@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+
+import sys
 import logging
 from logging.handlers import RotatingFileHandler
 from . import paths
-import sys
 
 APP_LOG_FILE = "debug.log"
 ERROR_LOG_FILE = "error.log"

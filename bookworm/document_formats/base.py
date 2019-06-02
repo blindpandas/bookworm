@@ -2,34 +2,28 @@ from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
 from dataclasses import field, dataclass
 from weakref import WeakValueDictionary
-from ..utils import cached_property
 
 
 @dataclass
-class Book:
+class BookMetadata:
     title: str
     author: str
     publisher: str = ""
     publication_year: str = ""
-    tags: tuple = ()
-    metadata: dict = field(default_factory=dict)
-
-
-@dataclass
-class TOCItem:
-    title: str
-    children: list = field(default_factory=list)
-    data: dict = field(default_factory=dict)
+    extra: dict = field(default_factory=dict)
 
 
 class PaginationError(IndexError):
     """Raised when the  `next` or `prev` page is not available."""
 
 
-class Pagination:
+@dataclass(frozen=True)
+class Pager:
+    """A simple paginater.""" 
+    first: int
+    last: int
 
-    def __init__(self, first, last):
-        self.first, self.last = (first, last)
+    def __post_init__(self):
         self.reset()
 
     def __repr__(self):
@@ -38,20 +32,26 @@ class Pagination:
     def __iter__(self):
         return iter(range(self.first, self.last + 1))
 
+    def __len__(self):
+        return self.last - self.first
+
+    def __contains__(self, value):
+        return self.first <= value <= self.last
+
     def reset(self):
-        self.current = self.first
+        object.__setattr__(self, "current",  self.first)
 
     def set_current(self, to):
         if  to not in self:
             raise PaginationError(f"The page ({to}) is out of range for this paginater.")
-        self.current = to
+        object.__setattr__(self, "current",  to)
 
     @property
     def next(self):
         next_item = self.current + 1
         if next_item > self.last:
             raise PaginationError(f"Page ({next_item}) is out of range.")
-        self.current = next_item 
+        object.__setattr__(self, "current",  next_item)
         return next_item
 
     @property
@@ -59,11 +59,25 @@ class Pagination:
         prev_item = self.current - 1
         if prev_item < self.first:
             raise PaginationError(f"Page ({prev_item}) is out of range.")
-        self.current = prev_item
+        object.__setattr__(self, "current",  prev_item)
         return prev_item
 
 
-class BaseEBookReader(metaclass=ABCMeta):
+@dataclass
+class TOCItem:
+    title: str
+    children: list = field(default_factory=list)
+    data: dict = field(default_factory=dict)
+
+@dataclass
+class PaginatedTOCItem:
+    title: str
+    pager: Pager = None
+    children: list = field(default_factory=list)
+    data: dict = field(default_factory=dict)
+
+
+class BaseDocument(metaclass=ABCMeta):
 
     # Important Attributes
     # Must be defined in all subclasses
@@ -76,7 +90,7 @@ class BaseEBookReader(metaclass=ABCMeta):
 
     def __init__(self, ebook_path):
         self.ebook_path = ebook_path
-        self.ebook = None
+        self._ebook = None
         super().__init__()
 
     @abstractmethod
@@ -86,34 +100,37 @@ class BaseEBookReader(metaclass=ABCMeta):
     @abstractmethod
     def close(self):
         """Perform the actual IO operations for unloading the ebook."""
-        self.ebook = None
+        self._ebook = None
 
     @abstractmethod
     def get_content(self, item):
         """Get the text content for an item."""
 
-    @cached_property
+    @property
     @abstractmethod
     def toc_tree(self):
         """Return an iterable representing the table of content.
         The items should be of type `TOCItem`.
         """
 
-    @cached_property
+    @property
     @abstractmethod
     def metadata(self):
         """Return a `Book` object holding info about this book."""
 
 
-class PaginatedBaseEBookReader(BaseEBookReader, Sequence):
-    """A Base reader that supports pagination."""
+class PaginatedBaseDocument(BaseDocument, Sequence):
+    """A Base Document that supports pagination."""
     supports_pagination = True
+
+    def __contains__(self, value):
+        return 0 <= value < len(self)
 
     @abstractmethod
     def get_page_content(self, page_number):
-        """Get the text content for a page."""
+        """Get the text content of a page."""
 
-    @cached_property
+    @property
     def paginated_toc_tree(self):
         return self._get_paginated_toc_tree()
     
@@ -122,7 +139,7 @@ class PaginatedBaseEBookReader(BaseEBookReader, Sequence):
             rv = {}
             items = self.toc_tree[1:]
         for item in items:
-            pgn = item.data["paginater"]
+            pgn = item.pager
             rv[(pgn.first, pgn.last)] = item
             if item.children:
                 self._get_paginated_toc_tree(item.children, rv)

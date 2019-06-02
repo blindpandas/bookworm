@@ -49,3 +49,4 @@ class cached_property(property):
             obj.__dict__[self.__name__] = value
         return value
 
+

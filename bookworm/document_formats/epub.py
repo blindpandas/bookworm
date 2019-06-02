@@ -4,32 +4,32 @@ from ebooklib import epub
 from ebooklib.utils import parse_html_string
 from markupsafe import Markup
 from ..logger import logger
-from .base import BaseEBookReader, Book, TOCItem
+from ..utils import cached_property
+from .base import BaseDocument, BookMetadata, TOCItem
 
 
 log = logger.getChild(__name__)
-log = logger.getChild(__name__)
 
 
-class EPUBReader(BaseEBookReader):
+class EPUBReader(BaseDocument):
 
     format = "epub"
     name = "Electronic Publications"
     extensions = ("*.epub",)
 
     def read(self):
-        self.ebook = epub.read_epub(self.ebook_path)
+        self._ebook = epub.read_epub(self._ebook_path)
 
     def get_content(self, item):
-        content = self.ebook.get_item_with_href(item.data["obj"].href)
+        content = self._ebook.get_item_with_href(item.data["obj"].href)
         if content is None:
             return item.title
         body_content = content.get_content()
         return parse_html_string(body_content).text_content().strip()
 
-    @property
+    @cached_property
     def toc_tree(self):
-        return self._get_toc_tree(self.ebook.toc)
+        return self._get_toc_tree(self._ebook.toc)
 
     def _get_toc_tree(self, toc_list):
         toc = []
@@ -47,13 +47,13 @@ class EPUBReader(BaseEBookReader):
                 raise ValueError(f"Unknown TOC element {item}.")
         return toc
 
-    @property
+    @cached_property
     def metadata(self):
         info = dict(
-            title=self.ebook.title,
-            author=self.ebook.get_metadata("DC", "creator")[0][0],
-            publisher=self.ebook.get_metadata("DC", "publisher")[0][0]
+            title=self._ebook.title,
+            author=self._ebook.get_metadata("DC", "creator")[0][0],
+            publisher=self._ebook.get_metadata("DC", "publisher")[0][0]
         )
         with suppress(IndexError):
-            info["publication_year"] =self.ebook.get_metadata("DC", "date")[0][0]
-        return Book(**info)
+            info["publication_year"] =self._ebook.get_metadata("DC", "date")[0][0]
+        return BookMetadata(**info)

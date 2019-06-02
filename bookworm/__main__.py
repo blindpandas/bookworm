@@ -1,10 +1,8 @@
-from .gui import BookReaderApp
-from .config import setup_config
+from .bookworm import BookwormApp
 
 
 def main():
-    setup_config()
-    app = BookReaderApp(redirect=True)
+    app = BookwormApp(redirect=True)
     app.MainLoop()
 
 
