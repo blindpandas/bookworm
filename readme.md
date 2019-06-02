@@ -10,4 +10,4 @@ TBD
 
 ## Licence
 
-**Bookworm** is copyright (c) 2019 Musharraf Omer and oy contributers. It is licenced under the [MIT License](https://github.com/mush42/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2019 Musharraf Omer and Bookworm contributers. It is licenced under the [MIT License](https://github.com/mush42/bookworm/blob/master/LICENSE).
