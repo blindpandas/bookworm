@@ -72,8 +72,8 @@ class EBookReader(TextToSpeechProvider):
 
     def save_current_position(self):
         filename = self.document.filename
-        # Some times we shadow the original document with another one
-        # for example when we decrypt it, or when we make it a11y friendly
+        # Some times we may need to shadow the original document with another
+        #  one, for example when we decrypt it, or when we make it a11y friendly
         if getattr(self.document, "_original_file_name", None):
             filename = self.document._original_file_name
         database.save_last_position(

@@ -32,13 +32,14 @@ class SpeechEngine(Synthesis.SpeechSynthesizer):
     """Our Pythonic Interface to SAPI speech enginge."""
 
     def __init__(self):
-        """We do not accept any initialization time parameters."""
         super().__init__()
+        self.SetOutputToDefaultAudioDevice()
 
     def close(self):
         with suppress(System.ObjectDisposedException):
             self.stop()
         self.Dispose()
+        self.Finalize()
 
     def __del__(self):
         self.close()

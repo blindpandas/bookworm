@@ -35,7 +35,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         panel = wx.Panel(self, size=(rect.width * 0.8, rect.height * 0.75))
 
         # Create the book reader controls
-        tocTreeLabel = wx.StaticText(panel, -1, "Table of content")
+        tocTreeLabel = wx.StaticText(panel, -1, "Table of Contents")
         self.tocTreeCtrl = wx.TreeCtrl(
             panel,
             size=(280, 160),

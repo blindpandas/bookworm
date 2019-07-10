@@ -3,12 +3,14 @@
 import wx
 import bisect
 import json
+from dataclasses import dataclass
+from sentence_splitter import SentenceSplitter, SentenceSplitterException
 from bookworm import config
 from bookworm import sounds
 from bookworm.speech import SpeechProvider
 from bookworm.speech.utterance import SpeechUtterance, SpeechStyle
 from bookworm.speech.enumerations import SynthState, EmphSpec, PauseSpec
-from bookworm.utils import gui_thread_safe
+from bookworm.utils import cached_property, gui_thread_safe
 from bookworm.signals import (
     reader_book_unloaded,
     reader_page_changed,
@@ -20,20 +22,87 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
+@dataclass
+class TextInfo:
+    """Provides basic structural information  about a blob of text
+    This class is highly optimized. Repeated calls will return
+    already calculated values.
+    """
+
+    text: str
+    """The text blob to process."""
+
+    start_pos: int = 0
+    """Starting position of the text, i.e. in a text control or a stream."""
+
+    lang: str = "en"
+    """The natural language of the text. Used in splitting the text into sentences."""
+
+    eol: str = "\n"
+    """The recognizable end-of-line sequence. Used to split the text into paragraphs."""
+
+    def __post_init__(self):
+        self._sent_tokenizer = SentenceSplitter(self.lang)
+
+    @property
+    def sentence_markers(self):
+        return self._record_markers(self.sentences)
+
+    @property
+    def paragraph_markers(self):
+        return self._record_markers(self.paragraphs)
+
+    def split_sentences(self, textblock):
+        return self._sent_tokenizer.split(textblock)
+
+    @property
+    def sentences(self):
+        rv = []
+        for sent in self.split_sentences(self.text):
+            if sent.strip():
+                # XXX FixME: Find a way to get the starting position of this sentence
+                pos = self.text.find(sent)
+                rv.append((sent, pos + self.start_pos))
+        return rv
+
+    @property
+    def paragraphs(self):
+        rv = []
+        for parag in self.text.split(self.eol):
+            if parag.strip():
+                pos = self.text.index(parag)
+                rv.append((parag, pos + self.start_pos))
+        return rv
+
+    def _record_markers(self, segments):
+        rv = []
+        for _, pos in segments:
+            rv.append(pos + self.start_pos)
+        return rv
+
+    @property
+    def configured_markers(self):
+        if config.conf["speech"]["granularity"]:
+            return self.paragraph_markers
+        return self.sentence_markers
+
+
 class TextToSpeechProvider:
     """A mixin to add text-to-speech functionality to the reader."""
 
     def __init__(self):
         self.tts = SpeechProvider(self)
-        self._paragraph_markers = []
-        reader_book_unloaded.connect(
-            lambda s: self.tts.close(), sender=self, weak=False
-        )
+        self._current_textinfo = None
+        reader_book_unloaded.connect(self._tts_on_unload, sender=self)
         reader_page_changed.connect(self.change_page_for_tts, sender=self)
         speech_engine_state_changed.connect(self._on_tts_state_changed, sender=self.tts)
 
+    def _tts_on_unload(self, sender):
+        self.tts.close()
+        self._current_textinfo = None
+
     def change_page_for_tts(self, sender, current, prev):
-        self._record_paragraph_markers()
+        self._current_textinfo = self.content_tokenized(start_pos=0)
         if not self.tts.is_ready:
             return
         is_speaking = self.tts.engine.state is SynthState.busy
@@ -48,8 +117,7 @@ class TextToSpeechProvider:
                 utterance.add_pause(PauseSpec.medium)
             self.speak_current_page(utterance)
 
-    def content_tokenized(self, page_number, start_pos=None):
-        # XXX More refactoring is needed
+    def content_tokenized(self, start_pos=None):
         textCtrl = self.view.contentTextCtrl
         current_pos = start_pos
         if start_pos is None:
@@ -59,34 +127,33 @@ class TextToSpeechProvider:
                 current_pos = 0
         end_of_page = textCtrl.GetLastPosition()
         text = textCtrl.GetRange(current_pos, end_of_page)
-        if not text:
-            return
-        parags = text.split("\n")
-        for parag in parags:
-            if not parag.strip():
-                continue
-            pos = current_pos + text.index(parag)
-            yield (parag, pos)
+        return TextInfo(text, start_pos=current_pos)
 
     def speak_current_page(self, utterance=None):
         utterance = utterance or SpeechUtterance()
-        for text, pos in self.content_tokenized(self.current_page):
+        textinfo = self.content_tokenized()
+        if config.conf["speech"]["granularity"]:
+            segments = textinfo.paragraphs
+        else:
+            segments = textinfo.sentences
+        for text, pos in segments:
             bookmark_data = json.dumps(
-                {"type": "start_paragraph", "pos": pos, "end": pos + len(text)}
+                {"type": "start_segment", "pos": pos, "end": pos + len(text)}
             )
             utterance.add_bookmark(bookmark_data)
             sent_pause = config.conf["speech"]["sentence_pause"]
             if not sent_pause:
                 utterance.add_text(text)
             else:
-                # XXX Is it worth the overhead of using a NLP based approach
-                # Perhaps there is an even better option
-                for sent in text.split("."):
-                    if not sent:
-                        continue
+                if not config.conf["speech"]["granularity"]:
+                    utterance.add_text(text)
+                    utterance.add_pause(sent_pause)
+                    continue
+                for sent in textinfo.split_sentences(text):
                     utterance.add_text(sent)
                     utterance.add_pause(sent_pause)
-            utterance.add_pause(config.conf["speech"]["paragraph_pause"])
+            if config.conf["speech"]["granularity"] or (pos + len(text) + 1) in textinfo.paragraph_markers:
+                utterance.add_pause(config.conf["speech"]["paragraph_pause"])
         if config.conf["reading"]["reading_mode"] < 2:
             utterance.add_pause(config.conf["speech"]["end_of_page_pause"])
             utterance.add_text(".\f")
@@ -100,7 +167,7 @@ class TextToSpeechProvider:
     @gui_thread_safe
     def process_bookmark(self, bookmark):
         data = json.loads(bookmark)
-        if data["type"] == "start_paragraph":
+        if data["type"] == "start_segment":
             textCtrl = self.view.contentTextCtrl
             pos = data["pos"]
             textCtrl.ShowPosition(pos)
@@ -128,35 +195,32 @@ class TextToSpeechProvider:
         elif data["type"] == "next_section":
             self.navigate(to="next", unit="section")
 
-    def _record_paragraph_markers(self):
-        self._paragraph_markers.clear()
-        for _, pos in self.content_tokenized(self.current_page, start_pos=0):
-            self._paragraph_markers.append(pos)
-
     def fastforward(self):
-        if not self._paragraph_markers or (
+        if not self._current_textinfo or (
             self.tts.engine.state is not SynthState.busy
         ):
             return wx.Bell()
+        markers = self._current_textinfo.configured_markers
         caret_pos = self.view.contentTextCtrl.InsertionPoint
-        pos = self._paragraph_markers[-1]
-        index = bisect.bisect_right(self._paragraph_markers, caret_pos)
-        if index != len(self._paragraph_markers):
-            pos = self._paragraph_markers[index]
+        pos = markers[-1]
+        index = bisect.bisect_right(markers, caret_pos)
+        if index != len(markers):
+            pos = markers[index]
         self.view.contentTextCtrl.SetInsertionPoint(pos)
         self.tts.engine.stop()
         self.speak_current_page()
 
     def rewind(self):
-        if not self._paragraph_markers or (
+        if not self._current_textinfo or (
             self.tts.engine.state is not SynthState.busy
         ):
             return wx.Bell()
+        markers = self._current_textinfo.configured_markers
         caret_pos = self.view.contentTextCtrl.InsertionPoint
-        index = bisect.bisect_left(self._paragraph_markers, caret_pos)
+        index = bisect.bisect_left(markers, caret_pos)
         if index:
             index -= 1
-        pos = self._paragraph_markers[index]
+        pos = markers[index]
         self.view.contentTextCtrl.SetInsertionPoint(pos)
         self.tts.engine.stop()
         self.speak_current_page()

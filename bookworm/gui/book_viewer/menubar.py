@@ -347,7 +347,7 @@ class MenubarProvider:
             if not retval:
                 return
             self.reader.go_to_page(retval)
-            self._last_go_to_page = retval
+            self._last_go_to_page = retval + 1
 
     @only_when_reader_ready
     def onViewRenderedAsImage(self, event):
