@@ -1,7 +1,65 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
+
+import wx
+import re
+import hashlib
+import json
+from collections import UserString, OrderedDict
+from functools import wraps
+from pathlib import Path
+from bookworm.concurrency import call_threaded
+from bookworm.logger import logger
 
 
+log = logger.getChild(__name__)
+
+
+# Sentinel
 _missing = object()
+
+
+def recursively_iterdir(path):
+    """Iterate over files, exclusively, in path and its sub directories."""
+    for item in Path(path).iterdir():
+        if item.is_dir():
+            yield from recursively_iterdir(item)
+        else:
+            yield item
+
+
+def gui_thread_safe(func):
+    """Always call the function in the gui thread."""
+
+    @wraps(func)
+    def wrapper(*a, **kw):
+        return wx.CallAfter(func, *a, **kw)
+
+    return wrapper
+
+
+@call_threaded
+def generate_sha1hash(filename):
+    hasher = hashlib.sha1()
+    with open(filename, "rb") as file:
+        for chunk in file:
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
+def search(request, text):
+    """Search the given text using info from the search request."""
+    I = re.I if not request.case_sensitive else 0
+    ps = fr"({request.term})"
+    if request.whole_word:
+        ps = fr"\b{ps}\b"
+    pat = re.compile(ps, I)
+    mat = pat.search(text)
+    if not mat:
+        return
+    pos = mat.span()[0]
+    lseg, tseg, rseg = pat.split(text, maxsplit=1)
+    snipit = "".join([lseg[-20:], tseg, rseg[:20]])
+    return (pos, snipit)
 
 
 class cached_property(property):
@@ -21,7 +79,7 @@ class cached_property(property):
     The class has to have a `__dict__` in order for this property to
     work.
     
-    Taken as is from `werkzeug` (a WSGI toolkit for python).
+    Taken as is from werkzeug, a WSGI toolkit for python.
     :copyright: (c) 2014 by the Werkzeug Team.
     """
 
@@ -50,3 +108,21 @@ class cached_property(property):
         return value
 
 
+class JsonString(UserString):
+    """Self `serializable/deserializable`json` data."""
+
+    def __init__(self, seq=None, data=None):
+        if seq is not None:
+            self._data_record = json.dumps(seq)
+        elif data is not None:
+            self._data_record = data
+            seq = json.dumps(data)
+        else:
+            raise ValueError("Either `seq` or `data` argument should be supplied.")
+        super().__init__(seq or "")
+
+    def __str__(self):
+        return self.data
+
+    def getdata(self):
+        return self._data_record

@@ -1,14 +1,16 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
 import sys
 import logging
 from logging.handlers import RotatingFileHandler
-from . import paths
+from bookworm import paths
+from bookworm import app
 
-APP_LOG_FILE = "debug.log"
+
+APP_LOG_FILE = f"{app.name}.log"
 ERROR_LOG_FILE = "error.log"
 MESSAGE_FORMAT = "%(asctime)s %(name)s %(levelname)s: %(message)s"
-DATE_FORMAT = u"%d/%m/%Y %H:%M:%S"
+DATE_FORMAT = "%d/%m/%Y %H:%M:%S"
 
 formatter = logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT)
 

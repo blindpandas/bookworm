@@ -1,9 +1,6 @@
-from .bookworm import BookwormApp
+# coding: utf-8
 
-
-def main():
-    app = BookwormApp(redirect=True)
-    app.MainLoop()
+from .bookworm import main
 
 
 if __name__ == "__main__":

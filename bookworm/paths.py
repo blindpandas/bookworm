@@ -1,93 +1,97 @@
-# -*- coding: utf-8 -*-
-import platform
-import os
-import sys
+# coding: utf-8
+
 import logging
+import platform
+import winpaths
+import bookworm
+from pathlib import Path
 from platform_utils import paths as paths_
 from functools import wraps
+from bookworm import app
 
 
-log = logging.getLogger("paths")
+log = logging.getLogger("bookworm.paths")
 
 
-mode = "portable"
-directory = os.path.join(paths_.app_path(), ".appdata")
+DATA_PATH_DEBUG = Path(bookworm.__path__[0]).parent / ".appdata"
 
 
 def merge_paths(func):
     @wraps(func)
     def merge_paths_wrapper(*a):
-        return os.path.join(func(), *a)
+        return func().joinpath(*a)
 
     return merge_paths_wrapper
 
 
 @merge_paths
+def data_path():
+    if app.debug:
+        data_path = DATA_PATH_DEBUG
+    else:
+        data_path = Path(winpaths.get_appdata()) / app.name
+    if not data_path.exists():
+        data_path.mkdir(parents=True, exist_ok=True)
+    return data_path
+
+
+@merge_paths
 def app_path():
-    return paths_.app_path()
+    return Path(paths_.app_path())
 
 
 @merge_paths
 def config_path():
-    global mode, directory
-    if mode == "portable":
-        if directory is None:
-            path = app_path("config")
-        else:
-            path = os.path.join(directory, "config")
-    elif mode == "installed":
-        path = data_path("config")
-    if not os.path.exists(path):
+    path = data_path("config")
+    if not path.exists():
         log.debug("%s path does not exist, creating..." % (path,))
-        os.makedirs(path, exist_ok=True)
+        path.mkdir(parents=True, exist_ok=True)
     return path
 
 
 @merge_paths
 def logs_path():
-    global mode, directory
-    if mode == "portable":
-        if directory is None:
-            path = app_path("logs")
-        else:
-            path = os.path.join(directory, "logs")
-    elif mode == "installed":
-        path = data_path("logs")
-    if not os.path.exists(path):
+    path = data_path("logs")
+    if not path.exists():
         log.debug("%s path does not exist, creating..." % (path,))
-        os.makedirs(path, exist_ok=True)
+        path.mkdir(parents=True, exist_ok=True)
     return path
 
 
 @merge_paths
-def data_path(app_name="TW blue"):
-    if platform.system() == "Windows":
-        import winpaths
-
-        data_path = os.path.join(winpaths.get_appdata(), app_name)
-    else:
-        data_path = os.path.join(os.environ["HOME"], ".%s" % app_name)
-    if not os.path.exists(data_path):
-        os.mkdir(data_path)
-    return data_path
-
-
-@merge_paths
 def locale_path():
-    return app_path("locales")
+    return app_path("resources", "locales")
 
 
 @merge_paths
-def com_path():
-    global mode, directory
-    if mode == "portable":
-        if directory != None:
-            path = os.path.join(directory, "com_cache")
-        elif directory == None:
-            path = app_path("com_cache")
-    elif mode == "installed":
-        path = data_path("com_cache")
-    if not os.path.exists(path):
+def db_path():
+    path = data_path("database")
+    if not path.exists():
         log.debug("%s path does not exist, creating..." % (path,))
-        os.makedirs(path, exist_ok=True)
+        path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+@merge_paths
+def docs_path():
+    if app.debug:
+        parent = Path(DATA_PATH_DEBUG).parent
+        path = parent / "docs"
+    else:
+        path = app_path("docs")
+    if not path.exists():
+        log.debug("%s path does not exist, creating..." % (path,))
+        path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+@merge_paths
+def home_data_path():
+    if not app.debug:
+        path = Path.home() / f".{app.name}"
+    else:
+        path = DATA_PATH_DEBUG / "home_data"
+    if not path.exists():
+        log.debug("%s path does not exist, creating..." % (path,))
+        path.mkdir(parents=True, exist_ok=True)
     return path
