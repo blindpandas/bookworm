@@ -4,13 +4,13 @@ import wx
 import bisect
 import json
 from dataclasses import dataclass
-from sentence_splitter import SentenceSplitter, SentenceSplitterException
 from bookworm import config
 from bookworm import sounds
 from bookworm.speech import SpeechProvider
 from bookworm.speech.utterance import SpeechUtterance, SpeechStyle
 from bookworm.speech.enumerations import SynthState, EmphSpec, PauseSpec
 from bookworm.utils import cached_property, gui_thread_safe
+from bookworm.sentence_splitter import SentenceSplitter, SentenceSplitterException
 from bookworm.signals import (
     reader_book_unloaded,
     reader_page_changed,

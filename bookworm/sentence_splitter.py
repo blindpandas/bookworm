@@ -1,9 +1,10 @@
-from enum import Enum
-import os
-from typing import List
 import warnings
-
 import regex
+from enum import Enum
+from pathlib import Path
+from typing import List
+from .paths import app_path
+
 
 __all__ = (
     'SentenceSplitter',
@@ -45,11 +46,9 @@ class SentenceSplitter(object):
             raise SentenceSplitterException("Invalid language code: {}".format(language))
 
         if non_breaking_prefix_file is None:
-            pwd = os.path.dirname(os.path.abspath(__file__))
-            prefix_dir = os.path.join(pwd, 'non_breaking_prefixes')
-            non_breaking_prefix_file = os.path.join(prefix_dir, '{}.txt'.format(language))
+            non_breaking_prefix_file = app_path("resources", "non_breaking_prefixes", f"{language}.txt")
 
-        if not os.path.isfile(non_breaking_prefix_file):
+        if not Path(non_breaking_prefix_file).exists():
             raise SentenceSplitterException(
                 "Non-breaking prefix file for language '{}' was not found at path '{}'".format(
                     language,
