@@ -4,6 +4,8 @@ from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
 from functools import wraps
 from dataclasses import field, dataclass
+from pycld2 import detect as detect_language, error as CLD2Error
+from bookworm.concurrency import call_threaded
 from bookworm.utils import cached_property, generate_sha1hash
 from bookworm.logger import logger
 
@@ -130,6 +132,7 @@ class Section:
         if self:
             return self[0]
 
+    @property
     def last_child(self):
         if self:
             return self[-1]
@@ -210,6 +213,8 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         Subclasses should call super to ensure the standard behavior.
         """
         self._sha1hash = generate_sha1hash(self.filename)
+        # XXX Is this a pre-mature optimization?
+        call_threaded(lambda: self.language)
 
     @abstractmethod
     def close(self):
@@ -233,6 +238,22 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         The items should be of type `Section`.
         """
 
+    @cached_property
+    def language(self):
+        """Return the language of this document.
+        By default we use a heuristic based on Google's CLD2.
+        """
+        num_pages = len(self)
+        num_samples = num_pages if num_pages <= 20 else 20
+        text = "".join(self[i].getText() for i in range(num_samples + 1)).encode("utf8")
+        (success, _, ((_, lang, _, _), *_)) = detect_language(
+            utf8Bytes=text,
+            isPlainText=True,
+            hintLanguage=None
+        )
+        if success:
+            return lang
+
     @property
     @abstractmethod
     def metadata(self):
@@ -241,7 +262,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     @staticmethod
     def export_to_text(document_path, target_filename):
         """Export the content of this  book to a text file.
-        Note: This function will run in a separate thread.
+        Note: This function should be run concurrently.
         """
         raise NotImplementedError
 

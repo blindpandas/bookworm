@@ -1,4 +1,3 @@
-recursive-include bookworm/extlibs/accessible_output2/lib *
 recursive-include bookworm/resources/soundfiles *
 recursive-include bookworm/resources/non_breaking_prefixes *
 recursive-exclude tests *

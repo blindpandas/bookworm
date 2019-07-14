@@ -4,20 +4,14 @@
 Prepares the environment for the application.
 """
 
-import sys
 import os
 import clr
 from glob import glob
-from bookworm import app
 
-
-# Add the external libraries directory to `sys.path`
-_extlibs = os.path.join(os.path.dirname(__file__), "extlibs")
-sys.path.insert(0, _extlibs)
-del _extlibs
 
 # XXX Recent versions of Pythonnet does not auto discover
-# certain assemblies, so add what we need here.
+# certain assemblies, so add what we need from the
+# Global Assembly Cache (GAC).
 # This should be removed, eventually.
 import winpaths
 

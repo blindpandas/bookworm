@@ -225,7 +225,7 @@ class NoteEditorDialog(Dialog):
         if self.view_only:
             prefix = "View"
         elif self.note is None:
-            prefix = "Add"
+            prefix = "Take"
         else:
             prefix = "Edit"
         super().__init__(parent, title=f"{prefix} Note", **kwargs)

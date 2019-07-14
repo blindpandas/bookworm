@@ -78,10 +78,9 @@ def docs_path():
         parent = Path(DATA_PATH_DEBUG).parent
         path = parent / "docs"
     else:
-        path = app_path("docs")
+        path = app_path("resources", "docs")
     if not path.exists():
-        log.debug("%s path does not exist, creating..." % (path,))
-        path.mkdir(parents=True, exist_ok=True)
+        log.warning(f"Documentation files was not found in {path}. Folder not Found.")
     return path
 
 

@@ -1,3 +1,4 @@
+import os
 import warnings
 import regex
 from enum import Enum
@@ -10,7 +11,8 @@ __all__ = (
     'SentenceSplitter',
     'split_text_into_sentences',
     'SentenceSplitterException',
-    'SentenceSplitterWarning'
+    'SentenceSplitterWarning',
+    'supported_languages'
 )
 
 
@@ -22,6 +24,12 @@ class SentenceSplitterException(Exception):
 class SentenceSplitterWarning(Warning):
     """Sentence splitter warning."""
     pass
+
+
+def supported_languages():
+    nbp_path = app_path("resources", "non_breaking_prefixes")
+    return (file[:-4] for file in os.listdir(nbp_path))
+
 
 
 class SentenceSplitter(object):

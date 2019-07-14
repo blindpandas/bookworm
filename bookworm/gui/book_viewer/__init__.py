@@ -177,7 +177,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
     def clear_highlight(self, start=0, end=-1):
         textCtrl = self.contentTextCtrl
         end = textCtrl.LastPosition if end < 0 else end
-        textCtrl.SetStyle(start, end, wx.TextAttr(wx.BLACK, wx.WHITE))
+        textCtrl.SetStyle(start, end, wx.TextAttr(textCtrl.ForegroundColour, textCtrl.BackgroundColour))
 
     def get_containing_line(self, pos):
         """Returns the left and right boundaries

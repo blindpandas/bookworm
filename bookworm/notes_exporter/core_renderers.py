@@ -5,11 +5,11 @@ from bs4 import BeautifulSoup
 from .base_renderer import BaseRenderer
 
 
-class PlaneTextRenderer(BaseRenderer):
+class PlainTextRenderer(BaseRenderer):
     """Renders notes to a text document."""
 
     name = "text"
-    display_name = "Plane Text "
+    display_name = "Plain Text "
     output_ext = ".txt"
 
     def start_document(self):

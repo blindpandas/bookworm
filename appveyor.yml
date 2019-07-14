@@ -1,0 +1,13 @@
+
+branches:
+ only:
+  - master
+  
+environment:
+ PY_PYTHON: 3.7-32
+
+install:
+- pip install -r requirements-dev.txt
+
+test_script:
+- pytest

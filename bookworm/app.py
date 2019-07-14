@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import sys
 import os
 
 
@@ -11,7 +12,7 @@ version = "0.1-beta"
 url = "https://github.com/mush42/bookworm/"
 website = "https://mush42.github.io/bookworm/"
 copyright = f"Copyright (c) 2019 {author}."
-debug = bool(int(os.environ.get("BOOKWORM_DEBUG", 1)))
+debug = bool(int(os.environ.get("BOOKWORM_DEBUG", 0)))
 
 # About Message
 about_msg = f"""

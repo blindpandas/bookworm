@@ -2,14 +2,15 @@
 
 import clr
 
-clr.AddReference("System.Collections")
+clr.AddReference("System.Globalization")
 
 import System
-from System.Collections.Generic import KeyNotFoundException
+from System.Globalization import CultureInfo
 from System.Speech import Synthesis
 from collections import OrderedDict
 from contextlib import suppress
 from dataclasses import dataclass
+from bookworm.resources.lang_locales import locale_map
 from bookworm.logger import logger
 from .enumerations import SynthState
 from .utterance import SpeechUtterance
@@ -23,9 +24,12 @@ class VoiceInfo:
     id: str
     name: str
     desc: str
-    lang: int
+    language: str
     gender: int
     age: int
+
+    def speaks_language(self, language):
+        return self.language.startswith(language)
 
 
 class SpeechEngine(Synthesis.SpeechSynthesizer):
@@ -44,19 +48,33 @@ class SpeechEngine(Synthesis.SpeechSynthesizer):
     def __del__(self):
         self.close()
 
-    def get_voices(self):
+    def get_voices(self, language=None):
         rv = []
-        for voice in self.GetInstalledVoices():
+        voices = []
+        if language is not None:
+            current_culture = CultureInfo.CurrentUICulture
+            if current_culture.IetfLanguageTag.startswith(language):
+                voices.extend(self.GetInstalledVoices(current_culture))
+            if language in locale_map:
+                for locale in locale_map[language]:
+                    culture = CultureInfo.GetCultureInfoByIetfLanguageTag(f"{language}-{locale}")
+                    voices.extend(self.GetInstalledVoices(culture))
+            voices.extend(self.GetInstalledVoices(CultureInfo(language)))
+        else:
+            voices = self.GetInstalledVoices()
+        if not voices:
+            log.warning("No suitable TTS voice was found.")
+            return rv
+        for voice in voices:
+            if not voice.Enabled:
+                continue
             info = voice.VoiceInfo
-            lang = None
-            with suppress(KeyNotFoundException):
-                lang = info.AdditionalInfo["Language"]
             rv.append(
                 VoiceInfo(
                     id=info.Id,
                     name=info.Name,
                     desc=info.Description,
-                    lang=lang,
+                    language=info.Culture.IetfLanguageTag,
                     gender=info.Gender,
                     age=info.Age,
                 )
@@ -66,6 +84,12 @@ class SpeechEngine(Synthesis.SpeechSynthesizer):
     @property
     def state(self):
         return SynthState(self.State)
+
+    def get_current_voice(self):
+        for voice in self.get_voices():
+            if voice.name == self.voice:
+                return voice
+
 
     @property
     def voice(self):
@@ -118,9 +142,9 @@ class SpeechEngine(Synthesis.SpeechSynthesizer):
             self.Resume()
 
     @classmethod
-    def get_first_available_voice(cls):
+    def get_first_available_voice(cls, language=None):
         _test_engine = cls()
-        for voice in _test_engine.get_voices():
+        for voice in _test_engine.get_voices(language=language):
             try:
                 _test_engine.voice = voice.name
                 return voice.name

@@ -3,7 +3,7 @@
 from bookworm.concurrency import call_threaded
 from bookworm.signals import notes_export_completed
 from bookworm.logger import logger
-from .core_renderers import MarkdownRenderer, HTMLRenderer, PlaneTextRenderer
+from .core_renderers import MarkdownRenderer, HTMLRenderer, PlainTextRenderer
 
 
 log = logger.getChild(__name__)
@@ -11,7 +11,7 @@ log = logger.getChild(__name__)
 
 class NotesExporter:
 
-    renderers = [PlaneTextRenderer, HTMLRenderer, MarkdownRenderer]
+    renderers = [PlainTextRenderer, HTMLRenderer, MarkdownRenderer]
     """A list of renderers."""
 
     def __init__(self, notes, renderer_name, filename, doc_title):

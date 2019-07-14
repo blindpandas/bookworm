@@ -35,7 +35,7 @@ class SpeechStyle:
                 continue
             varvalue = getattr(self, varname)
             if varvalue is not None and not isinstance(varvalue, vartype):
-                raise ValueError(f"Invalid value for {varname}")
+                raise TypeError(f"{varname} must be of type {vartype}")
 
     @property
     def prompt_style(self):
@@ -59,16 +59,24 @@ class SpeechUtterance:
         default_factory=lambda: PromptBuilder(), compare=False
     )
 
-    @classmethod
-    def from_prompt(cls, prompt):
-        """Create a new instance with the provided prompt object."""
-        new = cls()
-        object.__setattr__(new, "prompt", prompt)
-        return new
-
     def add_text(self, text):
         """Append textual content."""
         self.prompt.AppendText(text)
+
+    def add_sentence(self, sentence):
+        """Append a sentence."""
+        self.prompt.StartSentence()
+        self.add_text(sentence)
+        self.prompt.EndSentence()
+
+    @contextmanager
+    def new_paragraph(self):
+        """Create a new paragraph."""
+        self.prompt.StartParagraph()
+        try:
+            yield
+        finally:
+            self.prompt.EndParagraph()
 
     def add_bookmark(self, bookmark):
         """Append application specific data."""
@@ -81,10 +89,12 @@ class SpeechUtterance:
         if _has_voice:
             self.prompt.StartVoice(style.voice)
         self.prompt.StartStyle(style.prompt_style)
-        yield
-        self.prompt.EndStyle()
-        if _has_voice:
-            self.prompt.EndVoice()
+        try:
+            yield
+        finally:
+            self.prompt.EndStyle()
+            if _has_voice:
+                self.prompt.EndVoice()
 
     def add_pause(self, duration):
         """Append silence to the speech stream.
@@ -102,12 +112,16 @@ class SpeechUtterance:
         uri = Path(filename).as_uri()
         self.prompt.AppendAudio(uri)
 
-    def add_utterance(self, utterance):
-        """Append the content of another utterance to this utterance."""
-        self.prompt.AppendPromptBuilder(utterance.prompt)
-
     def _is_valid_operand(self, other):
         return isinstance(other, self.__class__)
+
+    def add(self, utterance):
+        """Append the content of another utterance to this utterance."""
+        if not self._is_valid_operand(utterance):
+            raise TypeError(
+                'can only add SpeechUtterance (not "{type(utterance)}") to SpeechUtterance'
+            )
+        self.prompt.AppendPromptBuilder(utterance.prompt)
 
     def __str__(self):
         return self.prompt.ToXml()
@@ -119,3 +133,7 @@ class SpeechUtterance:
         if not self._is_valid_operand(other):
             return NotImplemented
         return self.prompt.Equals(other)
+
+    def __iadd__(self, other):
+        self.add(other)
+        return self

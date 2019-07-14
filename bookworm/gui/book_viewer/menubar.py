@@ -102,7 +102,7 @@ class MenubarProvider:
         # File menu
         fileMenu.Append(wx.ID_OPEN)
         fileMenu.AppendSeparator()
-        fileMenu.Append(wx.ID_SAVEAS, "&Save As Plane Text...")
+        fileMenu.Append(wx.ID_SAVEAS, "&Save As Plain Text...")
         fileMenu.AppendSeparator()
         fileMenu.Append(
             BookRelatedMenuIds.closeCurrentFile,
@@ -177,7 +177,7 @@ class MenubarProvider:
         )
         annotationsMenu.Append(
             BookRelatedMenuIds.addNote,
-            "Add &Note...\tCtrl-n",
+            "Take &Note...\tCtrl-n",
             "Add a note at the current location",
         )
         annotationsMenu.Append(
@@ -216,7 +216,7 @@ class MenubarProvider:
         # Bind the menu event to an event handler
         # File menu event handlers
         self.Bind(wx.EVT_MENU, self.onOpenEBook, id=wx.ID_OPEN)
-        self.Bind(wx.EVT_MENU, self.onExportAsPlaneText, id=wx.ID_SAVEAS)
+        self.Bind(wx.EVT_MENU, self.onExportAsPlainText, id=wx.ID_SAVEAS)
         self.Bind(
             wx.EVT_MENU, self.onCloseCurrentFile, id=BookRelatedMenuIds.closeCurrentFile
         )
@@ -278,7 +278,7 @@ class MenubarProvider:
         )
         self.Bind(
             wx.EVT_MENU,
-            lambda e: wx.LaunchDefaultApplication(str(DOCS_PATH / "license.txt")),
+            lambda e: wx.LaunchDefaultApplication(str(paths.docs_path("license.txt"))),
             id=ViewerMenuIds.license,
         )
         self.Bind(wx.EVT_MENU, self.onAbout, id=ViewerMenuIds.about)
@@ -411,13 +411,13 @@ class MenubarProvider:
 
     @only_when_reader_ready
     @call_threaded
-    def onExportAsPlaneText(self, event):
+    def onExportAsPlainText(self, event):
         book_title = slugify(self.reader.current_book.title)
         filename, _ = wx.FileSelectorEx(
             "Save As",
             default_path=wx.GetUserHome(),
             default_filename=f"{book_title}.txt",
-            wildcard="Plane Text (*.txt)|.txt",
+            wildcard="Plain Text (*.txt)|.txt",
             flags=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
             parent=self,
         )
@@ -426,7 +426,7 @@ class MenubarProvider:
         total = len(self.reader.document)
         dlg = wx.ProgressDialog(
             "Exporting Book",
-            "Converting your book to plane text.",
+            "Converting your book to plain text.",
             parent=self,
             maximum=total - 1,
             style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,

@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import wx
 from bookworm import config
 from bookworm import database
 from bookworm import speech
@@ -188,3 +189,6 @@ class EBookReader(TextToSpeechProvider):
 
     def _detect_ebook_format(self, ebook_path):
         return os.path.splitext(ebook_path)[-1].lstrip(".").lower()
+
+    def notify_user(self, title, message):
+        wx.MessageBox(message, title, wx.ICON_INFORMATION)

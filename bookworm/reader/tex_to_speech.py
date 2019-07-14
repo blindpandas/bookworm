@@ -2,7 +2,7 @@
 
 import wx
 import bisect
-import json
+import ujson as json
 from dataclasses import dataclass
 from bookworm import config
 from bookworm import sounds
@@ -10,7 +10,11 @@ from bookworm.speech import SpeechProvider
 from bookworm.speech.utterance import SpeechUtterance, SpeechStyle
 from bookworm.speech.enumerations import SynthState, EmphSpec, PauseSpec
 from bookworm.utils import cached_property, gui_thread_safe
-from bookworm.sentence_splitter import SentenceSplitter, SentenceSplitterException
+from bookworm.sentence_splitter import (
+    SentenceSplitter,
+    SentenceSplitterException,
+    supported_languages as splitter_supported_languages
+)
 from bookworm.signals import (
     reader_book_unloaded,
     reader_page_changed,
@@ -42,20 +46,23 @@ class TextInfo:
     """The recognizable end-of-line sequence. Used to split the text into paragraphs."""
 
     def __post_init__(self):
-        self._sent_tokenizer = SentenceSplitter(self.lang)
+        lang = self.lang
+        if lang not in splitter_supported_languages():
+            lang = "en"
+        self._sent_tokenizer = SentenceSplitter(lang)
 
-    @property
+    @cached_property
     def sentence_markers(self):
         return self._record_markers(self.sentences)
 
-    @property
+    @cached_property
     def paragraph_markers(self):
         return self._record_markers(self.paragraphs)
 
     def split_sentences(self, textblock):
         return self._sent_tokenizer.split(textblock)
 
-    @property
+    @cached_property
     def sentences(self):
         rv = []
         for sent in self.split_sentences(self.text):
@@ -65,7 +72,7 @@ class TextInfo:
                 rv.append((sent, pos + self.start_pos))
         return rv
 
-    @property
+    @cached_property
     def paragraphs(self):
         rv = []
         for parag in self.text.split(self.eol):
@@ -117,6 +124,11 @@ class TextToSpeechProvider:
                 utterance.add_pause(PauseSpec.medium)
             self.speak_current_page(utterance)
 
+    def make_text_info(self, *args, **kwargs):
+        """Add the language of the current document."""
+        kwargs.setdefault("lang", self.document.language)
+        return TextInfo(*args, **kwargs)
+
     def content_tokenized(self, start_pos=None):
         textCtrl = self.view.contentTextCtrl
         current_pos = start_pos
@@ -127,32 +139,22 @@ class TextToSpeechProvider:
                 current_pos = 0
         end_of_page = textCtrl.GetLastPosition()
         text = textCtrl.GetRange(current_pos, end_of_page)
-        return TextInfo(text, start_pos=current_pos)
+        return self.make_text_info(text, start_pos=current_pos)
 
     def speak_current_page(self, utterance=None):
         utterance = utterance or SpeechUtterance()
         textinfo = self.content_tokenized()
-        if config.conf["speech"]["granularity"]:
-            segments = textinfo.paragraphs
-        else:
-            segments = textinfo.sentences
-        for text, pos in segments:
-            bookmark_data = json.dumps(
-                {"type": "start_segment", "pos": pos, "end": pos + len(text)}
-            )
-            utterance.add_bookmark(bookmark_data)
-            sent_pause = config.conf["speech"]["sentence_pause"]
-            if not sent_pause:
-                utterance.add_text(text)
-            else:
-                if not config.conf["speech"]["granularity"]:
-                    utterance.add_text(text)
-                    utterance.add_pause(sent_pause)
-                    continue
+        for text, pos in textinfo.paragraphs:
+            with utterance.new_paragraph():
+                bookmark_data = json.dumps(
+                    {"type": "start_segment", "pos": pos, "end": pos + len(text)}
+                )
+                utterance.add_bookmark(bookmark_data)
+                sent_pause = config.conf["speech"]["sentence_pause"]
                 for sent in textinfo.split_sentences(text):
-                    utterance.add_text(sent)
-                    utterance.add_pause(sent_pause)
-            if config.conf["speech"]["granularity"] or (pos + len(text) + 1) in textinfo.paragraph_markers:
+                    utterance.add_sentence(sent)
+                    if sent_pause:
+                        utterance.add_pause(sent_pause)
                 utterance.add_pause(config.conf["speech"]["paragraph_pause"])
         if config.conf["reading"]["reading_mode"] < 2:
             utterance.add_pause(config.conf["speech"]["end_of_page_pause"])
@@ -184,7 +186,7 @@ class TextToSpeechProvider:
                 utterance = SpeechUtterance(priority=1)
                 if config.conf["reading"]["play_end_of_section_sound"]:
                     utterance.add_audio(sounds.section_changed.path)
-                with utterance.set_style(SpeechStyle(emph=EmphSpec.moderate)):
+                with utterance.set_style(SpeechStyle(emph=EmphSpec.strong)):
                     utterance.add_text(f"End of section: {self.active_section.title}.")
                 utterance.add_pause(config.conf["speech"]["end_of_section_pause"])
                 if config.conf["reading"]["reading_mode"] == 0:
@@ -224,9 +226,6 @@ class TextToSpeechProvider:
         self.view.contentTextCtrl.SetInsertionPoint(pos)
         self.tts.engine.stop()
         self.speak_current_page()
-
-    def alert_for_tts_error(self, message):
-        wx.MessageBox(message, "No voices", wx.ICON_ERROR)
 
     def _on_tts_state_changed(self, sender, state):
         if state is SynthState.ready:
