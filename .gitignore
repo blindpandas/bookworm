@@ -105,3 +105,6 @@ venv.bak/
 
 # app specific data
 .appdata/
+
+# Generated image module
+bookworm/resources/images.py
