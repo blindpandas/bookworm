@@ -89,6 +89,9 @@ When you are in the Render View, you can use the usual zoom commands to zoom in 
 * Ctrl + - will zoom-out
 * Ctrl + 0 reset the zoom level
 
+Note that the usual navigation commands work in the render view as well.
+
+
 ### Searching The Book
 
 To find a specific term, or a portion of text in the currently opened book, you can press Ctrl + F to bring up the "Search Book Dialog". This Dialog allows you to type the text you want to search for as well as configuring the  search process itself. The following options are available:

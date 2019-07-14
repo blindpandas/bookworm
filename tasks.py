@@ -96,7 +96,7 @@ def install_packages(c):
 
 
 @task(
-    pre=(make_icons, install_packages),
+    pre=(install_packages, make_icons),
     post=(build_docs, copy_artifacts,))
 def build(c):
     """Freeze, package, and prepare the app for distribution."""
@@ -108,7 +108,7 @@ def build(c):
 
 @task(
     name="dev",
-    pre=(make_icons, install_packages))
+    pre=(install_packages, make_icons))
 def prepare_dev_environment(c):
     print("\r\nHappy hacking...")
 
@@ -119,7 +119,7 @@ def run_application(c, debug=True):
         c.run('pip freeze | grep "bookworm"')
     except UnexpectedExit:
         print("Looks like your development environment is not ready yet!")
-        print("To prepare your development environment, please run: invoke dev")
+        print("To prepare your development environment, you should run: invoke dev")
         return
     os.environ.setdefault("BOOKWORM_DEBUG", str(int(debug)))
     c.run("py -m bookworm")

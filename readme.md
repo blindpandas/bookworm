@@ -16,7 +16,7 @@
 
 ## Development
 
-If you would like to contribute to *Bookworm's* development, please follow the following steps to prepare your environment:
+If you would like to contribute to *Bookworm's* development, please follow the following steps to get bookworm running on your computer:
 
 1. Make sure you are running Windows 7 or later, and you've installed Python 3.7 or a later version:
 2. Create a virtual environment:
@@ -39,9 +39,9 @@ cd bookworm
 pip install -r requirements-dev.txt
 ```
 
-This should install the application and the development dependencies.
+This should install the, pip installable, application and development dependencies.
 
-5. After installing the dependencies run the following command to prepare your environment:
+5. After installing dependencies, run the following command to prepare your environment:
 
 ```shell
 invoke dev
