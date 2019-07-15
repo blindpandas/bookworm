@@ -19,7 +19,7 @@ class NavigationProvider:
         if isinstance(ctrl, wx.TextCtrl):
             ctrl.Bind(
                 wx.EVT_TEXT_ENTER,
-                lambda e: self.reader.navigate(to="next", unit="page"),
+                self._text_ctrl_navigate_next,
                 ctrl,
             )
 
@@ -74,3 +74,7 @@ class NavigationProvider:
         ):
             if key_code in self.zoom_keymap:
                 self.zoom_callback(self.zoom_keymap[key_code])
+
+    @only_when_reader_ready
+    def _text_ctrl_navigate_next(self, event):
+        self.reader.navigate(to="next", unit="page")
