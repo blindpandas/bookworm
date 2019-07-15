@@ -100,7 +100,7 @@ def install_packages(c):
     print("Finished installing packages.")
 
 
-@task(pre=(install_packages, format_code, make_icons), post=(build_docs, copy_artifacts))
+@task(pre=(install_packages, make_icons), post=(build_docs, copy_artifacts))
 def build(c):
     """Freeze, package, and prepare the app for distribution."""
     build_folder = PROJECT_ROOT / "scripts" / "builder" / "dist"
