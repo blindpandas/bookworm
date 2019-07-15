@@ -8,7 +8,7 @@
 * Two different styles of viewing pages; plain-text and fully rendered, zoomable, images.
 * Full text search with customizable search options
 * Book navigation via Table of content is extensively supported for all e-book formats
-* Support for reading books aloud using Text-to-speech, with configurable pauses.
+* Support for reading books aloud using Text-to-speech, with configurable voice parameters.
 * The ability to customize  text-to-speech with voice profiles. Each voice profile configures the style of the speech, and you can freely activate/deactivate any voice profile, even while reading aloud!
 * Support for standard zoom-in/zoom-out/reset commands, Ctrl + =, Ctrl + -, and Ctrl + 0 respectively. This functionality is supported in the textual view and the rendered page view.
 * Support for exporting any e-book format to a plain text file.

@@ -13,7 +13,7 @@ from bookworm.utils import cached_property, gui_thread_safe
 from bookworm.sentence_splitter import (
     SentenceSplitter,
     SentenceSplitterException,
-    supported_languages as splitter_supported_languages
+    supported_languages as splitter_supported_languages,
 )
 from bookworm.signals import (
     reader_book_unloaded,
@@ -198,9 +198,7 @@ class TextToSpeechProvider:
             self.navigate(to="next", unit="section")
 
     def fastforward(self):
-        if not self._current_textinfo or (
-            self.tts.engine.state is not SynthState.busy
-        ):
+        if not self._current_textinfo or (self.tts.engine.state is not SynthState.busy):
             return wx.Bell()
         markers = self._current_textinfo.configured_markers
         caret_pos = self.view.contentTextCtrl.InsertionPoint
@@ -213,9 +211,7 @@ class TextToSpeechProvider:
         self.speak_current_page()
 
     def rewind(self):
-        if not self._current_textinfo or (
-            self.tts.engine.state is not SynthState.busy
-        ):
+        if not self._current_textinfo or (self.tts.engine.state is not SynthState.busy):
             return wx.Bell()
         markers = self._current_textinfo.configured_markers
         caret_pos = self.view.contentTextCtrl.InsertionPoint

@@ -16,12 +16,13 @@ with open(CWD / "requirements.txt", "r") as reqs:
 
 def get_data_files():
     from accessible_output2 import find_datafiles
+
     rv = find_datafiles()
     res = CWD / "bookworm" / "resources"
     to_str = lambda it: [str(i) for i in it]
     waves = to_str(res.rglob("*.wav"))
     txts = to_str(res.rglob("*.txt"))
-    return rv + [("resources", waves + txts),]
+    return rv + [("resources", waves + txts)]
 
 
 setup(
@@ -50,29 +51,31 @@ setup(
     ],
     windows=[
         {
-            "script":"bookworm/__main__.py",
-            "dest_base":"Bookworm",
-            "icon_resources":[(1, "resources/bookworm.ico")],
+            "script": "bookworm/__main__.py",
+            "dest_base": "Bookworm",
+            "icon_resources": [(1, "resources/bookworm.ico")],
             "version": "1.0.0",
-            "description":"Bookworm, the accessible ebook reader",
+            "description": "Bookworm, the accessible ebook reader",
             "product_version": "1.0.0",
             "copyright": "Musharraf Omer (c) 2019",
             "company_name": "Musharraf Omer",
-        },
+        }
     ],
-    options = {"py2exe": {
-        "bundle_files": 3,
-        "excludes": [
-            "Tkinter",
-            "serial.loopback_connection",
-            "serial.rfc2217",
-            "serial.serialcli",
-            "serial.serialjava",
-            "serial.serialposix",
-            "serial.socket_connection"
-        ],
-        "packages": find_packages(),
-        "includes": [],
-    }},
-    data_files=get_data_files()
+    options={
+        "py2exe": {
+            "bundle_files": 3,
+            "excludes": [
+                "Tkinter",
+                "serial.loopback_connection",
+                "serial.rfc2217",
+                "serial.serialcli",
+                "serial.serialjava",
+                "serial.serialposix",
+                "serial.socket_connection",
+            ],
+            "packages": find_packages(),
+            "includes": [],
+        }
+    },
+    data_files=get_data_files(),
 )

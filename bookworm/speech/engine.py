@@ -57,7 +57,9 @@ class SpeechEngine(Synthesis.SpeechSynthesizer):
                 voices.extend(self.GetInstalledVoices(current_culture))
             if language in locale_map:
                 for locale in locale_map[language]:
-                    culture = CultureInfo.GetCultureInfoByIetfLanguageTag(f"{language}-{locale}")
+                    culture = CultureInfo.GetCultureInfoByIetfLanguageTag(
+                        f"{language}-{locale}"
+                    )
                     voices.extend(self.GetInstalledVoices(culture))
             voices.extend(self.GetInstalledVoices(CultureInfo(language)))
         else:
@@ -89,7 +91,6 @@ class SpeechEngine(Synthesis.SpeechSynthesizer):
         for voice in self.get_voices():
             if voice.name == self.voice:
                 return voice
-
 
     @property
     def voice(self):

@@ -56,7 +56,9 @@ class SpeechProvider:
     def _try_set_tts_language(self):
         lang = self.reader.document.language
         if not self.engine.get_current_voice().speaks_language(lang):
-            voice_for_lang = self.reader.tts.engine.get_voices(self.reader.document.language)
+            voice_for_lang = self.reader.tts.engine.get_voices(
+                self.reader.document.language
+            )
             if voice_for_lang:
                 self.engine.SelectVoice(voice_for_lang[0].name)
                 self.reader.notify_user(
@@ -64,7 +66,7 @@ class SpeechProvider:
                     "Bookworm has noticed that the currently configured Text-to-speech voice "
                     "speaks a language different from that of this book. "
                     "Because of this, Bookworm has temporary switched to "
-                    "another voice that speaks a language similar to the language  of this book."
+                    "another voice that speaks a language similar to the language  of this book.",
                 )
 
     def close(self):
@@ -109,11 +111,13 @@ class SpeechProvider:
                 self.engine.voice = configured_voice
             except ValueError:
                 log.debug(f"Can not set voice to {configured_voice}")
-                configured_voice = self.engine.get_first_available_voice(self.reader.document.language)
+                configured_voice = self.engine.get_first_available_voice(
+                    self.reader.document.language
+                )
                 if configured_voice is None:
                     self.reader.notify_user(
                         "No TTS Voices",
-                        "A valid Text-to-speech voice was not found on your computer.\nText-to-speech functionality will be disabled."
+                        "A valid Text-to-speech voice was not found on your computer.\nText-to-speech functionality will be disabled.",
                     )
                     conf["voice"] = ""
                     config.save()

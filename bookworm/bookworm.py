@@ -16,7 +16,6 @@ log = logger.getChild(__name__)
 
 
 class BookwormApp(wx.App):
-
     def setupSubsystems(self):
         log.debug("Setting up application subsystems.")
         log.debug("Setting up the configuration subsystem.")
@@ -24,7 +23,7 @@ class BookwormApp(wx.App):
         log.debug("Initializing the database subsystem.")
         init_database()
 
-    def OnInit(self) :
+    def OnInit(self):
         log.debug("Starting the application.")
         log.debug(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
         self.setupSubsystems()
@@ -38,7 +37,7 @@ class BookwormApp(wx.App):
 
     def OnAssert(self, file, line, cond, msg):
         message = f"{file}, line {line}:\nassert {cond}: {msg}"
-        log.warning(message, codepath="wx",stack_info=True)
+        log.warning(message, codepath="wx", stack_info=True)
 
     def onEndSession(self, event):
         app_shuttingdown.send(self)
@@ -46,7 +45,6 @@ class BookwormApp(wx.App):
     def OnExit(self):
         log.debug("Shutting down the application.")
         return 0
-        
 
 
 def init_app_and_run_main_loop():
@@ -67,4 +65,3 @@ def main():
         if appinfo.debug:
             raise e
         wx.Exit()
-    

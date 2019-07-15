@@ -29,9 +29,7 @@ def make_icons(c):
             if imgfile.is_dir() or imgfile.suffix != ".png":
                 continue
             fname = Path(temp) / imgfile.name
-            Image.open(imgfile)\
-            .resize(TARGET_SIZE)\
-            .save(fname)
+            Image.open(imgfile).resize(TARGET_SIZE).save(fname)
             append = bool(index)
             img2py(
                 python_file=str(PY_MODULE),
@@ -43,11 +41,17 @@ def make_icons(c):
         print("*" * 10 + " Done Embedding Images" + "*" * 10)
     icon_file = PROJECT_ROOT / "scripts" / "builder" / "artifacts" / "bookworm.ico"
     if not icon_file.exists():
-        print("Application icon is not there, creating it.") 
-        Image.open(IMAGE_SOURCE_FOLDER / "ico" / "bookworm.png")\
-        .resize((48, 48))\
-        .save(icon_file)
+        print("Application icon is not there, creating it.")
+        Image.open(IMAGE_SOURCE_FOLDER / "ico" / "bookworm.png").resize((48, 48)).save(
+            icon_file
+        )
         print("Copied app icon to the artifacts folder.")
+
+
+@task
+def format_code(c):
+    print("Formatting code to conform to our coding guidelines")
+    c.run("black .")
 
 
 @task(name="docs")
@@ -55,12 +59,11 @@ def build_docs(c):
     """Build the end-user documentation."""
     print("Building documentations")
     md = PROJECT_ROOT / "docs" / "bookworm.md"
-    html =  c.build_folder / "resources" / "docs" / "bookworm.html"
+    html = c.build_folder / "resources" / "docs" / "bookworm.html"
     html.parent.mkdir(parents=True, exist_ok=True)
     content = md.read_text(encoding="utf8")
     content_healed = BeautifulSoup(
-        markdown(content, escape=False),
-        features="html.parser"
+        markdown(content, escape=False), features="html.parser"
     )
     html.write_text(str(content_healed), encoding="utf8")
     print("Done building the documentations.")
@@ -85,7 +88,9 @@ def install_packages(c):
         pkg_names = c["packages_to_install"]
         arch = "x86" if "32bit" in platform.architecture()[0] else "x64"
         binary_packages = pkg_names[f"binary_{arch}"]
-        packages = pkg_names["pure_python"] + [f"{arch}\\{pkg}" for pkg in binary_packages]
+        packages = pkg_names["pure_python"] + [
+            f"{arch}\\{pkg}" for pkg in binary_packages
+        ]
         for package in packages:
             c.run(f"pip install --upgrade {package}")
     with c.cd(str(PROJECT_ROOT)):
@@ -95,9 +100,7 @@ def install_packages(c):
     print("Finished installing packages.")
 
 
-@task(
-    pre=(install_packages, make_icons),
-    post=(build_docs, copy_artifacts,))
+@task(pre=(install_packages, format_code, make_icons), post=(build_docs, copy_artifacts))
 def build(c):
     """Freeze, package, and prepare the app for distribution."""
     build_folder = PROJECT_ROOT / "scripts" / "builder" / "dist"
@@ -106,11 +109,10 @@ def build(c):
         c.run(f"pyinstaller Bookworm.spec -y --distpath {build_folder}")
 
 
-@task(
-    name="dev",
-    pre=(install_packages, make_icons))
+@task(name="dev", pre=(install_packages, make_icons))
 def prepare_dev_environment(c):
     print("\r\nHappy hacking...")
+
 
 @task(name="run")
 def run_application(c, debug=True):
@@ -123,3 +125,5 @@ def run_application(c, debug=True):
         return
     os.environ.setdefault("BOOKWORM_DEBUG", str(int(debug)))
     c.run("py -m bookworm")
+
+

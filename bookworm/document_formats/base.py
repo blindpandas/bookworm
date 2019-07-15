@@ -247,9 +247,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         num_samples = num_pages if num_pages <= 20 else 20
         text = "".join(self[i].getText() for i in range(num_samples + 1)).encode("utf8")
         (success, _, ((_, lang, _, _), *_)) = detect_language(
-            utf8Bytes=text,
-            isPlainText=True,
-            hintLanguage=None
+            utf8Bytes=text, isPlainText=True, hintLanguage=None
         )
         if success:
             return lang

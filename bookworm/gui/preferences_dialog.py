@@ -119,11 +119,11 @@ class SpeechPanel(SettingsPanel):
         vol = wx.Slider(voiceBox, -1, minValue=0, maxValue=100, name="speech.volume")
         vol.SetPageSize(DEFAULT_STEP_SIZE)
         # self.granularity = wx.RadioBox(
-            # None,
-            # -1,
-            # "Speech Granularity:",
-            # style=wx.RA_SPECIFY_COLS,
-            # choices=["Sentence", "Paragraph"],
+        # None,
+        # -1,
+        # "Speech Granularity:",
+        # style=wx.RA_SPECIFY_COLS,
+        # choices=["Sentence", "Paragraph"],
         # )
         pausesBox = sc.SizedStaticBox(self, -1, "Pauses")
         pausesBox.SetSizerType("form")
