@@ -20,7 +20,16 @@
 
 ## Installation
 
-TBD
+To get Bookworm up and running on your computer, follow these steps:
+
+1. Point your web browser to the [official website of Bookworm](https://mush42.github.io/bookworm/) and download the installer that suits your operating system. Bookworm comes in two flavors:
+
+* A 32-bit installer for computers running a 32-bit variant of Windows 
+* A 64-bit installer for computers running a 64-bit variant of Windows 
+
+2. Run the installer and follow the prompts
+3. After the installation has finished successfully , you can launch Bookworm from the *Desktop* or from the program list found in the Start Menu
+
 
 ### Opening A Book
 

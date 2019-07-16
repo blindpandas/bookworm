@@ -107,3 +107,6 @@ venv.bak/
 
 # Generated image module
 bookworm/resources/images.py
+
+# OS generated files
+Thumbs.db
