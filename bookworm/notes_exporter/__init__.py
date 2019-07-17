@@ -18,8 +18,7 @@ class NotesExporter:
         target_renderer = [
             rend for rend in self.renderers if rend.name == renderer_name
         ]
-        if not target_renderer:
-            raise ValueError(f"Renderer {renderer_name} is not a valid renderer.")
+        assert target_renderer, f"Renderer {renderer_name} is not a valid renderer."
         self.renderer = target_renderer[0]
         self.notes = notes
         self.filename = filename

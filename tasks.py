@@ -9,7 +9,6 @@ from invoke.exceptions import UnexpectedExit
 from PIL import Image
 from wx.tools.img2py import img2py
 from mistune import markdown
-from bs4 import BeautifulSoup
 
 
 PROJECT_ROOT = Path.cwd()
@@ -62,10 +61,18 @@ def build_docs(c):
     html = c.build_folder / "resources" / "docs" / "bookworm.html"
     html.parent.mkdir(parents=True, exist_ok=True)
     content = md.read_text(encoding="utf8")
-    content_healed = BeautifulSoup(
-        markdown(content, escape=False), features="html.parser"
-    )
-    html.write_text(str(content_healed), encoding="utf8")
+    text_md = markdown(content, escape=False)
+    html.write_text(f"""
+        <!doctype html>
+        <html>
+        <head>
+        <title>Bookworm User Manual</title>
+        </head>
+        <body>
+        {text_md}
+        </body>
+        </html>
+    """)
     print("Done building the documentations.")
 
 
@@ -94,6 +101,7 @@ def install_packages(c):
         for package in packages:
             c.run(f"pip install --upgrade {package}")
     with c.cd(str(PROJECT_ROOT)):
+        format_code(c)
         c.run("py setup.py bdist_wheel")
         wheel_path = next(Path(PROJECT_ROOT / "dist").glob("*.whl"))
         c.run(f"pip install --upgrade {wheel_path}")

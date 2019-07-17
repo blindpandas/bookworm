@@ -1,8 +1,8 @@
 -r requirements.txt
 
+black==19.3b0
+invoke==1.2.0
 Pillow==6.1.0
 PyInstaller==3.5
-black==19.3b0
 pytest==5.0.1
-invoke==1.2.0
 wheel==0.33.4

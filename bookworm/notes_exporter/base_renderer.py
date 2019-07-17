@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from abc import ABCMeta, abstractmethod
+from io import StringIO
 
 
 class BaseRenderer(metaclass=ABCMeta):
@@ -18,7 +19,7 @@ class BaseRenderer(metaclass=ABCMeta):
     def __init__(self, notes, title):
         self.notes = notes
         self.title = title
-        self.output = []
+        self.output = StringIO()
         self._done_sections = set()
 
     @abstractmethod
@@ -51,4 +52,6 @@ class BaseRenderer(metaclass=ABCMeta):
                 self._done_sections.add(note.section_identifier)
             self.render_note(note)
         self.end_document()
-        return "".join(self.output)
+        text = self.output.getvalue()
+        self.output.close()
+        return text

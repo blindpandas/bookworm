@@ -42,7 +42,7 @@ class TextInfo:
     lang: str = "en"
     """The natural language of the text. Used in splitting the text into sentences."""
 
-    eol: str = "\n"
+    eol: str = None
     """The recognizable end-of-line sequence. Used to split the text into paragraphs."""
 
     def __post_init__(self):
@@ -75,7 +75,11 @@ class TextInfo:
     @cached_property
     def paragraphs(self):
         rv = []
-        for parag in self.text.split(self.eol):
+        if self.eol is None:
+            paragraphs = self.text.splitlines()
+        else:
+            paragraphs = self.text.split(self.eol)
+        for parag in paragraphs:
             if parag.strip():
                 pos = self.text.index(parag)
                 rv.append((parag, pos + self.start_pos))
@@ -101,17 +105,17 @@ class TextToSpeechProvider:
         self.tts = SpeechProvider(self)
         self._current_textinfo = None
         reader_book_unloaded.connect(self._tts_on_unload, sender=self)
-        reader_page_changed.connect(self.change_page_for_tts, sender=self)
+        reader_page_changed.connect(self._change_page_for_tts, sender=self)
         speech_engine_state_changed.connect(self._on_tts_state_changed, sender=self.tts)
 
     def _tts_on_unload(self, sender):
         self.tts.close()
         self._current_textinfo = None
 
-    def change_page_for_tts(self, sender, current, prev):
-        self._current_textinfo = self.content_tokenized(start_pos=0)
+    def _change_page_for_tts(self, sender, current, prev):
         if not self.tts.is_ready:
             return
+        self._current_textinfo = self.content_tokenized(start_pos=0)
         is_speaking = self.tts.engine.state is SynthState.busy
         if self.tts.engine.state is not SynthState.ready:
             self.tts.engine.stop()
@@ -142,6 +146,8 @@ class TextToSpeechProvider:
         return self.make_text_info(text, start_pos=current_pos)
 
     def speak_current_page(self, utterance=None):
+        if self._current_textinfo is None:
+            self._current_textinfo = self.content_tokenized(start_pos=0)
         utterance = utterance or SpeechUtterance()
         textinfo = self.content_tokenized()
         for text, pos in textinfo.paragraphs:

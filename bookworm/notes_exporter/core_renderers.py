@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import mistune
-from bs4 import BeautifulSoup
+from bookworm.utils import escape_html
 from .base_renderer import BaseRenderer
 
 
@@ -13,26 +13,26 @@ class PlainTextRenderer(BaseRenderer):
     output_ext = ".txt"
 
     def start_document(self):
-        self.output.append(f"Notes For {self.title}\n")
-        self.output.append("=" * 30)
-        self.output.append("\n\n")
+        self.output.write(f"Notes For {self.title}\n")
+        self.output.write("=" * 30)
+        self.output.write("\n\n")
 
     def end_document(self):
-        self.output.append("\r\n\r\nEnd of File")
+        self.output.write("\r\n\r\nEnd of File")
 
     def start_section(self, title):
-        self.output.append("~" * 30)
-        self.output.append(f"\n{title}\n")
-        self.output.append("~" * 30)
-        self.output.append("\n")
+        self.output.write("~" * 30)
+        self.output.write(f"\n{title}\n")
+        self.output.write("~" * 30)
+        self.output.write("\n")
 
     def end_section(self):
-        self.output.append("\n\n")
+        self.output.write("\n\n")
 
     def render_note(self, note):
-        self.output.append(f"\n{note.title} — " f"(Page {note.page_number})\n")
-        self.output.append("\n")
-        self.output.append(note.content)
+        self.output.write(f"\n{note.title} — (Page {note.page_number})\n")
+        self.output.write("\n")
+        self.output.write(note.content)
 
 
 class MarkdownRenderer(BaseRenderer):
@@ -43,21 +43,21 @@ class MarkdownRenderer(BaseRenderer):
     output_ext = ".md"
 
     def start_document(self):
-        self.output.append(f"# Notes For {self.title}\r\r\r")
+        self.output.write(f"# Notes For {self.title}\r\r\r")
 
     def end_document(self):
         pass
 
     def start_section(self, title):
-        self.output.append(f"## {title}\r\r")
+        self.output.write(f"## {title}\r\r")
 
     def end_section(self):
-        self.output.append("\r\r")
+        self.output.write("\r\r")
 
     def render_note(self, note):
-        self.output.append(f"### {note.title} — " f"**(Page {note.page_number})**\r\r")
-        self.output.append(note.content)
-        self.output.append("\r\r")
+        self.output.write(f"### {note.title} — **(Page {note.page_number})**\r\r")
+        self.output.write(note.content)
+        self.output.write("\r\r")
 
 
 class HTMLRenderer(MarkdownRenderer):
@@ -68,10 +68,32 @@ class HTMLRenderer(MarkdownRenderer):
     output_ext = ".html"
 
     def start_document(self):
-        pass
+        etitle = escape_html(self.title)
+        head = (
+            '<!doctype html>'
+            '<html><head>'
+            f'<title>Notes — {etitle}</title>'
+            '</head><body>'
+            f'<h1>Notes for {etitle}</h1>'
+        )
+        self.output.write(head)
 
-    def render(self):
-        content = super().render()
-        content = f"<title>Book Notes, {self.title}</title>" + content
-        content_healed = BeautifulSoup(mistune.markdown(content, escape=False), "lxml")
-        return str(content_healed)
+    def end_document(self):
+        self.output.write("</body></html>")
+
+    def start_section(self, title):
+        etitle = escape_html(title)
+        self.output.write(f"<section><h2>{etitle}</h2>")
+
+    def end_section(self):
+        self.output.write("</section>")
+
+    def render_note(self, note):
+        etitle = escape_html(note.title)
+        self.output.write(f"<article><header><h3>{etitle}</h3></header>")
+        self.output.write(f"<aside>(Page {note.page_number})</aside>")
+        for paragraph in note.content.splitlines():
+            eparagraph = escape_html(paragraph)
+            self.output.write(f"<p>{eparagraph}</p>")
+        self.output.write("<footer>End of section</footer></article>")
+

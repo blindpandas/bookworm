@@ -131,7 +131,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         root = self.tocTreeCtrl.AddRoot(tree.title, data=tree)
         self._populate_tree(tree.children, root=root)
         tree.data["tree_id"] = root
-        self.reader.active_section = tree
 
     def tocTreeSetSelection(self, item):
         tree_id = item.data["tree_id"]

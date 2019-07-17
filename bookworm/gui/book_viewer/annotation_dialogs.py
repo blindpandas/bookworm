@@ -320,7 +320,9 @@ class ExportNotesDialog(Dialog):
 
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
-        btnsizer.AddButton(wx.Button(parent, wx.ID_SAVE, "&Export"))
+        export_btn = wx.Button(parent, wx.ID_SAVE, "&Export")
+        export_btn.SetDefault()
+        btnsizer.AddButton(export_btn)
         btnsizer.AddButton(wx.Button(parent, wx.ID_CANCEL, "&Cancel"))
         btnsizer.Realize()
         return btnsizer
@@ -335,7 +337,7 @@ class ExportNotesDialog(Dialog):
                 self.reader.active_section.unique_identifier, asc=True
             )
             pager = self.reader.active_section.pager
-            suffix += f" {pager.first}-{pager.last}"
+            suffix += f" {pager.first + 1}-{pager.last + 1}"
         filename = slugify(suffix) + renderer.output_ext
         saveExportedFD = wx.FileDialog(
             self,

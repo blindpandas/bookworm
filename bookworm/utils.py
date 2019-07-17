@@ -3,10 +3,9 @@
 import wx
 import re
 import hashlib
-import json
-from collections import UserString, OrderedDict
 from functools import wraps
 from pathlib import Path
+from xml.sax.saxutils import escape
 from bookworm.concurrency import call_threaded
 from bookworm.logger import logger
 
@@ -108,21 +107,15 @@ class cached_property(property):
         return value
 
 
-class JsonString(UserString):
-    """Self `serializable/deserializable`json` data."""
 
-    def __init__(self, seq=None, data=None):
-        if seq is not None:
-            self._data_record = json.dumps(seq)
-        elif data is not None:
-            self._data_record = data
-            seq = json.dumps(data)
-        else:
-            raise ValueError("Either `seq` or `data` argument should be supplied.")
-        super().__init__(seq or "")
-
-    def __str__(self):
-        return self.data
-
-    def getdata(self):
-        return self._data_record
+def escape_html(text):
+    """Escape the text so as to be used
+    as a part of an HTML document.
+    
+    Taken from python Wiki.
+    """
+    html_escape_table = {
+        '"': "&quot;",
+        "'": "&apos;"
+    }
+    return escape(text, html_escape_table)
