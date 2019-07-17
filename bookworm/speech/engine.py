@@ -29,7 +29,7 @@ class VoiceInfo:
     age: int
 
     def speaks_language(self, language):
-        return self.language.startswith(language)
+        return self.language.startswith(language.lower())
 
 
 class SpeechEngine(Synthesis.SpeechSynthesizer):
@@ -52,8 +52,8 @@ class SpeechEngine(Synthesis.SpeechSynthesizer):
         rv = []
         voices = []
         if language is not None:
-            current_culture = CultureInfo.CurrentUICulture
-            if current_culture.IetfLanguageTag.startswith(language):
+            current_culture = CultureInfo.CurrentCulture
+            if current_culture.IetfLanguageTag.startswith(language.lower()):
                 voices.extend(self.GetInstalledVoices(current_culture))
             if language in locale_map:
                 for locale in locale_map[language]:
