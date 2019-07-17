@@ -251,6 +251,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         )
         if success:
             return lang
+        return "en"
 
     @property
     @abstractmethod

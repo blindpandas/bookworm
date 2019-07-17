@@ -23,6 +23,10 @@ _speech_assembly = glob(
         "System.Speech\*\System.Speech.dll",
     )
 )
+
+# Add CLR assembly-references here
 clr.AddReference(os.path.abspath(_speech_assembly[0]))
+clr.AddReference("System.Globalization")
+
 del _windows_root
 del _speech_assembly

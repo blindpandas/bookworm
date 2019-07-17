@@ -193,3 +193,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
     def onContext(self, event):
         # XXX a work around a bug in WX Widgets
         event.Skip(False)
+
+    def set_text_direction(self, rtl=False):
+        style = self.contentTextCtrl.GetDefaultStyle()
+        style.SetAlignment(wx.TEXT_ALIGNMENT_RIGHT if rtl else wx.TEXT_ALIGNMENT_LEFT)
+        self.contentTextCtrl.SetDefaultStyle(style)

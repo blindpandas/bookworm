@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import gc
-import clr
 import System
 from queue import PriorityQueue
 from accessible_output2.outputs.auto import Auto
@@ -43,7 +42,7 @@ class SpeechProvider:
     def initialize(self):
         if self.engine is not None:
             return
-        self.engine = SpeechEngine()
+        self.engine = SpeechEngine(language=self.reader.document.language)
         self.configure_engine()
         # Event handlers
         app_shuttingdown.connect(lambda s: self.close(), weak=False)

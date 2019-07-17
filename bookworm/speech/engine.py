@@ -1,9 +1,5 @@
 # coding: utf-8
 
-import clr
-
-clr.AddReference("System.Globalization")
-
 import System
 from System.Globalization import CultureInfo
 from System.Speech import Synthesis
@@ -35,8 +31,9 @@ class VoiceInfo:
 class SpeechEngine(Synthesis.SpeechSynthesizer):
     """Our Pythonic Interface to SAPI speech enginge."""
 
-    def __init__(self):
+    def __init__(self, language=None):
         super().__init__()
+        self._language = language
         self.SetOutputToDefaultAudioDevice()
 
     def close(self):
@@ -126,6 +123,8 @@ class SpeechEngine(Synthesis.SpeechSynthesizer):
     def speak(self, utterance):
         if not isinstance(utterance, SpeechUtterance):
             raise TypeError(f"Invalid utterance {utterance}")
+        if self._language is not None:
+            utterance.prompt.Culture = CultureInfo(self._language)
         self.SpeakAsync(utterance.prompt)
 
     def stop(self):

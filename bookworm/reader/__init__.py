@@ -2,6 +2,7 @@
 
 import os
 import wx
+from System.Globalization import CultureInfo
 from bookworm import config
 from bookworm import database
 from bookworm import speech
@@ -56,6 +57,9 @@ class EBookReader(TextToSpeechProvider):
         self.document.read()
         self.current_book = self.document.metadata
         self.view.add_toc_tree(self.document.toc_tree)
+        self.view.set_text_direction(
+            CultureInfo(self.document.language).TextInfo.IsRightToLeft
+        )
         self.active_section = self.document.toc_tree
         self.view.SetTitle(self.get_view_title())
         last_position = database.get_last_position(ebook_path.lower())
