@@ -118,13 +118,6 @@ class SpeechPanel(SettingsPanel):
         wx.StaticText(voiceBox, -1, "Volume:")
         vol = wx.Slider(voiceBox, -1, minValue=0, maxValue=100, name="speech.volume")
         vol.SetPageSize(DEFAULT_STEP_SIZE)
-        # self.granularity = wx.RadioBox(
-        # None,
-        # -1,
-        # "Speech Granularity:",
-        # style=wx.RA_SPECIFY_COLS,
-        # choices=["Sentence", "Paragraph"],
-        # )
         pausesBox = sc.SizedStaticBox(self, -1, "Pauses")
         pausesBox.SetSizerType("form")
         pausesBox.SetSizerProps(expand=True)
@@ -163,10 +156,8 @@ class SpeechPanel(SettingsPanel):
                 if vinfo.name == configured_voice:
                     pos = idx
             self.voice.SetSelection(pos)
-            # self.granularity.SetSelection(self.config["granularity"])
         elif strategy is ReconciliationStrategies.save:
             self.config["voice"] = self.voices[self.voice.GetSelection()].name
-            # self.config["granularity"] = self.granularity.GetSelection()
         super().reconcile(strategy=strategy)
 
 

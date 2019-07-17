@@ -26,8 +26,6 @@ config_spec = StringIO(
     voice = string(default="")
     rate = integer(default=50)
     volume = integer(default=75)
-    # 0: sentence, 1: paragraph
-    granularity = integer(default=1, max=1, min=0)
     sentence_pause = integer(default=0, min=0, max={PARAGRAPH_PAUSE_MAX})
     paragraph_pause = integer(default=300, min=0, max={PARAGRAPH_PAUSE_MAX})
     end_of_page_pause = integer(default=500, min=0, max={END_OF_PAGE_PAUSE_MAX})

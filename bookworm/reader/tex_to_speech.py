@@ -93,9 +93,7 @@ class TextInfo:
 
     @property
     def configured_markers(self):
-        if config.conf["speech"]["granularity"]:
-            return self.paragraph_markers
-        return self.sentence_markers
+        return self.paragraph_markers
 
 
 class TextToSpeechProvider:
