@@ -19,6 +19,8 @@ install:
   # NSIS Paths
   # https://www.appveyor.com/docs/build-environment/#tools
   - set PATH=%PATH%;C:\Program Files (x86)\NSIS
+  - py -3.7 -m venv .venv
+  - call ".venv\Scripts\activate.bat"
   - py -m pip install --upgrade pip
   - pip install -r requirements-dev.txt
 
