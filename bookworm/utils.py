@@ -107,15 +107,11 @@ class cached_property(property):
         return value
 
 
-
 def escape_html(text):
     """Escape the text so as to be used
     as a part of an HTML document.
     
     Taken from python Wiki.
     """
-    html_escape_table = {
-        '"': "&quot;",
-        "'": "&apos;"
-    }
+    html_escape_table = {'"': "&quot;", "'": "&apos;"}
     return escape(text, html_escape_table)

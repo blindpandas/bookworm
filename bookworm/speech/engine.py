@@ -124,7 +124,9 @@ class SpeechEngine(Synthesis.SpeechSynthesizer):
         if not isinstance(utterance, SpeechUtterance):
             raise TypeError(f"Invalid utterance {utterance}")
         if self._language is not None:
-            utterance.prompt.Culture = CultureInfo(self._language)
+            utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(
+                self._language
+            )
         self.SpeakAsync(utterance.prompt)
 
     def stop(self):

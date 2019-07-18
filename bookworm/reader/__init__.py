@@ -15,7 +15,7 @@ from bookworm.signals import (
     reader_section_changed,
 )
 from bookworm.logger import logger
-from .tex_to_speech import TextToSpeechProvider
+from .text_to_speech import TextToSpeechProvider
 
 
 log = logger.getChild(__name__)

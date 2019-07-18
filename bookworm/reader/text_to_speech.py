@@ -3,6 +3,7 @@
 import wx
 import bisect
 import ujson as json
+from base64 import urlsafe_b64encode, urlsafe_b64decode
 from dataclasses import dataclass
 from bookworm import config
 from bookworm import sounds
@@ -29,8 +30,7 @@ log = logger.getChild(__name__)
 @dataclass
 class TextInfo:
     """Provides basic structural information  about a blob of text
-    This class is highly optimized. Repeated calls will return
-    already calculated values.
+    This class is optimized for repeated calls.
     """
 
     text: str
@@ -131,6 +131,14 @@ class TextToSpeechProvider:
         kwargs.setdefault("lang", self.document.language)
         return TextInfo(*args, **kwargs)
 
+    def encode_bookmark(self, data):
+        dump = json.dumps(data, encode_html_chars=True, ensure_ascii=True).encode("ascii")
+        return urlsafe_b64encode(dump).decode("ascii")
+
+    def decode_bookmark(self, string):
+        data = urlsafe_b64decode(string.encode("ascii"))
+        return json.loads(data)
+
     def content_tokenized(self, start_pos=None):
         textCtrl = self.view.contentTextCtrl
         current_pos = start_pos
@@ -150,29 +158,25 @@ class TextToSpeechProvider:
         textinfo = self.content_tokenized()
         for text, pos in textinfo.paragraphs:
             with utterance.new_paragraph():
-                bookmark_data = json.dumps(
-                    {"type": "start_segment", "pos": pos, "end": pos + len(text)}
-                )
-                utterance.add_bookmark(bookmark_data)
+                bookmark_data =  {"type": "start_segment", "pos": pos, "end": pos + len(text)}
+                utterance.add_bookmark(self.encode_bookmark(bookmark_data))
                 sent_pause = config.conf["speech"]["sentence_pause"]
                 for sent in textinfo.split_sentences(text):
-                    utterance.add_sentence(sent)
+                    utterance.add_sentence(sent + " ")
                     if sent_pause:
                         utterance.add_pause(sent_pause)
                 utterance.add_pause(config.conf["speech"]["paragraph_pause"])
         if config.conf["reading"]["reading_mode"] < 2:
             utterance.add_pause(config.conf["speech"]["end_of_page_pause"])
-            utterance.add_text(".\f")
-            page_bookmark = json.dumps(
-                {"type": "end_page", "current": self.current_page}
-            )
-            utterance.add_bookmark(page_bookmark)
+            page_bookmark = {"type": "end_page", "current": self.current_page}
+            utterance.add_bookmark(self.encode_bookmark(page_bookmark))
+            utterance.add_text("\f")
         self.tts.enqueue(utterance)
         self.tts.process_queue()
 
     @gui_thread_safe
     def process_bookmark(self, bookmark):
-        data = json.loads(bookmark)
+        data = self.decode_bookmark(bookmark)
         if data["type"] == "start_segment":
             textCtrl = self.view.contentTextCtrl
             pos = data["pos"]
@@ -194,8 +198,8 @@ class TextToSpeechProvider:
                     utterance.add_text(f"End of section: {self.active_section.title}.")
                 utterance.add_pause(config.conf["speech"]["end_of_section_pause"])
                 if config.conf["reading"]["reading_mode"] == 0:
-                    nextsect_bookmark = json.dumps({"type": "next_section"})
-                    utterance.add_bookmark(nextsect_bookmark)
+                    nextsect_bookmark = {"type": "next_section"}
+                    utterance.add_bookmark(self.encode_bookmark(nextsect_bookmark))
                 self.tts.enqueue(utterance)
                 self.tts.process_queue()
         elif data["type"] == "next_section":

@@ -70,11 +70,11 @@ class HTMLRenderer(MarkdownRenderer):
     def start_document(self):
         etitle = escape_html(self.title)
         head = (
-            '<!doctype html>'
-            '<html><head>'
-            f'<title>Notes — {etitle}</title>'
-            '</head><body>'
-            f'<h1>Notes for {etitle}</h1>'
+            "<!doctype html>"
+            "<html><head>"
+            f"<title>Notes — {etitle}</title>"
+            "</head><body>"
+            f"<h1>Notes for {etitle}</h1>"
         )
         self.output.write(head)
 
@@ -96,4 +96,3 @@ class HTMLRenderer(MarkdownRenderer):
             eparagraph = escape_html(paragraph)
             self.output.write(f"<p>{eparagraph}</p>")
         self.output.write("<footer>End of section</footer></article>")
-

@@ -17,11 +17,7 @@ class NavigationProvider:
         ctrl.Bind(wx.EVT_KEY_UP, self.onKeyUp, ctrl)
         # Funky  thinks can happen if we use normal `Key up` event with wx.TextCtrl
         if isinstance(ctrl, wx.TextCtrl):
-            ctrl.Bind(
-                wx.EVT_TEXT_ENTER,
-                self._text_ctrl_navigate_next,
-                ctrl,
-            )
+            ctrl.Bind(wx.EVT_TEXT_ENTER, self._text_ctrl_navigate_next, ctrl)
 
     def callback(self):
         if self.callback_func is not None:

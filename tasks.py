@@ -62,7 +62,8 @@ def build_docs(c):
     html.parent.mkdir(parents=True, exist_ok=True)
     content = md.read_text(encoding="utf8")
     text_md = markdown(content, escape=False)
-    html.write_text(f"""
+    html.write_text(
+        f"""
         <!doctype html>
         <html>
         <head>
@@ -72,7 +73,8 @@ def build_docs(c):
         {text_md}
         </body>
         </html>
-    """)
+    """
+    )
     print("Done building the documentations.")
 
 
@@ -126,12 +128,13 @@ def prepare_dev_environment(c):
 def run_application(c, debug=True):
     """Runs the app."""
     try:
-        c.run('pip freeze | grep "bookworm"')
-    except UnexpectedExit:
+        from bookworm.bookworm import main
+        from bookworm import app
+        print(f"{app.display_name} v{app.version}")
+        del main, app
+    except ImportError:
         print("Looks like your development environment is not ready yet!")
         print("To prepare your development environment, you should run: invoke dev")
         return
     os.environ.setdefault("BOOKWORM_DEBUG", str(int(debug)))
     c.run("py -m bookworm")
-
-
