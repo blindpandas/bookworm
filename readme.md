@@ -1,3 +1,5 @@
+[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/mush42/bookworm?branch=master&svg=true)
+
 # Bookworm
 
 **Bookworm** is an accessible e-book reader that enables blind and visually impaired individuals to read ebooks in an easy and hassle free manor. The main highlights of bookworm are:
