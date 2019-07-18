@@ -1,6 +1,6 @@
 # Bookworm
 
-**Bookworm** is an ACCESSIBLEebook reader that enables blind and visually impaired individuals to read ebooks in an easy and hassle free manor. The main highlights of bookworm are:
+**Bookworm** is an accessible e-book reader that enables blind and visually impaired individuals to read ebooks in an easy and hassle free manor. The main highlights of bookworm are:
 
 * Supports popular e-book formats, including EPUB and PDF
 * You can add named bookmarks to mark interesting positions in the text for later reference
@@ -18,22 +18,22 @@
 
 If you would like to contribute to *Bookworm's* development, please follow the following steps to get bookworm running on your computer:
 
-1. Make sure you are running Windows 7 or later, and you've installed Python 3.7 or a later version:
-2. Create a virtual environment:
+* Make sure you are running Windows 7 or later, and you've installed Python 3.7 or a later version:
+* Create a virtual environment:
 
 ```bash
 py -m venv .env
 .env\\scripts\\activate
 ``
 
-3. Get the source code by cloneing this repo:
+* Get the source code by cloneing this repo:
 
 ```shell
 git clone https://github.com/mush42/bookworm.git
 cd bookworm
 ```
 
-4. Install the requirements from *PyPI* using *pip*:
+* Install the requirements from *PyPI* using *pip*:
 
 ```shell
 pip install -r requirements-dev.txt
@@ -41,13 +41,13 @@ pip install -r requirements-dev.txt
 
 This should install the, pip installable, application and development dependencies.
 
-5. After installing dependencies, run the following command to prepare your environment:
+* After installing dependencies, run the following command to prepare your environment:
 
 ```shell
 invoke dev
 ```
 
-6. Run bookworm:
+* Run bookworm:
 
 ```shell
 invoke run
@@ -68,7 +68,7 @@ set BOOKWORM_DEBUG=1
 py -m bookworm
 ```
 
-6. If you've found a bug, or you want to contribute your changes back to bookworm, please create an issue or submit a pull request. We welcome any contribution, no matter how small it is.
+* If you've found a bug, or you want to contribute your changes back to bookworm, please create an issue or submit a pull request. We welcome any contribution, no matter how small it is.
 
 
 ## License
