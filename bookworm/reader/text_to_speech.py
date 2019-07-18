@@ -132,7 +132,9 @@ class TextToSpeechProvider:
         return TextInfo(*args, **kwargs)
 
     def encode_bookmark(self, data):
-        dump = json.dumps(data, encode_html_chars=True, ensure_ascii=True).encode("ascii")
+        dump = json.dumps(data, encode_html_chars=True, ensure_ascii=True).encode(
+            "ascii"
+        )
         return urlsafe_b64encode(dump).decode("ascii")
 
     def decode_bookmark(self, string):
@@ -158,7 +160,11 @@ class TextToSpeechProvider:
         textinfo = self.content_tokenized()
         for text, pos in textinfo.paragraphs:
             with utterance.new_paragraph():
-                bookmark_data =  {"type": "start_segment", "pos": pos, "end": pos + len(text)}
+                bookmark_data = {
+                    "type": "start_segment",
+                    "pos": pos,
+                    "end": pos + len(text),
+                }
                 utterance.add_bookmark(self.encode_bookmark(bookmark_data))
                 sent_pause = config.conf["speech"]["sentence_pause"]
                 for sent in textinfo.split_sentences(text):

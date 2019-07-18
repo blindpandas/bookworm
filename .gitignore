@@ -1,3 +1,6 @@
+# Executables
+*.exe
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -109,4 +112,4 @@ venv.bak/
 bookworm/resources/images.py
 
 # OS generated files
-Thumbs.db
+*.db

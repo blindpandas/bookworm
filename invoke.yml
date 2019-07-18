@@ -11,3 +11,15 @@ packages_to_install:
     binary_x86:
         - "ujson-1.35-cp37-cp37m-win32.whl"
         - "pycld2-0.31-cp37-cp37m-win32.whl"
+folders_to_clean:
+    everytime:
+        - build
+        - dist
+        - bookworm.egg-info
+        - scripts\builder\build
+        - scripts\builder\dist
+    artifacts:
+        - bookworm\resources\images.py
+        - scripts\Bookworm-setup.exe
+        - scripts\builder\artifacts\bookworm.bmp
+        - scripts\builder\artifacts\bookworm.ico

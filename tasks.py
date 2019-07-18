@@ -2,6 +2,7 @@
 
 import os
 import platform
+import shutil
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from invoke import task
@@ -45,6 +46,11 @@ def make_icons(c):
             icon_file
         )
         print("Copied app icon to the artifacts folder.")
+    bitmap_file = PROJECT_ROOT / "scripts" / "builder" / "artifacts" / "bookworm.bmp"
+    if not bitmap_file.exists():
+        print("Installer logo bitmap is not there, creating it.")
+        Image.open(IMAGE_SOURCE_FOLDER / "ico" / "bookworm.png").save(bitmap_file)
+        print("Copied installer bitmap  to the artifacts folder.")
 
 
 @task
@@ -84,8 +90,8 @@ def copy_artifacts(c):
     print("Copying files...")
     license_file = c.build_folder / "resources" / "docs" / "license.txt"
     icon_file = PROJECT_ROOT / "scripts" / "builder" / "artifacts" / "bookworm.ico"
-    c.run(f"cp {PROJECT_ROOT / 'LICENSE'} {license_file}")
-    c.run(f"cp {icon_file} {c.build_folder}")
+    c.run(f"copy {PROJECT_ROOT / 'LICENSE'} {license_file}")
+    c.run(f"copy {icon_file} {c.build_folder}")
     print("Done copying files.")
 
 
@@ -110,7 +116,43 @@ def install_packages(c):
     print("Finished installing packages.")
 
 
-@task(pre=(install_packages, make_icons), post=(build_docs, copy_artifacts))
+@task
+def make_installer(c):
+    """Build the NSIS installer for bookworm."""
+    with c.cd(str(PROJECT_ROOT / "scripts")):
+        c.run("makensis bookworm.nsi")
+        print("Setup File Build Completed.")
+
+
+@task(name="clean")
+def clean_after(c, artifacts=False, siteconfig=False):
+    """Remove intermediary build folders."""
+    with c.cd(str(PROJECT_ROOT)):
+        print("Cleaning compiled bytecode cache.")
+        for pyc in PROJECT_ROOT.rglob("__pycache__"):
+            shutil.rmtree(pyc, ignore_errors=True)
+        print("Cleaning up temporary files and directories.")
+        folders_to_clean = c["folders_to_clean"]["everytime"]
+        if artifacts:
+            folders_to_clean.extend(c["folders_to_clean"]["artifacts"])
+        if siteconfig:
+            folders_to_clean.append(".appdata")
+        for to_remove in folders_to_clean:
+            path = Path(to_remove)
+            if not path.exists():
+                continue
+            print(f"Removing {path}")
+            if path.is_file():
+                path.unlink()
+            else:
+                shutil.rmtree(path, ignore_errors=True)
+        print("Cleaned up all intermediary build folders.")
+
+
+@task(
+    pre=(install_packages, make_icons),
+    post=(build_docs, copy_artifacts, make_installer),
+)
 def build(c):
     """Freeze, package, and prepare the app for distribution."""
     build_folder = PROJECT_ROOT / "scripts" / "builder" / "dist"
@@ -130,6 +172,7 @@ def run_application(c, debug=True):
     try:
         from bookworm.bookworm import main
         from bookworm import app
+
         print(f"{app.display_name} v{app.version}")
         del main, app
     except ImportError as e:

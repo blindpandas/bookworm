@@ -30,11 +30,12 @@ class SentenceSplitterWarning(Warning):
 
 _supported_lans = []
 
+
 def supported_languages():
     global _supported_lans
     if not _supported_lans:
         nbp_path = app_path("resources", "non_breaking_prefixes")
-        _supported_lans =  [file[:-4] for file in os.listdir(nbp_path)]
+        _supported_lans = [file[:-4] for file in os.listdir(nbp_path)]
     return _supported_lans
 
 

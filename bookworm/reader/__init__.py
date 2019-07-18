@@ -11,7 +11,7 @@ from bookworm.document_formats import (
     FitzDocument,
     FitzEPUBDocument,
     DocumentError,
-    PaginationError
+    PaginationError,
 )
 from bookworm.signals import (
     reader_book_loaded,
@@ -65,7 +65,7 @@ class EBookReader(TextToSpeechProvider):
             self.notify_user(
                 "Error Openning Document",
                 f"Could not open file {ebook_path}. Either the file  has been damaged during download, or it has been corrupted in some other way.",
-                icon=wx.ICON_ERROR
+                icon=wx.ICON_ERROR,
             )
             raise e
         self.current_book = self.document.metadata
