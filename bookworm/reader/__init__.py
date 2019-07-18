@@ -7,7 +7,12 @@ from bookworm import config
 from bookworm import database
 from bookworm import speech
 from bookworm import sounds
-from bookworm.document_formats import FitzDocument, FitzEPUBDocument, PaginationError
+from bookworm.document_formats import (
+    FitzDocument,
+    FitzEPUBDocument,
+    DocumentError,
+    PaginationError
+)
 from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,
@@ -53,8 +58,16 @@ class EBookReader(TextToSpeechProvider):
         if ebook_format not in self.supported_ebook_formats:
             raise IOError(f"Unsupported ebook format {ebook_format}.")
         document_cls = self.supported_ebook_formats[ebook_format]
-        self.document = document_cls(filename=ebook_path)
-        self.document.read()
+        try:
+            self.document = document_cls(filename=ebook_path)
+            self.document.read()
+        except DocumentError as e:
+            self.notify_user(
+                "Error Openning Document",
+                f"Could not open file {ebook_path}. Either the file  has been damaged during download, or it has been corrupted in some other way.",
+                icon=wx.ICON_ERROR
+            )
+            raise e
         self.current_book = self.document.metadata
         self.view.add_toc_tree(self.document.toc_tree)
         self.view.set_text_direction(
@@ -194,5 +207,5 @@ class EBookReader(TextToSpeechProvider):
     def _detect_ebook_format(self, ebook_path):
         return os.path.splitext(ebook_path)[-1].lstrip(".").lower()
 
-    def notify_user(self, title, message):
-        wx.MessageBox(message, title, wx.ICON_INFORMATION)
+    def notify_user(self, title, message, icon=wx.ICON_INFORMATION):
+        wx.MessageBox(message, title, icon)

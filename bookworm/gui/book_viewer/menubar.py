@@ -310,11 +310,11 @@ class MenubarProvider:
         )
         if openFileDlg.ShowModal() == wx.ID_OK:
             filename = openFileDlg.GetPath().strip()
+            openFileDlg.Destroy()
             if filename:
                 self.open_file(filename)
                 config.conf["history"]["last_folder"] = os.path.split(filename)[0]
                 config.save()
-        openFileDlg.Destroy()
 
     def onRecentFileItem(self, event):
         clicked_id = event.GetId()
@@ -543,7 +543,10 @@ class MenubarProvider:
                 "Missing File",
                 style=wx.ICON_ERROR,
             )
-        self.reader.load(filename)
+        try:
+            self.reader.load(filename)
+        except:
+            return
         if self.reader.document.is_encrypted():
             self.decrypt_opened_document()
         self.renderItem.Enable(self.reader.document.supports_rendering)

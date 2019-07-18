@@ -132,9 +132,11 @@ def run_application(c, debug=True):
         from bookworm import app
         print(f"{app.display_name} v{app.version}")
         del main, app
-    except ImportError:
-        print("Looks like your development environment is not ready yet!")
-        print("To prepare your development environment, you should run: invoke dev")
-        return
+    except ImportError as e:
+        print("An import error was raised when trying to open the application.")
+        print("Make sure that your development environment is ready.")
+        print("To prepare your development environment run: invoke dev\r\n")
+        print("Here is the traceback:\r\n")
+        raise e
     os.environ.setdefault("BOOKWORM_DEBUG", str(int(debug)))
     c.run("py -m bookworm")

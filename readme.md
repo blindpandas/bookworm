@@ -20,54 +20,38 @@ If you would like to contribute to *Bookworm's* development, please follow the f
 
 * Make sure you are running Windows 7 or later, and you've installed Python 3.7 or a later version:
 * Create a virtual environment:
-
 ```bash
 py -m venv .env
 .env\\scripts\\activate
 ``
-
 * Get the source code by cloneing this repo:
-
 ```shell
 git clone https://github.com/mush42/bookworm.git
 cd bookworm
 ```
-
 * Install the requirements from *PyPI* using *pip*:
-
 ```shell
 pip install -r requirements-dev.txt
 ```
-
 This should install the, pip installable, application and development dependencies.
-
 * After installing dependencies, run the following command to prepare your environment:
-
 ```shell
 invoke dev
 ```
-
 * Run bookworm:
-
 ```shell
 invoke run
 ```
-
 To run the app with debug mode disabled you can do:
-
 ```shell
 invoke run --no-debug
 ```
-
 Another way to run the app is to execute the package directly. In this case, you should turn on/off debug mode yourself using the environment variable `BOOKWORM_DEBUG`.
-
 To execute the package, you can do:
-
 ```shell
 set BOOKWORM_DEBUG=1
 py -m bookworm
 ```
-
 * If you've found a bug, or you want to contribute your changes back to bookworm, please create an issue or submit a pull request. We welcome any contribution, no matter how small it is.
 
 

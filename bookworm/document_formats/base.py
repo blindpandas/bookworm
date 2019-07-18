@@ -13,6 +13,10 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
+class DocumentError(Exception):
+    """The base class of all bookworm exceptions."""
+
+
 @dataclass
 class BookMetadata:
     title: str

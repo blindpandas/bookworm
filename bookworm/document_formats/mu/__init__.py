@@ -9,6 +9,7 @@ from bookworm.document_formats.base import (
     Section,
     BookMetadata,
     Pager,
+    DocumentError,
     PaginationError,
 )
 from bookworm.logger import logger
@@ -34,7 +35,10 @@ class FitzDocument(BaseDocument):
         return self._ebook.pageCount
 
     def read(self, filetype=None):
-        self._ebook = fitz.open(self.filename, filetype=filetype)
+        try:
+            self._ebook = fitz.open(self.filename, filetype=filetype)
+        except RuntimeError as e:
+            raise DocumentError(*e.args)
         super().read()
 
     def close(self):
