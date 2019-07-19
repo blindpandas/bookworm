@@ -108,8 +108,10 @@ venv.bak/
 # app specific data
 .appdata/
 
-# Generated image module
+# Generated images
 bookworm/resources/images.py
+scripts/builder/artifacts/bookworm.bmp
+scripts/builder/artifacts/bookworm.ico
 
 # OS generated files
 *.db

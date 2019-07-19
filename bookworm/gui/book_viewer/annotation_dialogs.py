@@ -338,6 +338,13 @@ class ExportNotesDialog(Dialog):
             )
             pager = self.reader.active_section.pager
             suffix += f" {pager.first + 1}-{pager.last + 1}"
+        if not notes.count():
+            wx.MessageBox(
+                "There are no notes for this book or the selected section. Please make sure you have added some notes before using the export functionality.",
+                "No Notes",
+                style=wx.ICON_WARNING
+            )
+            return self.Close()
         filename = slugify(suffix) + renderer.output_ext
         saveExportedFD = wx.FileDialog(
             self,

@@ -208,4 +208,4 @@ class EBookReader(TextToSpeechProvider):
         return os.path.splitext(ebook_path)[-1].lstrip(".").lower()
 
     def notify_user(self, title, message, icon=wx.ICON_INFORMATION):
-        wx.MessageBox(message, title, icon)
+        wx.MessageBox(message, title, style=icon)

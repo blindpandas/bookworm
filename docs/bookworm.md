@@ -39,7 +39,7 @@ You can open a book by selecting the "Open..." menu item from the "File" Menu. A
 
 The main window of bookworm consists of the following two parts:
 
-1. The "Table of contents": This part shows the e-book chapters'. It allows you to explore the content structure. Use navigation keys to navigate chapters, and press enter to navigate to specific chapter. 
+1. The "Table of contents": This part shows the e-book chapters'. It allows you to explore the content structure. Use navigation keys to navigate chapters, and press enter to navigate to specific chapter.
 
 2. The "Textual View" area: This part contains the text of the current page. In this part you can use your usual reading commands to navigate the text. Additionally, you can use the following keyboard  shortcuts to navigate the e-book:
 
@@ -53,7 +53,7 @@ The main window of bookworm consists of the following two parts:
 
 ### Bookmarks & Notes
 
-Bookworm allows you to annotate the opened book.  You can add a bookmark to quickly jump to  a specific location in the book, or you can take a note to capture a thought or summarize some content.
+Bookworm allows you to annotate the opened book.  You can add a bookmark to remember a specific location in the book, and later on, quickly jump to  it. Also, you can take a note to capture a thought or summarize some content.
 
 #### Adding Bookmarks
 
@@ -63,7 +63,7 @@ While reading a book, you can press Ctrl + B (or select the "Add Bookmark" menu 
 
 Press Ctrl + Shift + B, or select the "View Bookmarks" menu item from the "Annotations" menu. A dialog containing added bookmarks will be shown. Clicking any item in the bookmarks list will immediately take you to the position of that bookmark.
 
-Additionally, you can press F2 to edit the title of the selected bookmark, or you can click the "Delete" button or the "Delete" key on your keyboard to remove the selected bookmark.
+Additionally, you can press F2 to edit the title of the selected bookmark in place, or you can click the "Delete" button or the "Delete" key on your keyboard to remove the selected bookmark.
 
 #### Taking Notes
 
@@ -75,7 +75,20 @@ When you navigate to a page containing at least one note, you will hear a little
 
 Press Ctrl + Shift + N, or select the "Manage Notes" menu item from the "Annotations" menu. A dialog containing added notes will be shown. Clicking any item in the notes list will immediately take you to the position of that note. Clicking the "View" button will bring up a dialog showing the title and the content of the selected note.
 
-Additionally, you can click the "Edit" button to edit the title and the content of the selected note, or press  F2 to edit the, title, of the selected note, or you can click the "Delete" button or the "Delete" key on your keyboard to remove the selected note.
+Additionally, you can click the "Edit" button to edit the title and the content of the selected note, or press  F2 to edit the title of the selected note in place, or you can click the "Delete" button or the "Delete" key on your keyboard to remove the selected note.
+
+#### Exporting Notes
+
+Bookworm allows you to export your notes to a plain-text file, or to an HTML document which you can then open in your web browser.  Optionally, bookworm allows you to export your notes to markdown, which is a text-base format for writing structured documents popular among expert computer users.
+
+To export your notes, follow these steps:
+
+1. From the "Annotations" menu select the "Notes Exporter..." menu item
+2. Select the export range. This tells Bookworm whether you want to export the notes of the whole book, or you just want to export the notes of the current section. 
+3. Select the output format. This determines the format of the file you get after exporting. Exporting to a plain-text will give you a simple, nicely formatted text file, exporting to HTML gives you a web page, and exporting to markdown will give you a .md file which is a text format popular among expert computer users.
+4. If you want Bookworm to open the file to which your notes have been exported, you can check the "Open file after exporting" checkbox.
+5. Click Export. You will be asked to select the file name of the exported file, and the location to which the file is saved. Clicking "Save" will save the file, and open it if you have instructed Bookworm to do so.
+
 
 ### Reading Aloud
 
@@ -85,7 +98,7 @@ You can configure the speech in two ways:
 1. Using A Voice Profile: A voice profile contains your custom speech configurations, you can activate/deactivate the voice profile at any time. You can access voice profiles from the speech menu or by pressing Ctrl + Shift + V. 
 2. The Global speech settings: these settings will be used by default when no voice profile is active. You can configure the global speech settings from the application preferences. 
 
-During reading aloud, you can skip backward or foreword by paragraph or sentence by pressing Alt plus the left and right arrow  keys.
+During reading aloud, you can skip backward or foreword by paragraph by pressing Alt plus the left and right arrow  keys.
 
 
 ### Fully Rendered Pages
@@ -101,6 +114,11 @@ When you are in the Render View, you can use the usual zoom commands to zoom in 
 Note that the usual navigation commands work in the render view as well.
 
 
+### Navigating To A Page
+
+Press Ctrl + G, or select the "Go To..." menu item from the tools menu, to navigate to a specific page in the currently opened book.
+
+ 
 ### Searching The Book
 
 To find a specific term, or a portion of text in the currently opened book, you can press Ctrl + F to bring up the "Search Book Dialog". This Dialog allows you to type the text you want to search for as well as configuring the  search process itself. The following options are available:
