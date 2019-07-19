@@ -5,17 +5,11 @@ branches:
 
 # Build worker image (VM template)
 image: Visual Studio 2017
-  
+
 environment:
  PY_PYTHON: 3.7-32
 
-# build platform, i.e. x86, x64, Any CPU. This setting is optional.
-platform: x86
-
 install:
-  # MSVC Paths
-  # https://www.appveyor.com/docs/lang/cpp/#visual-studio
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
   # NSIS Paths
   # https://www.appveyor.com/docs/build-environment/#tools
   - set PATH=%PATH%;C:\Program Files (x86)\NSIS
