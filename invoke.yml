@@ -20,6 +20,6 @@ folders_to_clean:
         - scripts\builder\dist
     artifacts:
         - bookworm\resources\images.py
-        - scripts\Bookworm-setup.exe
+        - scripts\Bookworm*setup.exe
         - scripts\builder\artifacts\bookworm.bmp
         - scripts\builder\artifacts\bookworm.ico

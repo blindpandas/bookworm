@@ -19,13 +19,21 @@ install:
   # NSIS Paths
   # https://www.appveyor.com/docs/build-environment/#tools
   - set PATH=%PATH%;C:\Program Files (x86)\NSIS
-  - py -3.7 -m venv .venv
-  - call ".venv\Scripts\activate.bat"
-  - py -m pip install --upgrade pip
-  - pip install -r requirements-dev.txt
 
 build_script:
+    # 32-bit version
+  - C:\Python37\python.exe -m venv .venv32
+  - call ".venv32\Scripts\activate.bat"
+  - py -m pip install --upgrade pip
+  - pip install -r requirements-dev.txt
+  - invoke build
+  - deactivate
+  # 64-bit version
+  - C:\Python37-x64\python.exe -m venv .venv64
+  - call ".venv64\Scripts\activate.bat"
+  - py -m pip install --upgrade pip
+  - pip install -r requirements-dev.txt
   - invoke build
 
 artifacts:
-  - path: scripts\Bookworm-setup.exe
+  - path: scripts\Bookworm*setup.exe

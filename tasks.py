@@ -1,8 +1,10 @@
 # coding: utf-8
 
+import struct
 import os
 import platform
 import shutil
+from glob import glob
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from invoke import task
@@ -119,6 +121,19 @@ def install_packages(c):
 @task
 def make_installer(c):
     """Build the NSIS installer for bookworm."""
+    from bookworm import app
+
+    os.environ.update(
+        {
+            "IAPP_NAME": app.name,
+            "IAPP_DISPLAY_NAME": app.display_name,
+            "IAPP_VERSION": app.version,
+            "IAPP_VERSION_EX": app.version_ex,
+            "IAPP_AUTHOR": app.author,
+            "IAPP_WEBSITE": app.website,
+            "IAPP_COPYRIGHT": app.copyright,
+        }
+    )
     with c.cd(str(PROJECT_ROOT / "scripts")):
         c.run("makensis bookworm.nsi")
         print("Setup File Build Completed.")
@@ -137,6 +152,10 @@ def clean_after(c, artifacts=False, siteconfig=False):
             folders_to_clean.extend(c["folders_to_clean"]["artifacts"])
         if siteconfig:
             folders_to_clean.append(".appdata")
+        glob_patterns = ((i, entry) for (i, entry) in enumerate(folders_to_clean) if "*" in entry)
+        for idx, glb in glob_patterns:
+            folders_to_clean.pop(idx)
+            folders_to_clean.extend(glob(glb))
         for to_remove in folders_to_clean:
             path = Path(to_remove)
             if not path.exists():
@@ -155,9 +174,11 @@ def clean_after(c, artifacts=False, siteconfig=False):
 )
 def build(c):
     """Freeze, package, and prepare the app for distribution."""
-    build_folder = PROJECT_ROOT / "scripts" / "builder" / "dist"
+    arch = "x86" if struct.calcsize("P") == 4 else "x64"
+    os.environ["IAPP_ARCH"] = arch
+    build_folder = PROJECT_ROOT / "scripts" / "builder" / "dist" / arch
     c.config["build_folder"] = build_folder / "Bookworm"
-    with c.cd(str(build_folder.parent)):
+    with c.cd(str(build_folder.parent.parent)):
         c.run(f"pyinstaller Bookworm.spec -y --distpath {build_folder}")
 
 
