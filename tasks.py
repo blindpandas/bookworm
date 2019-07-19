@@ -100,7 +100,6 @@ def copy_artifacts(c):
 @task(name="install")
 def install_packages(c):
     print("Installing packages")
-    c.run("pip install -r requirements.txt")
     with c.cd(str(PROJECT_ROOT / "packages")):
         pkg_names = c["packages_to_install"]
         arch = "x86" if "32bit" in platform.architecture()[0] else "x64"
@@ -111,7 +110,6 @@ def install_packages(c):
         for package in packages:
             c.run(f"pip install --upgrade {package}")
     with c.cd(str(PROJECT_ROOT)):
-        format_code(c)
         c.run("py setup.py bdist_wheel")
         wheel_path = next(Path(PROJECT_ROOT / "dist").glob("*.whl"))
         c.run(f"pip install --upgrade {wheel_path}")
