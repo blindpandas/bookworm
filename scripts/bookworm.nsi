@@ -7,7 +7,7 @@ ManifestSupportedOS all
 XPStyle on
 Name "$%IAPP_DISPLAY_NAME%"
 OutFile "$%IAPP_DISPLAY_NAME%-$%IAPP_VERSION%-$%IAPP_ARCH%-setup.exe"
-InstallDir "$PROGRAMFILES\$%IAPP_NAME%"
+InstallDir "$PROGRAMFILES\$%IAPP_DISPLAY_NAME%"
 InstallDirRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "InstallLocation"
 RequestExecutionLevel admin
 SetCompress auto
@@ -39,7 +39,7 @@ var StartMenuFolder
 Section
 SetShellVarContext All
 SetOutPath "$INSTDIR"
-File /r "builder\dist\$%IAPP_ARCH%\$%IAPP_DISPLAY_NAME%\*"
+File /r "$%IAPP_FROZEN_DIRECTORY%\*"
 CreateShortCut "$DESKTOP\$%IAPP_DISPLAY_NAME%.lnk" "$INSTDIR\$%IAPP_DISPLAY_NAME%.exe"
 !insertmacro MUI_STARTMENU_WRITE_BEGIN startmenu
 CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
@@ -66,9 +66,3 @@ Delete "$DESKTOP\$%IAPP_DISPLAY_NAME%.lnk"
 !insertmacro MUI_STARTMENU_GETFOLDER startmenu $StartMenuFolder
 RMDir /r "$SMPROGRAMS\$StartMenuFolder"
 SectionEnd
-Function .onInit
-${If} ${RunningX64}
-StrCpy $instdir "$programfiles64\$%IAPP_NAME%"
-${EndIf}
-!insertmacro MUI_LANGDLL_DISPLAY
-FunctionEnd

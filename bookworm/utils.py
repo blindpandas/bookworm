@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import wx
-import re
 import hashlib
 from functools import wraps
 from pathlib import Path
@@ -45,18 +44,13 @@ def generate_sha1hash(filename):
     return hasher.hexdigest()
 
 
-def search(request, text):
-    """Search the given text using info from the search request."""
-    I = re.I if not request.case_sensitive else 0
-    ps = fr"({request.term})"
-    if request.whole_word:
-        ps = fr"\b{ps}\b"
-    pat = re.compile(ps, I)
-    mat = pat.search(text)
+def search(pattern, text):
+    """Search the given text using a compiled regular expression."""
+    mat = pattern.search(text, concurrent=True)
     if not mat:
         return
     pos = mat.span()[0]
-    lseg, tseg, rseg = pat.split(text, maxsplit=1)
+    lseg, tseg, rseg = pattern.split(text, maxsplit=1)
     snipit = "".join([lseg[-20:], tseg, rseg[:20]])
     return (pos, snipit)
 

@@ -1,9 +1,14 @@
 # coding: utf-8
 
+"""
+This file contains Bookworm's build system. It uses the `invoke` package to define and run commands.
+"""
+
 import struct
 import os
 import platform
 import shutil
+from functools import wraps
 from glob import glob
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -17,6 +22,38 @@ from mistune import markdown
 PROJECT_ROOT = Path.cwd()
 PACKAGE_FOLDER = PROJECT_ROOT / "bookworm"
 
+
+def _add_envars(context):
+    from bookworm import app
+
+    arch = "x86" if struct.calcsize("P") == 4 else "x64"
+    build_folder = PROJECT_ROOT / "scripts" / "builder" / "dist" / arch / "Bookworm"
+    context["build_folder"] = build_folder
+    os.environ.update(
+        {
+            "IAPP_ARCH": arch,
+            "IAPP_NAME": app.name,
+            "IAPP_DISPLAY_NAME": app.display_name,
+            "IAPP_VERSION": app.version,
+            "IAPP_VERSION_EX": app.version_ex,
+            "IAPP_AUTHOR": app.author,
+            "IAPP_WEBSITE": app.website,
+            "IAPP_COPYRIGHT": app.copyright,
+            "IAPP_FROZEN_DIRECTORY": str(build_folder)
+        }
+    )
+    context["_envars_added"] = True
+
+
+def make_env(func):
+    """Set the necessary environment variables."""
+    @wraps(func)
+    def wrapper(c, *args, **kwargs):
+        if not c.get("_envars_added"):
+            print("Adding environment variables...")
+            _add_envars(c)
+        return func(c, *args, **kwargs)
+    return wrapper
 
 @task(name="icons")
 def make_icons(c):
@@ -62,11 +99,12 @@ def format_code(c):
 
 
 @task(name="docs")
+@make_env
 def build_docs(c):
     """Build the end-user documentation."""
     print("Building documentations")
     md = PROJECT_ROOT / "docs" / "bookworm.md"
-    html = c.build_folder / "resources" / "docs" / "bookworm.html"
+    html = c["build_folder"] / "resources" / "docs" / "bookworm.html"
     html.parent.mkdir(parents=True, exist_ok=True)
     content = md.read_text(encoding="utf8")
     text_md = markdown(content, escape=False)
@@ -87,13 +125,14 @@ def build_docs(c):
 
 
 @task
+@make_env
 def copy_assets(c):
     """Copy some static assets to the new build folder."""
     print("Copying files...")
-    license_file = c.build_folder / "resources" / "docs" / "license.txt"
+    license_file = c["build_folder"] / "resources" / "docs" / "license.txt"
     icon_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico"
     c.run(f"copy {PROJECT_ROOT / 'LICENSE'} {license_file}")
-    c.run(f"copy {icon_file} {c.build_folder}")
+    c.run(f"copy {icon_file} {c['build_folder']}")
     print("Done copying files.")
 
 
@@ -117,21 +156,9 @@ def install_packages(c):
 
 
 @task
+@make_env
 def make_installer(c):
     """Build the NSIS installer for bookworm."""
-    from bookworm import app
-
-    os.environ.update(
-        {
-            "IAPP_NAME": app.name,
-            "IAPP_DISPLAY_NAME": app.display_name,
-            "IAPP_VERSION": app.version,
-            "IAPP_VERSION_EX": app.version_ex,
-            "IAPP_AUTHOR": app.author,
-            "IAPP_WEBSITE": app.website,
-            "IAPP_COPYRIGHT": app.copyright,
-        }
-    )
     with c.cd(str(PROJECT_ROOT / "scripts")):
         c.run("makensis bookworm.nsi")
         print("Setup File Build Completed.")
@@ -166,18 +193,23 @@ def clean_after(c, assets=False, siteconfig=False):
         print("Cleaned up all intermediary build folders.")
 
 
+@task
+@make_env
+def freeze(c):
+    """Freeze the app using pyinstaller."""
+    print("Freezing the application...")
+    with c.cd(str(PROJECT_ROOT / "scripts" / "builder")):
+        c.run(f"pyinstaller Bookworm.spec -y --distpath {c['build_folder'].parent} ")
+
+
 @task(
-    pre=(make_icons, install_packages),
+    pre=(make_icons, install_packages, freeze),
     post=(build_docs, copy_assets, make_installer),
 )
+@make_env
 def build(c):
     """Freeze, package, and prepare the app for distribution."""
-    arch = "x86" if struct.calcsize("P") == 4 else "x64"
-    os.environ["IAPP_ARCH"] = arch
-    build_folder = PROJECT_ROOT / "scripts" / "builder" / "dist" / arch
-    c.config["build_folder"] = build_folder / "Bookworm"
-    with c.cd(str(build_folder.parent.parent)):
-        c.run(f"pyinstaller Bookworm.spec -y --distpath {build_folder}")
+    print("Starting the build process...")
 
 
 @task(name="dev", pre=(install_packages, make_icons))

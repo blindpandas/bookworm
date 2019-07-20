@@ -4,9 +4,12 @@ image: Visual Studio 2017
 branches:
   only:
     - master
+    - /release-.*/
+
 
 environment:
- PY_PYTHON: 3.7-32
+  PY_PYTHON: 3.7-32
+
 
 install:
   # NSIS Paths
@@ -30,3 +33,16 @@ build_script:
 
 artifacts:
   - path: scripts\Bookworm*setup.exe
+
+deploy:
+  release: "Bookworm Release (Build v$(appveyor_build_version))"
+  description: "Uploaded from appveyor by the build bot"
+  provider: GitHub
+  auth_token:
+    secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
+  artifact: /Bookworm-.*-setup\.exe/
+  draft: true
+  prerelease: true
+  on:
+    branch: /release-.*/
+    APPVEYOR_REPO_TAG: true

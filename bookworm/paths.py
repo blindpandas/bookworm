@@ -29,7 +29,7 @@ def data_path():
     if app.debug:
         data_path = DATA_PATH_DEBUG
     else:
-        data_path = Path(winpaths.get_appdata()) / app.name
+        data_path = Path(winpaths.get_appdata()) / app.display_name
     if not data_path.exists():
         data_path.mkdir(parents=True, exist_ok=True)
     return data_path

@@ -27,7 +27,7 @@ class BookwormApp(wx.App):
         log.debug("Starting the application.")
         log.debug(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
         self.setupSubsystems()
-        mainFrame = BookViewerWindow(None, appinfo.display_name)
+        mainFrame = BookViewerWindow(None, appinfo.localized_name)
         self.SetTopWindow(mainFrame)
         mainFrame.Show(True)
         self.Bind(wx.EVT_END_SESSION, self.onEndSession)

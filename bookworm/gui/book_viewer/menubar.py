@@ -406,7 +406,7 @@ class MenubarProvider:
         dlg.Show()
 
     def onPreferences(self, event):
-        with PreferencesDialog(self, title=f"{app.display_name} Preferences") as dlg:
+        with PreferencesDialog(self, title=f"{app.localized_name} Preferences") as dlg:
             dlg.ShowModal()
 
     @only_when_reader_ready
@@ -504,7 +504,7 @@ class MenubarProvider:
     def onAbout(self, event):
         wx.MessageBox(
             app.about_msg,
-            f"About {app.display_name}",
+            f"About {app.localized_name}",
             parent=self,
             style=wx.ICON_INFORMATION,
         )
@@ -515,6 +515,7 @@ class MenubarProvider:
         elif self.reader.tts.engine.state is SynthState.busy:
             return wx.Bell()
         self.reader.speak_current_page()
+        setattr(self.reader.tts, "_requested_play", True)
 
     def onPauseToggle(self, event):
         if self.reader.tts.is_ready:
@@ -532,6 +533,7 @@ class MenubarProvider:
             and self.reader.tts.engine.state is not SynthState.ready
         ):
             self.reader.tts.engine.stop()
+            setattr(self.reader.tts, "_requested_play", False)
             return speech.announce("Stopped")
         wx.Bell()
 

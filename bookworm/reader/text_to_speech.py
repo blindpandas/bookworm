@@ -114,7 +114,7 @@ class TextToSpeechProvider:
         if not self.tts.is_ready:
             return
         self._current_textinfo = self.content_tokenized(start_pos=0)
-        is_speaking = self.tts.engine.state is SynthState.busy
+        is_speaking = getattr(self.tts, "_requested_play", False)
         if self.tts.engine.state is not SynthState.ready:
             self.tts.engine.stop()
         if is_speaking:

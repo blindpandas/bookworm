@@ -2,6 +2,7 @@
 
 """Contains utility functions for the mu document reader."""
 
+import regex as re
 from hashlib import md5
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
@@ -37,8 +38,13 @@ def do_search_book(document_path, request, queue):
     """This function also runs in a separate process."""
     doc = mu.FitzDocument(document_path)
     doc.read()
+    I = re.I if not request.case_sensitive else 0
+    ps = fr"({request.term})"
+    if request.whole_word:
+        ps = fr"\b{ps}\b"
+    pattern = re.compile(ps, I|re.M)
     for n in range(request.from_page, request.to_page + 1):
-        found = search(request, doc[n].getText())
+        found = search(pattern, doc[n].getText())
         if not found:
             queue.put((n, None, None, None))
             continue

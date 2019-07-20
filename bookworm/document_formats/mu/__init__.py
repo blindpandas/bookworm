@@ -143,7 +143,7 @@ class FitzEPUBDocument(FitzDocument):
     def read(self):
         try:
             super().read()
-        except RuntimeError as e:
+        except DocumentError as e:
             if "drm" in e.args[0].lower():
                 log.debug("Got an encrypted file, attempting to decrypt it...")
                 self._original_file_name = self.filename
