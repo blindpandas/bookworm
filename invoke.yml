@@ -18,8 +18,8 @@ folders_to_clean:
         - bookworm.egg-info
         - scripts\builder\build
         - scripts\builder\dist
-    artifacts:
+    assets:
         - bookworm\resources\images.py
         - scripts\Bookworm*setup.exe
-        - scripts\builder\artifacts\bookworm.bmp
-        - scripts\builder\artifacts\bookworm.ico
+        - scripts\builder\assets\bookworm.bmp
+        - scripts\builder\assets\bookworm.ico

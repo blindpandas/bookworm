@@ -1,10 +1,9 @@
+# Build worker image (VM template)
+image: Visual Studio 2017
 
 branches:
   only:
     - master
-
-# Build worker image (VM template)
-image: Visual Studio 2017
 
 environment:
  PY_PYTHON: 3.7-32

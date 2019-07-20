@@ -41,7 +41,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=False , version='artifacts\\version_info.txt', icon='artifacts\\bookworm.ico')
+          console=False , version='assets\\version_info.txt', icon='assets\\bookworm.ico')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

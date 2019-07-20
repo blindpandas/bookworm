@@ -41,18 +41,18 @@ def make_icons(c):
                 compressed=True,
             )
         print("*" * 10 + " Done Embedding Images" + "*" * 10)
-    icon_file = PROJECT_ROOT / "scripts" / "builder" / "artifacts" / "bookworm.ico"
+    icon_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico"
     if not icon_file.exists():
         print("Application icon is not there, creating it.")
         Image.open(IMAGE_SOURCE_FOLDER / "ico" / "bookworm.png").resize((48, 48)).save(
             icon_file
         )
-        print("Copied app icon to the artifacts folder.")
-    bitmap_file = PROJECT_ROOT / "scripts" / "builder" / "artifacts" / "bookworm.bmp"
+        print("Copied app icon to the assets folder.")
+    bitmap_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.bmp"
     if not bitmap_file.exists():
         print("Installer logo bitmap is not there, creating it.")
         Image.open(IMAGE_SOURCE_FOLDER / "ico" / "bookworm.png").save(bitmap_file)
-        print("Copied installer bitmap  to the artifacts folder.")
+        print("Copied installer bitmap  to the assets folder.")
 
 
 @task
@@ -87,11 +87,11 @@ def build_docs(c):
 
 
 @task
-def copy_artifacts(c):
-    """Copy some static artifacts to the new build folder."""
+def copy_assets(c):
+    """Copy some static assets to the new build folder."""
     print("Copying files...")
     license_file = c.build_folder / "resources" / "docs" / "license.txt"
-    icon_file = PROJECT_ROOT / "scripts" / "builder" / "artifacts" / "bookworm.ico"
+    icon_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico"
     c.run(f"copy {PROJECT_ROOT / 'LICENSE'} {license_file}")
     c.run(f"copy {icon_file} {c.build_folder}")
     print("Done copying files.")
@@ -138,7 +138,7 @@ def make_installer(c):
 
 
 @task(name="clean")
-def clean_after(c, artifacts=False, siteconfig=False):
+def clean_after(c, assets=False, siteconfig=False):
     """Remove intermediary build folders."""
     with c.cd(str(PROJECT_ROOT)):
         print("Cleaning compiled bytecode cache.")
@@ -146,8 +146,8 @@ def clean_after(c, artifacts=False, siteconfig=False):
             shutil.rmtree(pyc, ignore_errors=True)
         print("Cleaning up temporary files and directories.")
         folders_to_clean = c["folders_to_clean"]["everytime"]
-        if artifacts:
-            folders_to_clean.extend(c["folders_to_clean"]["artifacts"])
+        if assets:
+            folders_to_clean.extend(c["folders_to_clean"]["assets"])
         if siteconfig:
             folders_to_clean.append(".appdata")
         glob_patterns = ((i, entry) for (i, entry) in enumerate(folders_to_clean) if "*" in entry)
@@ -167,8 +167,8 @@ def clean_after(c, artifacts=False, siteconfig=False):
 
 
 @task(
-    pre=(install_packages, make_icons),
-    post=(build_docs, copy_artifacts, make_installer),
+    pre=(make_icons, install_packages),
+    post=(build_docs, copy_assets, make_installer),
 )
 def build(c):
     """Freeze, package, and prepare the app for distribution."""

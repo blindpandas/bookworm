@@ -19,9 +19,9 @@ VIAddVersionKey ProductVersion "$%IAPP_VERSION%"
 VIAddVersionKey FileVersion "$%IAPP_VERSION%"
 VIProductVersion "$%IAPP_VERSION_EX%"
 VIFileVersion "$%IAPP_VERSION_EX%"
-!define MUI_ICON "builder\artifacts\$%IAPP_NAME%.ico"
+!define MUI_ICON "builder\assets\$%IAPP_NAME%.ico"
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP "builder\artifacts\$%IAPP_NAME%.bmp"
+!define MUI_HEADERIMAGE_BITMAP "builder\assets\$%IAPP_NAME%.bmp"
 !define MUI_HEADERIMAGE_RIGHT
 !insertmacro MUI_PAGE_WELCOME
 !define MUI_LICENSEPAGE_RADIOBUTTONS

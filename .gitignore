@@ -110,8 +110,8 @@ venv.bak/
 
 # Generated images
 bookworm/resources/images.py
-scripts/builder/artifacts/bookworm.bmp
-scripts/builder/artifacts/bookworm.ico
+scripts/builder/assets/bookworm.bmp
+scripts/builder/assets/bookworm.ico
 
 # OS generated files
-*.db
+Thumbs.db
