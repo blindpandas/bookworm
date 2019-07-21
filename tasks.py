@@ -81,15 +81,20 @@ def make_icons(c):
     icon_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico"
     if not icon_file.exists():
         print("Application icon is not there, creating it.")
-        Image.open(IMAGE_SOURCE_FOLDER / "ico" / "bookworm.png").resize((48, 48)).save(
+        Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").resize((48, 48)).save(
             icon_file
         )
         print("Copied app icon to the assets folder.")
     bitmap_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.bmp"
     if not bitmap_file.exists():
         print("Installer logo bitmap is not there, creating it.")
-        Image.open(IMAGE_SOURCE_FOLDER / "ico" / "bookworm.png").save(bitmap_file)
+        Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").save(bitmap_file)
         print("Copied installer bitmap  to the assets folder.")
+    website_header = PROJECT_ROOT / "docs" / "img" / "bookworm.png"
+    if not website_header.exists():
+        print("Website header logo is not there, creating it.")
+        Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").resize((256, 256)).save(website_header)
+        print("Copied website header image  to the docs folder.")
 
 
 @task
@@ -103,10 +108,11 @@ def format_code(c):
 def build_docs(c):
     """Build the end-user documentation."""
     print("Building documentations")
-    md = PROJECT_ROOT / "docs" / "bookworm.md"
+    md = PROJECT_ROOT / "docs" / "bookworm_user_guide.md"
     html = c["build_folder"] / "resources" / "docs" / "bookworm.html"
     html.parent.mkdir(parents=True, exist_ok=True)
     content = md.read_text(encoding="utf8")
+    content = f"# Bookworm {os.environ['IAPP_VERSION']} User Guide\r\r{content}"
     text_md = markdown(content, escape=False)
     html.write_text(
         f"""

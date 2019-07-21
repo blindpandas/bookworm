@@ -16,7 +16,7 @@ from bookworm.concurrency import call_threaded
 from bookworm import speech
 from bookworm.speech.enumerations import SynthState
 from bookworm.reader import EBookReader
-from bookworm.utils import gui_thread_safe
+from bookworm.utils import cached_property, gui_thread_safe
 from bookworm.logger import logger
 from .decorators import only_when_reader_ready
 from ..preferences_dialog import PreferencesDialog
@@ -138,6 +138,9 @@ class MenubarProvider:
             "&Render Page\tCtrl-R",
             "View a fully rendered version of this page.",
         )
+        toolsMenu.Append(
+            wx.ID_PREFERENCES, "&Preferences...\tCtrl-Shift-P", "Configure application"
+        )
         # Speech menu
         speechMenu.Append(BookRelatedMenuIds.play, "&Play\tF5", "Start reading aloud")
         speechMenu.Append(
@@ -165,9 +168,6 @@ class MenubarProvider:
             ViewerMenuIds.deactivateVoiceProfiles,
             "&Deactivate Active Voice Profile",
             "Deactivate the active voice profile.",
-        )
-        toolsMenu.Append(
-            wx.ID_PREFERENCES, "&Preferences...\tCtrl-Shift-P", "Configure application"
         )
         # Annotations menu
         annotationsMenu.Append(
@@ -562,6 +562,35 @@ class MenubarProvider:
         config.conf["history"]["recently_opened"] = newfiles
         config.save()
         self.populate_recent_file_list()
+
+    @cached_property
+    def content_text_ctrl_context_menu(self):
+        menu = wx.Menu()
+        menu.Append(
+            BookRelatedMenuIds.addBookmark,
+            "Add &Bookmark...\tCtrl-B",
+            "Bookmark the current location",
+        )
+        menu.Append(
+            BookRelatedMenuIds.addNote,
+            "Take &Note...\tCtrl-n",
+            "Add a note at the current location",
+        )
+        menu.Append(
+            BookRelatedMenuIds.goToPage, "&Go To Page...\tCtrl-g", "Go to page"
+        )
+        menu.Append(wx.ID_FIND, "&Find in Book...\tCtrl-F", "Search this book.")
+        menu.Append(
+            BookRelatedMenuIds.viewRenderedAsImage,
+            "&Render Page\tCtrl-R",
+            "View a fully rendered version of this page.",
+        )
+        return menu
+
+    def onContentTextCtrlContextMenu(self, event):
+        event.Skip(False)
+        if self.reader.ready:
+            self.PopupMenu(self.content_text_ctrl_context_menu)
 
     def populate_recent_file_list(self):
         for item, _, filename in self._recent_files_data:
