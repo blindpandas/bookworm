@@ -66,3 +66,7 @@ Delete "$DESKTOP\$%IAPP_DISPLAY_NAME%.lnk"
 !insertmacro MUI_STARTMENU_GETFOLDER startmenu $StartMenuFolder
 RMDir /r "$SMPROGRAMS\$StartMenuFolder"
 SectionEnd
+Function .onInit
+StrCmp $%IAPP_ARCH% "x64" +1 +2
+  StrCpy $instdir "$programfiles64\$%IAPP_DISPLAY_NAME%"
+FunctionEnd

@@ -22,18 +22,13 @@ about_msg = f"""
 Version: {version}
 Website: {website}
 
-{localized_name} is an ACCESSIBLEebook reader that enables blind and visually impaired individuals to read ebooks in an easy and accessible manor. It is being developed by {author} with some contributions from the community.
-
+{localized_name} is an ACCESSIBLEebook reader that enables blind and visually impaired individuals to read e-books in an easy, accessible, and hassle-free manor. It is being developed by {author}.
 
 {copyright}
 This software is offered to you under the terms of The MIT license.
 You can view the license text from the help menu.
 
+As a blind developer, my responsibility is to develop applications that provide independence for me, and for my fellow blind friends allover the world. So, if you've found Bookworm useful in any way, please help me to improve it. At this initial stage, I want you to tell me about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at (https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
 
-THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: ({website}). You can also follow me, {author}, at (@mush42) on Twitter
 """

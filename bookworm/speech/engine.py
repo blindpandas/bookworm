@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from bookworm.resources.lang_locales import locale_map
 from bookworm.logger import logger
 from .enumerations import SynthState
-from .utterance import SpeechUtterance
+from .utterance import SpeechUtterance, SpeechStyle
 
 
 log = logger.getChild(__name__)
@@ -123,11 +123,13 @@ class SpeechEngine(Synthesis.SpeechSynthesizer):
     def speak(self, utterance):
         if not isinstance(utterance, SpeechUtterance):
             raise TypeError(f"Invalid utterance {utterance}")
-        if self._language is not None:
-            utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(
-                self._language
-            )
-        self.SpeakAsync(utterance.prompt)
+        # We need to wrap the whol utterance in another
+        # one that sets the voice. Because The Speak()
+        # function does not honor  the engine voice.
+        voice_utterance = SpeechUtterance()
+        with voice_utterance.set_style(SpeechStyle(voice=self.voice)):
+            voice_utterance.add(utterance)
+        self.SpeakAsync(voice_utterance.prompt)
 
     def stop(self):
         if self.state is not SynthState.ready:

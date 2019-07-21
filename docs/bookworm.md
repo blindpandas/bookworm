@@ -2,7 +2,7 @@
 
 ## Introduction
 
-**Bookworm** is an ACCESSIBLEebook reader that enables blind and visually impaired individuals to read ebooks in an easy and hassle free manor. The main highlights of bookworm are:
+**Bookworm** is an ACCESSIBLEebook reader that enables blind and visually impaired individuals to read e-books in an easy and hassle free manor. The main highlights of bookworm are:
 
 * Supports popular e-book formats, including EPUB and PDF
 * You can add named bookmarks to mark interesting positions in the text for later reference
@@ -15,8 +15,6 @@
 * Support for standard zoom-in/zoom-out/reset commands, Ctrl + =, Ctrl + -, and Ctrl + 0 respectively. This functionality is supported in the plain text view and the rendered page view.
 * Support for exporting any e-book format to a plain text file.
 
-
-# User Guide
 
 ## Installation
 
@@ -31,9 +29,11 @@ To get Bookworm up and running on your computer, follow these steps:
 3. After the installation has finished successfully , you can launch Bookworm from the *Desktop* or from the program list found in the Start Menu
 
 
+## Usage
+
 ### Opening A Book
 
-You can open a book by selecting the "Open..." menu item from the "File" Menu. Alternatively you can use the Ctrl+O shortcut. Either way, the familiar "open file" dialog will be shown. Browse to your e-book, and click open to load it.
+You can open a book by selecting the "Open..." menu item from the "File" Menu. Alternatively you can use the Ctrl+O shortcut. Either way, the familiar "open file" dialog is shown. Browse to your e-book, and click open to load it.
 
 ### The Reader Window
 
@@ -57,7 +57,7 @@ Bookworm allows you to annotate the opened book.  You can add a bookmark to reme
 
 #### Adding Bookmarks
 
-While reading a book, you can press Ctrl + B (or select the "Add Bookmark" menu item from the "Annotations" menu to add a bookmark. The bookmark will be added at the current position of the cursor. You'll be asked to provide a title for the bookmark. Type the desired title and click the OK Button. A bookmark will be added at the current location, and the current line will be visually highlighted.
+While reading a book, you can press Ctrl + B (or select the "Add Bookmark" menu item from the "Annotations" menu to add a bookmark. The bookmark is added at the current position of the cursor. You'll be asked to provide a title for the bookmark. Type the desired title and click the OK Button. A bookmark will be added at the current location, and the current line will be visually highlighted.
 
 #### Viewing Bookmarks
 
@@ -67,7 +67,7 @@ Additionally, you can press F2 to edit the title of the selected bookmark in pla
 
 #### Taking Notes
 
-While reading a book, you can press Ctrl + N (or select the "Take Note" menu item from the "Annotations" menu to take a note. The note will be added at the current position of the cursor. You'll be asked to provide the title and the content for the note. Type the desired title and content, and then click the Ok button. A note will be added at the current location.
+While reading a book, you can press Ctrl + N (or select the "Take Note" menu item from the "Annotations" menu to take a note. The note will be added at the current position of the cursor. You'll be asked to provide the title and the content for the note. Type the desired title and content, and then click the OK button. A note will be added at the current location.
 
 When you navigate to a page containing at least one note, you will hear a little sound indicating the existence of a note in the current page..
 
@@ -75,7 +75,7 @@ When you navigate to a page containing at least one note, you will hear a little
 
 Press Ctrl + Shift + N, or select the "Manage Notes" menu item from the "Annotations" menu. A dialog containing added notes will be shown. Clicking any item in the notes list will immediately take you to the position of that note. Clicking the "View" button will bring up a dialog showing the title and the content of the selected note.
 
-Additionally, you can click the "Edit" button to edit the title and the content of the selected note, or press  F2 to edit the title of the selected note in place, or you can click the "Delete" button or the "Delete" key on your keyboard to remove the selected note.
+Additionally, you can click the "Edit" button to edit the title and the content of the selected note, press  F2 to edit the title of the selected note in place, or you can click the "Delete" button or the "Delete" key on your keyboard to remove the selected note.
 
 #### Exporting Notes
 
@@ -85,7 +85,7 @@ To export your notes, follow these steps:
 
 1. From the "Annotations" menu select the "Notes Exporter..." menu item
 2. Select the export range. This tells Bookworm whether you want to export the notes of the whole book, or you just want to export the notes of the current section. 
-3. Select the output format. This determines the format of the file you get after exporting. Exporting to a plain-text will give you a simple, nicely formatted text file, exporting to HTML gives you a web page, and exporting to markdown will give you a .md file which is a text format popular among expert computer users.
+3. Select the output format. This determines the format of the file you get after exporting. Exporting to a plain-text gives you a simple, nicely formatted text file, exporting to HTML gives you a web page, and exporting to markdown gives you a markdown document which is a text format popular among expert computer users.
 4. If you want Bookworm to open the file to which your notes have been exported, you can check the "Open file after exporting" checkbox.
 5. Click Export. You will be asked to select the file name of the exported file, and the location to which the file is saved. Clicking "Save" will save the file, and open it if you have instructed Bookworm to do so.
 
@@ -95,28 +95,41 @@ To export your notes, follow these steps:
 Bookworm supports reading the content of the opened book aloud using an installed text-to-speech voice. Just press F5 to start the speech, F6 to pause or resume the speech, and F7 to stop the speech entirely.
 
 You can configure the speech in two ways:
-1. Using A Voice Profile: A voice profile contains your custom speech configurations, you can activate/deactivate the voice profile at any time. You can access voice profiles from the speech menu or by pressing Ctrl + Shift + V. 
+1. Using A Voice Profile: A voice profile contains your custom speech configurations, you can activate/deactivate the voice profile at any time. You can access voice profiles from the speech menu or by pressing Ctrl + Shift + V. Note that bookworm comes with some exemplary, built-in voice profiles.
 2. The Global speech settings: these settings will be used by default when no voice profile is active. You can configure the global speech settings from the application preferences. 
 
 During reading aloud, you can skip backward or foreword by paragraph by pressing Alt plus the left and right arrow  keys.
 
 
-### Fully Rendered Pages
+### Configuring The Reading Style
 
-Bookworm allows you to view a fully rendered version of the book. While a book is opened, you can press Ctrl + R or select the "Render Page" menu item from the tools menu.
+In addition to the speech settings, Bookworm gives you the ability to fine-tune its reading behavior through these settings. All of the following settings could be found in the reading page of the application preferences.
 
-When you are in the Render View, you can use the usual zoom commands to zoom in and out:
+* What to read: this option controls what happens when you instruct Bookworm to "Play" the current book. You can choose to "Read the entire book", "Read the current section", or read just "The current page". By default, bookworm reads the entire book in a continuous manner, unless you instruct it to stop when it reaches the end of the page or the end of the current section.
+* Where to start: this option controls the position from which to start reading aloud. You can choose to start reading from the "Position of cursor" or the "Start of the current page".
+* How to read: this set of options control how bookworm behave during reading aloud. You can turn on/off any one of the following options by checking/unchecking its respective checkbox:
 
-* Ctrl + = will zoom-in 
-* Ctrl + - will zoom-out
+* Highlight spoken text: if this option is turned on, the currently spoken text is visually highlighted.
+* Select spoken text: if this option is turned on, the currently spoken text is selected. This enables you, for instance, to press Ctrl + C to copy the currently spoken paragraph.
+* Play end-of-section sound: if this option is turned on, Bookworm plays a little sound when it reaches the end of a section.
+
+
+### Viewing A Fully Rendered Version of The Current Page
+
+Bookworm allows you to view a fully rendered version of the book. While a book is opened, you can press Ctrl + R or select the "Render Page" menu item from the tools menu. We call this view "The Render View" as appose to the, default, Textual View.
+
+When you are in the Render View, you can use the usual zoom commands to zoom the page in and out:
+
+* Ctrl + = zoom-in 
+* Ctrl + - zoom-out
 * Ctrl + 0 reset the zoom level
 
-Note that the usual navigation commands work in the render view as well.
+Note that you can also use the book navigation commands, mentioned above,  to navigate the render view as well.
 
 
-### Navigating To A Page
+### Navigating To A Specific Page
 
-Press Ctrl + G, or select the "Go To..." menu item from the tools menu, to navigate to a specific page in the currently opened book.
+To navigate to a specific page in the currently opened book., press Ctrl + G, or select the "Go To..." menu item from the tools menu to show the "Go To Page" dialog. In this dialog you can type the number of any page you want to navigate to, and Bookworm will take you to it.
 
  
 ### Searching The Book
@@ -128,6 +141,15 @@ To find a specific term, or a portion of text in the currently opened book, you 
 * Search Range: This allows you to confine the search to certain pages or a specific section.
 
 After clicking the OK button in the "Search Book Dialog", another dialog containing search results will be shown. Clicking any item in the search results list will immediately take you to the position of that result with the search term highlighted for you.
+
+Note that if you've closed the search results window, you can press F3 and Shift + F3 to move to the next and previous occurrence of the last search respectively.
+
+
+## News & Updates
+
+As a blind developer, my responsibility is to develop applications that provide independence for me, and for my fellow blind friends allover the world. So, if you've found Bookworm useful in any way, please help me in making Bookworm better for you and for others. At this initial stage, I want you to tell me about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
+
+To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: [mush42.github.io/bookworm](https://mush42.github.io/bookworm/). You can also follow me, Musharraf Omer, at [@mush42](https://twitter.com/mush42/) on Twitter.
 
 
 ## License
