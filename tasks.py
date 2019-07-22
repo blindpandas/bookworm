@@ -119,7 +119,7 @@ def build_docs(c):
         <!doctype html>
         <html>
         <head>
-        <title>Bookworm User Manual</title>
+        <title>Bookworm User Guide</title>
         </head>
         <body>
         {text_md}

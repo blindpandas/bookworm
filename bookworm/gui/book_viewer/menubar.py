@@ -590,7 +590,8 @@ class MenubarProvider:
     def onContentTextCtrlContextMenu(self, event):
         event.Skip(False)
         if self.reader.ready:
-            self.PopupMenu(self.content_text_ctrl_context_menu)
+            pos = self.contentTextCtrl.PositionToCoords(self.contentTextCtrl.InsertionPoint)
+            self.PopupMenu(self.content_text_ctrl_context_menu, pos=pos)
 
     def populate_recent_file_list(self):
         for item, _, filename in self._recent_files_data:
