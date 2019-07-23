@@ -1,8 +1,7 @@
 # coding: utf-8
 
-import sys
+import argparse
 import wx
-from multiprocessing import freeze_support
 from bookworm import app as appinfo
 from bookworm.paths import logs_path
 from bookworm.config import setup_config
@@ -25,7 +24,6 @@ class BookwormApp(wx.App):
 
     def OnInit(self):
         log.debug("Starting the application.")
-        log.debug(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
         self.setupSubsystems()
         mainFrame = BookViewerWindow(None, appinfo.localized_name)
         self.SetTopWindow(mainFrame)
@@ -48,7 +46,15 @@ class BookwormApp(wx.App):
 
 
 def init_app_and_run_main_loop():
-    if hasattr(sys, "frozen"):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--filename")
+    parser.add_argument("--debug", action="store_true")
+    appinfo.args, appinfo.extra_args = parser.parse_known_args()
+    if appinfo.args.debug:
+        appinfo.debug = True
+    log.debug(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
+    if appinfo.is_frozen:
+        from multiprocessing import freeze_support
         freeze_support()
     wxlogfilename = logs_path("wx.log") if not appinfo.debug else None
     app = BookwormApp(redirect=True, useBestVisual=True, filename=wxlogfilename)

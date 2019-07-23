@@ -78,7 +78,8 @@ class ViewerMenuIds(enum.IntEnum):
     documentation = 801
     website = 802
     license = 803
-    about = 804
+    restart_with_debug = 804
+    about = 805
 
 
 class MenubarProvider:
@@ -207,6 +208,17 @@ class MenubarProvider:
             "&License",
             "View legal information about this program .",
         )
+        if app.is_frozen and not app.debug:
+            helpMenu.Append(
+                ViewerMenuIds.restart_with_debug,
+                "&Restart with debug-mode enabled",
+                "Restart the program with debug mode enabled to show errors."
+            )
+            self.Bind(
+                wx.EVT_MENU,
+                self.onRestartWithDebugMode,
+                id=ViewerMenuIds.restart_with_debug
+            )
         helpMenu.Append(
             ViewerMenuIds.about,
             "&About Bookworm...",
@@ -562,6 +574,15 @@ class MenubarProvider:
         config.conf["history"]["recently_opened"] = newfiles
         config.save()
         self.populate_recent_file_list()
+
+    def onRestartWithDebugMode(self, event):
+        args = sys.argv
+        if self.reader.ready:
+            args.append(f"--filename {self.reader.document.filename}")
+            self.reader.save_last_position()
+        args.append("--debug")
+        args = [f'"{arg}"'  for arg in args]
+        os.execv(sys.executable, args)
 
     @cached_property
     def content_text_ctrl_context_menu(self):

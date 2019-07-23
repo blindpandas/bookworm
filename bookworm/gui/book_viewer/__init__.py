@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import os
 import wx
 from bookworm import app
 from bookworm import config
@@ -100,6 +101,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
             reader_page_changed.connect(
                 highlight_bookmarked_positions, sender=self.reader
             )
+            arg_file = app.args.filename
+            if arg_file and os.path.isfile(arg_file):
+                self.open_file(arg_file)
 
     def set_content(self, content):
         self.contentTextCtrl.Clear()

@@ -224,7 +224,7 @@ def prepare_dev_environment(c):
 
 
 @task(name="run")
-def run_application(c, debug=True):
+def run_application(c, _filename=None, debug=True):
     """Runs the app."""
     try:
         from bookworm.bookworm import main
@@ -238,5 +238,10 @@ def run_application(c, debug=True):
         print("To prepare your development environment run: invoke dev\r\n")
         print("Here is the traceback:\r\n")
         raise e
-    os.environ.setdefault("BOOKWORM_DEBUG", str(int(debug)))
-    c.run("py -m bookworm")
+    args = []
+    if _filename:
+        args.append(f"--filename {_filename}")
+    if debug:
+        args.append("--debug")
+    print(f"Debug mode is {'on' if debug else 'off'}.")
+    c.run(f"py -m bookworm {' '.join(args)}")

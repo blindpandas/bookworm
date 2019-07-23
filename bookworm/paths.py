@@ -26,7 +26,7 @@ def merge_paths(func):
 
 @merge_paths
 def data_path():
-    if app.debug:
+    if not app.is_frozen and app.debug:
         data_path = DATA_PATH_DEBUG
     else:
         data_path = Path(winpaths.get_appdata()) / app.display_name
@@ -74,7 +74,7 @@ def db_path():
 
 @merge_paths
 def docs_path():
-    if app.debug:
+    if not app.is_frozen:
         parent = Path(DATA_PATH_DEBUG).parent
         path = parent / "docs"
     else:
@@ -86,7 +86,7 @@ def docs_path():
 
 @merge_paths
 def home_data_path():
-    if not app.debug:
+    if app.is_frozen:
         path = Path.home() / f".{app.name}"
     else:
         path = DATA_PATH_DEBUG / "home_data"

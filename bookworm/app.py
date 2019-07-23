@@ -5,6 +5,7 @@ import os
 
 
 name = "bookworm"
+is_frozen = hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS')
 display_name = "Bookworm"
 localized_name = "Bookworm"
 author = "Musharraf Omer"
@@ -14,7 +15,7 @@ version_ex = "0.1.0.0"
 url = "https://github.com/mush42/bookworm/"
 website = "https://mush42.github.io/bookworm/"
 copyright = f"Copyright (c) 2019 {author}."
-debug = bool(int(os.environ.get("BOOKWORM_DEBUG", 0)))
+debug = False
 
 # About Message
 about_msg = f"""
