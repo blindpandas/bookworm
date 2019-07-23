@@ -5,6 +5,14 @@ Direct links to the templates:
 - [Problem report](https://github.com/mush42/bookworm/issues/new?template=problem_report.md)
 - [Feature request](https://github.com/mush42/bookworm/issues/new?template=feature_request.md)
 
+
+<!--
+Before submitting a new issue, make sure that you ran Bookworm in debug mode. To turn on debug mode, go to the "Help" menu and then click "Restart with debug-mode enabled" and try to reproduce the issue with debug mode enabled. In the majority of cases, when the error happens again with debug mode enabled, a dialog will be shown with the details of that error.
+
+Note that some issues could be tricky to reproduce, they go away when you restart the program. In this case, it is okay to report the issue without the detailed information from the debug mode. Just make sure you include as much information as possible about the particulars of your system.
+-->
+
+
 ## Steps To Reproduce
 
 ## Actual Behavior

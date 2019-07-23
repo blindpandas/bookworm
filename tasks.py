@@ -12,7 +12,7 @@ from functools import wraps
 from glob import glob
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from invoke import task
+from invoke import task, call
 from invoke.exceptions import UnexpectedExit
 from PIL import Image
 from wx.tools.img2py import img2py
@@ -112,14 +112,14 @@ def build_docs(c):
     html = c["build_folder"] / "resources" / "docs" / "bookworm.html"
     html.parent.mkdir(parents=True, exist_ok=True)
     content = md.read_text(encoding="utf8")
-    content = f"# Bookworm {os.environ['IAPP_VERSION']} User Guide\r\r{content}"
+    content = f"# Bookworm v{os.environ['IAPP_VERSION']} User Guide\r\r{content}"
     text_md = markdown(content, escape=False)
     html.write_text(
         f"""
         <!doctype html>
         <html>
         <head>
-        <title>Bookworm User Guide</title>
+        <title>Bookworm v{os.environ['IAPP_VERSION']} User Guide</title>
         </head>
         <body>
         {text_md}
@@ -170,9 +170,9 @@ def make_installer(c):
         print("Setup File Build Completed.")
 
 
-@task(name="clean")
-def clean_after(c, assets=False, siteconfig=False):
-    """Remove intermediary build folders."""
+@task
+def clean(c, assets=False, siteconfig=False):
+    """Remove intermediary build files and folders."""
     with c.cd(str(PROJECT_ROOT)):
         print("Cleaning compiled bytecode cache.")
         for pyc in PROJECT_ROOT.rglob("__pycache__"):
@@ -209,7 +209,7 @@ def freeze(c):
 
 
 @task(
-    pre=(make_icons, install_packages, freeze),
+    pre=(call(clean, assets=True, siteconfig=True), make_icons, install_packages, freeze),
     post=(build_docs, copy_assets, make_installer),
 )
 @make_env

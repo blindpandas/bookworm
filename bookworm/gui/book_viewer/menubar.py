@@ -276,7 +276,7 @@ class MenubarProvider:
         self.Bind(wx.EVT_MENU, self.onNotesExporter, id=BookRelatedMenuIds.ExportNotes)
 
         # Help menu event handlers
-        help_filename = f"bookworm.{'md' if app.debug else 'html'}"
+        help_filename = f"bookworm.{'html' if app.is_frozen else 'md'}"
         docs = paths.docs_path(help_filename)
         self.Bind(
             wx.EVT_MENU,
@@ -576,12 +576,11 @@ class MenubarProvider:
         self.populate_recent_file_list()
 
     def onRestartWithDebugMode(self, event):
-        args = sys.argv
+        args = sys.argv[:1]
         if self.reader.ready:
-            args.append(f"--filename {self.reader.document.filename}")
-            self.reader.save_last_position()
+            args.append(f'--filename "{self.reader.document.filename}"')
+            self.reader.save_current_position()
         args.append("--debug")
-        args = [f'"{arg}"'  for arg in args]
         os.execv(sys.executable, args)
 
     @cached_property
