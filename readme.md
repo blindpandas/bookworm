@@ -16,9 +16,15 @@
 * Support for exporting any e-book format to a plain text file.
 
 
+## Resources
+
+* The official website: [mush42.github.io/bookworm](https://mush42.github.io/bookworm/)
+* User guide: [Bookworm user guide](https://mush42.github.io/bookworm/user-guide/)
+
+
 ## Development
 
-If you would like to contribute to *Bookworm's* development, please follow the following steps to get bookworm running on your computer:
+If you would like to contribute to *Bookworm's* development, please follow the following steps to get bookworm up and running on your computer:
 
 * Make sure you are running Windows 7 or later, and you've installed Python 3.7 or a later version:
 * Create a virtual environment:
@@ -44,15 +50,14 @@ invoke dev
 ```shell
 invoke run
 ```
-To run the app with debug mode disabled you can do:
+This should run Bookworm with debug mode enabled. To run the app with debug mode disabled you can do:
 ```shell
 invoke run --no-debug
 ```
-Another way to run the app is to execute the package directly. In this case, you should turn on/off debug mode yourself using the environment variable `BOOKWORM_DEBUG`.
+Another way to run the app is to execute the package directly. In this case, you can turn on debug mode yourself using the "--debug" flag.
 To execute the package, you can do:
 ```shell
-set BOOKWORM_DEBUG=1
-py -m bookworm
+py -m bookworm --debug
 ```
 * If you've found a bug, or you want to contribute your changes back to bookworm, please create an issue or submit a pull request. We welcome any contribution, no matter how small it is.
 
