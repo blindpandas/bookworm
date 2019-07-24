@@ -60,7 +60,7 @@ class SpeechProvider:
             )
             if voice_for_lang:
                 self.engine.SelectVoice(voice_for_lang[0].name)
-                self.reader.notify_user(
+                self.reader.view.notify_user(
                     "Incompatible TTS Voice Detected",
                     "Bookworm has noticed that the currently configured Text-to-speech voice "
                     "speaks a language different from that of this book. "
@@ -114,7 +114,7 @@ class SpeechProvider:
                     self.reader.document.language
                 )
                 if configured_voice is None:
-                    self.reader.notify_user(
+                    self.reader.view.notify_user(
                         "No TTS Voices",
                         "A valid Text-to-speech voice was not found on your computer.\n"
                         "Text-to-speech functionality will be disabled.",

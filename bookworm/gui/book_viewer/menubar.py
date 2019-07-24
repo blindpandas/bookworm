@@ -321,6 +321,7 @@ class MenubarProvider:
             style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST,
         )
         if openFileDlg.ShowModal() == wx.ID_OK:
+            self.unloadCurrentEbook()
             filename = openFileDlg.GetPath().strip()
             openFileDlg.Destroy()
             if filename:
@@ -559,7 +560,8 @@ class MenubarProvider:
                 "Missing File",
                 style=wx.ICON_ERROR,
             )
-        self.reader.load(filename)
+        if not self.reader.load(filename):
+            return
         if self.reader.document.is_encrypted():
             self.decrypt_opened_document()
         self.renderItem.Enable(self.reader.document.supports_rendering)

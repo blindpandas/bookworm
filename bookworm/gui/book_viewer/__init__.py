@@ -126,6 +126,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         self.tocTreeCtrl.DeleteAllItems()
         self.Title = app.name
         self._reset_search_history()
+        self.populate_recent_file_list()
 
     @only_when_reader_ready
     def onTOCItemClick(self, event):
@@ -205,3 +206,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         style = self.contentTextCtrl.GetDefaultStyle()
         style.SetAlignment(wx.TEXT_ALIGNMENT_RIGHT if rtl else wx.TEXT_ALIGNMENT_LEFT)
         self.contentTextCtrl.SetDefaultStyle(style)
+
+    def notify_user(self, title, message, icon=wx.ICON_INFORMATION):
+        wx.MessageBox(message, title, style=icon)
