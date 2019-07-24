@@ -105,7 +105,7 @@ During reading aloud, you can skip backward or foreword by paragraph by pressing
 In addition to the speech settings, Bookworm gives you the ability to fine-tune its reading behavior through these settings. All of the following settings could be found in the reading page of the application preferences.
 
 * What to read: this option controls what happens when you instruct Bookworm to "Play" the current book. You can choose to "Read the entire book", "Read the current section", or read just "The current page". By default, bookworm reads the entire book in a continuous manner, unless you instruct it to stop when it reaches the end of the page or the end of the current section.
-* Where to start: this option controls the position from which to start reading aloud. You can choose to start reading from the "Position of cursor" or the "Start of the current page".
+* Where to start: this option controls the position from which to start reading aloud. You can choose to start reading from the "Position of the caret" or the "Start of the current page".
 * How to read: this set of options control how bookworm behave during reading aloud. You can turn on/off any one of the following options by checking/unchecking its respective checkbox:
 
 * Highlight spoken text: if this option is turned on, the currently spoken text is visually highlighted.
@@ -148,9 +148,9 @@ Note that if you've closed the search results window, you can press F3 and Shift
 
 As a blind developer, my responsibility is to develop applications that provide independence for me, and for my fellow blind friends allover the world. So, if you've found Bookworm useful in any way, please help me in making Bookworm better for you and for others. At this initial stage, I want you to tell me about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
 
-Before submitting a new issue, make sure that you ran Bookworm in debug mode. To turn on debug mode, go to the "Help" menu and then click "Restart with debug-mode enabled" and try to reproduce the issue with debug mode enabled. In the majority of cases, when the error happens again with debug mode enabled, a dialog will be shown with the details of that error.
+Before submitting a new issue, make sure that you ran Bookworm in debug mode. To turn on debug mode, go to the "Help" menu and then click "Restart with debug-mode enabled" and try to reproduce the issue with debug mode enabled. In the majority of cases, when the error happens again with debug mode enabled, a dialog will be shown with the details of that error. You can then copy this information and include it with your problem report.
 
-Note that some issues could be tricky to reproduce, they go away when you restart the program. In this case, it is okay to report the issue without the detailed information from the debug mode. Just make sure you include as much information as possible about the particulars of your system.
+Note that some issues could be tricky to reproduce, they go away when you restart the program. In this case, it is okay to report the issue without the detailed information from the debug mode. Just make sure you include as much information as possible about the particulars of your system and usage scenario.
 
 
 ## News & Updates

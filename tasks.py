@@ -175,8 +175,12 @@ def clean(c, assets=False, siteconfig=False):
     """Remove intermediary build files and folders."""
     with c.cd(str(PROJECT_ROOT)):
         print("Cleaning compiled bytecode cache.")
-        for pyc in PROJECT_ROOT.rglob("__pycache__"):
-            shutil.rmtree(pyc, ignore_errors=True)
+        for item in PROJECT_ROOT.iterdir():
+            if not item.is_dir() or item.name.startswith("."):
+                # A special folder, move on
+                continue
+            for pyc in PROJECT_ROOT.rglob("__pycache__"):
+                shutil.rmtree(pyc, ignore_errors=True)
         print("Cleaning up temporary files and directories.")
         folders_to_clean = c["folders_to_clean"]["everytime"]
         if assets:
