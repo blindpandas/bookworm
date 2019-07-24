@@ -205,6 +205,26 @@ def clean(c, assets=False, siteconfig=False):
 
 @task
 @make_env
+def copy_deps(c):
+    """Copies the system dlls."""
+    arch = os.environ["IAPP_ARCH"]
+    dist_dir = os.environ["IAPP_FROZEN_DIRECTORY"]
+    dlls = (
+        f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\msvcp140.dll",
+        f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.OPENMP\\vcomp140.dll",
+        f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\vcruntime140.dll",
+        f"C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\DLLs\\{arch}\\*"
+    )
+    for dll in dlls:
+        print(f"Copying {dll} to {dist_dir}")
+        try:
+            c.run(f'copy "{dll}" "{dist_dir}"')
+        except UnexpectedExit:
+            continue
+
+
+@task
+@make_env
 def freeze(c):
     """Freeze the app using pyinstaller."""
     print("Freezing the application...")
@@ -213,6 +233,8 @@ def freeze(c):
             print("Turnning on python optimizations...")
             os.environ["PYTHONOPTIMIZE"] = "2"
         c.run(f"pyinstaller Bookworm.spec -y --distpath {c['build_folder'].parent} ")
+    print("Freeze finished. Trying to copy system dlls.")
+    copy_deps(c)
 
 
 @task(
