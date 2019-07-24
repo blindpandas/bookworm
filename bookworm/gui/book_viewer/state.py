@@ -64,6 +64,6 @@ class StateProvider:
         stop = self.menuBar.FindItemById(BookRelatedMenuIds.stop)
         pause_toggle.Enable(state is not SynthState.ready)
         stop.Enable(state is not SynthState.ready)
-        play.Enable(state is SynthState.ready)
+        play.Enable(state is not SynthState.busy)
         fastforward.Enable(state is not SynthState.ready)
         rewind.Enable(state is not SynthState.ready)

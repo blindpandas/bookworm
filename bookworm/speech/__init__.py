@@ -116,14 +116,15 @@ class SpeechProvider:
                 if configured_voice is None:
                     self.reader.notify_user(
                         "No TTS Voices",
-                        "A valid Text-to-speech voice was not found on your computer.\nText-to-speech functionality will be disabled.",
+                        "A valid Text-to-speech voice was not found on your computer.\n"
+                        "Text-to-speech functionality will be disabled.",
                     )
                     conf["voice"] = ""
                     config.save()
                     return self.close()
-                self.engine.voice = configured_voice
-                conf["voice"] = configured_voice
-                config.save()
+            self.engine.voice = configured_voice
+            conf["voice"] = configured_voice
+            config.save()
         self.engine.rate = conf["rate"]
         self.engine.volume = conf["volume"]
         if self.reader.ready and state is SynthState.busy:

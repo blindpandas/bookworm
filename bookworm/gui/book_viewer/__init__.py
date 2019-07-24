@@ -5,6 +5,7 @@ import wx
 from bookworm import app
 from bookworm import config
 from bookworm import speech
+from bookworm.paths import app_path
 from bookworm.reader import EBookReader
 from bookworm.signals import reader_page_changed
 from bookworm.utils import gui_thread_safe
@@ -25,6 +26,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
 
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, -1, title, name="main_window")
+        self.setFrameIcon()
+
         self.reader = EBookReader(self)
         MenubarProvider.__init__(self)
         ToolbarProvider.__init__(self)
@@ -166,6 +169,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
             item.data["tree_id"] = entry
             if item.children:
                 self._populate_tree(item.children, entry)
+
+    def setFrameIcon(self):
+        icon_file = app_path(f"{app.name}.ico")
+        if icon_file.exists():
+            self.SetIcon(wx.Icon(str(icon_file)))
 
     def _get_text_view_margins(self):
         # XXX need to do some work here to obtain appropriate margins

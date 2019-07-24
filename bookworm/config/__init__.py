@@ -108,7 +108,7 @@ class ConfigProvider:
             profile.write()
 
     def __getitem__(self, key):
-        if key == "speech" and self.active_profile:
+        if key == "speech" and self.active_profile is not None:
             return self.active_profile[key]
         return self.config[key]
 

@@ -526,8 +526,10 @@ class MenubarProvider:
             self.reader.tts.initialize()
         elif self.reader.tts.engine.state is SynthState.busy:
             return wx.Bell()
-        self.reader.speak_current_page()
         setattr(self.reader.tts, "_requested_play", True)
+        if self.reader.tts.engine.state is SynthState.paused:
+            return self.onPauseToggle(event)
+        self.reader.speak_current_page()
 
     def onPauseToggle(self, event):
         if self.reader.tts.is_ready:
