@@ -56,7 +56,12 @@ class EBookReader(TextToSpeechProvider):
     def load(self, ebook_path):
         ebook_format = self._detect_ebook_format(ebook_path)
         if ebook_format not in self.supported_ebook_formats:
-            raise IOError(f"Unsupported ebook format {ebook_format}.")
+            self.notify_user(
+                "Unsupported Document Format",
+                "The format of the given document is not supported by Bookworm.",
+                icon=wx.ICON_WARNING
+            )
+            return
         document_cls = self.supported_ebook_formats[ebook_format]
         try:
             self.document = document_cls(filename=ebook_path)
@@ -67,7 +72,8 @@ class EBookReader(TextToSpeechProvider):
                 f"Could not open file {ebook_path}. Either the file  has been damaged during download, or it has been corrupted in some other way.",
                 icon=wx.ICON_ERROR,
             )
-            raise e
+            log.exception(f"Error opening document.\r\n{e.args}")
+            return
         self.current_book = self.document.metadata
         self.view.add_toc_tree(self.document.toc_tree)
         self.view.set_text_direction(

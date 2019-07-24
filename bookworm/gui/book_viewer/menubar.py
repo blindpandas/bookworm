@@ -559,10 +559,7 @@ class MenubarProvider:
                 "Missing File",
                 style=wx.ICON_ERROR,
             )
-        try:
-            self.reader.load(filename)
-        except:
-            return
+        self.reader.load(filename)
         if self.reader.document.is_encrypted():
             self.decrypt_opened_document()
         self.renderItem.Enable(self.reader.document.supports_rendering)

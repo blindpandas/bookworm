@@ -205,6 +205,9 @@ def freeze(c):
     """Freeze the app using pyinstaller."""
     print("Freezing the application...")
     with c.cd(str(PROJECT_ROOT / "scripts" / "builder")):
+        if all(ident not in os.environ["IAPP_VERSION"] for ident in ("a", "b", "dev")):
+            print("Turnning on python optimizations...")
+            os.environ["PYTHONOPTIMIZE"] = "2"
         c.run(f"pyinstaller Bookworm.spec -y --distpath {c['build_folder'].parent} ")
 
 

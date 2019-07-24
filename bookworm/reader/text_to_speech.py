@@ -176,7 +176,7 @@ class TextToSpeechProvider:
             utterance.add_pause(config.conf["speech"]["end_of_page_pause"])
             page_bookmark = {"type": "end_page", "current": self.current_page}
             utterance.add_bookmark(self.encode_bookmark(page_bookmark))
-            utterance.add_text(".\f")
+            utterance.add_text(",\f")
         self.tts.enqueue(utterance)
         self.tts.process_queue()
 
