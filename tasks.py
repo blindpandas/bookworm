@@ -212,7 +212,7 @@ def freeze(c):
 
 
 @task(
-    pre=(call(clean, assets=True, siteconfig=True), make_icons, install_packages, freeze),
+    pre=(clean, make_icons, install_packages, freeze),
     post=(build_docs, copy_assets, make_installer),
 )
 @make_env
