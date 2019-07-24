@@ -1,5 +1,5 @@
 # Build worker image (VM template)
-image: Visual Studio 2017
+image: Visual Studio 2015
 
 branches:
   only:
@@ -18,6 +18,7 @@ install:
 
 build_script:
     # 32-bit version
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
   - C:\Python37\python.exe -m venv .venv32
   - call ".venv32\Scripts\activate.bat"
   - py -m pip install --upgrade pip
@@ -25,6 +26,8 @@ build_script:
   - invoke build
   - deactivate
   # 64-bit version
+  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   - C:\Python37-x64\python.exe -m venv .venv64
   - call ".venv64\Scripts\activate.bat"
   - py -m pip install --upgrade pip
