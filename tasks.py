@@ -232,7 +232,7 @@ def freeze(c):
         if all(ident not in os.environ["IAPP_VERSION"] for ident in ("a", "b", "dev")):
             print("Turnning on python optimizations...")
             os.environ["PYTHONOPTIMIZE"] = "2"
-        c.run(f"pyinstaller Bookworm.spec -y --distpath {c['build_folder'].parent} ")
+        c.run(f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}")
     print("Freeze finished. Trying to copy system dlls.")
     copy_deps(c)
 
