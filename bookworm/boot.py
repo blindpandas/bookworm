@@ -4,8 +4,10 @@
 Prepares the environment for the application.
 """
 
+import sys
 import os
 import clr
+from System.IO import FileNotFoundException
 from glob import glob
 
 
@@ -25,8 +27,20 @@ _speech_assembly = glob(
 )
 
 # Add CLR assembly-references here
-clr.AddReference(os.path.abspath(_speech_assembly[0]))
-clr.AddReference("System.Globalization")
+try:
+    if not _speech_assembly:
+        raise FileNotFoundException
+    clr.AddReference(os.path.abspath(_speech_assembly[0]))
+except FileNotFoundException:
+    import wx
+    wx.SafeShowMessage(
+        "Unable To Start",
+        "Bookworm is unable to start because a key component is missing from your system.\n"
+        "Bookworm requires that the .NET Framework v4.0 or a later version is present in the target system.\n"
+        "Head over to the following link to download and install the .NET Framework v4.0:\n"
+        "https://www.microsoft.com/en-us/download/details.aspx?id=17718"
+    )
+    sys.exit(1)
 
 del _windows_root
 del _speech_assembly
