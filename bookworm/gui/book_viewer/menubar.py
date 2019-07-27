@@ -11,6 +11,7 @@ from slugify import slugify
 from bookworm import config
 from bookworm import paths
 from bookworm import app
+from bookworm.updater import check_for_updates
 from bookworm.annotator import Bookmarker
 from bookworm.concurrency import call_threaded
 from bookworm import speech
@@ -78,6 +79,7 @@ class ViewerMenuIds(enum.IntEnum):
     documentation = 801
     website = 802
     license = 803
+    check_for_updates = 810
     restart_with_debug = 804
     about = 805
 
@@ -208,6 +210,11 @@ class MenubarProvider:
             "&License",
             "View legal information about this program .",
         )
+        helpMenu.Append(
+            ViewerMenuIds.check_for_updates,
+            "&Check for updates",
+            "Check for newer versions of the program. .",
+        )
         if app.is_frozen and not app.debug:
             helpMenu.Append(
                 ViewerMenuIds.restart_with_debug,
@@ -292,6 +299,11 @@ class MenubarProvider:
             wx.EVT_MENU,
             lambda e: wx.LaunchDefaultApplication(str(paths.docs_path("license.txt"))),
             id=ViewerMenuIds.license,
+        )
+        self.Bind(
+            wx.EVT_MENU,
+            lambda e: check_for_updates(verbose=True),
+            id=ViewerMenuIds.check_for_updates,
         )
         self.Bind(wx.EVT_MENU, self.onAbout, id=ViewerMenuIds.about)
 

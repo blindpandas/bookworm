@@ -21,5 +21,6 @@ folders_to_clean:
     assets:
         - bookworm\resources\images.py
         - scripts\Bookworm*setup.exe
+        - scripts\Bookworm*update.bundle
         - scripts\builder\assets\bookworm.bmp
         - scripts\builder\assets\bookworm.ico
