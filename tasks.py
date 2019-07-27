@@ -1,17 +1,22 @@
 # coding: utf-8
 
 """
-This file contains Bookworm's build system. It uses the `invoke` package to define and run commands.
+This file contains Bookworm's build system.
+It uses the `invoke` package to define and run commands.
 """
 
-import struct
 import os
 import platform
 import shutil
+import json 
+from io import BytesIO
+from datetime import datetime
 from functools import wraps
 from glob import glob
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from zipfile import ZipFile
+from lzma import compress
 from invoke import task, call
 from invoke.exceptions import UnexpectedExit
 from PIL import Image
@@ -21,12 +26,20 @@ from mistune import markdown
 
 PROJECT_ROOT = Path.cwd()
 PACKAGE_FOLDER = PROJECT_ROOT / "bookworm"
+to_bool = lambda s: True if type(s) is str and "t" in s.lower() else False
+JS_VERSION_TEMPLATE = """
+(function($) {{
+
+  window.app_release_identifier = "Bookworm-Release-(Build-v{appveyor_build_version})";
+
+}})(jQuery);
+"""
 
 
 def _add_envars(context):
     from bookworm import app
 
-    arch = "x86" if struct.calcsize("P") == 4 else "x64"
+    arch = app.arch
     build_folder = PROJECT_ROOT / "scripts" / "builder" / "dist" / arch / "Bookworm"
     context["build_folder"] = build_folder
     os.environ.update(
@@ -43,6 +56,7 @@ def _add_envars(context):
         }
     )
     context["_envars_added"] = True
+    context["on_appveyor"] = "APPVEYOR_PROJECT_ID" in os.environ
 
 
 def make_env(func):
@@ -187,10 +201,10 @@ def clean(c, assets=False, siteconfig=False):
             folders_to_clean.extend(c["folders_to_clean"]["assets"])
         if siteconfig:
             folders_to_clean.append(".appdata")
-        glob_patterns = ((i, entry) for (i, entry) in enumerate(folders_to_clean) if "*" in entry)
-        for idx, glb in glob_patterns:
-            folders_to_clean.pop(idx)
-            folders_to_clean.extend(glob(glb))
+        glob_patterns = [(entry, glob(entry)) for entry in folders_to_clean if "*" in entry]
+        for entry, glbs in glob_patterns:
+            folders_to_clean.remove(entry)
+            folders_to_clean.extend(glbs)
         for to_remove in folders_to_clean:
             path = Path(to_remove)
             if not path.exists():
@@ -237,9 +251,68 @@ def freeze(c):
     copy_deps(c)
 
 
+@task
+@make_env
+def bundle_update(c):
+    """Bundles the frozen app for use in updates.
+    Uses zip and lzma compression.
+    """    
+    print("Preparing update bundle...")
+    from bookworm.utils import recursively_iterdir, generate_sha1hash
+
+    env = os.environ
+    frozen_dir = Path(env["IAPP_FROZEN_DIRECTORY"])
+    fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-{env['IAPP_ARCH']}-update.bundle"
+    bundle_file = PROJECT_ROOT / "scripts" / fname
+    archive_file = BytesIO()
+    with ZipFile(archive_file, "w") as archive:
+        for file in recursively_iterdir(frozen_dir):
+            archive.write(file, file.relative_to(frozen_dir))
+        archive.write(PROJECT_ROOT / "scripts" / "executables" / "bootstrap.exe", "bootstrap.exe") 
+    archive_file.seek(0)
+    data = compress(archive_file.getbuffer())
+    bundle_file.write_bytes(data)
+    print("Done preparing update bundle.")
+    c["update_bundle_sha1hash"] = generate_sha1hash(bundle_file).result()
+
+
+@task
+def update_version_info(c):
+    from bookworm import app
+
+    json_file = PROJECT_ROOT / "docs" / "current_version.json"
+    try:
+        json_info = json.loads(json_file.read_text())
+    except (ValueError, FileNotFoundError):
+        json_info = {}
+    conditions = (
+        to_bool(os.environ.get('APPVEYOR_REPO_TAG')),
+        os.environ.get("APPVEYOR_REPO_TAG_NAME", "").startswith("release")
+    )
+    if c["on_appveyor"] and not all(conditions):
+        return
+    build_version = os.environ.get("appveyor_build_version", "")
+    dl_url =(
+        "https://github.com/mush42/bookworm/releases/download/"
+        f"Bookworm-Release-(Build-v{build_version})"
+        f"/Bookworm-{app.version}-{app.arch}-update.bundle"
+    )
+    json_info.update({
+        "version": app.version,
+        "release_date": datetime.now().isoformat(),
+        f"{app.arch}_download": dl_url,
+        f"{app.arch}_sha1hash": c["update_bundle_sha1hash"],
+    })
+    json_file.write_text(json.dumps(json_info, indent=2))
+    print("Updated version information")
+    if build_version:
+        js_ver = PROJECT_ROOT / "docs" / "js" / "version_provider.js"
+        js_ver.write_text(JS_VERSION_TEMPLATE.format(appveyor_build_version=build_version))
+
+
 @task(
     pre=(clean, make_icons, install_packages, freeze),
-    post=(build_docs, copy_assets, make_installer),
+    post=(build_docs, copy_assets, make_installer, bundle_update, update_version_info)
 )
 @make_env
 def build(c):

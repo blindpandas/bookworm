@@ -1,6 +1,3 @@
-# Executables
-*.exe
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -109,10 +106,13 @@ venv.bak/
 # app specific data
 .appdata/
 
-# Generated images
+# Generated files
 bookworm/resources/images.py
 scripts/builder/assets/bookworm.bmp
 scripts/builder/assets/bookworm.ico
+scripts/Bookworm*.exe
+scripts/Bookworm*.bundle
+
 
 # OS generated files
 Thumbs.db
