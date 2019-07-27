@@ -51,7 +51,10 @@ def config_path():
 
 @merge_paths
 def logs_path():
-    path = data_path("logs")
+    if not app.is_frozen:
+        path = DATA_PATH_DEBUG / "logs"
+    else:
+        path = data_path("logs")
     if not path.exists():
         log.debug("%s path does not exist, creating..." % (path,))
         path.mkdir(parents=True, exist_ok=True)

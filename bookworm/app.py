@@ -2,10 +2,12 @@
 
 import sys
 import os
+import struct
 
 
 name = "bookworm"
-is_frozen = hasattr(sys, "frozen") and hasattr(sys, "_MEIPASS")
+is_frozen = hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS')
+arch = "x86" if struct.calcsize("P") == 4 else "x64"
 display_name = "Bookworm"
 localized_name = _("Bookworm")
 author = "Musharraf Omer"
@@ -14,6 +16,7 @@ version = "0.1b1"
 version_ex = "0.1.0.0"
 url = "https://github.com/mush42/bookworm/"
 website = "https://mush42.github.io/bookworm/"
+update_url = "http://localhost:5000/current_version.json"
 copyright = f"Copyright (c) 2019 {author}."
 debug = False
 

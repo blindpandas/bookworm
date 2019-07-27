@@ -39,6 +39,7 @@ build_script:
 
 artifacts:
   - path: scripts\Bookworm*setup.exe
+  - path: scripts\Bookworm*update.bundle
 
 deploy:
   release: "Bookworm Release (Build v$(appveyor_build_version))"
@@ -46,7 +47,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
-  artifact: /Bookworm-.*-setup\.exe/
+  artifact: "/Bookworm-.*-setup\.exe/", "/Bookworm-.*-update\.bundle/"
   draft: true
   prerelease: true
   on:

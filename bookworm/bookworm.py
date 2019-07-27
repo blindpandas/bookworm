@@ -28,9 +28,9 @@ class BookwormApp(wx.App):
     def OnInit(self):
         log.debug("Starting the application.")
         self.setupSubsystems()
-        mainFrame = BookViewerWindow(None, appinfo.localized_name)
-        self.SetTopWindow(mainFrame)
-        mainFrame.Show(True)
+        self.mainFrame = BookViewerWindow(None, appinfo.localized_name)
+        self.SetTopWindow(self.mainFrame)
+        self.mainFrame.Show(True)
         self.Bind(wx.EVT_END_SESSION, self.onEndSession)
         app_started.send(self)
         log.debug("The application has started successfully.")

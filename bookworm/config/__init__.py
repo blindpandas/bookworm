@@ -8,7 +8,11 @@ from validate import Validator, ValidateError
 from bookworm import app
 from bookworm.paths import config_path
 from bookworm.concurrency import call_threaded
+from bookworm.logger import logger
 from .spec import config_spec, builtin_voice_profiles
+
+
+log = logger.getChild(__name__)
 
 
 # The configuration singleton

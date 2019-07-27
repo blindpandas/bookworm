@@ -43,13 +43,17 @@ def gui_thread_safe(func):
     return wrapper
 
 
-@call_threaded
-def generate_sha1hash(filename):
+def _gen_sha1hash(filename):
     hasher = hashlib.sha1()
     with open(filename, "rb") as file:
         for chunk in file:
             hasher.update(chunk)
     return hasher.hexdigest()
+
+
+@call_threaded
+def generate_sha1hash(filename):
+    return _gen_sha1hash(filename)
 
 
 def search(pattern, text):
