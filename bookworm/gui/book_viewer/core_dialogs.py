@@ -241,7 +241,7 @@ class ViewPageAsImageDialog(wx.Dialog):
     def getPageImage(self):
         page = self.reader.document[self.reader.current_page]
         mat = fitz.Matrix(self.zoom_factor, self.zoom_factor)
-        pix = page.getPixmap(matrix=mat)
+        pix = page.getPixmap(matrix=mat, alpha=True)
         bmp = wx.Bitmap.FromBufferRGBA(pix.width, pix.height, pix.samples)
         size = (bmp.GetWidth(), bmp.GetHeight())
         return bmp, size
