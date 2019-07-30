@@ -169,7 +169,7 @@ def install_packages(c):
         for package in packages:
             c.run(f"pip install --upgrade {package}")
     with c.cd(str(PROJECT_ROOT)):
-        c.run("py setup.py bdist_wheel")
+        c.run("py setup.py bdist_wheel", hide="stdout")
         wheel_path = next(Path(PROJECT_ROOT / "dist").glob("*.whl"))
         c.run(f"pip install --upgrade {wheel_path}")
     print("Finished installing packages.")
@@ -273,7 +273,7 @@ def bundle_update(c):
     data = compress(archive_file.getbuffer())
     bundle_file.write_bytes(data)
     print("Done preparing update bundle.")
-    c["update_bundle_sha1hash"] = generate_sha1hash(bundle_file).result()
+    c["update_bundle_sha1hash"] = generate_sha1hash(bundle_file)
 
 
 @task
