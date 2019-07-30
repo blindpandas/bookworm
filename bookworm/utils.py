@@ -35,17 +35,24 @@ def gui_thread_safe(func):
     return wrapper
 
 
-def _gen_sha1hash(filename):
+def generate_sha1hash(content):
     hasher = hashlib.sha1()
-    with open(filename, "rb") as file:
-        for chunk in file:
-            hasher.update(chunk)
+    is_file_like = hasattr(content, "seek")
+    if not is_file_like:
+        file = open(content, "rb")
+    else:
+        content.seek(0)
+        file = content
+    for chunk in file:
+        hasher.update(chunk)
+    if not is_file_like:
+        file.close()
     return hasher.hexdigest()
 
 
 @call_threaded
-def generate_sha1hash(filename):
-    return _gen_sha1hash(filename)
+def generate_sha1hash_async(filename):
+    return generate_sha1hash(filename)
 
 
 def search(pattern, text):

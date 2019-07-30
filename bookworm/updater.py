@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import sys
 import os
 import shutil
 import zipfile
@@ -16,7 +17,7 @@ from lzma import decompress
 from bookworm import app
 from bookworm import paths
 from bookworm.concurrency import call_threaded
-from bookworm.utils import _gen_sha1hash
+from bookworm.utils import generate_sha1hash
 from bookworm.signals import app_started
 from bookworm.logger import logger
 
@@ -24,21 +25,25 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-def extract_update_bundle(bundle_filename):
+def extract_update_bundle(bundle):
     log.debug("Extracting update bundle")
+    bundle.seek(0)
     extraction_dir = paths.data_path("update", "extracted")
     if not extraction_dir.exists():
         extraction_dir.mkdir(parents=True, exist_ok=True)
     else:
         shutil.rmtree(extraction_dir)
-    with open(bundle_filename, "rb") as bundle:
-        archive_file = BytesIO(decompress(bundle.read()))
+    archive_file = BytesIO(decompress(bundle.read()))
     with zipfile.ZipFile(archive_file) as archive:
         archive.extractall(extraction_dir)
     return extraction_dir
 
 
 @app_started.connect
+def _check_for_updates_upon_startup(sender):
+    check_for_updates()
+
+
 @call_threaded
 def check_for_updates(verbose=False):
     past_update_dir = paths.data_path("update")
@@ -122,16 +127,14 @@ def perform_update(update_url, sha1hash):
         maximum=update_file_size,
         style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
     )
-    bundle = tempfile.NamedTemporaryFile()
-    log.debug(f"Downloading update bundle to {bundle.name}")
+    bundle = tempfile.SpooledTemporaryFile(max_size=1024 * 30 * 1000)
     for chunk in update_file:
         bundle.write(chunk)
         dlg.Update(bundle.tell(), "Downloading Update...")
     wx.CallAfter(dlg.Hide)
     wx.CallAfter(dlg.Destroy)
-    log.debug("Update downloaded successfully.")
-    bundle_hash = _gen_sha1hash(bundle.name)
-    if bundle_hash != sha1hash:
+    log.debug("The update bundle has been downloaded successfully.")
+    if generate_sha1hash(bundle) != sha1hash:
         log.debug("Hashes do not match.")
         bundle.close()
         msg = wx.MessageBox(
@@ -148,26 +151,23 @@ def perform_update(update_url, sha1hash):
     log.debug("Installing the update...")
     wx.CallAfter(
         wx.MessageBox,
-        "The update has been downloaded successfully, and it is ready to be installed.",
+        "The update has been downloaded successfully, and it is ready to be installed.\nClick the OK button to install it now.",
         "Download Completed",
         style=wx.ICON_INFORMATION
     )
-    extraction_dir = extract_update_bundle(bundle.name)
+    extraction_dir = extract_update_bundle(bundle)
     bundle.close()
-    execute_bootstrap(extraction_dir)
+    wx.CallAfter(execute_bootstrap, extraction_dir)
 
 
 def execute_bootstrap(extraction_dir):
     log.info("Executing bootstrap to complete update.")
     move_to = extraction_dir.parent
-    shutil.move(Path(extraction_dir.name) / "bootstrap.exe", move_to)
-    args = [f'"{os.getpid()}"', f'"{extraction_dir}"', f'"{paths.app_path()}"', sys.executable]
+    shutil.move(str(extraction_dir / "bootstrap.exe"), str(move_to))
+    args = f'"{os.getpid()}" "{extraction_dir}" "{paths.app_path()}" "{sys.executable}"'
     viewer = wx.GetApp().mainFrame
     if viewer.reader.ready:
         viewer.reader.save_current_position()
-        args[-1] += f' --filename "{viewer.reader.document.filename}"'
-    if app.debug:
-        args[-1] += " --debug"
-    args[-1] = f'"{args[-1]}"'
-    args = " ".join(args)
     win32api.ShellExecute(0, "open", str(move_to / "bootstrap.exe"), args, "", 5)
+    log.info("Bootstrap has been executed.")
+    sys.exit()
