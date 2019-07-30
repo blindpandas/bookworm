@@ -353,14 +353,10 @@ class MenubarProvider:
 
     @only_when_reader_ready
     def onGoToPage(self, event):
-        dlg = GoToPageDialog(parent=self, title="Go To Page")
-        if dlg.ShowModal() == wx.ID_OK:
-            retval = dlg.GetValue()
-            dlg.Destroy()
-            if not retval:
-                return
-            self.reader.go_to_page(retval)
-            self._last_go_to_page = retval + 1
+        with GoToPageDialog(parent=self, title="Go To Page") as dlg:
+            if dlg.ShowModal() == wx.ID_OK:
+                retval = dlg.GetValue()
+                self.reader.go_to_page(retval)
 
     @only_when_reader_ready
     def onViewRenderedAsImage(self, event):

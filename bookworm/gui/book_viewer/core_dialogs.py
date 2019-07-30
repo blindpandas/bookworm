@@ -163,13 +163,10 @@ class GoToPageDialog(SimpleDialog):
     """Go to page dialog."""
 
     def addControls(self, parent):
-        self.pageCount = len(self.parent.reader.document)
-        _last_go_to_page = getattr(
-            self.parent, "_last_go_to_page", str(self.parent.reader.current_page + 1)
-        )
-        label = wx.StaticText(parent, -1, f"Page number (of {self.pageCount}):")
+        page_count = len(self.parent.reader.document)
+        label = wx.StaticText(parent, -1, f"Page number (of {page_count}):")
         self.pageNumberCtrl = EnhancedSpinCtrl(
-            parent, -1, min=1, max=self.pageCount, value=str(_last_go_to_page)
+            parent, -1, min=1, max=page_count, value=str(self.parent.reader.current_page + 1)
         )
         self.pageNumberCtrl.SetSizerProps(expand=True)
 
