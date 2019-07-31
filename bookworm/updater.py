@@ -47,6 +47,8 @@ def _check_for_updates_upon_startup(sender):
 def parse_update_info(update_info):
     current_version = app.get_version_info()
     update_channel = current_version["pre_type"] or ""
+    if update_channel not in update_info:
+        return app.version, None, None
     upstream_version = update_info[update_channel]
     dl_url = upstream_version[f"{app.arch}_download"]
     dl_sha1hash = upstream_version[f"{app.arch}_sha1hash"]
