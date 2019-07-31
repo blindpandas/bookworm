@@ -32,9 +32,9 @@ class NavigationProvider:
                 not isinstance(event.GetEventObject(), wx.TextCtrl)
                 and key_code == wx.WXK_RETURN
             ):
-                self.reader.navigate(to="next", unit="page")
+                self.navigate_to_page(to="next")
             elif key_code == wx.WXK_BACK:
-                self.reader.navigate(to="prev", unit="page")
+                self.navigate_to_page(to="prev")
             self.callback()
         if event.GetModifiers() == wx.MOD_ALT and key_code in (
             wx.WXK_PAGEUP,
@@ -73,4 +73,14 @@ class NavigationProvider:
 
     @only_when_reader_ready
     def _text_ctrl_navigate_next(self, event):
-        self.reader.navigate(to="next", unit="page")
+        self.navigate_to_page(to="next")
+
+    def navigate_to_page(self, to):
+        rv = self.reader.navigate(to=to, unit="page")
+        if not rv:
+            if to == "prev":
+                prev = self.reader.active_section.simple_prev
+                if prev is not None and not prev.is_root:
+                    self.reader.go_to_page(prev.pager.last)
+            else:
+                self.reader.navigate(to=to, unit="section")
