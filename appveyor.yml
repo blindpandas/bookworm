@@ -52,6 +52,8 @@ on_success:
   - git config --global user.email "musharraf.omer@gmail.com"
   - git config --global user.name "mush42"
   - cmd: git checkout %APPVEYOR_REPO_BRANCH%
+  - git add docs\current_version.json
+  - git add docs\js\version_provider.js
   - git commit -m "Successful build. Automatically updating version files."
   - git push
 
