@@ -1,7 +1,7 @@
 os: Visual Studio 2015
-
 # Build worker image (VM template)
 image: Visual Studio 2015
+
 
 branches:
   only:
@@ -12,12 +12,15 @@ branches:
 
 environment:
   PY_PYTHON: 3.7-32
+  github_access_token:
+    secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
 
 
 install:
   # NSIS Paths
   # https://www.appveyor.com/docs/build-environment/#tools
   - set PATH=%PATH%;C:\Program Files (x86)\NSIS
+
 
 build_script:
     # 32-bit version
@@ -37,9 +40,21 @@ build_script:
   - pip install -r requirements-dev.txt
   - invoke build
 
+
 artifacts:
   - path: scripts\Bookworm*setup.exe
   - path: scripts\Bookworm*update.bundle
+
+
+on_success:
+  - git config --global credential.helper store
+  - ps: Add-Content "$HOME\.git-credentials" "https://$($env:github_access_token):x-oauth-basic@github.com`n"
+  - git config --global user.email "musharraf.omer@gmail.com"
+  - git config --global user.name "mush42"
+  - cmd: git checkout %APPVEYOR_REPO_BRANCH%
+  - git commit -m "Successful build. Automatically updating version files."
+  - git push
+
 
 deploy:
   release: "Bookworm Release (Build v$(appveyor_build_version))"
