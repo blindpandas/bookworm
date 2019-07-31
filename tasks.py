@@ -370,7 +370,7 @@ def update_version_info(c):
         to_bool(os.environ.get('APPVEYOR_REPO_TAG')),
         os.environ.get("APPVEYOR_REPO_TAG_NAME", "").startswith("release")
     )
-    if False: #c["on_appveyor"] and not all(conditions):
+    if c["on_appveyor"] and not all(conditions):
         return
     build_version = os.environ.get("appveyor_build_version", "")
     dl_url =(
@@ -387,7 +387,7 @@ def update_version_info(c):
     })
     json_file.write_text(json.dumps(json_info, indent=2))
     print("Updated version information")
-    if True: #build_version and not release_type:
+    if build_version and not release_type:
         # This is a final release
         js_ver = PROJECT_ROOT / "docs" / "js" / "version_provider.js"
         js_ver.write_text(JS_VERSION_TEMPLATE.format(appveyor_build_version=build_version))
