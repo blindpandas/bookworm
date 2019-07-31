@@ -5,13 +5,15 @@ This file contains Bookworm's build system.
 It uses the `invoke` package to define and run commands.
 """
 
+import sys
 import os
 import platform
 import shutil
 import json 
-from io import BytesIO
+from io import BytesIO, StringIO
 from datetime import datetime
 from functools import wraps
+from contextlib import contextmanager
 from glob import glob
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -38,6 +40,16 @@ GUIDE_HTML_TEMPLATE = """<!doctype html>
 """
 
 
+@contextmanager
+def mute_stdout():
+    _stdout = sys.stdout
+    sys.stdout = StringIO()
+    try:
+        yield
+    finally:
+        sys.stdout = _stdout
+        
+        
 def _add_envars(context):
     from bookworm import app
 
@@ -77,6 +89,7 @@ def make_env(func):
 @task(name="icons")
 def make_icons(c):
     """Rescale images and embed them in a python module."""
+    print("Rescaling images and embedding them in bookworm.resources.images.py")
     TARGET_SIZE = (24, 24)
     IMAGE_SOURCE_FOLDER = PROJECT_ROOT / "fullsize_images"
     PY_MODULE = PACKAGE_FOLDER / "resources" / "images.py"
@@ -89,13 +102,14 @@ def make_icons(c):
             fname = Path(temp) / imgfile.name
             Image.open(imgfile).resize(TARGET_SIZE).save(fname)
             append = bool(index)
-            img2py(
-                python_file=str(PY_MODULE),
-                image_file=str(fname),
-                imgName=fname.name[:-4],
-                append=append,
-                compressed=True,
-            )
+            with mute_stdout():
+                img2py(
+                    python_file=str(PY_MODULE),
+                    image_file=str(fname),
+                    imgName=fname.name[:-4],
+                    append=append,
+                    compressed=True,
+                )
         print("*" * 10 + " Done Embedding Images" + "*" * 10)
     icon_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico"
     if not icon_file.exists():
@@ -246,11 +260,14 @@ def install_packages(c):
             f"{arch}\\{pkg}" for pkg in binary_packages
         ]
         for package in packages:
-            c.run(f"pip install --upgrade {package}")
+            print(f"Installing package {package}")
+            c.run(f"pip install --upgrade {package}", hide="stdout")
     with c.cd(str(PROJECT_ROOT)):
+        print("Building Bookworm wheel.")
         c.run("py setup.py bdist_wheel", hide="stdout")
         wheel_path = next(Path(PROJECT_ROOT / "dist").glob("*.whl"))
-        c.run(f"pip install --upgrade {wheel_path}")
+        print("Installing Bookworm wheel") 
+        c.run(f"pip install --upgrade {wheel_path}", hide="stdout")
     print("Finished installing packages.")
 
 
@@ -258,8 +275,9 @@ def install_packages(c):
 @make_env
 def make_installer(c):
     """Build the NSIS installer for bookworm."""
+    print("Building installer for bookworm...")
     with c.cd(str(PROJECT_ROOT / "scripts")):
-        c.run("makensis bookworm.nsi")
+        c.run("makensis bookworm.nsi", hide="stdout")
         print("Setup File Build Completed.")
 
 
@@ -320,15 +338,15 @@ def copy_deps(c):
 @make_env
 def freeze(c):
     """Freeze the app using pyinstaller."""
+    from bookworm import app
+
     print("Freezing the application...")
     with c.cd(str(PROJECT_ROOT / "scripts" / "builder")):
-        if all(ident not in os.environ["IAPP_VERSION"] for ident in ("a", "b", "dev")):
-            print("Turnning on python optimizations...")
+        if app.get_version_info()["pre_type"] is None:
+            print("The current build is a final release. Turnning on python optimizations...")
             os.environ["PYTHONOPTIMIZE"] = "2"
-        c.run(
-            f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}"
-        )
-    print("Freeze finished. Trying to copy system dlls.")
+        c.run(f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}", hide=True)
+    print("App freezed. Trying to copy system dlls.")
     copy_deps(c)
 
 
@@ -400,7 +418,6 @@ def update_version_info(c):
 @make_env
 def build(c):
     """Freeze, package, and prepare the app for distribution."""
-    print("Starting the build process...")
 
 
 @task(name="dev", pre=(install_packages, make_icons))

@@ -49,6 +49,7 @@ artifacts:
 on_success:
   - ps: |
       if ($env:APPVEYOR_REPO_TAG_NAME -and $env:APPVEYOR_REPO_TAG_NAME.StartsWith("release-")) {
+        echo "Updating version information for this release." 
         git config --global credential.helper store
         Add-Content "$HOME\.git-credentials" "https://$($env:github_access_token):x-oauth-basic@github.com`n"
         git config --global user.email "musharraf.omer@gmail.com"
@@ -57,6 +58,7 @@ on_success:
         git add docs/js/version_provider.js
         git commit -m "Successful build. Automatically updating version files."
         git push origin "HEAD:$env:APPVEYOR_REPO_BRANCH"
+        echo "New version info has been pushed to remote."
       }
 
 
