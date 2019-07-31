@@ -54,7 +54,7 @@ on_success:
   - git add docs/current_version.json
   - git add docs/js/version_provider.js
   - git commit -m "Successful build. Automatically updating version files."
-  - git push
+  - cmd: git push origin HEAD:%APPVEYOR_REPO_BRANCH%
 
 
 deploy:

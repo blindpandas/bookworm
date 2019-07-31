@@ -387,7 +387,7 @@ def update_version_info(c):
     })
     json_file.write_text(json.dumps(json_info, indent=2))
     print("Updated version information")
-    if True: #not release_type and build_version:
+    if True: #build_version and not release_type:
         # This is a final release
         js_ver = PROJECT_ROOT / "docs" / "js" / "version_provider.js"
         js_ver.write_text(JS_VERSION_TEMPLATE.format(appveyor_build_version=build_version))
