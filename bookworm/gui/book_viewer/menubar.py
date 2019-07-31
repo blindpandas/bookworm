@@ -11,7 +11,7 @@ from slugify import slugify
 from bookworm import config
 from bookworm import paths
 from bookworm import app
-from bookworm.updater import check_for_updates
+from bookworm.otau import check_for_updates
 from bookworm.annotator import Bookmarker
 from bookworm.concurrency import call_threaded
 from bookworm import speech

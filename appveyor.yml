@@ -49,7 +49,6 @@ artifacts:
 on_success:
   - ps: |
       if ($env:APPVEYOR_REPO_TAG_NAME -and $env:APPVEYOR_REPO_TAG_NAME.StartsWith("release-")) {
-      {
         git config --global credential.helper store
         Add-Content "$HOME\.git-credentials" "https://$($env:github_access_token):x-oauth-basic@github.com`n"
         git config --global user.email "musharraf.omer@gmail.com"
