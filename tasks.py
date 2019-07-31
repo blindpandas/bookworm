@@ -390,7 +390,7 @@ def update_version_info(c):
     if build_version and not release_type:
         # This is a final release
         js_ver = PROJECT_ROOT / "docs" / "js" / "version_provider.js"
-        js_ver.write_text(JS_VERSION_TEMPLATE.format(appveyor_build_version=build_version))
+        js_ver.write_text(JS_VERSION_TEMPLATE.format(appveyor_build_version=build_version, app_version=app.version))
 
 
 @task(

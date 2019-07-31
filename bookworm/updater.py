@@ -44,6 +44,15 @@ def _check_for_updates_upon_startup(sender):
     check_for_updates()
 
 
+def parse_update_info(update_info):
+    current_version = app.get_version_info()
+    update_channel = current_version["pre_type"] or ""
+    upstream_version = update_info[update_channel]
+    dl_url = upstream_version[f"{app.arch}_download"]
+    dl_sha1hash = upstream_version[f"{app.arch}_sha1hash"]
+    return upstream_version["version"], dl_url, dl_sha1hash
+
+
 @call_threaded
 def check_for_updates(verbose=False):
     past_update_dir = paths.data_path("update")
@@ -51,7 +60,6 @@ def check_for_updates(verbose=False):
         log.info("Found previous update data. Removing...")
         shutil.rmtree(past_update_dir, ignore_errors=True)
     log.info("Checking for updates...")
-    current_version = app.version
     try:
         content = urlopen(app.update_url)
     except URLError as e:
@@ -76,7 +84,8 @@ def check_for_updates(verbose=False):
                 style=wx.ICON_WARNING
             )
         return
-    if update_info["version"] == app.version:
+    upstream_version, dl_url, dl_sha1hash = parse_update_info(update_info)
+    if upstream_version == app.version:
         log.info("No new version.")
         if verbose:
             wx.CallAfter(
@@ -90,18 +99,17 @@ def check_for_updates(verbose=False):
             )
         return
     # A new version is available
-    log.debug(f"A new version is available. Version {update_info['version']}")
+    log.debug(f"A new version is available. Version {upstream_version}")
     msg = wx.MessageBox(
         "A new update for Bookworm has been released.\n"
         "Would you like to download and install it?\n"
         f"\tInstalled Version: {app.version}\n"
-        f"\tNew Version: {update_info['version']}\n"
-        f"\tRelease Date: {update_info['release_date']}",
+        f"\tNew Version: {upstream_version}\n",
         "Update Available",
         style=wx.YES_NO|wx.ICON_INFORMATION
     )
     if msg == wx.YES:
-        perform_update(update_info[f"{app.arch}_download"], update_info[f"{app.arch}_sha1hash"])
+        perform_update(dl_url, dl_sha1hash)
 
 
 def perform_update(update_url, sha1hash):
