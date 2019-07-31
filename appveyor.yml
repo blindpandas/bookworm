@@ -23,21 +23,23 @@ install:
 
 
 build_script:
-    # 32-bit version
+  # 32-bit version
+  - ps: Write-Host "Building the 32-bit variant."
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
   - C:\Python37\python.exe -m venv .venv32
   - call ".venv32\Scripts\activate.bat"
-  - py -m pip install --upgrade pip
-  - pip install -r requirements-dev.txt
+  - py -m pip -q install --upgrade pip
+  - pip -q install -r requirements-dev.txt
   - invoke build
   - deactivate
   # 64-bit version
+  - ps: Write-Host "Building the 64-bit variant."
   - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   - C:\Python37-x64\python.exe -m venv .venv64
   - call ".venv64\Scripts\activate.bat"
-  - py -m pip install --upgrade pip
-  - pip install -r requirements-dev.txt
+  - py -m pip -q install --upgrade pip
+  - pip -q install -r requirements-dev.txt
   - invoke build
 
 
