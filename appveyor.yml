@@ -56,10 +56,11 @@ on_success:
         Add-Content "$HOME\.git-credentials" "https://$($env:github_access_token):x-oauth-basic@github.com`n"
         git config --global user.email "musharraf.omer@gmail.com"
         git config --global user.name "mush42"
+        git checkout "$env:APPVEYOR_REPO_BRANCH"
         git add docs/current_version.json
         git add docs/js/version_provider.js
         git commit -m "Successful build. Automatically updating version files."
-        git push origin "HEAD:$env:APPVEYOR_REPO_BRANCH"
+        git push
         echo "New version info has been pushed to remote."
       }
 
