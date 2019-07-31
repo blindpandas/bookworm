@@ -26,7 +26,6 @@ from mistune import markdown
 
 PROJECT_ROOT = Path.cwd()
 PACKAGE_FOLDER = PROJECT_ROOT / "bookworm"
-to_bool = lambda s: True if type(s) is str and "t" in s.lower() else False
 JS_VERSION_TEMPLATE = """
 (function($) {{
 
@@ -34,6 +33,7 @@ JS_VERSION_TEMPLATE = """
 
 }})(jQuery);
 """
+to_bool = lambda s: True if type(s) is str and "t" in s.lower() else False
 
 
 def _add_envars(context):
@@ -297,7 +297,8 @@ def update_version_info(c):
         f"Bookworm-Release-(Build-v{build_version})"
         f"/Bookworm-{app.version}-{app.arch}-update.bundle"
     )
-    json_info.update({
+    release_type = app.get_version_info()["pre_type"] or ""
+    json_info.setdefault(release_type, {}).update({
         "version": app.version,
         "release_date": datetime.now().isoformat(),
         f"{app.arch}_download": dl_url,
@@ -305,7 +306,8 @@ def update_version_info(c):
     })
     json_file.write_text(json.dumps(json_info, indent=2))
     print("Updated version information")
-    if build_version:
+    if not release_type and build_version:
+        # This is a final release
         js_ver = PROJECT_ROOT / "docs" / "js" / "version_provider.js"
         js_ver.write_text(JS_VERSION_TEMPLATE.format(appveyor_build_version=build_version))
 
