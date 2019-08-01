@@ -1,5 +1,7 @@
 # coding: utf-8
 
+"""Over the air update (OTAU) functionality."""
+
 import sys
 import os
 import shutil
@@ -29,10 +31,9 @@ def extract_update_bundle(bundle):
     log.debug("Extracting update bundle")
     bundle.seek(0)
     extraction_dir = paths.data_path("update", "extracted")
-    if not extraction_dir.exists():
-        extraction_dir.mkdir(parents=True, exist_ok=True)
-    else:
+    if extraction_dir.exists():
         shutil.rmtree(extraction_dir)
+    extraction_dir.mkdir(parents=True, exist_ok=True)
     archive_file = BytesIO(decompress(bundle.read()))
     with zipfile.ZipFile(archive_file) as archive:
         archive.extractall(extraction_dir)
@@ -48,7 +49,7 @@ def parse_update_info(update_info):
     current_version = app.get_version_info()
     update_channel = current_version["pre_type"] or ""
     if update_channel not in update_info:
-        return app.version, None, None
+        return False, None, None
     upstream_version = update_info[update_channel]
     dl_url = upstream_version[f"{app.arch}_download"]
     dl_sha1hash = upstream_version[f"{app.arch}_sha1hash"]
@@ -87,7 +88,7 @@ def check_for_updates(verbose=False):
             )
         return
     upstream_version, dl_url, dl_sha1hash = parse_update_info(update_info)
-    if upstream_version == app.version:
+    if not upstream_version or (upstream_version == app.version):
         log.info("No new version.")
         if verbose:
             wx.CallAfter(
@@ -138,9 +139,11 @@ def perform_update(update_url, sha1hash):
         style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
     )
     bundle = tempfile.SpooledTemporaryFile(max_size=1024 * 30 * 1000)
+    update_progress = lambda c, t=update_file_size: f"Downloading update. {round(c/(1024**2))} MB of {round(t/(1024**2))} MB"
     for chunk in update_file:
         bundle.write(chunk)
-        dlg.Update(bundle.tell(), "Downloading Update...")
+        downloaded = bundle.tell()
+        dlg.Update(downloaded, update_progress(downloaded))
     wx.CallAfter(dlg.Hide)
     wx.CallAfter(dlg.Destroy)
     log.debug("The update bundle has been downloaded successfully.")

@@ -60,7 +60,7 @@ on_success:
         git add docs/current_version.json
         git add docs/js/version_provider.js
         git commit -m "Successful build. Automatically updating version files."
-        git push
+        git push -u origin "HEAD:$env:APPVEYOR_REPO_BRANCH"
         echo "New version info has been pushed to remote."
       }
 
