@@ -142,7 +142,42 @@ def copy_assets(c):
     print("Done copying files.")
 
 
-@task(name="install")
+@task
+def copy_wx_catalogs(c):
+    import wx
+
+    src = Path(wx.__path__[0]) / "locale"
+    dst = PACKAGE_FOLDER / "resources" / "locale"
+    wx_langs = {fldr.name for fldr in src.iterdir() if fldr.is_dir()}
+    app_langs = {fldr.name for fldr in dst.iterdir() if fldr.is_dir()}
+    to_copy = wx_langs.intersection(app_langs)
+    for lang in to_copy:
+        c.run(f'copy "{src / lang / "LC_MESSAGES" / "wxstd.mo"}" "{dst / lang / "LC_MESSAGES"}"')
+
+@task
+@make_env
+def pygettext(c):
+    print("Generating translation catalog.")
+    domain = os.environ["IAPP_NAME"]
+    args = " ".join((
+        f"-d {domain}",
+        "-n",
+        "-p " + str(PROJECT_ROOT / "scripts")
+    ))
+    pyfiles = " ".join(f'"{file}"' for file in PACKAGE_FOLDER.rglob("*.py"))
+    c.run(f"C:\\python37\\python.exe C:\\python37\\Tools\\i18n\\pygettext.py {args} {pyfiles}")
+    print("The translation catalog has been generated. You can find it in the scripts folder ")
+
+@task
+def msgfmt(c):
+    print("Compiling .pot message catalogs to binary format.")
+    pofiles = (PACKAGE_FOLDER / "resources" / "locale").rglob("*.po")
+    for catalog in pofiles:
+        c.run(f'C:\\python37\\python.exe C:\\python37\\Tools\\i18n\\msgfmt.py "{catalog}"')
+    print("Done compiling pot files.")
+
+
+@task(name="install", pre=(msgfmt,))
 def install_packages(c):
     print("Installing packages")
     with c.cd(str(PROJECT_ROOT / "packages")):
@@ -274,3 +309,4 @@ def run_application(c, _filename=None, debug=True):
         args.append("--debug")
     print(f"Debug mode is {'on' if debug else 'off'}.")
     c.run(f"py -m bookworm {' '.join(args)}")
+

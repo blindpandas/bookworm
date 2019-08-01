@@ -60,7 +60,7 @@ def logs_path():
 
 @merge_paths
 def locale_path():
-    return app_path("resources", "locales")
+    return app_path("resources", "locale")
 
 
 @merge_paths

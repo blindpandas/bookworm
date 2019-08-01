@@ -5,6 +5,7 @@ import wx
 from bookworm import app as appinfo
 from bookworm.paths import logs_path
 from bookworm.config import setup_config
+from bookworm.i18n import setup_i18n
 from bookworm.database import init_database
 from bookworm.signals import app_started, app_shuttingdown
 from bookworm.gui.book_viewer import BookViewerWindow
@@ -19,6 +20,8 @@ class BookwormApp(wx.App):
         log.debug("Setting up application subsystems.")
         log.debug("Setting up the configuration subsystem.")
         setup_config()
+        log.debug("Setting up the internationalization subsystem.")
+        setup_i18n()
         log.debug("Initializing the database subsystem.")
         init_database()
 

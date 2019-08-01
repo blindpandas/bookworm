@@ -12,6 +12,7 @@ END_OF_SECTION_PAUSE_MAX = 9000
 config_spec = StringIO(
     f"""
 [general]
+    language = string(default="Windows")
     announce_ui_messages = boolean(default=True)
     show_file_name_as_title = boolean(default=False)
     open_with_last_position = boolean(default=True)
