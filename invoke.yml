@@ -23,5 +23,6 @@ folders_to_clean:
         - scripts\Bookworm*setup.exe
         - scripts\bookworm.pot
         - scripts\Bookworm*update.bundle
+        - scripts\release-info.json
         - scripts\builder\assets\bookworm.bmp
         - scripts\builder\assets\bookworm.ico

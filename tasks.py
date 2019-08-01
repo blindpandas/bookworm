@@ -39,7 +39,6 @@ GUIDE_HTML_TEMPLATE = """<!doctype html>
   </html>
 """
 
-
 @contextmanager
 def mute_stdout():
     _stdout = sys.stdout
@@ -70,7 +69,6 @@ def _add_envars(context):
         }
     )
     context["_envars_added"] = True
-    context["on_appveyor"] = "APPVEYOR_PROJECT_ID" in os.environ
 
 
 def make_env(func):
@@ -167,8 +165,8 @@ def copy_assets(c):
     print("Copying files...")
     license_file = c["build_folder"] / "resources" / "docs" / "license.txt"
     icon_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico"
-    c.run(f"copy {PROJECT_ROOT / 'LICENSE'} {license_file}")
-    c.run(f"copy {icon_file} {c['build_folder']}")
+    c.run(f"copy {PROJECT_ROOT / 'LICENSE'} {license_file}", hide="stdout")
+    c.run(f"copy {icon_file} {c['build_folder']}", hide="stdout")
     print("Done copying files.")
 
 
@@ -359,7 +357,7 @@ def bundle_update(c):
     Uses zip and lzma compression.
     """    
     print("Preparing update bundle...")
-    from bookworm.utils import recursively_iterdir, generate_sha1hash
+    from bookworm.utils import recursively_iterdir
 
     env = os.environ
     frozen_dir = Path(env["IAPP_FROZEN_DIRECTORY"])
@@ -374,48 +372,31 @@ def bundle_update(c):
     data = compress(archive_file.getbuffer())
     bundle_file.write_bytes(data)
     print("Done preparing update bundle.")
-    c["update_bundle_sha1hash"] = generate_sha1hash(bundle_file)
 
 
 @task
 def update_version_info(c):
     from bookworm import app
+    from bookworm.utils import generate_sha1hash
 
-    json_file = PROJECT_ROOT / "docs" / "current_version.json"
-    try:
-        json_info = json.loads(json_file.read_text())
-    except (ValueError, FileNotFoundError):
-        json_info = {}
-    conditions = (
-        to_bool(os.environ.get('APPVEYOR_REPO_TAG')),
-        os.environ.get("APPVEYOR_REPO_TAG_NAME", "").startswith("release")
-    )
-    if c["on_appveyor"] and not all(conditions):
-        return
-    build_version = os.environ.get("appveyor_build_version", "")
-    dl_url =(
-        "https://github.com/mush42/bookworm/releases/download/"
-        f"Bookworm-Release-(Build-v{build_version})"
-        f"/Bookworm-{app.version}-{app.arch}-update.bundle"
-    )
+    artifacts_folder = PROJECT_ROOT / "scripts"
+    json_file =  artifacts_folder / "release-info.json"
     release_type = app.get_version_info()["pre_type"] or ""
-    json_info.setdefault(release_type, {}).update({
-        "version": app.version,
-        "release_date": datetime.now().isoformat(),
-        f"{app.arch}_download": dl_url,
-        f"{app.arch}_sha1hash": c["update_bundle_sha1hash"],
-    })
+    json_info = {release_type: {"version": app.version}}
+    artifacts = dict(
+        installer=artifacts_folder.glob("Bookworm*setup.exe"),
+        update_bundle=artifacts_folder.glob("Bookworm*update.bundle")
+    )
+    for artifact_type, artifact_files in artifacts.items():
+        for file in artifact_files:
+            json_info[release_type][f"{file.name}.sha1hash"] = generate_sha1hash(file)
     json_file.write_text(json.dumps(json_info, indent=2))
     print("Updated version information")
-    if build_version and not release_type:
-        # This is a final release
-        js_ver = PROJECT_ROOT / "docs" / "js" / "version_provider.js"
-        js_ver.write_text(JS_VERSION_TEMPLATE.format(appveyor_build_version=build_version, app_version=app.version))
 
 
 @task(
     pre=(clean, make_icons, install_packages, freeze),
-    post=(build_docs, copy_assets, make_installer, bundle_update, update_version_info)
+    post=(build_docs, copy_assets, make_installer, bundle_update)
 )
 @make_env
 def build(c):

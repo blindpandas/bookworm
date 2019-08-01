@@ -41,27 +41,20 @@ build_script:
   - py -m pip -q install --upgrade pip
   - pip -q install -r requirements-dev.txt
   - invoke build
+  # Update the release info file
+  - invoke update-version-info
 
 
 artifacts:
   - path: scripts\Bookworm*setup.exe
   - path: scripts\Bookworm*update.bundle
+  - path: scripts\release-info.json
 
 
 on_success:
   - ps: |
       if ($env:APPVEYOR_REPO_TAG_NAME -and $env:APPVEYOR_REPO_TAG_NAME.StartsWith("release-")) {
         echo "Updating version information for this release." 
-        git config --global credential.helper store
-        Add-Content "$HOME\.git-credentials" "https://$($env:github_access_token):x-oauth-basic@github.com`n"
-        git config --global user.email "musharraf.omer@gmail.com"
-        git config --global user.name "mush42"
-        git checkout "$env:APPVEYOR_REPO_BRANCH"
-        git add docs/current_version.json
-        git add docs/js/version_provider.js
-        git commit -m "Successful build. Automatically updating version files."
-        git push -u origin "HEAD:$env:APPVEYOR_REPO_BRANCH"
-        echo "New version info has been pushed to remote."
       }
 
 
@@ -71,7 +64,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
-  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/
+  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, release-info.json
   draft: true
   prerelease: true
   on:
