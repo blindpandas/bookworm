@@ -2,104 +2,79 @@ import ctypes
 import os
 import gettext
 import locale
-
-"""We should move to a dotnet based implementation."""
-"""I18n support is versatile, and we depend on it anyway."""
-
-# a few Windows locale constants
-LOCALE_SLANGUAGE = 0x2
-LOCALE_SLANGDISPLAYNAME = 0x6F
-BUFFSIZE = 1024
-
-
-def locale_name_to_LCID(locale_name):
-    locale_name = locale.normalize(locale_name)
-    if "." in locale_name:
-        locale_name = locale_name.split(".")[0]
-    func_locale_nameToLCID = getattr(ctypes.windll.kernel32, "localeNameToLCID", None)
-    if func_locale_nameToLCID is not None:
-        locale_name = locale_name.replace("_", "-")
-        LCID = func_locale_nameToLCID(locale_name, 0)
-    else:
-        LCList = [
-            x[0] for x in locale.windows_locale.items() if x[1] == locale_name
-        ]
-        if len(LCList) > 0:
-            LCID = LCList[0]
-        else:
-            LCID = 0
-    return LCID
+from collections import OrderedDict
+from contextlib import suppress
+from pathlib import Path
+from System.Globalization import CultureInfo, CultureNotFoundException
+from bookworm import app
+from bookworm import paths
+from bookworm.logger import logger
 
 
-def language_description(language):
-    """Determine the label of the language"""
-    LCID = locale_name_to_LCID(language)
-    if LCID == 0:
-        return None
-    buffer = ctypes.create_unicode_buffer(BUFFSIZE)
-    res = 0
-    if "_" not in language:
-        res = ctypes.windll.kernel32.GetLocaleInfoW(
-            LCID, LOCALE_SLANGDISPLAYNAME, buffer, BUFFSIZE
-        )
-    if res == 0:
-        res = ctypes.windll.kernel32.GetLocaleInfoW(
-            LCID, LOCALE_SLANGUAGE, buffer, BUFFSIZE
-        )
-    return buffer.value
+log = logger.getChild(__name__)
+UNKNOWN_CULTURE_LCID = 4096
 
 
-def available_languages(locale_dir, app_name):
+class LanguageInfo:
+    __slots__ = ["language", "culture"]
+
+    def __init__(self, language):
+        try:
+            culture = CultureInfo.GetCultureInfoByIetfLanguageTag(language)
+            self.culture = culture if culture.LCID != UNKNOWN_CULTURE_LCID else culture.Parent
+            self.language = self.culture.IetfLanguageTag
+        except CultureNotFoundException:
+            raise ValueError(f"Invalid language {language}.")
+
+    def __repr__(self):
+        return f'LanguageInfo(language="{self.language}")'
+
+    @property
+    def LCID(self):
+        return self.culture.LCID
+
+    @property
+    def description(self):
+        return self.culture.DisplayName, self.culture.NativeName
+
+
+def get_available_languages():
     """List the translations available from a directory"""
-    dirs = [i for i in os.listdir(locale_dir) if not i.startswith(".")]
-    langs = sorted(
-        ["en"]
-        + [
-            i
-            for i in dirs
-            if os.path.isfile(
-                os.path.join(locale_dir, "%s/LC_MESSAGES/%s.mo" % (i, app_name))
-            )
-        ]
-    )
-    langs = set(langs)
-    result = dict()
-    for l in langs:
-        result[l] = dict(LCID=locale_name_to_LCID(l))
-        description = language_description(l)
-        result[l]["language"] = description if description else l
-    if "Windows" not in result:
-        result["Windows"] = dict(language="User default, Windows")
-    return result
+    folders = [item for item in Path(paths.locale_path()).iterdir() if item.is_dir()]
+    langs = OrderedDict(en=LanguageInfo("en"))
+    for entry in folders:
+        try:
+            if not entry.joinpath(f"LC_MESSAGES/{app.name}.mo").is_file():
+                continue
+            langinfo = LanguageInfo(entry.name)
+            langs[langinfo.language] = langinfo
+        except ValueError:
+            continue
+    current = None
+    for lang in (CultureInfo.CurrentUICulture, CultureInfo.CurrentUICulture.Parent):
+        if lang.IetfLanguageTag in langs:
+            current = lang
+    if current is not None:
+        langs["Windows"] = langs[current.IetfLanguageTag]
+    return langs
 
 
-def set_active_language(app_name, locale_dir, lang):
-    try:
-        if lang == "Windows":
-            LCID = ctypes.windll.kernel32.GetUserDefaultUILanguage()
-            lang = locale.windows_locale[LCID]
-            translation = gettext.translation(
-                app_name, localedir=locale_dir, languages=[lang]
-            )
-            translation.install(True, names=["ngettext"])
-        else:
-            translation = gettext.translation(
-                app_name, localedir=locale_dir, languages=[lang]
-            )
-            translation.install(True, names=["ngettext"])
-            locale_changed = False
-            try:
-                locale.setlocale(locale.LC_ALL, lang)
+def set_active_language(language):
+    langinfo = get_available_languages().get(language)
+    if langinfo is None:
+        raise ValueError("LanguageInfo is not available.")
+    lang =  langinfo.language.replace("-", "_")
+    translation = gettext.translation(app.name, localedir=paths.locale_path(), languages=[language,], fallback=True)
+    translation.install(names=["ngettext"])
+    locale_changed = False
+    with suppress(Exception):
+        locale.setlocale(locale.LC_ALL, lang)
+        locale_changed = True
+    if not locale_changed:
+        if "_" in lang:
+            with suppress(Exception):
+                locale.setlocale(locale.LC_ALL, lang.split("_")[0])
                 locale_changed = True
-            except:
-                pass
-            if not locale_changed and "_" in lang:
-                try:
-                    locale.setlocale(locale.LC_ALL, lang.split("_")[0])
-                except:
-                    pass
-            LCID = locale_name_to_LCID(lang)
-            ctypes.windll.kernel32.SetThreadLocale(LCID)
-            return lang
-    except IOError:
-        gettext.install(app_name, names=["ngettext"])
+    if locale_changed:
+        ctypes.windll.kernel32.SetThreadLocale(langinfo.LCID)
+    app.current_language = lang

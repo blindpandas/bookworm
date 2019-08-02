@@ -170,11 +170,11 @@ def pygettext(c):
 
 @task
 def msgfmt(c):
-    print("Compiling .pot message catalogs to binary format.")
+    print("Compiling .po message catalogs to binary format.")
     pofiles = (PACKAGE_FOLDER / "resources" / "locale").rglob("*.po")
     for catalog in pofiles:
         c.run(f'C:\\python37\\python.exe C:\\python37\\Tools\\i18n\\msgfmt.py "{catalog}"')
-    print("Done compiling pot files.")
+    print("Done compiling message catalogs files.")
 
 
 @task(name="install", pre=(msgfmt,))

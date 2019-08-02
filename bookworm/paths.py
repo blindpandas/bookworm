@@ -60,8 +60,9 @@ def logs_path():
 
 @merge_paths
 def locale_path():
-    return app_path("resources", "locale")
-
+    if app.is_frozen:
+        return app_path("resources", "locale")
+    return Path(app.__file__).parent / "resources" / "locale"
 
 @merge_paths
 def db_path():
