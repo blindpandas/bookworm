@@ -1,5 +1,6 @@
 -r requirements.txt
 
+babel==2.7.0
 black==19.3b0
 invoke==1.2.0
 Pillow==6.1.0

@@ -21,6 +21,16 @@ from mistune import markdown
 
 PROJECT_ROOT = Path.cwd()
 PACKAGE_FOLDER = PROJECT_ROOT / "bookworm"
+GUIDE_HTML_TEMPLATE = """<!doctype html>
+  <html lang="{lang}">
+  <head>
+  <title>{title}</title>
+  </head>
+  <body>
+  {content}
+  </body>
+  </html>
+"""
 
 
 def _add_envars(context):
@@ -108,26 +118,21 @@ def format_code(c):
 def build_docs(c):
     """Build the end-user documentation."""
     print("Building documentations")
-    md = PROJECT_ROOT / "docs" / "bookworm_user_guide.md"
-    html = c["build_folder"] / "resources" / "docs" / "bookworm.html"
-    html.parent.mkdir(parents=True, exist_ok=True)
-    content = md.read_text(encoding="utf8")
-    content = f"# Bookworm v{os.environ['IAPP_VERSION']} User Guide\r\r{content}"
-    text_md = markdown(content, escape=False)
-    html.write_text(
-        f"""
-        <!doctype html>
-        <html>
-        <head>
-        <title>Bookworm v{os.environ['IAPP_VERSION']} User Guide</title>
-        </head>
-        <body>
-        {text_md}
-        </body>
-        </html>
-    """
-    )
-    print("Done building the documentations.")
+    docs_src = PROJECT_ROOT / "docs" / "userguides"
+    for folder in [fd for fd in docs_src.iterdir() if fd.is_dir()]:
+        lang = folder.name
+        md = folder / "bookworm.md"
+        html = c["build_folder"] / "resources" / "docs" / lang / "bookworm.html"
+        html.parent.mkdir(parents=True, exist_ok=True)
+        content_md = md.read_text(encoding="utf8")
+        content = markdown(content_md, escape=False)
+        page_title = content_md.splitlines()[0].lstrip("#")
+        html.write_text(GUIDE_HTML_TEMPLATE.format(
+            lang=lang,
+            title=page_title.strip(),
+            content=content,
+        ))
+        print("Done building the documentations.")
 
 
 @task
@@ -152,32 +157,68 @@ def copy_wx_catalogs(c):
     app_langs = {fldr.name for fldr in dst.iterdir() if fldr.is_dir()}
     to_copy = wx_langs.intersection(app_langs)
     for lang in to_copy:
-        c.run(f'copy "{src / lang / "LC_MESSAGES" / "wxstd.mo"}" "{dst / lang / "LC_MESSAGES"}"')
+        c.run(f'copy "{src / lang / "LC_MESSAGES" / "wxstd.mo"}" "{dst / lang / "LC_MESSAGES"}"', hide="stdout")
+
 
 @task
 @make_env
-def pygettext(c):
-    print("Generating translation catalog.")
-    domain = os.environ["IAPP_NAME"]
+def extract_msgs(c):
+    print("Generating translation catalog template..")
+    name = os.environ["IAPP_NAME"]
+    author = os.environ["IAPP_AUTHOR"]
     args = " ".join((
-        f"-d {domain}",
-        "-n",
-        "-p " + str(PROJECT_ROOT / "scripts")
+        f'-o "{str(PROJECT_ROOT / "scripts" / name)}.pot"',
+        '-c "Translators:"',
+        '--msgid-bugs-address "ibnomer2011@hotmail.com"',
+        f'--copyright-holder="{author}"'
     ))
-    pyfiles = " ".join(f'"{file}"' for file in PACKAGE_FOLDER.rglob("*.py"))
-    c.run(f"C:\\python37\\python.exe C:\\python37\\Tools\\i18n\\pygettext.py {args} {pyfiles}")
+    c.run(f"pybabel extract {args} bookworm", hide="stdout")
     print("The translation catalog has been generated. You can find it in the scripts folder ")
 
 @task
-def msgfmt(c):
+@make_env
+def compile_msgs(c):
     print("Compiling .po message catalogs to binary format.")
-    pofiles = (PACKAGE_FOLDER / "resources" / "locale").rglob("*.po")
-    for catalog in pofiles:
-        c.run(f'C:\\python37\\python.exe C:\\python37\\Tools\\i18n\\msgfmt.py "{catalog}"')
-    print("Done compiling message catalogs files.")
+    domain = os.environ["IAPP_NAME"]
+    locale_dir = (PACKAGE_FOLDER / "resources" / "locale")
+    if list(locale_dir.rglob("*.po")):
+        c.run(f'pybabel compile -D {domain} -d "{locale_dir}"', hide="stdout")
+        print("Done compiling message catalogs files.")
+    else:
+        print("No message catalogs found.")
 
 
-@task(name="install", pre=(msgfmt,))
+@task(pre=(extract_msgs,))
+@make_env
+def update_msgs(c):
+    print("Updating .po message catalogs with latest messages.")
+    domain = os.environ["IAPP_NAME"]
+    locale_dir = (PACKAGE_FOLDER / "resources" / "locale")
+    potfile = PROJECT_ROOT / "scripts" / f"{domain}.pot"
+    if list(locale_dir.rglob("*.po")):
+        c.run(
+            f'pybabel update -i "{potfile}" -D {domain} '
+            f'-d "{locale_dir}" --ignore-obsolete',
+            hide="stdout"
+        )
+        print("Done updating message catalogs files.")
+    else:
+        print("No message catalogs found.")
+
+
+@task(pre=(extract_msgs,))
+def init_lang(c, lang):
+    from bookworm import app
+
+    print(f"Creating a language catalog for language '{lang}'...")
+    potfile = PROJECT_ROOT / "scripts" / f"{app.name}.pot"
+    locale_dir = (PACKAGE_FOLDER / "resources" / "locale")
+    c.run(
+        f'pybabel init -D {app.name} -i "{potfile}" '
+        f'-d "{locale_dir}" --locale={lang}',
+        hide='stdout'
+    )
+@task(name="install", pre=(compile_msgs, copy_wx_catalogs,))
 def install_packages(c):
     print("Installing packages")
     with c.cd(str(PROJECT_ROOT / "packages")):

@@ -5,6 +5,7 @@ import wx.lib.sized_controls as sc
 from enum import IntEnum, auto
 from bookworm import app
 from bookworm import config
+from bookworm.i18n import get_available_languages, set_active_language
 from bookworm.speech.engine import SpeechEngine
 from bookworm.signals import config_updated
 from bookworm.resources import images
@@ -18,7 +19,6 @@ from .components import SimpleDialog, EnhancedSpinCtrl
 
 
 log = logger.getChild(__name__)
-
 DEFAULT_STEP_SIZE = 5
 
 
@@ -62,43 +62,74 @@ class GeneralPanel(SettingsPanel):
     config_section = "general"
 
     def addControls(self):
-        UIBox = sc.SizedStaticBox(self, -1, "User Interface")
+        # Translators: the title of a group of controls in the
+        # general settings page related to the UI
+        UIBox = sc.SizedStaticBox(self, -1, _("User Interface"))
         UIBox.SetSizerProps(expand=True)
+        # Translators: the label of a combobox containing display languages.
+        wx.StaticText(UIBox, -1, _("Display Language:"))
+        self.languageChoice = wx.Choice(UIBox, -1, style=wx.CB_SORT)
+        self.languageChoice.SetSizerProps(expand=True)
         wx.CheckBox(
             UIBox,
             -1,
-            "Speak user interface messages",
+            # Translators: the label of a checkbox
+            _("Speak user interface messages"),
             name="general.announce_ui_messages",
         )
         wx.CheckBox(
             UIBox,
             -1,
-            "Open recently opened books from the last position",
+            # Translators: the label of a checkbox
+            _("Open recently opened books from the last position"),
             name="general.open_with_last_position",
         )
         wx.CheckBox(
             UIBox,
             -1,
-            "Use file name instead of book title",
+            # Translators: the label of a checkbox
+            _("Use file name instead of book title"),
             name="general.show_file_name_as_title",
         )
-        miscBox = sc.SizedStaticBox(self, -1, "Miscellaneous")
+        # Translators: the title of a group of controls shown in the
+        # general settings page related to miscellaneous settings
+        miscBox = sc.SizedStaticBox(self, -1, _("Miscellaneous"))
         miscBox.SetSizerProps(expand=True)
         wx.CheckBox(
-            miscBox, -1, "Play pagination sound", name="general.play_pagination_sound"
+            # Translators: the label of a checkbox
+            miscBox, -1, _("Play pagination sound"), name="general.play_pagination_sound"
         )
         wx.CheckBox(
             miscBox,
             -1,
-            "Play a sound when the current page contains notes",
+            # Translators: the label of a checkbox
+            _("Play a sound when the current page contains notes"),
             name="general.play_page_note_sound",
         )
         wx.CheckBox(
             miscBox,
             -1,
-            "Highlight bookmarked positions",
+            # Translators: the label of a checkbox
+            _("Highlight bookmarked positions"),
             name="general.highlight_bookmarked_positions",
         )
+        langobjs = get_available_languages().values()
+        languages = set((lang.language, lang.description[0]) for lang in langobjs)
+        for ident, label in languages:
+           self.languageChoice.Append(label, ident)
+        self.languageChoice.SetStringSelection(app.current_language.description[0])
+
+    def reconcile(self, strategy=ReconciliationStrategies.load):
+        if strategy is ReconciliationStrategies.save:
+            configured_lang = self.config["language"]
+            selection = self.languageChoice.GetSelection()
+            if selection == wx.NOT_FOUND:
+                return
+            selected_lang = self.languageChoice.GetClientData(selection)
+            self.config["language"] = selected_lang
+            if selected_lang != configured_lang:
+                set_active_language(selected_lang)
+        super().reconcile(strategy=strategy)
 
 
 class SpeechPanel(SettingsPanel):
@@ -107,29 +138,39 @@ class SpeechPanel(SettingsPanel):
     def addControls(self):
         self.voices = SpeechEngine().get_voices()
 
-        voiceBox = sc.SizedStaticBox(self, -1, "Voice")
+        # Translators: the label of a group of controls in the
+        # speech settings page related to voice selection
+        voiceBox = sc.SizedStaticBox(self, -1, _("Voice"))
         voiceBox.SetSizerType("form")
         voiceBox.SetSizerProps(expand=True)
-        wx.StaticText(voiceBox, -1, "Select Voice:")
+        # Translators: the label of a combobox containing a list of tts voices
+        wx.StaticText(voiceBox, -1, _("Select Voice:"))
         self.voice = wx.Choice(voiceBox, -1, choices=[v.desc for v in self.voices])
-        wx.StaticText(voiceBox, -1, "Speech Rate:")
+        # Translators: the label of the speech rate slider
+        wx.StaticText(voiceBox, -1, _("Speech Rate:"))
         rt = wx.Slider(voiceBox, -1, minValue=0, maxValue=100, name="speech.rate")
         rt.SetPageSize(DEFAULT_STEP_SIZE)
-        wx.StaticText(voiceBox, -1, "Volume:")
+        # Translators: the label of the speech volume slider
+        wx.StaticText(voiceBox, -1, _("Speech Volume:"))
         vol = wx.Slider(voiceBox, -1, minValue=0, maxValue=100, name="speech.volume")
         vol.SetPageSize(DEFAULT_STEP_SIZE)
-        pausesBox = sc.SizedStaticBox(self, -1, "Pauses")
+        # Translators: the label of a group of controls in the speech
+        # settings page related to speech pauses
+        pausesBox = sc.SizedStaticBox(self, -1, _("Pauses"))
         pausesBox.SetSizerType("form")
         pausesBox.SetSizerProps(expand=True)
-        wx.StaticText(pausesBox, -1, "Additional Pause At Sentence End (Ms)")
+        # Translators: the label of an edit field
+        wx.StaticText(pausesBox, -1, _("Additional Pause At Sentence End (Ms)"))
         sp = EnhancedSpinCtrl(
             pausesBox, -1, min=0, max=PARAGRAPH_PAUSE_MAX, name="speech.sentence_pause"
         )
-        wx.StaticText(pausesBox, -1, "Additional Pause At Paragraph End (Ms)")
+        # Translators: the label of an edit field
+        wx.StaticText(pausesBox, -1, _("Additional Pause At Paragraph End (Ms)"))
         pp = EnhancedSpinCtrl(
             pausesBox, -1, min=0, max=PARAGRAPH_PAUSE_MAX, name="speech.paragraph_pause"
         )
-        wx.StaticText(pausesBox, -1, "End of Page Pause (ms)")
+        # Translators: the label of an edit field
+        wx.StaticText(pausesBox, -1, _("End of Page Pause (ms)"))
         eop = EnhancedSpinCtrl(
             pausesBox,
             -1,
@@ -137,7 +178,8 @@ class SpeechPanel(SettingsPanel):
             max=END_OF_PAGE_PAUSE_MAX,
             name="speech.end_of_page_pause",
         )
-        wx.StaticText(pausesBox, -1, "End of Section Pause (ms)")
+        # Translators: the label of an edit field
+        wx.StaticText(pausesBox, -1, _("End of Section Pause (ms)"))
         eos = EnhancedSpinCtrl(
             pausesBox,
             -1,
@@ -165,39 +207,53 @@ class ReadingPanel(SettingsPanel):
     config_section = "reading"
 
     def addControls(self):
+        # Translators: the title of a group of radio buttons in the reading page
+        # in the application settings related to how to read.
         self.readingMode = wx.RadioBox(
             self,
             -1,
-            "When Pressing Play:",
+            _("When Pressing Play:"),
             majorDimension=1,
             style=wx.RA_SPECIFY_COLS,
             choices=[
-                "Read the entire book",
-                "Read the current section",
-                "Read the current page",
+                # Translators: the label of a radio button
+                _("Read the entire book"),
+                # Translators: the label of a radio button
+                _("Read the current section"),
+                # Translators: the label of a radio button
+                _("Read the current page"),
             ],
         )
+        # Translators: the title of a group of radio buttons in the reading page
+        # in the application settings related to where to start reading from.
         self.reading_pos = wx.RadioBox(
             self,
             -1,
-            "Start reading from:",
+            _("Start reading from:"),
             majorDimension=1,
             style=wx.RA_SPECIFY_COLS,
-            choices=["Cursor position", "Beginning of page"],
+            # Translators: the label of a radio button
+            choices=[_("Cursor position"), _("Beginning of page")],
         )
-        miscBox = sc.SizedStaticBox(self, -1, "During Reading Aloud")
+        # Translators: the label of a group of controls in the reading page
+        # of the settings related to behavior during reading  aloud
+        miscBox = sc.SizedStaticBox(self, -1, _("During Reading Aloud"))
         miscBox.SetSizerProps(expand=True)
-        wx.CheckBox(miscBox, -1, "Speak page number", name="reading.speak_page_number")
+        # Translators: the label of a checkbox
+        wx.CheckBox(miscBox, -1, _("Speak page number"), name="reading.speak_page_number")
+        # Translators: the label of a checkbox
         wx.CheckBox(
-            miscBox, -1, "Highlight spoken text", name="reading.highlight_spoken_text"
+            miscBox, -1, _("Highlight spoken text"), name="reading.highlight_spoken_text"
         )
         wx.CheckBox(
-            miscBox, -1, "Select spoken text", name="reading.select_spoken_text"
+            # Translators: the label of a checkbox
+            miscBox, -1, _("Select spoken text"), name="reading.select_spoken_text"
         )
         wx.CheckBox(
             miscBox,
             -1,
-            "Play end of section sound",
+            # Translators: the label of a checkbox
+            _("Play end of section sound"),
             name="reading.play_end_of_section_sound",
         )
 
@@ -232,9 +288,12 @@ class PreferencesDialog(SimpleDialog):
         readingPage = ReadingPanel(self.tabs)
 
         # Add tabs
-        self.tabs.AddPage(generalPage, "General", select=True, imageId=0)
-        self.tabs.AddPage(speechPage, "Speech", imageId=1)
-        self.tabs.AddPage(readingPage, "Reading", imageId=2)
+        # Translators: the label of a page in the settings dialog
+        self.tabs.AddPage(generalPage, _("General"), select=True, imageId=0)
+        # Translators: the label of a page in the settings dialog
+        self.tabs.AddPage(speechPage, _("Speech"), imageId=1)
+        # Translators: the label of a page in the settings dialog
+        self.tabs.AddPage(readingPage, _("Reading"), imageId=2)
 
         # Finalize
         self.SetButtonSizer(
