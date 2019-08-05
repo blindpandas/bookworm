@@ -39,21 +39,22 @@ from .annotation_dialogs import (
 log = logger.getChild(__name__)
 
 # About Message
-ABOUT_MSG = f"""
-{app.localized_name}
-Version: {app.version}
-Website: {app.website}
+# Translators: the content of the about message
+ABOUT_MSG = _("""
+{name}
+Version: {version}
+Website: {website}
 
-{app.localized_name} is an ACCESSIBLEebook reader that enables blind and visually impaired individuals to read e-books in an easy, accessible, and hassle-free manor. It is being developed by {app.author}.
+{name} is an accessible e-book reader that enables blind and visually impaired individuals to read e-books in an easy, accessible, and hassle-free manor. It is being developed by {author}.
 
-{app.copyright}
+{copyright}
 This software is offered to you under the terms of The MIT license.
 You can view the license text from the help menu.
 
 As a blind developer, my responsibility is to develop applications that provide independence for me, and for my fellow blind friends allover the world. So, if you've found Bookworm useful in any way, please help me in making Bookworm better for you and for others. At this initial stage, I want you to tell me about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
 
-To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: ({app.website}). You can also follow me, {app.author}, at (@mush42) on Twitter
-"""
+To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: ({website}). You can also follow me, {author}, at (@mush42) on Twitter
+""").format(**app.__dict__)
 
 
 class BookRelatedMenuIds(enum.IntEnum):
