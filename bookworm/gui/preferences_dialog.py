@@ -118,10 +118,10 @@ class GeneralPanel(SettingsPanel):
             name="general.highlight_bookmarked_positions",
         )
         langobjs = get_available_languages().values()
-        languages = set((lang.language, lang.description[0]) for lang in langobjs)
+        languages = set((lang.language, lang.description) for lang in langobjs)
         for ident, label in languages:
             self.languageChoice.Append(label, ident)
-        self.languageChoice.SetStringSelection(app.current_language.description[0])
+        self.languageChoice.SetStringSelection(app.current_language.description)
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
         if strategy is ReconciliationStrategies.save:
@@ -130,8 +130,9 @@ class GeneralPanel(SettingsPanel):
             if selection == wx.NOT_FOUND:
                 return
             selected_lang = self.languageChoice.GetClientData(selection)
-            self.config["language"] = selected_lang
             if selected_lang != configured_lang:
+                self.config["language"] = selected_lang
+                config.save()
                 set_active_language(selected_lang)
                 msg = wx.MessageBox(
                     # Translators: the content of a message asking the user to restart

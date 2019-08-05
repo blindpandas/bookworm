@@ -46,13 +46,20 @@ class LanguageInfo:
     def pylang(self):
         return self.language.replace("-", "_")
 
-    @property
-    def description(self):
+    def get_display_info(self):
         return (
             self.culture.DisplayName,
             self.culture.NativeName,
             self.culture.EnglishName,
         )
+
+    @property
+    def description(self):
+        info = self.get_display_info()
+        desc = info[1]
+        if info[1] != info[2]:
+            desc += f" ({info[2]})"
+        return  desc
 
 
 def get_available_languages():
@@ -110,6 +117,10 @@ def set_active_language(language):
         app.current_language = langinfo
     except IOError:
         log.error(f"Translation catalog for language {lang} was not found.")
+        invariant_culture = CultureInfo.InvariantCulture
+        CultureInfo.CurrentUICulture = invariant_culture
+        CultureInfo.DefaultThreadCurrentUICulture = invariant_culture
+        ctypes.windll.kernel32.SetThreadLocale(invariant_culture.LCID)
         app.current_language = get_available_languages()["default"]
 
 

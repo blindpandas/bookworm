@@ -756,7 +756,7 @@ class MenubarProvider:
         wx.LaunchDefaultApplication(str(docs))
 
     def populate_recent_file_list(self):
-        for item, _, filename in self._recent_files_data:
+        for item, _nop, filename in self._recent_files_data:
             self.recentFilesMenu.Delete(item)
         self._recent_files_data.clear()
         recent_files = config.conf["history"]["recently_opened"]

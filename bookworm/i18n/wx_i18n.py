@@ -11,9 +11,9 @@ log = logger.getChild(__name__)
 
 def set_wx_language(lang):
     log.debug(f"Setting wx locale to {lang}.")
-    if app.is_frozen:
-        wx_locale.AddCatalogLookupPathPrefix(paths.locale_path())
     wx_locale = wx.Locale()
+    if app.is_frozen:
+        wx_locale.AddCatalogLookupPathPrefix(str(paths.locale_path()))
     wx_lang = wx_locale.FindLanguageInfo(lang)
     if not wx_lang and "_" in lang:
         wx_lang = wx_locale.FindLanguageInfo(lang.split("_")[0])

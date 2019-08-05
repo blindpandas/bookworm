@@ -6,7 +6,7 @@ image: Visual Studio 2015
 branches:
   only:
     - master
-    - /dev-.*/
+    - /dev.*/
     - /release-.*/
 
 

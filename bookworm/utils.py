@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import sys
+import os
 import wx
 import hashlib
 from functools import wraps
