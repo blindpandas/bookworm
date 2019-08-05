@@ -16,7 +16,7 @@ from bookworm.concurrency import call_threaded
 from bookworm import speech
 from bookworm.speech.enumerations import SynthState
 from bookworm.reader import EBookReader
-from bookworm.utils import cached_property, gui_thread_safe
+from bookworm.utils import restart_application, cached_property, gui_thread_safe
 from bookworm.logger import logger
 from .decorators import only_when_reader_ready
 from ..preferences_dialog import PreferencesDialog
@@ -101,118 +101,195 @@ class MenubarProvider:
 
         # add items to the menu
         # File menu
-        fileMenu.Append(wx.ID_OPEN)
+        # Translators: the label of an ietm in the application menubar
+        fileMenu.Append(wx.ID_OPEN, _("Open") + "...\tCtrl-O")
         fileMenu.AppendSeparator()
-        fileMenu.Append(wx.ID_SAVEAS, "&Save As Plain Text...")
+        # Translators: the label of an ietm in the application menubar
+        fileMenu.Append(wx.ID_SAVEAS, _("&Save As Plain Text...") + "...\tCtrl+S")
         fileMenu.AppendSeparator()
         fileMenu.Append(
             BookRelatedMenuIds.closeCurrentFile,
-            "&Close Current Book\tCtrl-W",
-            "Close current file",
+            # Translators: the label of an ietm in the application menubar
+            _("&Close Current Book") + "\tCtrl-W",
+            # Translators: the help text of an ietm in the application menubar
+            _("Close the currently open e-book")
         )
         fileMenu.AppendSeparator()
         fileMenu.AppendSubMenu(
             self.recentFilesMenu,
-            "&Recent Books",
-            "Opens a list of recently opened books.",
+            # Translators: the label of an ietm in the application menubar
+            _("&Recent Books"),
+            # Translators: the help text of an ietm in the application menubar
+            _("Opens a list of recently opened books.")
         )
         self.recentFilesMenu.Append(
-            wx.ID_CLEAR, "Clear list", "Clear the recent books list."
+            wx.ID_CLEAR,
+            # Translators: the label of an ietm in the application menubar
+            _("Clear list"),
+            # Translators: the help text of an ietm in the application menubar
+            _("Clear the recent books list.")
         )
         fileMenu.AppendSeparator()
-        fileMenu.Append(wx.ID_EXIT)
+        # Translators: the label of an ietm in the application menubar
+        fileMenu.Append(wx.ID_EXIT, _("Exit"))
         # Tools menu
         toolsMenu.Append(
-            BookRelatedMenuIds.goToPage, "&Go To Page...\tCtrl-g", "Go to page"
+            BookRelatedMenuIds.goToPage,
+            # Translators: the label of an ietm in the application menubar
+            _("&Go To Page") + "...\tCtrl-G",
+            # Translators: the help text of an ietm in the application menubar
+            _("Go to page")
         )
-        toolsMenu.Append(wx.ID_FIND, "&Find in Book...\tCtrl-F", "Search this book.")
         toolsMenu.Append(
-            BookRelatedMenuIds.findNext, "&Find &Next...\tF3", "Find next occurrence."
+            wx.ID_FIND,
+            # Translators: the label of an ietm in the application menubar
+            _("&Find in Book") + "...\tCtrl-F",
+            # Translators: the help text of an ietm in the application menubar
+            _("Search this book.")
+        )
+        toolsMenu.Append(
+            BookRelatedMenuIds.findNext,
+            # Translators: the label of an ietm in the application menubar
+            _("&Find &Next") + "\tF3",
+            # Translators: the help text of an ietm in the application menubar
+            _("Find next occurrence.")
         )
         toolsMenu.Append(
             BookRelatedMenuIds.findPrev,
-            "&Find &Previous...\tShift-F3",
-            "Find previous occurrence.",
+            # Translators: the label of an ietm in the application menubar
+            _("&Find &Previous") + "\tShift-F3",
+            # Translators: the help text of an ietm in the application menubar
+            _("Find previous occurrence.")
         )
         self.renderItem = toolsMenu.Append(
             BookRelatedMenuIds.viewRenderedAsImage,
-            "&Render Page\tCtrl-R",
-            "View a fully rendered version of this page.",
+            # Translators: the label of an ietm in the application menubar
+            _("&Render Page") + "...\tCtrl-R",
+            # Translators: the help text of an ietm in the application menubar
+            _("View a fully rendered version of this page.")
         )
         toolsMenu.Append(
-            wx.ID_PREFERENCES, "&Preferences...\tCtrl-Shift-P", "Configure application"
+            wx.ID_PREFERENCES,
+            # Translators: the label of an ietm in the application menubar
+            _("&Preferences") + "...\tCtrl-Shift-P",
+            # Translators: the help text of an ietm in the application menubar
+            _("Configure application")
         )
         # Speech menu
-        speechMenu.Append(BookRelatedMenuIds.play, "&Play\tF5", "Start reading aloud")
+        speechMenu.Append(
+            BookRelatedMenuIds.play,
+            # Translators: the label of an ietm in the application menubar
+            _("&Play") + "\tF5",
+            # Translators: the help text of an ietm in the application menubar
+            _("Start reading aloud")
+        )
         speechMenu.Append(
             BookRelatedMenuIds.pauseToggle,
-            "Pa&use/Resume\tF6",
-            "Pause/Resume reading aloud",
+            # Translators: the label of an ietm in the application menubar
+            _("Pa&use/Resume") + "\tF6",
+            # Translators: the help text of an ietm in the application menubar
+            _("Pause/Resume reading aloud")
         )
-        speechMenu.Append(BookRelatedMenuIds.stop, "&Stop\tF7", "Stop reading aloud")
+        speechMenu.Append(
+            BookRelatedMenuIds.stop,
+            # Translators: the label of an ietm in the application menubar
+            _("&Stop") + "\tF7",
+            # Translators: the help text of an ietm in the application menubar
+            _("Stop reading aloud")
+        )
         speechMenu.Append(
             BookRelatedMenuIds.rewind,
-            "&Rewind\tAlt-LeftArrow",
-            "Skip to previous paragraph",
+            # Translators: the label of an ietm in the application menubar
+            _("&Rewind") + "\tAlt-LeftArrow",
+            # Translators: the help text of an ietm in the application menubar
+            _("Skip to previous paragraph")
         )
         speechMenu.Append(
             BookRelatedMenuIds.fastforward,
-            "&Fast Forward\tAlt-RightArrow",
-            "Skip to next paragraph",
+            # Translators: the label of an ietm in the application menubar
+            _("&Fast Forward") + "\tAlt-RightArrow",
+            # Translators: the help text of an ietm in the application menubar
+            _("Skip to next paragraph")
         )
         speechMenu.Append(
             ViewerMenuIds.voiceProfiles,
-            "&Voice Profiles\tCtrl-Shift-V",
-            "Manage voice profiles.",
+            # Translators: the label of an ietm in the application menubar
+            _("&Voice Profiles") + "\tCtrl-Shift-V",
+            # Translators: the help text of an ietm in the application menubar
+            _("Manage voice profiles.")
         )
         speechMenu.Append(
             ViewerMenuIds.deactivateVoiceProfiles,
-            "&Deactivate Active Voice Profile",
-            "Deactivate the active voice profile.",
+            # Translators: the label of an ietm in the application menubar
+            _("&Deactivate Active Voice Profile"),
+            # Translators: the help text of an ietm in the application menubar
+            _("Deactivate the active voice profile."),
         )
         # Annotations menu
         annotationsMenu.Append(
             BookRelatedMenuIds.addBookmark,
-            "Add &Bookmark...\tCtrl-B",
-            "Bookmark the current location",
+            # Translators: the label of an ietm in the application menubar
+            _("Add &Bookmark") + "...\tCtrl-B",
+            # Translators: the help text of an ietm in the application menubar
+            _("Bookmark the current location"),
         )
         annotationsMenu.Append(
             BookRelatedMenuIds.addNote,
-            "Take &Note...\tCtrl-n",
-            "Add a note at the current location",
+            # Translators: the label of an ietm in the application menubar
+            _("Take &Note") + "...\tCtrl-n",
+            # Translators: the help text of an ietm in the application menubar
+            _("Add a note at the current location")
         )
         annotationsMenu.Append(
             BookRelatedMenuIds.viewBookmarks,
-            "&View Bookmarks...\tCtrl-Shift-B",
-            "View added bookmarks",
+            # Translators: the label of an ietm in the application menubar
+            _("&View Bookmarks") + "...\tCtrl-Shift-B",
+            # Translators: the help text of an ietm in the application menubar
+            _("View added bookmarks")
         )
         annotationsMenu.Append(
             BookRelatedMenuIds.viewNotes,
-            "&Manage Notes...\tCtrl-Shift-N",
-            "View, edit, and remove notes.",
+            # Translators: the label of an ietm in the application menubar
+            _("&Manage Notes") + "...\tCtrl-Shift-N",
+            # Translators: the help text of an ietm in the application menubar
+            _("View, edit, and remove notes.")
         )
         annotationsMenu.Append(
             BookRelatedMenuIds.ExportNotes,
-            "Notes &Exporter...",
-            "Export notes to a file.",
+            # Translators: the label of an ietm in the application menubar
+            _("Notes &Exporter") + "...",
+            # Translators: the help text of an ietm in the application menubar
+            _("Export notes to a file."),
         )
         # Help menu
         helpMenu.Append(
-            ViewerMenuIds.documentation, "&User guide...\tF1", "View Bookworm manuals "
+            ViewerMenuIds.documentation,
+            # Translators: the label of an ietm in the application menubar
+            _("&User guide") + "...\tF1",
+            # Translators: the help text of an ietm in the application menubar
+            _("View Bookworm manuals")
         )
         helpMenu.Append(
-            ViewerMenuIds.website, "&Bookworm website...", "Visit the official website."
+            ViewerMenuIds.website,
+            # Translators: the label of an ietm in the application menubar
+            _("&Bookworm website..."),
+            # Translators: the help text of an ietm in the application menubar
+            _("Visit the official website of Bookworm")
         )
         helpMenu.Append(
             ViewerMenuIds.license,
-            "&License",
-            "View legal information about this program .",
+            # Translators: the label of an ietm in the application menubar
+            _("&License"),
+            # Translators: the help text of an ietm in the application menubar
+            _("View legal information about this program .")
         )
         if app.is_frozen and not app.debug:
             helpMenu.Append(
                 ViewerMenuIds.restart_with_debug,
-                "&Restart with debug-mode enabled",
-                "Restart the program with debug mode enabled to show errors."
+                # Translators: the label of an ietm in the application menubar
+                _("&Restart with debug-mode enabled"),
+                # Translators: the help text of an ietm in the application menubar
+                _("Restart the program with debug mode enabled to show errors")
             )
             self.Bind(
                 wx.EVT_MENU,
@@ -221,11 +298,13 @@ class MenubarProvider:
             )
         helpMenu.Append(
             ViewerMenuIds.about,
-            "&About Bookworm...",
-            "General information about this program.",
+            # Translators: the label of an ietm in the application menubar
+            _("&About Bookworm") + "...",
+            # Translators: the help text of an ietm in the application menubar
+            _("Show general information about this program")
         )
 
-        # Bind the menu event to an event handler
+        # Bind menu events to event handlers
         # File menu event handlers
         self.Bind(wx.EVT_MENU, self.onOpenEBook, id=wx.ID_OPEN)
         self.Bind(wx.EVT_MENU, self.onExportAsPlainText, id=wx.ID_SAVEAS)
@@ -276,11 +355,9 @@ class MenubarProvider:
         self.Bind(wx.EVT_MENU, self.onNotesExporter, id=BookRelatedMenuIds.ExportNotes)
 
         # Help menu event handlers
-        help_filename = f"bookworm.{'html' if app.is_frozen else 'md'}"
-        docs = paths.docs_path(help_filename)
         self.Bind(
             wx.EVT_MENU,
-            lambda e: wx.LaunchDefaultApplication(str(docs)),
+            self.onOpenDocumentation,
             id=ViewerMenuIds.documentation,
         )
         self.Bind(
@@ -296,11 +373,16 @@ class MenubarProvider:
         self.Bind(wx.EVT_MENU, self.onAbout, id=ViewerMenuIds.about)
 
         # and put the menu on the menubar
-        self.menuBar.Append(fileMenu, "&File")
-        self.menuBar.Append(toolsMenu, "&Tools")
-        self.menuBar.Append(speechMenu, "&Speech")
-        self.menuBar.Append(annotationsMenu, "&Annotations")
-        self.menuBar.Append(helpMenu, "&Help")
+        # Translators: the label of an ietm in the application menubar
+        self.menuBar.Append(fileMenu, _("&File"))
+        # Translators: the label of an ietm in the application menubar
+        self.menuBar.Append(toolsMenu, _("&Tools"))
+        # Translators: the label of an ietm in the application menubar
+        self.menuBar.Append(speechMenu, _("&Speech"))
+        # Translators: the label of an ietm in the application menubar
+        self.menuBar.Append(annotationsMenu, _("&Annotations"))
+        # Translators: the label of an ietm in the application menubar
+        self.menuBar.Append(helpMenu, _("&Help"))
         self.SetMenuBar(self.menuBar)
         # Disable this when no voice profile is active
         self.menuBar.FindItemById(wx.ID_REVERT).Enable(False)
@@ -315,7 +397,8 @@ class MenubarProvider:
             last_folder = str(Path.home())
         openFileDlg = wx.FileDialog(
             self,
-            message="Choose an e-book",
+            # Translators: the title of a file dialog to browse to an e-book
+            message=_("Choose an e-book"),
             defaultDir=last_folder,
             wildcard=self._get_ebooks_wildcards(),
             style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST,
@@ -353,19 +436,22 @@ class MenubarProvider:
 
     @only_when_reader_ready
     def onGoToPage(self, event):
-        with GoToPageDialog(parent=self, title="Go To Page") as dlg:
+        # Translators: the title of the go to page dialog
+        with GoToPageDialog(parent=self, title=_("Go To Page")) as dlg:
             if dlg.ShowModal() == wx.ID_OK:
                 retval = dlg.GetValue()
                 self.reader.go_to_page(retval)
 
     @only_when_reader_ready
     def onViewRenderedAsImage(self, event):
-        with ViewPageAsImageDialog(self, "Rendered Page", style=wx.CLOSE_BOX) as dlg:
+        # Translators: the title of the render page dialog
+        with ViewPageAsImageDialog(self, _("Rendered Page"), style=wx.CLOSE_BOX) as dlg:
             dlg.Maximize()
             dlg.ShowModal()
 
     def onVoiceProfiles(self, event):
-        with VoiceProfileDialog(self, title="Voice Profiles") as dlg:
+        # Translators: the title of the voice profiles dialog
+        with VoiceProfileDialog(self, title=_("Voice Profiles")) as dlg:
             dlg.ShowModal()
 
     def onDeactivateVoiceProfile(self, event):
@@ -375,7 +461,13 @@ class MenubarProvider:
 
     @only_when_reader_ready
     def onAddBookmark(self, event):
-        dlg = wx.TextEntryDialog(self, "Bookmark title:", "Bookmark This Location")
+        dlg = wx.TextEntryDialog(
+            self,
+            # Translators: the label of an edit field to enter the title for a new bookmark
+            _("Bookmark title:"),
+            # Translators: the title of a dialog to create a new bookmark
+            _("Bookmark This Location")
+        )
         insertionPoint = self.contentTextCtrl.GetInsertionPoint()
         if dlg.ShowModal() == wx.ID_OK:
             value = dlg.GetValue().strip()
@@ -389,33 +481,45 @@ class MenubarProvider:
     @only_when_reader_ready
     def onAddNote(self, event):
         insertionPoint = self.contentTextCtrl.GetInsertionPoint()
-        dlg = NoteEditorDialog(self, self.reader, pos=insertionPoint)
-        dlg.Show()
+        with NoteEditorDialog(self, self.reader, pos=insertionPoint) as dlg:
+            dlg.ShowModal()
 
     def onViewBookmarks(self, event):
         dlg = ViewAnnotationsDialog(
             self,
             type_="bookmark",
-            title=f"Bookmarks | {self.reader.current_book.title}",
+            # Translators: the title of a dialog to view bookmarks
+            title=_("Bookmarks | {book}").format(book=self.reader.current_book.title),
         )
         with dlg:
             dlg.ShowModal()
 
     def onViewNotes(self, event):
         dlg = ViewAnnotationsDialog(
-            self, type_="note", title=f"Notes | {self.reader.current_book.title}"
+            self,
+            type_="note",
+            # Translators: the title of a dialog to view notes
+            title=_("Notes | {book}").format(book=self.reader.current_book.title)
         )
         with dlg:
             dlg.ShowModal()
 
     def onNotesExporter(self, event):
         dlg = ExportNotesDialog(
-            self.reader, self, title=f"Export Notes | {self.reader.current_book.title}"
+            self.reader,
+            self,
+            # Translators: the title of a dialog for exporting notes
+            title=_("Export Notes | {book}").format(book=self.reader.current_book.title)
         )
         dlg.Show()
 
     def onPreferences(self, event):
-        with PreferencesDialog(self, title=f"{app.localized_name} Preferences") as dlg:
+        dlg = PreferencesDialog(
+            self,
+            # Translators: the title of the application preferences dialog
+            title=_("{app_name} Preferences").format(app_name=app.localized_name)
+        )
+        with dlg:
             dlg.ShowModal()
 
     @only_when_reader_ready
@@ -423,7 +527,8 @@ class MenubarProvider:
     def onExportAsPlainText(self, event):
         book_title = slugify(self.reader.current_book.title)
         filename, _ = wx.FileSelectorEx(
-            "Save As",
+            # Translators: the title of a dialog to save the exported book
+            _("Save As"),
             default_path=wx.GetUserHome(),
             default_filename=f"{book_title}.txt",
             wildcard="Plain Text (*.txt)|.txt",
@@ -434,21 +539,26 @@ class MenubarProvider:
             return
         total = len(self.reader.document)
         dlg = wx.ProgressDialog(
-            "Exporting Book",
-            "Converting your book to plain text.",
+            # Translators: the title of a dialog showing
+            # the progress of book export process
+            _("Exporting Book"),
+            # Translators: the message of a dialog showing the progress of book export
+            _("Converting your book to plain text."),
             parent=self,
             maximum=total - 1,
             style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
         )
         export_func = self.reader.document.export_to_text
         for progress in export_func(self.reader.document.filename, filename):
-            dlg.Update(progress, "Converting book...")
+            # Translators: a message shown when the book is being exported
+            dlg.Update(progress, _("Converting book..."))
         dlg.Close()
         dlg.Destroy()
 
     @only_when_reader_ready
     def onFind(self, event):
-        dlg = SearchBookDialog(parent=self, title="Search book")
+        # Translators: the title of the search dialog
+        dlg = SearchBookDialog(parent=self, title=_("Search book"))
         if dlg.ShowModal() != wx.ID_OK:
             return
         request = dlg.GetValue()
@@ -464,7 +574,9 @@ class MenubarProvider:
         config.save()
         self._reset_search_history()
         self._recent_search_term = term
-        dlg = SearchResultsDialog(self, title=f"Searching For '{term}'")
+        # Translators: the initial title of the search results dialog 
+        # shown when the search process is not done yet
+        dlg = SearchResultsDialog(self, title=_("Searching For '{term}'").format(term=term))
         dlg.Show()
         self._add_search_results(request, dlg)
 
@@ -486,8 +598,11 @@ class MenubarProvider:
                 self._latest_search_results.append((page, snip, section, pos))
             total += 1
         if dlg.IsShown():
-            dlg.SetTitle(f"Found {total} results.")
-            speech.announce(f"Found {total} results.", True)
+            # Translators: the final title of the search results dialog
+            # shown after the search is finished
+            msg = _("Results | {total}").format(total=total)
+            dlg.SetTitle(msg)
+            speech.announce(msg, True)
 
     @only_when_reader_ready
     def onFindNext(self, event):
@@ -513,7 +628,8 @@ class MenubarProvider:
     def onAbout(self, event):
         wx.MessageBox(
             app.about_msg,
-            f"About {app.localized_name}",
+            # Translators: the title of the about dialog
+            _("About {app_name}").format(app_name=app.localized_name),
             parent=self,
             style=wx.ICON_INFORMATION,
         )
@@ -532,10 +648,12 @@ class MenubarProvider:
         if self.reader.tts.is_ready:
             if self.reader.tts.engine.state is SynthState.busy:
                 self.reader.tts.engine.pause()
-                return speech.announce("Paused")
+                # Translators: a message that is announced when the speech is paused
+                return speech.announce(_("Paused"))
             elif self.reader.tts.engine.state is SynthState.paused:
                 self.reader.tts.engine.resume()
-                return speech.announce("Resumed")
+                # Translators: a message that is announced when the speech is resumed
+                return speech.announce(_("Resumed"))
         wx.Bell()
 
     def onStop(self, event):
@@ -545,15 +663,18 @@ class MenubarProvider:
         ):
             self.reader.tts.engine.stop()
             setattr(self.reader.tts, "_requested_play", False)
-            return speech.announce("Stopped")
+            # Translators: a message that is announced when the speech is stopped
+            return speech.announce(_("Stopped"))
         wx.Bell()
 
     def open_file(self, filename):
         if not os.path.isfile(filename):
             self.populate_recent_file_list()
             return wx.MessageBox(
-                f"The file\n{filename}\nwas not found.",
-                "Missing File",
+                # Translators: the content of an error message 
+                _("The file\n{file}\nwas not found.").format(file=filename),
+                # Translators: the title of an error message
+                _("File Not Found"),
                 style=wx.ICON_ERROR,
             )
         if not self.reader.load(filename):
@@ -573,34 +694,50 @@ class MenubarProvider:
         self.populate_recent_file_list()
 
     def onRestartWithDebugMode(self, event):
-        args = sys.argv[:1]
+        args = []
         if self.reader.ready:
             args.append(f'--filename "{self.reader.document.filename}"')
             self.reader.save_current_position()
         args.append("--debug")
-        os.execv(sys.executable, args)
+        restart_application(*args)
 
     @cached_property
     def content_text_ctrl_context_menu(self):
         menu = wx.Menu()
         menu.Append(
             BookRelatedMenuIds.addBookmark,
-            "Add &Bookmark...\tCtrl-B",
-            "Bookmark the current location",
+            # Translators: the label of an ietm in the application menubar
+            _("Add &Bookmark") + "...\tCtrl-B",
+            # Translators: the help text of an ietm in the application menubar
+            _("Bookmark the current location")
         )
         menu.Append(
             BookRelatedMenuIds.addNote,
-            "Take &Note...\tCtrl-n",
-            "Add a note at the current location",
+            # Translators: the label of an ietm in the application menubar
+            _("Take &Note") + "...\tCtrl-n",
+            # Translators: the help text of an ietm in the application menubar
+            _("Add a note at the current location")
         )
         menu.Append(
-            BookRelatedMenuIds.goToPage, "&Go To Page...\tCtrl-g", "Go to page"
+            BookRelatedMenuIds.goToPage,
+            # Translators: the label of an ietm in the application menubar
+            _("&Go To Page") + "...\tCtrl-G",
+            # Translators: the help text of an ietm in the application menubar
+            _("Go to page")
         )
-        menu.Append(wx.ID_FIND, "&Find in Book...\tCtrl-F", "Search this book.")
+        menu.Append(
+            wx.ID_FIND,
+            # Translators: the label of an ietm in the application menubar
+            _("&Find in Book") + "...\tCtrl-F",
+            # Translators: the help text of an ietm in the application menubar
+            _("Search this book.")
+        )
         menu.Append(
             BookRelatedMenuIds.viewRenderedAsImage,
-            "&Render Page\tCtrl-R",
-            "View a fully rendered version of this page.",
+            # Translators: the label of an ietm in the application menubar
+            _("&Render Page") + "...\tCtrl-R",
+            # Translators: the help text of an ietm in the application menubar
+            _("View a fully rendered version of this page.")
         )
         return menu
 
@@ -610,6 +747,12 @@ class MenubarProvider:
             pos = self.contentTextCtrl.PositionToCoords(self.contentTextCtrl.InsertionPoint)
             self.PopupMenu(self.content_text_ctrl_context_menu, pos=pos)
 
+    def onOpenDocumentation(self, event):
+        help_filename = f"bookworm.{'html' if app.is_frozen else 'md'}"
+        lang = app.current_language.given_lang
+        docs = paths.docs_path(lang, help_filename)
+        wx.LaunchDefaultApplication(str(docs))
+
     def populate_recent_file_list(self):
         for item, _, filename in self._recent_files_data:
             self.recentFilesMenu.Delete(item)
@@ -617,7 +760,10 @@ class MenubarProvider:
         recent_files = config.conf["history"]["recently_opened"]
         if len(recent_files) == 0:
             _no_files = self.recentFilesMenu.Append(
-                -1, "(No recent books)", "No recent books"
+                wx.ID_ANY,
+                # Translators: the label of an ietm in the application menubar
+                _("(No recent books)"),
+                _("No recent books")
             )
             _no_files.Enable(False)
             self._recent_files_data.append((_no_files, -1, ""))
@@ -625,9 +771,7 @@ class MenubarProvider:
             recent_files = (file for file in recent_files if os.path.exists(file))
             for idx, filename in enumerate(recent_files):
                 fname = os.path.split(filename)[-1]
-                item = self.recentFilesMenu.Append(
-                    wx.ID_ANY, f"{idx + 1}. {fname}", "Open this book"
-                )
+                item = self.recentFilesMenu.Append(wx.ID_ANY, f"{idx + 1}. {fname}")
                 self.Bind(wx.EVT_MENU, self.onRecentFileItem, item)
                 self._recent_files_data.append((item, item.GetId(), filename))
                 if self.reader.ready:
@@ -663,15 +807,20 @@ class MenubarProvider:
 
     def decrypt_opened_document(self):
         pwd = wx.GetPasswordFromUser(
-            "This document is encrypted, and you need a password to access its content.\nPlease enter the password billow and press enter.",
+            # Translators: the content of a dialog asking the user
+            # for the password to decrypt the current e-book
+            _("This document is encrypted, and you need a password to access its content.\nPlease enter the password billow and press enter."),
+            # Translators: the title of a dialog asking the user to enter a password to decrypt the e-book
             "Enter Password",
             parent=self,
         )
         res = self.reader.document.decrypt(pwd.GetValue())
         if not res:
             wx.MessageBox(
-                "The password you've entered is invalid.\nPlease try again.",
-                "Invalid Password",
+                # Translators: the content of a message
+                _("The password you've entered is invalid.\nPlease try again."),
+                # Translators: the title of an error message
+                _("Invalid Password"),
                 parent=self,
                 style=wx.ICON_ERROR,
             )

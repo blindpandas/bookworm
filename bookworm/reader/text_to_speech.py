@@ -121,7 +121,8 @@ class TextToSpeechProvider:
             utterance = SpeechUtterance()
             if config.conf["reading"]["speak_page_number"]:
                 utterance.add_text(
-                    f"Page {self.current_page + 1} of {len(self.document)}"
+                    # Translators: a message to announce when navigating to another page
+                    _("Page {page} of {total}").format(page=self.current_page + 1, total=len(self.document))
                 )
                 utterance.add_pause(PauseSpec.medium)
             self.speak_current_page(utterance)
@@ -201,7 +202,8 @@ class TextToSpeechProvider:
                 if config.conf["reading"]["play_end_of_section_sound"]:
                     utterance.add_audio(sounds.section_changed.path)
                 with utterance.set_style(SpeechStyle(emph=EmphSpec.strong)):
-                    utterance.add_text(f"End of section: {self.active_section.title}.")
+                    # Translators: a message to speak at the end of the chapter
+                    utterance.add_text(_("End of section: {chapter}.").format(chapter=self.active_section.title))
                 utterance.add_pause(config.conf["speech"]["end_of_section_pause"])
                 if config.conf["reading"]["reading_mode"] == 0:
                     nextsect_bookmark = {"type": "next_section"}

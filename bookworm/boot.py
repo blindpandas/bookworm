@@ -7,8 +7,13 @@ Prepares the environment for the application.
 import sys
 import os
 import clr
+import gettext
 from System.IO import FileNotFoundException
 from glob import glob
+
+
+# Make the gettext function _() available in the global namespace, even if no i18n is used
+gettext.install("bookworm", names=['ngettext'])
 
 
 # XXX Recent versions of Pythonnet does not auto discover

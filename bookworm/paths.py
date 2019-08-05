@@ -77,7 +77,7 @@ def db_path():
 def docs_path():
     if not app.is_frozen:
         parent = Path(DATA_PATH_DEBUG).parent
-        path = parent / "docs"
+        path = parent / "docs" / "userguides"
     else:
         path = app_path("resources", "docs")
     if not path.exists():

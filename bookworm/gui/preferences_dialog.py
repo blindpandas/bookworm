@@ -5,6 +5,7 @@ import wx.lib.sized_controls as sc
 from enum import IntEnum, auto
 from bookworm import app
 from bookworm import config
+from bookworm.utils import restart_application
 from bookworm.i18n import get_available_languages, set_active_language
 from bookworm.speech.engine import SpeechEngine
 from bookworm.signals import config_updated
@@ -129,6 +130,18 @@ class GeneralPanel(SettingsPanel):
             self.config["language"] = selected_lang
             if selected_lang != configured_lang:
                 set_active_language(selected_lang)
+                msg = wx.MessageBox(
+                    # Translators: the content of a message asking the user to restart
+                    _("You have changed the display language of Bookworm.\n"
+                    "For this setting to fully take effect, you need to restart the application.\n"
+                    "Would you like to restart the application right now?"),
+                    # Translators: the title of a message telling the user
+                    # that the display language have been changed
+                    _("Language Changed"),
+                    style=wx.YES_NO|wx.ICON_WARNING
+                )
+                if msg == wx.YES:
+                    restart_application()
         super().reconcile(strategy=strategy)
 
 

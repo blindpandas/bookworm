@@ -16,6 +16,12 @@ log = logger.getChild(__name__)
 _missing = object()
 
 
+def restart_application(*args):
+    args = sys.argv[:1]
+    args.extend(args)
+    os.execv(sys.executable, args)
+
+
 def recursively_iterdir(path):
     """Iterate over files, exclusively, in path and its sub directories."""
     for item in Path(path).iterdir():

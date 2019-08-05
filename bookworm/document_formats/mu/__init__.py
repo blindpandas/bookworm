@@ -22,7 +22,8 @@ log = logger.getChild(__name__)
 class FitzDocument(BaseDocument):
 
     format = "pdf"
-    name = "Portable Document Format"
+    # Translators: the name of a document file format 
+    name = _("Portable Document Format")
     extensions = ("*.pdf",)
     supports_rendering = True
 
@@ -137,7 +138,8 @@ class FitzDocument(BaseDocument):
 class FitzEPUBDocument(FitzDocument):
 
     format = "epub"
-    name = "Electronic Publications"
+    # Translators: the name of a document file format 
+    name = _("Electronic Publications")
     extensions = ("*.epub",)
 
     def read(self):

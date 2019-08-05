@@ -22,9 +22,10 @@ _AVAILABLE_LANGUAGES  = None
 
 
 class LanguageInfo:
-    __slots__ = ["language", "culture"]
+    __slots__ = ["given_lang", "language", "culture"]
 
     def __init__(self, language):
+        self.given_lang = language
         try:
             culture = CultureInfo.GetCultureInfoByIetfLanguageTag(language)
             self.culture = culture if culture.LCID != UNKNOWN_CULTURE_LCID else culture.Parent
@@ -101,8 +102,12 @@ def set_active_language(language):
         app.current_language = langinfo
     except IOError:
         log.error(f"Translation catalog for language {lang} was not found.")
-        gettext.install(app.name, names=['ngettext'])
         app.current_language = get_available_languages()["default"]
 
 def setup_i18n():
     set_active_language(config.conf["general"]["language"])
+
+
+def is_rtl(lang):
+    with suppress(ValueError):
+        return CultureInfo(lang).TextInfo.IsRightToLeft
