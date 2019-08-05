@@ -163,8 +163,7 @@ def copy_wx_catalogs(c):
     to_copy = wx_langs.intersection(app_langs)
     for lang in to_copy:
         c.run(
-            f'copy "{src / lang / "LC_MESSAGES" / "wxstd.mo"}" "{dst / lang / "LC_MESSAGES"}"',
-            hide="stdout",
+            f'copy "{src / lang / "LC_MESSAGES" / "wxstd.mo"}" "{dst / lang / "LC_MESSAGES"}"'
         )
 
 
@@ -182,20 +181,19 @@ def extract_msgs(c):
             f'--copyright-holder="{author}"',
         )
     )
-    c.run(f"pybabel extract {args} bookworm", hide="stdout")
+    c.run(f"pybabel extract {args} bookworm")
     print(
         "The translation catalog has been generated. You can find it in the scripts folder "
     )
 
 
 @task
-@make_env
 def compile_msgs(c):
     print("Compiling .po message catalogs to binary format.")
-    domain = os.environ["IAPP_NAME"]
+    domain = "bookworm"
     locale_dir = PACKAGE_FOLDER / "resources" / "locale"
     if list(locale_dir.rglob("*.po")):
-        c.run(f'pybabel compile -D {domain} -d "{locale_dir}"', hide="stdout")
+        c.run(f'pybabel compile -D {domain} -d "{locale_dir}"')
         print("Done compiling message catalogs files.")
     else:
         print("No message catalogs found.")
@@ -211,8 +209,7 @@ def update_msgs(c):
     if list(locale_dir.rglob("*.po")):
         c.run(
             f'pybabel update -i "{potfile}" -D {domain} '
-            f'-d "{locale_dir}" --ignore-obsolete',
-            hide="stdout",
+            f'-d "{locale_dir}" --ignore-obsolete'
         )
         print("Done updating message catalogs files.")
     else:
@@ -228,8 +225,7 @@ def init_lang(c, lang):
     locale_dir = PACKAGE_FOLDER / "resources" / "locale"
     c.run(
         f'pybabel init -D {app.name} -i "{potfile}" '
-        f'-d "{locale_dir}" --locale={lang}',
-        hide="stdout",
+        f'-d "{locale_dir}" --locale={lang}'
     )
 
 
