@@ -42,7 +42,7 @@ def do_search_book(document_path, request, queue):
     ps = fr"({request.term})"
     if request.whole_word:
         ps = fr"\b{ps}\b"
-    pattern = re.compile(ps, I|re.M)
+    pattern = re.compile(ps, I | re.M)
     for n in range(request.from_page, request.to_page + 1):
         found = search(pattern, doc[n].getText())
         if not found:

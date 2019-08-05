@@ -9,7 +9,7 @@ class PlainTextRenderer(BaseRenderer):
     """Renders notes to a text document."""
 
     name = "text"
-    # Translators: the name of a document file format 
+    # Translators: the name of a document file format
     display_name = _("Plain Text")
     output_ext = ".txt"
 
@@ -40,7 +40,7 @@ class MarkdownRenderer(BaseRenderer):
     """Renders notes to a markdown document."""
 
     name = "markdown"
-    # Translators: the name of a document file format 
+    # Translators: the name of a document file format
     display_name = _("Markdown")
     output_ext = ".md"
 
@@ -66,7 +66,7 @@ class HTMLRenderer(MarkdownRenderer):
     """Renders notes to HTML."""
 
     name = "html"
-    # Translators: the name of a document file format 
+    # Translators: the name of a document file format
     display_name = _("HTML")
     output_ext = ".html"
 

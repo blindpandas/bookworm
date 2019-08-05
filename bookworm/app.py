@@ -5,7 +5,7 @@ import os
 
 
 name = "bookworm"
-is_frozen = hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS')
+is_frozen = hasattr(sys, "frozen") and hasattr(sys, "_MEIPASS")
 display_name = "Bookworm"
 localized_name = _("Bookworm")
 author = "Musharraf Omer"

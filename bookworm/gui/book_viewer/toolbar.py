@@ -36,7 +36,7 @@ class ToolbarProvider:
             _("Open"),
             open_bmp,
             # Translators: the help text of a button in the application toolbar
-            _("Open an e-book")
+            _("Open an e-book"),
         )
         self.toolbar.AddSeparator()
         self.toolbar.AddTool(
@@ -45,7 +45,7 @@ class ToolbarProvider:
             _("Search"),
             search_bmp,
             # Translators: the help text of a button in the application toolbar
-            _("Search e-book")
+            _("Search e-book"),
         )
         self.toolbar.AddTool(
             BookRelatedMenuIds.goToPage,
@@ -53,7 +53,7 @@ class ToolbarProvider:
             _("Go"),
             goto_bmp,
             # Translators: the help text of a button in the application toolbar
-            _("Go to page")
+            _("Go to page"),
         )
         self.toolbar.AddTool(
             BookRelatedMenuIds.viewRenderedAsImage,
@@ -61,7 +61,7 @@ class ToolbarProvider:
             _("View"),
             view_image_bmp,
             # Translators: the help text of a button in the application toolbar
-            _("View a fully rendered version of this page")
+            _("View a fully rendered version of this page"),
         )
         self.toolbar.AddSeparator()
         self.toolbar.AddTool(
@@ -70,7 +70,7 @@ class ToolbarProvider:
             _("Bookmark"),
             bookmark_bmp,
             # Translators: the help text of a button in the application toolbar
-            _("Add bookmark")
+            _("Add bookmark"),
         )
         self.toolbar.AddTool(
             BookRelatedMenuIds.addNote,
@@ -78,7 +78,7 @@ class ToolbarProvider:
             _("Note"),
             images.note.GetBitmap(),
             # Translators: the help text of a button in the application toolbar
-            _("Add note")
+            _("Add note"),
         )
         self.toolbar.AddSeparator()
         self.toolbar.AddTool(
@@ -87,7 +87,7 @@ class ToolbarProvider:
             _("Rewind"),
             images.rewind.GetBitmap(),
             # Translators: the help text of a button in the application toolbar
-            _("Skip to previous paragraph")
+            _("Skip to previous paragraph"),
         )
         self.toolbar.AddTool(
             self.ppr_id,
@@ -95,7 +95,7 @@ class ToolbarProvider:
             _("Play"),
             images.play.GetBitmap(),
             # Translators: the help text of a button in the application toolbar
-            _("Play/Resume")
+            _("Play/Resume"),
         )
         self.toolbar.AddTool(
             BookRelatedMenuIds.fastforward,
@@ -111,7 +111,7 @@ class ToolbarProvider:
             _("Voice"),
             images.profile.GetBitmap(),
             # Translators: the help text of a button in the application toolbar
-            _("Customize TTS voice parameters.")
+            _("Customize TTS voice parameters."),
         )
         self.toolbar.AddSeparator()
         self.toolbar.AddTool(
@@ -120,7 +120,7 @@ class ToolbarProvider:
             _("Zoom out"),
             images.zoom_out.GetBitmap(),
             # Translators: the help text of a button in the application toolbar
-            _("Make font smaller")
+            _("Make font smaller"),
         )
         self.toolbar.AddTool(
             wx.ID_PREVIEW_ZOOM_IN,
@@ -128,7 +128,7 @@ class ToolbarProvider:
             _("Zoom in"),
             images.zoom_in.GetBitmap(),
             # Translators: the help text of a button in the application toolbar
-            _("Make font larger")
+            _("Make font larger"),
         )
         self.toolbar.AddSeparator()
         self.toolbar.AddTool(
@@ -137,7 +137,7 @@ class ToolbarProvider:
             _("Preferences"),
             images.settings.GetBitmap(),
             # Translators: the help text of a button in the application toolbar
-            _("Configure the application")
+            _("Configure the application"),
         )
 
         # Finalize

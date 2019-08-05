@@ -64,8 +64,12 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
             | wx.TE_NOHIDESEL,
             name="content_view",
         )
-        self.contentTextCtrl.Bind(wx.EVT_CONTEXT_MENU, lambda e: e.Skip(False), self.contentTextCtrl)
-        self.contentTextCtrl.Bind(wx.EVT_RIGHT_UP, self.onContentTextCtrlContextMenu, self.contentTextCtrl)
+        self.contentTextCtrl.Bind(
+            wx.EVT_CONTEXT_MENU, lambda e: e.Skip(False), self.contentTextCtrl
+        )
+        self.contentTextCtrl.Bind(
+            wx.EVT_RIGHT_UP, self.onContentTextCtrlContextMenu, self.contentTextCtrl
+        )
         self.contentTextCtrl.SetMargins(self._get_text_view_margins())
 
         # Use a sizer to layout the controls, stacked horizontally and with

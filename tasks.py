@@ -49,7 +49,7 @@ def _add_envars(context):
             "IAPP_AUTHOR": app.author,
             "IAPP_WEBSITE": app.website,
             "IAPP_COPYRIGHT": app.copyright,
-            "IAPP_FROZEN_DIRECTORY": str(build_folder)
+            "IAPP_FROZEN_DIRECTORY": str(build_folder),
         }
     )
     context["_envars_added"] = True
@@ -57,13 +57,16 @@ def _add_envars(context):
 
 def make_env(func):
     """Set the necessary environment variables."""
+
     @wraps(func)
     def wrapper(c, *args, **kwargs):
         if not c.get("_envars_added"):
             print("Adding environment variables...")
             _add_envars(c)
         return func(c, *args, **kwargs)
+
     return wrapper
+
 
 @task(name="icons")
 def make_icons(c):
@@ -103,7 +106,9 @@ def make_icons(c):
     website_header = PROJECT_ROOT / "docs" / "img" / "bookworm.png"
     if not website_header.exists():
         print("Website header logo is not there, creating it.")
-        Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").resize((256, 256)).save(website_header)
+        Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").resize(
+            (256, 256)
+        ).save(website_header)
         print("Copied website header image  to the docs folder.")
 
 
@@ -127,11 +132,11 @@ def build_docs(c):
         content_md = md.read_text(encoding="utf8")
         content = markdown(content_md, escape=False)
         page_title = content_md.splitlines()[0].lstrip("#")
-        html.write_text(GUIDE_HTML_TEMPLATE.format(
-            lang=lang,
-            title=page_title.strip(),
-            content=content,
-        ))
+        html.write_text(
+            GUIDE_HTML_TEMPLATE.format(
+                lang=lang, title=page_title.strip(), content=content
+            )
+        )
         print("Done building the documentations.")
 
 
@@ -157,7 +162,10 @@ def copy_wx_catalogs(c):
     app_langs = {fldr.name for fldr in dst.iterdir() if fldr.is_dir()}
     to_copy = wx_langs.intersection(app_langs)
     for lang in to_copy:
-        c.run(f'copy "{src / lang / "LC_MESSAGES" / "wxstd.mo"}" "{dst / lang / "LC_MESSAGES"}"', hide="stdout")
+        c.run(
+            f'copy "{src / lang / "LC_MESSAGES" / "wxstd.mo"}" "{dst / lang / "LC_MESSAGES"}"',
+            hide="stdout",
+        )
 
 
 @task
@@ -166,21 +174,26 @@ def extract_msgs(c):
     print("Generating translation catalog template..")
     name = os.environ["IAPP_NAME"]
     author = os.environ["IAPP_AUTHOR"]
-    args = " ".join((
-        f'-o "{str(PROJECT_ROOT / "scripts" / name)}.pot"',
-        '-c "Translators:"',
-        '--msgid-bugs-address "ibnomer2011@hotmail.com"',
-        f'--copyright-holder="{author}"'
-    ))
+    args = " ".join(
+        (
+            f'-o "{str(PROJECT_ROOT / "scripts" / name)}.pot"',
+            '-c "Translators:"',
+            '--msgid-bugs-address "ibnomer2011@hotmail.com"',
+            f'--copyright-holder="{author}"',
+        )
+    )
     c.run(f"pybabel extract {args} bookworm", hide="stdout")
-    print("The translation catalog has been generated. You can find it in the scripts folder ")
+    print(
+        "The translation catalog has been generated. You can find it in the scripts folder "
+    )
+
 
 @task
 @make_env
 def compile_msgs(c):
     print("Compiling .po message catalogs to binary format.")
     domain = os.environ["IAPP_NAME"]
-    locale_dir = (PACKAGE_FOLDER / "resources" / "locale")
+    locale_dir = PACKAGE_FOLDER / "resources" / "locale"
     if list(locale_dir.rglob("*.po")):
         c.run(f'pybabel compile -D {domain} -d "{locale_dir}"', hide="stdout")
         print("Done compiling message catalogs files.")
@@ -193,13 +206,13 @@ def compile_msgs(c):
 def update_msgs(c):
     print("Updating .po message catalogs with latest messages.")
     domain = os.environ["IAPP_NAME"]
-    locale_dir = (PACKAGE_FOLDER / "resources" / "locale")
+    locale_dir = PACKAGE_FOLDER / "resources" / "locale"
     potfile = PROJECT_ROOT / "scripts" / f"{domain}.pot"
     if list(locale_dir.rglob("*.po")):
         c.run(
             f'pybabel update -i "{potfile}" -D {domain} '
             f'-d "{locale_dir}" --ignore-obsolete',
-            hide="stdout"
+            hide="stdout",
         )
         print("Done updating message catalogs files.")
     else:
@@ -212,13 +225,15 @@ def init_lang(c, lang):
 
     print(f"Creating a language catalog for language '{lang}'...")
     potfile = PROJECT_ROOT / "scripts" / f"{app.name}.pot"
-    locale_dir = (PACKAGE_FOLDER / "resources" / "locale")
+    locale_dir = PACKAGE_FOLDER / "resources" / "locale"
     c.run(
         f'pybabel init -D {app.name} -i "{potfile}" '
         f'-d "{locale_dir}" --locale={lang}',
-        hide='stdout'
+        hide="stdout",
     )
-@task(name="install", pre=(compile_msgs, copy_wx_catalogs,))
+
+
+@task(name="install", pre=(compile_msgs, copy_wx_catalogs))
 def install_packages(c):
     print("Installing packages")
     with c.cd(str(PROJECT_ROOT / "packages")):
@@ -263,7 +278,9 @@ def clean(c, assets=False, siteconfig=False):
             folders_to_clean.extend(c["folders_to_clean"]["assets"])
         if siteconfig:
             folders_to_clean.append(".appdata")
-        glob_patterns = ((i, entry) for (i, entry) in enumerate(folders_to_clean) if "*" in entry)
+        glob_patterns = (
+            (i, entry) for (i, entry) in enumerate(folders_to_clean) if "*" in entry
+        )
         for idx, glb in glob_patterns:
             folders_to_clean.pop(idx)
             folders_to_clean.extend(glob(glb))
@@ -289,7 +306,7 @@ def copy_deps(c):
         f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\msvcp140.dll",
         f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.OPENMP\\vcomp140.dll",
         f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\vcruntime140.dll",
-        f"C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\DLLs\\{arch}\\*"
+        f"C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\DLLs\\{arch}\\*",
     )
     for dll in dlls:
         print(f"Copying {dll} to {dist_dir}")
@@ -308,7 +325,9 @@ def freeze(c):
         if all(ident not in os.environ["IAPP_VERSION"] for ident in ("a", "b", "dev")):
             print("Turnning on python optimizations...")
             os.environ["PYTHONOPTIMIZE"] = "2"
-        c.run(f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}")
+        c.run(
+            f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}"
+        )
     print("Freeze finished. Trying to copy system dlls.")
     copy_deps(c)
 
@@ -350,4 +369,3 @@ def run_application(c, _filename=None, debug=True):
         args.append("--debug")
     print(f"Debug mode is {'on' if debug else 'off'}.")
     c.run(f"py -m bookworm {' '.join(args)}")
-

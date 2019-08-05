@@ -64,7 +64,9 @@ class ViewAnnotationsDialog(Dialog):
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         label = wx.StaticText(
             # Translators: the title of a dialog showing a list of notes or bookmarks
-            parent, -1, _("Bookmarks") if self.type == "bookmark" else _("Notes")
+            parent,
+            -1,
+            _("Bookmarks") if self.type == "bookmark" else _("Notes"),
         )
         self.annotationsListCtrl = DialogListCtrl(parent, -1)
         lstSizer.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 10)
@@ -110,15 +112,21 @@ class ViewAnnotationsDialog(Dialog):
         self.annotationsListCtrl.ClearAll()
         self.annotationsListCtrl.AppendColumn(
             # Translators: the title of a column in the bookmarks list
-            _("Title"), format=wx.LIST_FORMAT_LEFT, width=50
+            _("Title"),
+            format=wx.LIST_FORMAT_LEFT,
+            width=50,
         )
         self.annotationsListCtrl.AppendColumn(
             # Translators: the title of a column in the bookmarks list
-            _("Page"), format=wx.LIST_FORMAT_CENTER, width=20
+            _("Page"),
+            format=wx.LIST_FORMAT_CENTER,
+            width=20,
         )
         self.annotationsListCtrl.AppendColumn(
             # Translators: the title of a column in the bookmarks list
-            _("Section"), format=wx.LIST_FORMAT_LEFT, width=30
+            _("Section"),
+            format=wx.LIST_FORMAT_LEFT,
+            width=30,
         )
         self.annotationsListCtrl.SetColumnWidth(0, 100)
         self.annotationsListCtrl.SetColumnWidth(1, 100)
@@ -188,7 +196,9 @@ class ViewAnnotationsDialog(Dialog):
         if (
             wx.MessageBox(
                 # Translators: the content of a message asking the user to delete a bookmark
-                _("This action can not be reverted.\r\nAre you sure you want to continue?"),
+                _(
+                    "This action can not be reverted.\r\nAre you sure you want to continue?"
+                ),
                 # Translators: the title of a message asking the user to delete a bookmark
                 _("Remove Entry?"),
                 parent=self,
@@ -281,8 +291,10 @@ class NoteEditorDialog(Dialog):
         content = self.noteContentTextCtrl.GetValue().strip()
         if not all((title, content)):
             wx.MessageBox(
-                # Translators: the title of a message telling the user that the field is empty 
-                _("Empty fields are present. Please make sure you have filled-in all fields."),
+                # Translators: the title of a message telling the user that the field is empty
+                _(
+                    "Empty fields are present. Please make sure you have filled-in all fields."
+                ),
                 # Translators: the title of a message dialog
                 _("Cannot Save Note"),
                 parent=self,
@@ -330,7 +342,9 @@ class ExportNotesDialog(Dialog):
         self.formatChoice = wx.Choice(parent, -1, choices=formats)
         self.openAfterExportCheckBox = wx.CheckBox(
             # Translators: the label of a checkbox
-            parent, -1, "Open file after exporting"
+            parent,
+            -1,
+            "Open file after exporting",
         )
         sizer.Add(self.outputRangeRb, 0, wx.EXPAND | wx.ALL, 10)
         sizer.Add(formatChoiceLabel, 0, wx.EXPAND | wx.TOP | wx.LEFT | wx.RIGHT, 10)
@@ -365,11 +379,13 @@ class ExportNotesDialog(Dialog):
         if not notes.count():
             wx.MessageBox(
                 # Translators: the content of a message dialog
-                _("There are no notes for this book or the selected section.\n"
-                "Please make sure you have added some notes before using the export functionality."),
+                _(
+                    "There are no notes for this book or the selected section.\n"
+                    "Please make sure you have added some notes before using the export functionality."
+                ),
                 # Translators: the title of a message dialog
                 _("No Notes"),
-                style=wx.ICON_WARNING
+                style=wx.ICON_WARNING,
             )
             return self.Close()
         filename = slugify(suffix) + renderer.output_ext
@@ -390,11 +406,13 @@ class ExportNotesDialog(Dialog):
             file_path = file_path.encode("mbcs")
         except UnicodeEncodeError:
             wx.MessageBox(
-                # Translators: the content of a message telling the user that the file name is invalid 
-                _("The provided file name is not valid. Please try again with a different name."),
+                # Translators: the content of a message telling the user that the file name is invalid
+                _(
+                    "The provided file name is not valid. Please try again with a different name."
+                ),
                 # Translators: the title of a message telling the user that the provided file name is invalid
                 _("Invalid File Name"),
-                style=wx.ICON_ERROR
+                style=wx.ICON_ERROR,
             )
             self.fileCtrl.SetValue("")
             self.fileCtrl.SetFocus()

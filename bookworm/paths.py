@@ -64,6 +64,7 @@ def locale_path():
         return app_path("resources", "locale")
     return Path(app.__file__).parent / "resources" / "locale"
 
+
 @merge_paths
 def db_path():
     path = data_path("database")

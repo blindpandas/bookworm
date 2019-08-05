@@ -29,17 +29,23 @@ class SearchResultsDialog(Dialog):
         self.searchResultsListCtrl = DialogListCtrl(parent, -1)
         self.searchResultsListCtrl.AppendColumn(
             # Translators: the title of a column in the search results list
-            _("Page"), format=wx.LIST_FORMAT_LEFT, width=20
+            _("Page"),
+            format=wx.LIST_FORMAT_LEFT,
+            width=20,
         )
         self.searchResultsListCtrl.AppendColumn(
             # Translators: the title of a column in the search results list showing
             # an excerpt of the text of the search result
-            _("Text"), format=wx.LIST_FORMAT_CENTER, width=50
+            _("Text"),
+            format=wx.LIST_FORMAT_CENTER,
+            width=50,
         )
         self.searchResultsListCtrl.AppendColumn(
             # Translators: the title of a column in the search results list
             # showing the title of the chapter in which this occurrence was found
-            _("Section"), format=wx.LIST_FORMAT_LEFT, width=30
+            _("Section"),
+            format=wx.LIST_FORMAT_LEFT,
+            width=30,
         )
         self.searchResultsListCtrl.SetColumnWidth(0, 100)
         self.searchResultsListCtrl.SetColumnWidth(1, 100)
@@ -185,9 +191,15 @@ class GoToPageDialog(SimpleDialog):
     def addControls(self, parent):
         page_count = len(self.parent.reader.document)
         # Translators: the label of an edit field in the go to page dialog
-        label = wx.StaticText(parent, -1, _("Page number, of {total}:").format(total=page_count))
+        label = wx.StaticText(
+            parent, -1, _("Page number, of {total}:").format(total=page_count)
+        )
         self.pageNumberCtrl = EnhancedSpinCtrl(
-            parent, -1, min=1, max=page_count, value=str(self.parent.reader.current_page + 1)
+            parent,
+            -1,
+            min=1,
+            max=page_count,
+            value=str(self.parent.reader.current_page + 1),
         )
         self.pageNumberCtrl.SetSizerProps(expand=True)
 
@@ -250,7 +262,9 @@ class ViewPageAsImageDialog(wx.Dialog):
         self.setDialogImage()
         self.scroll.SetupScrolling(rate_x=self.scroll_rate, rate_y=self.scroll_rate)
         # Translators: a message announced to the user when the zoom factor changes
-        speech.announce(_("Zoom is at {factor} percent").format(factor=int(value * 100)))
+        speech.announce(
+            _("Zoom is at {factor} percent").format(factor=int(value * 100))
+        )
 
     def setDialogImage(self):
         bmp, size = self.getPageImage()
@@ -280,7 +294,7 @@ class VoiceProfileEditorDialog(SimpleDialog):
     def __init__(self, parent, profile_name, profile):
         self.profile = profile
         # Translators: the title of a dialog to edit a voice profile
-        title =             _("Voice Profile: {profile}").format(profile=profile_name)
+        title = _("Voice Profile: {profile}").format(profile=profile_name)
         super().__init__(parent, title)
 
     def addControls(self, parent):
@@ -397,7 +411,7 @@ class VoiceProfileDialog(SimpleDialog):
             _("Profile Name:"),
             # Translators: the title of a dialog to enter the name of a new voice profile
             _("New Voice Profile"),
-            parent=self
+            parent=self,
         )
         if not profile_name.strip():
             return wx.Bell()
@@ -408,8 +422,10 @@ class VoiceProfileDialog(SimpleDialog):
             wx.MessageBox(
                 # Translators: the content of a message notifying the user
                 # user of the existance of a voice profile with the same name
-                _("A voice profile with the same name already exists. Please select another name."),
-                # Translators: the title of a message telling the user that an error has occurred 
+                _(
+                    "A voice profile with the same name already exists. Please select another name."
+                ),
+                # Translators: the title of a message telling the user that an error has occurred
                 _("Error"),
                 style=wx.ICON_WARNING,
             )
@@ -432,9 +448,11 @@ class VoiceProfileDialog(SimpleDialog):
             wx.MessageBox(
                 # Translators: the content of a message telling the user that the voice
                 # profile he is removing is the active one
-                _("Voice profile {profile} is the active profile.\n"
-                "Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
-                "menu item from the speech menu.").format(profile=profile_name),
+                _(
+                    "Voice profile {profile} is the active profile.\n"
+                    "Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
+                    "menu item from the speech menu."
+                ).format(profile=profile_name),
                 # Translators: the title of a message telling the user that
                 # it is not possible to remove this voice profile
                 _("Cannot Remove Profile"),
@@ -443,8 +461,10 @@ class VoiceProfileDialog(SimpleDialog):
             return
         msg = wx.MessageBox(
             # Translators: the title of a message to confirm the removal of the voice profile
-            _("Are you sure you want to remove voice profile {profile}?\n"
-            "This cannot be undone.").format(profile=profile_name),
+            _(
+                "Are you sure you want to remove voice profile {profile}?\n"
+                "This cannot be undone."
+            ).format(profile=profile_name),
             # Translators: the title of a message to confirm the removal of a voice profile
             _("Remove Voice Profile?"),
             parent=self,

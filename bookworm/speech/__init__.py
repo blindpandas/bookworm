@@ -64,10 +64,12 @@ class SpeechProvider:
                     # Translators: the title of a message telling the user that the TTS voice has been changed
                     _("Incompatible TTS Voice Detected"),
                     # Translators: a message telling the user that the TTS voice has been changed
-                    _("Bookworm has noticed that the currently configured Text-to-speech voice "
-                    "speaks a language different from that of this book. "
-                    "Because of this, Bookworm has temporary switched to "
-                    "another voice that speaks a language similar to the language  of this book."),
+                    _(
+                        "Bookworm has noticed that the currently configured Text-to-speech voice "
+                        "speaks a language different from that of this book. "
+                        "Because of this, Bookworm has temporary switched to "
+                        "another voice that speaks a language similar to the language  of this book."
+                    ),
                 )
 
     def close(self):
@@ -120,8 +122,10 @@ class SpeechProvider:
                         # Translators: the title of a message telling the user that no TTS voice found
                         _("No TTS Voices"),
                         # Translators: a message telling the user that no TTS voice found
-                        _("A valid Text-to-speech voice was not found on your computer.\n"
-                        "Text-to-speech functionality will be disabled.")
+                        _(
+                            "A valid Text-to-speech voice was not found on your computer.\n"
+                            "Text-to-speech functionality will be disabled."
+                        ),
                     )
                     conf["voice"] = ""
                     config.save()

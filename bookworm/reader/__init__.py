@@ -63,7 +63,7 @@ class EBookReader(TextToSpeechProvider):
                 # Translators: the content of a message shown
                 # when the format of the e-book is not supported
                 _("The format of the given document is not supported by Bookworm."),
-                icon=wx.ICON_WARNING
+                icon=wx.ICON_WARNING,
             )
             return
         document_cls = self.supported_ebook_formats[ebook_format]
@@ -75,9 +75,11 @@ class EBookReader(TextToSpeechProvider):
                 # Translators: the title of an error message
                 _("Error Openning Document"),
                 # Translators: the content of an error message
-                _("Could not open file {file}\n."
-                "Either the file  has been damaged during download, "
-                "or it has been corrupted in some other way.").format(file=ebook_path),
+                _(
+                    "Could not open file {file}\n."
+                    "Either the file  has been damaged during download, "
+                    "or it has been corrupted in some other way."
+                ).format(file=ebook_path),
                 icon=wx.ICON_ERROR,
             )
             log.exception(f"Error opening document.\r\n{e.args}")
@@ -151,9 +153,13 @@ class EBookReader(TextToSpeechProvider):
         if config.conf["general"]["play_pagination_sound"]:
             sounds.pagination.play_after()
         # Translators: the label of the page content text area
-        cmsg = _("Page {page} | {chapter}").format(page=value + 1, chapter=self.active_section.title)
+        cmsg = _("Page {page} | {chapter}").format(
+            page=value + 1, chapter=self.active_section.title
+        )
         # Translators: a message that is announced after navigating to a page
-        smsg  = _("Page {page} of {total}").format(page=value+1, total=len(self.document))
+        smsg = _("Page {page} of {total}").format(
+            page=value + 1, total=len(self.document)
+        )
         self.view.SetStatusText(cmsg)
         speech.announce(smsg)
         reader_page_changed.send(self, current=value, prev=_prev)
@@ -220,9 +226,10 @@ class EBookReader(TextToSpeechProvider):
             if include_author and self.current_book.author:
                 author = self.current_book.author
                 # Translators: the title of the window when an e-book is open
-                view_title = _("{title} — by {author}").format(title=title, author=author)
+                view_title = _("{title} — by {author}").format(
+                    title=title, author=author
+                )
         return view_title
 
     def _detect_ebook_format(self, ebook_path):
         return os.path.splitext(ebook_path)[-1].lstrip(".").lower()
-

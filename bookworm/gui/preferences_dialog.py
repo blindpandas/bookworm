@@ -98,7 +98,10 @@ class GeneralPanel(SettingsPanel):
         miscBox.SetSizerProps(expand=True)
         wx.CheckBox(
             # Translators: the label of a checkbox
-            miscBox, -1, _("Play pagination sound"), name="general.play_pagination_sound"
+            miscBox,
+            -1,
+            _("Play pagination sound"),
+            name="general.play_pagination_sound",
         )
         wx.CheckBox(
             miscBox,
@@ -117,7 +120,7 @@ class GeneralPanel(SettingsPanel):
         langobjs = get_available_languages().values()
         languages = set((lang.language, lang.description[0]) for lang in langobjs)
         for ident, label in languages:
-           self.languageChoice.Append(label, ident)
+            self.languageChoice.Append(label, ident)
         self.languageChoice.SetStringSelection(app.current_language.description[0])
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
@@ -132,13 +135,15 @@ class GeneralPanel(SettingsPanel):
                 set_active_language(selected_lang)
                 msg = wx.MessageBox(
                     # Translators: the content of a message asking the user to restart
-                    _("You have changed the display language of Bookworm.\n"
-                    "For this setting to fully take effect, you need to restart the application.\n"
-                    "Would you like to restart the application right now?"),
+                    _(
+                        "You have changed the display language of Bookworm.\n"
+                        "For this setting to fully take effect, you need to restart the application.\n"
+                        "Would you like to restart the application right now?"
+                    ),
                     # Translators: the title of a message telling the user
                     # that the display language have been changed
                     _("Language Changed"),
-                    style=wx.YES_NO|wx.ICON_WARNING
+                    style=wx.YES_NO | wx.ICON_WARNING,
                 )
                 if msg == wx.YES:
                     restart_application()
@@ -253,14 +258,22 @@ class ReadingPanel(SettingsPanel):
         miscBox = sc.SizedStaticBox(self, -1, _("During Reading Aloud"))
         miscBox.SetSizerProps(expand=True)
         # Translators: the label of a checkbox
-        wx.CheckBox(miscBox, -1, _("Speak page number"), name="reading.speak_page_number")
+        wx.CheckBox(
+            miscBox, -1, _("Speak page number"), name="reading.speak_page_number"
+        )
         # Translators: the label of a checkbox
         wx.CheckBox(
-            miscBox, -1, _("Highlight spoken text"), name="reading.highlight_spoken_text"
+            miscBox,
+            -1,
+            _("Highlight spoken text"),
+            name="reading.highlight_spoken_text",
         )
         wx.CheckBox(
             # Translators: the label of a checkbox
-            miscBox, -1, _("Select spoken text"), name="reading.select_spoken_text"
+            miscBox,
+            -1,
+            _("Select spoken text"),
+            name="reading.select_spoken_text",
         )
         wx.CheckBox(
             miscBox,

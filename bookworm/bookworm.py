@@ -58,6 +58,7 @@ def init_app_and_run_main_loop():
     log.debug(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
     if appinfo.is_frozen:
         from multiprocessing import freeze_support
+
         freeze_support()
     wxlogfilename = logs_path("wx.log") if not appinfo.debug else None
     app = BookwormApp(redirect=True, useBestVisual=True, filename=wxlogfilename)
