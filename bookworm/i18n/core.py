@@ -117,11 +117,11 @@ def set_active_language(language):
         app.current_language = langinfo
     except IOError:
         log.error(f"Translation catalog for language {lang} was not found.")
-        invariant_culture = CultureInfo.InvariantCulture
-        CultureInfo.CurrentUICulture = invariant_culture
-        CultureInfo.DefaultThreadCurrentUICulture = invariant_culture
-        ctypes.windll.kernel32.SetThreadLocale(invariant_culture.LCID)
-        app.current_language = get_available_languages()["default"]
+        en_culture = CultureInfo.GetCultureInfoByIetfLanguageTag("en")
+        CultureInfo.CurrentUICulture = en_culture
+        CultureInfo.DefaultThreadCurrentUICulture = en_culture
+        ctypes.windll.kernel32.SetThreadLocale(en_culture.LCID)
+        app.current_language = get_available_languages()["en"]
 
 
 def setup_i18n():
