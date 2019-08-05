@@ -16,7 +16,7 @@ version = "0.1b1"
 version_ex = "0.1.0.0"
 url = "https://github.com/mush42/bookworm/"
 website = "https://mush42.github.io/bookworm/"
-update_url = "http://localhost:5000/current_version.json"
+update_url = "https://mush42.github.io/bookworm/current_version.json"
 copyright = f"Copyright (c) 2019 {author}."
 arch = "x86" if struct.calcsize("P") == 4 else "x64"
 debug = False
