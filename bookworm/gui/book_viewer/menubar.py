@@ -657,8 +657,8 @@ class MenubarProvider:
     def onAbout(self, event):
         wx.MessageBox(
             # Translators: the title of the about dialog
-            _("About {app_name}").format(app_name=app.localized_name),
             ABOUT_MSG,
+            _("About {app_name}").format(app_name=app.localized_name),
             parent=self,
             style=wx.ICON_INFORMATION,
         )
