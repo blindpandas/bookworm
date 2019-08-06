@@ -729,7 +729,7 @@ class MenubarProvider:
             args.append(f'--filename "{self.reader.document.filename}"')
             self.reader.save_current_position()
         args.append("--debug")
-        restart_application(*args)
+        restart_application(args)
 
     @cached_property
     def content_text_ctrl_context_menu(self):
