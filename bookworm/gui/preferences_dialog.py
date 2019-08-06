@@ -323,9 +323,7 @@ class PreferencesDialog(SimpleDialog):
         self.tabs.AddPage(readingPage, _("Reading"), imageId=2)
 
         # Finalize
-        self.SetButtonSizer(
-            self.CreateStdDialogButtonSizer(wx.OK | wx.CANCEL | wx.APPLY)
-        )
+        self.SetButtonSizer(self.createButtonsSizer())
         # Event handlers
         self.Bind(wx.EVT_BUTTON, self.onSubmit, id=wx.ID_OK)
         self.Bind(wx.EVT_BUTTON, self.onApply, id=wx.ID_APPLY)
@@ -353,3 +351,17 @@ class PreferencesDialog(SimpleDialog):
         page = self.tabs.GetCurrentPage()
         page.reconcile(strategy=ReconciliationStrategies.save)
         self.tabs.GetListView().SetFocus()
+
+    def createButtonsSizer(self):
+        btnsizer = wx.StdDialogButtonSizer()
+        # Translators: the lable of the OK button in a dialog
+        okBtn = wx.Button(self, wx.ID_OK, _("OK"))
+        okBtn.SetDefault()
+        # Translators: the lable of the cancel button in a dialog
+        cancelBtn = wx.Button(self, wx.ID_CANCEL, _("Cancel"))
+        # Translators: the lable of the apply button in a dialog
+        applyBtn = wx.Button(self, wx.ID_APPLY, _("Apply"))
+        for btn in (okBtn, cancelBtn, applyBtn):
+            btnsizer.AddButton(btn)
+        btnsizer.Realize()
+        return btnsizer
