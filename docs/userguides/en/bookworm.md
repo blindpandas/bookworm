@@ -145,6 +145,13 @@ After clicking the OK button in the "Search Book Dialog", another dialog contain
 Note that if you've closed the search results window, you can press F3 and Shift + F3 to move to the next and previous occurrence of the last search respectively.
 
 
+## Updating Bookworm
+
+By default, Bookworm checks for new versions upon startup. This ensures that you get the latest and greatest of Bookworm as early as possible. You can disable this default behavior from the application preferences.   You can also check for updates manually by clicking the "Check for updates" menu item found under the "Help" menu.
+
+Either way, when a new version is found, Bookworm will ask you if you want to install it. If you click "Yes", the application will go ahead and download the update bundle, and will show a dialog indicating the progress of download. After the update is downloaded, Bookworm will alert you with a message, telling you it will restart the application in order to update. Just click "OK" to complete the update process.
+
+
 ## Reporting Problems & Issues
 
 As a blind developer, my responsibility is to develop applications that provide independence for me, and for my fellow blind friends allover the world. So, if you've found Bookworm useful in any way, please help me in making Bookworm better for you and for others. At this initial stage, I want you to tell me about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.

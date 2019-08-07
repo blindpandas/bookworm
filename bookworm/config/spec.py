@@ -19,6 +19,7 @@ config_spec = StringIO(
     play_pagination_sound = boolean(default=True)
     play_page_note_sound = boolean(default=True)
     highlight_bookmarked_positions = boolean(default=True)
+    auto_check_for_updates = boolean(default=True)
 [history]
     recently_opened = list(default=list())
     recent_terms = list(default=list())

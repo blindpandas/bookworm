@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  0.1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2019-08-06 14:01+0200\n"
+"POT-Creation-Date: 2019-08-07 20:30+0200\n"
 "PO-Revision-Date: 2019-08-04 23:02+0200\n"
 "Last-Translator: Musharraf Omer <ibnomer2011@hotmail.com>\n"
 "Language: ar\n"
@@ -24,20 +24,20 @@ msgid "Bookworm"
 msgstr ""
 
 #. Translators: the content of a message indicating a connection error
-#: bookworm/otau.py:74
+#: bookworm/otau.py:78
 msgid "We couldn't access the internet right now. Please try again later."
 msgstr ""
 
 #. Translators: the title of a message indicating a connection error
 #. Translators: the title of a message indicating a failure in downloading an
 #. update
-#: bookworm/otau.py:76 bookworm/otau.py:139
+#: bookworm/otau.py:80 bookworm/otau.py:143
 msgid "Network Error"
 msgstr ""
 
 #. Translators: the content of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:88
+#: bookworm/otau.py:92
 msgid ""
 "We have faced a technical problem while checking for updates. Please try "
 "again later."
@@ -45,13 +45,13 @@ msgstr ""
 
 #. Translators: the title of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:90
+#: bookworm/otau.py:94
 msgid "Error Checking For Updates"
 msgstr ""
 
 #. Translators: the content of a message indicating that there is no new
 #. version
-#: bookworm/otau.py:101
+#: bookworm/otau.py:105
 msgid ""
 "Congratulations, you have already got the latest version of Bookworm.\n"
 "We are working day and night on making Bookworm better. The next version "
@@ -60,13 +60,13 @@ msgid ""
 msgstr ""
 
 #. Translators: the title of a message indicating that there is no new version
-#: bookworm/otau.py:106
+#: bookworm/otau.py:110
 msgid "No Update"
 msgstr ""
 
 #. Translators: the content of a message indicating the availability of an
 #. update
-#: bookworm/otau.py:114
+#: bookworm/otau.py:118
 msgid ""
 "A new update for Bookworm has been released.\n"
 "Would you like to download and install it?\n"
@@ -75,13 +75,13 @@ msgid ""
 msgstr ""
 
 #. Translators: the title of a message indicating the availability of an update
-#: bookworm/otau.py:119
+#: bookworm/otau.py:123
 msgid "Update Available"
 msgstr ""
 
 #. Translators: the content of a message indicating a failure in downloading an
 #. update
-#: bookworm/otau.py:135
+#: bookworm/otau.py:139
 msgid ""
 "A network error was occured when trying to download the update.\n"
 "Make sure you are connected to the internet, or try again at a later time."
@@ -89,24 +89,24 @@ msgstr ""
 
 #. Translators: the title of a message indicating the progress of downloading
 #. an update
-#: bookworm/otau.py:146
+#: bookworm/otau.py:150
 msgid "Downloading Update"
 msgstr ""
 
 #. Translators: a message indicating the progress of downloading an update
 #. bundle
-#: bookworm/otau.py:148
+#: bookworm/otau.py:152
 msgid "Downloading {url}:"
 msgstr ""
 
 #. Translators: a message indicating the progress of downloading an update
 #. bundle
-#: bookworm/otau.py:155
-msgid "Downloading. {downloaded} MB of {total }MB"
+#: bookworm/otau.py:159
+msgid "Downloading. {downloaded} MB of {total} MB"
 msgstr ""
 
 #. Translators: the content of a message indicating a corrupted file
-#: bookworm/otau.py:172
+#: bookworm/otau.py:176
 msgid ""
 "The update file has been downloaded, but it has been corrupted during "
 "download.\n"
@@ -114,37 +114,39 @@ msgid ""
 msgstr ""
 
 #. Translators: the title of a message indicating a corrupted file
-#: bookworm/otau.py:175
+#: bookworm/otau.py:179
 msgid "Download Error"
 msgstr ""
 
 #. Translators: the content of a message indicating successful download of the
 #. update bundle
-#: bookworm/otau.py:187
+#: bookworm/otau.py:191
 msgid ""
 "The update has been downloaded successfully, and it is ready to be "
 "installed.\n"
-"Click the OK button to install it now."
+"The application will be restarted in order to complete the update "
+"process.\n"
+"Click the OK button to continue."
 msgstr ""
 
 #. Translators: the title of a message indicating successful download of the
 #. update bundle
-#: bookworm/otau.py:189
+#: bookworm/otau.py:195
 msgid "Download Completed"
 msgstr ""
 
 #. Translators: the name of a built-in voice profile
-#: bookworm/config/spec.py:50
+#: bookworm/config/spec.py:51
 msgid "Expressive"
 msgstr ""
 
 #. Translators: the name of a built-in voice profile
-#: bookworm/config/spec.py:61
+#: bookworm/config/spec.py:62
 msgid "Deep Reading"
 msgstr ""
 
 #. Translators: the name of a built-in voice profile
-#: bookworm/config/spec.py:72
+#: bookworm/config/spec.py:73
 msgid "Hazy"
 msgstr ""
 
@@ -156,6 +158,18 @@ msgstr ""
 #. Translators: the name of a document file format
 #: bookworm/document_formats/mu/__init__.py:142
 msgid "Electronic Publications"
+msgstr ""
+
+#. Translators: the lable of the OK button in a dialog
+#: bookworm/gui/components.py:77 bookworm/gui/components.py:117
+#: bookworm/gui/preferences_dialog.py:365
+msgid "OK"
+msgstr ""
+
+#. Translators: the lable of the cancel button in a dialog
+#: bookworm/gui/components.py:80 bookworm/gui/components.py:120
+#: bookworm/gui/preferences_dialog.py:368
+msgid "Cancel"
 msgstr ""
 
 #. Translators: the title of a group of controls in the
@@ -204,8 +218,13 @@ msgstr "إصدار صوت إذا كانت الصفحة الحالية تتضمن
 msgid "Highlight bookmarked positions"
 msgstr ""
 
+#. Translators: the label of a checkbox
+#: bookworm/gui/preferences_dialog.py:124
+msgid "Automatically check for updates"
+msgstr ""
+
 #. Translators: the content of a message asking the user to restart
-#: bookworm/gui/preferences_dialog.py:139
+#: bookworm/gui/preferences_dialog.py:146
 msgid ""
 "You have changed the display language of Bookworm.\n"
 "For this setting to fully take effect, you need to restart the "
@@ -215,7 +234,7 @@ msgstr ""
 
 #. Translators: the title of a message telling the user
 #. that the display language have been changed
-#: bookworm/gui/preferences_dialog.py:146
+#: bookworm/gui/preferences_dialog.py:153
 msgid "Language Changed"
 msgstr ""
 
@@ -223,120 +242,125 @@ msgstr ""
 #. speech settings page related to voice selection
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:111
-#: bookworm/gui/preferences_dialog.py:162
+#: bookworm/gui/preferences_dialog.py:169
 msgid "Voice"
 msgstr "إعدادات الصوت"
 
 #. Translators: the label of a combobox containing a list of tts voices
-#: bookworm/gui/preferences_dialog.py:166
+#: bookworm/gui/preferences_dialog.py:173
 msgid "Select Voice:"
 msgstr "إختر الصوت"
 
 #. Translators: the label of the speech rate slider
-#: bookworm/gui/preferences_dialog.py:169
+#: bookworm/gui/preferences_dialog.py:176
 msgid "Speech Rate:"
 msgstr "سرعة القراءة"
 
 #. Translators: the label of the speech volume slider
-#: bookworm/gui/preferences_dialog.py:173
+#: bookworm/gui/preferences_dialog.py:180
 msgid "Speech Volume:"
 msgstr "مستوى الصوت"
 
 #. Translators: the label of a group of controls in the speech
 #. settings page related to speech pauses
-#: bookworm/gui/preferences_dialog.py:178
+#: bookworm/gui/preferences_dialog.py:185
 msgid "Pauses"
 msgstr "إعدادات السكتات"
 
 #. Translators: the label of an edit field
-#: bookworm/gui/preferences_dialog.py:182
+#: bookworm/gui/preferences_dialog.py:189
 msgid "Additional Pause At Sentence End (Ms)"
 msgstr "السكوت الإضافي عند نهاية الجملة (بالمايكرو ثانية)"
 
 #. Translators: the label of an edit field
-#: bookworm/gui/preferences_dialog.py:187
+#: bookworm/gui/preferences_dialog.py:194
 msgid "Additional Pause At Paragraph End (Ms)"
 msgstr "السكوت الإضافي عند نهاية الفقرة (بالمايكرو ثانية)"
 
 #. Translators: the label of an edit field
-#: bookworm/gui/preferences_dialog.py:192
+#: bookworm/gui/preferences_dialog.py:199
 msgid "End of Page Pause (ms)"
 msgstr "السكوت الإضافي عند نهاية الصفحة (بالمايكرو ثانية)"
 
 #. Translators: the label of an edit field
-#: bookworm/gui/preferences_dialog.py:201
+#: bookworm/gui/preferences_dialog.py:208
 msgid "End of Section Pause (ms)"
 msgstr "السكوت الإضافي عند نهاية الفصل (بالمايكرو ثانية)"
 
-#: bookworm/gui/preferences_dialog.py:234
+#: bookworm/gui/preferences_dialog.py:241
 msgid "When Pressing Play:"
 msgstr "الجزئية التي سيقرؤها البرنامج عند الضغط على زر \"إقرأ\":"
 
 #. Translators: the label of a radio button
-#: bookworm/gui/preferences_dialog.py:239
+#: bookworm/gui/preferences_dialog.py:246
 msgid "Read the entire book"
 msgstr "قراءة الكتاب من الغلاف للغلاف"
 
 #. Translators: the label of a radio button
-#: bookworm/gui/preferences_dialog.py:241
+#: bookworm/gui/preferences_dialog.py:248
 msgid "Read the current section"
 msgstr "قراءة الفصل الحالي فقط"
 
 #. Translators: the label of a radio button
-#: bookworm/gui/preferences_dialog.py:243
+#: bookworm/gui/preferences_dialog.py:250
 msgid "Read the current page"
 msgstr "قراءة الصفحة الحالية فقط"
 
-#: bookworm/gui/preferences_dialog.py:251
+#: bookworm/gui/preferences_dialog.py:258
 msgid "Start reading from:"
 msgstr "الشروع في القراءة من:"
 
 #. Translators: the label of a radio button
-#: bookworm/gui/preferences_dialog.py:255
+#: bookworm/gui/preferences_dialog.py:262
 msgid "Cursor position"
 msgstr "الموضع الحالي للمؤشر"
 
-#: bookworm/gui/preferences_dialog.py:255
+#: bookworm/gui/preferences_dialog.py:262
 msgid "Beginning of page"
 msgstr "بداية الصفحة"
 
 #. Translators: the label of a group of controls in the reading page
 #. of the settings related to behavior during reading  aloud
-#: bookworm/gui/preferences_dialog.py:259
+#: bookworm/gui/preferences_dialog.py:266
 msgid "During Reading Aloud"
 msgstr "أثناء القراءة:"
 
-#: bookworm/gui/preferences_dialog.py:263
+#: bookworm/gui/preferences_dialog.py:270
 msgid "Speak page number"
 msgstr "نطق رقم الصفحة الحالية"
 
-#: bookworm/gui/preferences_dialog.py:269
+#: bookworm/gui/preferences_dialog.py:276
 msgid "Highlight spoken text"
 msgstr "تظهير النص المقروء"
 
-#: bookworm/gui/preferences_dialog.py:276
+#: bookworm/gui/preferences_dialog.py:283
 msgid "Select spoken text"
 msgstr "تحديد النص المقروء"
 
 #. Translators: the label of a checkbox
-#: bookworm/gui/preferences_dialog.py:283
+#: bookworm/gui/preferences_dialog.py:290
 msgid "Play end of section sound"
 msgstr "إصدار صوت عند بلوغ نهاية كل فصل"
 
 #. Translators: the label of a page in the settings dialog
-#: bookworm/gui/preferences_dialog.py:319
+#: bookworm/gui/preferences_dialog.py:326
 msgid "General"
 msgstr "إعدادات عامة"
 
 #. Translators: the label of a page in the settings dialog
-#: bookworm/gui/preferences_dialog.py:321
+#: bookworm/gui/preferences_dialog.py:328
 msgid "Speech"
 msgstr "إعدادات النطق"
 
 #. Translators: the label of a page in the settings dialog
-#: bookworm/gui/preferences_dialog.py:323
+#: bookworm/gui/preferences_dialog.py:330
 msgid "Reading"
 msgstr "إعدادات القراءة"
+
+#. Translators: the lable of the apply button in a dialog
+#: bookworm/gui/preferences_dialog.py:370
+msgid "Apply"
+msgstr ""
 
 #. Translators: the label of the table-of-contents tree
 #: bookworm/gui/book_viewer/__init__.py:43

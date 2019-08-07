@@ -17,6 +17,7 @@ from hashlib import sha1
 from pathlib import Path
 from lzma import decompress
 from bookworm import app
+from bookworm import config
 from bookworm import paths
 from bookworm.concurrency import call_threaded
 from bookworm.utils import generate_sha1hash
@@ -42,7 +43,10 @@ def extract_update_bundle(bundle):
 
 @app_started.connect
 def _check_for_updates_upon_startup(sender):
-    check_for_updates()
+    if config.conf["general"]["auto_check_for_updates"]:
+        check_for_updates()
+    else:
+        log.info("Automatic updates are disabled by user.")
 
 
 def parse_update_info(update_info):
@@ -184,7 +188,9 @@ def perform_update(update_url, sha1hash):
     wx.CallAfter(
         wx.MessageBox,
         # Translators: the content of a message indicating successful download of the update bundle
-        _("The update has been downloaded successfully, and it is ready to be installed.\nClick the OK button to install it now."),
+        _("The update has been downloaded successfully, and it is ready to be installed.\n"
+        "The application will be restarted in order to complete the update process.\n"
+        "Click the OK button to continue."),
         # Translators: the title of a message indicating successful download of the update bundle
         _("Download Completed"),
         style=wx.ICON_INFORMATION

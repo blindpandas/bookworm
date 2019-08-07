@@ -117,6 +117,13 @@ class GeneralPanel(SettingsPanel):
             _("Highlight bookmarked positions"),
             name="general.highlight_bookmarked_positions",
         )
+        wx.CheckBox(
+            miscBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Automatically check for updates"),
+            name="general.auto_check_for_updates",
+        )
         langobjs = get_available_languages().values()
         languages = set((lang.language, lang.description) for lang in langobjs)
         for ident, label in languages:
