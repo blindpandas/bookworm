@@ -18,7 +18,7 @@ log = logger.getChild(__name__)
 _missing = object()
 
 
-def restart_application(extra_args):
+def restart_application(extra_args=()):
     args = sys.argv[:1]
     args.extend(extra_args)
     os.execv(sys.executable, args)
