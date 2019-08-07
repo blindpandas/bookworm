@@ -9,7 +9,7 @@ import sys
 import os
 import platform
 import shutil
-import json 
+import json
 from io import BytesIO, StringIO
 from datetime import datetime
 from functools import wraps
@@ -21,9 +21,6 @@ from zipfile import ZipFile
 from lzma import compress
 from invoke import task, call
 from invoke.exceptions import UnexpectedExit
-from PIL import Image
-from wx.tools.img2py import img2py
-from mistune import markdown
 
 
 PROJECT_ROOT = Path.cwd()
@@ -39,6 +36,7 @@ GUIDE_HTML_TEMPLATE = """<!doctype html>
   </html>
 """
 
+
 @contextmanager
 def mute_stdout():
     _stdout = sys.stdout
@@ -47,10 +45,12 @@ def mute_stdout():
         yield
     finally:
         sys.stdout = _stdout
-        
-        
+
+
 def _add_envars(context):
-    from bookworm import app
+    sys.path.insert(0, str(PACKAGE_FOLDER))
+    import app
+    del sys.path[0]
 
     arch = app.arch
     build_folder = PROJECT_ROOT / "scripts" / "builder" / "dist" / arch / "Bookworm"
@@ -87,6 +87,9 @@ def make_env(func):
 @task(name="icons")
 def make_icons(c):
     """Rescale images and embed them in a python module."""
+    from PIL import Image
+    from wx.tools.img2py import img2py
+
     print("Rescaling images and embedding them in bookworm.resources.images.py")
     TARGET_SIZE = (24, 24)
     IMAGE_SOURCE_FOLDER = PROJECT_ROOT / "fullsize_images"
@@ -140,6 +143,8 @@ def format_code(c):
 @make_env
 def build_docs(c):
     """Build the end-user documentation."""
+    from mistune import markdown
+
     print("Building documentations")
     docs_src = PROJECT_ROOT / "docs" / "userguides"
     for folder in [fd for fd in docs_src.iterdir() if fd.is_dir()]:
@@ -206,9 +211,10 @@ def extract_msgs(c):
 
 
 @task
+@make_env
 def compile_msgs(c):
     print("Compiling .po message catalogs to binary format.")
-    domain = "bookworm"
+    domain = os.environ["IAPP_NAME"]
     locale_dir = PACKAGE_FOLDER / "resources" / "locale"
     if list(locale_dir.rglob("*.po")):
         c.run(f'pybabel compile -D {domain} -d "{locale_dir}"')
@@ -264,7 +270,7 @@ def install_packages(c):
         print("Building Bookworm wheel.")
         c.run("py setup.py bdist_wheel", hide="stdout")
         wheel_path = next(Path(PROJECT_ROOT / "dist").glob("*.whl"))
-        print("Installing Bookworm wheel") 
+        print("Installing Bookworm wheel")
         c.run(f"pip install --upgrade {wheel_path}", hide="stdout")
     print("Finished installing packages.")
 
@@ -296,7 +302,9 @@ def clean(c, assets=False, siteconfig=False):
             folders_to_clean.extend(c["folders_to_clean"]["assets"])
         if siteconfig:
             folders_to_clean.append(".appdata")
-        glob_patterns = [(entry, glob(entry)) for entry in folders_to_clean if "*" in entry]
+        glob_patterns = [
+            (entry, glob(entry)) for entry in folders_to_clean if "*" in entry
+        ]
         for entry, glbs in glob_patterns:
             folders_to_clean.remove(entry)
             folders_to_clean.extend(glbs)
@@ -316,7 +324,7 @@ def clean(c, assets=False, siteconfig=False):
 @make_env
 def copy_deps(c):
     """Copies the system dlls."""
-    print("Statically linking vcredis 2015 ucrt ...") 
+    print("Statically linking vcredis 2015 ucrt ...")
     arch = os.environ["IAPP_ARCH"]
     dist_dir = os.environ["IAPP_FROZEN_DIRECTORY"]
     dlls = (
@@ -331,7 +339,7 @@ def copy_deps(c):
         except UnexpectedExit:
             print(f"Faild to copy  {dll} to {dist_dir}")
             continue
-    print("Static linking of vcredis 2015 ucrt is done.") 
+    print("Static linking of vcredis 2015 ucrt is done.")
 
 
 @task
@@ -343,9 +351,14 @@ def freeze(c):
     print("Freezing the application...")
     with c.cd(str(PROJECT_ROOT / "scripts" / "builder")):
         if app.get_version_info()["pre_type"] is None:
-            print("The current build is a final release. Turnning on python optimizations...")
+            print(
+                "The current build is a final release. Turnning on python optimizations..."
+            )
             os.environ["PYTHONOPTIMIZE"] = "2"
-        c.run(f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}", hide=True)
+        c.run(
+            f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}",
+            hide=True,
+        )
     print("App freezed. Trying to copy system dlls.")
     copy_deps(c)
 
@@ -355,7 +368,7 @@ def freeze(c):
 def bundle_update(c):
     """Bundles the frozen app for use in updates.
     Uses zip and lzma compression.
-    """    
+    """
     print("Preparing update bundle...")
     from bookworm.utils import recursively_iterdir
 
@@ -367,7 +380,9 @@ def bundle_update(c):
     with ZipFile(archive_file, "w") as archive:
         for file in recursively_iterdir(frozen_dir):
             archive.write(file, file.relative_to(frozen_dir))
-        archive.write(PROJECT_ROOT / "scripts" / "executables" / "bootstrap.exe", "bootstrap.exe") 
+        archive.write(
+            PROJECT_ROOT / "scripts" / "executables" / "bootstrap.exe", "bootstrap.exe"
+        )
     archive_file.seek(0)
     data = compress(archive_file.getbuffer())
     bundle_file.write_bytes(data)
@@ -380,12 +395,12 @@ def update_version_info(c):
     from bookworm.utils import generate_sha1hash
 
     artifacts_folder = PROJECT_ROOT / "scripts"
-    json_file =  artifacts_folder / "release-info.json"
+    json_file = artifacts_folder / "release-info.json"
     release_type = app.get_version_info()["pre_type"] or ""
     json_info = {release_type: {"version": app.version}}
     artifacts = dict(
         installer=artifacts_folder.glob("Bookworm*setup.exe"),
-        update_bundle=artifacts_folder.glob("Bookworm*update.bundle")
+        update_bundle=artifacts_folder.glob("Bookworm*update.bundle"),
     )
     for artifact_type, artifact_files in artifacts.items():
         for file in artifact_files:
@@ -396,7 +411,7 @@ def update_version_info(c):
 
 @task(
     pre=(clean, make_icons, install_packages, freeze),
-    post=(build_docs, copy_assets, make_installer, bundle_update)
+    post=(build_docs, copy_assets, make_installer, bundle_update),
 )
 @make_env
 def build(c):

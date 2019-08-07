@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  0.1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2019-08-07 21:15+0200\n"
+"POT-Creation-Date: 2019-08-07 21:44+0200\n"
 "PO-Revision-Date: 2019-08-07 13:03+0300\n"
 "Last-Translator: ikrami <ikrami.ahmad@gmail.com>\n"
 "Language: ar\n"
@@ -19,10 +19,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
-#: bookworm/app.py:12
-msgid "Bookworm"
-msgstr "Bookworm"
-
 #. Translators: the content of a message indicating a connection error
 #: bookworm/otau.py:78
 msgid "We couldn't access the internet right now. Please try again later."
@@ -31,7 +27,7 @@ msgstr ""
 #. Translators: the title of a message indicating a connection error
 #. Translators: the title of a message indicating a failure in downloading an
 #. update
-#: bookworm/otau.py:80 bookworm/otau.py:143
+#: bookworm/otau.py:80 bookworm/otau.py:151
 msgid "Network Error"
 msgstr ""
 
@@ -45,13 +41,13 @@ msgstr ""
 
 #. Translators: the title of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:94
+#: bookworm/otau.py:96
 msgid "Error Checking For Updates"
 msgstr ""
 
 #. Translators: the content of a message indicating that there is no new
 #. version
-#: bookworm/otau.py:105
+#: bookworm/otau.py:107
 msgid ""
 "Congratulations, you have already got the latest version of Bookworm.\n"
 "We are working day and night on making Bookworm better. The next version "
@@ -60,13 +56,13 @@ msgid ""
 msgstr ""
 
 #. Translators: the title of a message indicating that there is no new version
-#: bookworm/otau.py:110
+#: bookworm/otau.py:114
 msgid "No Update"
 msgstr ""
 
 #. Translators: the content of a message indicating the availability of an
 #. update
-#: bookworm/otau.py:118
+#: bookworm/otau.py:122
 msgid ""
 "A new update for Bookworm has been released.\n"
 "Would you like to download and install it?\n"
@@ -75,13 +71,13 @@ msgid ""
 msgstr ""
 
 #. Translators: the title of a message indicating the availability of an update
-#: bookworm/otau.py:123
+#: bookworm/otau.py:129
 msgid "Update Available"
 msgstr ""
 
 #. Translators: the content of a message indicating a failure in downloading an
 #. update
-#: bookworm/otau.py:139
+#: bookworm/otau.py:145
 msgid ""
 "A network error was occured when trying to download the update.\n"
 "Make sure you are connected to the internet, or try again at a later time."
@@ -89,24 +85,24 @@ msgstr ""
 
 #. Translators: the title of a message indicating the progress of downloading
 #. an update
-#: bookworm/otau.py:150
+#: bookworm/otau.py:158
 msgid "Downloading Update"
 msgstr ""
 
 #. Translators: a message indicating the progress of downloading an update
 #. bundle
-#: bookworm/otau.py:152
+#: bookworm/otau.py:160
 msgid "Downloading {url}:"
 msgstr ""
 
 #. Translators: a message indicating the progress of downloading an update
 #. bundle
-#: bookworm/otau.py:159
+#: bookworm/otau.py:167
 msgid "Downloading. {downloaded} MB of {total} MB"
 msgstr ""
 
 #. Translators: the content of a message indicating a corrupted file
-#: bookworm/otau.py:176
+#: bookworm/otau.py:182
 msgid ""
 "The update file has been downloaded, but it has been corrupted during "
 "download.\n"
@@ -114,13 +110,13 @@ msgid ""
 msgstr ""
 
 #. Translators: the title of a message indicating a corrupted file
-#: bookworm/otau.py:179
+#: bookworm/otau.py:187
 msgid "Download Error"
 msgstr ""
 
 #. Translators: the content of a message indicating successful download of the
 #. update bundle
-#: bookworm/otau.py:191
+#: bookworm/otau.py:199
 msgid ""
 "The update has been downloaded successfully, and it is ready to be "
 "installed.\n"
@@ -131,7 +127,7 @@ msgstr ""
 
 #. Translators: the title of a message indicating successful download of the
 #. update bundle
-#: bookworm/otau.py:195
+#: bookworm/otau.py:205
 msgid "Download Completed"
 msgstr ""
 
@@ -756,430 +752,430 @@ msgstr ""
 
 #. Translators: the label of an ietm in the application menubar
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/menubar.py:125
+#: bookworm/gui/book_viewer/menubar.py:127
 #: bookworm/gui/book_viewer/toolbar.py:36
 msgid "Open"
 msgstr "فتح"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:128
+#: bookworm/gui/book_viewer/menubar.py:130
 msgid "&Save As Plain Text..."
 msgstr "ال&حفظ كنص بسيط..."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:133
+#: bookworm/gui/book_viewer/menubar.py:135
 msgid "&Close Current Book"
 msgstr "إ&غلاق الكتاب الحالي"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:135
+#: bookworm/gui/book_viewer/menubar.py:137
 msgid "Close the currently open e-book"
 msgstr "لإغلاق الكتاب الإلكتروني المفتوح حاليا"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:141
+#: bookworm/gui/book_viewer/menubar.py:143
 msgid "&Recent Books"
 msgstr "ال&كتب المفتوحة مؤخراً"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:143
+#: bookworm/gui/book_viewer/menubar.py:145
 msgid "Opens a list of recently opened books."
 msgstr "لعرض قائمة بآخر الكتب التي قمت بفتحها."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:148
+#: bookworm/gui/book_viewer/menubar.py:150
 msgid "Clear list"
 msgstr "مسح القائمة"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:150
+#: bookworm/gui/book_viewer/menubar.py:152
 msgid "Clear the recent books list."
 msgstr "لمسح محتويات قائمة الكتب المفتوحة مؤخراً."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:154
+#: bookworm/gui/book_viewer/menubar.py:156
 msgid "Exit"
 msgstr "الخروج"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:159
-#: bookworm/gui/book_viewer/menubar.py:754
+#: bookworm/gui/book_viewer/menubar.py:161
+#: bookworm/gui/book_viewer/menubar.py:756
 msgid "&Go To Page"
 msgstr "ال&ذهاب إلى صفحة"
 
 #. Translators: the help text of an ietm in the application menubar
 #. Translators: the help text of a button in the application toolbar
-#: bookworm/gui/book_viewer/menubar.py:161
-#: bookworm/gui/book_viewer/menubar.py:756
+#: bookworm/gui/book_viewer/menubar.py:163
+#: bookworm/gui/book_viewer/menubar.py:758
 #: bookworm/gui/book_viewer/toolbar.py:56
 msgid "Go to page"
 msgstr "الذهاب إلى صفحة"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:166
-#: bookworm/gui/book_viewer/menubar.py:761
+#: bookworm/gui/book_viewer/menubar.py:168
+#: bookworm/gui/book_viewer/menubar.py:763
 msgid "&Find in Book"
 msgstr "ال&بحث في الكتاب"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:168
-#: bookworm/gui/book_viewer/menubar.py:763
+#: bookworm/gui/book_viewer/menubar.py:170
+#: bookworm/gui/book_viewer/menubar.py:765
 msgid "Search this book."
 msgstr "البحث عن مصطلح ما داخل الكتاب النشط حالياً."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:173
+#: bookworm/gui/book_viewer/menubar.py:175
 msgid "&Find &Next"
 msgstr "&البحث عن &التالي"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:175
+#: bookworm/gui/book_viewer/menubar.py:177
 msgid "Find next occurrence."
 msgstr "الانتقال إلى نتيجة البحث التالية."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:180
+#: bookworm/gui/book_viewer/menubar.py:182
 msgid "&Find &Previous"
 msgstr "ال&بحث عن السا&بق"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:182
+#: bookworm/gui/book_viewer/menubar.py:184
 msgid "Find previous occurrence."
 msgstr "الانتقال إلى نتيجة البحث السابقة."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:187
-#: bookworm/gui/book_viewer/menubar.py:768
+#: bookworm/gui/book_viewer/menubar.py:189
+#: bookworm/gui/book_viewer/menubar.py:770
 msgid "&Render Page"
 msgstr "&عرض الصفحة"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:189
-#: bookworm/gui/book_viewer/menubar.py:770
+#: bookworm/gui/book_viewer/menubar.py:191
+#: bookworm/gui/book_viewer/menubar.py:772
 msgid "View a fully rendered version of this page."
 msgstr "لعرض نسخة كاملة قابلة للتكبير من الصفحة الحالية."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:194
+#: bookworm/gui/book_viewer/menubar.py:196
 msgid "&Preferences"
 msgstr "ال&تفضيلات"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:196
+#: bookworm/gui/book_viewer/menubar.py:198
 msgid "Configure application"
 msgstr "لضبط خيارات البرنامج"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:202
+#: bookworm/gui/book_viewer/menubar.py:204
 msgid "&Play"
 msgstr "ت&شغيل"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:204
+#: bookworm/gui/book_viewer/menubar.py:206
 msgid "Start reading aloud"
 msgstr "بدء القراءة"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:209
+#: bookworm/gui/book_viewer/menubar.py:211
 msgid "Pa&use/Resume"
 msgstr "إي&قاف/استئناف"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:211
+#: bookworm/gui/book_viewer/menubar.py:213
 msgid "Pause/Resume reading aloud"
 msgstr "لإيقاف القراءة مؤقتاً أو استئنافها"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:216
+#: bookworm/gui/book_viewer/menubar.py:218
 msgid "&Stop"
 msgstr "إيقا&ف"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:218
+#: bookworm/gui/book_viewer/menubar.py:220
 msgid "Stop reading aloud"
 msgstr "لإيقاف القراءة تماماً"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:223
+#: bookworm/gui/book_viewer/menubar.py:225
 msgid "&Rewind"
 msgstr "&رجوع للخلف"
 
 #. Translators: the help text of an ietm in the application menubar
 #. Translators: the help text of a button in the application toolbar
-#: bookworm/gui/book_viewer/menubar.py:225
+#: bookworm/gui/book_viewer/menubar.py:227
 #: bookworm/gui/book_viewer/toolbar.py:90
 msgid "Skip to previous paragraph"
 msgstr "الانتقال إلى الفقرة السابقة"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:230
+#: bookworm/gui/book_viewer/menubar.py:232
 msgid "&Fast Forward"
 msgstr "التقد&م للأمام"
 
 #. Translators: the help text of an ietm in the application menubar
 #. Translators: the help text of a button in the application toolbar
-#: bookworm/gui/book_viewer/menubar.py:232
+#: bookworm/gui/book_viewer/menubar.py:234
 #: bookworm/gui/book_viewer/toolbar.py:106
 msgid "Skip to next paragraph"
 msgstr "الانتقال إلى الفقرة التالية"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:237
+#: bookworm/gui/book_viewer/menubar.py:239
 msgid "&Voice Profiles"
 msgstr "الأو&ضاع الصوتية"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:239
+#: bookworm/gui/book_viewer/menubar.py:241
 msgid "Manage voice profiles."
 msgstr "لإدارة الأوضاع الصوتية."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:244
+#: bookworm/gui/book_viewer/menubar.py:246
 msgid "&Deactivate Active Voice Profile"
 msgstr "تع&طيل الوضع الصوتي النشط"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:246
+#: bookworm/gui/book_viewer/menubar.py:248
 msgid "Deactivate the active voice profile."
 msgstr "لتعطيل الوضع الصوتي النشط حاليا."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:252
-#: bookworm/gui/book_viewer/menubar.py:740
+#: bookworm/gui/book_viewer/menubar.py:254
+#: bookworm/gui/book_viewer/menubar.py:742
 msgid "Add &Bookmark"
 msgstr "إ&ضافة علامة مرجعية"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:254
-#: bookworm/gui/book_viewer/menubar.py:742
+#: bookworm/gui/book_viewer/menubar.py:256
+#: bookworm/gui/book_viewer/menubar.py:744
 msgid "Bookmark the current location"
 msgstr "لإضافة علامة مرجعية عند موقع القراءة الحالي."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:259
-#: bookworm/gui/book_viewer/menubar.py:747
+#: bookworm/gui/book_viewer/menubar.py:261
+#: bookworm/gui/book_viewer/menubar.py:749
 msgid "Take &Note"
 msgstr "تدوين &ملاحظة"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:261
-#: bookworm/gui/book_viewer/menubar.py:749
+#: bookworm/gui/book_viewer/menubar.py:263
+#: bookworm/gui/book_viewer/menubar.py:751
 msgid "Add a note at the current location"
 msgstr "لإضافة ملاحظة جديدة عند موقع القراءة الحالي"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:266
+#: bookworm/gui/book_viewer/menubar.py:268
 msgid "&View Bookmarks"
 msgstr "&عرض العلامات المرجعية"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:268
+#: bookworm/gui/book_viewer/menubar.py:270
 msgid "View added bookmarks"
 msgstr "لعرض العلامات المرجعية التي تمت إضافتها"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:273
+#: bookworm/gui/book_viewer/menubar.py:275
 msgid "&Manage Notes"
 msgstr "إدارة الملاح&ظات"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:275
+#: bookworm/gui/book_viewer/menubar.py:277
 msgid "View, edit, and remove notes."
 msgstr "لاستعراض، أو تعديل أو حذف الملاحظات الموجودة على الكتاب."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:280
+#: bookworm/gui/book_viewer/menubar.py:282
 msgid "Notes &Exporter"
 msgstr "ت&صدير الملاحظات"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:282
+#: bookworm/gui/book_viewer/menubar.py:284
 msgid "Export notes to a file."
 msgstr "لتصدير الملاحظات إلى ملف نصي."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:288
+#: bookworm/gui/book_viewer/menubar.py:290
 msgid "&User guide"
 msgstr "&دليل المستخدم"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:290
+#: bookworm/gui/book_viewer/menubar.py:292
 msgid "View Bookworm manuals"
 msgstr "لعرض دليل المستخدم الخاص ببرنامج BookWorm"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:295
+#: bookworm/gui/book_viewer/menubar.py:297
 msgid "&Bookworm website..."
 msgstr "م&وقع الويب..."
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:297
+#: bookworm/gui/book_viewer/menubar.py:299
 msgid "Visit the official website of Bookworm"
 msgstr "لزيارة الموقع الرسمي الخاص ببرنامج BookWorm"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:302
+#: bookworm/gui/book_viewer/menubar.py:304
 msgid "&License"
 msgstr "التر&خيص"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:304
+#: bookworm/gui/book_viewer/menubar.py:306
 msgid "View legal information about this program ."
 msgstr "عرض المعلومات القانونية المتعلقة بهذا البرنامج."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:315
+#: bookworm/gui/book_viewer/menubar.py:317
 msgid "&Restart with debug-mode enabled"
 msgstr "إعادة الت&شغيل مع تمكين وضع التصحيح"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:317
+#: bookworm/gui/book_viewer/menubar.py:319
 msgid "Restart the program with debug mode enabled to show errors"
 msgstr "إعادة تشغيل البرنامج في وضع التصحيح، وذلك لعرض الأخطاء"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:327
+#: bookworm/gui/book_viewer/menubar.py:329
 msgid "&About Bookworm"
 msgstr "&حول BookWorm"
 
 #. Translators: the help text of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:329
+#: bookworm/gui/book_viewer/menubar.py:331
 msgid "Show general information about this program"
 msgstr "لعرض معلومات عامة حول هذا البرنامج"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:403
+#: bookworm/gui/book_viewer/menubar.py:405
 msgid "&File"
 msgstr "&ملف"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:405
+#: bookworm/gui/book_viewer/menubar.py:407
 msgid "&Tools"
 msgstr "أ&دوات"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:407
+#: bookworm/gui/book_viewer/menubar.py:409
 msgid "&Speech"
 msgstr "ال&نطق"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:409
+#: bookworm/gui/book_viewer/menubar.py:411
 msgid "&Annotations"
 msgstr "ال&حواشي"
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:411
+#: bookworm/gui/book_viewer/menubar.py:413
 msgid "&Help"
 msgstr "الم&ساعدة"
 
 #. Translators: the title of a file dialog to browse to an e-book
-#: bookworm/gui/book_viewer/menubar.py:427
+#: bookworm/gui/book_viewer/menubar.py:429
 msgid "Choose an e-book"
 msgstr "اختر كتاباً إلكترونياً"
 
 #. Translators: the title of the go to page dialog
-#: bookworm/gui/book_viewer/menubar.py:466
+#: bookworm/gui/book_viewer/menubar.py:468
 msgid "Go To Page"
 msgstr "الذهاب إلى صفحة"
 
 #. Translators: the title of the render page dialog
-#: bookworm/gui/book_viewer/menubar.py:474
+#: bookworm/gui/book_viewer/menubar.py:476
 msgid "Rendered Page"
 msgstr "عرض الصفحة"
 
 #. Translators: the title of the voice profiles dialog
-#: bookworm/gui/book_viewer/menubar.py:480
+#: bookworm/gui/book_viewer/menubar.py:482
 msgid "Voice Profiles"
 msgstr "الأوضاع الصوتية"
 
 #. Translators: the label of an edit field to enter the title for a new
 #. bookmark
-#: bookworm/gui/book_viewer/menubar.py:493
+#: bookworm/gui/book_viewer/menubar.py:495
 msgid "Bookmark title:"
 msgstr "عنوان العلامة المرجعية:"
 
 #. Translators: the title of a dialog to create a new bookmark
-#: bookworm/gui/book_viewer/menubar.py:495
+#: bookworm/gui/book_viewer/menubar.py:497
 msgid "Bookmark This Location"
 msgstr "وضع علامة مرجعية عند هذا الموضع"
 
 #. Translators: the title of a dialog to view bookmarks
-#: bookworm/gui/book_viewer/menubar.py:518
+#: bookworm/gui/book_viewer/menubar.py:520
 msgid "Bookmarks | {book}"
 msgstr "العلامات المرجعية | {book}"
 
 #. Translators: the title of a dialog to view notes
-#: bookworm/gui/book_viewer/menubar.py:528
+#: bookworm/gui/book_viewer/menubar.py:530
 msgid "Notes | {book}"
 msgstr "الملاحظات | {book}"
 
 #. Translators: the title of a dialog for exporting notes
-#: bookworm/gui/book_viewer/menubar.py:538
+#: bookworm/gui/book_viewer/menubar.py:540
 msgid "Export Notes | {book}"
 msgstr "تصدير الملاحظات | {book}"
 
 #. Translators: the title of the application preferences dialog
-#: bookworm/gui/book_viewer/menubar.py:548
+#: bookworm/gui/book_viewer/menubar.py:550
 msgid "{app_name} Preferences"
 msgstr "تفضيلات {app_name}"
 
 #. Translators: the title of a dialog to save the exported book
-#: bookworm/gui/book_viewer/menubar.py:559
+#: bookworm/gui/book_viewer/menubar.py:561
 msgid "Save As"
 msgstr "حفظ باسم"
 
 #. Translators: the title of a dialog showing
 #. the progress of book export process
-#: bookworm/gui/book_viewer/menubar.py:572
+#: bookworm/gui/book_viewer/menubar.py:574
 msgid "Exporting Book"
 msgstr "تصدير الكتاب"
 
 #. Translators: the message of a dialog showing the progress of book export
-#: bookworm/gui/book_viewer/menubar.py:574
+#: bookworm/gui/book_viewer/menubar.py:576
 msgid "Converting your book to plain text."
 msgstr "تحويل الكتاب إلى نص بسيط."
 
 #. Translators: a message shown when the book is being exported
-#: bookworm/gui/book_viewer/menubar.py:582
+#: bookworm/gui/book_viewer/menubar.py:584
 msgid "Converting book..."
 msgstr "جاري تحويل الكتاب..."
 
 #. Translators: the title of the search dialog
-#: bookworm/gui/book_viewer/menubar.py:589
+#: bookworm/gui/book_viewer/menubar.py:591
 msgid "Search book"
 msgstr "البحث في الكتاب"
 
-#: bookworm/gui/book_viewer/menubar.py:608
+#: bookworm/gui/book_viewer/menubar.py:610
 msgid "Searching For '{term}'"
 msgstr "البحث عن '{term}'"
 
 #. Translators: the final title of the search results dialog
 #. shown after the search is finished
-#: bookworm/gui/book_viewer/menubar.py:633
+#: bookworm/gui/book_viewer/menubar.py:635
 msgid "Results | {total}"
 msgstr "النتائج | {total}"
 
-#: bookworm/gui/book_viewer/menubar.py:662
+#: bookworm/gui/book_viewer/menubar.py:664
 msgid "About {app_name}"
 msgstr "حول {app_name}"
 
 #. Translators: a message that is announced when the speech is paused
-#: bookworm/gui/book_viewer/menubar.py:682
+#: bookworm/gui/book_viewer/menubar.py:684
 msgid "Paused"
 msgstr "تم إيقاف التشغيل"
 
 #. Translators: a message that is announced when the speech is resumed
-#: bookworm/gui/book_viewer/menubar.py:686
+#: bookworm/gui/book_viewer/menubar.py:688
 msgid "Resumed"
 msgstr "تم استئناف التشغيل"
 
 #. Translators: a message that is announced when the speech is stopped
-#: bookworm/gui/book_viewer/menubar.py:697
+#: bookworm/gui/book_viewer/menubar.py:699
 msgid "Stopped"
 msgstr "تم إنهاء التشغيل"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/menubar.py:705
+#: bookworm/gui/book_viewer/menubar.py:707
 msgid ""
 "The file\n"
 "{file}\n"
@@ -1190,22 +1186,22 @@ msgstr ""
 "غير موجود."
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/menubar.py:707
+#: bookworm/gui/book_viewer/menubar.py:709
 msgid "File Not Found"
 msgstr "لم يتم العثور على الملف."
 
 #. Translators: the label of an ietm in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:797
+#: bookworm/gui/book_viewer/menubar.py:799
 msgid "(No recent books)"
 msgstr ")لا توجد كتب تم فتحها مؤخراً("
 
-#: bookworm/gui/book_viewer/menubar.py:798
+#: bookworm/gui/book_viewer/menubar.py:800
 msgid "No recent books"
 msgstr "لا توجد كتب تم فتحها مؤخراً"
 
 #. Translators: the content of a dialog asking the user
 #. for the password to decrypt the current e-book
-#: bookworm/gui/book_viewer/menubar.py:844
+#: bookworm/gui/book_viewer/menubar.py:846
 msgid ""
 "This document is encrypted, and you need a password to access its "
 "content.\n"
@@ -1217,7 +1213,7 @@ msgstr ""
 #. Translators: the title of a dialog asking the user to enter a password to
 #. decrypt the e-book
 #. Translators: the content of a message
-#: bookworm/gui/book_viewer/menubar.py:855
+#: bookworm/gui/book_viewer/menubar.py:857
 msgid ""
 "The password you've entered is invalid.\n"
 "Please try again."
@@ -1226,7 +1222,7 @@ msgstr ""
 "الرجاء إعادة المحاولة."
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/menubar.py:857
+#: bookworm/gui/book_viewer/menubar.py:859
 msgid "Invalid Password"
 msgstr "كلمة مرور غير صالحة"
 

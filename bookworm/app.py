@@ -3,13 +3,11 @@
 import sys
 import os
 import struct
-import regex as re
+import re
 
 
 name = "bookworm"
-is_frozen = hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS')
 display_name = "Bookworm"
-localized_name = _("Bookworm")
 author = "Musharraf Omer"
 author_email = "ibnomer2011@hotmail.com"
 version = "0.1b1"
@@ -18,8 +16,11 @@ url = "https://github.com/mush42/bookworm/"
 website = "https://mush42.github.io/bookworm/"
 update_url = "https://mush42.github.io/bookworm/current_version.json"
 copyright = f"Copyright (c) 2019 {author}."
+is_frozen = hasattr(sys, "frozen") and hasattr(sys, "_MEIPASS")
 arch = "x86" if struct.calcsize("P") == 4 else "x64"
 debug = False
+# These variables are set upon app initialization
+args = extra_args = current_language = None
 
 # Version pattern
 VERSION_PATTERN = r"""
@@ -39,10 +40,10 @@ VERSION_PATTERN = r"""
 
 
 def get_version_info(version_string=version):
-    pattern = re.compile(r"^\s*" + VERSION_PATTERN + r"\s*$", re.VERBOSE | re.IGNORECASE)
-    mat = pattern.match(version_string, concurrent=True)
+    pattern = re.compile(
+        r"^\s*" + VERSION_PATTERN + r"\s*$", re.VERBOSE | re.IGNORECASE
+    )
+    mat = pattern.match(version_string)
     if not mat:
         raise ValueError
     return mat.groupdict()
-
-

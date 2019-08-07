@@ -78,7 +78,7 @@ def check_for_updates(verbose=False):
                 _("We couldn't access the internet right now. Please try again later."),
                 # Translators: the title of a message indicating a connection error
                 _("Network Error"),
-                style=wx.ICON_WARNING
+                style=wx.ICON_WARNING,
             )
         return
     try:
@@ -89,10 +89,12 @@ def check_for_updates(verbose=False):
             wx.CallAfter(
                 wx.MessageBox,
                 # Translators: the content of a message indicating an error while updating the app
-                _("We have faced a technical problem while checking for updates. Please try again later."),
+                _(
+                    "We have faced a technical problem while checking for updates. Please try again later."
+                ),
                 # Translators: the title of a message indicating an error while updating the app
                 _("Error Checking For Updates"),
-                style=wx.ICON_WARNING
+                style=wx.ICON_WARNING,
             )
         return
     upstream_version, dl_url, dl_sha1hash = parse_update_info(update_info)
@@ -102,26 +104,30 @@ def check_for_updates(verbose=False):
             wx.CallAfter(
                 wx.MessageBox,
                 # Translators: the content of a message indicating that there is no new version
-                _("Congratulations, you have already got the latest version of Bookworm.\n"
-                "We are working day and night on making Bookworm better. The next version "
-                "of Bookworm is on its way, so wait for it. Rest assured, "
-                "we will notify you when it is released."),
+                _(
+                    "Congratulations, you have already got the latest version of Bookworm.\n"
+                    "We are working day and night on making Bookworm better. The next version "
+                    "of Bookworm is on its way, so wait for it. Rest assured, "
+                    "we will notify you when it is released."
+                ),
                 # Translators: the title of a message indicating that there is no new version
                 _("No Update"),
-                style=wx.ICON_INFORMATION
+                style=wx.ICON_INFORMATION,
             )
         return
     # A new version is available
     log.debug(f"A new version is available. Version {upstream_version}")
     msg = wx.MessageBox(
         # Translators: the content of a message indicating the availability of an update
-        _("A new update for Bookworm has been released.\n"
-        "Would you like to download and install it?\n"
-        "\tInstalled Version: {current}\n"
-        "\tNew Version: {new}\n").format(current=app.version, new=upstream_version),
+        _(
+            "A new update for Bookworm has been released.\n"
+            "Would you like to download and install it?\n"
+            "\tInstalled Version: {current}\n"
+            "\tNew Version: {new}\n"
+        ).format(current=app.version, new=upstream_version),
         # Translators: the title of a message indicating the availability of an update
         _("Update Available"),
-        style=wx.YES_NO|wx.ICON_INFORMATION
+        style=wx.YES_NO | wx.ICON_INFORMATION,
     )
     if msg == wx.YES:
         perform_update(dl_url, dl_sha1hash)
@@ -136,12 +142,14 @@ def perform_update(update_url, sha1hash):
         wx.CallAfter(
             wx.MessageBox,
             # Translators: the content of a message indicating a failure in downloading an update
-            _("A network error was occured when trying to download the update.\n"
-            "Make sure you are connected to the internet, "
-            "or try again at a later time."),
+            _(
+                "A network error was occured when trying to download the update.\n"
+                "Make sure you are connected to the internet, "
+                "or try again at a later time."
+            ),
             # Translators: the title of a message indicating a failure in downloading an update
             _("Network Error"),
-            style=wx.ICON_ERROR
+            style=wx.ICON_ERROR,
         )
         return
     update_file_size = update_file.length
@@ -156,11 +164,9 @@ def perform_update(update_url, sha1hash):
     )
     bundle = tempfile.SpooledTemporaryFile(max_size=1024 * 30 * 1000)
     # Translators: a message indicating the progress of downloading an update bundle
-    update_progress = lambda c, t=update_file_size: _("Downloading. {downloaded} MB of {total} MB")\
-      .format(
-        downloaded=round(c/(1024**2)),
-        total=round(t/(1024**2))
-    )
+    update_progress = lambda c, t=update_file_size: _(
+        "Downloading. {downloaded} MB of {total} MB"
+    ).format(downloaded=round(c / (1024 ** 2)), total=round(t / (1024 ** 2)))
     for chunk in update_file:
         bundle.write(chunk)
         downloaded = bundle.tell()
@@ -173,11 +179,13 @@ def perform_update(update_url, sha1hash):
         bundle.close()
         msg = wx.MessageBox(
             # Translators: the content of a message indicating a corrupted file
-            _("The update file has been downloaded, but it has been corrupted during download.\n"
-            "Would you like to download the update file again?"),
+            _(
+                "The update file has been downloaded, but it has been corrupted during download.\n"
+                "Would you like to download the update file again?"
+            ),
             # Translators: the title of a message indicating a corrupted file
             _("Download Error"),
-            style=wx.YES_NO|wx.ICON_QUESTION
+            style=wx.YES_NO | wx.ICON_QUESTION,
         )
         if msg == wx.YES:
             return perform_update(update_url, sha1hash)
@@ -188,12 +196,14 @@ def perform_update(update_url, sha1hash):
     wx.CallAfter(
         wx.MessageBox,
         # Translators: the content of a message indicating successful download of the update bundle
-        _("The update has been downloaded successfully, and it is ready to be installed.\n"
-        "The application will be restarted in order to complete the update process.\n"
-        "Click the OK button to continue."),
+        _(
+            "The update has been downloaded successfully, and it is ready to be installed.\n"
+            "The application will be restarted in order to complete the update process.\n"
+            "Click the OK button to continue."
+        ),
         # Translators: the title of a message indicating successful download of the update bundle
         _("Download Completed"),
-        style=wx.ICON_INFORMATION
+        style=wx.ICON_INFORMATION,
     )
     extraction_dir = extract_update_bundle(bundle)
     bundle.close()

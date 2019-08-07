@@ -59,7 +59,7 @@ class LanguageInfo:
         desc = info[1]
         if info[1] != info[2]:
             desc += f" ({info[2]})"
-        return  desc
+        return desc
 
 
 def get_available_languages():

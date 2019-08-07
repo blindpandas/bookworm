@@ -40,7 +40,8 @@ log = logger.getChild(__name__)
 
 # About Message
 # Translators: the content of the about message
-ABOUT_MSG = _("""
+ABOUT_MSG = _(
+    """
 {name}
 Version: {version}
 Website: {website}
@@ -54,7 +55,8 @@ You can view the license text from the help menu.
 As a blind developer, my responsibility is to develop applications that provide independence for me, and for my fellow blind friends allover the world. So, if you've found Bookworm useful in any way, please help me in making Bookworm better for you and for others. At this initial stage, I want you to tell me about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
 
 To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: ({website}). You can also follow me, {author}, at (@mush42) on Twitter
-""").format(**app.__dict__)
+"""
+).format(**app.__dict__)
 
 
 class BookRelatedMenuIds(enum.IntEnum):
@@ -545,7 +547,7 @@ class MenubarProvider:
         dlg = PreferencesDialog(
             self,
             # Translators: the title of the application preferences dialog
-            title=_("{app_name} Preferences").format(app_name=app.localized_name),
+            title=_("{app_name} Preferences").format(app_name=app.display_name),
         )
         with dlg:
             dlg.ShowModal()
@@ -659,7 +661,7 @@ class MenubarProvider:
         wx.MessageBox(
             # Translators: the title of the about dialog
             ABOUT_MSG,
-            _("About {app_name}").format(app_name=app.localized_name),
+            _("About {app_name}").format(app_name=app.display_name),
             parent=self,
             style=wx.ICON_INFORMATION,
         )
