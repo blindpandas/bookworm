@@ -307,8 +307,10 @@ class MenubarProvider:
         )
         helpMenu.Append(
             ViewerMenuIds.check_for_updates,
-            "&Check for updates",
-            "Check for newer versions of the program. .",
+            # Translators: the label of an ietm in the application menubar
+            _("&Check for updates"),
+            # Translators: the help text of an ietm in the application menubar
+            _("Update the application"),
         )
         if app.is_frozen and not app.debug:
             helpMenu.Append(
