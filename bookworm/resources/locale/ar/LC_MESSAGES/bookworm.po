@@ -5,60 +5,66 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  0.1\n"
+"Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2019-08-07 21:44+0200\n"
-"PO-Revision-Date: 2019-08-07 13:03+0300\n"
+"PO-Revision-Date: 2019-08-08 13:38+0300\n"
 "Last-Translator: ikrami <ikrami.ahmad@gmail.com>\n"
 "Language: ar\n"
 "Language-Team: ar <ibnomer2011@hotmail.com>\n"
-"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : "
-"n%100>=3 && n%100<=10 ? 3 : n%100>=0 && n%100<=2 ? 4 : 5)\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && "
+"n%100<=10 ? 3 : n%100>=0 && n%100<=2 ? 4 : 5);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
+"X-Generator: Poedit 1.8.12\n"
 
 #. Translators: the content of a message indicating a connection error
 #: bookworm/otau.py:78
 msgid "We couldn't access the internet right now. Please try again later."
-msgstr ""
+msgstr "تعذَّر الوصول إلى شبكة الإنترنت في الوقت الحالي. يُرجى المحاولة لاحقاً."
 
 #. Translators: the title of a message indicating a connection error
 #. Translators: the title of a message indicating a failure in downloading an
 #. update
 #: bookworm/otau.py:80 bookworm/otau.py:151
 msgid "Network Error"
-msgstr ""
+msgstr "خطأ في الاتصال"
 
 #. Translators: the content of a message indicating an error while updating the
 #. app
 #: bookworm/otau.py:92
 msgid ""
-"We have faced a technical problem while checking for updates. Please try "
-"again later."
-msgstr ""
+"We have faced a technical problem while checking for updates. Please try again "
+"later."
+msgstr "لقد واجهتنا مشكلة تقنية أثناء البحث عن التحديثات. يُرجى المحاولة لاحقاً."
 
 #. Translators: the title of a message indicating an error while updating the
 #. app
 #: bookworm/otau.py:96
 msgid "Error Checking For Updates"
-msgstr ""
+msgstr "خطأ أثناء البحث عن تحديثات"
 
 #. Translators: the content of a message indicating that there is no new
 #. version
 #: bookworm/otau.py:107
 msgid ""
 "Congratulations, you have already got the latest version of Bookworm.\n"
-"We are working day and night on making Bookworm better. The next version "
-"of Bookworm is on its way, so wait for it. Rest assured, we will notify "
-"you when it is released."
+"We are working day and night on making Bookworm better. The next version of "
+"Bookworm is on its way, so wait for it. Rest assured, we will notify you when "
+"it is released."
 msgstr ""
+"تهانينا، لقد حصلت بالفعل على أحدث إصدار من برنامج قارئ الكتب الإلكترونية "
+"Bookworm.\n"
+"نحن نعمل بصورة مستمرة على تطوير هذا البرنامج وجعله أكثر فائدة، وربما يصلك "
+"الإصدار الجديد منه في القريب العاجل. سيصلك إشعار من قِبَلنا بمجرد إطلاق تحديث "
+"جديد."
 
 #. Translators: the title of a message indicating that there is no new version
 #: bookworm/otau.py:114
 msgid "No Update"
-msgstr ""
+msgstr "لا توجد تحديثات"
 
 #. Translators: the content of a message indicating the availability of an
 #. update
@@ -69,11 +75,15 @@ msgid ""
 "\tInstalled Version: {current}\n"
 "\tNew Version: {new}\n"
 msgstr ""
+"لقد صَدَر تحديث جديد لبرنامج Bookworm.\n"
+"هل ترغب في تنزيله ثم تثبيته على حاسوبك الآن?\n"
+"\tرقم الإصدار الحالي: {current}\n"
+"\tرقم الإصدار الجديد: {new}\n"
 
 #. Translators: the title of a message indicating the availability of an update
 #: bookworm/otau.py:129
 msgid "Update Available"
-msgstr ""
+msgstr "هناك تحديث جديد"
 
 #. Translators: the content of a message indicating a failure in downloading an
 #. update
@@ -82,24 +92,26 @@ msgid ""
 "A network error was occured when trying to download the update.\n"
 "Make sure you are connected to the internet, or try again at a later time."
 msgstr ""
+"حدث خطأ في الشبكة عند محاولة تنزيل التحديث.\n"
+"تأكد من أنك متصل بالإنترنت ، أو حاول مرة أخرى في وقت لاحق."
 
 #. Translators: the title of a message indicating the progress of downloading
 #. an update
 #: bookworm/otau.py:158
 msgid "Downloading Update"
-msgstr ""
+msgstr "يجري الآن تنزيل التحديث"
 
 #. Translators: a message indicating the progress of downloading an update
 #. bundle
 #: bookworm/otau.py:160
 msgid "Downloading {url}:"
-msgstr ""
+msgstr "التنزيل من {url}:"
 
 #. Translators: a message indicating the progress of downloading an update
 #. bundle
 #: bookworm/otau.py:167
 msgid "Downloading. {downloaded} MB of {total} MB"
-msgstr ""
+msgstr "تم تنزيل {downloaded} ميغابايت من أصل {total} ميغابايت"
 
 #. Translators: the content of a message indicating a corrupted file
 #: bookworm/otau.py:182
@@ -108,33 +120,36 @@ msgid ""
 "download.\n"
 "Would you like to download the update file again?"
 msgstr ""
+"لقد حدث تَلَفٌ بملف التحديث أثناء تنزيله من الإنترنت.\n"
+"هل ترغب في تنزيل ملف التحديث مرة أخرى؟"
 
 #. Translators: the title of a message indicating a corrupted file
 #: bookworm/otau.py:187
 msgid "Download Error"
-msgstr ""
+msgstr "خطأ في التنزيل"
 
 #. Translators: the content of a message indicating successful download of the
 #. update bundle
 #: bookworm/otau.py:199
 msgid ""
-"The update has been downloaded successfully, and it is ready to be "
-"installed.\n"
-"The application will be restarted in order to complete the update "
-"process.\n"
+"The update has been downloaded successfully, and it is ready to be installed.\n"
+"The application will be restarted in order to complete the update process.\n"
 "Click the OK button to continue."
 msgstr ""
+"تم تنزيل ملف التحديث بنجاح، وهو جاهز للتثبيت.\n"
+"سيتم إعادة تشغيل البرنامج لإكمال عملية التحديث.\n"
+"اضغط على زر موافق للمتابعة."
 
 #. Translators: the title of a message indicating successful download of the
 #. update bundle
 #: bookworm/otau.py:205
 msgid "Download Completed"
-msgstr ""
+msgstr "اكتمل التنزيل"
 
 #. Translators: the name of a built-in voice profile
 #: bookworm/config/spec.py:51
 msgid "Expressive"
-msgstr "تعبيري"
+msgstr "قراءة تعبيرية"
 
 #. Translators: the name of a built-in voice profile
 #: bookworm/config/spec.py:62
@@ -144,7 +159,7 @@ msgstr "قراءة عميقة"
 #. Translators: the name of a built-in voice profile
 #: bookworm/config/spec.py:73
 msgid "Hazy"
-msgstr "غامض"
+msgstr "قراءة مبهمة"
 
 #. Translators: the name of a document file format
 #: bookworm/document_formats/mu/__init__.py:26
@@ -160,13 +175,13 @@ msgstr "المنشورات الإلكترونية"
 #: bookworm/gui/components.py:77 bookworm/gui/components.py:117
 #: bookworm/gui/preferences_dialog.py:365
 msgid "OK"
-msgstr ""
+msgstr "موافق"
 
 #. Translators: the lable of the cancel button in a dialog
 #: bookworm/gui/components.py:80 bookworm/gui/components.py:120
 #: bookworm/gui/preferences_dialog.py:368
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
 #. Translators: the title of a group of controls in the
 #. general settings page related to the UI
@@ -217,14 +232,13 @@ msgstr "تمييز المواضع التي تم تعيينها كعلامات م
 #. Translators: the label of a checkbox
 #: bookworm/gui/preferences_dialog.py:124
 msgid "Automatically check for updates"
-msgstr ""
+msgstr "البحث عن التحديثات تلقائياً"
 
 #. Translators: the content of a message asking the user to restart
 #: bookworm/gui/preferences_dialog.py:146
 msgid ""
 "You have changed the display language of Bookworm.\n"
-"For this setting to fully take effect, you need to restart the "
-"application.\n"
+"For this setting to fully take effect, you need to restart the application.\n"
 "Would you like to restart the application right now?"
 msgstr ""
 "لقد قمتَ بتغيير لغة عرض Bookworm.\n"
@@ -240,8 +254,7 @@ msgstr "تم تغيير اللغة"
 #. Translators: the label of a group of controls in the
 #. speech settings page related to voice selection
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/toolbar.py:111
-#: bookworm/gui/preferences_dialog.py:169
+#: bookworm/gui/book_viewer/toolbar.py:111 bookworm/gui/preferences_dialog.py:169
 msgid "Voice"
 msgstr "إعدادات الصوت"
 
@@ -359,7 +372,7 @@ msgstr "إعدادات القراءة"
 #. Translators: the lable of the apply button in a dialog
 #: bookworm/gui/preferences_dialog.py:370
 msgid "Apply"
-msgstr ""
+msgstr "تطبيق"
 
 #. Translators: the label of the table-of-contents tree
 #: bookworm/gui/book_viewer/__init__.py:43
@@ -378,8 +391,7 @@ msgstr "محتوى الكتاب"
 #: bookworm/gui/book_viewer/__init__.py:104
 msgid "Press (Ctrl + O) to open an ebook"
 msgstr ""
-"اضغط مفتاح التحكم زائد حرف خاء لعرض المحاورة التي تمكنك من اختيار كتابٍ "
-"لفتحه"
+"اضغط مفتاح التحكم زائد حرف خاء لعرض المحاورة التي تمكنك من اختيار كتابٍ لفتحه"
 
 #. Translators: a message telling the user that the font size has been
 #. increased
@@ -556,11 +568,9 @@ msgstr "التصدير إلى"
 #. invalid
 #: bookworm/gui/book_viewer/annotation_dialogs.py:410
 msgid ""
-"The provided file name is not valid. Please try again with a different "
-"name."
+"The provided file name is not valid. Please try again with a different name."
 msgstr ""
-"اسم الملف الذي تم إدخاله غير صالح. يُرجى إعادة المحاولة باستخدام اسم آخر "
-"للملف."
+"اسم الملف الذي تم إدخاله غير صالح. يُرجى إعادة المحاولة باستخدام اسم آخر للملف."
 
 #. Translators: the title of a message telling the user that the provided file
 #. name is invalid
@@ -676,8 +686,7 @@ msgstr "وضع صوتي جديد"
 #. user of the existance of a voice profile with the same name
 #: bookworm/gui/book_viewer/core_dialogs.py:425
 msgid ""
-"A voice profile with the same name already exists. Please select another "
-"name."
+"A voice profile with the same name already exists. Please select another name."
 msgstr "هناك وضع صوتي موجود بنفس الاسم. يُرجى اختيار اسم آخر."
 
 #. Translators: the title of a message telling the user that an error has
@@ -691,12 +700,12 @@ msgstr "خطأ"
 #: bookworm/gui/book_viewer/core_dialogs.py:451
 msgid ""
 "Voice profile {profile} is the active profile.\n"
-"Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
-"menu item from the speech menu."
+"Please deactivate it first by clicking 'Deactivate Active Voice Profile` menu "
+"item from the speech menu."
 msgstr ""
 "الوضع الصوتي {profile} هو الوضع النشط حالياً.\n"
-"يُرجى تعطيله أولاً بالذهاب إلى قائمة النطق، ثم الضغط على عنصر 'تعطيل "
-"الوضع الصوتي النشط.'"
+"يُرجى تعطيله أولاً بالذهاب إلى قائمة النطق، ثم الضغط على عنصر 'تعطيل الوضع "
+"الصوتي النشط.'"
 
 #. Translators: the title of a message telling the user that
 #. it is not possible to remove this voice profile
@@ -728,9 +737,9 @@ msgid ""
 "Version: {version}\n"
 "Website: {website}\n"
 "\n"
-"{name} is an accessible e-book reader that enables blind and visually "
-"impaired individuals to read e-books in an easy, accessible, and hassle-"
-"free manor. It is being developed by {author}.\n"
+"{name} is an accessible e-book reader that enables blind and visually impaired "
+"individuals to read e-books in an easy, accessible, and hassle-free manor. It "
+"is being developed by {author}.\n"
 "\n"
 "{copyright}\n"
 "This software is offered to you under the terms of The MIT license.\n"
@@ -739,21 +748,43 @@ msgid ""
 "As a blind developer, my responsibility is to develop applications that "
 "provide independence for me, and for my fellow blind friends allover the "
 "world. So, if you've found Bookworm useful in any way, please help me in "
-"making Bookworm better for you and for others. At this initial stage, I "
-"want you to tell me about any errors you may encounter during your use of"
-" Bookworm. To do so, open a new issue with the details of the error at "
-"[the issue tracker](https://github.com/mush42/bookworm/issues/). Your "
-"help is greatly appreciated.\n"
+"making Bookworm better for you and for others. At this initial stage, I want "
+"you to tell me about any errors you may encounter during your use of Bookworm. "
+"To do so, open a new issue with the details of the error at [the issue tracker]"
+"(https://github.com/mush42/bookworm/issues/). Your help is greatly "
+"appreciated.\n"
 "\n"
-"To keep yourself updated with the latest news about Bookworm, you can "
-"visit Bookworm's website at: ({website}). You can also follow me, "
-"{author}, at (@mush42) on Twitter\n"
+"To keep yourself updated with the latest news about Bookworm, you can visit "
+"Bookworm's website at: ({website}). You can also follow me, {author}, at "
+"(@mush42) on Twitter\n"
 msgstr ""
+"\n"
+"{name}\n"
+"الإصدار: {version}\n"
+"موقع الويب: {website}\n"
+"\n"
+"{name} هو برنامج شمولي لقراءة الكتب الإلكترونية، فهو يمكّن المكفوفين وضعاف "
+"البصر من مطالعة الكتب الإلكترونية بطريقة سلسة ومتوافقة وخالية من المتاعب. تم "
+"تطويره من قبل{author}.\n"
+"\n"
+"{copyright}\n"
+"يتم تقديم هذا البرنامج لك بموجب شروط ترخيص MIT.\n"
+"يمكنك الاطلاع على نص اتفاقية الترخيص من قائمة المساعدة بالبرنامج.\n"
+"\n"
+"بصفتي مطورًا فاقدًا للبصر، فإن مسؤوليتي هي تطوير برامج توفر الاستقلال لي "
+"ولأصدقائي المكفوفين في جميع أنحاء العالم. لذلك، إذا وجدتم برنامج Bookworm "
+"مفيدة بأي شكل من الأشكال، فالرجاء مساعدتي في جعله أفضل لكم وللآخرين. في هذه "
+"المرحلة الأولية من التطوير، كل ما أحتاجه هو التعرُف على أي أخطاء قد تواجهونها "
+"أثناء استخدامكم للبرنامج. للقيام بذلك، ما عليكم سوى إنشاء موضوع جديد يحتوي على "
+"تفاصيل الخطأ وذلك عبر [صفحة تتبُع المشاكل](https://github.com/mush42/bookworm/"
+"issues/). ستكون مساعدتكم محل تقدير كبير.\n"
+"للبقاء على اطلاع بكل جديد حول هذا البرنامج، يمكنكم زيارة موقعه الإلكتروني: "
+"({website}). كما يمكنكم أيضا متابعتي {author} عبر اسم المستخدم (@mush42) على "
+"تويتر\n"
 
 #. Translators: the label of an ietm in the application menubar
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/menubar.py:127
-#: bookworm/gui/book_viewer/toolbar.py:36
+#: bookworm/gui/book_viewer/menubar.py:127 bookworm/gui/book_viewer/toolbar.py:36
 msgid "Open"
 msgstr "فتح"
 
@@ -795,7 +826,7 @@ msgstr "لمسح محتويات قائمة الكتب المفتوحة مؤخر�
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:156
 msgid "Exit"
-msgstr "الخروج"
+msgstr "خروج"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:161
@@ -806,8 +837,7 @@ msgstr "ال&ذهاب إلى صفحة"
 #. Translators: the help text of an ietm in the application menubar
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/menubar.py:163
-#: bookworm/gui/book_viewer/menubar.py:758
-#: bookworm/gui/book_viewer/toolbar.py:56
+#: bookworm/gui/book_viewer/menubar.py:758 bookworm/gui/book_viewer/toolbar.py:56
 msgid "Go to page"
 msgstr "الذهاب إلى صفحة"
 
@@ -826,7 +856,7 @@ msgstr "البحث عن مصطلح ما داخل الكتاب النشط حال�
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:175
 msgid "&Find &Next"
-msgstr "&البحث عن &التالي"
+msgstr "البحث عن ال&تالي"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:177
@@ -836,7 +866,7 @@ msgstr "الانتقال إلى نتيجة البحث التالية."
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:182
 msgid "&Find &Previous"
-msgstr "ال&بحث عن السا&بق"
+msgstr "البحث عن الساب&ق"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:184
@@ -902,8 +932,7 @@ msgstr "&رجوع للخلف"
 
 #. Translators: the help text of an ietm in the application menubar
 #. Translators: the help text of a button in the application toolbar
-#: bookworm/gui/book_viewer/menubar.py:227
-#: bookworm/gui/book_viewer/toolbar.py:90
+#: bookworm/gui/book_viewer/menubar.py:227 bookworm/gui/book_viewer/toolbar.py:90
 msgid "Skip to previous paragraph"
 msgstr "الانتقال إلى الفقرة السابقة"
 
@@ -1162,7 +1191,7 @@ msgstr "حول {app_name}"
 #. Translators: a message that is announced when the speech is paused
 #: bookworm/gui/book_viewer/menubar.py:684
 msgid "Paused"
-msgstr "تم إيقاف التشغيل"
+msgstr "تم إيقاف التشغيل مؤقتاً"
 
 #. Translators: a message that is announced when the speech is resumed
 #: bookworm/gui/book_viewer/menubar.py:688
@@ -1193,18 +1222,17 @@ msgstr "لم يتم العثور على الملف."
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:799
 msgid "(No recent books)"
-msgstr ")لا توجد كتب تم فتحها مؤخراً("
+msgstr ")لم يتم فتح أي كتب مؤخراً("
 
 #: bookworm/gui/book_viewer/menubar.py:800
 msgid "No recent books"
-msgstr "لا توجد كتب تم فتحها مؤخراً"
+msgstr "لم يتم فتح أي كتاب مؤخراً"
 
 #. Translators: the content of a dialog asking the user
 #. for the password to decrypt the current e-book
 #: bookworm/gui/book_viewer/menubar.py:846
 msgid ""
-"This document is encrypted, and you need a password to access its "
-"content.\n"
+"This document is encrypted, and you need a password to access its content.\n"
 "Please enter the password billow and press enter."
 msgstr ""
 "هذا المستند مشفر. تحتاج إلى كلمة مرور للوصول إلى محتواه.\n"
@@ -1299,7 +1327,7 @@ msgstr "تقديم"
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:114
 msgid "Customize TTS voice parameters."
-msgstr "تخصيص خيارات أصوات آلة النطق."
+msgstr "تخصيص إعدادات أصوات آلة النطق."
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:120
@@ -1339,12 +1367,12 @@ msgstr "نص بسيط"
 #. Translators: the name of a document file format
 #: bookworm/notes_exporter/core_renderers.py:44
 msgid "Markdown"
-msgstr "Markdown"
+msgstr "صيغة ماركداون، Markdown"
 
 #. Translators: the name of a document file format
 #: bookworm/notes_exporter/core_renderers.py:70
 msgid "HTML"
-msgstr "HTML"
+msgstr "صفحة ويب، HTML"
 
 #. Translators: the title of a message shown
 #. when the format of the e-book is not supported
@@ -1367,8 +1395,8 @@ msgstr "خطأ في فتح المستند"
 #: bookworm/reader/__init__.py:78
 msgid ""
 "Could not open file {file}\n"
-".Either the file  has been damaged during download, or it has been "
-"corrupted in some other way."
+".Either the file  has been damaged during download, or it has been corrupted "
+"in some other way."
 msgstr ""
 "تعَذَّر فتح الملف {file}\n"
 "إما أن الملف قد تعرض للتلف أثناء التنزيل، أو ربما أن هناك سبب آخر لذلك."
@@ -1402,14 +1430,14 @@ msgstr "تم اكتشاف صوت بآلة نطق غير متوافقة"
 #. Translators: a message telling the user that the TTS voice has been changed
 #: bookworm/speech/__init__.py:67
 msgid ""
-"Bookworm has noticed that the currently configured Text-to-speech voice "
-"speaks a language different from that of this book. Because of this, "
-"Bookworm has temporary switched to another voice that speaks a language "
-"similar to the language  of this book."
+"Bookworm has noticed that the currently configured Text-to-speech voice speaks "
+"a language different from that of this book. Because of this, Bookworm has "
+"temporary switched to another voice that speaks a language similar to the "
+"language  of this book."
 msgstr ""
-"اكتشف البرنامج أن صوت آلة النطق المُستَخدَم يتحدث بلغة تختلف عن لغة "
-"الكتاب الحالية. لهذا السبب، سيقوم BookWorm بالانتقال بشكل مؤقت إلى صوت "
-"آخر يماثل لغة هذا الكتاب."
+"اكتشف البرنامج أن صوت آلة النطق المُستَخدَم يتحدث بلغة تختلف عن لغة الكتاب "
+"الحالية. لهذا السبب، سيقوم BookWorm بالانتقال بشكل مؤقت إلى صوت آخر يماثل لغة "
+"هذا الكتاب."
 
 #. Translators: the title of a message telling the user that no TTS voice found
 #: bookworm/speech/__init__.py:123
@@ -1424,4 +1452,3 @@ msgid ""
 msgstr ""
 "تعذَّر العثور على آلات نطق صالحة للاستخدام على الحاسوب لديك.\n"
 "لذا، سيتم تعطيل ميزة القراءة عبر أصوات آلات النطق "
-

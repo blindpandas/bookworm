@@ -129,15 +129,22 @@ class EBookReader(TextToSpeechProvider):
             return
         elif self.active_section is not None:
             self.active_section.pager.reset()
+        try:
+            _prev_page = self.current_page
+        except RuntimeError:
+            _prev_page = None
         self.__state["active_section"] = value
         self.view.tocTreeSetSelection(value)
-        self.current_page = value.pager.current
+        page_number = value.pager.current
+        if page_number != _prev_page:
+            self.current_page = page_number
         speech.announce(value.title)
         reader_section_changed.send(self, active=value)
 
     @property
     def current_page(self):
-        assert self.active_section is not None, "No active section."
+        if self.active_section is None:
+            raise RuntimeError("No active section.")
         return self.active_section.pager.current
 
     @current_page.setter
