@@ -24,16 +24,16 @@ _AVAILABLE_LANGUAGES = None
 class LanguageInfo:
     __slots__ = ["given_lang", "language", "culture"]
 
-    def __init__(self, language):
-        self.given_lang = language
+    def __init__(self, given_lang):
+        self.given_lang = given_lang
         try:
-            culture = CultureInfo.GetCultureInfoByIetfLanguageTag(language)
+            culture = CultureInfo.GetCultureInfoByIetfLanguageTag(given_lang)
             self.culture = (
                 culture if culture.LCID != UNKNOWN_CULTURE_LCID else culture.Parent
             )
             self.language = self.culture.IetfLanguageTag
         except CultureNotFoundException:
-            raise ValueError(f"Invalid language {language}.")
+            raise ValueError(f"Invalid language {given_lang}.")
 
     def __repr__(self):
         return f'LanguageInfo(language="{self.language}")'
@@ -62,10 +62,10 @@ class LanguageInfo:
         return desc
 
 
-def get_available_languages():
+def get_available_languages(force_update=False):
     """List the translations available from a directory"""
     global _AVAILABLE_LANGUAGES
-    if _AVAILABLE_LANGUAGES:
+    if _AVAILABLE_LANGUAGES and not force_update:
         return _AVAILABLE_LANGUAGES
     folders = [item for item in Path(paths.locale_path()).iterdir() if item.is_dir()]
     langs = OrderedDict(en=LanguageInfo("en"))
