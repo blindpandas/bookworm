@@ -87,17 +87,13 @@ class FitzDocument(BaseDocument):
                 self._set_appropriate_last_page(_last_pager, page - 1)
             pg = Pager(first=page if page >= 0 else 0)
             sect = Section(title=title, level=level, pager=pg)
-            if level > last_section.level:
-                last_section.append(sect)
-            elif level < last_section.level:
-                try:
-                    _records[level - 1].append(sect)
-                except KeyError:
-                    root_item.append(sect)
+            try:
+                _records[level - 1].append(sect)
+            except KeyError:
+                root_item.append(sect)
+            if level < last_section.level:
                 with suppress(KeyError):
                     self._set_appropriate_last_page(_records[level].pager, page - 1)
-            else:
-                _records[level-1].append(sect)
             last_section = _records[level] = sect
         last_section.pager.last = max_page
         _records.get(1, root_item).pager.last = max_page
