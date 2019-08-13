@@ -1,164 +1,180 @@
-# Bookworm User Guide
+# دليل استخدام Bookworm
 
-## Introduction
+## مقدمة
 
-**Bookworm** is an ACCESSIBLEebook reader that enables blind and visually impaired individuals to read e-books in an easy and hassle free manor. The main highlights of bookworm are:
+**Bookworm** هو برنامج لقراءة الكتب الإلكترونية يمتاز بسهولة الوصول والتوافقية الكاملة، حيث يمكن للمكفوفين وضعاف البصر من خلاله مطالعة الكتب الإلكترونية بطريقة سلسة وخالية من التعقيدات. يحتوي البرنامج على مزايا عديدة، أبرزها ما يلي:
 
-* Supports popular e-book formats, including EPUB and PDF
-* You can add named bookmarks to mark interesting positions in the text for later reference
-* You can add notes to capture an interesting thought or create a summary of the content at a specific position of the text. Bookworm allows you to quickly jump to a specific note and view it. Later on, you can export these notes to a text file or an HTML document for future reference.
-* Two different styles of viewing pages; plain-text and fully rendered, zoomable, images.
-* Full text search with customizable search options
-* Book navigation via Table of content is extensively supported for all e-book formats
-* Support for reading books aloud using Text-to-speech, with configurable voice parameters.
-* The ability to customize  text-to-speech with voice profiles. Each voice profile configures the style of the speech, and you can freely activate/deactivate any voice profile, even while reading aloud!
-* Support for standard zoom-in/zoom-out/reset commands, Ctrl + =, Ctrl + -, and Ctrl + 0 respectively. This functionality is supported in the plain text view and the rendered page view.
-* Support for exporting any e-book format to a plain text file.
-
-
-## Installation
-
-To get Bookworm up and running on your computer, follow these steps:
-
-1. Point your web browser to the [official website of Bookworm](https://mush42.github.io/bookworm/) and download the installer that suits your operating system. Bookworm comes in two flavors:
-
-* A 32-bit installer for computers running a 32-bit variant of Windows 
-* A 64-bit installer for computers running a 64-bit variant of Windows 
-
-2. Run the installer and follow the prompts
-3. After the installation has finished successfully , you can launch Bookworm from the *Desktop* or from the program list found in the Start Menu
+* دعم أبرز الصيغ للكتب الإلكترونية، بما في ذلك المنشورات الإلكترونية بصيغة .epub وصيغة المستندات المحمولة .pdf.
+* إمكانية إضافة علامات مرجعية إلى المواضع المهمة أثناء القراءة، وتسمية تلك العلامات والرجوع إليها مستقبلاً.
+* إمكانية تدوين ملاحظة ما حول فكرة أعجبتك، أو كتابة مُلَخّص للمحتوى الذي تقرأه عند موضع معيّن بالكتاب. يتيح لك Bookworm حفظ تلك الملاحظات والانتقال إليها في أي وقت عند الحاجة، كما يمكنك لاحقا تصدير تلك الملاحظات إلى ملف نصي بسيط أو إلى ملف على شكل صفحة ويب بصيغة html ليسهُل العودة لها لاحقاً.
+* إمكانية عرض الكتب في نمطين مختلفين، إما بصيغة نصية كاملة، أو كصفحات مصوَّرَة يمكن التحكم في حجمها.
+* إمكانية البحث داخل النص مع تخصيص خيارات البحث.
+* إمكانية التنقل داخل الكتب الإلكترونية بمختلف صيغها عبر جدول المحتويات إن وُجِد.
+* إمكانية الاستماع للكتب الإلكترونية بالصوت عبر محركات تحويل النص إلى كلام، مع القدرة على تخصيص خيارات الصوت والتعديل عليها حسب الرغبة.
+* إمكانية تخصيص صوت القراءة عبر خاصية الأوضاع الصوتية، بحيث يحتوي كل وضع صوتي على إعدادات مختلفة للصوت أثناء القراءة. يمكن الانتقال بين تلك الأوضاع الصوتية مباشرةً حتى أثناء القراءة.
+* إمكانية استخدام مفتاح الاختصار "تحكم + =" لتكبير حجم النص، ومفتاح الاختصار "تحكم + -" لتصغير حجم النص، ومفتاح الاختصار "تحكم +0" لإعادته لحجمه الافتراضي. يمكن استخدام تلك الاختصارات في كلا النمطين، النصي أو المُصَوَّر.
+* إمكانية تصدير الكتب الإلكترونية إلى ملفات نصية بسيطة.
 
 
-## Usage
+## التثبيت
 
-### Opening A Book
+لكي تحصل على برنامج Bookworm وتقوم بتثبيته على حاسوبك، اتبع الخطوات التالية:
 
-You can open a book by selecting the "Open..." menu item from the "File" Menu. Alternatively you can use the Ctrl+O shortcut. Either way, the familiar "open file" dialog is shown. Browse to your e-book, and click open to load it.
+1. استخدم متصفح الإنترنت لديك لزيارة [الموقع الرسمي للبرنامج](https://mush42.github.io/bookworm/) ثم قم بتنزيل ملف التثبيت الذي يتوافق مع جهاز الحاسوب الخاص بك. لبرنامج Bookworm ملفين للتثبيت:
 
-### The Reader Window
+* نسخة 32-bit خاصة بالحواسيب العاملة بأنظمة 32-bit من ويندوز
+* نسخة 64-bit خاصة بالحواسيب العاملة بأنظمة 64-bit من ويندوز
 
-The main window of bookworm consists of the following two parts:
-
-1. The "Table of contents": This part shows the e-book chapters'. It allows you to explore the content structure. Use navigation keys to navigate chapters, and press enter to navigate to specific chapter.
-
-2. The "Textual View" area: This part contains the text of the current page. In this part you can use your usual reading commands to navigate the text. Additionally, you can use the following keyboard  shortcuts to navigate the e-book:
-
-* Enter: navigate to the next page in the current section
-* Backspace: navigate to the previous page in the current section
-* Home: navigate to the first page of the current section
-* End: navigate to the last page of the current section
-* Alt + Page down: navigate to next section
-* Alt + Page up: navigate to previous section
+2. بعد تنزيل الملف المناسب لنظامك، قم بتشغيل ملف التثبيت واتبع الخطوات المألوفة 
+3. عند انتهاء عملية التثبيت بنجاح، ستستطيع بدء تشغيل برنامج Bookworm عبر الأيقونة الخاصة به والتي ستُوضع على سطح المكتب، أو من مجلد كافة البرامج بقائمة ابدأ.
 
 
-### Bookmarks & Notes
+## الاستخدام
 
-Bookworm allows you to annotate the opened book.  You can add a bookmark to remember a specific location in the book, and later on, quickly jump to  it. Also, you can take a note to capture a thought or summarize some content.
+### فتح كتاب
 
-#### Adding Bookmarks
+يمكنك اختيار كتاب لفتحه عبر الذهاب إلى قائمة "ملف" واختيار عنصر فتح...، أو استخدم مفتاح الاختصار "تحكم + خ". أياً كانت الطريقة التي تفضلها، سيظهر لك المربع الحواري الاعتيادي الذي يسمح لك بتصفح محتويات جهازك واختيار ملف. تصفح ملفاتك حتى تصل إلى الكتاب الذي ترغب في فتحه، ثم اضغط على زر "فتح" ليظهر لك مباشرةً في نافذة البرنامج الرئيسة.
 
-While reading a book, you can press Ctrl + B (or select the "Add Bookmark" menu item from the "Annotations" menu to add a bookmark. The bookmark is added at the current position of the cursor. You'll be asked to provide a title for the bookmark. Type the desired title and click the OK Button. A bookmark will be added at the current location, and the current line will be visually highlighted.
+### نافذة القارئ
 
-#### Viewing Bookmarks
+تتكون النافذة الرئيسة لبرنامج Bookworm من جزئين أساسيين:
 
-Press Ctrl + Shift + B, or select the "View Bookmarks" menu item from the "Annotations" menu. A dialog containing added bookmarks will be shown. Clicking any item in the bookmarks list will immediately take you to the position of that bookmark.
+1. منطقة "جدول المحتويات": يعرض هذا الجزء من النافذة فصول الكتاب الإلكتروني حسب ترتيبها في فهرس الكتاب. يمكنك استكشافها للتعرُف على البنية الأساسية لمحتوى الكتاب. استخدم مفاتيح التنقل للتحرك بين الفصول، ثم اضغط على مفتاح الإدخال للانتقال إلى فصل معين.
 
-Additionally, you can press F2 to edit the title of the selected bookmark in place, or you can click the "Delete" button or the "Delete" key on your keyboard to remove the selected bookmark.
+2. منطقة "العرض النصي": يحتوي هذا الجزء من النافذة على نص الصفحة الحالية. عند انتقالك لهذا الجزء، سيمكنك استخدام أوامر القراءة المعتادة لاستعراض النص، كاستخدام السهم لأسفل لقراءة السطر التالي، وسهم لأعلى لقراءة السطر السابق. بالإضافة لذلك، يتيح لك برنامج Bookworm استخدام مفاتيح الاختصار التالية للتنقل عبر الكتاب الإلكتروني المفتوح:
 
-#### Taking Notes
-
-While reading a book, you can press Ctrl + N (or select the "Take Note" menu item from the "Annotations" menu to take a note. The note will be added at the current position of the cursor. You'll be asked to provide the title and the content for the note. Type the desired title and content, and then click the OK button. A note will be added at the current location.
-
-When you navigate to a page containing at least one note, you will hear a little sound indicating the existence of a note in the current page..
-
-#### Managing Notes
-
-Press Ctrl + Shift + N, or select the "Manage Notes" menu item from the "Annotations" menu. A dialog containing added notes will be shown. Clicking any item in the notes list will immediately take you to the position of that note. Clicking the "View" button will bring up a dialog showing the title and the content of the selected note.
-
-Additionally, you can click the "Edit" button to edit the title and the content of the selected note, press  F2 to edit the title of the selected note in place, or you can click the "Delete" button or the "Delete" key on your keyboard to remove the selected note.
-
-#### Exporting Notes
-
-Bookworm allows you to export your notes to a plain-text file, or to an HTML document which you can then open in your web browser.  Optionally, bookworm allows you to export your notes to markdown, which is a text-base format for writing structured documents popular among expert computer users.
-
-To export your notes, follow these steps:
-
-1. From the "Annotations" menu select the "Notes Exporter..." menu item
-2. Select the export range. This tells Bookworm whether you want to export the notes of the whole book, or you just want to export the notes of the current section. 
-3. Select the output format. This determines the format of the file you get after exporting. Exporting to a plain-text gives you a simple, nicely formatted text file, exporting to HTML gives you a web page, and exporting to markdown gives you a markdown document which is a text format popular among expert computer users.
-4. If you want Bookworm to open the file to which your notes have been exported, you can check the "Open file after exporting" checkbox.
-5. Click Export. You will be asked to select the file name of the exported file, and the location to which the file is saved. Clicking "Save" will save the file, and open it if you have instructed Bookworm to do so.
+* مفتاح الإدخال: للانتقال إلى الصفحة التالية من الفصل الحالي
+* مفتاح مسافة للخلف: للانتقال إلى الصفحة السابقة من الفصل الحالي
+* مفتاح البداية: للانتقال إلى الصفحة الأولى بالفصل الحالي
+* مفتاح النهاية: للانتقال إلى الصفحة الأخيرة بالفصل الحالي
+* تبديل + صفحة لأسفل: للانتقال إلى الفصل التالي
+* تبديل + صفحة لأعلى: للانتقال إلى الفصل السابق
 
 
-### Reading Aloud
+### العلامات المرجعية والملاحظات
 
-Bookworm supports reading the content of the opened book aloud using an installed text-to-speech voice. Just press F5 to start the speech, F6 to pause or resume the speech, and F7 to stop the speech entirely.
+يسمح لك برنامج Bookworm بالتعليق على الكتاب المفتوح حاليا، فيمكنك إضافة علامة مرجعية لتتذكر بها موقع معين في الكتاب، مما يجعلك قادراً على الانتقال إليها بسرعة عند الحاجة. أيضا، يمكنك تدوين ملاحظة جانبية حول ما تقرأه، وهو ما يجعلك قادراً على الاحتفاظ بفكرة ما وكتابتها أو تلخيص بعض المحتوى.
 
-You can configure the speech in two ways:
-1. Using A Voice Profile: A voice profile contains your custom speech configurations, you can activate/deactivate the voice profile at any time. You can access voice profiles from the speech menu or by pressing Ctrl + Shift + V. Note that bookworm comes with some exemplary, built-in voice profiles.
-2. The Global speech settings: these settings will be used by default when no voice profile is active. You can configure the global speech settings from the application preferences. 
+#### إضافة علامات مرجعية
 
-During reading aloud, you can skip backward or foreword by paragraph by pressing Alt plus the left and right arrow  keys.
+أثناء قراءتك لكتاب ما، يمكنك إضافة علامة مرجعية بالضغط على مفتاح الاختصار "تحكم + لا"، أو بالذهاب إلى قائمة الحواشي واختيار عنصر "إضافة علامة مرجعية." ستتم إضافة العلامة المرجعية عند موضع المؤشر الحالي. عند القيام بذلك، سيُطلَب منك أولاً كتابة عنوان للعلامة المرجعية، وذلك ليسهُل عليك التعرف عليها مستقبلاً. اكتب العنوان المُفضَل ثم اضغط على زر "موافق" لتتم إضافة العلامة المرجعية وسيتم تمييز السطر الذي تمت إضافتها إليه بشكل يسمح لضعاف البصر التعرُف عليها لاحقاً.
+
+#### استعراض العلامات المرجعية
+
+لعرض العلامات المرجعية، اضغط مفتاح الاختصار "تحكم + عالي + لا"، أو اذهب إلى قائمة "الحواشي" واختر منها عنصر "عرض العلامات المرجعية". سيظهر لك حينئذ مربع حواري يحتوي على قائمة بالعلامات المرجعية التي تمت إضافتها لهذا الكتاب. عند اختيار أيً من تلك العلامات المرجعية، ستنتقل إلى موضعها في الكتاب مباشرةً. أيضاً بإمكانك الضغط على المفتاح الوظيفي الثاني "f2" لتحرير عنوان العلامة المرجعية النشطة، كما يمكنك استخدام زر "حذف" الموجود بالمربع الحواري أو الضغط على مفتاح الحذف بلوحة المفاتيح لديك لحذف العلامة المرجعية النشطة.
+
+#### تدوين الملاحظات
+
+أثناء قراءة كتاب ما، يمكنك الضغط على تحكم + ى، أو اختيار عنصر "تدوين ملاحظة" من قائمة "الحواشي"، وذلك  للشروع في إضافة  ملاحظة جديدة على الكتاب المفتوح. عند القيام بذلك، سيظهر لك مربع تحرير يتيح لك كتابة عنوان للملاحظة، ومربع تحرير آخر لكتابة محتوى الملاحظة. عند الانتهاء من ملأ هذين المربعين، اضغط على زر "موافق" لتتم إضافة ملاحظتك عند موضع المؤشر الحالي.
+
+عند انتقالك إلى صفحة تحتوي على ملاحظة واحدة على الأقل، سوف يقوم البرنامج بتشغيل صوت خفيف ينبهِك إلى وجود ملاحظة في الصفحة الحالية.
+
+#### إدارة الملاحظات
+
+يتيح لك البرنامج إمكانية إدارة الملاحظات التي تمت إضافتها إلى كتاب ما، وذلك باستعراضها أو تعديلها أو حذفها. اضغط مفتاح الاختصار "تحكم + عالي + ى"، أو اذهب إلى قائمة "الحواشي" واختر منها عنصر "إدارة الملاحظات." سيظهر لك مربع حوار يحتوي على ما يلي:
+* قائمة بعناوين الملاحظات الموجودة بالكتاب، عند تنشيط أيٍ منها ستنتقل مباشرةً إلى موضع الملاحظة بالكتاب.
+* زر "عرض"، يُظهِر لك عنوان الملاحظة النشطة ومحتواها.
+* زر تحرير، يمكنك من التعديل على عنوان الملاحظة النشِطة أو محتواها. يمكنك الضغط على المفتاح الوظيفي الثاني f2 أثناء وجودك في قائمة الملاحظات لتنفيذ هذا الأمر مباشرةً.
+* زر "حذف"، لحذف الملاحظة النشِطة من الكتاب. يمكنك أيضاً الضغط على مفتاح الحذف من لوحة المفاتيح لديك لتنفيذ هذا الأمر مباشرةً.
+
+#### تصدير الملاحظات
+
+يتتيح لك Bookworm تصدير ملاحظاتك إلى ملف نصي عادي بصيغة txt، أو تصديره على شكل صفحة ويب بصيغة HTML يمكنك فتحه بعد ذلك في متصفح الويب الخاص بك. بالإضافة لذلك، يمكنك أيضا تصدير ملاحظاتك إلى صيغة MarkDown، وهي عبارة عن صيغة نصية مُبسَطَة لكتابة المستندات بتنسيقاتها البسيطةلكتابة، وهي صيغة شائعة بين مستخدمي الكمبيوتر المتمرسين.
+
+ولتصدير ملاحظاتك، اتبع الخطوات التالية:
+
+1. اذهب إلى قائمة "الحواشي"، واختر منها عنصر "تصدير الملاحظات."
+2. سيظهر لك مربع حواري. سيتيح لك صندوق الخيارات الأول من تحديد نطاق التصدير. اختر منه ما إذا كنت ترغب في تصدير كافة الملاحظات الموجودة بالكتاب، أو الملاحظات الموجودة على الفصل الحالي فقط.
+3. بعد ذلك، قم باختيار صيغة الملف الذي سيتم تصدير الملاحظات إليه. اختيار صيغة النص البسيط سيمنحك ملف بصيغة txt منسق بشكل جميل، وصيغة html ستعطيك مستنداً عبارة عن صفحة ويب تفتح في متصفح الإنترنت لديك، أما صيغة المارك داون فستمنحك ملفاً نصياً به رموز تدل على التنسيقات الأساسية داخل المستند، وهي صيغة شائعة بين مستخدمي الحاسوب المتمرسين.
+4. يلي ذلك صندوق اختيار يتيح لك تحديد ما إذا كنت ترغب في أن يفتح لك برنامج Bookworm الملف الذي قمت بتصدير ملاحظتك إليه تلقائياً فور الانتهاء من إنشائه أم لا.
+5. بعد ذلك اضغط على زر "تصدير." سيُطلب منك حينئذ كتابة اسم لملف الملاحظات واختيار موقع لحفظه. عند الانتهاء من تحديد تلك الخيارات، اضغط على زر "حفظ" ليتم تصدير الملاحظات وفتح الملف إذا كنت قد اخترت ذلك.
 
 
-### Configuring The Reading Style
+### القراءة بالصوت
 
-In addition to the speech settings, Bookworm gives you the ability to fine-tune its reading behavior through these settings. All of the following settings could be found in the reading page of the application preferences.
+يسمح برنامج Bookworm لمستخدميه بقراءة الكتب الإلكترونية عبر الأصوات المتوفرة بمحركات تحويل النص إلى كلام المثبَتَة لديهم. يمكن فقط الضغط على المفتاح الوظيفي الخامس "f5" لبدء القراءة، والمفتاح الوظيفي السادس "f6" لإيقاف القراءة مؤقتاً أو استئنافها، والمفتاح الوظيفي السابع "f7" لإنهاء القراءة.
 
-* What to read: this option controls what happens when you instruct Bookworm to "Play" the current book. You can choose to "Read the entire book", "Read the current section", or read just "The current page". By default, bookworm reads the entire book in a continuous manner, unless you instruct it to stop when it reaches the end of the page or the end of the current section.
-* Where to start: this option controls the position from which to start reading aloud. You can choose to start reading from the "Position of the caret" or the "Start of the current page".
-* How to read: this set of options control how bookworm behave during reading aloud. You can turn on/off any one of the following options by checking/unchecking its respective checkbox:
+يمكنك تخصيص صوت القراءة بطريقتين:
+1. باستخدام الأوضاع الصوتية: وهي أوضاع تحتوي على مجموعة من خيارات الصوت التي تم تحديدها مسبقا، والتي يمكنك تفعيلها أو تعطيلها في أي وقت. يمكنك الوصول إلى الأوضاع الصوتية إما عبر قائمة "النطق"، أو عبر الضغط على مفتاح الاختصار "تحكم + عالي + ر." يُرجى ملاحظة أن البرنامج يحتوي على مجموعة من الأوضاع الصوتية الافتراضية التي تم إعدادها بشكل مسبق.
+2. عبر إعدادات الصوت العامة: وهي الخيارات التي سيتم استخدامها بشكل افتراضي عندما لا يكون هناك أي وضع صوتي نشِط. يمكنك ضبط إعدادات الصوت العامة عبر مربع الحوار الخاص بتفضيلات البرنامج. 
 
-* Highlight spoken text: if this option is turned on, the currently spoken text is visually highlighted.
-* Select spoken text: if this option is turned on, the currently spoken text is selected. This enables you, for instance, to press Ctrl + C to copy the currently spoken paragraph.
-* Play end-of-section sound: if this option is turned on, Bookworm plays a little sound when it reaches the end of a section.
+أثناء القراءة بالصوت، يمكنك الانتقال إلى الفقرة التالية بالضغط على مفتاح الاختصار "تبديل + السهم الأيمن"، والانتقال إلى الفقرة السابقة بالضغط على مفتاح الاختصار "تبديل + السهم الأيسر."
 
 
-### Viewing A Fully Rendered Version of The Current Page
+### تخصيص طريقة القراءة
 
-Bookworm allows you to view a fully rendered version of the book. While a book is opened, you can press Ctrl + R or select the "Render Page" menu item from the tools menu. We call this view "The Render View" as appose to the, default, Textual View.
+بالإضافة إلى إمكانية تخصيص صوت القراءة كما سبق شرحه، فإن Bookworm يمنحك القدرة على تخصيص ما يتم قراءته، وذلك  عبر مجموعة من الخيارات التي يمكن العثور عليها في قسم إعدادات القراءة من تفضيلات البرنامج، وهي كما يلي:
 
-When you are in the Render View, you can use the usual zoom commands to zoom the page in and out:
+* عند الضغط على زر تشغيل: يتحكم هذا الخيار في ما يحدث عندما تقوم ببدء قراءة كتاب عبر Bookworm بالضغط على زر "تشغيل". يمكنك اختيار "قراءة الكتاب بالكامل"، أو "قراءة الفصل الحالي" أو "قراءة الصفحة الحالية" فقط. بشكل افتراضي، سيقوم Bookworm بقراءة الكتاب بأكمله بطريقة مستمرة، إلا إذا طلبت منه التوقف عندما يصل إلى نهاية الصفحة أو نهاية الفصل الحالي عبر تغيير هذا الخيار.
+* الشروع في القراءة من: يحدد لك هذا الخيار الموضع الذي سيبدأ البرنامج بالقراءة من عنده. يمكنك اختيار بدء القراءة من موضع المؤشر الحالي، أو من بداية الصفحة الحالية.
+* أثناء القراءة: تتحكم هذه المجموعة من الخيارات في كيفية عمل البرنامج أثناء القراءة بالصوت. يمكنك تشغيل  أو تعطيل أياً من الخيارات التالية عن طريق تحديد / إلغاء تحديد خانة الاختيار الخاصة بها:
 
-* Ctrl + = zoom-in 
-* Ctrl + - zoom-out
-* Ctrl + 0 reset the zoom level
-
-Note that you can also use the book navigation commands, mentioned above,  to navigate the render view as well.
+* تمييز النص المقروء: إذا تم تفعيل هذا الخيار، فإن النص الذي يجري نطقه سوف يتم تمييزه بصرياً في نفس الآن.
+* تحديد النص المقروء: إذا تم تفعيل هذا الخيار، فإن النص الذي يجري نطقه سوف يتم تحديده تلقائيا. يتيح لك ذلك، على سبيل المثال، ضغط مفتاح الاختصار تحكم + ؤ لنسخ الفقرة التي تُقرَأ حاليا.
+* تشغيل صوت عند نهاية كل فصل: عند تفعيل هذا الخيار، سيقوم البرنامج بتشغيل صوت ليُشعرَ المستخدم بنهاية الفصل الذي يقرأه.
 
 
-### Navigating To A Specific Page
+### عرض نسخة مصوَّرة من الصفحة الحالية
 
-To navigate to a specific page in the currently opened book., press Ctrl + G, or select the "Go To..." menu item from the tools menu to show the "Go To Page" dialog. In this dialog you can type the number of any page you want to navigate to, and Bookworm will take you to it.
+يتيح لك Bookworm الاطلاع على نسخة كاملة مصوَرَة من الكتاب المفتوح. لتصل لهذه الميزة، اضغط مفتاح الاختصار "تحكم + ق"، أو اذهب إلى قائمة "أدوات" واختر منها عنصر "عرض الصفحة." نُطلِق على هذا النمط من العرض اسم "العرض المُصوَّر"، وهو ما يُضاد نمط العرض الافتراضي بالبرنامج وهو "العرض النصي."
+
+أثناء وجودك بنمط العرض المصوَّر، يمكنك استخدام أوامر التكبير الاعتيادية للتحكم بحجم الصفحة المعروضة كما يلي:
+
+* تحكم + = لتكبير الحجم
+* تحكم + - لتصغير الحجم
+* Ctrl + 0 لإعادة مستوى التكبير إلى الحالة الافتراضية
+
+يُلاحظ أيضاً أنه بإمكانك استخدام اختصارات التنقل في الكتاب، التي سبق ذكرها بالإعلى، للتحرك أثناء تفعيل نمط العرض المصوَر.، كما يمكنك الضغط على مفتاح الهروب للخروج من هذا النمط والعودة للنمط النصي الافتراضي.
+
+
+### الانتقال إلى صفحة معينة
+
+يتيح لك bookworm ميزة الانتقال المباشر إلى رقم صفحة معينة بالكتاب المفتوح وذلك باتباع الخطوات التالية:
+
+* اضغط مفتاح الاختصار "تحكم + ل"، أو اذهب إلى قائمة "أدوات" واختر منها عنصر "الذهاب إلى صفحة."
+* سيظهر لك مربع تحرير يتيح لك كتابة رقم الصفحة التي ترغب في الانتقال إليها. كما أنك ستُلاحظ أن عدد الصفحات الكلي بالكتاب موضَّحاً لك أيضاً.
+* اكتب رقم الصفحة التي ترغب في الانتقال إليها، ثم اضغط على زر "موافق" لتنتقل مباشرةً إليها.
 
  
-### Searching The Book
+### البحث في الكتاب
 
-To find a specific term, or a portion of text in the currently opened book, you can press Ctrl + F to bring up the "Search Book Dialog". This Dialog allows you to type the text you want to search for as well as configuring the  search process itself. The following options are available:
+للعثور على مصطلح معين، أو جزء من النص في الكتاب المفتوح حاليًا، يمكنك الضغط على مفتاح الاختصار "تحكم + ب" لإظهار مربع حوار البحث في الكتاب، الذي يمكنك الوصول إليه أيضا عبر الذهاب لقائمة "أدوات" واختيار عنصر "البحث في الكتاب." يتيح لك مربع الحوار هذا كتابة النص الذي تريد البحث عنه بالإضافة إلى تخصيص عملية البحث نفسها، وذلك عبر الخيارات التالية:
 
-* Case Sensitive: The search will take into account the case of the letters in the search term.
-* Whole Word Only: The search term must be found as a whole word, i.e. not as a part of another word
-* Search Range: This allows you to confine the search to certain pages or a specific section.
+* مطابقة حالة الأحرف: سيأخذ البرنامج بعين الاعتبار عند البحث حالة الأحرف اللاتينية الموجودة في مربع تحرير مصطلح البحث، سواءً كانت كبيرة أم صغيرة.
+* مطابقة الكلمة بأكملها فقط: تحديد هذا الخيار يعني أن مصطلح البحث الذي ترغب في البحث عنه يجب أن يكون كلمة كاملة، وليس جزءً من كلمة أكبر.
+* نطاق البحث: يتيح لك هذا الخيار تحديد ما إذا كنت ترغب في البحث خلال مجموعة صفحات معينة، أم في فصل معين من الكتاب.
+ * إذا اخترت البحث في "نطاق الصفحات"، فسيظهر لك مربعين إضافيين للكتابة يسمحان لك بإدخال رقم الصفحة التي ترغب في أن يبدأ البحث من عندها في المربع الأول، ورقم الصفحة التي ترغب في أن ينتهي البحث عندها في المربع الثاني.
+  * عند اختيارك البحث في "فصل محدد"، فسيظهر لك صندوق خيارات يحتوي على كافة الفصول الموجودة بالكتاب لتختار منه الفصل الذي ترغب في البحث به.
+  
 
-After clicking the OK button in the "Search Book Dialog", another dialog containing search results will be shown. Clicking any item in the search results list will immediately take you to the position of that result with the search term highlighted for you.
+عند الضغط على زر "موافق" في مربع حوار "البحث في الكتاب"، سيتم عرض مربع حوار آخر يحتوي على نتائج البحث. يؤدي النقر فوق أي عنصر في قائمة نتائج البحث إلى نقلك فورًا إلى موضع تلك النتيجة بالكتاب، كما سيتم تمييز مصطلح البحث لك.
 
-Note that if you've closed the search results window, you can press F3 and Shift + F3 to move to the next and previous occurrence of the last search respectively.
-
-
-## Reporting Problems & Issues
-
-As a blind developer, my responsibility is to develop applications that provide independence for me, and for my fellow blind friends allover the world. So, if you've found Bookworm useful in any way, please help me in making Bookworm better for you and for others. At this initial stage, I want you to tell me about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
-
-Before submitting a new issue, make sure that you ran Bookworm in debug mode. To turn on debug mode, go to the "Help" menu and then click "Restart with debug-mode enabled" and try to reproduce the issue with debug mode enabled. In the majority of cases, when the error happens again with debug mode enabled, a dialog will be shown with the details of that error. You can then copy this information and include it with your problem report.
-
-Note that some issues could be tricky to reproduce, they go away when you restart the program. In this case, it is okay to report the issue without the detailed information from the debug mode. Just make sure you include as much information as possible about the particulars of your system and usage scenario.
+يُلاحظ أنه إذا قمت بإغلاق نافذة نتائج البحث، فستظل قادراً على الانتقال إلى نتيجة البحث التالية بالضغط على المفتاح الوظيفي الثالث "f3"، والانتقال إلى نتيجة البحث السابقة بالضغط على عالي + المفتاح الوظيفي الثالث "shift + f3"
 
 
-## News & Updates
+## تحديث Bookworm
 
-To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: [mush42.github.io/bookworm](https://mush42.github.io/bookworm/). You can also follow me, Musharraf Omer, at [@mush42](https://twitter.com/mush42/) on Twitter.
+بشكل افتراضي، يتحقق Bookworm من وجود إصدارات جديدة عند بدء تشغيل البرنامج. هذا يضمن لك الحصول على أحدث وأفضل نسخة في أسرع وقت ممكن. يمكنك تعطيل هذه الخاصية الافتراضية من قسم الإعدادات العامة بتفضيلات البرنامج. يمكنك أيضًا البحث عن التحديثات يدويًا بالنقر فوق عنصر "التحقق من وجود تحديثات" الموجود ضمن قائمة "المساعدة".
+
+في كلتا الحالتين، وعند العثور على إصدار جديد، سوف يسألك Bookworm عما إذا كنت تريد تثبيت هذا الإصدار. إذا نقرت على "نعم"، فسيشرع البرنامج  في تنزيل حزمة التحديث، وسيظهر مربع حوار يشير إلى تقدم عملية التنزيل. بعد تنزيل التحديث، سينبهك Bookworm برسالة تخبرك بأنه يجب إعادة تشغيل البرنامج لأجل إتمام عملية التحديث. فقط انقر فوق "موافق" لإكمال التحديث.
 
 
-## License
+## الإبلاغ عن أخطاء
 
-**Bookworm** is copyright (c) 2019 Musharraf Omer. It is licensed under the [MIT License](https://github.com/mush42/bookworm/blob/master/LICENSE).
+بصفتي مطورًا فاقدًا للبصر، فإن مسؤوليتي هي تطوير برامج توفر الاستقلال لي ولأصدقائي المكفوفين في جميع أنحاء العالم. لذلك، إذا وجدتم برنامج Bookworm مفيدة بأي شكل من الأشكال، فالرجاء مساعدتي في جعله أفضل لكم وللآخرين. في هذه المرحلة الأولية من التطوير، كل ما أحتاجه هو التعرُف على أي أخطاء قد تواجهونها أثناء استخدامكم للبرنامج. للقيام بذلك، ما عليكم سوى إنشاء موضوع جديد يحتوي على تفاصيل الخطأ وذلك عبر [صفحة تتبُع المشاكل](https://github.com/mush42/bookworm/issues/). ستكون مساعدتكم محل تقدير كبير.
+
+
+
+وقبل الإبلاغ عن مشكلة، يُرجى تشغيل البرنامج في وضع التصحيح. ولتشغيل وضع التصحيح، انتقل إلى قائمة "المساعدة" ثم انقر فوق "إعادة التشغيل مع تمكين وضع التصحيح" وحاول إعادة خلق المشكلة وتكرارها أثناء تمكين وضع التصحيح. في معظم الحالات، عندما يحدث الخطأ مرة أخرى مع تمكين وضع التصحيح، سيتم عرض مربع حوار مع تفاصيل هذا الخطأ. يمكنك بعد ذلك نسخ هذه المعلومات وإدراجها في تقرير مشكلتك.
+
+لاحظ أن بعض المشكلات قد يصعُب تكرارها، إذ أنها تختفي عند إعادة تشغيل البرنامج. في هذه الحالة، لا بأس بالإبلاغ عن المشكلة دون المعلومات التفصيلية من وضع التصحيح. فقط تأكد من تضمين أكبر قدر ممكن من المعلومات حول تفاصيل النظام وسيناريو الاستخدام.
+
+
+## لمعرفة كل جديد
+
+للبقاء على أحدث الأخبار والمعلومات حول برنامج Bookworm وكل جديد يتعلق به، يمكنك زيارة الموقع الرسمي للبرنامج على الرابط: [mush42.github.io/bookworm](https://mush42.github.io/bookworm/). كما يمكنك أيضا متابعتي أنا، عمر مشرف، مطوِر البرنامج، عبر تويتر تحت اسم المستخدم: [@mush42](https://twitter.com/mush42/).
+
+
+## اتفاقية الترخيص
+
+حقوق الطبع والنشر لبرنامج **Bookworm** محفوظة ل(c) 2019 Musharraf Omer. هذا البرنامج مرخص بموجب [MIT License](https://github.com/mush42/bookworm/blob/master/LICENSE).

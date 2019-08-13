@@ -158,7 +158,8 @@ def build_docs(c):
         html.write_text(
             GUIDE_HTML_TEMPLATE.format(
                 lang=lang, title=page_title.strip(), content=content
-            )
+            ),
+            encoding="utf8"
         )
         print("Done building the documentations.")
 
