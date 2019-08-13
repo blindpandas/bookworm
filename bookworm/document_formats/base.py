@@ -43,18 +43,17 @@ class PaginationError(IndexError):
     """Raised when the  `next` or `prev` page is not available."""
 
 
-@dataclass(frozen=True)
 class Pager:
     """A simple paginater."""
 
     __slots__ = ["first", "last", "current"]
 
-    first: int
-    last: int
-    current: int
-
-    def __post_init__(self):
-        object.__setattr__(self, "current", self.first)
+    def __init__(self, first, last=None, current=None):
+        self.first = first
+        self.last = last
+        self.current = None
+        if self.current is None:
+            self.current = self.first
 
     def __repr__(self):
         return f"<Pagination: first={self.first}, last={self.last}, total={self.last - self.first}>"
@@ -74,7 +73,7 @@ class Pager:
     def set_current(self, to):
         if to not in self:
             raise PaginationError(f"The page ({to}) is out of range for this pager.")
-        object.__setattr__(self, "current", to)
+        self.current = to
 
     def go_to_next(self):
         next_item = self.current + 1
@@ -97,13 +96,14 @@ class Section:
     TOC tree. It can contain other sections as well.
     """
 
-    __slots__ = ["title", "parent", "children", "pager", "data"]
+    __slots__ = ["title", "parent", "children", "pager", "level", "data"]
 
-    def __init__(self, title, parent=None, children=None, pager=None, data=None):
+    def __init__(self, title, level=1, parent=None, children=None, pager=None, data=None):
         self.title = title
         self.parent = parent
         self.children = children or []
         self.pager = pager
+        self.level = level
         self.data = data or {}
         for child in self.children:
             child.parent = self

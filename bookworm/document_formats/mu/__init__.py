@@ -64,41 +64,31 @@ class FitzDocument(BaseDocument):
 
     @cached_property
     def toc_tree(self):
-        toc_info = self._ebook.getToC()
+        toc_info = self._ebook.getToC(simple=False)
         max_page = len(self) - 1
         root_item = Section(
             title=self.metadata.title,
+            level=0,
             pager=Pager(first=0, last=max_page, current=0),
         )
-        for (index, (level, title, start_page)) in enumerate(toc_info):
-            try:
-                curr_index = index
-                next_item = toc_info[curr_index + 1]
-                while next_item[0] != level:
-                    curr_index += 1
-                    next_item = toc_info[curr_index]
-            except IndexError:
-                next_item = None
-            first_page = start_page - 1
-            last_page = max_page if next_item is None else next_item[-1] - 2
-            if last_page < first_page:
-                last_page += 1
-            assert all(p >= 0 for p in (first_page, last_page)), "Error, invalid page number."
-            assert first_page <= last_page, "Error, Malformed page structure."
-            pgn = Pager(first=first_page, last=last_page, current=first_page)
-            sect = Section(title=title, pager=pgn)
-            if level == 1:
-                root_item.append(sect)
-                continue
-            parent_lvl = level - 1
-            parent = root_item.children[-1]
-            while True:
-                if parent_lvl > 1:
-                    parent = parent.children[-1]
-                    parent_lvl -= 1
-                    continue
-                parent.append(sect)
-                break
+        _records = {"last": root_item, 0: root_item}
+        for level, title, start_page, metadata in toc_info:
+            last_section = _records["last"]
+            page = metadata.get("page") or (start_page -1)
+            _last_pager = last_section.pager
+            if _last_pager.last is None:
+                _last_pager.last = _last_pager.first + (page - _last_pager.first) - 1
+            pg = Pager(first=page)
+            sect = Section(title=title, level=level, pager=pg)
+            if level == last_section.level:
+                _records[level-1].append(sect)
+            elif level > last_section.level:
+                last_section.append(sect)
+            else:
+                sibling = _records[last_section.level - level]
+                _records[sibling.level - 1].append(sect)
+            _records["last"] = _records[level] = sect
+        _records["last"].pager.last = max_page
         return root_item
 
     @cached_property
