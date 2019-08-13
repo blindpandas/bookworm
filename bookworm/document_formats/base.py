@@ -51,9 +51,7 @@ class Pager:
     def __init__(self, first, last=None, current=None):
         self.first = first
         self.last = last
-        self.current = None
-        if self.current is None:
-            self.current = self.first
+        self.current = self.first
 
     def __repr__(self):
         return f"<Pagination: first={self.first}, last={self.last}, total={self.last - self.first}>"

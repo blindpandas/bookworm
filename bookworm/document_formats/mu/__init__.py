@@ -2,6 +2,7 @@
 
 import os
 import fitz
+from contextlib import suppress
 from bookworm.concurrency import QueueProcess
 from bookworm.utils import cached_property
 from bookworm.document_formats.base import (
@@ -62,6 +63,12 @@ class FitzDocument(BaseDocument):
     def get_page_content(self, page_number):
         return self._text_from_page(self[page_number])
 
+    def _set_appropriate_last_page(self, pager, possible_last):
+        if possible_last  < pager.first:
+            pager.last = pager.first
+        else:
+            pager.last = possible_last
+
     @cached_property
     def toc_tree(self):
         toc_info = self._ebook.getToC(simple=False)
@@ -71,24 +78,29 @@ class FitzDocument(BaseDocument):
             level=0,
             pager=Pager(first=0, last=max_page, current=0),
         )
-        _records = {"last": root_item, 0: root_item}
+        _records = {0: root_item}
+        last_section = root_item
         for level, title, start_page, metadata in toc_info:
-            last_section = _records["last"]
             page = metadata.get("page") or (start_page -1)
             _last_pager = last_section.pager
             if _last_pager.last is None:
-                _last_pager.last = _last_pager.first + (page - _last_pager.first) - 1
-            pg = Pager(first=page)
+                self._set_appropriate_last_page(_last_pager, page - 1)
+            pg = Pager(first=page if page >= 0 else 0)
             sect = Section(title=title, level=level, pager=pg)
-            if level == last_section.level:
-                _records[level-1].append(sect)
-            elif level > last_section.level:
+            if level > last_section.level:
                 last_section.append(sect)
+            elif level < last_section.level:
+                try:
+                    _records[level - 1].append(sect)
+                except KeyError:
+                    root_item.append(sect)
+                with suppress(KeyError):
+                    self._set_appropriate_last_page(_records[level].pager, page - 1)
             else:
-                sibling = _records[last_section.level - level]
-                _records[sibling.level - 1].append(sect)
-            _records["last"] = _records[level] = sect
-        _records["last"].pager.last = max_page
+                _records[level-1].append(sect)
+            last_section = _records[level] = sect
+        last_section.pager.last = max_page
+        _records.get(1, root_item).pager.last = max_page
         return root_item
 
     @cached_property
