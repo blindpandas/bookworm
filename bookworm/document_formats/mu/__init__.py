@@ -81,8 +81,8 @@ class FitzDocument(BaseDocument):
                 next_item = None
             first_page = start_page - 1
             last_page = max_page if next_item is None else next_item[-1] - 2
-            if last_page < first_page:
-                last_page += 1
+            first_page = first_page if first_page >= 0 else 0
+            last_page = last_page if last_page >= first_page else  last_page + 1
             assert all(p >= 0 for p in (first_page, last_page)), "Error, invalid page number."
             assert first_page <= last_page, "Error, Malformed page structure."
             pgn = Pager(first=first_page, last=last_page, current=first_page)
