@@ -13,7 +13,7 @@ import json
 from io import BytesIO, StringIO
 from datetime import datetime
 from functools import wraps
-from contextlib import contextmanager
+from contextlib import redirect_stdout
 from glob import glob
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -35,16 +35,6 @@ GUIDE_HTML_TEMPLATE = """<!doctype html>
   </body>
   </html>
 """
-
-
-@contextmanager
-def mute_stdout():
-    _stdout = sys.stdout
-    sys.stdout = StringIO()
-    try:
-        yield
-    finally:
-        sys.stdout = _stdout
 
 
 def _add_envars(context):
@@ -103,7 +93,7 @@ def make_icons(c):
             fname = Path(temp) / imgfile.name
             Image.open(imgfile).resize(TARGET_SIZE).save(fname)
             append = bool(index)
-            with mute_stdout():
+            with redirect_stdout(StringIO()):
                 img2py(
                     python_file=str(PY_MODULE),
                     image_file=str(fname),
