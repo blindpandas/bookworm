@@ -2,7 +2,6 @@
 
 import os
 import fitz
-from contextlib import suppress
 from bookworm.concurrency import QueueProcess
 from bookworm.utils import cached_property
 from bookworm.document_formats.base import (
@@ -63,11 +62,11 @@ class FitzDocument(BaseDocument):
     def get_page_content(self, page_number):
         return self._text_from_page(self[page_number])
 
-    def _set_appropriate_last_page(self, pager, possible_last):
-        if possible_last  < pager.first:
-            pager.last = pager.first
+    def make_pager(self, first, last):
+        if last == first:
+            return Pager(first, first)
         else:
-            pager.last = possible_last
+            return Pager(first, last - 1)
 
     @cached_property
     def toc_tree(self):
@@ -80,23 +79,25 @@ class FitzDocument(BaseDocument):
         )
         _records = {0: root_item}
         last_section = root_item
-        for level, title, start_page, metadata in toc_info:
-            page = metadata.get("page") or (start_page -1)
-            _last_pager = last_section.pager
-            if _last_pager.last is None:
-                self._set_appropriate_last_page(_last_pager, page - 1)
-            pg = Pager(first=page if page >= 0 else 0)
-            sect = Section(title=title, level=level, pager=pg)
+        for (index, (level, title, start_page, metadata)) in enumerate(toc_info):
+            first_page = metadata.get("page") or (start_page -1)
             try:
-                _records[level - 1].append(sect)
-            except KeyError:
-                root_item.append(sect)
-            if level < last_section.level:
-                with suppress(KeyError):
-                    self._set_appropriate_last_page(_records[level].pager, page - 1)
+                cur_index = index + 1
+                while True:
+                    next_entry = toc_info[cur_index]
+                    if next_entry[0] == level:
+                        last_page = next_entry[2]
+                        break
+                    cur_index += 1
+            except IndexError:
+                last_page = max_page
+            sect = Section(
+                title=title,
+                level=level,
+                pager=self.make_pager(first=first_page if first_page >= 0 else 0, last=last_page)
+            )
+            _records[level - 1].append(sect)
             last_section = _records[level] = sect
-        last_section.pager.last = max_page
-        _records.get(1, root_item).pager.last = max_page
         return root_item
 
     @cached_property
