@@ -40,8 +40,7 @@ log = logger.getChild(__name__)
 
 # About Message
 # Translators: the content of the about message
-ABOUT_MSG = _(
-    """
+ABOUT_MSG = _("""
 {name}
 Version: {version}
 Website: {website}
@@ -55,8 +54,7 @@ You can view the license text from the help menu.
 As a blind developer, my responsibility is to develop applications that provide independence for me, and for my fellow blind friends allover the world. So, if you've found Bookworm useful in any way, please help me in making Bookworm better for you and for others. At this initial stage, I want you to tell me about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
 
 To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: ({website}). You can also follow me, {author}, at (@mush42) on Twitter
-"""
-).format(**app.__dict__)
+""").format(**app.__dict__)
 
 
 class BookRelatedMenuIds(enum.IntEnum):
@@ -127,7 +125,7 @@ class MenubarProvider:
         fileMenu.Append(wx.ID_OPEN, _("Open") + "...\tCtrl-O")
         fileMenu.AppendSeparator()
         # Translators: the label of an ietm in the application menubar
-        fileMenu.Append(wx.ID_SAVEAS, _("&Save As Plain Text...") + "...\tCtrl+S")
+        fileMenu.Append(BookRelatedMenuIds.export, _("&Save As Plain Text...") + "...\tCtrl+S")
         fileMenu.AppendSeparator()
         fileMenu.Append(
             BookRelatedMenuIds.closeCurrentFile,
@@ -336,7 +334,7 @@ class MenubarProvider:
         # Bind menu events to event handlers
         # File menu event handlers
         self.Bind(wx.EVT_MENU, self.onOpenEBook, id=wx.ID_OPEN)
-        self.Bind(wx.EVT_MENU, self.onExportAsPlainText, id=wx.ID_SAVEAS)
+        self.Bind(wx.EVT_MENU, self.onExportAsPlainText, id=BookRelatedMenuIds.export)
         self.Bind(
             wx.EVT_MENU, self.onCloseCurrentFile, id=BookRelatedMenuIds.closeCurrentFile
         )
@@ -558,12 +556,13 @@ class MenubarProvider:
     @call_threaded
     def onExportAsPlainText(self, event):
         book_title = slugify(self.reader.current_book.title)
-        filename, _ = wx.FileSelectorEx(
+        filename, _nope = wx.FileSelectorEx(
             # Translators: the title of a dialog to save the exported book
             _("Save As"),
             default_path=wx.GetUserHome(),
             default_filename=f"{book_title}.txt",
-            wildcard="Plain Text (*.txt)|.txt",
+            # Translators: a name of a file format
+            wildcard=_("Plain Text") + " (*.txt)|.txt",
             flags=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
             parent=self,
         )
@@ -833,12 +832,15 @@ class MenubarProvider:
         all_exts = []
         for cls in EBookReader.document_classes:
             for ext in cls.extensions:
-                rv.append(f"{cls.name} ({ext})|{ext}|")
+                rv.append("{name} ({ext})|{ext}|".format(name=_(cls.name), ext=ext))
                 all_exts.append(ext)
         rv[-1] = rv[-1].rstrip("|")
         allfiles = ";".join(all_exts)
         allfiles_display = " ".join(e for e in all_exts)
-        rv.insert(0, f"Supported E-Book Formats ({allfiles_display})|{allfiles}|")
+        rv.insert(
+            0,
+            _("Supported E-Book Formats ({display})|{ext}|").format(display=allfiles_display, ext=allfiles)
+        )
         return "".join(rv)
 
     def decrypt_opened_document(self):

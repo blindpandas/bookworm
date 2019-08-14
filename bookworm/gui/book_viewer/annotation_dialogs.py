@@ -327,7 +327,7 @@ class ExportNotesDialog(Dialog):
     def addControls(self, sizer, parent):
         # Translators: the label of a radio button
         self.output_ranges = [_("Whole Book"), _("Current Section")]
-        formats = [rend.display_name for rend in NotesExporter.renderers]
+        formats = [_(rend.display_name) for rend in NotesExporter.renderers]
         self.outputRangeRb = wx.RadioBox(
             parent,
             -1,
@@ -338,13 +338,13 @@ class ExportNotesDialog(Dialog):
             style=wx.RA_SPECIFY_COLS,
         )
         # Translators: the label of a combobox of available export formats
-        formatChoiceLabel = wx.StaticText(parent, -1, "Output Format:")
+        formatChoiceLabel = wx.StaticText(parent, -1, _("Output format:"))
         self.formatChoice = wx.Choice(parent, -1, choices=formats)
         self.openAfterExportCheckBox = wx.CheckBox(
-            # Translators: the label of a checkbox
             parent,
             -1,
-            "Open file after exporting",
+            # Translators: the label of a checkbox
+            _("Open file after exporting"),
         )
         sizer.Add(self.outputRangeRb, 0, wx.EXPAND | wx.ALL, 10)
         sizer.Add(formatChoiceLabel, 0, wx.EXPAND | wx.TOP | wx.LEFT | wx.RIGHT, 10)
@@ -395,7 +395,7 @@ class ExportNotesDialog(Dialog):
             _("Export To"),
             defaultDir=wx.GetUserHome(),
             defaultFile=filename,
-            wildcard=f"{renderer.display_name} (*{renderer.output_ext})|{renderer.output_ext}",
+            wildcard=f"{_(renderer.display_name)} (*{renderer.output_ext})|{renderer.output_ext}",
             style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
         )
         if saveExportedFD.ShowModal() != wx.ID_OK:

@@ -87,7 +87,7 @@ class TextInfo:
 
     def _record_markers(self, segments):
         rv = []
-        for _, pos in segments:
+        for _nope, pos in segments:
             rv.append(pos + self.start_pos)
         return rv
 

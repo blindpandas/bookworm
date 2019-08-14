@@ -358,9 +358,10 @@ class VoiceProfileDialog(SimpleDialog):
         sel = 0
         active_profile = config.conf.active_profile
         for i, profile in enumerate(profiles):
-            label = profile
+            label = _(profile)
             if active_profile and active_profile["name"] == profile:
-                label += " (active)"
+                # Translators: the entry of the active voice profile in the voice profiles list
+                label = _("{profile} (active)").format(profile=label)
                 sel = i
             self.voiceProfilesChoice.Append(label, profile)
         self.voiceProfilesChoice.SetSelection(sel)
