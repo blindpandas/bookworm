@@ -50,3 +50,23 @@ class ViewerMenuIds(enum.IntEnum):
     about = 805
 
 
+
+KEYBOARD_SHORTCUTS = {
+    wx.ID_OPEN: "Ctrl-O",
+    BookRelatedMenuIds.closeCurrentFile: "Ctrl-W",
+    BookRelatedMenuIds.goToPage: "Ctrl-G",
+    wx.ID_FIND: "Ctrl-F",
+    BookRelatedMenuIds.findNext: "F3",
+    BookRelatedMenuIds.findPrev: "Shift-F3",
+    BookRelatedMenuIds.viewRenderedAsImage: "Ctrl-R",
+    wx.ID_PREFERENCES: "Ctrl-Shift-P",
+    BookRelatedMenuIds.play: "F5",
+    BookRelatedMenuIds.pauseToggle: "F6",
+    BookRelatedMenuIds.stop: "F7",
+    ViewerMenuIds.voiceProfiles: "Ctrl-Shift-V",
+    BookRelatedMenuIds.addBookmark: "Ctrl-B",
+    BookRelatedMenuIds.addNote: "Ctrl-N",
+    BookRelatedMenuIds.viewBookmarks: "Ctrl-Shift-B",
+    BookRelatedMenuIds.viewNotes: "Ctrl-Shift-N",
+    ViewerMenuIds.documentation: "F1",
+}
