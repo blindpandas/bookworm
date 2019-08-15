@@ -160,8 +160,10 @@ def copy_assets(c):
     """Copy some static assets to the new build folder."""
     print("Copying files...")
     license_file = c["build_folder"] / "resources" / "docs" / "license.txt"
+    contrib_file = c["build_folder"] / "resources" / "docs" / "contributors.txt"
     icon_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico"
     c.run(f"copy {PROJECT_ROOT / 'LICENSE'} {license_file}", hide="stdout")
+    c.run(f"copy {PROJECT_ROOT / 'contributors.txt'} {contrib_file}", hide="stdout")
     c.run(f"copy {icon_file} {c['build_folder']}", hide="stdout")
     print("Done copying files.")
 

@@ -4,7 +4,6 @@ import sys
 import os
 import wx
 import threading
-import enum
 import webbrowser
 from pathlib import Path
 from slugify import slugify
@@ -19,24 +18,26 @@ from bookworm.speech.enumerations import SynthState
 from bookworm.reader import EBookReader
 from bookworm.utils import restart_application, cached_property, gui_thread_safe
 from bookworm.logger import logger
-from .decorators import only_when_reader_ready
-from ..preferences_dialog import PreferencesDialog
-from .core_dialogs import (
+from bookworm.gui.preferences_dialog import PreferencesDialog
+from bookworm.gui.book_viewer.decorators import only_when_reader_ready
+from bookworm.gui.book_viewer.core_dialogs import (
     GoToPageDialog,
     SearchBookDialog,
     SearchResultsDialog,
     ViewPageAsImageDialog,
     VoiceProfileDialog,
 )
-from .annotation_dialogs import (
+from bookworm.gui.book_viewer.annotation_dialogs import (
     NoteEditorDialog,
     ViewAnnotationsDialog,
     ExportNotesDialog,
     highlight_containing_line,
 )
+from ._constants import *
 
 
 log = logger.getChild(__name__)
+
 
 # About Message
 # Translators: the content of the about message
@@ -45,61 +46,16 @@ ABOUT_MSG = _("""
 Version: {version}
 Website: {website}
 
-{name} is an accessible e-book reader that enables blind and visually impaired individuals to read e-books in an easy, accessible, and hassle-free manor. It is being developed by {author}.
+{name} is an accessible e-book reader that enables blind and visually impaired individuals to read e-books in an easy, accessible, and hassle-free manor. It is being developed by {author} with some contributions from the community.
 
 {copyright}
 This software is offered to you under the terms of The MIT license.
 You can view the license text from the help menu.
 
-As a blind developer, my responsibility is to develop applications that provide independence for me, and for my fellow blind friends allover the world. So, if you've found Bookworm useful in any way, please help me in making Bookworm better for you and for others. At this initial stage, I want you to tell me about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
+As blind developers, our responsibility is to develop applications that provide independence for us, and for our fellow blind friends allover the world. So, if you've found Bookworm useful in any way, please help us in making Bookworm better for you and for others. At this initial stage, we want you to tell us about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
 
-To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: ({website}). You can also follow me, {author}, at (@mush42) on Twitter
+To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: ({website}). You can also follow the lead developer, {author}, at (@mush42) on Twitter
 """).format(**app.__dict__)
-
-
-class BookRelatedMenuIds(enum.IntEnum):
-    """Declares  menu ids for items which are enabled/disabled
-    based on whether a book is loaded or not.
-    """
-
-    # File
-    export = wx.ID_SAVEAS
-    closeCurrentFile = 211
-    # Tools
-    goToPage = 221
-    searchBook = wx.ID_FIND
-    findNext = 222
-    findPrev = 223
-    viewRenderedAsImage = 224
-    # Speech
-    play = 251
-    stop = 252
-    pauseToggle = 253
-    rewind = wx.ID_BACKWARD
-    fastforward = wx.ID_FORWARD
-    # Annotations
-    addBookmark = 241
-    addNote = 242
-    viewBookmarks = 243
-    viewNotes = 244
-    ExportNotes = 245
-
-
-class ViewerMenuIds(enum.IntEnum):
-    """Declares menu ids for all other menu items."""
-
-    # Tools menu
-    preferences = wx.ID_PREFERENCES
-    # Speech menu
-    voiceProfiles = 257
-    deactivateVoiceProfiles = wx.ID_REVERT
-    # Help Menu
-    documentation = 801
-    website = 802
-    license = 803
-    check_for_updates = 810
-    restart_with_debug = 804
-    about = 805
 
 
 class MenubarProvider:
@@ -292,7 +248,7 @@ class MenubarProvider:
         helpMenu.Append(
             ViewerMenuIds.website,
             # Translators: the label of an ietm in the application menubar
-            _("&Bookworm website..."),
+            _("Bookworm &website..."),
             # Translators: the help text of an ietm in the application menubar
             _("Visit the official website of Bookworm"),
         )
@@ -302,6 +258,13 @@ class MenubarProvider:
             _("&License"),
             # Translators: the help text of an ietm in the application menubar
             _("View legal information about this program ."),
+        )
+        helpMenu.Append(
+            ViewerMenuIds.contributors,
+            # Translators: the label of an ietm in the application menubar
+            _("Con&tributors"),
+            # Translators: the help text of an ietm in the application menubar
+            _("View a list of notable contributors to the program."),
         )
         helpMenu.Append(
             ViewerMenuIds.check_for_updates,
@@ -392,6 +355,11 @@ class MenubarProvider:
             wx.EVT_MENU,
             lambda e: wx.LaunchDefaultApplication(str(paths.docs_path("license.txt"))),
             id=ViewerMenuIds.license,
+        )
+        self.Bind(
+            wx.EVT_MENU,
+            lambda e: wx.LaunchDefaultApplication(str(paths.docs_path("contributors.txt"))),
+            id=ViewerMenuIds.contributors,
         )
         self.Bind(
             wx.EVT_MENU,
@@ -660,8 +628,8 @@ class MenubarProvider:
 
     def onAbout(self, event):
         wx.MessageBox(
+            _(ABOUT_MSG),
             # Translators: the title of the about dialog
-            ABOUT_MSG,
             _("About {app_name}").format(app_name=app.display_name),
             parent=self,
             style=wx.ICON_INFORMATION,
