@@ -171,8 +171,8 @@ class GeneralPanel(SettingsPanel):
 
     def onRequestFileAssoc(self, event):
         msg = wx.MessageBox(
-            _("This will change your user preferences to always use Bookworm to open supported files type.\n"
-            "Later on, if you decided to use another app for opening a specific file type, you can change your preferences from the control panel\n\n"
+            _("This will change your preferences to always use Bookworm for opening supported e-book formats.\n"
+            "Later on, if you decided to use another app for opening a specific e-book format, you can change your preferences from the control panel.\n\n"
             "Are you sure you want to continue?"),
             _("Change File Association"),
             style=wx.YES_NO|wx.ICON_WARNING

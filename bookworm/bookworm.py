@@ -7,12 +7,21 @@ from bookworm.paths import logs_path
 from bookworm.config import setup_config
 from bookworm.i18n import setup_i18n
 from bookworm.database import init_database
+from bookworm.shell_integration import shell_integrate, shell_disintegrate
 from bookworm.signals import app_started, app_shuttingdown
 from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
+
+
+# The following tasks are autonomous. They are executed
+#  by invoking the executable with a command line flag
+TASKS = {
+    "shell_integrate": lambda v: shell_integrate(),
+    "shell_disintegrate": lambda v: shell_disintegrate(),
+}
 
 
 class BookwormApp(wx.App):
@@ -30,11 +39,13 @@ class BookwormApp(wx.App):
         self.setupSubsystems()
         self.mainFrame = BookViewerWindow(None, appinfo.display_name)
         self.SetTopWindow(self.mainFrame)
-        self.mainFrame.Show(True)
         self.Bind(wx.EVT_END_SESSION, self.onEndSession)
         app_started.send(self)
         log.debug("The application has started successfully.")
         return True
+
+    def ShowMainWindow(self):
+        self.mainFrame.Show(True)
 
     def OnAssert(self, file, line, cond, msg):
         message = f"{file}, line {line}:\nassert {cond}: {msg}"
@@ -52,16 +63,22 @@ def init_app_and_run_main_loop():
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", nargs="?", default=None)
     parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--shell-integrate", action="store_true")
+    parser.add_argument("--shell-disintegrate", action="store_true")
     appinfo.args, appinfo.extra_args = parser.parse_known_args()
     if appinfo.args.debug:
         appinfo.debug = True
     log.debug(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
     if appinfo.is_frozen:
         from multiprocessing import freeze_support
-
         freeze_support()
     wxlogfilename = logs_path("wx.log") if not appinfo.debug else None
     app = BookwormApp(redirect=True, useBestVisual=True, filename=wxlogfilename)
+    for flag, func in TASKS.items():
+        flag_value = getattr(appinfo.args, flag, None)
+        if (flag_value is not None) and flag_value:
+            return func(flag_value)
+    app.ShowMainWindow()
     app.MainLoop()
     app_shuttingdown.send(app)
 

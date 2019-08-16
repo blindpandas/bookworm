@@ -8,6 +8,7 @@ import sys
 import os
 from typing import Iterable
 from dataclasses import dataclass
+from functools import wraps
 from bookworm import app
 from bookworm.reader import EBookReader
 from bookworm.vendor import shellapi
@@ -15,6 +16,19 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
+
+
+def ignore_system_exceptions(func):
+    """Ignore the exception raised when dealing with the registry ."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except System.Exception:
+            log.exception("A System.Exception was raised when trying to access the registry.", exc_info=True)
+
+    return wrapper
+
 
 
 @dataclass
@@ -92,22 +106,16 @@ def associate_extension(ext, prog_id, executable, desc, icon=None):
 
 
 def remove_association(ext, prog_id):
-    try:
-        with RegKey.LocalSoftware("") as k:
-            k.DeleteSubKeyTree(prog_id)
-        with RegKey.LocalSoftware(fr"{ext}\OpenWithProgids") as k:
-            k.DeleteSubKey(prog_id)
-        shellapi.SHChangeNotify(
-            shellapi.SHCNE_ASSOCCHANGED,
-            shellapi.SHCNF_IDLIST,
-            None,
-            None
-        )
-    except System.ArgumentException:
-        log.exception(
-            f"Error removing association for extension {ext} with prog_id {prog_id}",
-            exc_info=True
-        )
+    with RegKey.LocalSoftware("") as k:
+        k.DeleteSubKeyTree(prog_id)
+    with RegKey.LocalSoftware(fr"{ext}\OpenWithProgids") as k:
+        k.DeleteSubKey(prog_id)
+    shellapi.SHChangeNotify(
+        shellapi.SHCNE_ASSOCCHANGED,
+        shellapi.SHCNF_IDLIST,
+        None,
+        None
+    )
 
 
 def get_ext_info(supported="*"):
@@ -119,7 +127,10 @@ def get_ext_info(supported="*"):
     return doctypes
 
 
+@ignore_system_exceptions
 def shell_integrate(supported="*"):
+    if not app.is_frozen:
+        return log.warning("File association is not available when running from source.")
     register_application(app.prog_id, sys.executable, supported)
     doctypes = get_ext_info(supported)
     for (ext, (prog_id, desc)) in doctypes.items():
@@ -127,9 +138,18 @@ def shell_integrate(supported="*"):
     return doctypes
 
 
+@ignore_system_exceptions
 def shell_disintegrate(supported="*"):
+    if not app.is_frozen:
+        return log.warning("File association is not available when running from source.")
+    exe = os.path.split(sys.executable)[-1]
+    with RegKey.LocalSoftware("Applications") as apps_key:
+        should_remove = False
+        with RegKey.LocalSoftware(fr"Applications\{exe}") as exe_key:
+            should_remove = exe_key.exists
+        if should_remove:
+            apps_key.DeleteSubKeyTree(exe)
     doctypes = get_ext_info(supported)
     executable = sys.executable
     for (ext, (prog_id, desc)) in doctypes.items():
         remove_association(ext, prog_id)
-    return doctypes
