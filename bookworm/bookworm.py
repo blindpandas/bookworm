@@ -50,7 +50,7 @@ class BookwormApp(wx.App):
 
 def init_app_and_run_main_loop():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--filename")
+    parser.add_argument("filename", nargs="?", default=None)
     parser.add_argument("--debug", action="store_true")
     appinfo.args, appinfo.extra_args = parser.parse_known_args()
     if appinfo.args.debug:

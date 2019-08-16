@@ -19,6 +19,8 @@ copyright = f"Copyright (c) 2019 {author}."
 is_frozen = hasattr(sys, "frozen") and hasattr(sys, "_MEIPASS")
 arch = "x86" if struct.calcsize("P") == 4 else "x64"
 debug = False
+# The programatic identifier used in file association
+prog_id = "bookworm.a11y.reader.1"
 # These variables are set upon app initialization
 args = extra_args = current_language = None
 

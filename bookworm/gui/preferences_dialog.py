@@ -10,12 +10,13 @@ from bookworm.i18n import get_available_languages, set_active_language
 from bookworm.speech.engine import SpeechEngine
 from bookworm.signals import config_updated
 from bookworm.resources import images
-from bookworm.logger import logger
 from bookworm.config.spec import (
     PARAGRAPH_PAUSE_MAX,
     END_OF_PAGE_PAUSE_MAX,
     END_OF_SECTION_PAUSE_MAX,
 )
+from bookworm.shell_integration import shell_integrate
+from bookworm.logger import logger
 from .components import SimpleDialog, EnhancedSpinCtrl
 
 
@@ -93,13 +94,23 @@ class GeneralPanel(SettingsPanel):
             name="general.show_file_name_as_title",
         )
         # Translators: the title of a group of controls shown in the
+        # general settings page related to file associations
+        assocBox = sc.SizedStaticBox(self, -1, _("File Association"))
+        assocBox.SetSizerProps(expand=True)
+        wx.Button(
+            assocBox,
+            wx.ID_SETUP,
+            # Translators: the label of a button
+            _("Associate Supported &File Types")
+        )
+        # Translators: the title of a group of controls shown in the
         # general settings page related to miscellaneous settings
         miscBox = sc.SizedStaticBox(self, -1, _("Miscellaneous"))
         miscBox.SetSizerProps(expand=True)
         wx.CheckBox(
-            # Translators: the label of a checkbox
             miscBox,
             -1,
+            # Translators: the label of a checkbox
             _("Play pagination sound"),
             name="general.play_pagination_sound",
         )
@@ -124,6 +135,7 @@ class GeneralPanel(SettingsPanel):
             _("Automatically check for updates"),
             name="general.auto_check_for_updates",
         )
+        self.Bind(wx.EVT_BUTTON, self.onRequestFileAssoc, id=wx.ID_SETUP)
         langobjs = get_available_languages().values()
         languages = set((lang.language, lang.description) for lang in langobjs)
         for ident, label in languages:
@@ -156,6 +168,17 @@ class GeneralPanel(SettingsPanel):
                 if msg == wx.YES:
                     restart_application()
         super().reconcile(strategy=strategy)
+
+    def onRequestFileAssoc(self, event):
+        msg = wx.MessageBox(
+            _("This will change your user preferences to always use Bookworm to open supported files type.\n"
+            "Later on, if you decided to use another app for opening a specific file type, you can change your preferences from the control panel\n\n"
+            "Are you sure you want to continue?"),
+            _("Change File Association"),
+            style=wx.YES_NO|wx.ICON_WARNING
+        )
+        if msg == wx.YES:
+            shell_integrate()
 
 
 class SpeechPanel(SettingsPanel):

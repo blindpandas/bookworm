@@ -697,7 +697,7 @@ class MenubarProvider:
     def onRestartWithDebugMode(self, event):
         args = []
         if self.reader.ready:
-            args.append(f'--filename "{self.reader.document.filename}"')
+            args.append(f'"{self.reader.document.filename}"')
             self.reader.save_current_position()
         args.append("--debug")
         restart_application(args)

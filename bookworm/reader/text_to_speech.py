@@ -11,7 +11,7 @@ from bookworm.speech import SpeechProvider
 from bookworm.speech.utterance import SpeechUtterance, SpeechStyle
 from bookworm.speech.enumerations import SynthState, EmphSpec, PauseSpec
 from bookworm.utils import cached_property, gui_thread_safe
-from bookworm.sentence_splitter import (
+from bookworm.vendor.sentence_splitter import (
     SentenceSplitter,
     SentenceSplitterException,
     supported_languages as splitter_supported_languages,
