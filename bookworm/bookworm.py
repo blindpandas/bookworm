@@ -35,13 +35,13 @@ class BookwormApp(wx.App):
         init_database()
 
     def OnInit(self):
-        log.debug("Starting the application.")
+        log.info("Starting the application.")
         self.setupSubsystems()
         self.mainFrame = BookViewerWindow(None, appinfo.display_name)
         self.SetTopWindow(self.mainFrame)
         self.Bind(wx.EVT_END_SESSION, self.onEndSession)
         app_started.send(self)
-        log.debug("The application has started successfully.")
+        log.info("The application has started successfully.")
         return True
 
     def ShowMainWindow(self):
@@ -68,7 +68,7 @@ def init_app_and_run_main_loop():
     appinfo.args, appinfo.extra_args = parser.parse_known_args()
     if appinfo.args.debug:
         appinfo.debug = True
-    log.debug(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
+    log.info(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
     if appinfo.is_frozen:
         from multiprocessing import freeze_support
         freeze_support()
@@ -76,7 +76,9 @@ def init_app_and_run_main_loop():
     app = BookwormApp(redirect=True, useBestVisual=True, filename=wxlogfilename)
     for flag, func in TASKS.items():
         flag_value = getattr(appinfo.args, flag, None)
-        if (flag_value is not None) and flag_value:
+        if flag_value:
+            log.info("The application is running in command line mode.")
+            log.info(f"Invoking command `{flag}` with value `{flag_value}`.")
             return func(flag_value)
     app.ShowMainWindow()
     app.MainLoop()
@@ -86,7 +88,7 @@ def init_app_and_run_main_loop():
 def main():
     try:
         init_app_and_run_main_loop()
-        log.debug("The application has exited grasefully.")
+        log.info("The application has exited grasefully.")
     except BaseException as e:
         log.exception(f"An unhandled error has occured.")
         if appinfo.debug:

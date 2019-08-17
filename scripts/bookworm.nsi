@@ -60,6 +60,7 @@ WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_N
 SectionEnd
 Section "Uninstall"
 SetShellVarContext All
+nsExec::ExecToStack '"$INSTDIR\Bookworm.exe" --shell-disintegrate'
 DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%"
 RMDir /r /REBOOTOK $INSTDIR
 Delete "$DESKTOP\$%IAPP_DISPLAY_NAME%.lnk"

@@ -23,7 +23,7 @@ class FitzDocument(BaseDocument):
 
     format = "pdf"
     # Translators: the name of a document file format
-    name = _("Portable Document Format")
+    name = _("Portable Document (PDF)")
     extensions = ("*.pdf",)
     supports_rendering = True
 
@@ -144,7 +144,7 @@ class FitzEPUBDocument(FitzDocument):
 
     format = "epub"
     # Translators: the name of a document file format
-    name = _("Electronic Publications")
+    name = _("Electronic Publication (EPUB)")
     extensions = ("*.epub",)
 
     def read(self):

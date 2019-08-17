@@ -25,6 +25,7 @@ from invoke.exceptions import UnexpectedExit
 
 PROJECT_ROOT = Path.cwd()
 PACKAGE_FOLDER = PROJECT_ROOT / "bookworm"
+ICON_SIZE = (256, 256)
 GUIDE_HTML_TEMPLATE = """<!doctype html>
   <html lang="{lang}">
   <head>
@@ -105,9 +106,9 @@ def make_icons(c):
     icon_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico"
     if not icon_file.exists():
         print("Application icon is not there, creating it.")
-        Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").resize((48, 48)).save(
-            icon_file
-        )
+        Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png")\
+        .resize(ICON_SIZE)\
+        .save(icon_file)
         print("Copied app icon to the assets folder.")
     bitmap_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.bmp"
     if not bitmap_file.exists():
@@ -158,13 +159,23 @@ def build_docs(c):
 @make_env
 def copy_assets(c):
     """Copy some static assets to the new build folder."""
+    from PIL import Image
+
     print("Copying files...")
-    license_file = c["build_folder"] / "resources" / "docs" / "license.txt"
-    contrib_file = c["build_folder"] / "resources" / "docs" / "contributors.txt"
-    icon_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico"
-    c.run(f"copy {PROJECT_ROOT / 'LICENSE'} {license_file}", hide="stdout")
-    c.run(f"copy {PROJECT_ROOT / 'contributors.txt'} {contrib_file}", hide="stdout")
-    c.run(f"copy {icon_file} {c['build_folder']}", hide="stdout")
+    files_to_copy = {
+        PROJECT_ROOT / "LICENSE": c["build_folder"] / "resources" / "docs" / "license.txt",
+        PROJECT_ROOT / "contributors.txt": c["build_folder"] / "resources" / "docs" / "contributors.txt",
+        PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico": c["build_folder"],
+    }
+    for src, dst in files_to_copy.items():
+        c.run(f"copy {src} {dst}", hide="stdout")
+    ficos_src = PROJECT_ROOT / "fullsize_images"/ "file_icons"
+    ficos_dst = c["build_folder"] / "resources" / "icons"
+    ficos_dst.mkdir(parents=True, exist_ok=True)
+    for img in [i for i in ficos_src.iterdir() if i.suffix == ".png"]:
+        Image.open(img)\
+        .resize(ICON_SIZE)\
+        .save(ficos_dst.joinpath(img.name.split(".")[0] + ".ico"))
     print("Done copying files.")
 
 

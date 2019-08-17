@@ -10,6 +10,7 @@ from typing import Iterable
 from dataclasses import dataclass
 from functools import wraps
 from bookworm import app
+from bookworm.paths import app_path
 from bookworm.reader import EBookReader
 from bookworm.vendor import shellapi
 from bookworm.logger import logger
@@ -106,10 +107,16 @@ def associate_extension(ext, prog_id, executable, desc, icon=None):
 
 
 def remove_association(ext, prog_id):
-    with RegKey.LocalSoftware("") as k:
-        k.DeleteSubKeyTree(prog_id)
-    with RegKey.LocalSoftware(fr"{ext}\OpenWithProgids") as k:
-        k.DeleteSubKey(prog_id)
+    try:
+        with RegKey.LocalSoftware("") as k:
+            k.DeleteSubKeyTree(prog_id)
+    except System.ArgumentException:
+        log.exception(f"Faild to remove the prog_id key", exc_info=True)
+    try:
+        with RegKey.LocalSoftware(fr"{ext}\OpenWithProgids") as k:
+            k.DeleteSubKey(prog_id)
+    except System.ArgumentException:
+        log.exception(f"Faild to remove the openwith prog_id key", exc_info=True)
     shellapi.SHChangeNotify(
         shellapi.SHCNE_ASSOCCHANGED,
         shellapi.SHCNF_IDLIST,
@@ -119,11 +126,14 @@ def remove_association(ext, prog_id):
 
 
 def get_ext_info(supported="*"):
+    ficos_path = app_path("resources", "icons")
     doctypes = {}
     for cls in EBookReader.document_classes:
         for ext in cls.extensions:
             if (supported == "*") or (ext in supported):
-                doctypes[ext.replace("*", "")] = (f"{app.prog_id}.{cls.format}", _(cls.name))
+                icon = ficos_path.joinpath(cls.format + ".ico")
+                icon = str(icon) if icon.exists() else None
+                doctypes[ext.replace("*", "")] = (f"{app.prog_id}.{cls.format}", _(cls.name), icon)
     return doctypes
 
 
@@ -131,25 +141,25 @@ def get_ext_info(supported="*"):
 def shell_integrate(supported="*"):
     if not app.is_frozen:
         return log.warning("File association is not available when running from source.")
+    log.info(f"Registring file associations for extensions {supported}.")
     register_application(app.prog_id, sys.executable, supported)
     doctypes = get_ext_info(supported)
-    for (ext, (prog_id, desc)) in doctypes.items():
-        associate_extension(ext, prog_id, sys.executable, desc, icon=None)
-    return doctypes
+    for (ext, (prog_id, desc, icon)) in doctypes.items():
+        associate_extension(ext, prog_id, sys.executable, desc, icon)
 
 
 @ignore_system_exceptions
 def shell_disintegrate(supported="*"):
     if not app.is_frozen:
         return log.warning("File association is not available when running from source.")
+    log.info(f"Unregistring file associations for extensions {supported}.")
     exe = os.path.split(sys.executable)[-1]
     with RegKey.LocalSoftware("Applications") as apps_key:
         should_remove = False
-        with RegKey.LocalSoftware(fr"Applications\{exe}") as exe_key:
+        with RegKey(apps_key, exe) as exe_key:
             should_remove = exe_key.exists
         if should_remove:
             apps_key.DeleteSubKeyTree(exe)
     doctypes = get_ext_info(supported)
-    executable = sys.executable
-    for (ext, (prog_id, desc)) in doctypes.items():
+    for (ext, (prog_id, desc, icon)) in doctypes.items():
         remove_association(ext, prog_id)
