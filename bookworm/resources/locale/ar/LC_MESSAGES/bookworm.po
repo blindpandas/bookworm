@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  0.1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2019-08-19 15:38+0200\n"
+"POT-Creation-Date: 2019-08-19 20:13+0200\n"
 "PO-Revision-Date: 2019-08-14 23:07+0200\n"
 "Last-Translator: Musharraf Omer <ibnomer2011@hotmail.com>\n"
 "Language: ar\n"
@@ -148,17 +148,17 @@ msgid "Download Completed"
 msgstr "اكتمل التنزيل"
 
 #. Translators: the name of a built-in voice profile
-#: bookworm/config/spec.py:51
+#: bookworm/config/spec.py:52
 msgid "Expressive"
 msgstr "قراءة معبرة"
 
 #. Translators: the name of a built-in voice profile
-#: bookworm/config/spec.py:62
+#: bookworm/config/spec.py:63
 msgid "Deep Reading"
 msgstr "قراءة عميقة"
 
 #. Translators: the name of a built-in voice profile
-#: bookworm/config/spec.py:73
+#: bookworm/config/spec.py:74
 msgid "Hazy"
 msgstr "قراءة متعجلة"
 
@@ -174,17 +174,22 @@ msgstr ""
 
 #. Translators: the lable of the OK button in a dialog
 #: bookworm/gui/components.py:77 bookworm/gui/components.py:117
-#: bookworm/gui/preferences_dialog.py:482
+#: bookworm/gui/preferences_dialog.py:497
 msgid "OK"
 msgstr "موافق"
 
 #. Translators: the lable of the cancel button in a dialog
 #: bookworm/gui/components.py:80 bookworm/gui/components.py:120
-#: bookworm/gui/preferences_dialog.py:485
+#: bookworm/gui/preferences_dialog.py:500
 msgid "Cancel"
 msgstr "إلغاء"
 
-#: bookworm/gui/preferences_dialog.py:47
+#. Translators: the title of the file associations dialog
+#: bookworm/gui/preferences_dialog.py:40
+msgid "Bookworm File Associations"
+msgstr ""
+
+#: bookworm/gui/preferences_dialog.py:52
 msgid ""
 "This dialog will help you to setup file associations.\n"
 "Associating files with Bookworm means that when you click on a file in "
@@ -192,133 +197,128 @@ msgid ""
 msgstr ""
 
 #. Translators: the main label of a button
-#: bookworm/gui/preferences_dialog.py:56
+#: bookworm/gui/preferences_dialog.py:61
 msgid "Associate all"
 msgstr ""
 
 #. Translators: the note of a button
-#: bookworm/gui/preferences_dialog.py:58
-msgid "Use Bookworm to open all supported ebook formats."
+#: bookworm/gui/preferences_dialog.py:63
+msgid "Use Bookworm to open all supported ebook formats"
 msgstr ""
 
 #. Translators: the main label of a button
 #. Translators: the note of a button
-#: bookworm/gui/preferences_dialog.py:64
-msgid "Associate files with extension {ext} so they always open in Bookworm"
+#: bookworm/gui/preferences_dialog.py:69
+msgid "Associate files with {ext} extension so they always open in Bookworm"
 msgstr ""
 
 #. Translators: the main label of a button
-#: bookworm/gui/preferences_dialog.py:71
+#: bookworm/gui/preferences_dialog.py:76
 msgid "Dissociate all supported file types"
 msgstr ""
 
 #. Translators: the note of a button
-#: bookworm/gui/preferences_dialog.py:73
-msgid "Unregister previously associated file types (if exist)."
+#: bookworm/gui/preferences_dialog.py:78
+msgid "Unregister previously associated file types"
 msgstr ""
 
 #. Translators: the label of a button to close the dialog
 #: bookworm/gui/book_viewer/annotation_dialogs.py:107
 #: bookworm/gui/book_viewer/annotation_dialogs.py:284
 #: bookworm/gui/book_viewer/core_dialogs.py:334
-#: bookworm/gui/preferences_dialog.py:80
+#: bookworm/gui/preferences_dialog.py:85
 msgid "&Close"
 msgstr "إ&غلاق"
 
 #. Translators: the text of a message indicating successful file association
-#: bookworm/gui/preferences_dialog.py:90
+#: bookworm/gui/preferences_dialog.py:95
 msgid "Files of type {format} have been associated with Bookworm."
 msgstr ""
 
 #. Translators: the title of a message indicating successful file association
 #. Translators: the title of a message indicating successful removal of file
 #. association
-#: bookworm/gui/preferences_dialog.py:92 bookworm/gui/preferences_dialog.py:108
+#: bookworm/gui/preferences_dialog.py:97 bookworm/gui/preferences_dialog.py:113
 msgid "Success"
 msgstr ""
 
 #. Translators: the text of a message indicating successful removal of file
 #. associations
-#: bookworm/gui/preferences_dialog.py:101
+#: bookworm/gui/preferences_dialog.py:106
 msgid "All supported file types have been set to open by default in Bookworm."
 msgstr ""
 
 #. Translators: the text of a message indicating successful removal of file
 #. associations
-#: bookworm/gui/preferences_dialog.py:104
+#: bookworm/gui/preferences_dialog.py:109
 msgid "All registered file associations have been removed."
-msgstr ""
-
-#: bookworm/gui/preferences_dialog.py:124
-#: bookworm/gui/preferences_dialog.py:274
-msgid "Bookworm File Associations"
 msgstr ""
 
 #. Translators: the title of a group of controls in the
 #. general settings page related to the UI
-#: bookworm/gui/preferences_dialog.py:170
+#: bookworm/gui/preferences_dialog.py:186
 msgid "User Interface"
 msgstr "واجهة البرنامج"
 
 #. Translators: the label of a combobox containing display languages.
-#: bookworm/gui/preferences_dialog.py:173
+#: bookworm/gui/preferences_dialog.py:189
 msgid "Display Language:"
 msgstr "اللغة"
 
 #. Translators: the label of a checkbox
-#: bookworm/gui/preferences_dialog.py:180
+#: bookworm/gui/preferences_dialog.py:196
 msgid "Speak user interface messages"
 msgstr "نطق الرسائل والتنبيهات"
 
 #. Translators: the label of a checkbox
-#: bookworm/gui/preferences_dialog.py:187
+#: bookworm/gui/preferences_dialog.py:203
 msgid "Open recently opened books from the last position"
 msgstr "الإستمرار في القراءة من آخر موضع عند فتح الكتب"
 
 #. Translators: the label of a checkbox
-#: bookworm/gui/preferences_dialog.py:194
+#: bookworm/gui/preferences_dialog.py:210
 msgid "Use file name instead of book title"
 msgstr "إستخدام إسم الملف بدلاً عن عنوان الكتاب كعنوان لنافذة البرنامج"
 
 #. Translators: the title of a group of controls shown in the
 #. general settings page related to miscellaneous settings
-#: bookworm/gui/preferences_dialog.py:199
+#: bookworm/gui/preferences_dialog.py:215
 msgid "Miscellaneous"
 msgstr "إعدادات أخرى"
 
 #. Translators: the label of a checkbox
-#: bookworm/gui/preferences_dialog.py:205
+#: bookworm/gui/preferences_dialog.py:221
 msgid "Play pagination sound"
 msgstr "إصدار صوت عند قلب الصفحة"
 
 #. Translators: the label of a checkbox
-#: bookworm/gui/preferences_dialog.py:212
+#: bookworm/gui/preferences_dialog.py:228
 msgid "Play a sound when the current page contains notes"
 msgstr "إصدار صوت إذا كانت الصفحة الحالية تتضمن ملاحظات"
 
 #. Translators: the label of a checkbox
-#: bookworm/gui/preferences_dialog.py:219
+#: bookworm/gui/preferences_dialog.py:235
 msgid "Highlight bookmarked positions"
 msgstr "تمييز المواضع التي تم تعيينها كعلامات مرجعية"
 
 #. Translators: the label of a checkbox
-#: bookworm/gui/preferences_dialog.py:226
+#: bookworm/gui/preferences_dialog.py:242
 msgid "Automatically check for updates"
 msgstr "البحث عن التحديثات تلقائياً"
 
 #. Translators: the title of a group of controls shown in the
 #. general settings page related to file associations
-#: bookworm/gui/preferences_dialog.py:231
+#: bookworm/gui/preferences_dialog.py:247
 msgid "File Associations"
 msgstr ""
 
 #. Translators: the label of a button
-#: bookworm/gui/preferences_dialog.py:237
+#: bookworm/gui/preferences_dialog.py:253
 msgid "Manage File &Associations"
 msgstr ""
 
 #. Translators: the content of a message asking the user to restart
-#: bookworm/gui/preferences_dialog.py:259
+#: bookworm/gui/preferences_dialog.py:274
 msgid ""
 "You have changed the display language of Bookworm.\n"
 "For this setting to fully take effect, you need to restart the "
@@ -331,7 +331,7 @@ msgstr ""
 
 #. Translators: the title of a message telling the user
 #. that the display language have been changed
-#: bookworm/gui/preferences_dialog.py:266
+#: bookworm/gui/preferences_dialog.py:281
 msgid "Language Changed"
 msgstr "تم تغيير اللغة"
 
@@ -339,123 +339,123 @@ msgstr "تم تغيير اللغة"
 #. speech settings page related to voice selection
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:111
-#: bookworm/gui/preferences_dialog.py:286
+#: bookworm/gui/preferences_dialog.py:301
 msgid "Voice"
 msgstr "إعدادات الصوت"
 
 #. Translators: the label of a combobox containing a list of tts voices
-#: bookworm/gui/preferences_dialog.py:290
+#: bookworm/gui/preferences_dialog.py:305
 msgid "Select Voice:"
 msgstr "إختر الصوت"
 
 #. Translators: the label of the speech rate slider
-#: bookworm/gui/preferences_dialog.py:293
+#: bookworm/gui/preferences_dialog.py:308
 msgid "Speech Rate:"
 msgstr "سرعة القراءة"
 
 #. Translators: the label of the speech volume slider
-#: bookworm/gui/preferences_dialog.py:297
+#: bookworm/gui/preferences_dialog.py:312
 msgid "Speech Volume:"
 msgstr "مستوى الصوت"
 
 #. Translators: the label of a group of controls in the speech
 #. settings page related to speech pauses
-#: bookworm/gui/preferences_dialog.py:302
+#: bookworm/gui/preferences_dialog.py:317
 msgid "Pauses"
 msgstr "إعدادات السكتات"
 
 #. Translators: the label of an edit field
-#: bookworm/gui/preferences_dialog.py:306
+#: bookworm/gui/preferences_dialog.py:321
 msgid "Additional Pause At Sentence End (Ms)"
 msgstr "السكوت الإضافي عند نهاية الجملة (بالميلي ثانية)"
 
 #. Translators: the label of an edit field
-#: bookworm/gui/preferences_dialog.py:311
+#: bookworm/gui/preferences_dialog.py:326
 msgid "Additional Pause At Paragraph End (Ms)"
 msgstr "السكوت الإضافي عند نهاية الفقرة (بالميلي ثانية)"
 
 #. Translators: the label of an edit field
-#: bookworm/gui/preferences_dialog.py:316
+#: bookworm/gui/preferences_dialog.py:331
 msgid "End of Page Pause (ms)"
 msgstr "السكوت الإضافي عند نهاية الصفحة (بالميلي ثانية)"
 
 #. Translators: the label of an edit field
-#: bookworm/gui/preferences_dialog.py:325
+#: bookworm/gui/preferences_dialog.py:340
 msgid "End of Section Pause (ms)"
 msgstr "السكوت الإضافي عند نهاية الفصل (بالميلي ثانية)"
 
-#: bookworm/gui/preferences_dialog.py:358
+#: bookworm/gui/preferences_dialog.py:373
 msgid "When Pressing Play:"
 msgstr "عند الضغط على زر تشغيل"
 
 #. Translators: the label of a radio button
-#: bookworm/gui/preferences_dialog.py:363
+#: bookworm/gui/preferences_dialog.py:378
 msgid "Read the entire book"
 msgstr "قراءة الكتاب من الغلاف للغلاف"
 
 #. Translators: the label of a radio button
-#: bookworm/gui/preferences_dialog.py:365
+#: bookworm/gui/preferences_dialog.py:380
 msgid "Read the current section"
 msgstr "قراءة الفصل الحالي فقط"
 
 #. Translators: the label of a radio button
-#: bookworm/gui/preferences_dialog.py:367
+#: bookworm/gui/preferences_dialog.py:382
 msgid "Read the current page"
 msgstr "قراءة الصفحة الحالية فقط"
 
-#: bookworm/gui/preferences_dialog.py:375
+#: bookworm/gui/preferences_dialog.py:390
 msgid "Start reading from:"
 msgstr "الشروع في القراءة من:"
 
 #. Translators: the label of a radio button
-#: bookworm/gui/preferences_dialog.py:379
+#: bookworm/gui/preferences_dialog.py:394
 msgid "Cursor position"
 msgstr "الموضع الحالي للمؤشر"
 
-#: bookworm/gui/preferences_dialog.py:379
+#: bookworm/gui/preferences_dialog.py:394
 msgid "Beginning of page"
 msgstr "بداية الصفحة"
 
 #. Translators: the label of a group of controls in the reading page
 #. of the settings related to behavior during reading  aloud
-#: bookworm/gui/preferences_dialog.py:383
+#: bookworm/gui/preferences_dialog.py:398
 msgid "During Reading Aloud"
 msgstr "أثناء القراءة:"
 
-#: bookworm/gui/preferences_dialog.py:387
+#: bookworm/gui/preferences_dialog.py:402
 msgid "Speak page number"
 msgstr "نطق رقم الصفحة الحالية"
 
-#: bookworm/gui/preferences_dialog.py:393
+#: bookworm/gui/preferences_dialog.py:408
 msgid "Highlight spoken text"
 msgstr "تمييز النص المقروء"
 
-#: bookworm/gui/preferences_dialog.py:400
+#: bookworm/gui/preferences_dialog.py:415
 msgid "Select spoken text"
 msgstr "تحديد النص المقروء"
 
 #. Translators: the label of a checkbox
-#: bookworm/gui/preferences_dialog.py:407
+#: bookworm/gui/preferences_dialog.py:422
 msgid "Play end of section sound"
 msgstr "إصدار صوت عند بلوغ نهاية كل فصل"
 
 #. Translators: the label of a page in the settings dialog
-#: bookworm/gui/preferences_dialog.py:443
+#: bookworm/gui/preferences_dialog.py:458
 msgid "General"
 msgstr "إعدادات عامة"
 
 #. Translators: the label of a page in the settings dialog
-#: bookworm/gui/preferences_dialog.py:445
+#: bookworm/gui/preferences_dialog.py:460
 msgid "Speech"
 msgstr "إعدادات النطق"
 
 #. Translators: the label of a page in the settings dialog
-#: bookworm/gui/preferences_dialog.py:447
+#: bookworm/gui/preferences_dialog.py:462
 msgid "Reading"
 msgstr "إعدادات القراءة"
 
 #. Translators: the lable of the apply button in a dialog
-#: bookworm/gui/preferences_dialog.py:487
+#: bookworm/gui/preferences_dialog.py:502
 msgid "Apply"
 msgstr "تطبيق"
 
