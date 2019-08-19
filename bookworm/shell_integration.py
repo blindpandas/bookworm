@@ -31,6 +31,18 @@ def ignore_system_exceptions(func):
     return wrapper
 
 
+def get_ext_info(supported="*"):
+    ficos_path = app_path("resources", "icons")
+    doctypes = {}
+    for cls in EBookReader.document_classes:
+        for ext in cls.extensions:
+            cext = ext.replace("*", "")
+            if (supported == "*") or (cext in supported):
+                icon = ficos_path.joinpath(cls.format + ".ico")
+                icon = str(icon) if icon.exists() else None
+                doctypes[cext] = (f"{app.prog_id}.{cls.format}", _(cls.name), icon)
+    return doctypes
+
 
 @dataclass
 class RegKey:
@@ -74,7 +86,7 @@ class RegKey:
 
 
 def add_shell_command(key, executable):
-    key.CreateSubKey(r"shell\Read\command").SetValue(
+    key.CreateSubKey(r"shell\Open\Command").SetValue(
         "",
         f'"{executable}" "%1"',
         RegistryValueKind.String
@@ -86,7 +98,7 @@ def register_application(prog_id, executable, supported_exts):
     with RegKey.LocalSoftware(fr"Applications\{exe}", ensure_created=True) as exe_key:
         add_shell_command(exe_key, executable)
         with RegKey(exe_key, "SupportedTypes", ensure_created=True) as supkey:
-            for ext in supported_exts:
+            for ext in get_ext_info(supported_exts):
                 supkey.SetValue(ext, "", RegistryValueKind.String)
 
 
@@ -123,18 +135,6 @@ def remove_association(ext, prog_id):
         None,
         None
     )
-
-
-def get_ext_info(supported="*"):
-    ficos_path = app_path("resources", "icons")
-    doctypes = {}
-    for cls in EBookReader.document_classes:
-        for ext in cls.extensions:
-            if (supported == "*") or (ext in supported):
-                icon = ficos_path.joinpath(cls.format + ".ico")
-                icon = str(icon) if icon.exists() else None
-                doctypes[ext.replace("*", "")] = (f"{app.prog_id}.{cls.format}", _(cls.name), icon)
-    return doctypes
 
 
 @ignore_system_exceptions

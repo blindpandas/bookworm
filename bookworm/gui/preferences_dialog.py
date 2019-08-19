@@ -1,7 +1,9 @@
 # coding: utf-8
 
+import sys
 import wx
 import wx.lib.sized_controls as sc
+from wx.adv import CommandLinkButton
 from enum import IntEnum, auto
 from bookworm import app
 from bookworm import config
@@ -15,7 +17,7 @@ from bookworm.config.spec import (
     END_OF_PAGE_PAUSE_MAX,
     END_OF_SECTION_PAUSE_MAX,
 )
-from bookworm.shell_integration import shell_integrate
+from bookworm.shell_integration import shell_integrate, shell_disintegrate, get_ext_info
 from bookworm.logger import logger
 from .components import SimpleDialog, EnhancedSpinCtrl
 
@@ -27,6 +29,105 @@ DEFAULT_STEP_SIZE = 5
 class ReconciliationStrategies(IntEnum):
     load = auto()
     save = auto()
+
+
+class FileAssociationDialog(SimpleDialog):
+    """Associate supported file types."""
+
+    def __init__(self, *args, standalone=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.standalone = standalone
+
+    def addControls(self, parent):
+        self.ext_info = sorted(get_ext_info().items())
+        # Translators: instructions shown to the user in a dialog to set up file association.
+        wx.StaticText(
+            parent,
+            -1,
+            _(
+            "This dialog will help you to setup file associations.\n"
+            "Associating files with Bookworm means that when you click on a file in windows explorer, it will be opend in Bookworm by default "
+            )
+        )
+        assoc_btn = CommandLinkButton(
+            parent,
+            -1,
+            # Translators: the main label of a button
+            _("Associate all"),
+            # Translators: the note of a button
+            _("Use Bookworm to open all supported ebook formats.")
+        )
+        for ext, metadata in self.ext_info:
+            # Translators: the main label of a button
+            mlbl = "Associate files of type {format}".format(format=metadata[1])
+            # Translators: the note of a button
+            nlbl = _("Associate files with extension {ext} so they always open in Bookworm").format(ext=ext)
+            btn = CommandLinkButton(parent, -1, mlbl, nlbl)
+            self.Bind(wx.EVT_BUTTON, lambda e, args=(ext, metadata[1]): self.onFileAssoc(*args), btn)
+        dissoc_btn = CommandLinkButton(
+            parent,
+            -1,
+            # Translators: the main label of a button
+            _("Dissociate all supported file types"),
+            # Translators: the note of a button
+            _("Unregister previously associated file types (if exist).")
+        )
+        self.Bind(wx.EVT_BUTTON, lambda e: self.onBatchAssoc(assoc=True), assoc_btn)
+        self.Bind(wx.EVT_BUTTON, lambda e: self.onBatchAssoc(assoc=False), dissoc_btn)
+
+    def getButtons(self, parent):
+        btnsizer = wx.StdDialogButtonSizer()
+        cancelBtn = wx.Button(self, wx.ID_CANCEL, _("&Close"))
+        btnsizer.AddButton(cancelBtn)
+        btnsizer.Realize()
+        self.Bind(wx.EVT_BUTTON, lambda e: self.Close(), id=wx.ID_CANCEL)
+        return btnsizer
+
+    def onFileAssoc(self, ext, desc):
+        shell_integrate((ext,))
+        wx.MessageBox(
+            # Translators: the text of a message indicating successful file association
+            _("Files of type {format} have been associated with Bookworm.").format(format=desc),
+            # Translators: the title of a message indicating successful file association
+            _("Success"),
+            style=wx.ICON_INFORMATION
+        )
+
+    def onBatchAssoc(self, assoc):
+        func = shell_integrate if assoc else shell_disintegrate
+        func()
+        if assoc:
+            # Translators: the text of a message indicating successful removal of file associations
+            msg = _("All supported file types have been set to open by default in Bookworm.")
+        else:
+            # Translators: the text of a message indicating successful removal of file associations
+            msg = _("All registered file associations have been removed.")
+        wx.MessageBox(
+            msg,
+            # Translators: the title of a message indicating successful removal of file association
+            _("Success"),
+            style=wx.ICON_INFORMATION
+        )
+        self.Close()
+
+    def Close(self):
+        super().Close()
+        if self.standalone:
+            wx.GetApp().ExitMainLoop()
+            sys.exit(0)
+
+
+def show_file_association_dialog(flag):
+    from bookworm.paths import app_path
+
+    wx_app = wx.GetApp()
+    dlg = FileAssociationDialog(parent=None, title=_("Bookworm File Associations"), standalone=True)
+    icon_file = app_path(f"{app.name}.ico")
+    if icon_file.exists():
+        dlg.SetIcon(wx.Icon(str(icon_file)))
+    wx_app.SetTopWindow(dlg)
+    dlg.Show()
+    wx_app.MainLoop()
 
 
 class SettingsPanel(sc.SizedPanel):
@@ -94,16 +195,6 @@ class GeneralPanel(SettingsPanel):
             name="general.show_file_name_as_title",
         )
         # Translators: the title of a group of controls shown in the
-        # general settings page related to file associations
-        assocBox = sc.SizedStaticBox(self, -1, _("File Association"))
-        assocBox.SetSizerProps(expand=True)
-        wx.Button(
-            assocBox,
-            wx.ID_SETUP,
-            # Translators: the label of a button
-            _("Associate Supported &File Types")
-        )
-        # Translators: the title of a group of controls shown in the
         # general settings page related to miscellaneous settings
         miscBox = sc.SizedStaticBox(self, -1, _("Miscellaneous"))
         miscBox.SetSizerProps(expand=True)
@@ -134,6 +225,16 @@ class GeneralPanel(SettingsPanel):
             # Translators: the label of a checkbox
             _("Automatically check for updates"),
             name="general.auto_check_for_updates",
+        )
+        # Translators: the title of a group of controls shown in the
+        # general settings page related to file associations
+        assocBox = sc.SizedStaticBox(self, -1, _("File Associations"))
+        assocBox.SetSizerProps(expand=True)
+        wx.Button(
+            assocBox,
+            wx.ID_SETUP,
+            # Translators: the label of a button
+            _("Manage File &Associations")
         )
         self.Bind(wx.EVT_BUTTON, self.onRequestFileAssoc, id=wx.ID_SETUP)
         langobjs = get_available_languages().values()
@@ -170,15 +271,8 @@ class GeneralPanel(SettingsPanel):
         super().reconcile(strategy=strategy)
 
     def onRequestFileAssoc(self, event):
-        msg = wx.MessageBox(
-            _("This will change your preferences to always use Bookworm for opening supported e-book formats.\n"
-            "Later on, if you decided to use another app for opening a specific e-book format, you can change your preferences from the control panel.\n\n"
-            "Are you sure you want to continue?"),
-            _("Change File Association"),
-            style=wx.YES_NO|wx.ICON_WARNING
-        )
-        if msg == wx.YES:
-            shell_integrate()
+        with FileAssociationDialog(parent=self, title=_("Bookworm File Associations")) as dlg:
+            dlg.ShowModal()
 
 
 class SpeechPanel(SettingsPanel):

@@ -10,6 +10,7 @@ from bookworm.database import init_database
 from bookworm.shell_integration import shell_integrate, shell_disintegrate
 from bookworm.signals import app_started, app_shuttingdown
 from bookworm.gui.book_viewer import BookViewerWindow
+from bookworm.gui.preferences_dialog import show_file_association_dialog
 from bookworm.logger import logger
 
 
@@ -21,6 +22,7 @@ log = logger.getChild(__name__)
 TASKS = {
     "shell_integrate": lambda v: shell_integrate(),
     "shell_disintegrate": lambda v: shell_disintegrate(),
+    "setup_file_assoc": show_file_association_dialog,
 }
 
 
@@ -65,6 +67,7 @@ def init_app_and_run_main_loop():
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--shell-integrate", action="store_true")
     parser.add_argument("--shell-disintegrate", action="store_true")
+    parser.add_argument("--setup-file-assoc", action="store_true")
     appinfo.args, appinfo.extra_args = parser.parse_known_args()
     if appinfo.args.debug:
         appinfo.debug = True
