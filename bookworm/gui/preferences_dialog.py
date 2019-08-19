@@ -7,10 +7,11 @@ from wx.adv import CommandLinkButton
 from enum import IntEnum, auto
 from bookworm import app
 from bookworm import config
+from bookworm.paths import app_path
 from bookworm.utils import restart_application
 from bookworm.i18n import get_available_languages, set_active_language
 from bookworm.speech.engine import SpeechEngine
-from bookworm.signals import config_updated
+from bookworm.signals import app_started, config_updated
 from bookworm.resources import images
 from bookworm.config.spec import (
     PARAGRAPH_PAUSE_MAX,
@@ -34,9 +35,13 @@ class ReconciliationStrategies(IntEnum):
 class FileAssociationDialog(SimpleDialog):
     """Associate supported file types."""
 
-    def __init__(self, *args, standalone=False, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent, standalone=False):
+        # Translators: the title of the file associations dialog
+        super().__init__(parent, title=_("Bookworm File Associations"))
         self.standalone = standalone
+        icon_file = app_path(f"{app.name}.ico")
+        if icon_file.exists():
+            self.SetIcon(wx.Icon(str(icon_file)))
 
     def addControls(self, parent):
         self.ext_info = sorted(get_ext_info().items())
@@ -55,13 +60,13 @@ class FileAssociationDialog(SimpleDialog):
             # Translators: the main label of a button
             _("Associate all"),
             # Translators: the note of a button
-            _("Use Bookworm to open all supported ebook formats.")
+            _("Use Bookworm to open all supported ebook formats")
         )
         for ext, metadata in self.ext_info:
             # Translators: the main label of a button
             mlbl = "Associate files of type {format}".format(format=metadata[1])
             # Translators: the note of a button
-            nlbl = _("Associate files with extension {ext} so they always open in Bookworm").format(ext=ext)
+            nlbl = _("Associate files with {ext} extension so they always open in Bookworm").format(ext=ext)
             btn = CommandLinkButton(parent, -1, mlbl, nlbl)
             self.Bind(wx.EVT_BUTTON, lambda e, args=(ext, metadata[1]): self.onFileAssoc(*args), btn)
         dissoc_btn = CommandLinkButton(
@@ -70,7 +75,7 @@ class FileAssociationDialog(SimpleDialog):
             # Translators: the main label of a button
             _("Dissociate all supported file types"),
             # Translators: the note of a button
-            _("Unregister previously associated file types (if exist).")
+            _("Unregister previously associated file types")
         )
         self.Bind(wx.EVT_BUTTON, lambda e: self.onBatchAssoc(assoc=True), assoc_btn)
         self.Bind(wx.EVT_BUTTON, lambda e: self.onBatchAssoc(assoc=False), dissoc_btn)
@@ -111,23 +116,34 @@ class FileAssociationDialog(SimpleDialog):
         self.Close()
 
     def Close(self):
+        config.conf["history"]["set_file_assoc"] = -1
+        config.save()
         super().Close()
+        self.Destroy()
         if self.standalone:
             wx.GetApp().ExitMainLoop()
             sys.exit(0)
 
 
 def show_file_association_dialog(flag):
-    from bookworm.paths import app_path
-
     wx_app = wx.GetApp()
-    dlg = FileAssociationDialog(parent=None, title=_("Bookworm File Associations"), standalone=True)
-    icon_file = app_path(f"{app.name}.ico")
-    if icon_file.exists():
-        dlg.SetIcon(wx.Icon(str(icon_file)))
+    dlg = FileAssociationDialog(None, standalone=True)
     wx_app.SetTopWindow(dlg)
     dlg.Show()
     wx_app.MainLoop()
+
+
+@app_started.connect
+def _on_app_first_run(sender):
+    ndoctypes = len(get_ext_info())
+    confval = config.conf["history"]["set_file_assoc"]
+    if (confval >= 0) and (confval != ndoctypes):
+        dlg = FileAssociationDialog(wx.GetApp().mainFrame)
+        wx.CallAfter(dlg.ShowModal)
+        config.conf["history"]["set_file_assoc"] = ndoctypes
+        config.save()
+
+
 
 
 class SettingsPanel(sc.SizedPanel):
@@ -237,20 +253,19 @@ class GeneralPanel(SettingsPanel):
             _("Manage File &Associations")
         )
         self.Bind(wx.EVT_BUTTON, self.onRequestFileAssoc, id=wx.ID_SETUP)
-        langobjs = get_available_languages().values()
-        languages = set((lang.language, lang.description) for lang in langobjs)
+        self.langobjs = get_available_languages()
+        languages = set((lang.language, lang.description) for lang in self.langobjs.values())
         for ident, label in languages:
             self.languageChoice.Append(label, ident)
         self.languageChoice.SetStringSelection(app.current_language.description)
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
         if strategy is ReconciliationStrategies.save:
-            configured_lang = self.config["language"]
             selection = self.languageChoice.GetSelection()
             if selection == wx.NOT_FOUND:
                 return
             selected_lang = self.languageChoice.GetClientData(selection)
-            if selected_lang != configured_lang:
+            if self.langobjs[selected_lang] is not app.current_language:
                 self.config["language"] = selected_lang
                 config.save()
                 set_active_language(selected_lang)
@@ -271,7 +286,7 @@ class GeneralPanel(SettingsPanel):
         super().reconcile(strategy=strategy)
 
     def onRequestFileAssoc(self, event):
-        with FileAssociationDialog(parent=self, title=_("Bookworm File Associations")) as dlg:
+        with FileAssociationDialog(self) as dlg:
             dlg.ShowModal()
 
 

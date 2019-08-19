@@ -24,6 +24,7 @@ config_spec = StringIO(
     recently_opened = list(default=list())
     recent_terms = list(default=list())
     last_folder = string(default="")
+    set_file_assoc = integer(default=0)
 [speech]
     voice = string(default="")
     rate = integer(default=50)
