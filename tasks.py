@@ -103,18 +103,21 @@ def make_icons(c):
                     compressed=True,
                 )
         print("*" * 10 + " Done Embedding Images" + "*" * 10)
-    icon_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico"
-    if not icon_file.exists():
-        print("Application icon is not there, creating it.")
-        Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png")\
-        .resize(ICON_SIZE)\
-        .save(icon_file)
-        print("Copied app icon to the assets folder.")
-    bitmap_file = PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.bmp"
-    if not bitmap_file.exists():
-        print("Installer logo bitmap is not there, creating it.")
-        Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").save(bitmap_file)
-        print("Copied installer bitmap  to the assets folder.")
+    print ("Creating installer images...")
+    inst_dst = PROJECT_ROOT / "scripts" / "builder" / "assets"
+    inst_imgs = {
+        "bookworm.ico": ICON_SIZE,
+        "bookworm.bmp": (48, 48),
+        "bookworm-logo.bmp": (164, 164),
+    }
+    for fname, imgsize in inst_imgs.items():
+        imgfile = inst_dst.joinpath(fname)
+        if not imgfile.exists():
+            print(f"Creating image {fname}.")
+            Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png")\
+            .resize(imgsize)\
+            .save(imgfile)
+            print(f"Copied image {fname} to the assets folder.")
     website_header = PROJECT_ROOT / "docs" / "img" / "bookworm.png"
     if not website_header.exists():
         print("Website header logo is not there, creating it.")

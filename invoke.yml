@@ -25,4 +25,5 @@ folders_to_clean:
         - scripts\Bookworm*update.bundle
         - scripts\release-info.json
         - scripts\builder\assets\bookworm.bmp
+        - scripts\builder\assets\bookworm-logo.bmp
         - scripts\builder\assets\bookworm.ico
