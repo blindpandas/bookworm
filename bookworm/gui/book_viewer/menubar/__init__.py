@@ -112,7 +112,7 @@ class MenubarProvider:
         toolsMenu.Append(
             BookRelatedMenuIds.goToPage,
             # Translators: the label of an ietm in the application menubar
-            _("&Go To A Mushy Page..."),
+            _("&Go To Page...\tCtrl-G"),
             # Translators: the help text of an ietm in the application menubar
             _("Go to page"),
         )
@@ -380,9 +380,8 @@ class MenubarProvider:
         # Translators: the label of an ietm in the application menubar
         self.menuBar.Append(helpMenu, _("&Help"))
         self.SetMenuBar(self.menuBar)
-        # Set accelerators if the current language is not English
-        if not app.current_language.language.startswith("en"):
-            self._set_menu_accelerators()
+        # Set accelerators for the menu items
+        self._set_menu_accelerators()
         # Disable this when no voice profile is active
         self.menuBar.FindItemById(wx.ID_REVERT).Enable(False)
 
@@ -391,10 +390,12 @@ class MenubarProvider:
         self.populate_recent_file_list()
 
     def _set_menu_accelerators(self):
+        entries = []
         for menu_id, shortcut in KEYBOARD_SHORTCUTS.items():
             accel = wx.AcceleratorEntry(cmd=menu_id)
-            assert accel.FromString(shortcut)
-            self.menuBar.FindItemById(menu_id).SetAccel(accel) 
+            accel.FromString(shortcut)
+            entries.append(accel)
+        self.SetAcceleratorTable(wx.AcceleratorTable(entries))
 
     def onOpenEBook(self, event):
         last_folder = config.conf["history"]["last_folder"]
