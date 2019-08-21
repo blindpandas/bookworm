@@ -124,12 +124,12 @@ When you are in the Render View, you can use the usual zoom commands to zoom the
 * Ctrl + - zoom-out
 * Ctrl + 0 reset the zoom level
 
-Note that you can also use the book navigation commands, mentioned above,  to navigate the render view as well.
+Note that you can also use the book navigation commands, mentioned above,  to navigate the render view as well. You can also press the escape key to dismiss this view and return to the default textual view.
 
 
 ### Navigating To A Specific Page
 
-To navigate to a specific page in the currently opened book., press Ctrl + G, or select the "Go To..." menu item from the tools menu to show the "Go To Page" dialog. In this dialog you can type the number of any page you want to navigate to, and Bookworm will take you to it.
+To navigate to a specific page in the currently opened book., press Ctrl + G, or select the "Go To..." menu item from the tools menu to show the "Go To Page" dialog. In this dialog you can type the number of any page you want to navigate to, and Bookworm will take you to it. Note that this dialog will indicate to you the total number of pages found in the current book.
 
  
 ### Searching The Book
