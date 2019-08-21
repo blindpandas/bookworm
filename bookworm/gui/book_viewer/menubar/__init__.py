@@ -78,15 +78,15 @@ class MenubarProvider:
         # add items to the menu
         # File menu
         # Translators: the label of an ietm in the application menubar
-        fileMenu.Append(wx.ID_OPEN, _("Open") + "...\tCtrl-O")
+        fileMenu.Append(wx.ID_OPEN, _("Open...\tCtrl-O"))
         fileMenu.AppendSeparator()
         # Translators: the label of an ietm in the application menubar
-        fileMenu.Append(BookRelatedMenuIds.export, _("&Save As Plain Text...") + "...\tCtrl+S")
+        fileMenu.Append(BookRelatedMenuIds.export, _("&Save As Plain Text..."))
         fileMenu.AppendSeparator()
         fileMenu.Append(
             BookRelatedMenuIds.closeCurrentFile,
             # Translators: the label of an ietm in the application menubar
-            _("&Close Current Book") + "\tCtrl-W",
+            _("&Close Current Book\tCtrl-W"),
             # Translators: the help text of an ietm in the application menubar
             _("Close the currently open e-book"),
         )
@@ -112,42 +112,42 @@ class MenubarProvider:
         toolsMenu.Append(
             BookRelatedMenuIds.goToPage,
             # Translators: the label of an ietm in the application menubar
-            _("&Go To Page") + "...\tCtrl-G",
+            _("&Go To Page...\tCtrl-G"),
             # Translators: the help text of an ietm in the application menubar
             _("Go to page"),
         )
         toolsMenu.Append(
             wx.ID_FIND,
             # Translators: the label of an ietm in the application menubar
-            _("&Find in Book") + "...\tCtrl-F",
+            _("&Find in Book...\tCtrl-F"),
             # Translators: the help text of an ietm in the application menubar
             _("Search this book."),
         )
         toolsMenu.Append(
             BookRelatedMenuIds.findNext,
             # Translators: the label of an ietm in the application menubar
-            _("&Find &Next") + "\tF3",
+            _("&Find &Next\tF3"),
             # Translators: the help text of an ietm in the application menubar
             _("Find next occurrence."),
         )
         toolsMenu.Append(
             BookRelatedMenuIds.findPrev,
             # Translators: the label of an ietm in the application menubar
-            _("&Find &Previous") + "\tShift-F3",
+            _("&Find &Previous\tShift-F3"),
             # Translators: the help text of an ietm in the application menubar
             _("Find previous occurrence."),
         )
         self.renderItem = toolsMenu.Append(
             BookRelatedMenuIds.viewRenderedAsImage,
             # Translators: the label of an ietm in the application menubar
-            _("&Render Page") + "...\tCtrl-R",
+            _("&Render Page...\tCtrl-R"),
             # Translators: the help text of an ietm in the application menubar
             _("View a fully rendered version of this page."),
         )
         toolsMenu.Append(
             wx.ID_PREFERENCES,
             # Translators: the label of an ietm in the application menubar
-            _("&Preferences") + "...\tCtrl-Shift-P",
+            _("&Preferences...\tCtrl-Shift-P"),
             # Translators: the help text of an ietm in the application menubar
             _("Configure application"),
         )
@@ -155,42 +155,42 @@ class MenubarProvider:
         speechMenu.Append(
             BookRelatedMenuIds.play,
             # Translators: the label of an ietm in the application menubar
-            _("&Play") + "\tF5",
+            _("&Play\tF5"),
             # Translators: the help text of an ietm in the application menubar
             _("Start reading aloud"),
         )
         speechMenu.Append(
             BookRelatedMenuIds.pauseToggle,
             # Translators: the label of an ietm in the application menubar
-            _("Pa&use/Resume") + "\tF6",
+            _("Pa&use/Resume\tF6"),
             # Translators: the help text of an ietm in the application menubar
             _("Pause/Resume reading aloud"),
         )
         speechMenu.Append(
             BookRelatedMenuIds.stop,
             # Translators: the label of an ietm in the application menubar
-            _("&Stop") + "\tF7",
+            _("&Stop\tF7"),
             # Translators: the help text of an ietm in the application menubar
             _("Stop reading aloud"),
         )
         speechMenu.Append(
             BookRelatedMenuIds.rewind,
             # Translators: the label of an ietm in the application menubar
-            _("&Rewind") + "\tAlt-LeftArrow",
+            _("&Rewind\tAlt-LeftArrow"),
             # Translators: the help text of an ietm in the application menubar
             _("Skip to previous paragraph"),
         )
         speechMenu.Append(
             BookRelatedMenuIds.fastforward,
             # Translators: the label of an ietm in the application menubar
-            _("&Fast Forward") + "\tAlt-RightArrow",
+            _("&Fast Forward\tAlt-RightArrow"),
             # Translators: the help text of an ietm in the application menubar
             _("Skip to next paragraph"),
         )
         speechMenu.Append(
             ViewerMenuIds.voiceProfiles,
             # Translators: the label of an ietm in the application menubar
-            _("&Voice Profiles") + "\tCtrl-Shift-V",
+            _("&Voice Profiles\tCtrl-Shift-V"),
             # Translators: the help text of an ietm in the application menubar
             _("Manage voice profiles."),
         )
@@ -205,28 +205,28 @@ class MenubarProvider:
         annotationsMenu.Append(
             BookRelatedMenuIds.addBookmark,
             # Translators: the label of an ietm in the application menubar
-            _("Add &Bookmark") + "...\tCtrl-B",
+            _("Add &Bookmark...\tCtrl-B"),
             # Translators: the help text of an ietm in the application menubar
             _("Bookmark the current location"),
         )
         annotationsMenu.Append(
             BookRelatedMenuIds.addNote,
             # Translators: the label of an ietm in the application menubar
-            _("Take &Note") + "...\tCtrl-n",
+            _("Take &Note...\tCtrl-N"),
             # Translators: the help text of an ietm in the application menubar
             _("Add a note at the current location"),
         )
         annotationsMenu.Append(
             BookRelatedMenuIds.viewBookmarks,
             # Translators: the label of an ietm in the application menubar
-            _("&View Bookmarks") + "...\tCtrl-Shift-B",
+            _("&View Bookmarks...\tCtrl-Shift-B"),
             # Translators: the help text of an ietm in the application menubar
             _("View added bookmarks"),
         )
         annotationsMenu.Append(
             BookRelatedMenuIds.viewNotes,
             # Translators: the label of an ietm in the application menubar
-            _("&Manage Notes") + "...\tCtrl-Shift-N",
+            _("&Manage Notes...\tCtrl-Shift-N"),
             # Translators: the help text of an ietm in the application menubar
             _("View, edit, and remove notes."),
         )
@@ -241,7 +241,7 @@ class MenubarProvider:
         helpMenu.Append(
             ViewerMenuIds.documentation,
             # Translators: the label of an ietm in the application menubar
-            _("&User guide") + "...\tF1",
+            _("&User guide...\tF1"),
             # Translators: the help text of an ietm in the application menubar
             _("View Bookworm manuals"),
         )
@@ -380,12 +380,22 @@ class MenubarProvider:
         # Translators: the label of an ietm in the application menubar
         self.menuBar.Append(helpMenu, _("&Help"))
         self.SetMenuBar(self.menuBar)
+        # Set accelerators for the menu items
+        self._set_menu_accelerators()
         # Disable this when no voice profile is active
         self.menuBar.FindItemById(wx.ID_REVERT).Enable(False)
 
         # Populate the recent files submenu
         self._recent_files_data = []
         self.populate_recent_file_list()
+
+    def _set_menu_accelerators(self):
+        entries = []
+        for menu_id, shortcut in KEYBOARD_SHORTCUTS.items():
+            accel = wx.AcceleratorEntry(cmd=menu_id)
+            accel.FromString(shortcut)
+            entries.append(accel)
+        self.SetAcceleratorTable(wx.AcceleratorTable(entries))
 
     def onOpenEBook(self, event):
         last_folder = config.conf["history"]["last_folder"]
@@ -708,35 +718,35 @@ class MenubarProvider:
         menu.Append(
             BookRelatedMenuIds.addBookmark,
             # Translators: the label of an ietm in the application menubar
-            _("Add &Bookmark") + "...\tCtrl-B",
+            _("Add &Bookmark...\tCtrl-B"),
             # Translators: the help text of an ietm in the application menubar
             _("Bookmark the current location"),
         )
         menu.Append(
             BookRelatedMenuIds.addNote,
             # Translators: the label of an ietm in the application menubar
-            _("Take &Note") + "...\tCtrl-n",
+            _("Take &Note...\tCtrl-N"),
             # Translators: the help text of an ietm in the application menubar
             _("Add a note at the current location"),
         )
         menu.Append(
             BookRelatedMenuIds.goToPage,
             # Translators: the label of an ietm in the application menubar
-            _("&Go To Page") + "...\tCtrl-G",
+            _("&Go To Page...\tCtrl-G"),
             # Translators: the help text of an ietm in the application menubar
             _("Go to page"),
         )
         menu.Append(
             wx.ID_FIND,
             # Translators: the label of an ietm in the application menubar
-            _("&Find in Book") + "...\tCtrl-F",
+            _("&Find in Book...\tCtrl-F"),
             # Translators: the help text of an ietm in the application menubar
             _("Search this book."),
         )
         menu.Append(
             BookRelatedMenuIds.viewRenderedAsImage,
             # Translators: the label of an ietm in the application menubar
-            _("&Render Page") + "...\tCtrl-R",
+            _("&Render Page...\tCtrl-R"),
             # Translators: the help text of an ietm in the application menubar
             _("View a fully rendered version of this page."),
         )
