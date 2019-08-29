@@ -2,6 +2,6 @@
   "b": {
     "version": "0.1b1",
     "x86_sha1hash": "80ae37f7e03bd7bf9444d386669b083d671ba53f",
-    "x86__download": "https://github.com/mush42/bookworm/releases/download/Bookworm-Release-(Build-v1.0.162)/Bookworm-0.1b1-x86-update.bundle"
+    "x86_download": "https://github.com/mush42/bookworm/releases/download/Bookworm-Release-(Build-v1.0.162)/Bookworm-0.1b1-x86-update.bundle"
   }
 }
