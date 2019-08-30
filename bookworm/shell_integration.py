@@ -12,23 +12,12 @@ from functools import wraps
 from bookworm import app
 from bookworm.paths import app_path
 from bookworm.reader import EBookReader
+from bookworm.utils import ignore
 from bookworm.vendor import shellapi
 from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
-
-
-def ignore_system_exceptions(func):
-    """Ignore the exception raised when dealing with the registry ."""
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except System.Exception:
-            log.exception("A System.Exception was raised when trying to access the registry.", exc_info=True)
-
-    return wrapper
 
 
 def get_ext_info(supported="*"):
@@ -137,7 +126,7 @@ def remove_association(ext, prog_id):
     )
 
 
-@ignore_system_exceptions
+@ignore(System.Exception)
 def shell_integrate(supported="*"):
     if not app.is_frozen:
         return log.warning("File association is not available when running from source.")
@@ -148,7 +137,7 @@ def shell_integrate(supported="*"):
         associate_extension(ext, prog_id, sys.executable, desc, icon)
 
 
-@ignore_system_exceptions
+@ignore(System.Exception)
 def shell_disintegrate(supported="*"):
     if not app.is_frozen:
         return log.warning("File association is not available when running from source.")

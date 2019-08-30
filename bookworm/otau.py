@@ -20,7 +20,7 @@ from bookworm import app
 from bookworm import config
 from bookworm import paths
 from bookworm.concurrency import call_threaded
-from bookworm.utils import generate_sha1hash
+from bookworm.utils import ignore, generate_sha1hash
 from bookworm.signals import app_started
 from bookworm.logger import logger
 
@@ -28,7 +28,12 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
+@ignore(OSError)
 def extract_update_bundle(bundle):
+    past_update_dir = paths.data_path("update")
+    if past_update_dir.exists():
+        log.info("Found previous update data. Removing...")
+        shutil.rmtree(past_update_dir, ignore_errors=True)
     log.debug("Extracting update bundle")
     bundle.seek(0)
     extraction_dir = paths.data_path("update", "extracted")
@@ -49,11 +54,10 @@ def _check_for_updates_upon_startup(sender):
         log.info("Automatic updates are disabled by user.")
 
 
+@ignore(KeyError, retval=(None,) * 3)
 def parse_update_info(update_info):
     current_version = app.get_version_info()
     update_channel = current_version["pre_type"] or ""
-    if update_channel not in update_info:
-        return False, None, None
     upstream_version = update_info[update_channel]
     dl_url = upstream_version[f"{app.arch}_download"]
     dl_sha1hash = upstream_version[f"{app.arch}_sha1hash"]
@@ -62,10 +66,6 @@ def parse_update_info(update_info):
 
 @call_threaded
 def check_for_updates(verbose=False):
-    past_update_dir = paths.data_path("update")
-    if past_update_dir.exists():
-        log.info("Found previous update data. Removing...")
-        shutil.rmtree(past_update_dir, ignore_errors=True)
     log.info("Checking for updates...")
     try:
         content = urlopen(app.update_url)
@@ -170,7 +170,7 @@ def perform_update(update_url, sha1hash):
     for chunk in update_file:
         bundle.write(chunk)
         downloaded = bundle.tell()
-        dlg.Update(downloaded, update_progress(downloaded))
+        wx.CallAfter(dlg.Update, downloaded, update_progress(downloaded))
     wx.CallAfter(dlg.Hide)
     wx.CallAfter(dlg.Destroy)
     log.debug("The update bundle has been downloaded successfully.")
@@ -193,8 +193,7 @@ def perform_update(update_url, sha1hash):
             return
     # Go ahead and install the update
     log.debug("Installing the update...")
-    wx.CallAfter(
-        wx.MessageBox,
+    wx.MessageBox(
         # Translators: the content of a message indicating successful download of the update bundle
         _(
             "The update has been downloaded successfully, and it is ready to be installed.\n"
@@ -207,7 +206,8 @@ def perform_update(update_url, sha1hash):
     )
     extraction_dir = extract_update_bundle(bundle)
     bundle.close()
-    wx.CallAfter(execute_bootstrap, extraction_dir)
+    if extraction_dir is not None:
+        wx.CallAfter(execute_bootstrap, extraction_dir)
 
 
 def execute_bootstrap(extraction_dir):

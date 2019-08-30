@@ -18,6 +18,22 @@ log = logger.getChild(__name__)
 _missing = object()
 
 
+def ignore(*exceptions, retval=None):
+    """Execute function ignoring any one of the given exceptions if raised."""
+    def wrapper(func):
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                if not any(isinstance(e, exc) for exc in exceptions):
+                    raise
+                log.exception(f"Ignored exc {e} raised when executing function {func}", exc_info=True)
+                return retval
+        return wrapped
+    return wrapper
+
+
 def restart_application(extra_args=()):
     args = sys.argv[:1]
     args.extend(extra_args)
