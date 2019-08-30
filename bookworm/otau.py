@@ -20,6 +20,7 @@ from bookworm import app
 from bookworm import config
 from bookworm import paths
 from bookworm.concurrency import call_threaded
+from bookworm.gui.book_viewer.core_dialogs import ToastMessageDialog
 from bookworm.utils import ignore, generate_sha1hash
 from bookworm.logger import logger
 
@@ -205,7 +206,9 @@ def perform_update(update_url, sha1hash):
         _("Download Completed"),
         style=wx.ICON_INFORMATION,
     )
-    extraction_dir = extract_update_bundle(bundle)
+    # Translators: the title of a message telling the user to wait while extracting the update bundle
+    with ToastMessageDialog(title=_("Extracting Update Bundle")):
+        extraction_dir = extract_update_bundle(bundle)
     bundle.close()
     if extraction_dir is not None:
         wx.CallAfter(execute_bootstrap, extraction_dir)
