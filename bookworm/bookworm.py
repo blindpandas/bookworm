@@ -11,6 +11,7 @@ from bookworm.shell_integration import shell_integrate, shell_disintegrate
 from bookworm.signals import app_started, app_shuttingdown
 from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.gui.preferences_dialog import show_file_association_dialog
+from bookworm.otau import check_for_updates_upon_startup
 from bookworm.logger import logger
 
 
@@ -47,6 +48,7 @@ class BookwormApp(wx.App):
         return True
 
     def ShowMainWindow(self):
+        check_for_updates_upon_startup()
         self.mainFrame.Show(True)
 
     def OnAssert(self, file, line, cond, msg):
@@ -82,6 +84,7 @@ def init_app_and_run_main_loop():
         if flag_value:
             log.info("The application is running in command line mode.")
             log.info(f"Invoking command `{flag}` with value `{flag_value}`.")
+            appinfo.command_line_mode = True
             return func(flag_value)
     app.ShowMainWindow()
     app.MainLoop()

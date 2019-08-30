@@ -7,12 +7,12 @@ import os
 import shutil
 import zipfile
 import tempfile
+import requests
 import wx
 import win32api
-import ujson as json
+from math import ceil
 from io import BytesIO
-from urllib.request import urlopen
-from urllib.error import URLError
+from requests.exceptions import RequestException
 from hashlib import sha1
 from pathlib import Path
 from lzma import decompress
@@ -21,7 +21,6 @@ from bookworm import config
 from bookworm import paths
 from bookworm.concurrency import call_threaded
 from bookworm.utils import ignore, generate_sha1hash
-from bookworm.signals import app_started
 from bookworm.logger import logger
 
 
@@ -46,9 +45,8 @@ def extract_update_bundle(bundle):
     return extraction_dir
 
 
-@app_started.connect
-def _check_for_updates_upon_startup(sender):
-    if config.conf["general"]["auto_check_for_updates"]:
+def check_for_updates_upon_startup():
+    if not app.command_line_mode and config.conf["general"]["auto_check_for_updates"]:
         check_for_updates()
     else:
         log.info("Automatic updates are disabled by user.")
@@ -68,8 +66,9 @@ def parse_update_info(update_info):
 def check_for_updates(verbose=False):
     log.info("Checking for updates...")
     try:
-        content = urlopen(app.update_url)
-    except URLError as e:
+        version_info = response = requests.get(app.update_url)
+        version_info.raise_for_status()
+    except RequestException as e:
         log.error(f"Failed to check for updates. {e.args}")
         if verbose:
             wx.CallAfter(
@@ -82,7 +81,7 @@ def check_for_updates(verbose=False):
             )
         return
     try:
-        update_info = json.loads(content.read())
+        update_info = version_info.json()
     except ValueError as e:
         log.error(f"Invalid content recieved. {e.args}")
         if verbose:
@@ -136,8 +135,9 @@ def check_for_updates(verbose=False):
 def perform_update(update_url, sha1hash):
     try:
         log.debug(f"Downloading update from: {update_url}")
-        update_file = urlopen(update_url)
-    except URLError as e:
+        update_file = requests.get(update_url, stream=True)
+        update_file.raise_for_status()
+    except RequestException as e:
         log.info(f"Faild to obtain the update file. {e.args}")
         wx.CallAfter(
             wx.MessageBox,
@@ -152,14 +152,14 @@ def perform_update(update_url, sha1hash):
             style=wx.ICON_ERROR,
         )
         return
-    update_file_size = update_file.length
+    update_file_size = int(update_file.headers.get('content-length', 20 * 1024 ** 2))
     dlg = wx.ProgressDialog(
         # Translators: the title of a message indicating the progress of downloading an update
         _("Downloading Update"),
         # Translators: a message indicating the progress of downloading an update bundle
         _("Downloading {url}:").format(url=update_url),
         parent=wx.GetApp().mainFrame,
-        maximum=update_file_size,
+        maximum=99,
         style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
     )
     bundle = tempfile.SpooledTemporaryFile(max_size=1024 * 30 * 1000)
@@ -167,10 +167,11 @@ def perform_update(update_url, sha1hash):
     update_progress = lambda c, t=update_file_size: _(
         "Downloading. {downloaded} MB of {total} MB"
     ).format(downloaded=round(c / (1024 ** 2)), total=round(t / (1024 ** 2)))
-    for chunk in update_file:
+    csize = ceil(update_file_size/100)
+    for (progval, chunk) in enumerate(update_file.iter_content(chunk_size=csize)):
         bundle.write(chunk)
         downloaded = bundle.tell()
-        wx.CallAfter(dlg.Update, downloaded, update_progress(downloaded))
+        wx.CallAfter(dlg.Update, progval, update_progress(downloaded))
     wx.CallAfter(dlg.Hide)
     wx.CallAfter(dlg.Destroy)
     log.debug("The update bundle has been downloaded successfully.")
