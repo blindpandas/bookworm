@@ -61,9 +61,9 @@ py -m bookworm --debug
 ```
 * All the build/deployment commands are available in the `tasks.py` script. To view a list of these commands, issue the following in your terminal:
 ```shell
-invoke
+invoke --list
 ```
-As an example, to build an installer for Bookworm, issue the following command:
+As an example, to build Bookworm, issue the following command:
 ```shell
 invoke build
 ```
