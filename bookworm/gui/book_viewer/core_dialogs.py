@@ -19,39 +19,6 @@ from .navigation import NavigationProvider
 log = logger.getChild(__name__)
 
 
-class ToastMessageDialog(SimpleDialog):
-    """A simple dialog for showing a static message."""
-
-    def __init__(self, title, message=None, can_abort=False):
-        # Translators: a message shown to the user when an operation is expected to take a long time
-        self.message = message or _("Please wait...")
-        self.can_abort = can_abort
-        self.should_close = False
-        super().__init__(parent=wx.GetApp().mainFrame, title=title, style=wx.STAY_ON_TOP)
-
-    def addControls(self, parent):
-        wx.StaticText(parent, -1, self.message)
-        self.Bind(wx.EVT_CLOSE, self.onClose, self)
-
-    def getButtons(self, parent):
-        return None
-
-    def onClose(self, event):
-        if event.CanVeto and not self.can_abort:
-            if not self.should_close:
-                event.Veto()
-                return
-        self.Destroy()
-
-    def __enter__(self):
-        wx.CallAfter(self.ShowModal)
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.should_close = True
-        wx.CallAfter(self.Close)
-
-
 class SearchResultsDialog(Dialog):
     """Search Results."""
 

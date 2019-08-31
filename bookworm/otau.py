@@ -20,7 +20,6 @@ from bookworm import app
 from bookworm import config
 from bookworm import paths
 from bookworm.concurrency import call_threaded
-from bookworm.gui.book_viewer.core_dialogs import ToastMessageDialog
 from bookworm.utils import ignore, generate_sha1hash
 from bookworm.logger import logger
 
@@ -161,7 +160,7 @@ def perform_update(update_url, sha1hash):
         _("Downloading {url}:").format(url=update_url),
         parent=wx.GetApp().mainFrame,
         maximum=99,
-        style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
+        style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE
     )
     bundle = tempfile.SpooledTemporaryFile(max_size=1024 * 30 * 1000)
     # Translators: a message indicating the progress of downloading an update bundle
@@ -206,10 +205,18 @@ def perform_update(update_url, sha1hash):
         _("Download Completed"),
         style=wx.ICON_INFORMATION,
     )
-    # Translators: the title of a message telling the user to wait while extracting the update bundle
-    with ToastMessageDialog(title=_("Extracting Update Bundle")):
-        extraction_dir = extract_update_bundle(bundle)
-        bundle.close()
+    ex_dlg = wx.ProgressDialog(
+        # Translators: the title of a message shown when extracting an update bundle
+        _("Extracting"),
+        # Translators: a message shown when extracting an update bundle
+        _("Extracting the update bundle..."),
+        parent=wx.GetApp().mainFrame,
+        style=wx.PD_APP_MODAL
+    )
+    extraction_dir = extract_update_bundle(bundle)
+    bundle.close()
+    wx.CallAfter(ex_dlg.Close)
+    wx.CallAfter(ex_dlg.Destroy)
     if extraction_dir is not None:
         wx.CallAfter(execute_bootstrap, extraction_dir)
 
