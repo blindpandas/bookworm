@@ -28,7 +28,6 @@ class ToastMessageDialog(SimpleDialog):
         self.can_abort = can_abort
         self.should_close = False
         super().__init__(parent=wx.GetApp().mainFrame, title=title, style=wx.STAY_ON_TOP)
-        self.Show()
 
     def addControls(self, parent):
         wx.StaticText(parent, -1, self.message)
@@ -45,11 +44,12 @@ class ToastMessageDialog(SimpleDialog):
         self.Destroy()
 
     def __enter__(self):
+        wx.CallAfter(self.ShowModal)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.should_close = True
-        self.Close()
+        wx.CallAfter(self.Close)
 
 
 class SearchResultsDialog(Dialog):

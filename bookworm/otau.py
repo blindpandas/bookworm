@@ -209,7 +209,7 @@ def perform_update(update_url, sha1hash):
     # Translators: the title of a message telling the user to wait while extracting the update bundle
     with ToastMessageDialog(title=_("Extracting Update Bundle")):
         extraction_dir = extract_update_bundle(bundle)
-    bundle.close()
+        bundle.close()
     if extraction_dir is not None:
         wx.CallAfter(execute_bootstrap, extraction_dir)
 
