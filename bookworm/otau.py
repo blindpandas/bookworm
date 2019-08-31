@@ -207,9 +207,9 @@ def perform_update(update_url, sha1hash):
     )
     ex_dlg = wx.ProgressDialog(
         # Translators: the title of a message shown when extracting an update bundle
-        _("Extracting"),
+        _("Extracting Update Bundle"),
         # Translators: a message shown when extracting an update bundle
-        _("Extracting the update bundle..."),
+        _("Please wait..."),
         parent=wx.GetApp().mainFrame,
         style=wx.PD_APP_MODAL
     )

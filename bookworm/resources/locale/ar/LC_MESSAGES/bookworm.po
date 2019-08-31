@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2019-08-21 18:38+0200\n"
-"PO-Revision-Date: 2019-08-22 15:52+0300\n"
-"Last-Translator: ikrami <ikrami.ahmad@gmail.com>\n"
+"POT-Creation-Date: 2019-08-31 12:31+0200\n"
+"PO-Revision-Date: 2019-08-31 12:32+0200\n"
+"Last-Translator: Musharraf Omer <ibnomer2011@hotmail.com>\n"
 "Language: ar\n"
 "Language-Team: ar <ibnomer2011@hotmail.com>\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n"
@@ -18,23 +18,23 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
-"X-Generator: Poedit 1.8.12\n"
+"X-Generator: Poedit 2.2.3\n"
 
 #. Translators: the content of a message indicating a connection error
-#: bookworm/otau.py:78
+#: bookworm/otau.py:77
 msgid "We couldn't access the internet right now. Please try again later."
 msgstr "تعذَّر الوصول إلى شبكة الإنترنت في الوقت الحالي. يُرجى المحاولة لاحقاً."
 
 #. Translators: the title of a message indicating a connection error
 #. Translators: the title of a message indicating a failure in downloading an
 #. update
-#: bookworm/otau.py:80 bookworm/otau.py:151
+#: bookworm/otau.py:79 bookworm/otau.py:151
 msgid "Network Error"
 msgstr "خطأ في الاتصال"
 
 #. Translators: the content of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:92
+#: bookworm/otau.py:91
 msgid ""
 "We have faced a technical problem while checking for updates. Please try again "
 "later."
@@ -42,13 +42,13 @@ msgstr "لقد واجهتنا مشكلة تقنية أثناء البحث عن �
 
 #. Translators: the title of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:96
+#: bookworm/otau.py:95
 msgid "Error Checking For Updates"
 msgstr "خطأ أثناء البحث عن تحديثات"
 
 #. Translators: the content of a message indicating that there is no new
 #. version
-#: bookworm/otau.py:107
+#: bookworm/otau.py:106
 msgid ""
 "Congratulations, you have already got the latest version of Bookworm.\n"
 "We are working day and night on making Bookworm better. The next version of "
@@ -61,13 +61,13 @@ msgstr ""
 "الإصدار الجديد منه في القريب العاجل. سيصلك إشعار من قِبَلنا بمجرد إطلاق تحديث جديد."
 
 #. Translators: the title of a message indicating that there is no new version
-#: bookworm/otau.py:114
+#: bookworm/otau.py:113
 msgid "No Update"
 msgstr "لا توجد تحديثات"
 
 #. Translators: the content of a message indicating the availability of an
 #. update
-#: bookworm/otau.py:122
+#: bookworm/otau.py:121
 msgid ""
 "A new update for Bookworm has been released.\n"
 "Would you like to download and install it?\n"
@@ -80,7 +80,7 @@ msgstr ""
 "\tرقم الإصدار الجديد: {new}\n"
 
 #. Translators: the title of a message indicating the availability of an update
-#: bookworm/otau.py:129
+#: bookworm/otau.py:128
 msgid "Update Available"
 msgstr "هناك تحديث جديد"
 
@@ -113,7 +113,7 @@ msgid "Downloading. {downloaded} MB of {total} MB"
 msgstr "تم تنزيل {downloaded} ميغابايت من أصل {total} ميغابايت"
 
 #. Translators: the content of a message indicating a corrupted file
-#: bookworm/otau.py:182
+#: bookworm/otau.py:183
 msgid ""
 "The update file has been downloaded, but it has been corrupted during download.\n"
 "Would you like to download the update file again?"
@@ -122,7 +122,7 @@ msgstr ""
 "هل ترغب في تنزيل ملف التحديث مرة أخرى؟"
 
 #. Translators: the title of a message indicating a corrupted file
-#: bookworm/otau.py:187
+#: bookworm/otau.py:188
 msgid "Download Error"
 msgstr "خطأ في التنزيل"
 
@@ -143,6 +143,16 @@ msgstr ""
 #: bookworm/otau.py:205
 msgid "Download Completed"
 msgstr "اكتمل التنزيل"
+
+#. Translators: the title of a message shown when extracting an update bundle
+#: bookworm/otau.py:210
+msgid "Extracting Update Bundle"
+msgstr "جاري فك الضغط عن حزمة التحديث"
+
+#. Translators: a message shown when extracting an update bundle
+#: bookworm/otau.py:212
+msgid "Please wait..."
+msgstr "يُرجى الإنتظار..."
 
 #. Translators: the name of a built-in voice profile
 #: bookworm/config/spec.py:52
