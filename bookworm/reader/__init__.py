@@ -2,11 +2,12 @@
 
 import os
 import wx
-from System.Globalization import CultureInfo
+from bookworm import app
 from bookworm import config
 from bookworm import database
 from bookworm import speech
 from bookworm import sounds
+from bookworm.i18n import is_rtl
 from bookworm.document_formats import (
     FitzDocument,
     FitzEPUBDocument,
@@ -57,9 +58,13 @@ class EBookReader(TextToSpeechProvider):
         ebook_format = self._detect_ebook_format(ebook_path)
         if ebook_format not in self.supported_ebook_formats:
             self.view.notify_user(
-                "Unsupported Document Format",
-                "The format of the given document is not supported by Bookworm.",
-                icon=wx.ICON_WARNING
+                # Translators: the title of a message shown
+                # when the format of the e-book is not supported
+                _("Unsupported Document Format"),
+                # Translators: the content of a message shown
+                # when the format of the e-book is not supported
+                _("The format of the given document is not supported by Bookworm."),
+                icon=wx.ICON_WARNING,
             )
             return
         document_cls = self.supported_ebook_formats[ebook_format]
@@ -68,17 +73,21 @@ class EBookReader(TextToSpeechProvider):
             self.document.read()
         except DocumentError as e:
             self.view.notify_user(
-                "Error Openning Document",
-                f"Could not open file {ebook_path}. Either the file  has been damaged during download, or it has been corrupted in some other way.",
+                # Translators: the title of an error message
+                _("Error Openning Document"),
+                # Translators: the content of an error message
+                _(
+                    "Could not open file {file}\n."
+                    "Either the file  has been damaged during download, "
+                    "or it has been corrupted in some other way."
+                ).format(file=ebook_path),
                 icon=wx.ICON_ERROR,
             )
             log.exception(f"Error opening document.\r\n{e.args}")
             return
         self.current_book = self.document.metadata
         self.view.add_toc_tree(self.document.toc_tree)
-        self.view.set_text_direction(
-            CultureInfo(self.document.language).TextInfo.IsRightToLeft
-        )
+        self.view.set_text_direction(is_rtl(self.document.language))
         self.active_section = self.document.toc_tree
         self.view.SetTitle(self.get_view_title())
         last_position = database.get_last_position(ebook_path.lower())
@@ -121,9 +130,12 @@ class EBookReader(TextToSpeechProvider):
             return
         elif self.active_section is not None:
             self.active_section.pager.reset()
+        _prev_page = None if self.active_section is None else self.current_page
         self.__state["active_section"] = value
         self.view.tocTreeSetSelection(value)
-        self.current_page = value.pager.current
+        page_number = value.pager.current
+        if page_number != _prev_page:
+            self.current_page = page_number
         speech.announce(value.title)
         reader_section_changed.send(self, active=value)
 
@@ -144,8 +156,16 @@ class EBookReader(TextToSpeechProvider):
         self.view.set_content(self.get_page_content(value))
         if config.conf["general"]["play_pagination_sound"]:
             sounds.pagination.play_after()
-        self.view.SetStatusText(f"Page {value + 1} | {self.active_section.title}")
-        speech.announce(f"Page {value + 1} of {len(self.document)}")
+        # Translators: the label of the page content text area
+        cmsg = _("Page {page} | {chapter}").format(
+            page=value + 1, chapter=self.active_section.title
+        )
+        # Translators: a message that is announced after navigating to a page
+        smsg = _("Page {page} of {total}").format(
+            page=value + 1, total=len(self.document)
+        )
+        self.view.SetStatusText(cmsg)
+        speech.announce(smsg)
         reader_page_changed.send(self, current=value, prev=_prev)
 
     def go_to_page(self, page_number, pos=0):
@@ -208,9 +228,12 @@ class EBookReader(TextToSpeechProvider):
         else:
             view_title = self.current_book.title
             if include_author and self.current_book.author:
-                view_title += f" — by {self.current_book.author}"
-        return view_title
+                author = self.current_book.author
+                # Translators: the title of the window when an e-book is open
+                view_title = _("{title} — by {author}").format(
+                    title=title, author=author
+                )
+        return view_title + f" - {app.display_name}"
 
     def _detect_ebook_format(self, ebook_path):
         return os.path.splitext(ebook_path)[-1].lstrip(".").lower()
-

@@ -30,64 +30,114 @@ class ToolbarProvider:
         self.toolbar.SetToolBitmapSize(tsize)
 
         # Add toolbar items
-        self.toolbar.AddTool(wx.ID_OPEN, "Open", open_bmp, "Open an e-book")
+        self.toolbar.AddTool(
+            wx.ID_OPEN,
+            # Translators: the label of a button in the application toolbar
+            _("Open"),
+            open_bmp,
+            # Translators: the help text of a button in the application toolbar
+            _("Open an e-book"),
+        )
         self.toolbar.AddSeparator()
-        self.toolbar.AddTool(wx.ID_FIND, "Search", search_bmp, "Search e-book")
-        self.toolbar.AddTool(BookRelatedMenuIds.goToPage, "Go", goto_bmp, "Go to page")
+        self.toolbar.AddTool(
+            wx.ID_FIND,
+            # Translators: the label of a button in the application toolbar
+            _("Search"),
+            search_bmp,
+            # Translators: the help text of a button in the application toolbar
+            _("Search e-book"),
+        )
+        self.toolbar.AddTool(
+            BookRelatedMenuIds.goToPage,
+            # Translators: the label of a button in the application toolbar
+            _("Go"),
+            goto_bmp,
+            # Translators: the help text of a button in the application toolbar
+            _("Go to page"),
+        )
         self.toolbar.AddTool(
             BookRelatedMenuIds.viewRenderedAsImage,
-            "View",
+            # Translators: the label of a button in the application toolbar
+            _("View"),
             view_image_bmp,
-            "View a fully rendered version of this page",
+            # Translators: the help text of a button in the application toolbar
+            _("View a fully rendered version of this page"),
         )
         self.toolbar.AddSeparator()
         self.toolbar.AddTool(
-            BookRelatedMenuIds.addBookmark, "Bookmark", bookmark_bmp, "Add bookmark"
+            BookRelatedMenuIds.addBookmark,
+            # Translators: the label of a button in the application toolbar
+            _("Bookmark"),
+            bookmark_bmp,
+            # Translators: the help text of a button in the application toolbar
+            _("Add bookmark"),
         )
         self.toolbar.AddTool(
-            BookRelatedMenuIds.addNote, "Note", images.note.GetBitmap(), "Add note"
+            BookRelatedMenuIds.addNote,
+            # Translators: the label of a button in the application toolbar
+            _("Note"),
+            images.note.GetBitmap(),
+            # Translators: the help text of a button in the application toolbar
+            _("Add note"),
         )
         self.toolbar.AddSeparator()
         self.toolbar.AddTool(
             BookRelatedMenuIds.rewind,
-            "Rewind",
+            # Translators: the label of a button in the application toolbar
+            _("Rewind"),
             images.rewind.GetBitmap(),
-            "Skip to previous paragraph",
+            # Translators: the help text of a button in the application toolbar
+            _("Skip to previous paragraph"),
         )
         self.toolbar.AddTool(
-            self.ppr_id, "Play", images.play.GetBitmap(), "Play/Resume"
+            self.ppr_id,
+            # Translators: the label of a button in the application toolbar
+            _("Play"),
+            images.play.GetBitmap(),
+            # Translators: the help text of a button in the application toolbar
+            _("Play/Resume"),
         )
         self.toolbar.AddTool(
             BookRelatedMenuIds.fastforward,
-            "Fast Forward",
+            # Translators: the label of a button in the application toolbar
+            _("Fast Forward"),
             images.fastforward.GetBitmap(),
-            "Skip to next paragraph",
+            # Translators: the help text of a button in the application toolbar
+            _("Skip to next paragraph"),
         )
         self.toolbar.AddTool(
             ViewerMenuIds.voiceProfiles,
-            "Voice",
+            # Translators: the label of a button in the application toolbar
+            _("Voice"),
             images.profile.GetBitmap(),
-            "Customize TTS voice parameters.",
+            # Translators: the help text of a button in the application toolbar
+            _("Customize TTS voice parameters."),
         )
         self.toolbar.AddSeparator()
         self.toolbar.AddTool(
             wx.ID_PREVIEW_ZOOM_OUT,
-            "Zoom out",
+            # Translators: the label of a button in the application toolbar
+            _("Zoom out"),
             images.zoom_out.GetBitmap(),
-            "Make font smaller",
+            # Translators: the help text of a button in the application toolbar
+            _("Make font smaller"),
         )
         self.toolbar.AddTool(
             wx.ID_PREVIEW_ZOOM_IN,
-            "Zoom in",
+            # Translators: the label of a button in the application toolbar
+            _("Zoom in"),
             images.zoom_in.GetBitmap(),
-            "Make font larger",
+            # Translators: the help text of a button in the application toolbar
+            _("Make font larger"),
         )
         self.toolbar.AddSeparator()
         self.toolbar.AddTool(
             wx.ID_PREFERENCES,
-            "Preferences",
+            # Translators: the label of a button in the application toolbar
+            _("Preferences"),
             images.settings.GetBitmap(),
-            "Configure application",
+            # Translators: the help text of a button in the application toolbar
+            _("Configure the application"),
         )
 
         # Finalize

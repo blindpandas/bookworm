@@ -2,34 +2,50 @@
 
 import sys
 import os
+import struct
+import re
 
 
 name = "bookworm"
-is_frozen = hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS')
 display_name = "Bookworm"
-localized_name = "Bookworm"
 author = "Musharraf Omer"
 author_email = "ibnomer2011@hotmail.com"
-version = "0.1b1"
-version_ex = "0.1.0.0"
+version = "0.1b2"
+version_ex = "0.1.1.0"
 url = "https://github.com/mush42/bookworm/"
 website = "https://mush42.github.io/bookworm/"
+update_url = "https://mush42.github.io/bookworm/current_version.json"
 copyright = f"Copyright (c) 2019 {author}."
+is_frozen = hasattr(sys, "frozen") and hasattr(sys, "_MEIPASS")
+arch = "x86" if struct.calcsize("P") == 4 else "x64"
 debug = False
+# The programatic identifier used in file association
+prog_id = "bookworm.a11y.reader.1"
+# These variables are set upon app initialization
+args = extra_args = command_line_mode = current_language = None
 
-# About Message
-about_msg = f"""
-{localized_name}
-Version: {version}
-Website: {website}
-
-{localized_name} is an ACCESSIBLEebook reader that enables blind and visually impaired individuals to read e-books in an easy, accessible, and hassle-free manor. It is being developed by {author}.
-
-{copyright}
-This software is offered to you under the terms of The MIT license.
-You can view the license text from the help menu.
-
-As a blind developer, my responsibility is to develop applications that provide independence for me, and for my fellow blind friends allover the world. So, if you've found Bookworm useful in any way, please help me in making Bookworm better for you and for others. At this initial stage, I want you to tell me about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
-
-To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: ({website}). You can also follow me, {author}, at (@mush42) on Twitter
+# Version pattern
+VERSION_PATTERN = r"""
+    v?
+    (?:
+        (?:(?P<major>[0-9]+))
+        [-_\.]?
+        (?P<minor>[0-9]+(?:\.[0-9]+)*)
+        (?P<pre>
+            [-_\.]?
+            (?P<pre_type>(a|b|rc))
+            [-_\.]?
+            (?P<pre_number>[0-9]+)?
+        )?
+    )
 """
+
+
+def get_version_info(version_string=version):
+    pattern = re.compile(
+        r"^\s*" + VERSION_PATTERN + r"\s*$", re.VERBOSE | re.IGNORECASE
+    )
+    mat = pattern.match(version_string)
+    if not mat:
+        raise ValueError
+    return mat.groupdict()

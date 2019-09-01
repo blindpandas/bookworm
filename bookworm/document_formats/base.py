@@ -6,7 +6,7 @@ from functools import wraps
 from dataclasses import field, dataclass
 from pycld2 import detect as detect_language, error as CLD2Error
 from bookworm.concurrency import call_threaded
-from bookworm.utils import cached_property, generate_sha1hash
+from bookworm.utils import cached_property, generate_sha1hash_async
 from bookworm.logger import logger
 
 
@@ -216,7 +216,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         to generate a `sha1` hash based on the content of the file.
         Subclasses should call super to ensure the standard behavior.
         """
-        self._sha1hash = generate_sha1hash(self.filename)
+        self._sha1hash = generate_sha1hash_async(self.filename)
         # XXX Is this a pre-mature optimization?
         call_threaded(lambda: self.language)
 

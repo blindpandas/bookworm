@@ -6,7 +6,7 @@ from System.Speech import Synthesis
 from collections import OrderedDict
 from contextlib import suppress
 from dataclasses import dataclass
-from bookworm.resources.lang_locales import locale_map
+from bookworm.i18n.lang_locales import locale_map
 from bookworm.logger import logger
 from .enumerations import SynthState
 from .utterance import SpeechUtterance, SpeechStyle

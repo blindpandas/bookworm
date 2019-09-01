@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import sys
+import os
 import wx
 import hashlib
 from functools import wraps
@@ -14,6 +16,28 @@ log = logger.getChild(__name__)
 
 # Sentinel
 _missing = object()
+
+
+def ignore(*exceptions, retval=None):
+    """Execute function ignoring any one of the given exceptions if raised."""
+    def wrapper(func):
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                if not any(isinstance(e, exc) for exc in exceptions):
+                    raise
+                log.exception(f"Ignored exc {e} raised when executing function {func}", exc_info=True)
+                return retval
+        return wrapped
+    return wrapper
+
+
+def restart_application(extra_args=()):
+    args = sys.argv[:1]
+    args.extend(extra_args)
+    os.execv(sys.executable, args)
 
 
 def recursively_iterdir(path):
@@ -35,13 +59,24 @@ def gui_thread_safe(func):
     return wrapper
 
 
-@call_threaded
-def generate_sha1hash(filename):
+def generate_sha1hash(content):
     hasher = hashlib.sha1()
-    with open(filename, "rb") as file:
-        for chunk in file:
-            hasher.update(chunk)
+    is_file_like = hasattr(content, "seek")
+    if not is_file_like:
+        file = open(content, "rb")
+    else:
+        content.seek(0)
+        file = content
+    for chunk in file:
+        hasher.update(chunk)
+    if not is_file_like:
+        file.close()
     return hasher.hexdigest()
+
+
+@call_threaded
+def generate_sha1hash_async(filename):
+    return generate_sha1hash(filename)
 
 
 def search(pattern, text):

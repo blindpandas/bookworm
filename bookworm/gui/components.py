@@ -73,9 +73,11 @@ class Dialog(wx.Dialog):
 
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
-        okBtn = wx.Button(parent, wx.ID_OK)
+        # Translators: the lable of the OK button in a dialog
+        okBtn = wx.Button(parent, wx.ID_OK, _("OK"))
         okBtn.SetDefault()
-        cancelBtn = wx.Button(parent, wx.ID_CANCEL)
+        # Translators: the lable of the cancel button in a dialog
+        cancelBtn = wx.Button(parent, wx.ID_CANCEL, _("Cancel"))
         for btn in (okBtn, cancelBtn):
             btnsizer.AddButton(btn)
         btnsizer.Realize()
@@ -111,9 +113,11 @@ class SimpleDialog(sc.SizedDialog):
 
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
-        okBtn = wx.Button(self, wx.ID_OK)
+        # Translators: the lable of the OK button in a dialog
+        okBtn = wx.Button(self, wx.ID_OK, _("OK"))
         okBtn.SetDefault()
-        cancelBtn = wx.Button(self, wx.ID_CANCEL)
+        # Translators: the lable of the cancel button in a dialog
+        cancelBtn = wx.Button(self, wx.ID_CANCEL, _("Cancel"))
         for btn in (okBtn, cancelBtn):
             btnsizer.AddButton(btn)
         btnsizer.Realize()

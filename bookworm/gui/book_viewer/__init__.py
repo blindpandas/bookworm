@@ -39,7 +39,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         panel = wx.Panel(self, size=(rect.width * 0.8, rect.height * 0.75))
 
         # Create the book reader controls
-        tocTreeLabel = wx.StaticText(panel, -1, "Table of Contents")
+        # Translators: the label of the table-of-contents tree
+        tocTreeLabel = wx.StaticText(panel, -1, _("Table of Contents"))
         self.tocTreeCtrl = wx.TreeCtrl(
             panel,
             size=(280, 160),
@@ -49,7 +50,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
             | wx.TR_ROW_LINES,
             name="toc_tree",
         )
-        self.contentTextCtrlLabel = wx.StaticText(panel, -1, "Content")
+        # Translators: the label of the text area which shows the
+        # content of the current page
+        self.contentTextCtrlLabel = wx.StaticText(panel, -1, _("Content"))
         self.contentTextCtrl = wx.TextCtrl(
             panel,
             size=(200, 160),
@@ -61,8 +64,12 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
             | wx.TE_NOHIDESEL,
             name="content_view",
         )
-        self.contentTextCtrl.Bind(wx.EVT_CONTEXT_MENU, lambda e: e.Skip(False), self.contentTextCtrl)
-        self.contentTextCtrl.Bind(wx.EVT_RIGHT_UP, self.onContentTextCtrlContextMenu, self.contentTextCtrl)
+        self.contentTextCtrl.Bind(
+            wx.EVT_CONTEXT_MENU, lambda e: e.Skip(False), self.contentTextCtrl
+        )
+        self.contentTextCtrl.Bind(
+            wx.EVT_RIGHT_UP, self.onContentTextCtrlContextMenu, self.contentTextCtrl
+        )
         self.contentTextCtrl.SetMargins(self._get_text_view_margins())
 
         # Use a sizer to layout the controls, stacked horizontally and with
@@ -92,7 +99,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.onTOCItemClick, self.tocTreeCtrl)
 
         # Set statusbar text
-        self.SetStatusText("Press (Ctrl + O) to open an ebook")
+        # Translators: the text of the status bar when no book is currently open.
+        # It is being used also as a label for the page content text area when no book is opened.
+        self._no_open_book_status = _("Press (Ctrl + O) to open an ebook")
+        self.SetStatusText(self._no_open_book_status)
         NavigationProvider(
             ctrl=self.contentTextCtrl,
             reader=self.reader,
@@ -122,7 +132,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
     def unloadCurrentEbook(self):
         self.reader.unload()
         self.set_content("")
-        self.SetStatusText("Press (Ctrl + O) to open an ebook")
+        self.SetStatusText(self._no_open_book_status)
         self.tocTreeCtrl.DeleteAllItems()
         self.Title = app.name
         self._reset_search_history()
@@ -153,16 +163,19 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
             if size >= 64:
                 return wx.Bell()
             self.contentTextCtrl.SetFont(font.MakeLarger())
-            op = "Increased"
+            # Translators: a message telling the user that the font size has been increased
+            msg = _("The font size has been Increased")
         elif direction == -1:
             if size <= 6:
                 return wx.Bell()
             self.contentTextCtrl.SetFont(font.MakeSmaller())
-            op = "decreased"
+            # Translators: a message telling the user that the font size has been decreased
+            msg = _("The font size has been decreased")
         else:
             self.contentTextCtrl.SetFont(wx.NullFont)
-            op = "reset"
-        speech.announce(f"Font size has been {op}")
+            # Translators: a message telling the user that the font size has been reset
+            msg = _("The font size has been reset")
+        speech.announce(msg)
 
     def _populate_tree(self, toc, root):
         for item in toc:

@@ -10,7 +10,8 @@ def get_datafiles():
     rv = []
     wavs = res.rglob("*.wav")
     txts = res.rglob("*.txt")
-    for collect in (wavs, txts):
+    mos = res.rglob("*.mo")
+    for collect in (wavs, txts, mos):
         rv.extend([(str(f), str(f.relative_to(bwpath).parent)) for f in collect])
     return rv
 

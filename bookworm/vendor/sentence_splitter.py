@@ -4,7 +4,7 @@ import regex
 from enum import Enum
 from pathlib import Path
 from typing import List
-from .paths import app_path
+from bookworm.paths import app_path
 
 
 __all__ = (

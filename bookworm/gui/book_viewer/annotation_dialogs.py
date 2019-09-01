@@ -63,7 +63,10 @@ class ViewAnnotationsDialog(Dialog):
         lstSizer = wx.BoxSizer(wx.VERTICAL)
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         label = wx.StaticText(
-            parent, -1, "Bookmarks" if self.type == "bookmark" else "Notes"
+            # Translators: the title of a dialog showing a list of notes or bookmarks
+            parent,
+            -1,
+            _("Bookmarks") if self.type == "bookmark" else _("Notes"),
         )
         self.annotationsListCtrl = DialogListCtrl(parent, -1)
         lstSizer.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 10)
@@ -71,9 +74,12 @@ class ViewAnnotationsDialog(Dialog):
             self.annotationsListCtrl, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 10
         )
         if self.type == "note":
-            btnSizer.Add(wx.Button(parent, wx.ID_PREVIEW, "&View"))
-            btnSizer.Add(wx.Button(parent, wx.ID_EDIT, "&Edit..."))
-        btnSizer.Add(wx.Button(parent, wx.ID_DELETE, "&Remove"))
+            # Translators: the label of a button to view the selected note
+            btnSizer.Add(wx.Button(parent, wx.ID_PREVIEW, _("&View")))
+            # Translators: the label of a button to edit the current note
+            btnSizer.Add(wx.Button(parent, wx.ID_EDIT, _("&Edit...")))
+        # Translators: the label of a button to remove the selected note
+        btnSizer.Add(wx.Button(parent, wx.ID_DELETE, _("&Remove")))
         mainSizer.Add(lstSizer, 1, wx.EXPAND | wx.ALL, 10)
         mainSizer.Add(btnSizer, 0, wx.ALL | wx.ALIGN_CENTER, 10)
         sizer.Add(mainSizer, 1, wx.EXPAND | wx.ALL)
@@ -97,20 +103,30 @@ class ViewAnnotationsDialog(Dialog):
 
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
-        btnsizer.AddButton(wx.Button(parent, wx.ID_CANCEL, "&Close"))
+        # Translators: the label of a button to close the dialog
+        btnsizer.AddButton(wx.Button(parent, wx.ID_CANCEL, _("&Close")))
         btnsizer.Realize()
         return btnsizer
 
     def _populate_list(self, focus_target=0):
         self.annotationsListCtrl.ClearAll()
         self.annotationsListCtrl.AppendColumn(
-            "Title", format=wx.LIST_FORMAT_LEFT, width=50
+            # Translators: the title of a column in the bookmarks list
+            _("Title"),
+            format=wx.LIST_FORMAT_LEFT,
+            width=50,
         )
         self.annotationsListCtrl.AppendColumn(
-            "Page", format=wx.LIST_FORMAT_CENTER, width=20
+            # Translators: the title of a column in the bookmarks list
+            _("Page"),
+            format=wx.LIST_FORMAT_CENTER,
+            width=20,
         )
         self.annotationsListCtrl.AppendColumn(
-            "Section", format=wx.LIST_FORMAT_LEFT, width=30
+            # Translators: the title of a column in the bookmarks list
+            _("Section"),
+            format=wx.LIST_FORMAT_LEFT,
+            width=30,
         )
         self.annotationsListCtrl.SetColumnWidth(0, 100)
         self.annotationsListCtrl.SetColumnWidth(1, 100)
@@ -179,8 +195,12 @@ class ViewAnnotationsDialog(Dialog):
             return
         if (
             wx.MessageBox(
-                "This action can not be reverted.\r\nAre you sure you want to continue?",
-                "Remove Entry?",
+                # Translators: the content of a message asking the user to delete a bookmark
+                _(
+                    "This action can not be reverted.\r\nAre you sure you want to continue?"
+                ),
+                # Translators: the title of a message asking the user to delete a bookmark
+                _("Remove Entry?"),
                 parent=self,
                 style=wx.YES_NO | wx.ICON_WARNING,
             )
@@ -223,18 +243,23 @@ class NoteEditorDialog(Dialog):
         self.cursorPos = pos
         self.view_only = view_only
         if self.view_only:
-            prefix = "View"
+            # Translators: the title of a dialog to view the selected note
+            title = _("View Note...")
         elif self.note is None:
-            prefix = "Take"
+            # Translators: the title of a dialog to create a new note
+            title = _("Take A Note...")
         else:
-            prefix = "Edit"
-        super().__init__(parent, title=f"{prefix} Note", **kwargs)
+            # Translators: the title of a dialog to edit the selected note
+            title = _("Edit Note...")
+        super().__init__(parent, title=title, **kwargs)
 
     def addControls(self, sizer, parent):
         vsizer = wx.BoxSizer(wx.VERTICAL)
-        titleLabel = wx.StaticText(parent, -1, "Note Title:")
+        # Translators: the label of an edit field
+        titleLabel = wx.StaticText(parent, -1, _("Note Title:"))
         self.titleTextCtrl = wx.TextCtrl(parent, -1)
-        contentLabel = wx.StaticText(parent, -1, "Note Content:")
+        # Translators: the label of an edit field
+        contentLabel = wx.StaticText(parent, -1, _("Note Content:"))
         self.noteContentTextCtrl = wx.TextCtrl(
             parent, -1, style=wx.TE_MULTILINE | wx.TE_RICH2
         )
@@ -255,7 +280,8 @@ class NoteEditorDialog(Dialog):
     def getButtons(self, parent):
         if self.view_only:
             btnsizer = wx.StdDialogButtonSizer()
-            btnsizer.AddButton(wx.Button(parent, wx.ID_CANCEL, "&Close"))
+            # Translators: the label of a button to close the dialog
+            btnsizer.AddButton(wx.Button(parent, wx.ID_CANCEL, _("&Close")))
             btnsizer.Realize()
             return btnsizer
         return super().getButtons(parent)
@@ -265,8 +291,12 @@ class NoteEditorDialog(Dialog):
         content = self.noteContentTextCtrl.GetValue().strip()
         if not all((title, content)):
             wx.MessageBox(
-                "Could not save note. Empty fields are present",
-                "Warning",
+                # Translators: the title of a message telling the user that the field is empty
+                _(
+                    "Empty fields are present. Please make sure you have filled-in all fields."
+                ),
+                # Translators: the title of a message dialog
+                _("Cannot Save Note"),
                 parent=self,
                 style=wx.ICON_WARNING,
             )
@@ -295,20 +325,26 @@ class ExportNotesDialog(Dialog):
         super().__init__(*args, **kwargs)
 
     def addControls(self, sizer, parent):
-        self.output_ranges = ["Whole Book", "Current Section"]
-        formats = [rend.display_name for rend in NotesExporter.renderers]
+        # Translators: the label of a radio button
+        self.output_ranges = [_("Whole Book"), _("Current Section")]
+        formats = [_(rend.display_name) for rend in NotesExporter.renderers]
         self.outputRangeRb = wx.RadioBox(
             parent,
             -1,
-            "Export Range",
+            # Translators: the title of a group of radio buttons in the Export Notes dialog
+            _("Export Range"),
             choices=self.output_ranges,
             majorDimension=2,
             style=wx.RA_SPECIFY_COLS,
         )
-        formatChoiceLabel = wx.StaticText(parent, -1, "Output Format:")
+        # Translators: the label of a combobox of available export formats
+        formatChoiceLabel = wx.StaticText(parent, -1, _("Output format:"))
         self.formatChoice = wx.Choice(parent, -1, choices=formats)
         self.openAfterExportCheckBox = wx.CheckBox(
-            parent, -1, "Open file after exporting"
+            parent,
+            -1,
+            # Translators: the label of a checkbox
+            _("Open file after exporting"),
         )
         sizer.Add(self.outputRangeRb, 0, wx.EXPAND | wx.ALL, 10)
         sizer.Add(formatChoiceLabel, 0, wx.EXPAND | wx.TOP | wx.LEFT | wx.RIGHT, 10)
@@ -320,10 +356,12 @@ class ExportNotesDialog(Dialog):
 
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
-        export_btn = wx.Button(parent, wx.ID_SAVE, "&Export")
+        # Translators: the label of a button in the Export Notes dialog
+        export_btn = wx.Button(parent, wx.ID_SAVE, _("&Export"))
         export_btn.SetDefault()
         btnsizer.AddButton(export_btn)
-        btnsizer.AddButton(wx.Button(parent, wx.ID_CANCEL, "&Cancel"))
+        # Translators: the label of a button to cancel the current action
+        btnsizer.AddButton(wx.Button(parent, wx.ID_CANCEL, _("&Cancel")))
         btnsizer.Realize()
         return btnsizer
 
@@ -340,18 +378,24 @@ class ExportNotesDialog(Dialog):
             suffix += f" {pager.first + 1}-{pager.last + 1}"
         if not notes.count():
             wx.MessageBox(
-                "There are no notes for this book or the selected section. Please make sure you have added some notes before using the export functionality.",
-                "No Notes",
-                style=wx.ICON_WARNING
+                # Translators: the content of a message dialog
+                _(
+                    "There are no notes for this book or the selected section.\n"
+                    "Please make sure you have added some notes before using the export functionality."
+                ),
+                # Translators: the title of a message dialog
+                _("No Notes"),
+                style=wx.ICON_WARNING,
             )
             return self.Close()
         filename = slugify(suffix) + renderer.output_ext
         saveExportedFD = wx.FileDialog(
             self,
-            "Export To",
+            # Translators: the title of a save file dialog asking the user for a filename to export notes to
+            _("Export To"),
             defaultDir=wx.GetUserHome(),
             defaultFile=filename,
-            wildcard=f"{renderer.display_name} (*{renderer.output_ext})|{renderer.output_ext}",
+            wildcard=f"{_(renderer.display_name)} (*{renderer.output_ext})|{renderer.output_ext}",
             style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
         )
         if saveExportedFD.ShowModal() != wx.ID_OK:
@@ -362,7 +406,13 @@ class ExportNotesDialog(Dialog):
             file_path = file_path.encode("mbcs")
         except UnicodeEncodeError:
             wx.MessageBox(
-                "Invalid file name. Please try again.", "Error", style=wx.ICON_ERROR
+                # Translators: the content of a message telling the user that the file name is invalid
+                _(
+                    "The provided file name is not valid. Please try again with a different name."
+                ),
+                # Translators: the title of a message telling the user that the provided file name is invalid
+                _("Invalid File Name"),
+                style=wx.ICON_ERROR,
             )
             self.fileCtrl.SetValue("")
             self.fileCtrl.SetFocus()

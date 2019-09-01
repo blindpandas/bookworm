@@ -12,16 +12,19 @@ END_OF_SECTION_PAUSE_MAX = 9000
 config_spec = StringIO(
     f"""
 [general]
+    language = string(default="default")
     announce_ui_messages = boolean(default=True)
     show_file_name_as_title = boolean(default=False)
     open_with_last_position = boolean(default=True)
     play_pagination_sound = boolean(default=True)
     play_page_note_sound = boolean(default=True)
     highlight_bookmarked_positions = boolean(default=True)
+    auto_check_for_updates = boolean(default=True)
 [history]
     recently_opened = list(default=list())
     recent_terms = list(default=list())
     last_folder = string(default="")
+    set_file_assoc = integer(default=0)
 [speech]
     voice = string(default="")
     rate = integer(default=50)
@@ -45,7 +48,8 @@ config_spec = StringIO(
 
 builtin_voice_profiles = [
     (
-        "Expressive",
+        # Translators: the name of a built-in voice profile
+        _("Expressive"),
         dict(
             rate=60,
             sentence_pause=250,
@@ -55,7 +59,8 @@ builtin_voice_profiles = [
         ),
     ),
     (
-        "Deep Reading",
+        # Translators: the name of a built-in voice profile
+        _("Deep Reading"),
         dict(
             rate=60,
             sentence_pause=400,
@@ -65,7 +70,8 @@ builtin_voice_profiles = [
         ),
     ),
     (
-        "Hazy",
+        # Translators: the name of a built-in voice profile
+        _("Hazy"),
         dict(
             rate=65,
             sentence_pause=0,

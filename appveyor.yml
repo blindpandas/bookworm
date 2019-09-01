@@ -1,17 +1,19 @@
 os: Visual Studio 2015
-
 # Build worker image (VM template)
 image: Visual Studio 2015
+
 
 branches:
   only:
     - master
-    - /dev-.*/
+    - /dev.*/
     - /release-.*/
 
 
 environment:
   PY_PYTHON: 3.7-32
+  github_access_token:
+    secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
 
 
 install:
@@ -19,26 +21,42 @@ install:
   # https://www.appveyor.com/docs/build-environment/#tools
   - set PATH=%PATH%;C:\Program Files (x86)\NSIS
 
+
 build_script:
-    # 32-bit version
+  # 32-bit version
+  - ps: Write-Host "Building the 32-bit variant."
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
   - C:\Python37\python.exe -m venv .venv32
   - call ".venv32\Scripts\activate.bat"
-  - py -m pip install --upgrade pip
-  - pip install -r requirements-dev.txt
+  - py -m pip -q install --upgrade pip
+  - pip -q install -r requirements-dev.txt
   - invoke build
   - deactivate
   # 64-bit version
+  - ps: Write-Host "Building the 64-bit variant."
   - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   - C:\Python37-x64\python.exe -m venv .venv64
   - call ".venv64\Scripts\activate.bat"
-  - py -m pip install --upgrade pip
-  - pip install -r requirements-dev.txt
+  - py -m pip -q install --upgrade pip
+  - pip -q install -r requirements-dev.txt
   - invoke build
+  # Update the release info file
+  - invoke update-version-info
+
 
 artifacts:
   - path: scripts\Bookworm*setup.exe
+  - path: scripts\Bookworm*update.bundle
+  - path: scripts\release-info.json
+
+
+on_success:
+  - ps: |
+      if ($env:APPVEYOR_REPO_TAG_NAME -and $env:APPVEYOR_REPO_TAG_NAME.StartsWith("release-")) {
+        echo "Updating version information for this release." 
+      }
+
 
 deploy:
   release: "Bookworm Release (Build v$(appveyor_build_version))"
@@ -46,7 +64,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
-  artifact: /Bookworm-.*-setup\.exe/
+  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /release-info\.json/
   draft: true
   prerelease: true
   on:

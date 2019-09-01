@@ -22,7 +22,11 @@ VIFileVersion "$%IAPP_VERSION_EX%"
 !define MUI_ICON "builder\assets\$%IAPP_NAME%.ico"
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP "builder\assets\$%IAPP_NAME%.bmp"
-!define MUI_HEADERIMAGE_RIGHT
+!define MUI_HEADERIMAGE_BITMAP_NOSTRETCH
+!define MUI_WELCOMEFINISHPAGE_BITMAP "builder\assets\$%IAPP_NAME%-logo.bmp"
+!define MUI_ABORTWARNING
+!define MUI_FINISHPAGE_LINK "$%IAPP_WEBSITE%"
+!define MUI_FINISHPAGE_LINK_LOCATION $%IAPP_WEBSITE%
 !insertmacro MUI_PAGE_WELCOME
 !define MUI_LICENSEPAGE_RADIOBUTTONS
 !insertmacro MUI_PAGE_LICENSE "..\LICENSE"
@@ -35,6 +39,7 @@ var StartMenuFolder
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "English"
+!insertmacro MUI_LANGUAGE "Arabic"
 !insertmacro MUI_RESERVEFILE_LANGDLL
 Section
 SetShellVarContext All
@@ -60,6 +65,7 @@ WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_N
 SectionEnd
 Section "Uninstall"
 SetShellVarContext All
+nsExec::ExecToStack '"$INSTDIR\Bookworm.exe" --shell-disintegrate'
 DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%"
 RMDir /r /REBOOTOK $INSTDIR
 Delete "$DESKTOP\$%IAPP_DISPLAY_NAME%.lnk"
@@ -67,6 +73,7 @@ Delete "$DESKTOP\$%IAPP_DISPLAY_NAME%.lnk"
 RMDir /r "$SMPROGRAMS\$StartMenuFolder"
 SectionEnd
 Function .onInit
+!insertmacro MUI_LANGDLL_DISPLAY
 StrCmp $%IAPP_ARCH% "x64" +1 +2
   StrCpy $instdir "$programfiles64\$%IAPP_DISPLAY_NAME%"
 FunctionEnd

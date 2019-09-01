@@ -24,21 +24,34 @@ class SearchResultsDialog(Dialog):
 
     def addControls(self, sizer, parent):
         self.reader = self.parent.reader
-        label = wx.StaticText(parent, -1, "Search Results")
+        # Translators: the label of a list of search results
+        label = wx.StaticText(parent, -1, _("Search Results"))
         self.searchResultsListCtrl = DialogListCtrl(parent, -1)
         self.searchResultsListCtrl.AppendColumn(
-            "Page", format=wx.LIST_FORMAT_LEFT, width=20
+            # Translators: the title of a column in the search results list
+            _("Page"),
+            format=wx.LIST_FORMAT_LEFT,
+            width=20,
         )
         self.searchResultsListCtrl.AppendColumn(
-            "Text", format=wx.LIST_FORMAT_CENTER, width=50
+            # Translators: the title of a column in the search results list showing
+            # an excerpt of the text of the search result
+            _("Text"),
+            format=wx.LIST_FORMAT_CENTER,
+            width=50,
         )
         self.searchResultsListCtrl.AppendColumn(
-            "Section", format=wx.LIST_FORMAT_LEFT, width=30
+            # Translators: the title of a column in the search results list
+            # showing the title of the chapter in which this occurrence was found
+            _("Section"),
+            format=wx.LIST_FORMAT_LEFT,
+            width=30,
         )
         self.searchResultsListCtrl.SetColumnWidth(0, 100)
         self.searchResultsListCtrl.SetColumnWidth(1, 100)
         self.searchResultsListCtrl.SetColumnWidth(2, 100)
-        pbarlabel = wx.StaticText(parent, -1, "Search Progress:")
+        # Translators: the label of a progress bar indicating the progress of the search process
+        pbarlabel = wx.StaticText(parent, -1, _("Search Progress:"))
         self.progressbar = wx.Gauge(parent, -1, style=wx.GA_HORIZONTAL | wx.GA_SMOOTH)
         sizer.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 10)
         sizer.Add(
@@ -52,6 +65,7 @@ class SearchResultsDialog(Dialog):
 
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
+        # Translators: the label of a button to close the dialog
         btnsizer.AddButton(wx.Button(parent, wx.ID_CANCEL, "&Close"))
         btnsizer.Realize()
         return btnsizer
@@ -81,19 +95,28 @@ class SearchBookDialog(Dialog):
         self.reader = self.parent.reader
         num_pages = len(self.parent.reader.document)
         recent_terms = config.conf["history"]["recent_terms"]
-        st_label = wx.StaticText(parent, -1, "Search term:")
+        # Translators: the label of an edit field in the search dialog
+        st_label = wx.StaticText(parent, -1, _("Search term:"))
         self.searchTermTextCtrl = wx.ComboBox(
             parent, -1, choices=recent_terms, style=wx.CB_DROPDOWN
         )
-        self.isCaseSensitive = wx.CheckBox(parent, -1, "Case sensitive")
-        self.isWholeWord = wx.CheckBox(parent, -1, "Match whole word only")
-        rbTitle = wx.StaticBox(parent, -1, "Search Range")
+        # Translators: the label of a checkbox
+        self.isCaseSensitive = wx.CheckBox(parent, -1, _("Case sensitive"))
+        # Translators: the label of a checkbox
+        self.isWholeWord = wx.CheckBox(parent, -1, _("Match whole word only"))
+        # Translators: the title of a group of controls in the search dialog
+        rbTitle = wx.StaticBox(parent, -1, _("Search Range"))
         searchRangeBox = wx.StaticBoxSizer(rbTitle, wx.VERTICAL)
-        self.hasPage = wx.RadioButton(parent, -1, "Page Range", style=wx.RB_GROUP)
+        # Translators: the label of a radio button in the search dialog
+        self.hasPage = wx.RadioButton(parent, -1, _("Page Range"), style=wx.RB_GROUP)
         rsizer = wx.BoxSizer(wx.HORIZONTAL)
-        fpage_label = wx.StaticText(parent, -1, "From:")
+        # Translators: the label of an edit field in the search dialog
+        # to enter the page from which the search will start
+        fpage_label = wx.StaticText(parent, -1, _("From:"))
         self.fromPage = EnhancedSpinCtrl(parent, -1, min=1, max=num_pages, value="1")
-        tpage_label = wx.StaticText(parent, -1, "To:")
+        # Translators: the label of an edit field in the search dialog
+        # to enter the page number at which the search will stop
+        tpage_label = wx.StaticText(parent, -1, _("To:"))
         self.toPage = EnhancedSpinCtrl(
             parent, -1, min=1, max=num_pages, value=str(num_pages)
         )
@@ -105,8 +128,11 @@ class SearchBookDialog(Dialog):
                 (self.toPage, 1, wx.ALL, 5),
             ]
         )
-        self.hasSection = wx.RadioButton(parent, -1, "Specific section")
-        sec_label = wx.StaticText(parent, -1, "Select section:")
+        # Translators: the label of a radio button in the search dialog
+        self.hasSection = wx.RadioButton(parent, -1, _("Specific section"))
+        # Translators: the label of a combobox in the search dialog
+        # to choose the section to which the search will be confined
+        sec_label = wx.StaticText(parent, -1, _("Select section:"))
         self.sectionChoice = wx.Choice(
             parent, -1, choices=[sect.title for sect in self.reader.document.toc_tree]
         )
@@ -164,9 +190,16 @@ class GoToPageDialog(SimpleDialog):
 
     def addControls(self, parent):
         page_count = len(self.parent.reader.document)
-        label = wx.StaticText(parent, -1, f"Page number (of {page_count}):")
+        # Translators: the label of an edit field in the go to page dialog
+        label = wx.StaticText(
+            parent, -1, _("Page number, of {total}:").format(total=page_count)
+        )
         self.pageNumberCtrl = EnhancedSpinCtrl(
-            parent, -1, min=1, max=page_count, value=str(self.parent.reader.current_page + 1)
+            parent,
+            -1,
+            min=1,
+            max=page_count,
+            value=str(self.parent.reader.current_page + 1),
         )
         self.pageNumberCtrl.SetSizerProps(expand=True)
 
@@ -185,7 +218,8 @@ class ViewPageAsImageDialog(wx.Dialog):
         self.scaling_factor = 0.2
         self._zoom_factor = 1
         self.scroll_rate = 30
-        panel = self.scroll = scrolled.ScrolledPanel(self, -1, name="Page")
+        # Translators: the label of the image of a page in a dialog to render the current page
+        panel = self.scroll = scrolled.ScrolledPanel(self, -1, name=_("Page"))
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         self.imageCtrl = wx.StaticBitmap(panel)
@@ -227,7 +261,10 @@ class ViewPageAsImageDialog(wx.Dialog):
         self._zoom_factor = value
         self.setDialogImage()
         self.scroll.SetupScrolling(rate_x=self.scroll_rate, rate_y=self.scroll_rate)
-        speech.announce(f"Zoom is at {int(value * 100)} percent")
+        # Translators: a message announced to the user when the zoom factor changes
+        speech.announce(
+            _("Zoom is at {factor} percent").format(factor=int(value * 100))
+        )
 
     def setDialogImage(self):
         bmp, size = self.getPageImage()
@@ -256,7 +293,9 @@ class VoiceProfileEditorDialog(SimpleDialog):
 
     def __init__(self, parent, profile_name, profile):
         self.profile = profile
-        super().__init__(parent, f"Voice Profile: {profile_name}")
+        # Translators: the title of a dialog to edit a voice profile
+        title = _("Voice Profile: {profile}").format(profile=profile_name)
+        super().__init__(parent, title)
 
     def addControls(self, parent):
         cPanel = self.spPanel = SpeechPanel(parent, config_object=self.profile)
@@ -275,18 +314,24 @@ class VoiceProfileDialog(SimpleDialog):
     def addControls(self, parent):
         self.reader = self.parent.reader
 
-        label = wx.StaticText(parent, -1, "Select Voice Profile:")
+        # Translators: the label of a combobox to select a voice profile
+        label = wx.StaticText(parent, -1, _("Select Voice Profile:"))
         self.voiceProfilesChoice = wx.Choice(parent, -1, choices=[])
         self.voiceProfilesChoice.SetSizerProps(expand=True)
 
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
-        ab = wx.Button(self, wx.ID_DEFAULT, "&Activate")
-        eb = wx.Button(self, wx.ID_EDIT, "&Edit...")
-        rb = wx.Button(self, wx.ID_REMOVE, "&Remove")
-        nb = wx.Button(self, wx.ID_NEW, "&New Profile...")
+        # Translators: the label of a button to activate a voice profile
+        ab = wx.Button(self, wx.ID_DEFAULT, _("&Activate"))
+        # Translators: the label of a button to edit a voice profile
+        eb = wx.Button(self, wx.ID_EDIT, _("&Edit..."))
+        # Translators: the label of a button to remove a voice profile
+        rb = wx.Button(self, wx.ID_REMOVE, _("&Remove"))
+        # Translators: the label of a button to create a new voice profile
+        nb = wx.Button(self, wx.ID_NEW, _("&New Profile..."))
         for c in (ab, eb, rb, nb):
             btnSizer.Add(c, 0, wx.ALL, 10)
-        btnSizer.Add(wx.Button(self, wx.ID_CANCEL, "&Close"), 0, wx.ALL, 10)
+        # Translators: the label of a button to close the dialog
+        btnSizer.Add(wx.Button(self, wx.ID_CANCEL, _("&Close")), 0, wx.ALL, 10)
         self.SetButtonSizer(btnSizer)
         ab.SetDefault()
 
@@ -313,9 +358,10 @@ class VoiceProfileDialog(SimpleDialog):
         sel = 0
         active_profile = config.conf.active_profile
         for i, profile in enumerate(profiles):
-            label = profile
+            label = _(profile)
             if active_profile and active_profile["name"] == profile:
-                label += " (active)"
+                # Translators: the entry of the active voice profile in the voice profiles list
+                label = _("{profile} (active)").format(profile=label)
                 sel = i
             self.voiceProfilesChoice.Append(label, profile)
         self.voiceProfilesChoice.SetSelection(sel)
@@ -362,7 +408,11 @@ class VoiceProfileDialog(SimpleDialog):
 
     def onNew(self, event):
         profile_name = wx.GetTextFromUser(
-            "Profile Name:", "New Voice Profile", parent=self
+            # Translators: the label of an edit field to enter the voice profile name
+            _("Profile Name:"),
+            # Translators: the title of a dialog to enter the name of a new voice profile
+            _("New Voice Profile"),
+            parent=self,
         )
         if not profile_name.strip():
             return wx.Bell()
@@ -371,8 +421,13 @@ class VoiceProfileDialog(SimpleDialog):
             profile = config.conf.create_voice_profile(profile_name)
         except ValueError:
             wx.MessageBox(
-                "A voice profile with the same name already exists. Please select another name.",
-                "Error",
+                # Translators: the content of a message notifying the user
+                # user of the existance of a voice profile with the same name
+                _(
+                    "A voice profile with the same name already exists. Please select another name."
+                ),
+                # Translators: the title of a message telling the user that an error has occurred
+                _("Error"),
                 style=wx.ICON_WARNING,
             )
             return self.onNew(event)
@@ -392,14 +447,27 @@ class VoiceProfileDialog(SimpleDialog):
             and config.conf.active_profile["name"] == profile_name
         ):
             wx.MessageBox(
-                f"Voice profile {profile_name} is the active profile.\nPlease deactivate it first by clicking 'Deactivate Active Voice Profile` menu item from the speech menu.",
-                "Cannot Remove Profile",
+                # Translators: the content of a message telling the user that the voice
+                # profile he is removing is the active one
+                _(
+                    "Voice profile {profile} is the active profile.\n"
+                    "Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
+                    "menu item from the speech menu."
+                ).format(profile=profile_name),
+                # Translators: the title of a message telling the user that
+                # it is not possible to remove this voice profile
+                _("Cannot Remove Profile"),
                 style=wx.ICON_INFORMATION,
             )
             return
         msg = wx.MessageBox(
-            f"Are you sure you want to remove voice profile {profile_name}?\nThis cannot be undone.",
-            "Remove Voice Profile?",
+            # Translators: the title of a message to confirm the removal of the voice profile
+            _(
+                "Are you sure you want to remove voice profile {profile}?\n"
+                "This cannot be undone."
+            ).format(profile=profile_name),
+            # Translators: the title of a message to confirm the removal of a voice profile
+            _("Remove Voice Profile?"),
             parent=self,
             style=wx.YES | wx.NO | wx.ICON_QUESTION,
         )

@@ -51,7 +51,10 @@ def config_path():
 
 @merge_paths
 def logs_path():
-    path = data_path("logs")
+    if not app.is_frozen:
+        path = DATA_PATH_DEBUG / "logs"
+    else:
+        path = data_path("logs")
     if not path.exists():
         log.debug("%s path does not exist, creating..." % (path,))
         path.mkdir(parents=True, exist_ok=True)
@@ -60,7 +63,9 @@ def logs_path():
 
 @merge_paths
 def locale_path():
-    return app_path("resources", "locales")
+    if app.is_frozen:
+        return app_path("resources", "locale")
+    return Path(app.__file__).parent / "resources" / "locale"
 
 
 @merge_paths
@@ -76,7 +81,7 @@ def db_path():
 def docs_path():
     if not app.is_frozen:
         parent = Path(DATA_PATH_DEBUG).parent
-        path = parent / "docs"
+        path = parent / "docs" / "userguides"
     else:
         path = app_path("resources", "docs")
     if not path.exists():

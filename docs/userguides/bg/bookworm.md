@@ -1,3 +1,4 @@
+# Bookworm User Guide
 
 ## Introduction
 
@@ -123,12 +124,12 @@ When you are in the Render View, you can use the usual zoom commands to zoom the
 * Ctrl + - zoom-out
 * Ctrl + 0 reset the zoom level
 
-Note that you can also use the book navigation commands, mentioned above,  to navigate the render view as well.
+Note that you can also use the book navigation commands, mentioned above,  to navigate the render view as well. You can also press the escape key to dismiss this view and return to the default textual view.
 
 
 ### Navigating To A Specific Page
 
-To navigate to a specific page in the currently opened book., press Ctrl + G, or select the "Go To..." menu item from the tools menu to show the "Go To Page" dialog. In this dialog you can type the number of any page you want to navigate to, and Bookworm will take you to it.
+To navigate to a specific page in the currently opened book., press Ctrl + G, or select the "Go To..." menu item from the tools menu to show the "Go To Page" dialog. In this dialog you can type the number of any page you want to navigate to, and Bookworm will take you to it. Note that this dialog will indicate to you the total number of pages found in the current book.
 
  
 ### Searching The Book
@@ -144,9 +145,27 @@ After clicking the OK button in the "Search Book Dialog", another dialog contain
 Note that if you've closed the search results window, you can press F3 and Shift + F3 to move to the next and previous occurrence of the last search respectively.
 
 
+## Managing File Associations
+
+The "Manage File Associations" button, found in the general page in the application preferences, helps you to manage which file types are associated with Bookworm. Associating files with Bookworm means that when you click on a file in Windows explorer, that file would be opened in Bookworm by default. Note that this dialog is always shown to the user in the first run of the program.
+
+Once you launch the file associations manager, you will have the following options:
+
+* Associate all: this changes your settings so that if a file is supported by Bookworm, Windows will use Bookworm to open it. 
+* Dessociate all supported file types: this will remove previously registered file associations
+* Individual buttons for each supported file type: clicking any button of those will associate its respective file type with Bookworm.
+
+
+## Updating Bookworm
+
+By default, Bookworm checks for new versions upon startup. This ensures that you get the latest and greatest of Bookworm as early as possible. You can disable this default behavior from the application preferences.   You can also check for updates manually by clicking the "Check for updates" menu item found under the "Help" menu.
+
+Either way, when a new version is found, Bookworm will ask you if you want to install it. If you click "Yes", the application will go ahead and download the update bundle, and will show a dialog indicating the progress of download. After the update is downloaded, Bookworm will alert you with a message, telling you it will restart the application in order to update. Just click "OK" to complete the update process.
+
+
 ## Reporting Problems & Issues
 
-As a blind developer, my responsibility is to develop applications that provide independence for me, and for my fellow blind friends allover the world. So, if you've found Bookworm useful in any way, please help me in making Bookworm better for you and for others. At this initial stage, I want you to tell me about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
+As blind developers, our responsibility is to develop applications that provide independence for us, and for our fellow blind friends all over the world. So, if you've found Bookworm useful in any way, please help us in making Bookworm better for you and for others. At this initial stage, we want you to tell us about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
 
 Before submitting a new issue, make sure that you ran Bookworm in debug mode. To turn on debug mode, go to the "Help" menu and then click "Restart with debug-mode enabled" and try to reproduce the issue with debug mode enabled. In the majority of cases, when the error happens again with debug mode enabled, a dialog will be shown with the details of that error. You can then copy this information and include it with your problem report.
 
@@ -155,9 +174,9 @@ Note that some issues could be tricky to reproduce, they go away when you restar
 
 ## News & Updates
 
-To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: [mush42.github.io/bookworm](https://mush42.github.io/bookworm/). You can also follow me, Musharraf Omer, at [@mush42](https://twitter.com/mush42/) on Twitter.
+To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: [mush42.github.io/bookworm](https://mush42.github.io/bookworm/). You can also follow the lead developer, Musharraf Omer, at [@mush42](https://twitter.com/mush42/) on Twitter.
 
 
 ## License
 
-**Bookworm** is copyright (c) 2019 Musharraf Omer. It is licensed under the [MIT License](https://github.com/mush42/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2019 Musharraf Omer and Bookworm Contributors. It is licensed under the [MIT License](https://github.com/mush42/bookworm/blob/master/LICENSE).
