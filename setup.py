@@ -15,7 +15,7 @@ setup(
     version=app.version,
     author=app.author,
     author_email=app.author_email,
-    description="An accessible ebook reader.",
+    description="The universally accessible ebook reader",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/mush42/bookworm/",

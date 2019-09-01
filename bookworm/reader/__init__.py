@@ -2,6 +2,7 @@
 
 import os
 import wx
+from bookworm import app
 from bookworm import config
 from bookworm import database
 from bookworm import speech
@@ -232,7 +233,7 @@ class EBookReader(TextToSpeechProvider):
                 view_title = _("{title} — by {author}").format(
                     title=title, author=author
                 )
-        return view_title
+        return view_title + f" - {app.display_name}"
 
     def _detect_ebook_format(self, ebook_path):
         return os.path.splitext(ebook_path)[-1].lstrip(".").lower()
