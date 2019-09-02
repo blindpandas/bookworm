@@ -6,7 +6,7 @@ VSVersionInfo(
   ffi=FixedFileInfo(
     # filevers and prodvers should be always a tuple with four items: (1, 2, 3, 4)
     # Set not needed items to zero 0.
-    filevers=(1, 0, 0, 0),
+    filevers=(0, 1, 2, 0),
     prodvers=(1, 0, 0, 0),
     # Contains a bitmask that specifies the valid bits 'flags'r
     mask=0x3f,
@@ -30,12 +30,12 @@ VSVersionInfo(
       StringTable(
         u'040904B0',
         [StringStruct(u'CompanyName', u'Musharraf Omer'),
-        StringStruct(u'FileDescription', u'Bookworm, an accessible e-book reader'),
-        StringStruct(u'FileVersion', u'1.0.0 Alpha'),
+        StringStruct(u'FileDescription', u'Bookworm. The universally accessible eBook reader'),
+        StringStruct(u'FileVersion', u'0.1b2'),
         StringStruct(u'LegalCopyright', u'Copyright (C) 2019 Musharraf Omer'),
         StringStruct(u'OriginalFilename', u'Bookworm.exe'),
         StringStruct(u'ProductName', u'Bookworm'),
-        StringStruct(u'ProductVersion', u'1.0.0 Alpha')])
+        StringStruct(u'ProductVersion', u'0.1b2')])
       ]), 
     VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
   ]
