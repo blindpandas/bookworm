@@ -105,6 +105,7 @@ class EBookReader(TextToSpeechProvider):
             reader_book_unloaded.send(self)
 
     def save_current_position(self):
+        log.debug("Saving current position.")
         filename = self.document.filename
         # Some times we may need to shadow the original document with another
         #  one, for example when we decrypt it, or when we make it a11y friendly
