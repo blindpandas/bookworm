@@ -111,12 +111,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         if config.conf["general"]["play_page_note_sound"]:
             reader_page_changed.connect(play_sound_if_note, sender=self.reader)
         if config.conf["general"]["highlight_bookmarked_positions"]:
-            reader_page_changed.connect(
-                highlight_bookmarked_positions, sender=self.reader
-            )
-            arg_file = os.path.abspath(app.args.filename or "")
-            if os.path.isfile(arg_file):
-                self.open_file(arg_file)
+            reader_page_changed.connect(highlight_bookmarked_positions, sender=self.reader)
 
     def set_content(self, content):
         self.contentTextCtrl.Clear()
@@ -134,7 +129,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         self.set_content("")
         self.SetStatusText(self._no_open_book_status)
         self.tocTreeCtrl.DeleteAllItems()
-        self.Title = app.name
+        self.Title = app.display_name
         self._reset_search_history()
         self.populate_recent_file_list()
 

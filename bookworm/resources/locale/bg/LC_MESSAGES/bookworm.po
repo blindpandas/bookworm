@@ -7,72 +7,83 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2019-08-31 12:31+0200\n"
-"PO-Revision-Date: 2019-08-30 11:07+0200\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2019-08-30 11:07+0200\n"
+"PO-Revision-Date: 2019-09-02 12:35+0300\n"
 "Language: bg\n"
 "Language-Team: bg <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
+"Last-Translator: Kostadin Kolev <k_kolev1985@mail.bg>\n"
+"X-Generator: Poedit 2.2.3\n"
 
 #. Translators: the content of a message indicating a connection error
-#: bookworm/otau.py:77
+#: bookworm/otau.py:78
 msgid "We couldn't access the internet right now. Please try again later."
-msgstr ""
+msgstr "В момента нямаме достъп до интернет. Моля, опитайте отново по-късно."
 
 #. Translators: the title of a message indicating a connection error
 #. Translators: the title of a message indicating a failure in downloading an
 #. update
-#: bookworm/otau.py:79 bookworm/otau.py:151
+#: bookworm/otau.py:80 bookworm/otau.py:151
 msgid "Network Error"
-msgstr ""
+msgstr "Мрежова грешка"
 
 #. Translators: the content of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:91
+#: bookworm/otau.py:92
 msgid ""
-"We have faced a technical problem while checking for updates. Please try "
-"again later."
+"We have faced a technical problem while checking for updates. Please try again "
+"later."
 msgstr ""
+"Сблъскахме се с технически проблем, докато проверяваме за обновления. Моля, "
+"опитайте отново по-късно."
 
 #. Translators: the title of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:95
+#: bookworm/otau.py:96
 msgid "Error Checking For Updates"
-msgstr ""
+msgstr "Грешка при проверката за обновления"
 
 #. Translators: the content of a message indicating that there is no new
 #. version
-#: bookworm/otau.py:106
+#: bookworm/otau.py:107
 msgid ""
 "Congratulations, you have already got the latest version of Bookworm.\n"
-"We are working day and night on making Bookworm better. The next version "
-"of Bookworm is on its way, so wait for it. Rest assured, we will notify "
-"you when it is released."
+"We are working day and night on making Bookworm better. The next version of "
+"Bookworm is on its way, so wait for it. Rest assured, we will notify you when "
+"it is released."
 msgstr ""
+"Поздравления, вие разполагате с най-новата версия на Bookworm.\n"
+"Работим денонощно, за да направим Bookworm по-добра. Следващата версия на "
+"Bookworm е на път, така че бъдете търпеливи. Не се притеснявайте – ние ще ви "
+"уведомим, когато бъде издадена."
 
 #. Translators: the title of a message indicating that there is no new version
-#: bookworm/otau.py:113
+#: bookworm/otau.py:114
 msgid "No Update"
-msgstr ""
+msgstr "Няма обновления"
 
 #. Translators: the content of a message indicating the availability of an
 #. update
-#: bookworm/otau.py:121
+#: bookworm/otau.py:122
 msgid ""
 "A new update for Bookworm has been released.\n"
 "Would you like to download and install it?\n"
 "\tInstalled Version: {current}\n"
 "\tNew Version: {new}\n"
 msgstr ""
+"Налично е обновление за Bookworm.\n"
+"Желаете ли да го изтеглите и инсталирате?\n"
+"\tИнсталирана версия: {current}\n"
+"\tНова версия: {new}\n"
 
 #. Translators: the title of a message indicating the availability of an update
-#: bookworm/otau.py:128
+#: bookworm/otau.py:129
 msgid "Update Available"
-msgstr ""
+msgstr "Налично е обновление"
 
 #. Translators: the content of a message indicating a failure in downloading an
 #. update
@@ -81,139 +92,140 @@ msgid ""
 "A network error was occured when trying to download the update.\n"
 "Make sure you are connected to the internet, or try again at a later time."
 msgstr ""
+"Възникна мрежова грешка при опита за изтегляне на обновлението.\n"
+"Уверете се, че сте свързани с интернет или опитайте отново по-късно."
 
 #. Translators: the title of a message indicating the progress of downloading
 #. an update
 #: bookworm/otau.py:158
 msgid "Downloading Update"
-msgstr ""
+msgstr "Сваляне на обновлението"
 
 #. Translators: a message indicating the progress of downloading an update
 #. bundle
 #: bookworm/otau.py:160
 msgid "Downloading {url}:"
-msgstr ""
+msgstr "Сваляне на {url}:"
 
 #. Translators: a message indicating the progress of downloading an update
 #. bundle
 #: bookworm/otau.py:167
 msgid "Downloading. {downloaded} MB of {total} MB"
-msgstr ""
+msgstr "Сваляне: {downloaded} МБ от {total} МБ"
 
 #. Translators: the content of a message indicating a corrupted file
-#: bookworm/otau.py:183
+#: bookworm/otau.py:182
 msgid ""
 "The update file has been downloaded, but it has been corrupted during "
 "download.\n"
 "Would you like to download the update file again?"
 msgstr ""
+"Файлът с обновлението е изтеглен, но е бил повреден по време на изтеглянето.\n"
+"Желаете ли да изтеглите отново файла с обновлението?"
 
 #. Translators: the title of a message indicating a corrupted file
-#: bookworm/otau.py:188
+#: bookworm/otau.py:187
 msgid "Download Error"
-msgstr ""
+msgstr "Грешка при свалянето"
 
 #. Translators: the content of a message indicating successful download of the
 #. update bundle
 #: bookworm/otau.py:199
 msgid ""
-"The update has been downloaded successfully, and it is ready to be "
-"installed.\n"
-"The application will be restarted in order to complete the update "
-"process.\n"
+"The update has been downloaded successfully, and it is ready to be installed.\n"
+"The application will be restarted in order to complete the update process.\n"
 "Click the OK button to continue."
 msgstr ""
+"Обновлението е изтеглено успешно и е готово за инсталиране.\n"
+"Приложението ще бъде рестартирано, за да завърши процеса по обновяването.\n"
+"Задействайте бутона \"OK\", за да продължите."
 
 #. Translators: the title of a message indicating successful download of the
 #. update bundle
 #: bookworm/otau.py:205
 msgid "Download Completed"
-msgstr ""
-
-#. Translators: the title of a message shown when extracting an update bundle
-#: bookworm/otau.py:210
-msgid "Extracting Update Bundle"
-msgstr ""
-
-#. Translators: a message shown when extracting an update bundle
-#: bookworm/otau.py:212
-msgid "Please wait..."
-msgstr ""
+msgstr "Свалянето завърши"
 
 #. Translators: the name of a built-in voice profile
 #: bookworm/config/spec.py:52
 msgid "Expressive"
-msgstr ""
+msgstr "Изразителен"
 
 #. Translators: the name of a built-in voice profile
 #: bookworm/config/spec.py:63
 msgid "Deep Reading"
-msgstr ""
+msgstr "Дълбоко четене"
 
 #. Translators: the name of a built-in voice profile
 #: bookworm/config/spec.py:74
 msgid "Hazy"
-msgstr ""
+msgstr "Неясен"
 
 #. Translators: the name of a document file format
 #: bookworm/document_formats/mu/__init__.py:26
 msgid "Portable Document (PDF)"
-msgstr ""
+msgstr "Преносим формат за документи (PDF)"
 
 #. Translators: the name of a document file format
 #: bookworm/document_formats/mu/__init__.py:147
 msgid "Electronic Publication (EPUB)"
-msgstr ""
+msgstr "Електронна публикация (EPUB)"
 
 #. Translators: the lable of the OK button in a dialog
 #: bookworm/gui/components.py:77 bookworm/gui/components.py:117
 #: bookworm/gui/preferences_dialog.py:497
 msgid "OK"
-msgstr ""
+msgstr "Добре"
 
 #. Translators: the lable of the cancel button in a dialog
 #: bookworm/gui/components.py:80 bookworm/gui/components.py:120
 #: bookworm/gui/preferences_dialog.py:500
 msgid "Cancel"
-msgstr ""
+msgstr "Отказ"
 
 #. Translators: the title of the file associations dialog
 #: bookworm/gui/preferences_dialog.py:40
 msgid "Bookworm File Associations"
-msgstr ""
+msgstr "Асоцииране на файлове с Bookworm"
 
 #: bookworm/gui/preferences_dialog.py:52
 msgid ""
 "This dialog will help you to setup file associations.\n"
-"Associating files with Bookworm means that when you click on a file in "
-"windows explorer, it will be opend in Bookworm by default "
+"Associating files with Bookworm means that when you click on a file in windows "
+"explorer, it will be opend in Bookworm by default "
 msgstr ""
+"Този прозорец ще ви помогне да настроите файловите асоциации.\n"
+"Асоциирането на файлове с Bookworm означава, че когато натиснете ENTER върху "
+"файл в Windows Explorer, той по подразбиране ще бъде отворен с Bookworm. "
 
 #. Translators: the main label of a button
 #: bookworm/gui/preferences_dialog.py:61
 msgid "Associate all"
-msgstr ""
+msgstr "Асоциирай всички"
 
 #. Translators: the note of a button
 #: bookworm/gui/preferences_dialog.py:63
 msgid "Use Bookworm to open all supported ebook formats"
 msgstr ""
+"Използвай Bookworm за отваряне на всички поддържани формати за електронни книги"
 
 #. Translators: the main label of a button
 #. Translators: the note of a button
 #: bookworm/gui/preferences_dialog.py:69
 msgid "Associate files with {ext} extension so they always open in Bookworm"
 msgstr ""
+"Асоциирай файлове с разширение {ext}, така че те винаги да се отварят с "
+"Bookworm"
 
 #. Translators: the main label of a button
 #: bookworm/gui/preferences_dialog.py:76
 msgid "Dissociate all supported file types"
-msgstr ""
+msgstr "Деасоциирай всички поддържани типове файлове"
 
 #. Translators: the note of a button
 #: bookworm/gui/preferences_dialog.py:78
 msgid "Unregister previously associated file types"
-msgstr ""
+msgstr "Дерегистрирай асоциираните преди това типове файлове"
 
 #. Translators: the label of a button to close the dialog
 #: bookworm/gui/book_viewer/annotation_dialogs.py:107
@@ -221,300 +233,303 @@ msgstr ""
 #: bookworm/gui/book_viewer/core_dialogs.py:334
 #: bookworm/gui/preferences_dialog.py:85
 msgid "&Close"
-msgstr ""
+msgstr "&Затвори"
 
 #. Translators: the text of a message indicating successful file association
 #: bookworm/gui/preferences_dialog.py:95
 msgid "Files of type {format} have been associated with Bookworm."
-msgstr ""
+msgstr "Файлове от тип {format} бяха асоциирани с Bookworm."
 
 #. Translators: the title of a message indicating successful file association
 #. Translators: the title of a message indicating successful removal of file
 #. association
 #: bookworm/gui/preferences_dialog.py:97 bookworm/gui/preferences_dialog.py:113
 msgid "Success"
-msgstr ""
+msgstr "Успех"
 
 #. Translators: the text of a message indicating successful removal of file
 #. associations
 #: bookworm/gui/preferences_dialog.py:106
 msgid "All supported file types have been set to open by default in Bookworm."
 msgstr ""
+"Всички поддържани типове файлове бяха зададени да се отварят по подразбиране с "
+"Bookworm."
 
 #. Translators: the text of a message indicating successful removal of file
 #. associations
 #: bookworm/gui/preferences_dialog.py:109
 msgid "All registered file associations have been removed."
-msgstr ""
+msgstr "Всички регистрирани файлови асоциации бяха премахнати."
 
 #. Translators: the title of a group of controls in the
 #. general settings page related to the UI
 #: bookworm/gui/preferences_dialog.py:186
 msgid "User Interface"
-msgstr ""
+msgstr "Потребителски интерфейс"
 
 #. Translators: the label of a combobox containing display languages.
 #: bookworm/gui/preferences_dialog.py:189
 msgid "Display Language:"
-msgstr ""
+msgstr "Език на показване:"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/preferences_dialog.py:196
 msgid "Speak user interface messages"
-msgstr ""
+msgstr "Изговаряй съобщенията от потребителския интерфейс"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/preferences_dialog.py:203
 msgid "Open recently opened books from the last position"
-msgstr ""
+msgstr "Отваряй книгите от хронологията от последната позиция"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/preferences_dialog.py:210
 msgid "Use file name instead of book title"
-msgstr ""
+msgstr "Използвай името на файла вместо заглавието на книгата"
 
 #. Translators: the title of a group of controls shown in the
 #. general settings page related to miscellaneous settings
 #: bookworm/gui/preferences_dialog.py:215
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Разни"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/preferences_dialog.py:221
 msgid "Play pagination sound"
-msgstr ""
+msgstr "Възпроизвеждай звук при прелистване на страница"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/preferences_dialog.py:228
 msgid "Play a sound when the current page contains notes"
-msgstr ""
+msgstr "Възпроизвеждай звук, когато текущата страница съдържа бележки"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/preferences_dialog.py:235
 msgid "Highlight bookmarked positions"
-msgstr ""
+msgstr "Осветявай местата с показалци"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/preferences_dialog.py:242
 msgid "Automatically check for updates"
-msgstr ""
+msgstr "Автоматично проверявай за обновления"
 
 #. Translators: the title of a group of controls shown in the
 #. general settings page related to file associations
 #: bookworm/gui/preferences_dialog.py:247
 msgid "File Associations"
-msgstr ""
+msgstr "Файлови асоциации"
 
 #. Translators: the label of a button
 #: bookworm/gui/preferences_dialog.py:253
 msgid "Manage File &Associations"
-msgstr ""
+msgstr "Управление на файловите &асоциации"
 
 #. Translators: the content of a message asking the user to restart
 #: bookworm/gui/preferences_dialog.py:274
 msgid ""
 "You have changed the display language of Bookworm.\n"
-"For this setting to fully take effect, you need to restart the "
-"application.\n"
+"For this setting to fully take effect, you need to restart the application.\n"
 "Would you like to restart the application right now?"
 msgstr ""
+"Променихте езика на показване за Bookworm.\n"
+"За да влезе в сила тази настройка, трябва да рестартирате приложението.\n"
+"Желаете ли да рестартирате приложението сега?"
 
 #. Translators: the title of a message telling the user
 #. that the display language have been changed
 #: bookworm/gui/preferences_dialog.py:281
 msgid "Language Changed"
-msgstr ""
+msgstr "Езикът е променен"
 
 #. Translators: the label of a group of controls in the
 #. speech settings page related to voice selection
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/toolbar.py:111
-#: bookworm/gui/preferences_dialog.py:301
+#: bookworm/gui/book_viewer/toolbar.py:111 bookworm/gui/preferences_dialog.py:301
 msgid "Voice"
-msgstr ""
+msgstr "Глас"
 
 #. Translators: the label of a combobox containing a list of tts voices
 #: bookworm/gui/preferences_dialog.py:305
 msgid "Select Voice:"
-msgstr ""
+msgstr "Избор на глас:"
 
 #. Translators: the label of the speech rate slider
 #: bookworm/gui/preferences_dialog.py:308
 msgid "Speech Rate:"
-msgstr ""
+msgstr "Скорост на речта:"
 
 #. Translators: the label of the speech volume slider
 #: bookworm/gui/preferences_dialog.py:312
 msgid "Speech Volume:"
-msgstr ""
+msgstr "Сила на звука на речта:"
 
 #. Translators: the label of a group of controls in the speech
 #. settings page related to speech pauses
 #: bookworm/gui/preferences_dialog.py:317
 msgid "Pauses"
-msgstr ""
+msgstr "Паузи"
 
 #. Translators: the label of an edit field
 #: bookworm/gui/preferences_dialog.py:321
 msgid "Additional Pause At Sentence End (Ms)"
-msgstr ""
+msgstr "Допълнителна пауза в края на изречението (мсек)"
 
 #. Translators: the label of an edit field
 #: bookworm/gui/preferences_dialog.py:326
 msgid "Additional Pause At Paragraph End (Ms)"
-msgstr ""
+msgstr "Допълнителна пауза в края на абзаца (мсек)"
 
 #. Translators: the label of an edit field
 #: bookworm/gui/preferences_dialog.py:331
 msgid "End of Page Pause (ms)"
-msgstr ""
+msgstr "Пауза в края на страницата (мсек)"
 
 #. Translators: the label of an edit field
 #: bookworm/gui/preferences_dialog.py:340
 msgid "End of Section Pause (ms)"
-msgstr ""
+msgstr "Пауза в края на раздела (мсек)"
 
 #: bookworm/gui/preferences_dialog.py:373
 msgid "When Pressing Play:"
-msgstr ""
+msgstr "При задействане на командата за възпроизвеждане:"
 
 #. Translators: the label of a radio button
 #: bookworm/gui/preferences_dialog.py:378
 msgid "Read the entire book"
-msgstr ""
+msgstr "Прочети цялата книга"
 
 #. Translators: the label of a radio button
 #: bookworm/gui/preferences_dialog.py:380
 msgid "Read the current section"
-msgstr ""
+msgstr "Прочети текущия раздел"
 
 #. Translators: the label of a radio button
 #: bookworm/gui/preferences_dialog.py:382
 msgid "Read the current page"
-msgstr ""
+msgstr "Прочети текущата страница"
 
 #: bookworm/gui/preferences_dialog.py:390
 msgid "Start reading from:"
-msgstr ""
+msgstr "Започни да четеш от:"
 
 #. Translators: the label of a radio button
 #: bookworm/gui/preferences_dialog.py:394
 msgid "Cursor position"
-msgstr ""
+msgstr "Позицията на курсора"
 
 #: bookworm/gui/preferences_dialog.py:394
 msgid "Beginning of page"
-msgstr ""
+msgstr "Началото на страницата"
 
 #. Translators: the label of a group of controls in the reading page
 #. of the settings related to behavior during reading  aloud
 #: bookworm/gui/preferences_dialog.py:398
 msgid "During Reading Aloud"
-msgstr ""
+msgstr "По време на четенето на глас"
 
 #: bookworm/gui/preferences_dialog.py:402
 msgid "Speak page number"
-msgstr ""
+msgstr "Изговаряй номера на страницата"
 
 #: bookworm/gui/preferences_dialog.py:408
 msgid "Highlight spoken text"
-msgstr ""
+msgstr "Осветявай изговаряния текст"
 
 #: bookworm/gui/preferences_dialog.py:415
 msgid "Select spoken text"
-msgstr ""
+msgstr "Маркирай изговаряния текст"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/preferences_dialog.py:422
 msgid "Play end of section sound"
-msgstr ""
+msgstr "Възпроизвеждай звук в края на раздела"
 
 #. Translators: the label of a page in the settings dialog
 #: bookworm/gui/preferences_dialog.py:458
 msgid "General"
-msgstr ""
+msgstr "Общи"
 
 #. Translators: the label of a page in the settings dialog
 #: bookworm/gui/preferences_dialog.py:460
 msgid "Speech"
-msgstr ""
+msgstr "Реч"
 
 #. Translators: the label of a page in the settings dialog
 #: bookworm/gui/preferences_dialog.py:462
 msgid "Reading"
-msgstr ""
+msgstr "Четене"
 
 #. Translators: the lable of the apply button in a dialog
 #: bookworm/gui/preferences_dialog.py:502
 msgid "Apply"
-msgstr ""
+msgstr "Приложи"
 
 #. Translators: the label of the table-of-contents tree
 #: bookworm/gui/book_viewer/__init__.py:43
 msgid "Table of Contents"
-msgstr ""
+msgstr "Съдържание"
 
 #. Translators: the label of the text area which shows the
 #. content of the current page
 #: bookworm/gui/book_viewer/__init__.py:55
 msgid "Content"
-msgstr ""
+msgstr "Съдържание на страницата"
 
 #. Translators: the text of the status bar when no book is currently open.
 #. It is being used also as a label for the page content text area when no book
 #. is opened.
 #: bookworm/gui/book_viewer/__init__.py:104
 msgid "Press (Ctrl + O) to open an ebook"
-msgstr ""
+msgstr "Натиснете (Control+O), за да отворите електронна книга"
 
 #. Translators: a message telling the user that the font size has been
 #. increased
 #: bookworm/gui/book_viewer/__init__.py:167
 msgid "The font size has been Increased"
-msgstr ""
+msgstr "Размерът на шрифта е увеличен"
 
 #. Translators: a message telling the user that the font size has been
 #. decreased
 #: bookworm/gui/book_viewer/__init__.py:173
 msgid "The font size has been decreased"
-msgstr ""
+msgstr "Размерът на шрифта е намален"
 
 #. Translators: a message telling the user that the font size has been reset
 #: bookworm/gui/book_viewer/__init__.py:177
 msgid "The font size has been reset"
-msgstr ""
+msgstr "Размерът на шрифта е нулиран"
 
 #: bookworm/gui/book_viewer/annotation_dialogs.py:69
 msgid "Bookmarks"
-msgstr ""
+msgstr "Показалци"
 
 #: bookworm/gui/book_viewer/annotation_dialogs.py:69
 msgid "Notes"
-msgstr ""
+msgstr "Бележки"
 
 #. Translators: the label of a button to view the selected note
 #: bookworm/gui/book_viewer/annotation_dialogs.py:78
 msgid "&View"
-msgstr ""
+msgstr "&Преглед"
 
 #. Translators: the label of a button to edit the current note
 #. Translators: the label of a button to edit a voice profile
 #: bookworm/gui/book_viewer/annotation_dialogs.py:80
 #: bookworm/gui/book_viewer/core_dialogs.py:326
 msgid "&Edit..."
-msgstr ""
+msgstr "&Редактирай..."
 
 #. Translators: the label of a button to remove the selected note
 #. Translators: the label of a button to remove a voice profile
 #: bookworm/gui/book_viewer/annotation_dialogs.py:82
 #: bookworm/gui/book_viewer/core_dialogs.py:328
 msgid "&Remove"
-msgstr ""
+msgstr "&Премахни"
 
 #. Translators: the title of a column in the bookmarks list
 #: bookworm/gui/book_viewer/annotation_dialogs.py:115
 msgid "Title"
-msgstr ""
+msgstr "Заглавие"
 
 #. Translators: the title of a column in the bookmarks list
 #. Translators: the title of a column in the search results list
@@ -524,7 +539,7 @@ msgstr ""
 #: bookworm/gui/book_viewer/core_dialogs.py:32
 #: bookworm/gui/book_viewer/core_dialogs.py:222
 msgid "Page"
-msgstr ""
+msgstr "Страница"
 
 #. Translators: the title of a column in the bookmarks list
 #. Translators: the title of a column in the search results list
@@ -532,7 +547,7 @@ msgstr ""
 #: bookworm/gui/book_viewer/annotation_dialogs.py:127
 #: bookworm/gui/book_viewer/core_dialogs.py:46
 msgid "Section"
-msgstr ""
+msgstr "Раздел"
 
 #. Translators: the content of a message asking the user to delete a bookmark
 #: bookworm/gui/book_viewer/annotation_dialogs.py:199
@@ -540,81 +555,83 @@ msgid ""
 "This action can not be reverted.\r\n"
 "Are you sure you want to continue?"
 msgstr ""
+"Това действие не може да бъде отменено.\r\n"
+"Сигурни ли сте, че желаете да продължите?"
 
 #. Translators: the title of a message asking the user to delete a bookmark
 #: bookworm/gui/book_viewer/annotation_dialogs.py:203
 msgid "Remove Entry?"
-msgstr ""
+msgstr "Премахване на записа?"
 
 #. Translators: the title of a dialog to view the selected note
 #: bookworm/gui/book_viewer/annotation_dialogs.py:247
 msgid "View Note..."
-msgstr ""
+msgstr "Преглед на бележка..."
 
 #. Translators: the title of a dialog to create a new note
 #: bookworm/gui/book_viewer/annotation_dialogs.py:250
 msgid "Take A Note..."
-msgstr ""
+msgstr "Създаване на бележка..."
 
 #. Translators: the title of a dialog to edit the selected note
 #: bookworm/gui/book_viewer/annotation_dialogs.py:253
 msgid "Edit Note..."
-msgstr ""
+msgstr "Редактиране на бележка..."
 
 #. Translators: the label of an edit field
 #: bookworm/gui/book_viewer/annotation_dialogs.py:259
 msgid "Note Title:"
-msgstr ""
+msgstr "Заглавие на бележката:"
 
 #. Translators: the label of an edit field
 #: bookworm/gui/book_viewer/annotation_dialogs.py:262
 msgid "Note Content:"
-msgstr ""
+msgstr "Съдържание на бележката:"
 
 #. Translators: the title of a message telling the user that the field is empty
 #: bookworm/gui/book_viewer/annotation_dialogs.py:295
 msgid "Empty fields are present. Please make sure you have filled-in all fields."
-msgstr ""
+msgstr "Има празни полета. Моля, уверете се, че сте попълнили всички полета."
 
 #. Translators: the title of a message dialog
 #: bookworm/gui/book_viewer/annotation_dialogs.py:299
 msgid "Cannot Save Note"
-msgstr ""
+msgstr "Бележката не може да бъде запазена"
 
 #. Translators: the label of a radio button
 #: bookworm/gui/book_viewer/annotation_dialogs.py:329
 msgid "Whole Book"
-msgstr ""
+msgstr "Цялата книга"
 
 #: bookworm/gui/book_viewer/annotation_dialogs.py:329
 msgid "Current Section"
-msgstr ""
+msgstr "Текущият раздел"
 
 #. Translators: the title of a group of radio buttons in the Export Notes
 #. dialog
 #: bookworm/gui/book_viewer/annotation_dialogs.py:335
 msgid "Export Range"
-msgstr ""
+msgstr "Обхват на съдържанието за експортиране"
 
 #. Translators: the label of a combobox of available export formats
 #: bookworm/gui/book_viewer/annotation_dialogs.py:341
 msgid "Output format:"
-msgstr ""
+msgstr "Изходен формат:"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/book_viewer/annotation_dialogs.py:347
 msgid "Open file after exporting"
-msgstr ""
+msgstr "Отвори файла след експортирането"
 
 #. Translators: the label of a button in the Export Notes dialog
 #: bookworm/gui/book_viewer/annotation_dialogs.py:360
 msgid "&Export"
-msgstr ""
+msgstr "&Експортирай"
 
 #. Translators: the label of a button to cancel the current action
 #: bookworm/gui/book_viewer/annotation_dialogs.py:364
 msgid "&Cancel"
-msgstr ""
+msgstr "&Отказ"
 
 #. Translators: the content of a message dialog
 #: bookworm/gui/book_viewer/annotation_dialogs.py:382
@@ -623,170 +640,175 @@ msgid ""
 "Please make sure you have added some notes before using the export "
 "functionality."
 msgstr ""
+"Няма бележки за тази книга или избрания раздел.\n"
+"Моля, уверете се, че сте добавили поне една бележка, преди да използвате "
+"функцията за експортиране."
 
 #. Translators: the title of a message dialog
 #: bookworm/gui/book_viewer/annotation_dialogs.py:387
 msgid "No Notes"
-msgstr ""
+msgstr "Няма бележки"
 
 #. Translators: the title of a save file dialog asking the user for a filename
 #. to export notes to
 #: bookworm/gui/book_viewer/annotation_dialogs.py:395
 msgid "Export To"
-msgstr ""
+msgstr "Експортиране в"
 
 #. Translators: the content of a message telling the user that the file name is
 #. invalid
 #: bookworm/gui/book_viewer/annotation_dialogs.py:410
 msgid ""
-"The provided file name is not valid. Please try again with a different "
-"name."
+"The provided file name is not valid. Please try again with a different name."
 msgstr ""
+"Предоставеното име на файл не е валидно. Моля, опитайте отново с друго име."
 
 #. Translators: the title of a message telling the user that the provided file
 #. name is invalid
 #: bookworm/gui/book_viewer/annotation_dialogs.py:414
 msgid "Invalid File Name"
-msgstr ""
+msgstr "Невалидно име на файла"
 
 #. Translators: the label of a list of search results
 #: bookworm/gui/book_viewer/core_dialogs.py:28
 msgid "Search Results"
-msgstr ""
+msgstr "Резултати от търсенето"
 
 #. Translators: the title of a column in the search results list showing
 #. an excerpt of the text of the search result
 #: bookworm/gui/book_viewer/core_dialogs.py:39
 msgid "Text"
-msgstr ""
+msgstr "Текст"
 
 #. Translators: the label of a progress bar indicating the progress of the
 #. search process
 #: bookworm/gui/book_viewer/core_dialogs.py:54
 msgid "Search Progress:"
-msgstr ""
+msgstr "Напредък на търсенето:"
 
 #. Translators: the label of a button to close the dialog
 #. Translators: the label of an edit field in the search dialog
 #: bookworm/gui/book_viewer/core_dialogs.py:99
 msgid "Search term:"
-msgstr ""
+msgstr "Критерий за търсене:"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/book_viewer/core_dialogs.py:104
 msgid "Case sensitive"
-msgstr ""
+msgstr "Зачитай главни/малки букви"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/book_viewer/core_dialogs.py:106
 msgid "Match whole word only"
-msgstr ""
+msgstr "Съвпадение само на цели думи"
 
 #. Translators: the title of a group of controls in the search dialog
 #: bookworm/gui/book_viewer/core_dialogs.py:108
 msgid "Search Range"
-msgstr ""
+msgstr "Обхват на търсенето"
 
 #. Translators: the label of a radio button in the search dialog
 #: bookworm/gui/book_viewer/core_dialogs.py:111
 msgid "Page Range"
-msgstr ""
+msgstr "Обхват на страниците"
 
 #. Translators: the label of an edit field in the search dialog
 #. to enter the page from which the search will start
 #: bookworm/gui/book_viewer/core_dialogs.py:115
 msgid "From:"
-msgstr ""
+msgstr "От:"
 
 #. Translators: the label of an edit field in the search dialog
 #. to enter the page number at which the search will stop
 #: bookworm/gui/book_viewer/core_dialogs.py:119
 msgid "To:"
-msgstr ""
+msgstr "До:"
 
 #. Translators: the label of a radio button in the search dialog
 #: bookworm/gui/book_viewer/core_dialogs.py:132
 msgid "Specific section"
-msgstr ""
+msgstr "Конкретен раздел"
 
 #. Translators: the label of a combobox in the search dialog
 #. to choose the section to which the search will be confined
 #: bookworm/gui/book_viewer/core_dialogs.py:135
 msgid "Select section:"
-msgstr ""
+msgstr "Избор на раздел:"
 
 #: bookworm/gui/book_viewer/core_dialogs.py:195
 msgid "Page number, of {total}:"
-msgstr ""
+msgstr "Номер на страница (от общо {total}):"
 
 #: bookworm/gui/book_viewer/core_dialogs.py:266
 msgid "Zoom is at {factor} percent"
-msgstr ""
+msgstr "Мащабирането е на {factor} процента"
 
 #. Translators: the title of a dialog to edit a voice profile
 #: bookworm/gui/book_viewer/core_dialogs.py:297
 msgid "Voice Profile: {profile}"
-msgstr ""
+msgstr "Гласов профил: {profile}"
 
 #. Translators: the label of a combobox to select a voice profile
 #: bookworm/gui/book_viewer/core_dialogs.py:318
 msgid "Select Voice Profile:"
-msgstr ""
+msgstr "Избор на гласов профил:"
 
 #. Translators: the label of a button to activate a voice profile
 #: bookworm/gui/book_viewer/core_dialogs.py:324
 msgid "&Activate"
-msgstr ""
+msgstr "&Активирай"
 
 #. Translators: the label of a button to create a new voice profile
 #: bookworm/gui/book_viewer/core_dialogs.py:330
 msgid "&New Profile..."
-msgstr ""
+msgstr "&Нов профил..."
 
 #. Translators: the entry of the active voice profile in the voice profiles
 #. list
 #: bookworm/gui/book_viewer/core_dialogs.py:364
 msgid "{profile} (active)"
-msgstr ""
+msgstr "{profile} (активен)"
 
 #. Translators: the label of an edit field to enter the voice profile name
 #: bookworm/gui/book_viewer/core_dialogs.py:412
 msgid "Profile Name:"
-msgstr ""
+msgstr "Име на профила:"
 
 #. Translators: the title of a dialog to enter the name of a new voice profile
 #: bookworm/gui/book_viewer/core_dialogs.py:414
 msgid "New Voice Profile"
-msgstr ""
+msgstr "Нов гласов профил"
 
 #. Translators: the content of a message notifying the user
 #. user of the existance of a voice profile with the same name
 #: bookworm/gui/book_viewer/core_dialogs.py:426
 msgid ""
-"A voice profile with the same name already exists. Please select another "
-"name."
-msgstr ""
+"A voice profile with the same name already exists. Please select another name."
+msgstr "Гласов профил със същото име вече съществува. Моля, изберете друго име."
 
 #. Translators: the title of a message telling the user that an error has
 #. occurred
 #: bookworm/gui/book_viewer/core_dialogs.py:430
 msgid "Error"
-msgstr ""
+msgstr "Грешка"
 
 #. Translators: the content of a message telling the user that the voice
 #. profile he is removing is the active one
 #: bookworm/gui/book_viewer/core_dialogs.py:452
 msgid ""
 "Voice profile {profile} is the active profile.\n"
-"Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
-"menu item from the speech menu."
+"Please deactivate it first by clicking 'Deactivate Active Voice Profile` menu "
+"item from the speech menu."
 msgstr ""
+"Гласовият профил {profile} е текущо активният профил.\n"
+"Моля, първо го деактивирайте, като задействате командата \"Деактивирай "
+"активния гласов профил\" в менюто \"Реч\"."
 
 #. Translators: the title of a message telling the user that
 #. it is not possible to remove this voice profile
 #: bookworm/gui/book_viewer/core_dialogs.py:459
 msgid "Cannot Remove Profile"
-msgstr ""
+msgstr "Профилът не може да се премахне"
 
 #. Translators: the title of a message to confirm the removal of the voice
 #. profile
@@ -795,37 +817,39 @@ msgid ""
 "Are you sure you want to remove voice profile {profile}?\n"
 "This cannot be undone."
 msgstr ""
+"Сигурни ли сте, че желаете да изтриете гласовия профил {profile}?\n"
+"Това действие не може да бъде отменено."
 
 #. Translators: the title of a message to confirm the removal of a voice
 #. profile
 #: bookworm/gui/book_viewer/core_dialogs.py:470
 msgid "Remove Voice Profile?"
-msgstr ""
+msgstr "Премахване на гласов профил?"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:36
 msgid "Open"
-msgstr ""
+msgstr "Отвори"
 
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:39
 msgid "Open an e-book"
-msgstr ""
+msgstr "Отваряне на електронна книга"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:45
 msgid "Search"
-msgstr ""
+msgstr "Търсене"
 
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:48
 msgid "Search e-book"
-msgstr ""
+msgstr "Търсене в електронната книга"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:53
 msgid "Go"
-msgstr ""
+msgstr "Отиване до"
 
 #. Translators: the help text of a button in the application toolbar
 #. Translators: the help text of an ietm in the application menubar
@@ -833,106 +857,106 @@ msgstr ""
 #: bookworm/gui/book_viewer/menubar/__init__.py:737
 #: bookworm/gui/book_viewer/toolbar.py:56
 msgid "Go to page"
-msgstr ""
+msgstr "Отиване на страница"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:61
 msgid "View"
-msgstr ""
+msgstr "Визуализация"
 
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:64
 msgid "View a fully rendered version of this page"
-msgstr ""
+msgstr "Визуализация на точно представяне на тази страница"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:70
 msgid "Bookmark"
-msgstr ""
+msgstr "Показалец"
 
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:73
 msgid "Add bookmark"
-msgstr ""
+msgstr "Добавяне на показалец"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:78
 msgid "Note"
-msgstr ""
+msgstr "бележка"
 
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:81
 msgid "Add note"
-msgstr ""
+msgstr "Добавяне на бележка"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:87
 msgid "Rewind"
-msgstr ""
+msgstr "Превъртане назад"
 
 #. Translators: the help text of a button in the application toolbar
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:181
 #: bookworm/gui/book_viewer/toolbar.py:90
 msgid "Skip to previous paragraph"
-msgstr ""
+msgstr "Преминаване към предишния абзац"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:95
 msgid "Play"
-msgstr ""
+msgstr "Възпроизвеждане"
 
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:98
 msgid "Play/Resume"
-msgstr ""
+msgstr "Възпроизвеждане/Възобновяване"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:103
 msgid "Fast Forward"
-msgstr ""
+msgstr "Превъртане напред"
 
 #. Translators: the help text of a button in the application toolbar
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:188
 #: bookworm/gui/book_viewer/toolbar.py:106
 msgid "Skip to next paragraph"
-msgstr ""
+msgstr "Преминаване към следващия абзац"
 
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:114
 msgid "Customize TTS voice parameters."
-msgstr ""
+msgstr "Персонализиране на гласовите параметри на речевата машина"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:120
 msgid "Zoom out"
-msgstr ""
+msgstr "Намаляване"
 
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:123
 msgid "Make font smaller"
-msgstr ""
+msgstr "Намаляване на размера на шрифта"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:128
 msgid "Zoom in"
-msgstr ""
+msgstr "Увеличаване"
 
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:131
 msgid "Make font larger"
-msgstr ""
+msgstr "Увеличаване на размера на шрифта"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:137
 msgid "Preferences"
-msgstr ""
+msgstr "Настройки"
 
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:140
 msgid "Configure the application"
-msgstr ""
+msgstr "Конфигуриране на приложението"
 
 #. Translators: the content of the about message
 #: bookworm/gui/book_viewer/menubar/__init__.py:44
@@ -942,456 +966,483 @@ msgid ""
 "Version: {version}\n"
 "Website: {website}\n"
 "\n"
-"{name} is an accessible e-book reader that enables blind and visually "
-"impaired individuals to read e-books in an easy, accessible, and hassle-"
-"free manor. It is being developed by {author} with some contributions "
-"from the community.\n"
+"{name} is an accessible e-book reader that enables blind and visually impaired "
+"individuals to read e-books in an easy, accessible, and hassle-free manor. It "
+"is being developed by {author} with some contributions from the community.\n"
 "\n"
 "{copyright}\n"
 "This software is offered to you under the terms of The MIT license.\n"
 "You can view the license text from the help menu.\n"
 "\n"
 "As blind developers, our responsibility is to develop applications that "
-"provide independence for us, and for our fellow blind friends allover the"
-" world. So, if you've found Bookworm useful in any way, please help us in"
-" making Bookworm better for you and for others. At this initial stage, we"
-" want you to tell us about any errors you may encounter during your use "
-"of Bookworm. To do so, open a new issue with the details of the error at "
-"[the issue tracker](https://github.com/mush42/bookworm/issues/). Your "
-"help is greatly appreciated.\n"
+"provide independence for us, and for our fellow blind friends allover the "
+"world. So, if you've found Bookworm useful in any way, please help us in "
+"making Bookworm better for you and for others. At this initial stage, we want "
+"you to tell us about any errors you may encounter during your use of Bookworm. "
+"To do so, open a new issue with the details of the error at [the issue tracker]"
+"(https://github.com/mush42/bookworm/issues/). Your help is greatly "
+"appreciated.\n"
 "\n"
-"To keep yourself updated with the latest news about Bookworm, you can "
-"visit Bookworm's website at: ({website}). You can also follow the lead "
-"developer, {author}, at (@mush42) on Twitter\n"
+"To keep yourself updated with the latest news about Bookworm, you can visit "
+"Bookworm's website at: ({website}). You can also follow the lead developer, "
+"{author}, at (@mush42) on Twitter\n"
 msgstr ""
+"\n"
+"{name}\n"
+"Версия: {version}\n"
+"Уеб сайт: {website}\n"
+"\n"
+"{name} е достъпен четец на електронни книги, който дава възможност на "
+"незрящите и слабовиждащите личности да четат електронни книги по един лесен, "
+"достъпен и безпроблемен начин. Той се разработва от {author} с приноси от "
+"общността.\n"
+"\n"
+"{copyright}\n"
+"Този софтуер ви се предлага при условията на лиценза на MIT.\n"
+"Можете да прегледате лиценза от помощното меню.\n"
+"\n"
+"Като незрящи разработчици, нашата отговорност е да разработваме приложения, "
+"които осигуряват независимост за нас и за нашите незрящи познати и приятели по "
+"целия свят. Така че, ако за вас Bookworm е полезен по някакъв начин, моля, "
+"помогнете ни да направим Bookworm по-добър за вас и за другите. На този "
+"начален етап искаме да ни съобщавате за всички грешки, на които може да сте "
+"попаднали по време на работата ви с Bookworm. За целта създайте нов доклад с "
+"подробности за грешката в [портала за доклади](https://github.com/mush42/"
+"bookworm/issues/). Ценим високо вашата помощ.\n"
+"\n"
+"За да сте винаги информирани относно новостите около Bookworm, можете да "
+"посетите уебсайта на Bookworm на адрес: ({website}). Можете също така да "
+"следвате водещия разработчик – {author} – на адрес (@mush42) в Twitter\n"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:81
 msgid "Open...\tCtrl-O"
-msgstr ""
+msgstr "Отвори...\tCtrl-O"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:84
 msgid "&Save As Plain Text..."
-msgstr ""
+msgstr "&Запиши като обикновен текст..."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:89
 msgid "&Close Current Book\tCtrl-W"
-msgstr ""
+msgstr "&Затвори текущата книга\tCtrl-W"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:91
 msgid "Close the currently open e-book"
-msgstr ""
+msgstr "Затваряне на текущо отворената електронна книга"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:97
 msgid "&Recent Books"
-msgstr ""
+msgstr "&Скорошни книги"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:99
 msgid "Opens a list of recently opened books."
-msgstr ""
+msgstr "Извежда списък с наскоро отворени книги."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:104
 msgid "Clear list"
-msgstr ""
+msgstr "Изчисти списъка"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:106
 msgid "Clear the recent books list."
-msgstr ""
+msgstr "Изчистване на списъка с наскоро отваряните книги."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:110
 msgid "Exit"
-msgstr ""
+msgstr "Изход"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:115
 #: bookworm/gui/book_viewer/menubar/__init__.py:735
 msgid "&Go To Page...\tCtrl-G"
-msgstr ""
+msgstr "&Отиди на страница...\tCtrl-G"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:122
 #: bookworm/gui/book_viewer/menubar/__init__.py:742
 msgid "&Find in Book...\tCtrl-F"
-msgstr ""
+msgstr "&Намери в книгата...\tCtrl-F"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:124
 #: bookworm/gui/book_viewer/menubar/__init__.py:744
 msgid "Search this book."
-msgstr ""
+msgstr "Търсене в тази книга."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:129
 msgid "&Find &Next\tF3"
-msgstr ""
+msgstr "Намери &следващо\tF3"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:131
 msgid "Find next occurrence."
-msgstr ""
+msgstr "Намери следващото съвпадение."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:136
 msgid "&Find &Previous\tShift-F3"
-msgstr ""
+msgstr "Намери &предишно\tShift-F3"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:138
 msgid "Find previous occurrence."
-msgstr ""
+msgstr "Намери предишното съвпадение."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:143
 #: bookworm/gui/book_viewer/menubar/__init__.py:749
 msgid "&Render Page...\tCtrl-R"
-msgstr ""
+msgstr "&Точно представяне на страницата...\tCtrl-R"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:145
 #: bookworm/gui/book_viewer/menubar/__init__.py:751
 msgid "View a fully rendered version of this page."
-msgstr ""
+msgstr "Визуализация на точно представяне на тази страница."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:150
 msgid "&Preferences...\tCtrl-Shift-P"
-msgstr ""
+msgstr "&Настройки...\tCtrl-Shift-P"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:152
 msgid "Configure application"
-msgstr ""
+msgstr "Конфигуриране на приложението"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:158
 msgid "&Play\tF5"
-msgstr ""
+msgstr "&Възпроизвеждане\tF5"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:160
 msgid "Start reading aloud"
-msgstr ""
+msgstr "Започни четенето на глас"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:165
 msgid "Pa&use/Resume\tF6"
-msgstr ""
+msgstr "&Пауза/Възобновяване\tF6"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:167
 msgid "Pause/Resume reading aloud"
-msgstr ""
+msgstr "Поставяне на пауза/възобновяване на четенето на глас"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:172
 msgid "&Stop\tF7"
-msgstr ""
+msgstr "&Спиране\tF7"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:174
 msgid "Stop reading aloud"
-msgstr ""
+msgstr "Спиране на четенето на глас"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:179
 msgid "&Rewind\tAlt-LeftArrow"
-msgstr ""
+msgstr "Превъртане на&зад\tAlt-LeftArrow"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:186
 msgid "&Fast Forward\tAlt-RightArrow"
-msgstr ""
+msgstr "Превъртане на&пред\tAlt-RightArrow"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:193
 msgid "&Voice Profiles\tCtrl-Shift-V"
-msgstr ""
+msgstr "&Гласови профили\tCtrl-Shift-V"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:195
 msgid "Manage voice profiles."
-msgstr ""
+msgstr "Управление на гласовите профили."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:200
 msgid "&Deactivate Active Voice Profile"
-msgstr ""
+msgstr "&Деактивирай активния гласов профил"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:202
 msgid "Deactivate the active voice profile."
-msgstr ""
+msgstr "Деактивирай активния гласов профил."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:208
 #: bookworm/gui/book_viewer/menubar/__init__.py:721
 msgid "Add &Bookmark...\tCtrl-B"
-msgstr ""
+msgstr "Добави по&казалец...\tCtrl-B"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:210
 #: bookworm/gui/book_viewer/menubar/__init__.py:723
 msgid "Bookmark the current location"
-msgstr ""
+msgstr "Поставяне на показалец на текущата позиция"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:215
 #: bookworm/gui/book_viewer/menubar/__init__.py:728
 msgid "Take &Note...\tCtrl-N"
-msgstr ""
+msgstr "Създай беле&жка...\tCtrl-N"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:217
 #: bookworm/gui/book_viewer/menubar/__init__.py:730
 msgid "Add a note at the current location"
-msgstr ""
+msgstr "Добавяне на бележка на текущата позиция"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:222
 msgid "&View Bookmarks...\tCtrl-Shift-B"
-msgstr ""
+msgstr "Пре&глед на показалците...\tCtrl-Shift-B"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:224
 msgid "View added bookmarks"
-msgstr ""
+msgstr "Преглед на добавените показалци"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:229
 msgid "&Manage Notes...\tCtrl-Shift-N"
-msgstr ""
+msgstr "&Управление на бележките...\tCtrl-Shift-N"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:231
 msgid "View, edit, and remove notes."
-msgstr ""
+msgstr "Преглед, редактиране и премахване на бележки."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:236
 msgid "Notes &Exporter"
-msgstr ""
+msgstr "&Експортиране на бележките"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:238
 msgid "Export notes to a file."
-msgstr ""
+msgstr "Експортиране на бележките във файл."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:244
 msgid "&User guide...\tF1"
-msgstr ""
+msgstr "&Ръководство на потребителя...\tF1"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:246
 msgid "View Bookworm manuals"
-msgstr ""
+msgstr "Преглед на ръководството за Bookworm"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:251
 msgid "Bookworm &website..."
-msgstr ""
+msgstr "&Уеб сайт на Bookworm..."
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:253
 msgid "Visit the official website of Bookworm"
-msgstr ""
+msgstr "Отваряне на официалния уеб сайт на Bookworm"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:258
 msgid "&License"
-msgstr ""
+msgstr "&Лиценз"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:260
 msgid "View legal information about this program ."
-msgstr ""
+msgstr "Преглед на правната информация за тази програма."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:265
 msgid "Con&tributors"
-msgstr ""
+msgstr "Сътрудни&ци"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:267
 msgid "View a list of notable contributors to the program."
-msgstr ""
+msgstr "Преглед на списък с основните сътрудници на програмата."
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:272
 msgid "&Check for updates"
-msgstr ""
+msgstr "Провери за &обновления"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:274
 msgid "Update the application"
-msgstr ""
+msgstr "Обновяване на приложението"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:280
 msgid "&Restart with debug-mode enabled"
-msgstr ""
+msgstr "&Рестартирай в режим за отстраняване на грешки"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:282
 msgid "Restart the program with debug mode enabled to show errors"
 msgstr ""
+"Рестартиране на програмата със задействан режим за отстраняване на грешки за "
+"показване на грешки"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:292
 msgid "&About Bookworm"
-msgstr ""
+msgstr "О&тносно Bookworm"
 
 #. Translators: the help text of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:294
 msgid "Show general information about this program"
-msgstr ""
+msgstr "Показване на обща информация за програмата"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:373
 msgid "&File"
-msgstr ""
+msgstr "&Файл"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:375
 msgid "&Tools"
-msgstr ""
+msgstr "&Инструменти"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:377
 msgid "&Speech"
-msgstr ""
+msgstr "&Реч"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:379
 msgid "&Annotations"
-msgstr ""
+msgstr "&Анотации"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:381
 msgid "&Help"
-msgstr ""
+msgstr "&Помощ"
 
 #. Translators: the title of a file dialog to browse to an e-book
 #: bookworm/gui/book_viewer/menubar/__init__.py:407
 msgid "Choose an e-book"
-msgstr ""
+msgstr "Избор на електронна книга"
 
 #. Translators: the title of the go to page dialog
 #: bookworm/gui/book_viewer/menubar/__init__.py:446
 msgid "Go To Page"
-msgstr ""
+msgstr "Отиване на страница"
 
 #. Translators: the title of the render page dialog
 #: bookworm/gui/book_viewer/menubar/__init__.py:454
 msgid "Rendered Page"
-msgstr ""
+msgstr "Точно представяне на страницата"
 
 #. Translators: the title of the voice profiles dialog
 #: bookworm/gui/book_viewer/menubar/__init__.py:460
 msgid "Voice Profiles"
-msgstr ""
+msgstr "Гласови профили"
 
 #. Translators: the label of an edit field to enter the title for a new
 #. bookmark
 #: bookworm/gui/book_viewer/menubar/__init__.py:473
 msgid "Bookmark title:"
-msgstr ""
+msgstr "Заглавие на показалеца:"
 
 #. Translators: the title of a dialog to create a new bookmark
 #: bookworm/gui/book_viewer/menubar/__init__.py:475
 msgid "Bookmark This Location"
-msgstr ""
+msgstr "Поставяне на показалец на тази позиция"
 
 #. Translators: the title of a dialog to view bookmarks
 #: bookworm/gui/book_viewer/menubar/__init__.py:498
 msgid "Bookmarks | {book}"
-msgstr ""
+msgstr "Показалци | {book}"
 
 #. Translators: the title of a dialog to view notes
 #: bookworm/gui/book_viewer/menubar/__init__.py:508
 msgid "Notes | {book}"
-msgstr ""
+msgstr "Бележки | {book}"
 
 #. Translators: the title of a dialog for exporting notes
 #: bookworm/gui/book_viewer/menubar/__init__.py:518
 msgid "Export Notes | {book}"
-msgstr ""
+msgstr "Експортиране на бележки | {book}"
 
 #. Translators: the title of the application preferences dialog
 #: bookworm/gui/book_viewer/menubar/__init__.py:528
 msgid "{app_name} Preferences"
-msgstr ""
+msgstr "Настройки на {app_name}"
 
 #. Translators: the title of a dialog to save the exported book
 #: bookworm/gui/book_viewer/menubar/__init__.py:539
 msgid "Save As"
-msgstr ""
+msgstr "Запазване като"
 
 #. Translators: a name of a file format
 #. Translators: the name of a document file format
 #: bookworm/gui/book_viewer/menubar/__init__.py:543
 #: bookworm/notes_exporter/core_renderers.py:13
 msgid "Plain Text"
-msgstr ""
+msgstr "Обикновен текст"
 
 #. Translators: the title of a dialog showing
 #. the progress of book export process
 #: bookworm/gui/book_viewer/menubar/__init__.py:553
 msgid "Exporting Book"
-msgstr ""
+msgstr "Експортиране на книгата"
 
 #. Translators: the message of a dialog showing the progress of book export
 #: bookworm/gui/book_viewer/menubar/__init__.py:555
 msgid "Converting your book to plain text."
-msgstr ""
+msgstr "Преобразуване на вашата книга в обикновен текст."
 
 #. Translators: a message shown when the book is being exported
 #: bookworm/gui/book_viewer/menubar/__init__.py:563
 msgid "Converting book..."
-msgstr ""
+msgstr "Конвертиране на книгата..."
 
 #. Translators: the title of the search dialog
 #: bookworm/gui/book_viewer/menubar/__init__.py:570
 msgid "Search book"
-msgstr ""
+msgstr "Търсене в книгата"
 
 #: bookworm/gui/book_viewer/menubar/__init__.py:589
 msgid "Searching For '{term}'"
-msgstr ""
+msgstr "Търсене за \"{term}\""
 
 #. Translators: the final title of the search results dialog
 #. shown after the search is finished
 #: bookworm/gui/book_viewer/menubar/__init__.py:614
 msgid "Results | {total}"
-msgstr ""
+msgstr "Резултати | {total}"
 
 #. Translators: the title of the about dialog
 #: bookworm/gui/book_viewer/menubar/__init__.py:643
 msgid "About {app_name}"
-msgstr ""
+msgstr "Относно {app_name}"
 
 #. Translators: a message that is announced when the speech is paused
 #: bookworm/gui/book_viewer/menubar/__init__.py:663
 msgid "Paused"
-msgstr ""
+msgstr "Поставено на пауза"
 
 #. Translators: a message that is announced when the speech is resumed
 #: bookworm/gui/book_viewer/menubar/__init__.py:667
 msgid "Resumed"
-msgstr ""
+msgstr "Възобновено"
 
 #. Translators: a message that is announced when the speech is stopped
 #: bookworm/gui/book_viewer/menubar/__init__.py:678
 msgid "Stopped"
-msgstr ""
+msgstr "Спряно"
 
 #. Translators: the content of an error message
 #: bookworm/gui/book_viewer/menubar/__init__.py:686
@@ -1400,33 +1451,38 @@ msgid ""
 "{file}\n"
 "was not found."
 msgstr ""
+"Файлът\n"
+"{file}\n"
+"не бе намерен."
 
 #. Translators: the title of an error message
 #: bookworm/gui/book_viewer/menubar/__init__.py:688
 msgid "File Not Found"
-msgstr ""
+msgstr "Файлът не е намерен"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:778
 msgid "(No recent books)"
-msgstr ""
+msgstr "(няма скорошни книги)"
 
 #: bookworm/gui/book_viewer/menubar/__init__.py:779
 msgid "No recent books"
-msgstr ""
+msgstr "Няма скорошни книги"
 
 #: bookworm/gui/book_viewer/menubar/__init__.py:820
 msgid "Supported E-Book Formats ({display})|{ext}|"
-msgstr ""
+msgstr "Поддържани формати за електронни книги ({display})|{ext}|"
 
 #. Translators: the content of a dialog asking the user
 #. for the password to decrypt the current e-book
 #: bookworm/gui/book_viewer/menubar/__init__.py:828
 msgid ""
-"This document is encrypted, and you need a password to access its "
-"content.\n"
+"This document is encrypted, and you need a password to access its content.\n"
 "Please enter the password billow and press enter."
 msgstr ""
+"Този документ е шифрован и имате нужда от парола за достъп до съдържанието "
+"му.\n"
+"Моля, въведете паролата по-долу и натиснете Enter."
 
 #. Translators: the title of a dialog asking the user to enter a password to
 #. decrypt the e-book
@@ -1436,86 +1492,94 @@ msgid ""
 "The password you've entered is invalid.\n"
 "Please try again."
 msgstr ""
+"Въведената парола е невалидна.\n"
+"Моля, опитайте отново."
 
 #. Translators: the title of an error message
 #: bookworm/gui/book_viewer/menubar/__init__.py:841
 msgid "Invalid Password"
-msgstr ""
+msgstr "Невалидна парола"
 
 #. Translators: the name of a document file format
 #: bookworm/notes_exporter/core_renderers.py:44
 msgid "Markdown"
-msgstr ""
+msgstr "Markdown"
 
 #. Translators: the name of a document file format
 #: bookworm/notes_exporter/core_renderers.py:70
 msgid "HTML"
-msgstr ""
+msgstr "HTML"
 
 #. Translators: the title of a message shown
 #. when the format of the e-book is not supported
 #: bookworm/reader/__init__.py:62
 msgid "Unsupported Document Format"
-msgstr ""
+msgstr "Неподдържан формат на документа"
 
 #. Translators: the content of a message shown
 #. when the format of the e-book is not supported
 #: bookworm/reader/__init__.py:65
 msgid "The format of the given document is not supported by Bookworm."
-msgstr ""
+msgstr "Форматът на документа не се поддържа от Bookworm."
 
 #. Translators: the title of an error message
 #: bookworm/reader/__init__.py:76
 msgid "Error Openning Document"
-msgstr ""
+msgstr "Грешка при отваряне на документа"
 
 #. Translators: the content of an error message
 #: bookworm/reader/__init__.py:78
 msgid ""
 "Could not open file {file}\n"
-".Either the file  has been damaged during download, or it has been "
-"corrupted in some other way."
+".Either the file  has been damaged during download, or it has been corrupted "
+"in some other way."
 msgstr ""
+"Неуспешно отваряне на файла {file}.\n"
+"Или файлът се е повредил по време на изтегляне, или е повреден по някакъв друг "
+"начин."
 
 #. Translators: the label of the page content text area
 #: bookworm/reader/__init__.py:159
 msgid "Page {page} | {chapter}"
-msgstr ""
+msgstr "Страница {page} | {chapter}"
 
 #. Translators: a message that is announced after navigating to a page
 #. Translators: a message to announce when navigating to another page
 #: bookworm/reader/__init__.py:163 bookworm/reader/text_to_speech.py:125
 msgid "Page {page} of {total}"
-msgstr ""
+msgstr "Страница {page} от {total}"
 
 #. Translators: the title of the window when an e-book is open
 #: bookworm/reader/__init__.py:232
 msgid "{title} — by {author}"
-msgstr ""
+msgstr "{title} — от {author}"
 
 #: bookworm/reader/text_to_speech.py:209
 msgid "End of section: {chapter}."
-msgstr ""
+msgstr "Край на раздел: {chapter}."
 
 #. Translators: the title of a message telling the user that the TTS voice has
 #. been changed
 #: bookworm/speech/__init__.py:65
 msgid "Incompatible TTS Voice Detected"
-msgstr ""
+msgstr "Открит е несъвместим глас от речева машина"
 
 #. Translators: a message telling the user that the TTS voice has been changed
 #: bookworm/speech/__init__.py:67
 msgid ""
-"Bookworm has noticed that the currently configured Text-to-speech voice "
-"speaks a language different from that of this book. Because of this, "
-"Bookworm has temporary switched to another voice that speaks a language "
-"similar to the language  of this book."
+"Bookworm has noticed that the currently configured Text-to-speech voice speaks "
+"a language different from that of this book. Because of this, Bookworm has "
+"temporary switched to another voice that speaks a language similar to the "
+"language  of this book."
 msgstr ""
+"Bookworm установи, че текущо настроеният глас говори на език, различен от този "
+"на отворената книга. Поради тази причина, Bookworm временно превключи към друг "
+"глас, който говори език, подобен на езика на отворената книга."
 
 #. Translators: the title of a message telling the user that no TTS voice found
 #: bookworm/speech/__init__.py:123
 msgid "No TTS Voices"
-msgstr ""
+msgstr "Не са налични гласове"
 
 #. Translators: a message telling the user that no TTS voice found
 #: bookworm/speech/__init__.py:125
@@ -1523,4 +1587,5 @@ msgid ""
 "A valid Text-to-speech voice was not found on your computer.\n"
 "Text-to-speech functionality will be disabled."
 msgstr ""
-
+"На вашият компютър не беше намерен съвместим глас за синтезиране на говор .\n"
+"Функцията за преобразуване на текст в говор няма да бъде налична."

@@ -1,182 +1,182 @@
-# Bookworm User Guide
+# Ръководство на потребителя за Bookworm
 
-## Introduction
+## Представяне
 
-**Bookworm** is an ACCESSIBLEebook reader that enables blind and visually impaired individuals to read e-books in an easy and hassle free manor. The main highlights of bookworm are:
+**Bookworm** е достъпен четец на електронни книги, който дава възможност на незрящите и слабовиждащите личности да четат електронни книги по един лесен, достъпен и безпроблемен начин. Основните възможности на bookworm са:
 
-* Supports popular e-book formats, including EPUB and PDF
-* You can add named bookmarks to mark interesting positions in the text for later reference
-* You can add notes to capture an interesting thought or create a summary of the content at a specific position of the text. Bookworm allows you to quickly jump to a specific note and view it. Later on, you can export these notes to a text file or an HTML document for future reference.
-* Two different styles of viewing pages; plain-text and fully rendered, zoomable, images.
-* Full text search with customizable search options
-* Book navigation via Table of content is extensively supported for all e-book formats
-* Support for reading books aloud using Text-to-speech, with configurable voice parameters.
-* The ability to customize  text-to-speech with voice profiles. Each voice profile configures the style of the speech, and you can freely activate/deactivate any voice profile, even while reading aloud!
-* Support for standard zoom-in/zoom-out/reset commands, Ctrl + =, Ctrl + -, and Ctrl + 0 respectively. This functionality is supported in the plain text view and the rendered page view.
-* Support for exporting any e-book format to a plain text file.
-
-
-## Installation
-
-To get Bookworm up and running on your computer, follow these steps:
-
-1. Point your web browser to the [official website of Bookworm](https://mush42.github.io/bookworm/) and download the installer that suits your operating system. Bookworm comes in two flavors:
-
-* A 32-bit installer for computers running a 32-bit variant of Windows 
-* A 64-bit installer for computers running a 64-bit variant of Windows 
-
-2. Run the installer and follow the prompts
-3. After the installation has finished successfully , you can launch Bookworm from the *Desktop* or from the program list found in the Start Menu
+* Поддържа популярни формати за електронни книги, включително EPUB и PDF.
+* Можете да добавяте именувани отметки, за да маркирате интересни места в текста за по-късна справка.
+* Можете да добавяте бележки, за да запишете интересна мисъл или да създадете обобщение на съдържанието в определена позиция на текста. Bookworm ви позволява бързо да преминете към конкретна бележка и да я прегледате. По-късно можете да експортирате тези бележки в текстов файл или HTML документ за бъдеща справка.
+* Два различни стила За преглед на страници: като обикновен текст и реално представяни, мащабируеми (като изображения).
+* Цялостно търсене на текст с гъвкави възможности за търсене.
+* Навигацията в книги чрез съдържанието е широко поддържана за всички формати за електронни книги.
+* Поддръжка за четене на книги на глас с помощта на системата за преобразуване на текст в реч, с конфигурируеми гласови параметри.
+* Възможност за персонализиране на четенето на глас чрез гласови профили. Всеки гласов профил конфигурира стила на речта и можете свободно да активирате/деактивирате всеки гласов профил, дори докато е в ход четенето на глас.
+* Поддръжка за стандартните команди за увеличаване/намаляване/нулиране, съответно: Ctrl+=, Ctrl+- и Ctrl+0. Тази функционалност се поддържа в изгледа с обикновен текст и в изгледа с реално представяне на страницата.
+* Поддръжка за експортиране на всеки формат за електронна книга във файл с обикновен текст.
 
 
-## Usage
+## Инсталиране
 
-### Opening A Book
+За да подкарате Bookworm на компютъра си, изпълнете следните стъпки:
 
-You can open a book by selecting the "Open..." menu item from the "File" Menu. Alternatively you can use the Ctrl+O shortcut. Either way, the familiar "open file" dialog is shown. Browse to your e-book, and click open to load it.
+1. Заредете във вашия уеб браузър [официалния уеб сайт на Bookworm](https://mush42.github.io/bookworm/) и изтеглете инсталационния пакет подходящ за вашата операционна система. Bookworm има два варианта:
 
-### The Reader Window
+* 32-битов инсталатор за компютри, работещи с 32-битов вариант на Windows 
+* 64-битов инсталатор за компютри, работещи с 64-битов вариант на Windows 
 
-The main window of bookworm consists of the following two parts:
-
-1. The "Table of contents": This part shows the e-book chapters'. It allows you to explore the content structure. Use navigation keys to navigate chapters, and press enter to navigate to specific chapter.
-
-2. The "Textual View" area: This part contains the text of the current page. In this part you can use your usual reading commands to navigate the text. Additionally, you can use the following keyboard  shortcuts to navigate the e-book:
-
-* Enter: navigate to the next page in the current section
-* Backspace: navigate to the previous page in the current section
-* Home: navigate to the first page of the current section
-* End: navigate to the last page of the current section
-* Alt + Page down: navigate to next section
-* Alt + Page up: navigate to previous section
+2. Стартирайте инсталатора и следвайте инструкциите
+3. След като инсталацията приключи успешно, можете да стартирате Bookworm от *работния плот* или от списъка с програми, намиращ се в менюто „Старт“
 
 
-### Bookmarks & Notes
+## Употреба
 
-Bookworm allows you to annotate the opened book.  You can add a bookmark to remember a specific location in the book, and later on, quickly jump to  it. Also, you can take a note to capture a thought or summarize some content.
+### Отваряне на книга
 
-#### Adding Bookmarks
+Можете да отворите книга, като изберете пункта „Отвори“ в менюто „Файл“. Алтернативно, можете да използвате клавишната комбинация Ctrl+O. Извежда се познатият диалогов прозорец за отваряне на файл. Отидете до вашата електронна книга, изберете я и задействайте бутона „Отвори“, за да я заредите.
 
-While reading a book, you can press Ctrl + B (or select the "Add Bookmark" menu item from the "Annotations" menu to add a bookmark. The bookmark is added at the current position of the cursor. You'll be asked to provide a title for the bookmark. Type the desired title and click the OK Button. A bookmark will be added at the current location, and the current line will be visually highlighted.
+### Прозорецът за четене
 
-#### Viewing Bookmarks
+Основният прозорец на Bookworm се състои от следните две части:
 
-Press Ctrl + Shift + B, or select the "View Bookmarks" menu item from the "Annotations" menu. A dialog containing added bookmarks will be shown. Clicking any item in the bookmarks list will immediately take you to the position of that bookmark.
+1. „Съдържание“: Тази част показва главите на електронната книга. Тя ви позволява да прегледате структурата на съдържанието. Използвайте клавишите със стрелките, за да обхождате главите и натиснете Enter, за да се придвижите до конкретна глава.
 
-Additionally, you can press F2 to edit the title of the selected bookmark in place, or you can click the "Delete" button or the "Delete" key on your keyboard to remove the selected bookmark.
+2. Област „Текстов изглед“: Тази част съдържа текста на текущата страница. В тази част можете да използвате стандартните команди за четене, за да обхождате текста. Освен това можете да използвате следните клавишни комбинации за навигация в електронната книга:
 
-#### Taking Notes
-
-While reading a book, you can press Ctrl + N (or select the "Take Note" menu item from the "Annotations" menu to take a note. The note will be added at the current position of the cursor. You'll be asked to provide the title and the content for the note. Type the desired title and content, and then click the OK button. A note will be added at the current location.
-
-When you navigate to a page containing at least one note, you will hear a little sound indicating the existence of a note in the current page..
-
-#### Managing Notes
-
-Press Ctrl + Shift + N, or select the "Manage Notes" menu item from the "Annotations" menu. A dialog containing added notes will be shown. Clicking any item in the notes list will immediately take you to the position of that note. Clicking the "View" button will bring up a dialog showing the title and the content of the selected note.
-
-Additionally, you can click the "Edit" button to edit the title and the content of the selected note, press  F2 to edit the title of the selected note in place, or you can click the "Delete" button or the "Delete" key on your keyboard to remove the selected note.
-
-#### Exporting Notes
-
-Bookworm allows you to export your notes to a plain-text file, or to an HTML document which you can then open in your web browser.  Optionally, bookworm allows you to export your notes to markdown, which is a text-base format for writing structured documents popular among expert computer users.
-
-To export your notes, follow these steps:
-
-1. From the "Annotations" menu select the "Notes Exporter..." menu item
-2. Select the export range. This tells Bookworm whether you want to export the notes of the whole book, or you just want to export the notes of the current section. 
-3. Select the output format. This determines the format of the file you get after exporting. Exporting to a plain-text gives you a simple, nicely formatted text file, exporting to HTML gives you a web page, and exporting to markdown gives you a markdown document which is a text format popular among expert computer users.
-4. If you want Bookworm to open the file to which your notes have been exported, you can check the "Open file after exporting" checkbox.
-5. Click Export. You will be asked to select the file name of the exported file, and the location to which the file is saved. Clicking "Save" will save the file, and open it if you have instructed Bookworm to do so.
+* Enter: Отиване до следващата страница в текущия раздел
+* Backspace: Отиване до предишната страница в текущия раздел
+* Home: Отиване до първата страница в текущия раздел
+* End: Отиване до последната страница в текущия раздел
+* Alt+Page Down: Отиване до следващия раздел
+* Alt+Page Up: Отиване до предишния раздел
 
 
-### Reading Aloud
+### Показалци и бележки
 
-Bookworm supports reading the content of the opened book aloud using an installed text-to-speech voice. Just press F5 to start the speech, F6 to pause or resume the speech, and F7 to stop the speech entirely.
+Bookworm ви позволява да анотирате отворената книга. Можете да добавите показалец, за да отбележите конкретно място в книгата, а по-късно бързо да преминете към него. Също така можете да си създадете бележка, за да запишете своя мисъл или да обобщите дадено съдържание.
 
-You can configure the speech in two ways:
-1. Using A Voice Profile: A voice profile contains your custom speech configurations, you can activate/deactivate the voice profile at any time. You can access voice profiles from the speech menu or by pressing Ctrl + Shift + V. Note that bookworm comes with some exemplary, built-in voice profiles.
-2. The Global speech settings: these settings will be used by default when no voice profile is active. You can configure the global speech settings from the application preferences. 
+#### Добавяне на показалци
 
-During reading aloud, you can skip backward or foreword by paragraph by pressing Alt plus the left and right arrow  keys.
+Докато четете книга, можете да натиснете Ctrl+B (или да изберете пункта „Добави показалец“ от менюто „Анотации“), за да добавите показалец. Показалецът се добавя в текущата позиция на курсора. Ще бъдете подканени да въведете заглавие на показалеца. Въведете желаното заглавие и задействайте бутона OK. Показалецът ще бъде добавен на текущото местоположение и текущият ред ще бъде визуално осветен.
+
+#### Преглед на показалците
+
+Натиснете Ctrl+Shift+B или изберете пункта „Преглед на показалците“ от менюто „Анотации“. Ще се покаже диалогов прозорец, съдържащ добавените показалци. Задействането на който и да е елемент от списъка с показалци веднага ще ви отведе до позицията на този показалец.
+
+Освен това можете да натиснете F2, за да редактирате заглавието на избрания показалец на място. Можете също така да задействате бутона „Премахни“ или клавиша „Delete“ на клавиатурата, за да премахнете избрания показалец.
+
+#### Създаване на бележки
+
+Докато четете книга, можете да натиснете Ctrl+N (или да изберете пункта „Създай бележка“ от менюто „Анотации“), за да създадете бележка. Бележката ще бъде добавена на текущата позиция на курсора. Ще бъдете подканени да предоставите заглавие и съдържание за бележката. Въведете желаните заглавие и съдържание и след това задействайте бутона OK. Бележката ще бъде добавена на текущото местоположение.
+
+Когато отидете на страница, съдържаща поне една бележка, ще чуете кратък звук, показващ наличието на бележка в текущата страница.
+
+#### Управление на бележките
+
+Натиснете Ctrl+Shift+N или изберете пункта „Управление на бележките“ от менюто „Анотации“. Ще се покаже диалогов прозорец, съдържащ добавените бележки. Задействането на който и да е елемент от списъка с бележки веднага ще ви отведе до позицията на съответната бележка. Задействането на бутона „Преглед“ ще отвори диалогов прозорец, показващ заглавието и съдържанието на избраната бележка.
+
+Освен това можете да задействате бутона „Редактирай“, за да редактирате заглавието и съдържанието на избраната бележка. Можете да натиснете F2, за да редактирате заглавието на избраната бележка на място. Можете също така да задействате бутона „Премахни“ или клавиша „Delete“ на клавиатурата си, за да премахнете избраната бележка.
+
+#### Експортиране на бележки
+
+Bookworm ви позволява да експортирате бележките си в обикновен текстов файл или в HTML документ, който след това можете да отворите във вашия уеб браузър. В допълнение, Bookworm ви позволява да експортирате бележките си като markdown, който е текстово-базиран формат за писане на структурирани документи, популярен сред напредналите компютърни потребители.
+
+За да експортирате бележките си, изпълнете следните стъпки:
+
+1. От менюто „Анотации“, изберете пункта „Експортиране на бележките...“
+2. Изберете обхвата на съдържанието за експортиране. Това инструктира Bookworm дали да експортира бележките на цялата книга или само бележките от текущия раздел.
+3. Изберете изходния формат. Това определя формата на файла, който получавате след експортиране. Експортирането в обикновен текст ви предоставя опростен, добре форматиран, текстов файл. Експортирането в HTML ви предоставя уеб страница. Експортирането в markdown ви предоставя документ на markdown, който е текстов формат, популярен сред напредналите компютърни потребители.
+4. Ако искате Bookworm да отвори файла, в който са били експортирани вашите бележки, можете да поставите отметка в квадратчето „Отвори файла след експортирането“.
+5. Задействайте бутона „Експортирай“. Ще бъдете подканени да изберете името и местоположението за експортирания файл, където той да бъде записан. Задействането на бутона „Запиши“ ще запази файла и ще го отвори, ако сте инструктирали Bookworm да го направи.
 
 
-### Configuring The Reading Style
+### Четене на глас
 
-In addition to the speech settings, Bookworm gives you the ability to fine-tune its reading behavior through these settings. All of the following settings could be found in the reading page of the application preferences.
+Bookworm поддържа четенето на съдържанието на отворената книга на глас с помощта на инсталиран глас за синтезиран говор. Просто натиснете F5, за да започне четенето, F6, за да се постави на пауза или възобнови четенето, и F7, за да спре четенето.
 
-* What to read: this option controls what happens when you instruct Bookworm to "Play" the current book. You can choose to "Read the entire book", "Read the current section", or read just "The current page". By default, bookworm reads the entire book in a continuous manner, unless you instruct it to stop when it reaches the end of the page or the end of the current section.
-* Where to start: this option controls the position from which to start reading aloud. You can choose to start reading from the "Position of the caret" or the "Start of the current page".
-* How to read: this set of options control how bookworm behave during reading aloud. You can turn on/off any one of the following options by checking/unchecking its respective checkbox:
+Можете да конфигурирате речта по два начина:
+1. Чрез използване на гласов профил: Гласовият профил съдържа вашите персонализирани речеви конфигурации, можете да активирате/деактивирате гласовия профил по всяко време. Можете да получите достъп до гласовите профили от менюто „Реч“ или като натиснете Ctrl+Shift+V. Обърнете внимание, че Bookworm разполага с няколко вградени примерни гласови профила.
+2. Глобалните настройки за реч: Тези настройки ще се използват по подразбиране, когато няма активен гласов профил. Можете да конфигурирате глобалните настройки за речта от прозореца с настройките на приложението.
 
-* Highlight spoken text: if this option is turned on, the currently spoken text is visually highlighted.
-* Select spoken text: if this option is turned on, the currently spoken text is selected. This enables you, for instance, to press Ctrl + C to copy the currently spoken paragraph.
-* Play end-of-section sound: if this option is turned on, Bookworm plays a little sound when it reaches the end of a section.
+По време на четене на глас можете да преминете на предишния или следващия абзац, като натиснете Alt+стрелка наляво или Alt+стрелка надясно.
 
 
-### Viewing A Fully Rendered Version of The Current Page
+### Конфигуриране на стила за четене
 
-Bookworm allows you to view a fully rendered version of the book. While a book is opened, you can press Ctrl + R or select the "Render Page" menu item from the tools menu. We call this view "The Render View" as appose to the, default, Textual View.
+В допълнение към настройките на речта, Bookworm ви дава възможност да прецизирате поведението при четене чрез следните настройки. Тези настройки се намират в раздела за четене в настройките на приложението:
 
-When you are in the Render View, you can use the usual zoom commands to zoom the page in and out:
+* Какво да се чете: Тази опция контролира какво се случва, когато инструктирате Bookworm да „възпроизведе“ текущата книга. Можете да изберете да се „прочете цялата книга“, „прочете текущия раздел“ или „прочете текущата страница“. По подразбиране, Bookworm чете цялата книга без прекъсване, освен ако не го инструктирате да спре, когато стигне до края на страницата или в края на текущия раздел.
+* От къде да се започне: Тази опция контролира позицията, от която да се започне четенето на глас. Можете да изберете да се започне четенето от „позицията на курсора“ или „началото на текущата страница“.
+* Как да се чете: Този набор от опции контролира поведението на Bookworm по време на четене на глас. Можете да включите/изключите всяка от следните опции, като поставите/премахнете отметката от съответното поле:
 
-* Ctrl + = zoom-in 
-* Ctrl + - zoom-out
-* Ctrl + 0 reset the zoom level
-
-Note that you can also use the book navigation commands, mentioned above,  to navigate the render view as well. You can also press the escape key to dismiss this view and return to the default textual view.
+* Осветявай изговаряния текст: Ако тази опция е включена, прочитаният в момента текст се осветява визуално.
+* Маркирай изговаряния текст: Ако тази опция е включена, се маркира текущо прочитания текст. Например, това ви позволява да натиснете Ctrl+C, за да копирате текущо прочитания абзац.
+* Възпроизвеждай звук в края на раздела: Ако тази опция е включена, Bookworm възпроизвежда кратък звук при достигане на края на раздела.
 
 
-### Navigating To A Specific Page
+### Визуализация на точно представяне на текущата страница
 
-To navigate to a specific page in the currently opened book., press Ctrl + G, or select the "Go To..." menu item from the tools menu to show the "Go To Page" dialog. In this dialog you can type the number of any page you want to navigate to, and Bookworm will take you to it. Note that this dialog will indicate to you the total number of pages found in the current book.
+Bookworm ви позволява да видите точно представена версия на книгата. Докато има отворена книга, можете да натиснете Ctrl+R или да изберете пункта „Точно представяне на страницата“ от менюто „Инструменти“. Наричаме този изглед „точно представяне на страницата“, който е алтернатива на текстовия изглед.
+
+Когато сте в режим на точно представяне, можете да използвате обичайните команди за мащабиране, за да увеличавате и намалявате размера на страницата:
+
+* Ctrl+= – увеличаване
+* Ctrl+- – намаляване
+* Ctrl+0 – нулиране на нивото на мащабиране
+
+Обърнете внимание, че можете да използвате споменатите по-горе команди за навигация в книгата, за навигиране и в изгледа на точно представяне. Можете също да натиснете клавиша Escape, за да излезете от този изглед и да се върнете към изгледа по подразбиране (представяне като обикновен текст).
+
+
+### Отиване до конкретна страница
+
+За да отидете до конкретна страница в текущо отворената книга, натиснете Ctrl+G или изберете пункта „Отиди на страница“ от менюто „Инструменти“, за да изведете диалоговия прозорец „Отиване на страница“. В този диалогов прозорец можете да въведете номера на всяка страница, до която искате да се придвижите, и Bookworm ще ви отведе до нея. Обърнете внимание, че този диалогов прозорец ще ви покаже и общия брой страници, налични в текущата книга.
 
  
-### Searching The Book
+### Търсене в книгата
 
-To find a specific term, or a portion of text in the currently opened book, you can press Ctrl + F to bring up the "Search Book Dialog". This Dialog allows you to type the text you want to search for as well as configuring the  search process itself. The following options are available:
+За да намерите конкретна дума или част от текст в текущо отворената книга, можете да натиснете Ctrl+F, за да изведете диалоговия прозорец „Търсене в книгата“. Този прозорец ви позволява да въведете текста, който искате да търсите, както и да конфигурирате самия процес на търсене. Предлагат се следните опции:
 
-* Case Sensitive: The search will take into account the case of the letters in the search term.
-* Whole Word Only: The search term must be found as a whole word, i.e. not as a part of another word
-* Search Range: This allows you to confine the search to certain pages or a specific section.
+* Зачитай главни/малки букви: При търсенето ще се вземе предвид дали буквите в низа за търсене са главни или малки.
+* Съвпадение само на цели думи: Търсеният низ трябва да се намери като отделна дума, т.е. не като част от друга дума.
+* Обхват на търсенето: Това ви позволява да ограничите търсенето до определени страници или конкретен раздел.
 
-After clicking the OK button in the "Search Book Dialog", another dialog containing search results will be shown. Clicking any item in the search results list will immediately take you to the position of that result with the search term highlighted for you.
+След като задействате бутона OK в диалоговия прозорец „Търсене в книгата“, ще се покаже друг прозорец, съдържащ резултатите от търсенето. Задействането на който и да е елемент от списъка с резултатите от търсенето веднага ще ви отведе до позицията на този резултат с осветен търсеният от вас низ.
 
-Note that if you've closed the search results window, you can press F3 and Shift + F3 to move to the next and previous occurrence of the last search respectively.
-
-
-## Managing File Associations
-
-The "Manage File Associations" button, found in the general page in the application preferences, helps you to manage which file types are associated with Bookworm. Associating files with Bookworm means that when you click on a file in Windows explorer, that file would be opened in Bookworm by default. Note that this dialog is always shown to the user in the first run of the program.
-
-Once you launch the file associations manager, you will have the following options:
-
-* Associate all: this changes your settings so that if a file is supported by Bookworm, Windows will use Bookworm to open it. 
-* Dessociate all supported file types: this will remove previously registered file associations
-* Individual buttons for each supported file type: clicking any button of those will associate its respective file type with Bookworm.
+Имайте предвид, че ако сте затворили прозореца с резултатите от търсенето, можете да натиснете F3 и Shift+F3, за да преминете съответно към следващото или предишното съвпадение на последното търсене.
 
 
-## Updating Bookworm
+## Управление на файловите асоциации
 
-By default, Bookworm checks for new versions upon startup. This ensures that you get the latest and greatest of Bookworm as early as possible. You can disable this default behavior from the application preferences.   You can also check for updates manually by clicking the "Check for updates" menu item found under the "Help" menu.
+Бутонът „Управление на файловите асоциации“, който се намира в раздела „Общи“ в прозореца с настройките на приложението, ви помага да управлявате кои типове файлове са асоциирани с Bookworm. Асоциирането на типове файлове с Bookworm означава, че когато натиснете Enter върху файл в Windows Explorer, този тип файл по подразбиране ще бъде отворен в Bookworm. Обърнете внимание, че този диалогов прозорец винаги се показва на потребителя при първото стартиране на програмата.
 
-Either way, when a new version is found, Bookworm will ask you if you want to install it. If you click "Yes", the application will go ahead and download the update bundle, and will show a dialog indicating the progress of download. After the update is downloaded, Bookworm will alert you with a message, telling you it will restart the application in order to update. Just click "OK" to complete the update process.
+В прозореца за управление на файловите асоциации са налични следните опции:
 
-
-## Reporting Problems & Issues
-
-As blind developers, our responsibility is to develop applications that provide independence for us, and for our fellow blind friends all over the world. So, if you've found Bookworm useful in any way, please help us in making Bookworm better for you and for others. At this initial stage, we want you to tell us about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
-
-Before submitting a new issue, make sure that you ran Bookworm in debug mode. To turn on debug mode, go to the "Help" menu and then click "Restart with debug-mode enabled" and try to reproduce the issue with debug mode enabled. In the majority of cases, when the error happens again with debug mode enabled, a dialog will be shown with the details of that error. You can then copy this information and include it with your problem report.
-
-Note that some issues could be tricky to reproduce, they go away when you restart the program. In this case, it is okay to report the issue without the detailed information from the debug mode. Just make sure you include as much information as possible about the particulars of your system and usage scenario.
+* Асоциирай всички: Това променя вашите настройки така, че ако тип файл се поддържа от Bookworm, Windows ще използва Bookworm, за да го отвори.
+* Деасоциирай всички поддържани типове файлове: Това ще премахне регистрираните по-рано файлови асоциации.
+* Отделен бутон за всеки поддържан тип файл: Задействането на който и да е от тях ще асоциира съответния тип файл с Bookworm.
 
 
-## News & Updates
+## Обновяване на Bookworm
 
-To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: [mush42.github.io/bookworm](https://mush42.github.io/bookworm/). You can also follow the lead developer, Musharraf Omer, at [@mush42](https://twitter.com/mush42/) on Twitter.
+По подразбиране Bookworm проверява за нови версии при стартиране. Това гарантира, че ще получите най-новото и най-доброто от Bookworm възможно най-скоро. Можете да изключите това поведение по подразбиране от настройките на приложението. Можете да проверите за обновления и ръчно, като задействате пункта „Провери за обновления“, намиращ се в менюто „Помощ“.
+
+Така или иначе, когато е налична нова версия, Bookworm ще ви попита дали искате да я инсталирате. Ако задействате бутона „Да“, приложението ще продължи напред и ще изтегли пакета за обновяване и ще покаже диалогов прозорец, указващ напредъка на изтеглянето. След като обновлението бъде изтеглено, Bookworm ще ви предупреди със съобщение, информирайки ви, че ще рестартира приложението, за да се обнови. Просто задействайте бутона „OK“, за да завършите процеса по обновяването.
 
 
-## License
+## Докладване на проблеми
 
-**Bookworm** is copyright (c) 2019 Musharraf Omer and Bookworm Contributors. It is licensed under the [MIT License](https://github.com/mush42/bookworm/blob/master/LICENSE).
+Като незрящи разработчици, нашата отговорност е да разработваме приложения, които осигуряват независимост за нас и за нашите незрящи познати и приятели по целия свят. Така че, ако за вас Bookworm е полезен по някакъв начин, моля, помогнете ни да направим Bookworm по-добър за вас и за другите. На този начален етап искаме да ни съобщавате за всички грешки, на които може да сте попаднали по време на работата ви с Bookworm. За целта създайте нов доклад с подробности за грешката в [портала за доклади](https://github.com/mush42/bookworm/issues/). Ценим високо вашата помощ.
+
+Преди да публикувате нов доклад за проблем, уверете се, че сте стартирали Bookworm в режим за отстраняване на грешки. За да включите режима за отстраняване на грешки, отидете в менюто „Помощ“ и там задействайте пункта „Рестартирай в режим за отстраняване на грешки“ и опитайте да възпроизведете проблема с активиран режим за отстраняване на грешки. В повечето случаи, когато грешката се повтори с активиран режим за отстраняване на грешки, ще се покаже диалогов прозорец с подробностите за тази грешка. След това можете да копирате тази информация и да я включите в своя доклад за проблема.
+
+Имайте предвид, че някои проблеми могат да бъдат трудни за възпроизвеждане – те изчезват, когато рестартирате програмата. В този случай няма проблем да докладвате за проблема без подробната информация от режима за отстраняване на грешки. Просто не забравяйте да включите възможно най-много информация за спецификациите на вашата система и начина на използване на програмата.
+
+
+## Новини и обновления
+
+За да сте винаги информирани относно новостите около Bookworm, можете да посетите уебсайта на Bookworm на адрес: [mush42.github.io/bookworm](https://mush42.github.io/bookworm/). Можете също така да следвате водещия разработчик – Musharraf Omer – на адрес [@mush42](https://twitter.com/mush42/) в Twitter.
+
+
+## Лиценз
+
+**Bookworm** е със запазени права (c) 2019 г. от Musharraf Omer и сътрудниците на Bookworm. Лицензира се под [лиценза на MIT](https://github.com/mush42/bookworm/blob/master/LICENSE).

@@ -303,6 +303,7 @@ class MenubarProvider:
         )
         self.Bind(wx.EVT_MENU, self.onClearRecentFileList, id=wx.ID_CLEAR)
         self.Bind(wx.EVT_MENU, self.onClose, id=wx.ID_EXIT)
+        self.Bind(wx.EVT_CLOSE, self.onClose, self)
 
         # Tools menu event handlers
         self.Bind(wx.EVT_MENU, self.onGoToPage, id=BookRelatedMenuIds.goToPage)
@@ -433,7 +434,8 @@ class MenubarProvider:
 
     def onClose(self, evt):
         self.unloadCurrentEbook()
-        self.Close()
+        self.Destroy()
+        evt.Skip()
 
     @only_when_reader_ready
     def onCloseCurrentFile(self, event):
