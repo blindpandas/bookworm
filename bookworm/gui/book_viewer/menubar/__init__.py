@@ -776,7 +776,7 @@ class MenubarProvider:
         if len(recent_files) == 0:
             _no_files = self.recentFilesMenu.Append(
                 wx.ID_ANY,
-                # Translators: the label of an ietm in the application menubar
+                # Translators: the label of an item in the application menubar
                 _("(No recent books)"),
                 _("No recent books"),
             )
@@ -794,7 +794,7 @@ class MenubarProvider:
                         if fn == self.reader.document.filename:
                             it.Enable(False)
         self.recentFilesMenu.FindItemById(wx.ID_CLEAR).Enable(
-            self._recent_files_data[0][2] != ""
+            self._recent_files_data and (self._recent_files_data[0][2] != "")
         )
 
     def _reset_search_history(self):
