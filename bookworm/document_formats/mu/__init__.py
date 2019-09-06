@@ -70,6 +70,7 @@ class FitzDocument(BaseDocument):
             title=self.metadata.title,
             pager=Pager(first=0, last=max_page, current=0),
         )
+        _last_entry = None
         for (index, (level, title, start_page)) in enumerate(toc_info):
             try:
                 curr_index = index
@@ -81,23 +82,30 @@ class FitzDocument(BaseDocument):
                 next_item = None
             first_page = start_page - 1
             last_page = max_page if next_item is None else next_item[-1] - 2
-            first_page = first_page if first_page >= 0 else 0
-            last_page = last_page if last_page >= first_page else  last_page + 1
-            assert all(p >= 0 for p in (first_page, last_page)), "Error, invalid page number."
+            if first_page < 0:
+                first_page = 0 if _last_entry is None else _last_entry.pager.last
+            if last_page < first_page:
+                last_page += 1
+            if not all(p >= 0 for p in (first_page, last_page)):
+                continue
             assert first_page <= last_page, "Error, Malformed page structure."
             pgn = Pager(first=first_page, last=last_page, current=first_page)
             sect = Section(title=title, pager=pgn)
             if level == 1:
                 root_item.append(sect)
+                _last_entry = sect
                 continue
-            parent_lvl = level - 1
+            elif not root_item:
+                continue
             parent = root_item.children[-1]
+            parent_lvl = level - 1
             while True:
-                if parent_lvl > 1:
+                if (parent_lvl > 1) and parent.children:
                     parent = parent.children[-1]
                     parent_lvl -= 1
                     continue
                 parent.append(sect)
+                _last_entry = sect
                 break
         return root_item
 
