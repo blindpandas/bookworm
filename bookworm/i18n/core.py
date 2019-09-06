@@ -4,13 +4,14 @@ import ctypes
 import os
 import gettext
 import locale
+from System.Globalization import CultureInfo, CultureNotFoundException
 from collections import OrderedDict
 from contextlib import suppress
 from pathlib import Path
-from System.Globalization import CultureInfo, CultureNotFoundException
 from bookworm import app
 from bookworm import paths
 from bookworm import config
+from bookworm.signals import app_started
 from bookworm.logger import logger
 from .wx_i18n import set_wx_language
 
@@ -110,7 +111,7 @@ def set_active_language(language):
                     locale.setlocale(locale.LC_ALL, lang.split("_")[0])
                     locale_changed = True
         if not lang.startswith("en"):
-            set_wx_language(lang)
+            app_started.connect(lambda s: set_wx_language(lang), weak=False)
         CultureInfo.CurrentUICulture = langinfo.culture
         CultureInfo.DefaultThreadCurrentUICulture = langinfo.culture
         ctypes.windll.kernel32.SetThreadLocale(langinfo.LCID)

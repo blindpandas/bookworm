@@ -64,7 +64,7 @@ class FileAssociationDialog(SimpleDialog):
         )
         for ext, metadata in self.ext_info:
             # Translators: the main label of a button
-            mlbl = "Associate files of type {format}".format(format=metadata[1])
+            mlbl = _("Associate files of type {format}").format(format=metadata[1])
             # Translators: the note of a button
             nlbl = _("Associate files with {ext} extension so they always open in Bookworm").format(ext=ext)
             btn = CommandLinkButton(parent, -1, mlbl, nlbl)
