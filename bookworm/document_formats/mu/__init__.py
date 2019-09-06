@@ -88,7 +88,8 @@ class FitzDocument(BaseDocument):
                 last_page += 1
             if not all(p >= 0 for p in (first_page, last_page)):
                 continue
-            assert first_page <= last_page, "Error, Malformed page structure."
+            if first_page > last_page:
+                continue
             pgn = Pager(first=first_page, last=last_page, current=first_page)
             sect = Section(title=title, pager=pgn)
             if level == 1:

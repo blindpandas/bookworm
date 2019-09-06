@@ -769,6 +769,7 @@ class MenubarProvider:
         wx.LaunchDefaultApplication(str(docs))
 
     def populate_recent_file_list(self):
+        clear_item = self.recentFilesMenu.FindItemById(wx.ID_CLEAR)
         for item, _nop, filename in self._recent_files_data:
             self.recentFilesMenu.Delete(item)
         self._recent_files_data.clear()
@@ -782,8 +783,10 @@ class MenubarProvider:
             )
             _no_files.Enable(False)
             self._recent_files_data.append((_no_files, -1, ""))
+            clear_item.Enable(False)
         else:
             recent_files = (file for file in recent_files if os.path.exists(file))
+            clear_item.Enable(bool(recent_files))
             for idx, filename in enumerate(recent_files):
                 fname = os.path.split(filename)[-1]
                 item = self.recentFilesMenu.Append(wx.ID_ANY, f"{idx + 1}. {fname}")
@@ -793,9 +796,6 @@ class MenubarProvider:
                     for (it, id, fn) in self._recent_files_data:
                         if fn == self.reader.document.filename:
                             it.Enable(False)
-        self.recentFilesMenu.FindItemById(wx.ID_CLEAR).Enable(
-            self._recent_files_data and (self._recent_files_data[0][2] != "")
-        )
 
     def _reset_search_history(self):
         self._latest_search_results = []
