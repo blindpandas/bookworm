@@ -2,7 +2,7 @@
 
 ## Introduction
 
-**Bookworm** is an ACCESSIBLEebook reader that enables blind and visually impaired individuals to read e-books in an easy and hassle free manor. The main highlights of bookworm are:
+**Bookworm** is an ACCESSIBLEebook reader that enables blind and visually impaired individuals to read e-books in an easy and hassle free manor. The main highlights of Bookworm are:
 
 * Supports popular e-book formats, including EPUB and PDF
 * You can add named bookmarks to mark interesting positions in the text for later reference
@@ -37,7 +37,7 @@ You can open a book by selecting the "Open..." menu item from the "File" Menu. A
 
 ### The Reader Window
 
-The main window of bookworm consists of the following two parts:
+The main window of Bookworm consists of the following two parts:
 
 1. The "Table of contents": This part shows the e-book chapters'. It allows you to explore the content structure. Use navigation keys to navigate chapters, and press enter to navigate to specific chapter.
 
@@ -79,7 +79,7 @@ Additionally, you can click the "Edit" button to edit the title and the content 
 
 #### Exporting Notes
 
-Bookworm allows you to export your notes to a plain-text file, or to an HTML document which you can then open in your web browser.  Optionally, bookworm allows you to export your notes to markdown, which is a text-base format for writing structured documents popular among expert computer users.
+Bookworm allows you to export your notes to a plain-text file, or to an HTML document which you can then open in your web browser.  Optionally, Bookworm allows you to export your notes to markdown, which is a text-base format for writing structured documents popular among expert computer users.
 
 To export your notes, follow these steps:
 
@@ -95,7 +95,7 @@ To export your notes, follow these steps:
 Bookworm supports reading the content of the opened book aloud using an installed text-to-speech voice. Just press F5 to start the speech, F6 to pause or resume the speech, and F7 to stop the speech entirely.
 
 You can configure the speech in two ways:
-1. Using A Voice Profile: A voice profile contains your custom speech configurations, you can activate/deactivate the voice profile at any time. You can access voice profiles from the speech menu or by pressing Ctrl + Shift + V. Note that bookworm comes with some exemplary, built-in voice profiles.
+1. Using A Voice Profile: A voice profile contains your custom speech configurations, you can activate/deactivate the voice profile at any time. You can access voice profiles from the speech menu or by pressing Ctrl + Shift + V. Note that Bookworm comes with some exemplary, built-in voice profiles.
 2. The Global speech settings: these settings will be used by default when no voice profile is active. You can configure the global speech settings from the application preferences. 
 
 During reading aloud, you can skip backward or foreword by paragraph by pressing Alt plus the left and right arrow  keys.
@@ -105,9 +105,9 @@ During reading aloud, you can skip backward or foreword by paragraph by pressing
 
 In addition to the speech settings, Bookworm gives you the ability to fine-tune its reading behavior through these settings. All of the following settings could be found in the reading page of the application preferences.
 
-* What to read: this option controls what happens when you instruct Bookworm to "Play" the current book. You can choose to "Read the entire book", "Read the current section", or read just "The current page". By default, bookworm reads the entire book in a continuous manner, unless you instruct it to stop when it reaches the end of the page or the end of the current section.
+* What to read: this option controls what happens when you instruct Bookworm to "Play" the current book. You can choose to "Read the entire book", "Read the current section", or read just "The current page". By default, Bookworm reads the entire book in a continuous manner, unless you instruct it to stop when it reaches the end of the page or the end of the current section.
 * Where to start: this option controls the position from which to start reading aloud. You can choose to start reading from the "Position of the caret" or the "Start of the current page".
-* How to read: this set of options control how bookworm behave during reading aloud. You can turn on/off any one of the following options by checking/unchecking its respective checkbox:
+* How to read: this set of options control how Bookworm behave during reading aloud. You can turn on/off any one of the following options by checking/unchecking its respective checkbox:
 
 * Highlight spoken text: if this option is turned on, the currently spoken text is visually highlighted.
 * Select spoken text: if this option is turned on, the currently spoken text is selected. This enables you, for instance, to press Ctrl + C to copy the currently spoken paragraph.

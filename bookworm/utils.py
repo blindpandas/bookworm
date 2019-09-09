@@ -7,6 +7,7 @@ import hashlib
 from functools import wraps
 from pathlib import Path
 from xml.sax.saxutils import escape
+from bookworm import app
 from bookworm.concurrency import call_threaded
 from bookworm.logger import logger
 
@@ -34,9 +35,14 @@ def ignore(*exceptions, retval=None):
     return wrapper
 
 
-def restart_application(extra_args=()):
-    args = sys.argv[:1]
-    args.extend(extra_args)
+def restart_application(extra_args=(), restore=True):
+    args = list(extra_args)
+    if app.debug and "--debug" not in args:
+        args.append("--debug")
+    reader = wx.GetApp().mainFrame.reader
+    if restore and reader.ready:
+        reader.save_current_position()
+        args.insert(0, f'"{reader.document.filename}"')
     os.execv(sys.executable, args)
 
 

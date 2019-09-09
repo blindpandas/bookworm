@@ -15,7 +15,7 @@ version_ex = "0.1.1.0"
 url = "https://github.com/mush42/bookworm/"
 website = "https://mush42.github.io/bookworm/"
 update_url = "https://mush42.github.io/bookworm/current_version.json"
-copyright = f"Copyright (c) 2019 {author}."
+copyright = f"Copyright (c) 2019 {author} and {display_name} contributors."
 is_frozen = hasattr(sys, "frozen") and hasattr(sys, "_MEIPASS")
 arch = "x86" if struct.calcsize("P") == 4 else "x64"
 debug = False

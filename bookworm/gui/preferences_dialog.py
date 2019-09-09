@@ -24,6 +24,7 @@ from .components import SimpleDialog, EnhancedSpinCtrl
 
 
 log = logger.getChild(__name__)
+# Sentinel
 DEFAULT_STEP_SIZE = 5
 
 
@@ -176,6 +177,12 @@ class SettingsPanel(sc.SizedPanel):
             config.save()
             config_updated.send(self, section=self.config_section)
 
+    def make_static_box(self, title, parent=None, ctrl_id=-1):
+        stbx = sc.SizedStaticBox(parent or self, ctrl_id, title)
+        stbx.SetSizerProp("expand", True)
+        stbx.Sizer.AddSpacer(25)
+        return stbx
+
 
 class GeneralPanel(SettingsPanel):
     config_section = "general"
@@ -183,8 +190,7 @@ class GeneralPanel(SettingsPanel):
     def addControls(self):
         # Translators: the title of a group of controls in the
         # general settings page related to the UI
-        UIBox = sc.SizedStaticBox(self, -1, _("User Interface"))
-        UIBox.SetSizerProps(expand=True)
+        UIBox = self.make_static_box(_("User Interface"))
         # Translators: the label of a combobox containing display languages.
         wx.StaticText(UIBox, -1, _("Display Language:"))
         self.languageChoice = wx.Choice(UIBox, -1, style=wx.CB_SORT)
@@ -212,8 +218,7 @@ class GeneralPanel(SettingsPanel):
         )
         # Translators: the title of a group of controls shown in the
         # general settings page related to miscellaneous settings
-        miscBox = sc.SizedStaticBox(self, -1, _("Miscellaneous"))
-        miscBox.SetSizerProps(expand=True)
+        miscBox = self.make_static_box(_("Miscellaneous"))
         wx.CheckBox(
             miscBox,
             -1,
@@ -244,8 +249,7 @@ class GeneralPanel(SettingsPanel):
         )
         # Translators: the title of a group of controls shown in the
         # general settings page related to file associations
-        assocBox = sc.SizedStaticBox(self, -1, _("File Associations"))
-        assocBox.SetSizerProps(expand=True)
+        assocBox = self.make_static_box(_("File Associations"))
         wx.Button(
             assocBox,
             wx.ID_SETUP,
@@ -298,9 +302,8 @@ class SpeechPanel(SettingsPanel):
 
         # Translators: the label of a group of controls in the
         # speech settings page related to voice selection
-        voiceBox = sc.SizedStaticBox(self, -1, _("Voice"))
-        voiceBox.SetSizerType("form")
-        voiceBox.SetSizerProps(expand=True)
+        voiceBox = self.make_static_box(_("Voice"))
+        #voiceBox.SetSizerType("form")
         # Translators: the label of a combobox containing a list of tts voices
         wx.StaticText(voiceBox, -1, _("Select Voice:"))
         self.voice = wx.Choice(voiceBox, -1, choices=[v.desc for v in self.voices])
@@ -314,9 +317,8 @@ class SpeechPanel(SettingsPanel):
         vol.SetPageSize(DEFAULT_STEP_SIZE)
         # Translators: the label of a group of controls in the speech
         # settings page related to speech pauses
-        pausesBox = sc.SizedStaticBox(self, -1, _("Pauses"))
-        pausesBox.SetSizerType("form")
-        pausesBox.SetSizerProps(expand=True)
+        pausesBox = self.make_static_box(_("Pauses"))
+        #pausesBox.SetSizerType("form")
         # Translators: the label of an edit field
         wx.StaticText(pausesBox, -1, _("Additional Pause At Sentence End (Ms)"))
         sp = EnhancedSpinCtrl(
@@ -395,8 +397,7 @@ class ReadingPanel(SettingsPanel):
         )
         # Translators: the label of a group of controls in the reading page
         # of the settings related to behavior during reading  aloud
-        miscBox = sc.SizedStaticBox(self, -1, _("During Reading Aloud"))
-        miscBox.SetSizerProps(expand=True)
+        miscBox = self.make_static_box(_("During Reading Aloud"))
         # Translators: the label of a checkbox
         wx.CheckBox(
             miscBox, -1, _("Speak page number"), name="reading.speak_page_number"
