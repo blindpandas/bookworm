@@ -306,7 +306,7 @@ class SpeechPanel(SettingsPanel):
         #voiceBox.SetSizerType("form")
         # Translators: the label of a combobox containing a list of tts voices
         wx.StaticText(voiceBox, -1, _("Select Voice:"))
-        self.voice = wx.Choice(voiceBox, -1, choices=[v.desc for v in self.voices])
+        self.voice = wx.Choice(voiceBox, -1, choices=[(v.desc or v.name) for v in self.voices])
         # Translators: the label of the speech rate slider
         wx.StaticText(voiceBox, -1, _("Speech Rate:"))
         rt = wx.Slider(voiceBox, -1, minValue=0, maxValue=100, name="speech.rate")
