@@ -51,6 +51,9 @@ class EBookReader(TextToSpeechProvider):
             cls.format: cls for cls in self.document_classes
         }
         self.view = view
+        self.reset()
+
+    def reset(self):
         self.document = None
         self.__state = {}
 
@@ -84,6 +87,7 @@ class EBookReader(TextToSpeechProvider):
                 icon=wx.ICON_ERROR,
             )
             log.exception(f"Error opening document.\r\n{e.args}")
+            self.reset()
             return
         self.current_book = self.document.metadata
         self.view.add_toc_tree(self.document.toc_tree)
@@ -100,8 +104,7 @@ class EBookReader(TextToSpeechProvider):
         if self.ready:
             self.save_current_position()
             self.document.close()
-            self.document = None
-            self.__state.clear()
+            self.reset()
             reader_book_unloaded.send(self)
 
     def save_current_position(self):
@@ -176,10 +179,7 @@ class EBookReader(TextToSpeechProvider):
             if page_number in section.pager:
                 target_section = section
                 break
-        if page_number not in target_section.pager:
-            raise PaginationError(
-                f"Page {page_number} is out of range for this document."
-            )
+        assert page_number in target_section.pager, f"Page {page_number} is out of range for this document."
         self.active_section = target_section
         self.current_page = page_number
         self.view.contentTextCtrl.SetInsertionPoint(pos)
