@@ -86,7 +86,7 @@ class EBookReader(TextToSpeechProvider):
                 ).format(file=ebook_path),
                 icon=wx.ICON_ERROR,
             )
-            log.exception(f"Error opening document.\r\n{e.args}")
+            log.exception(f"Error opening document.\r\n{e.args}", exc_info=True)
             self.reset()
             return
         self.current_book = self.document.metadata
