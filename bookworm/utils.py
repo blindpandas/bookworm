@@ -35,14 +35,14 @@ def ignore(*exceptions, retval=None):
     return wrapper
 
 
-def restart_application(extra_args=(), restore=True):
+def restart_application(*extra_args, restore=True):
     args = list(extra_args)
     if app.debug and "--debug" not in args:
         args.append("--debug")
     reader = wx.GetApp().mainFrame.reader
     if restore and reader.ready:
-        reader.save_current_position()
         args.insert(0, f'"{reader.document.filename}"')
+        reader.save_current_position()
     os.execv(sys.executable, args)
 
 

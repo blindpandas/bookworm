@@ -707,7 +707,7 @@ class MenubarProvider:
         self.populate_recent_file_list()
 
     def onRestartWithDebugMode(self, event):
-        restart_application(("--debug",))
+        restart_application("--debug")
 
     @cached_property
     def content_text_ctrl_context_menu(self):
