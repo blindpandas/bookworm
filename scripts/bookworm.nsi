@@ -40,6 +40,7 @@ var StartMenuFolder
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Arabic"
+!insertmacro MUI_LANGUAGE "Bulgarian"
 !insertmacro MUI_RESERVEFILE_LANGDLL
 Section
 SetShellVarContext All
