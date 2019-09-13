@@ -5,8 +5,10 @@ import os
 import wx
 import hashlib
 from functools import wraps
+from subprocess import list2cmdline
 from pathlib import Path
 from xml.sax.saxutils import escape
+from bookworm.vendor import shellapi
 from bookworm import app
 from bookworm.concurrency import call_threaded
 from bookworm.logger import logger
@@ -35,15 +37,24 @@ def ignore(*exceptions, retval=None):
     return wrapper
 
 
-def restart_application(*extra_args, restore=True):
-    args = list(extra_args) + ["-r"]
-    if app.debug and "--debug" not in args:
-        args.append("--debug")
+def restart_application(*extra_args, debug=False, restore=True):
+    args = list(extra_args) + ["--restarted"]
     reader = wx.GetApp().mainFrame.reader
     if restore and reader.ready:
-        args.insert(0, f'"{reader.document.filename}"')
+        args.insert(0, f"{reader.document.filename}")
         reader.save_current_position()
-    os.execv(sys.executable, args)
+    if debug and ("--debug" not in args):
+        args.append("--debug")
+    wx.GetApp().ExitMainLoop()
+    shellapi.ShellExecute(
+        None,
+        None,
+        sys.executable,
+        list2cmdline(args),
+        None,
+        1
+    )
+    sys.exit(0)
 
 
 def recursively_iterdir(path):
