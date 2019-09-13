@@ -36,7 +36,7 @@ def ignore(*exceptions, retval=None):
 
 
 def restart_application(*extra_args, restore=True):
-    args = list(extra_args)
+    args = list(extra_args) + ["-r"]
     if app.debug and "--debug" not in args:
         args.append("--debug")
     reader = wx.GetApp().mainFrame.reader
