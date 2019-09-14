@@ -67,8 +67,7 @@ class FitzDocument(BaseDocument):
         toc_info = self._ebook.getToC()
         max_page = len(self) - 1
         root_item = Section(
-            title=self.metadata.title,
-            pager=Pager(first=0, last=max_page, current=0),
+            title=self.metadata.title, pager=Pager(first=0, last=max_page, current=0)
         )
         _last_entry = None
         for (index, (level, title, start_page)) in enumerate(toc_info):

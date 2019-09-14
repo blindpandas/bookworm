@@ -179,7 +179,9 @@ class EBookReader(TextToSpeechProvider):
             if page_number in section.pager:
                 target_section = section
                 break
-        assert page_number in target_section.pager, f"Page {page_number} is out of range for this document."
+        assert (
+            page_number in target_section.pager
+        ), f"Page {page_number} is out of range for this document."
         self.active_section = target_section
         self.current_page = page_number
         self.view.contentTextCtrl.SetInsertionPoint(pos)

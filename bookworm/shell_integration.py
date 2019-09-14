@@ -70,15 +70,15 @@ class RegKey:
 
     @classmethod
     def LocalSoftware(cls, *args, **kwargs):
-        root = cls(Registry.CurrentUser, r"SOFTWARE\Classes", kwargs.pop("writable", True))
+        root = cls(
+            Registry.CurrentUser, r"SOFTWARE\Classes", kwargs.pop("writable", True)
+        )
         return cls(root, *args, **kwargs)
 
 
 def add_shell_command(key, executable):
     key.CreateSubKey(r"shell\Open\Command").SetValue(
-        "",
-        f'"{executable}" "%1"',
-        RegistryValueKind.String
+        "", f'"{executable}" "%1"', RegistryValueKind.String
     )
 
 
@@ -104,7 +104,9 @@ def associate_extension(ext, prog_id, executable, desc, icon=None):
     # Set this executable as the default handler for files with this extension
     with RegKey.LocalSoftware(ext, ensure_created=True) as defkey:
         defkey.SetValue("", prog_id)
-    shellapi.SHChangeNotify(shellapi.SHCNE_ASSOCCHANGED, shellapi.SHCNF_IDLIST, None, None)
+    shellapi.SHChangeNotify(
+        shellapi.SHCNE_ASSOCCHANGED, shellapi.SHCNF_IDLIST, None, None
+    )
 
 
 def remove_association(ext, prog_id):
@@ -119,17 +121,16 @@ def remove_association(ext, prog_id):
     except System.ArgumentException:
         log.exception(f"Faild to remove the openwith prog_id key", exc_info=True)
     shellapi.SHChangeNotify(
-        shellapi.SHCNE_ASSOCCHANGED,
-        shellapi.SHCNF_IDLIST,
-        None,
-        None
+        shellapi.SHCNE_ASSOCCHANGED, shellapi.SHCNF_IDLIST, None, None
     )
 
 
 @ignore(System.Exception)
 def shell_integrate(supported="*"):
     if not app.is_frozen:
-        return log.warning("File association is not available when running from source.")
+        return log.warning(
+            "File association is not available when running from source."
+        )
     log.info(f"Registring file associations for extensions {supported}.")
     register_application(app.prog_id, sys.executable, supported)
     doctypes = get_ext_info(supported)
@@ -140,7 +141,9 @@ def shell_integrate(supported="*"):
 @ignore(System.Exception)
 def shell_disintegrate(supported="*"):
     if not app.is_frozen:
-        return log.warning("File association is not available when running from source.")
+        return log.warning(
+            "File association is not available when running from source."
+        )
     log.info(f"Unregistring file associations for extensions {supported}.")
     exe = os.path.split(sys.executable)[-1]
     with RegKey.LocalSoftware("Applications") as apps_key:

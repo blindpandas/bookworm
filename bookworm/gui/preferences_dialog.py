@@ -51,9 +51,9 @@ class FileAssociationDialog(SimpleDialog):
             parent,
             -1,
             _(
-            "This dialog will help you to setup file associations.\n"
-            "Associating files with Bookworm means that when you click on a file in windows explorer, it will be opend in Bookworm by default "
-            )
+                "This dialog will help you to setup file associations.\n"
+                "Associating files with Bookworm means that when you click on a file in windows explorer, it will be opend in Bookworm by default "
+            ),
         )
         assoc_btn = CommandLinkButton(
             parent,
@@ -61,22 +61,28 @@ class FileAssociationDialog(SimpleDialog):
             # Translators: the main label of a button
             _("Associate all"),
             # Translators: the note of a button
-            _("Use Bookworm to open all supported ebook formats")
+            _("Use Bookworm to open all supported ebook formats"),
         )
         for ext, metadata in self.ext_info:
             # Translators: the main label of a button
             mlbl = _("Associate files of type {format}").format(format=metadata[1])
             # Translators: the note of a button
-            nlbl = _("Associate files with {ext} extension so they always open in Bookworm").format(ext=ext)
+            nlbl = _(
+                "Associate files with {ext} extension so they always open in Bookworm"
+            ).format(ext=ext)
             btn = CommandLinkButton(parent, -1, mlbl, nlbl)
-            self.Bind(wx.EVT_BUTTON, lambda e, args=(ext, metadata[1]): self.onFileAssoc(*args), btn)
+            self.Bind(
+                wx.EVT_BUTTON,
+                lambda e, args=(ext, metadata[1]): self.onFileAssoc(*args),
+                btn,
+            )
         dissoc_btn = CommandLinkButton(
             parent,
             -1,
             # Translators: the main label of a button
             _("Dissociate all supported file types"),
             # Translators: the note of a button
-            _("Unregister previously associated file types")
+            _("Unregister previously associated file types"),
         )
         self.Bind(wx.EVT_BUTTON, lambda e: self.onBatchAssoc(assoc=True), assoc_btn)
         self.Bind(wx.EVT_BUTTON, lambda e: self.onBatchAssoc(assoc=False), dissoc_btn)
@@ -93,10 +99,12 @@ class FileAssociationDialog(SimpleDialog):
         shell_integrate((ext,))
         wx.MessageBox(
             # Translators: the text of a message indicating successful file association
-            _("Files of type {format} have been associated with Bookworm.").format(format=desc),
+            _("Files of type {format} have been associated with Bookworm.").format(
+                format=desc
+            ),
             # Translators: the title of a message indicating successful file association
             _("Success"),
-            style=wx.ICON_INFORMATION
+            style=wx.ICON_INFORMATION,
         )
 
     def onBatchAssoc(self, assoc):
@@ -104,7 +112,9 @@ class FileAssociationDialog(SimpleDialog):
         func()
         if assoc:
             # Translators: the text of a message indicating successful removal of file associations
-            msg = _("All supported file types have been set to open by default in Bookworm.")
+            msg = _(
+                "All supported file types have been set to open by default in Bookworm."
+            )
         else:
             # Translators: the text of a message indicating successful removal of file associations
             msg = _("All registered file associations have been removed.")
@@ -112,7 +122,7 @@ class FileAssociationDialog(SimpleDialog):
             msg,
             # Translators: the title of a message indicating successful removal of file association
             _("Success"),
-            style=wx.ICON_INFORMATION
+            style=wx.ICON_INFORMATION,
         )
         self.Close()
 
@@ -143,8 +153,6 @@ def _on_app_first_run(sender):
         wx.CallAfter(dlg.ShowModal)
         config.conf["history"]["set_file_assoc"] = ndoctypes
         config.save()
-
-
 
 
 class SettingsPanel(sc.SizedPanel):
@@ -254,11 +262,13 @@ class GeneralPanel(SettingsPanel):
             assocBox,
             wx.ID_SETUP,
             # Translators: the label of a button
-            _("Manage File &Associations")
+            _("Manage File &Associations"),
         )
         self.Bind(wx.EVT_BUTTON, self.onRequestFileAssoc, id=wx.ID_SETUP)
         self.langobjs = get_available_languages()
-        languages = set((lang.language, lang.description) for lang in self.langobjs.values())
+        languages = set(
+            (lang.language, lang.description) for lang in self.langobjs.values()
+        )
         for ident, label in languages:
             self.languageChoice.Append(label, ident)
         self.languageChoice.SetStringSelection(app.current_language.description)
@@ -303,10 +313,12 @@ class SpeechPanel(SettingsPanel):
         # Translators: the label of a group of controls in the
         # speech settings page related to voice selection
         voiceBox = self.make_static_box(_("Voice"))
-        #voiceBox.SetSizerType("form")
+        # voiceBox.SetSizerType("form")
         # Translators: the label of a combobox containing a list of tts voices
         wx.StaticText(voiceBox, -1, _("Select Voice:"))
-        self.voice = wx.Choice(voiceBox, -1, choices=[(v.desc or v.name) for v in self.voices])
+        self.voice = wx.Choice(
+            voiceBox, -1, choices=[(v.desc or v.name) for v in self.voices]
+        )
         # Translators: the label of the speech rate slider
         wx.StaticText(voiceBox, -1, _("Speech Rate:"))
         rt = wx.Slider(voiceBox, -1, minValue=0, maxValue=100, name="speech.rate")
@@ -318,7 +330,7 @@ class SpeechPanel(SettingsPanel):
         # Translators: the label of a group of controls in the speech
         # settings page related to speech pauses
         pausesBox = self.make_static_box(_("Pauses"))
-        #pausesBox.SetSizerType("form")
+        # pausesBox.SetSizerType("form")
         # Translators: the label of an edit field
         wx.StaticText(pausesBox, -1, _("Additional Pause At Sentence End (Ms)"))
         sp = EnhancedSpinCtrl(

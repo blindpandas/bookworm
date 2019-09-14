@@ -23,6 +23,7 @@ _missing = object()
 
 def ignore(*exceptions, retval=None):
     """Execute function ignoring any one of the given exceptions if raised."""
+
     def wrapper(func):
         @wraps(func)
         def wrapped(*args, **kwargs):
@@ -31,9 +32,14 @@ def ignore(*exceptions, retval=None):
             except Exception as e:
                 if not any(isinstance(e, exc) for exc in exceptions):
                     raise
-                log.exception(f"Ignored exc {e} raised when executing function {func}", exc_info=True)
+                log.exception(
+                    f"Ignored exc {e} raised when executing function {func}",
+                    exc_info=True,
+                )
                 return retval
+
         return wrapped
+
     return wrapper
 
 
@@ -46,14 +52,7 @@ def restart_application(*extra_args, debug=False, restore=True):
     if debug and ("--debug" not in args):
         args.append("--debug")
     wx.GetApp().ExitMainLoop()
-    shellapi.ShellExecute(
-        None,
-        None,
-        sys.executable,
-        list2cmdline(args),
-        None,
-        1
-    )
+    shellapi.ShellExecute(None, None, sys.executable, list2cmdline(args), None, 1)
     sys.exit(0)
 
 

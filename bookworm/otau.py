@@ -29,7 +29,7 @@ log = logger.getChild(__name__)
 
 
 def kill_other_running_instances():
-    """Ensure only one instance is running."""
+    """Ensure that only this instance is running."""
     log.debug("Killing other running instances of the application.")
     pid, exe_dir = os.getpid(), Path(sys.executable).resolve().parent
     for proc in Process.GetProcessesByName(app.name):
@@ -164,7 +164,7 @@ def perform_update(update_url, sha1hash):
             style=wx.ICON_ERROR,
         )
         return
-    update_file_size = int(update_file.headers.get('content-length', 20 * 1024 ** 2))
+    update_file_size = int(update_file.headers.get("content-length", 20 * 1024 ** 2))
     dlg = wx.ProgressDialog(
         # Translators: the title of a message indicating the progress of downloading an update
         _("Downloading Update"),
@@ -172,14 +172,14 @@ def perform_update(update_url, sha1hash):
         _("Downloading {url}:").format(url=update_url),
         parent=wx.GetApp().mainFrame,
         maximum=99,
-        style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE
+        style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
     )
     bundle = tempfile.SpooledTemporaryFile(max_size=1024 * 30 * 1000)
     # Translators: a message indicating the progress of downloading an update bundle
     update_progress = lambda c, t=update_file_size: _(
         "Downloading. {downloaded} MB of {total} MB"
     ).format(downloaded=round(c / (1024 ** 2)), total=round(t / (1024 ** 2)))
-    csize = ceil(update_file_size/100)
+    csize = ceil(update_file_size / 100)
     for (progval, chunk) in enumerate(update_file.iter_content(chunk_size=csize)):
         bundle.write(chunk)
         downloaded = bundle.tell()
@@ -223,7 +223,7 @@ def perform_update(update_url, sha1hash):
         # Translators: a message shown when extracting an update bundle
         _("Please wait..."),
         parent=wx.GetApp().mainFrame,
-        style=wx.PD_APP_MODAL
+        style=wx.PD_APP_MODAL,
     )
     extraction_dir = extract_update_bundle(bundle)
     bundle.close()

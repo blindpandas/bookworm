@@ -340,7 +340,9 @@ class MenubarProvider:
         )
         self.Bind(
             wx.EVT_MENU,
-            lambda e: wx.LaunchDefaultApplication(str(paths.docs_path("contributors.txt"))),
+            lambda e: wx.LaunchDefaultApplication(
+                str(paths.docs_path("contributors.txt"))
+            ),
             id=ViewerMenuIds.contributors,
         )
         self.Bind(
@@ -814,7 +816,9 @@ class MenubarProvider:
         allfiles_display = " ".join(e for e in all_exts)
         rv.insert(
             0,
-            _("Supported E-Book Formats ({display})|{ext}|").format(display=allfiles_display, ext=allfiles)
+            _("Supported E-Book Formats ({display})|{ext}|").format(
+                display=allfiles_display, ext=allfiles
+            ),
         )
         return "".join(rv)
 

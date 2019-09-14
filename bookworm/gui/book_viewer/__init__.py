@@ -111,7 +111,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         if config.conf["general"]["play_page_note_sound"]:
             reader_page_changed.connect(play_sound_if_note, sender=self.reader)
         if config.conf["general"]["highlight_bookmarked_positions"]:
-            reader_page_changed.connect(highlight_bookmarked_positions, sender=self.reader)
+            reader_page_changed.connect(
+                highlight_bookmarked_positions, sender=self.reader
+            )
 
     def set_content(self, content):
         self.contentTextCtrl.Clear()
