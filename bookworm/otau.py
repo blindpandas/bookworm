@@ -12,10 +12,11 @@ import wx
 import win32api
 from math import ceil
 from io import BytesIO
-from requests.exceptions import RequestException
 from hashlib import sha1
 from pathlib import Path
 from lzma import decompress
+from System.Diagnostics import Process
+from requests.exceptions import RequestException
 from bookworm import app
 from bookworm import config
 from bookworm import paths
@@ -25,6 +26,17 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
+
+
+def kill_other_running_instances():
+    """Ensure only one instance is running."""
+    log.debug("Killing other running instances of the application.")
+    pid, exe_dir = os.getpid(), Path(sys.executable).resolve().parent
+    for proc in Process.GetProcessesByName(app.name):
+        if Path(proc.MainModule.FileName).resolve().parent != exe_dir:
+            continue
+        if proc.Id != os.getpid():
+            proc.Kill()
 
 
 @ignore(OSError)
@@ -229,6 +241,7 @@ def execute_bootstrap(extraction_dir):
     viewer = wx.GetApp().mainFrame
     if viewer.reader.ready:
         viewer.reader.save_current_position()
+    kill_other_running_instances()
     win32api.ShellExecute(0, "open", str(move_to / "bootstrap.exe"), args, "", 5)
     log.info("Bootstrap has been executed.")
-    sys.exit()
+    sys.exit(0)
