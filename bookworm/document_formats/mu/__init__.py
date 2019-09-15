@@ -55,7 +55,7 @@ class FitzDocument(BaseDocument):
         return bool(self._ebook.authenticate(password))
 
     def _text_from_page(self, page):
-        bloks = page.getTextBlocks()
+        bloks = page.getTextBlocks(flags=fitz.TEXT_PRESERVE_WHITESPACE)
         text = [blk[4].replace("\n", " ") for blk in bloks]
         return "\r\n".join(text)
 
