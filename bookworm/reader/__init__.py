@@ -93,7 +93,7 @@ class EBookReader(TextToSpeechProvider):
         self.view.add_toc_tree(self.document.toc_tree)
         self.view.set_text_direction(is_rtl(self.document.language))
         self.active_section = self.document.toc_tree
-        self.view.SetTitle(self.get_view_title())
+        self.view.SetTitle(self.get_view_title(include_author=True))
         last_position = database.get_last_position(ebook_path.lower())
         if last_position is not None:
             self.go_to_page(*last_position)
@@ -234,7 +234,7 @@ class EBookReader(TextToSpeechProvider):
                 author = self.current_book.author
                 # Translators: the title of the window when an e-book is open
                 view_title = _("{title} — by {author}").format(
-                    title=title, author=author
+                    title=view_title, author=author
                 )
         return view_title + f" - {app.display_name}"
 
