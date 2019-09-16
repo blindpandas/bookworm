@@ -259,22 +259,24 @@ class ViewPageAsImageDialog(wx.Dialog):
         if (value < 1.0) or (value > 10.0):
             return
         self._zoom_factor = value
-        self.setDialogImage()
-        self.scroll.SetupScrolling(rate_x=self.scroll_rate, rate_y=self.scroll_rate)
+        self.setDialogImage(reset_scroll_pos=False)
+        self.scroll.SetupScrolling(rate_x=self.scroll_rate, rate_y=self.scroll_rate, scrollToTop=False)
         # Translators: a message announced to the user when the zoom factor changes
         speech.announce(
             _("Zoom is at {factor} percent").format(factor=int(value * 100))
         )
 
-    def setDialogImage(self):
+    def setDialogImage(self, reset_scroll_pos=True):
         bmp, size = self.getPageImage()
         self.imageCtrl.SetBitmap(bmp)
         self.imageCtrl.SetSize(size)
         self._currently_rendered_page = self.reader.current_page
+        if reset_scroll_pos:
+            wx.CallLater(50, self.scroll.Scroll, 0, 0)
 
     def getPageImage(self):
         page = self.reader.document[self.reader.current_page]
-        mat = fitz.Matrix(self.zoom_factor, self.zoom_factor)
+        mat = fitz.Matrix(self._zoom_factor, self._zoom_factor)
         pix = page.getPixmap(matrix=mat, alpha=True)
         bmp = wx.Bitmap.FromBufferRGBA(pix.width, pix.height, pix.samples)
         size = (bmp.GetWidth(), bmp.GetHeight())
