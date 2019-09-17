@@ -506,3 +506,56 @@ class SpeechEngineSelector(SimpleDialog):
     def ShowModal(self):
         super().ShowModal()
         return self._return_value
+
+
+class FootNotesDialog(Dialog):
+    """Search Results."""
+
+    def addControls(self, sizer, parent):
+        self.reader = self.parent.reader
+        # Translators: the label of a list of footnotes
+        label = wx.StaticText(parent, -1, _("Footnotes"))
+        self.footnotesList = DialogListCtrl(parent, -1)
+        self.footnotesList.AppendColumn(
+            # Translators: the title of a column in the footnotes list
+            _("Title"),
+            format=wx.LIST_FORMAT_LEFT,
+            width=20,
+        )
+        self.footnotesList.AppendColumn(
+            # Translators: the title of a column in the footnotes list
+            _("Footnote"),
+            format=wx.LIST_FORMAT_CENTER,
+            width=80,
+        )
+        self.footnotesList.SetColumnWidth(0, 100)
+        self.footnotesList.SetColumnWidth(1, 100)
+        sizer.Add(label, 0, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 10)
+        sizer.Add(self.footnotesList, 1, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 10)
+        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onItemClick, self.footnotesList)
+        footnotes = self.reader.document.get_footnotes(self.reader.active_section)
+        for (title, footnote) in footnotes:
+            self.add_footnote(title, footnote)
+
+    def getButtons(self, parent):
+        btnsizer = wx.StdDialogButtonSizer()
+        # Translators: the label of a button to close the dialog
+        btnsizer.AddButton(wx.Button(parent, wx.ID_CANCEL, "&Close"))
+        btnsizer.Realize()
+        return btnsizer
+
+    def onItemClick(self, event):
+        idx = self.searchResultsListCtrl.GetFocusedItem()
+        if idx != wx.NOT_FOUND:
+            page = self.searchResultsListCtrl.GetItemText(idx)
+            pos = self.searchResultsListCtrl.GetItemData(idx)
+            self.Close()
+            self.Destroy()
+            self.parent.highlight_search_result(int(page) - 1, pos)
+            self.parent._last_search_index = idx
+
+    def add_footnote(self, title, footnote):
+        count = self.footnotesList.ItemCount
+        index = self.footnotesList.InsertItem(count, title)
+        self.footnotesList.SetItem(index, 1, footnote)
+

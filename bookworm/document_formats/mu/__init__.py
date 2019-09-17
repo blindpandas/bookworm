@@ -1,7 +1,10 @@
 # coding: utf-8
 
 import os
+import zipfile
 import fitz
+from pathlib import Path, PurePosixPath as PosixPath
+from lxml import html
 from bookworm.concurrency import QueueProcess
 from bookworm.utils import cached_property
 from bookworm.document_formats.base import (
@@ -64,13 +67,13 @@ class FitzDocument(BaseDocument):
 
     @cached_property
     def toc_tree(self):
-        toc_info = self._ebook.getToC()
+        toc_info = self._ebook.getToC(simple=False)
         max_page = len(self) - 1
         root_item = Section(
             title=self.metadata.title, pager=Pager(first=0, last=max_page, current=0)
         )
         _last_entry = None
-        for (index, (level, title, start_page)) in enumerate(toc_info):
+        for (index, (level, title, start_page, infodict)) in enumerate(toc_info):
             try:
                 curr_index = index
                 next_item = toc_info[curr_index + 1]
@@ -80,7 +83,7 @@ class FitzDocument(BaseDocument):
             except IndexError:
                 next_item = None
             first_page = start_page - 1
-            last_page = max_page if next_item is None else next_item[-1] - 2
+            last_page = max_page if next_item is None else next_item[2] - 2
             if first_page < 0:
                 first_page = 0 if _last_entry is None else _last_entry.pager.last
             if last_page < first_page:
@@ -90,7 +93,7 @@ class FitzDocument(BaseDocument):
             if first_page > last_page:
                 continue
             pgn = Pager(first=first_page, last=last_page, current=first_page)
-            sect = Section(title=title, pager=pgn)
+            sect = Section(title=title, pager=pgn, data={"html_file": infodict.get("name")})
             if level == 1:
                 root_item.append(sect)
                 _last_entry = sect
@@ -165,3 +168,38 @@ class FitzEPUBDocument(FitzDocument):
                 self.filename = _tools.make_unrestricted_file(self.filename)
                 return super().read(filetype="epub")
             raise e
+        self._book_zip = zipfile.ZipFile(self.filename)
+
+    def close(self):
+        self._book_zip.close()
+        super().close()
+
+    def get_footnotes_for_single_section(self, section):
+        rv = []
+        html_file = section.data["html_file"]
+        content_id = None
+        if html_file is None:
+            return rv
+        if "#" in html_file:
+            html_file, content_id = html_file.split("#")
+        parents = PosixPath(html_file).parts[:-1]
+        html_doc = html.document_fromstring(self._book_zip.read(html_file))
+        if content_id is not None:
+            html_doc = html_doc.get_element_by_id(content_id)
+        for (el, attr, link, pos) in html_doc.iterlinks():
+            if (el.tag != "a") or ("#" not in link):
+                continue
+            try:
+                target_file, el_id = link.split("#")
+                target_full_path = Path(*parents, target_file).as_posix()
+                target_doc = html.document_fromstring(self._book_zip.read(target_full_path))
+                rv.append((el.text_content(), target_doc.get_element_by_id(el_id).text_content()))
+            except KeyError:
+                continue
+        return rv
+
+    def get_footnotes(self, section):
+        rv = self.get_footnotes_for_single_section(section)
+        for child in section.iterchildren():
+            rv.extend(self.get_footnotes_for_single_section(child))
+        return rv

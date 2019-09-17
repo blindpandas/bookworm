@@ -128,6 +128,11 @@ class Section:
         child.parent = self
         self.children.append(child)
 
+    def iterchildren(self):
+        for child in self.children:
+            yield child
+            yield from child.iterchildren()
+
     @property
     def is_root(self):
         return self.parent is None
@@ -243,6 +248,10 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """Return an iterable representing the table of content.
         The items should be of type `Section`.
         """
+
+    def get_footnotes(self, section):
+        """Returns a list of footnotes for the given section."""
+        return []
 
     @cached_property
     def language(self):

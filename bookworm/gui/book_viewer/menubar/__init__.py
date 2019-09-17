@@ -24,6 +24,7 @@ from bookworm.gui.book_viewer.core_dialogs import (
     GoToPageDialog,
     SearchBookDialog,
     SearchResultsDialog,
+    FootNotesDialog,
     ViewPageAsImageDialog,
     VoiceProfileDialog,
 )
@@ -184,6 +185,13 @@ class MenubarProvider:
         )
         # Annotations menu
         annotationsMenu.Append(
+            wx.ID_FILE2,
+            # Translators: the label of an ietm in the application menubar
+            _("View Footnotes...\tCtrl-B"),
+            # Translators: the help text of an ietm in the application menubar
+            _("Bookmark the current location"),
+        )
+        annotationsMenu.Append(
             BookRelatedMenuIds.addBookmark,
             # Translators: the label of an ietm in the application menubar
             _("Add &Bookmark...\tCtrl-B"),
@@ -318,6 +326,7 @@ class MenubarProvider:
         )
 
         # Annotations menu event handlers
+        self.Bind(wx.EVT_MENU, self.onViewFootnotes, id=wx.ID_FILE2)
         self.Bind(wx.EVT_MENU, self.onAddBookmark, id=BookRelatedMenuIds.addBookmark)
         self.Bind(wx.EVT_MENU, self.onAddNote, id=BookRelatedMenuIds.addNote)
         self.Bind(
@@ -844,3 +853,8 @@ class MenubarProvider:
                 style=wx.ICON_ERROR,
             )
             return self.decrypt_opened_document()
+
+    def onViewFootnotes(self, event):
+        chapter = self.reader.active_section.title
+        with FootNotesDialog(parent=self, title=_("Foot Notes | {chapter}").format(chapter=chapter)) as dlg:
+            dlg.ShowModal()
