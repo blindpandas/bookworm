@@ -9,7 +9,13 @@ from System.Speech.Synthesis import (
     PromptRate,
     PromptBreak,
 )
-from enum import IntEnum
+from enum import IntEnum, auto
+
+
+class EngineEvents(IntEnum):
+    bookmark_reached = auto()
+    state_changed = auto()
+    speech_progress = auto()
 
 
 class SynthState(IntEnum):
@@ -53,3 +59,4 @@ class PauseSpec(IntEnum):
     medium = PromptBreak.Medium
     large = PromptBreak.Large
     extra_large = PromptBreak.ExtraLarge
+

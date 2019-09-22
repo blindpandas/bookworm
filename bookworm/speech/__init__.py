@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import gc
-import System
 from queue import PriorityQueue
 from accessible_output2.outputs.auto import Auto
 from bookworm import config
@@ -11,8 +10,8 @@ from bookworm.signals import (
     speech_engine_state_changed,
 )
 from bookworm.logger import logger
-from .engine import SpeechEngine
-from .enumerations import SynthState
+from .engines.sapi import SapiSpeechEngine
+from .enumerations import EngineEvents, SynthState
 
 log = logger.getChild(__name__)
 
@@ -42,24 +41,23 @@ class SpeechProvider:
     def initialize(self):
         if self.engine is not None:
             return
-        self.engine = SpeechEngine(language=self.reader.document.language)
+        self.engine = SapiSpeechEngine(language=self.reader.document.language)
         self.configure_engine()
         # Event handlers
         app_shuttingdown.connect(lambda s: self.close(), weak=False)
         config_updated.connect(self.on_config_changed)
-        # self.engine.SpeakProgress += self.on_speech_progress
-        self.engine.StateChanged += self.on_state_changed
-        self.engine.BookmarkReached += self.on_bookmark_reached
+        self.engine.bind(EngineEvents.state_changed, self.on_state_changed)
+        self.engine.bind(EngineEvents.bookmark_reached, self.on_bookmark_reached)
         self._try_set_tts_language()
 
     def _try_set_tts_language(self):
         lang = self.reader.document.language
-        if not self.engine.get_current_voice().speaks_language(lang):
-            voice_for_lang = self.reader.tts.engine.get_voices(
+        if not self.engine.voice.speaks_language(lang):
+            voice_for_lang = self.engine.get_voices(
                 self.reader.document.language
             )
             if voice_for_lang:
-                self.engine.SelectVoice(voice_for_lang[0].name)
+                self.engine.voice = voice_for_lang[0]
                 self.reader.view.notify_user(
                     # Translators: the title of a message telling the user that the TTS voice has been changed
                     _("Incompatible TTS Voice Detected"),
@@ -75,12 +73,9 @@ class SpeechProvider:
     def close(self):
         if self.engine:
             # Unsubscribe
-            # self.engine.SpeakProgress -= self.on_speech_progress
-            self.engine.StateChanged -= self.on_state_changed
-            self.engine.BookmarkReached -= self.on_bookmark_reached
             self.engine.close()
             self.engine = None
-            # Force a collection here to dispose of the .NET object
+            # Force a collection here to dispose of any stale  objects
             gc.collect()
 
     def __del__(self):
@@ -154,14 +149,8 @@ class SpeechProvider:
     def is_ready(self):
         return self.engine is not None
 
-    def on_speech_progress(self, sender, args):
-        pos = args.CharacterPosition
-        count = args.CharacterCount
-        log.debug(f"Position: {pos}, Count: {count}")
-
-    def on_state_changed(self, sender, args):
-        state = SynthState(args.State)
+    def on_state_changed(self, state):
         speech_engine_state_changed.send(self, state=state)
 
-    def on_bookmark_reached(self, sender, args):
-        self.reader.process_bookmark(args.Bookmark)
+    def on_bookmark_reached(self, bookmark):
+        self.reader.process_bookmark(bookmark)

@@ -10,7 +10,7 @@ from bookworm import config
 from bookworm.paths import app_path
 from bookworm.utils import restart_application
 from bookworm.i18n import get_available_languages, set_active_language
-from bookworm.speech.engine import SpeechEngine
+from bookworm.speech.engines.sapi import SapiSpeechEngine as SpeechEngine
 from bookworm.signals import app_started, config_updated
 from bookworm.resources import images
 from bookworm.config.spec import (
@@ -317,7 +317,9 @@ class SpeechPanel(SettingsPanel):
         # Translators: the label of a combobox containing a list of tts voices
         wx.StaticText(voiceBox, -1, _("Select Voice:"))
         self.voice = wx.Choice(
-            voiceBox, -1, choices=[(v.desc or v.name) for v in self.voices]
+            voiceBox,
+            -1,
+            choices=[v.display_name for v in self.voices]
         )
         # Translators: the label of the speech rate slider
         wx.StaticText(voiceBox, -1, _("Speech Rate:"))
