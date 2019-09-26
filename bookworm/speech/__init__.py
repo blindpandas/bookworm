@@ -12,6 +12,10 @@ from bookworm.signals import (
 from bookworm.logger import logger
 from .engines.sapi import SapiSpeechEngine
 from .enumerations import EngineEvents, SynthState
+from .engines.sapi import SapiSpeechEngine
+from .engines.onecore import OnecoreSpeechEngine
+
+
 
 log = logger.getChild(__name__)
 
@@ -32,6 +36,8 @@ def announce(message, urgent=True):
 
 class SpeechProvider:
     """Text-to-speech controller for bookworm."""
+
+    speech_engines = (SapiSpeechEngine, OnecoreSpeechEngine,)
 
     def __init__(self, reader):
         self.reader = reader

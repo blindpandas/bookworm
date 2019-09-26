@@ -29,6 +29,10 @@ class VoiceInfo:
 class BaseSpeechEngine(metaclass=ABCMeta):
     """The base class for speech engines."""
 
+    name = None
+    """The name of this speech engine."""
+    display_name = None
+    """The user-friendly, localizable name of this engine."""
     utterance_cls = None
 
     def __init__(self, language=None):

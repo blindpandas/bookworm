@@ -27,6 +27,8 @@ log = logger.getChild(__name__)
 class OnecoreSpeechEngine(BaseSpeechEngine):
     """Our Pythonic Interface to OneCore speech synthesizer."""
 
+    name = "onecore"
+    display_name = _("Windows One Core Synthesizer")
     utterance_cls = OnecoreSpeechUtterance
 
     def __init__(self, language=None):
