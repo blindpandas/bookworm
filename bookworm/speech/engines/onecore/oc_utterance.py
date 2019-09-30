@@ -1,33 +1,64 @@
 # coding: utf-8
 
-from System.Speech.Synthesis import PromptBuilder
-from dataclasses import dataclass, field
-from ..sapi.sp_utterance import SapiSpeechUtterance
+from System.Globalization import CultureInfo, CultureNotFoundException
+from bookworm.speech.enumerations import SpeechElementKind
+from bookworm.speech.utterance import SpeechElement, SpeechStyle
 from bookworm.logger import logger
+from ..sapi.sp_utterance import SapiSpeechUtterance
+
+try:
+    from OcSpeechElements import PromptBuilder as OcPromptBuilder
+except:
+    OcPromptBuilder = None
+
 
 log = logger.getChild(__name__)
 
-@dataclass
-class OcBookmark:
-    bookmark: str
 
+class OcSpeechUtterance(SapiSpeechUtterance):
 
-@dataclass(order=True, frozen=True)
-class OnecoreSpeechUtterance(SapiSpeechUtterance):
-    """A blueprint for speaking some content."""
+    def __init__(self, synth):
+        super().__init__()
+        self.synth = synth
+        self._speech_sequence = []
+        self._heal_funcs = []
 
-    speech_sequence: list = field(default_factory=list, compare=False)
+    def process_speech_element(self, elm_kind, content):
+        if elm_kind is SpeechElementKind.start_paragraph:
+            super().process_speech_element(elm_kind, content)
+            self._heal_funcs.append((self.prompt.EndParagraph, ()))
+        elif elm_kind is SpeechElementKind.start_style:
+            super().process_speech_element(elm_kind, content)
+            self._heal_funcs.append((self.end_style, (content,)))
+        else:
+            super().process_speech_element(elm_kind, content)
 
     def add_bookmark(self, bookmark):
-        self.speech_sequence.append(self.prompt.ToXml())
-        self.speech_sequence.append(OcBookmark(bookmark))
-        self.prompt.ClearContent()
+        """Append application specific data."""
+        self._speech_sequence.append(self._pop_prompt_content())
+        self._speech_sequence.append(SpeechElement(SpeechElementKind.bookmark, bookmark))
 
-    def add(self, utterance):
-        """Append the content of another utterance to this utterance."""
-        self.speech_sequence.extend(utterance.speech_sequence)
+    def _pop_prompt_content(self):
+        for func, args in self._heal_funcs:
+            func(*args)
+        self._heal_funcs.clear()
+        voice = self.synth().voice
+        voice_utterance = SapiSpeechUtterance()
+        with voice_utterance.set_style(SpeechStyle(voice=voice, rate=self.synth().rate)):
+            voice_utterance.append_utterance(self)
+        voice_utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(voice.language)
+        rv = voice_utterance.prompt.ToXml()
+        if not self.prompt.IsEmpty:
+            self.prompt.ClearContent()
+        return SpeechElement(SpeechElementKind.ssml, rv)
 
-    def get_speech_sequence(self):
-        self.speech_sequence.append(self.prompt.ToXml())
-        self.prompt.ClearContent()
-        return self.speech_sequence
+    def to_oc_prompt(self):
+        oc_prompt = OcPromptBuilder()
+        if not self.prompt.IsEmpty:
+            self._speech_sequence.append(self._pop_prompt_content())
+        for element in self._speech_sequence:
+            if element.kind is SpeechElementKind.ssml:
+                oc_prompt.AddSsml(element.content)
+            elif element.kind is SpeechElementKind.bookmark:
+                oc_prompt.AddBookmark(element.content)
+        return oc_prompt

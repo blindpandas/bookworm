@@ -26,6 +26,7 @@ config_spec = StringIO(
     last_folder = string(default="")
     set_file_assoc = integer(default=0)
 [speech]
+    engine = string(default="sapi")
     voice = string(default="")
     rate = integer(default=50)
     volume = integer(default=75)

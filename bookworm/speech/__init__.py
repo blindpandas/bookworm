@@ -11,9 +11,10 @@ from bookworm.signals import (
 )
 from bookworm.logger import logger
 from .engines.sapi import SapiSpeechEngine
-from .enumerations import EngineEvents, SynthState
+from .engines.onecore import OcSpeechEngine
+from .enumerations import EngineEvent, SynthState
 from .engines.sapi import SapiSpeechEngine
-from .engines.onecore import OnecoreSpeechEngine
+
 
 
 
@@ -37,23 +38,27 @@ def announce(message, urgent=True):
 class SpeechProvider:
     """Text-to-speech controller for bookworm."""
 
-    speech_engines = (SapiSpeechEngine, OnecoreSpeechEngine,)
+    speech_engines = (SapiSpeechEngine, OcSpeechEngine)
 
     def __init__(self, reader):
         self.reader = reader
         self.queue = PriorityQueue()
         self.engine = None
 
-    def initialize(self):
+    def initialize_engine(self, engine_name=None):
         if self.engine is not None:
-            return
-        self.engine = SapiSpeechEngine(language=self.reader.document.language)
+            if self.engine.name == engine_name:
+                return
+            else:
+                self.close()
+        Engine = self.get_engine(engine_name)
+        self.engine = Engine(language=self.reader.document.language)
         self.configure_engine()
         # Event handlers
         app_shuttingdown.connect(lambda s: self.close(), weak=False)
         config_updated.connect(self.on_config_changed)
-        self.engine.bind(EngineEvents.state_changed, self.on_state_changed)
-        self.engine.bind(EngineEvents.bookmark_reached, self.on_bookmark_reached)
+        self.engine.bind(EngineEvent.state_changed, self.on_state_changed)
+        self.engine.bind(EngineEvent.bookmark_reached, self.on_bookmark_reached)
         self._try_set_tts_language()
 
     def _try_set_tts_language(self):
@@ -98,7 +103,7 @@ class SpeechProvider:
             ):
                 should_reconfig = True
             if should_reconfig:
-                self.configure_engine()
+                self.initialize_engine()
             if sender is not None:
                 sender.reconcile()
 
@@ -110,34 +115,33 @@ class SpeechProvider:
             self.engine.stop()
         conf = config.conf["speech"]
         configured_voice = conf["voice"]
-        if configured_voice:
-            try:
-                self.engine.voice = configured_voice
-            except ValueError:
-                log.debug(f"Can not set voice to {configured_voice}")
-                configured_voice = self.engine.get_first_available_voice(
-                    self.reader.document.language
+        try:
+            self.engine.set_voice_from_string(configured_voice)
+        except ValueError:
+            log.debug(f"Can not set voice to {configured_voice}")
+            first_voice = self.engine.get_first_available_voice(
+              self.reader.document.language
+            )
+            if first_voice is None:
+                self.reader.view.notify_user(
+                    # Translators: the title of a message telling the user that no TTS voice found
+                  _("No TTS Voices"),
+                  # Translators: a message telling the user that no TTS voice found
+                  _(
+                      "A valid Text-to-speech voice was not found on your computer.\n"
+                      "Text-to-speech functionality will be disabled."
+                    ),
                 )
-                if configured_voice is None:
-                    self.reader.view.notify_user(
-                        # Translators: the title of a message telling the user that no TTS voice found
-                        _("No TTS Voices"),
-                        # Translators: a message telling the user that no TTS voice found
-                        _(
-                            "A valid Text-to-speech voice was not found on your computer.\n"
-                            "Text-to-speech functionality will be disabled."
-                        ),
-                    )
-                    conf["voice"] = ""
-                    config.save()
-                    return self.close()
-            self.engine.voice = configured_voice
-            conf["voice"] = configured_voice
+                return self.close()
+            conf["voice"] = first_voice.id
             config.save()
+            return self.configure_engine()
         self.engine.rate = conf["rate"]
         self.engine.volume = conf["volume"]
         if self.reader.ready and state is SynthState.busy:
             self.reader.speak_current_page()
+
+
 
     def enqueue(self, utterance):
         if not self.is_ready:
@@ -160,3 +164,11 @@ class SpeechProvider:
 
     def on_bookmark_reached(self, bookmark):
         self.reader.process_bookmark(bookmark)
+
+    @classmethod
+    def get_engine(cls, engine_name=None):
+        engine_name = engine_name or config.conf["speech"]["engine"]
+        match = [e for e in cls.speech_engines if e.name == engine_name]
+        if match:
+            return match[0]
+        raise ValueError(f"Unknown speech engine `{engine_name}`")

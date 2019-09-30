@@ -1,152 +1,154 @@
 # coding: utf-8
 
-from collections import deque
-from platform import win32_ver
-from contextlib import suppress
-from unsync import unsync
-from bookworm.speech.enumerations import EngineEvents, SynthState
+import platform
+import clr
+import System
+from weakref import ref
+from functools import partial
+from bookworm.speech.enumerations import EngineEvent, SynthState, RateSpec
 from bookworm.speech.engine import BaseSpeechEngine, VoiceInfo
-from bookworm.speech.utterance import SpeechStyle
-from bookworm.i18n.lang_locales import locale_map
 from bookworm.logger import logger
-from .oc_utterance import OnecoreSpeechUtterance, OcBookmark
+from .oc_utterance import OcSpeechUtterance
+
 
 try:
-    from winrt.windows.media.speechsynthesis import SpeechSynthesizer
-    from winrt.windows.media.playback import MediaPlayer
-    from winrt.windows.media.playback import MediaPlaybackState
-    from winrt.windows.storage.streams import InMemoryRandomAccessStream
-    _winrt_available = True
+    clr.AddReference("OcSpeechEngine")
+    from OcSpeechEngine import OcSpeechEngine as _OnecoreEngine
+    _oc_available = True
 except:
-    _winrt_available = False
+    __oc_available = False
 
 
 log = logger.getChild(__name__)
 
 
-class OnecoreSpeechEngine(BaseSpeechEngine):
-    """Our Pythonic Interface to OneCore speech synthesizer."""
+class OcSpeechEngine(BaseSpeechEngine):
 
     name = "onecore"
-    display_name = _("Windows One Core Synthesizer")
-    utterance_cls = OnecoreSpeechUtterance
+    display_name = _("One-core Synthesizer")
 
     def __init__(self, language=None):
-        super().__init__(language)
-        self.synth = SpeechSynthesizer()
-        self.player = MediaPlayer()
-        self.player.auto_play = True
-        self._evt_stch_id = self.player.playback_session.add_playback_state_changed(self._on_playback_state_changed)
-        self._evt_mend_id = self.player.add_media_ended(lambda p, o: self._start_speech())
-        self._speech_queue = deque()
+        self._language = language
+        self.synth = _OnecoreEngine()
+        self._rate = 0
         self._event_table = {}
+        self.__events = {}
 
     @classmethod
     def check(self):
-        return (win32_ver()[0] == '10') and _winrt_available
+        return platform.version().startswith("10") and _oc_available
 
     def close(self):
-        self.synth.close()
-        #self.player.remove_media_ended(self._evt_mend_id)
-        #self.player.playback_session.remove_playback_state_changed(self._evt_stch_id)
-        self.player.close()
-        self.synth = self.player = None
-        self._event_table.clear()
+        self._unregister_events()
+        self.synth.Finalize()
 
-    def get_voices(self, language=None):
+    def get_voices(self):
         rv = []
-        voices = self.synth.get_all_voices()
-        for voice in voices:
-            rv.append(VoiceInfo(
-                id=voice.id,
-                name=voice.display_name,
-                desc=voice.description,
-                language=voice.language,
-                data={"voice_obj": voice}
-            ))
+        for voice in self.synth.GetVoices():
+            rv.append(
+                VoiceInfo(
+                    id=voice.Id,
+                    name=voice.Name,
+                    desc=voice.Description,
+                    language=voice.Language,
+                    data={"voice_obj": voice}
+                )
+            )
         return rv
 
     @property
     def state(self):
-        state = self.player.playback_session.playback_state
-        if state in (MediaPlaybackState.BUFFERING, MediaPlaybackState.PLAYING, MediaPlaybackState.OPENING):
-            return SynthState.busy
-        elif state  == MediaPlaybackState.PAUSED:
-            return SynthState.paused
-        else:
-            return SynthState.ready
+        return SynthState(self.synth.State)
 
     @property
     def voice(self):
         for voice in self.get_voices():
-            if voice.id == self.synth.voice.id:
+            if voice.id == self.synth.Voice.Id:
                 return voice
 
     @voice.setter
     def voice(self, value):
-        self.synth.voice = value.data["voice_obj"]
+        try:
+            self.synth.Voice = value.data["voice_obj"]
+        except System.InvalidOperationException:
+            raise ValueError(f"Can not set voice to  {value}.")
 
     @property
     def rate(self):
-        return 100
+        if 0 <= self._rate <= 20:
+            return RateSpec.extra_slow
+        elif 21 <= self._rate <= 40:
+            return RateSpec.slow
+        elif 41 <= self._rate <= 60:
+            return RateSpec.medium
+        elif 61 <= self._rate <= 80:
+            return RateSpec.fast
+        elif 81 <= self._rate <= 100:
+            return RateSpec.fast
+
 
     @rate.setter
     def rate(self, value):
-        pass
+        if 0 <= self._rate <= 100:
+            self._rate = value
+        else:
+            raise ValueError("The provided rate is out of range")
 
     @property
     def volume(self):
-        return 100
+        return int(self.synth.Volume)
 
     @volume.setter
     def volume(self, value):
-        pass
+        try:
+            self.synth.Volume = float(value)
+        except:
+            raise ValueError("The provided volume level is out of range")
 
-    def speak(self, utterance):
-        super().speak(utterance)
-        self._speech_queue.extend(utterance.get_speech_sequence())
-        if self.state is SynthState.ready:
-            self._start_speech()
+    def speak_utterance(self, utterance):
+        self.synth.SpeakAsync(utterance)
+
+    def preprocess_utterance(self, utterance):
+        """Return engine-specific speech utterance (if necessary)."""
+        oc_utterance = OcSpeechUtterance(ref(self))
+        oc_utterance.populate_from_speech_utterance(utterance)
+        return oc_utterance.to_oc_prompt()
 
     def stop(self):
-        if self.state is not SynthState.ready:
-            self.player.pause()
-            self.player.set_stream_source(InMemoryRandomAccessStream())
+        self.synth.CancelSpeech()
 
     def pause(self):
-        if self.state is SynthState.busy:
-            self.player.pause()
+        self.synth.Pause()
 
     def resume(self):
-        if self.state is SynthState.paused:
-            self.player.play()
+        self.synth.Resume()
 
     def bind(self, event, handler):
         if event in self._event_table:
             if handler in self._event_table[event]:
                 return
             else:
-                return self._event_table[event].append(handler)
+                self._event_table[event].append(handler)
+                return
         self._event_table.setdefault(event, []).append(handler)
+        if event is EngineEvent.state_changed:
+            func = partial(self._handle_sapi_events, EngineEvent.state_changed)
+            self.synth.StateChanged += func
+            self.__events[self.synth.StateChanged] = func
+        elif event is EngineEvent.bookmark_reached:
+            func = partial(self._handle_sapi_events, EngineEvent.bookmark_reached)
+            self.synth.BookmarkReached += func
+            self.__events[self.synth.BookmarkReached] = func
+        else:
+            raise NotImplementedError
 
-    def _on_playback_state_changed(self, playback_session, args):
-        handlers = self._event_table.get(EngineEvents.state_changed, [])
-        for func in handlers:
-            func(self, self.state)
+    def _handle_sapi_events(self, event, sender, args):
+        for handler in self._event_table[event]:
+            handler(args)
 
-    def _start_speech(self):
-        self.player.set_stream_source(InMemoryRandomAccessStream())
-        if self._speech_queue:
-            nextup = self._speech_queue.popleft()
-            if type(nextup) is OcBookmark:
-                bhandlers = self._event_table.get(EngineEvents.bookmark_reached, [])
-                for func in bhandlers:
-                    func(nextup.bookmark)
-                self._start_speech()
-            else:
-                self._synthesize_text(nextup)
+    def _unregister_events(self):
+        for delegate, func in self.__events.items():
+            delegate -= func
+        self.__events.clear()
 
-    @unsync
-    async def _synthesize_text(self, text):
-        stream = await self.synth.synthesize_ssml_to_stream_async(text)
-        self.player.set_stream_source(stream)
+

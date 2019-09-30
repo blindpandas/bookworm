@@ -50,3 +50,4 @@ except FileNotFoundException:
 
 del _windows_root
 del _speech_assembly
+clr.AddReference(r"C:\Users\DELL\source\repos\OcSpeechEngine\bin\Release\OcSpeechEngine.dll")

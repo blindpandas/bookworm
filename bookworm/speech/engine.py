@@ -3,27 +3,37 @@
 from abc import ABCMeta, abstractmethod
 from dataclasses import field, dataclass
 from bookworm.logger import logger
+from .utterance import SpeechUtterance
 
 
 log = logger.getChild(__name__)
 
 
-@dataclass
+@dataclass(order=True)
 class VoiceInfo:
-    id: str
-    name: str
-    desc: str
-    language: str
-    gender: int = None
-    age: int = None
-    data: dict = field(default_factory=dict)
+    id: str = field(compare=False)
+    name: str = field(compare=False)
+    desc: str = field(compare=False)
+    language: str = field(compare=False)
+    sort_key: int = 0
+    gender: int = field(default=None, compare=False)
+    age: int = field(default=None, compare=False)
+    data: dict = field(default_factory=dict, compare=False)
 
     @property
     def display_name(self):
         return self.desc or self.name
 
     def speaks_language(self, language):
-        return self.language.startswith(language.lower())
+        language = language.lower()
+        locale, country_code = self.language.lower().split("-")
+        if self.language.lower() == language:
+            self.sort_key = 0
+            return True
+        elif language == locale:
+            self.sort_key = 1
+            return True
+        return False
 
 
 class BaseSpeechEngine(metaclass=ABCMeta):
@@ -32,10 +42,10 @@ class BaseSpeechEngine(metaclass=ABCMeta):
     name = None
     """The name of this speech engine."""
     display_name = None
-    """The user-friendly, localizable name of this engine."""
-    utterance_cls = None
 
     def __init__(self, language=None):
+        if not self.check():
+            raise RuntimeError(f"Synthesizer {type(self)} is unavailable")
         self._language = language
 
     @classmethod
@@ -51,8 +61,11 @@ class BaseSpeechEngine(metaclass=ABCMeta):
         self.close()
 
     @abstractmethod
-    def get_voices(self, language=None):
+    def get_voices(self):
         """Return a list of VoiceInfo objects."""
+
+    def get_voices_by_language(self, language):
+        return sorted(voice for voice in self.get_voices() if voice.speaks_language(language))
 
     @property
     @abstractmethod
@@ -89,11 +102,16 @@ class BaseSpeechEngine(metaclass=ABCMeta):
     def volume(self, value):
         """Set the current volume level."""
 
-    @abstractmethod
     def speak(self, utterance):
         """Asynchronously speak the given text."""
-        if not isinstance(utterance, self.utterance_cls):
+        if not isinstance(utterance, SpeechUtterance):
             raise TypeError(f"Invalid utterance {utterance}")
+        processed_utterance = self.preprocess_utterance(utterance)
+        self.speak_utterance(processed_utterance)
+
+    @abstractmethod
+    def speak_utterance(self, utterance):
+        """Do the actual speech output."""
 
     @abstractmethod
     def stop(self):
@@ -115,19 +133,20 @@ class BaseSpeechEngine(metaclass=ABCMeta):
         for voice in self.get_voices():
             if voice.id == voice_ident:
                 self.voice = voice
+                return
+        raise ValueError(f"Invalid voice {voice_ident}")
+
 
     @classmethod
     def get_first_available_voice(cls, language=None):
         _test_engine = cls()
-        for voice in _test_engine.get_voices(language=language):
+        for voice in _test_engine.get_voices_by_language(language=language):
             try:
                 _test_engine.set_voice_from_string(voice.id)
-                return voice.id
+                return voice
             except ValueError:
                 continue
 
-    @classmethod
-    def make_utterance(cls, *args, **kwargs):
-        """Return a new utterance object that is compatable with this speech engine."""
-        return cls.utterance_cls(*args, **kwargs)
-
+    def preprocess_utterance(self, utterance):
+        """Return engine-specific speech utterance (if necessary)."""
+        return utterance

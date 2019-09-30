@@ -651,7 +651,7 @@ class MenubarProvider:
 
     def onPlay(self, event):
         if not self.reader.tts.is_ready:
-            self.reader.tts.initialize()
+            self.reader.tts.initialize_engine()
         elif self.reader.tts.engine.state is SynthState.busy:
             return wx.Bell()
         setattr(self.reader.tts, "_requested_play", True)

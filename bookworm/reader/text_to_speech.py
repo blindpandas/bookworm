@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from bookworm import config
 from bookworm import sounds
 from bookworm.speech import SpeechProvider
-from bookworm.speech.utterance import SpeechStyle
+from bookworm.speech.utterance import SpeechUtterance, SpeechStyle
 from bookworm.speech.enumerations import SynthState, EmphSpec, PauseSpec
 from bookworm.utils import cached_property, gui_thread_safe
 from bookworm.vendor.sentence_splitter import (
@@ -118,7 +118,7 @@ class TextToSpeechProvider:
         if self.tts.engine.state is not SynthState.ready:
             self.tts.engine.stop()
         if is_speaking:
-            utterance = self.tts.engine.make_utterance()
+            utterance = SpeechUtterance()
             if config.conf["reading"]["speak_page_number"]:
                 utterance.add_text(
                     # Translators: a message to announce when navigating to another page
@@ -159,7 +159,7 @@ class TextToSpeechProvider:
     def speak_current_page(self, utterance=None):
         if self._current_textinfo is None:
             self._current_textinfo = self.content_tokenized(start_pos=0)
-        utterance = utterance or self.tts.engine.make_utterance()
+        utterance = utterance or SpeechUtterance()
         textinfo = self.content_tokenized()
         for text, pos in textinfo.paragraphs:
             with utterance.new_paragraph():
@@ -200,7 +200,7 @@ class TextToSpeechProvider:
         elif data["type"] == "end_page":
             has_next_page = self.navigate(to="next", unit="page")
             if not has_next_page:
-                utterance = self.engine.make_utterance(priority=1)
+                utterance = SpeechUtterance(priority=1)
                 if config.conf["reading"]["play_end_of_section_sound"]:
                     utterance.add_audio(sounds.section_changed.path)
                 with utterance.set_style(SpeechStyle(emph=EmphSpec.strong)):

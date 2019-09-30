@@ -1,11 +1,11 @@
 # coding: utf-8
 
-from abc import ABC, abstractmethod
+from typing import Any, List
 from enum import IntEnum
 from dataclasses import dataclass, field
 from contextlib import contextmanager
 from bookworm.logger import logger
-from .enumerations import EmphSpec, VolumeSpec, RateSpec, PauseSpec
+from .enumerations import SpeechElementKind, EmphSpec, VolumeSpec, RateSpec, PauseSpec
 
 
 log = logger.getChild(__name__)
@@ -15,8 +15,8 @@ log = logger.getChild(__name__)
 class SpeechStyle:
     """Voice settings for a single utterance."""
 
-    voice: str = None
-    """Voice name."""
+    voice: object = None
+    """VoiceInfo object."""
 
     emph: EmphSpec = None
     """Speech emphasis."""
@@ -36,51 +36,68 @@ class SpeechStyle:
                 raise TypeError(f"{varname} must be of type {vartype}")
 
 
+@dataclass(frozen=True)
+class SpeechElement:
+    kind: SpeechElementKind
+    content: Any
+
+
 @dataclass(order=True, frozen=True)
-class BaseSpeechUtterance(ABC):
+class SpeechUtterance:
     """A blueprint for speaking some content."""
 
     priority: int = 0
+    speech_sequence: List[SpeechElement] = field(default_factory=list, compare=False)
 
-    @abstractmethod
     def add_text(self, text):
         """Append textual content."""
+        self.speech_sequence.append(SpeechElement(SpeechElementKind.text, text))
 
-    @abstractmethod
     def add_sentence(self, sentence):
         """Append a sentence."""
+        self.speech_sequence.append(SpeechElement(SpeechElementKind.sentence, sentence))
 
     @contextmanager
-    @abstractmethod
     def new_paragraph(self):
         """Create a new paragraph."""
+        self.speech_sequence.append(SpeechElement(SpeechElementKind.start_paragraph, None))
+        try:
+            yield
+        finally:
+            self.speech_sequence.append(SpeechElement(SpeechElementKind.end_paragraph, None))
 
-    @abstractmethod
     def add_bookmark(self, bookmark):
         """Append application specific data."""
+        self.speech_sequence.append(SpeechElement(SpeechElementKind.bookmark, bookmark))
 
-    @abstractmethod
     @contextmanager
     def set_style(self, style):
         """Temperary set the speech style."""
+        self.speech_sequence.append(SpeechElement(SpeechElementKind.start_style, style))
+        try:
+            yield
+        finally:
+            self.speech_sequence.append(SpeechElement(SpeechElementKind.end_style, style))
 
-    @abstractmethod
     def add_pause(self, duration):
         """Append silence to the speech stream.
         `duration` is a PauseSpec enumeration member or an int
         representing silence time in milliseconds.
         """
+        self.speech_sequence.append(SpeechElement(SpeechElementKind.pause, duration))
 
-    @abstractmethod
     def add_audio(self, filename):
         """Append a wave audio file to the speech stream."""
+        self.speech_sequence.append(SpeechElement(SpeechElementKind.audio, filename))
 
     def _is_valid_operand(self, other):
         return isinstance(other, self.__class__)
 
-    @abstractmethod
     def add(self, utterance):
         """Append the content of another utterance to this utterance."""
+        if not _is_valid_operand(utterance):
+            raise TypeError(f"Could not join utterance of type '{type(utterance)}' to utterance of type '{type(self)}'")
+        self.speech_sequence.extend(utterance.speech_sequence)
 
     def __iadd__(self, other):
         self.add(other)

@@ -10,6 +10,7 @@ from bookworm import config
 from bookworm.paths import app_path
 from bookworm.utils import restart_application
 from bookworm.i18n import get_available_languages, set_active_language
+from bookworm.speech import SpeechProvider
 from bookworm.speech.engines.sapi import SapiSpeechEngine as SpeechEngine
 from bookworm.signals import app_started, config_updated
 from bookworm.resources import images
@@ -308,18 +309,20 @@ class SpeechPanel(SettingsPanel):
     config_section = "speech"
 
     def addControls(self):
-        self.voices = SpeechEngine().get_voices()
-
         # Translators: the label of a group of controls in the
         # speech settings page related to voice selection
         voiceBox = self.make_static_box(_("Voice"))
         # voiceBox.SetSizerType("form")
+        # Translators: the label of a combobox containing a list of tts engines
+        wx.StaticText(voiceBox, -1, _("Speech Engine:"))
+        self.engineInfoText = wx.TextCtrl(voiceBox, -1, style=wx.TE_READONLY|wx.TE_MULTILINE)
+        # Translators: the label of a button that opens a dialog to change the speech engine
+        self.changeEngineBtn = wx.Button(voiceBox, -1, _("Change..."))
         # Translators: the label of a combobox containing a list of tts voices
         wx.StaticText(voiceBox, -1, _("Select Voice:"))
         self.voice = wx.Choice(
             voiceBox,
             -1,
-            choices=[v.display_name for v in self.voices]
         )
         # Translators: the label of the speech rate slider
         wx.StaticText(voiceBox, -1, _("Speech Rate:"))
@@ -361,19 +364,41 @@ class SpeechPanel(SettingsPanel):
             max=END_OF_SECTION_PAUSE_MAX,
             name="speech.end_of_section_pause",
         )
-        for ctrl in (sp, pp, eop, eos):
+        for ctrl in (sp, pp, eop, eos, self.engineInfoText):
             ctrl.SetSizerProps(expand=True)
+        self.changeEngineBtn.Bind(wx.EVT_BUTTON, self.OnChoosEngine, self.changeEngineBtn)
+        self.configure_with_engine()
+
+    def configure_with_engine(self):
+        self.current_engine = SpeechProvider.get_engine(self.config["engine"])
+        self.engineInfoText.SetValue(_(self.current_engine.display_name))
+        self.voices = self.current_engine().get_voices()
+        self.voice.Clear()
+        self.voice.Append([v.display_name for v in self.voices])
+
+    def OnChoosEngine(self, event):
+        dlg = wx.SingleChoiceDialog(
+            self.Parent,
+            _("Select a speech engine:"),
+            _("Speech Engine"),
+            choices=[e.display_name for e in SpeechProvider.speech_engines]
+        )
+        with dlg:
+            if dlg.ShowModal() == wx.ID_OK:
+                self.config["engine"] = SpeechProvider.speech_engines[dlg.GetSelection()].name
+                self.configure_with_engine()
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
         if strategy is ReconciliationStrategies.load:
             configured_voice = self.config["voice"]
             pos = 0
             for idx, vinfo in enumerate(self.voices):
-                if vinfo.name == configured_voice:
+                if vinfo.id == configured_voice:
                     pos = idx
             self.voice.SetSelection(pos)
         elif strategy is ReconciliationStrategies.save:
-            self.config["voice"] = self.voices[self.voice.GetSelection()].name
+            self.config["voice"] = self.voices[self.voice.GetSelection()].id
+            self.config["engine"] = self.current_engine.name
         super().reconcile(strategy=strategy)
 
 

@@ -2,24 +2,46 @@
 
 import System
 from System.Speech.Synthesis import PromptBuilder, PromptStyle
-from contextlib import contextmanager
-from dataclasses import dataclass, field
+from contextlib import suppress, contextmanager
 from pathlib import Path
-from bookworm.speech.enumerations import PauseSpec
-from bookworm.speech.utterance import BaseSpeechUtterance
+from bookworm.speech.enumerations import SpeechElementKind, PauseSpec
 from bookworm.logger import logger
 
 log = logger.getChild(__name__)
 
 
-
-@dataclass(order=True, frozen=True)
-class SapiSpeechUtterance(BaseSpeechUtterance):
+class SapiSpeechUtterance:
     """A blueprint for speaking some content."""
 
-    prompt: PromptBuilder = field(
-        default_factory=lambda: PromptBuilder(), compare=False
-    )
+    def __init__(self):
+        self.prompt = PromptBuilder()
+
+    def populate_from_speech_utterance(self, utterance):
+        for element in utterance.speech_sequence:
+            self.process_speech_element(element.kind, element.content)
+
+    def process_speech_element(self, elm_kind, content):
+        if elm_kind is SpeechElementKind.text:
+            self.add_text(content)
+        elif elm_kind is SpeechElementKind.sentence:
+            self.add_sentence(content)
+        elif elm_kind is SpeechElementKind.bookmark:
+            self.add_bookmark(content)
+        elif elm_kind is SpeechElementKind.pause:
+            self.add_pause(content)
+        elif elm_kind is SpeechElementKind.audio:
+            self.add_audio(content)
+        elif elm_kind is SpeechElementKind.start_paragraph:
+            self.prompt.StartParagraph()
+        elif elm_kind is SpeechElementKind.end_paragraph:
+            with suppress(System.InvalidOperationException):
+                self.prompt.EndParagraph()
+        elif elm_kind is SpeechElementKind.start_style:
+            self.start_style(content)
+        elif elm_kind is SpeechElementKind.end_style:
+            self.end_style(content)
+        else:
+            raise TypeError(f"Invalid speech element {element}")
 
     def add_text(self, text):
         """Append textual content."""
@@ -74,12 +96,8 @@ class SapiSpeechUtterance(BaseSpeechUtterance):
         uri = Path(filename).as_uri()
         self.prompt.AppendAudio(uri)
 
-    def add(self, utterance):
+    def append_utterance(self, utterance):
         """Append the content of another utterance to this utterance."""
-        if not self._is_valid_operand(utterance):
-            raise TypeError(
-                'can only add SpeechUtterance (not "{type(utterance)}") to SpeechUtterance'
-            )
         self.prompt.AppendPromptBuilder(utterance.prompt)
 
     @staticmethod
@@ -93,3 +111,13 @@ class SapiSpeechUtterance(BaseSpeechUtterance):
         if style.emph is not None:
             pstyle.Emphasis = style.emph
         return pstyle
+
+    def start_style(self, style):
+        if style.voice is not None:
+            self.prompt.StartVoice(style.voice.name)
+        self.prompt.StartStyle(self.prompt_style_from_style(style))
+
+    def end_style(self, style):
+        self.prompt.EndStyle()
+        if style.voice is not None:
+            self.prompt.EndVoice()

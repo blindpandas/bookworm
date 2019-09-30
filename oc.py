@@ -1,9 +1,10 @@
-from bookworm.speech.engines.onecore.oc_engine import OnecoreSpeechEngine as OS, OnecoreSpeechUtterance as US, EngineEvents as EE
+import time
+from bookworm.speech.utterance import SpeechUtterance
+from bookworm.speech.engines.onecore import OcSpeechEngine as E
 
-e = OS()
-u = US()
-u.add_sentence("OK")
-u.add_bookmark("my-book-mark")
-u.add_text("Hey you" * 5)
-e.bind(EE.bookmark_reached, lambda b: print(b))
-e.speak(u)
+e= E()
+e.synth.BookmarkReached += lambda s, b: print(f"Reached bookmark: {b}")
+u = SpeechUtterance()
+u.add_text("Hello world")
+u.add_bookmark("go-oc")
+u.add_text("Gootta" * 3)
