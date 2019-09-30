@@ -50,7 +50,7 @@ config_spec = StringIO(
 builtin_voice_profiles = [
     (
         # Translators: the name of a built-in voice profile
-        _("Expressive"),
+        _("Human-like"),
         dict(
             rate=60,
             sentence_pause=250,
@@ -72,7 +72,7 @@ builtin_voice_profiles = [
     ),
     (
         # Translators: the name of a built-in voice profile
-        _("Hazy"),
+        _("Expresse"),
         dict(
             rate=65,
             sentence_pause=0,

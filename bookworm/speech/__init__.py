@@ -44,9 +44,11 @@ class SpeechProvider:
         self.reader = reader
         self.queue = PriorityQueue()
         self.engine = None
+        app_shuttingdown.connect(lambda s: self.close(), weak=False)
+        config_updated.connect(self.on_config_changed)
 
     def initialize_engine(self, engine_name=None):
-        if self.engine is not None:
+        if self.is_ready:
             if self.engine.name == engine_name:
                 return
             else:
@@ -55,8 +57,6 @@ class SpeechProvider:
         self.engine = Engine(language=self.reader.document.language)
         self.configure_engine()
         # Event handlers
-        app_shuttingdown.connect(lambda s: self.close(), weak=False)
-        config_updated.connect(self.on_config_changed)
         self.engine.bind(EngineEvent.state_changed, self.on_state_changed)
         self.engine.bind(EngineEvent.bookmark_reached, self.on_bookmark_reached)
         self._try_set_tts_language()
@@ -64,7 +64,7 @@ class SpeechProvider:
     def _try_set_tts_language(self):
         lang = self.reader.document.language
         if not self.engine.voice.speaks_language(lang):
-            voice_for_lang = self.engine.get_voices(
+            voice_for_lang = self.engine.get_voices_by_language(
                 self.reader.document.language
             )
             if voice_for_lang:
@@ -83,7 +83,6 @@ class SpeechProvider:
 
     def close(self):
         if self.engine:
-            # Unsubscribe
             self.engine.close()
             self.engine = None
             # Force a collection here to dispose of any stale  objects
@@ -102,7 +101,7 @@ class SpeechProvider:
                 config.conf.active_profile["name"] == sender.config.main["name"]
             ):
                 should_reconfig = True
-            if should_reconfig:
+            if self.is_ready and should_reconfig:
                 self.initialize_engine()
             if sender is not None:
                 sender.reconcile()

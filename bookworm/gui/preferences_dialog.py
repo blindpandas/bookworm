@@ -387,6 +387,7 @@ class SpeechPanel(SettingsPanel):
             if dlg.ShowModal() == wx.ID_OK:
                 self.config["engine"] = SpeechProvider.speech_engines[dlg.GetSelection()].name
                 self.configure_with_engine()
+                self.reconcile()
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
         if strategy is ReconciliationStrategies.load:

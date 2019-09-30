@@ -132,7 +132,7 @@ class OcSpeechEngine(BaseSpeechEngine):
                 return
         self._event_table.setdefault(event, []).append(handler)
         if event is EngineEvent.state_changed:
-            func = partial(self._handle_sapi_events, EngineEvent.state_changed)
+            func = partial(self._handle_sapi_events, EngineEvent.state_changed, arg_transform=lambda state: SynthState(state))
             self.synth.StateChanged += func
             self.__events[self.synth.StateChanged] = func
         elif event is EngineEvent.bookmark_reached:
@@ -142,8 +142,10 @@ class OcSpeechEngine(BaseSpeechEngine):
         else:
             raise NotImplementedError
 
-    def _handle_sapi_events(self, event, sender, args):
+    def _handle_sapi_events(self, event, sender, args, arg_transform=None):
         for handler in self._event_table[event]:
+            if arg_transform is not None:
+                args = arg_transform(args)
             handler(args)
 
     def _unregister_events(self):
