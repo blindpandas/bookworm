@@ -416,9 +416,25 @@ def update_version_info(c):
     print("Updated version information")
 
 
+@task(name="libs")
+@make_env
+def build_and_include_libs(c):
+    with c.cd(str(PROJECT_ROOT)):
+        c.run("git submodule update --init --recursive")
+    onecore_path = PROJECT_ROOT / "includes" / "sharp-onecore-synth"
+    with c.cd(str(onecore_path)):
+        c.run("git fetch")
+        c.run("git merge")
+        c.run("nuget restore")
+        c.run("msbuild OcSpeechEngine.csproj")
+        src = onecore_path / "bin" / "Release" / "OcSpeechEngine.dll"
+        dst = c["build_folder"]
+        c.run(f"copy {src} {dst}")
+
+
 @task(
     pre=(clean, make_icons, install_packages, freeze),
-    post=(build_docs, copy_assets, make_installer, bundle_update),
+    post=(build_docs, copy_assets, build_and_include_libs, make_installer, bundle_update),
 )
 @make_env
 def build(c):

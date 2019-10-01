@@ -4,12 +4,14 @@ import platform
 import clr
 import System
 from weakref import ref
+from pathlib import Path
 from bookworm.speech.enumerations import EngineEvent, SynthState, RateSpec
 from bookworm.speech.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.logger import logger
 
 try:
-    clr.AddReference("OcSpeechEngine")
+    _oc_dll = Path.cwd().joinpath("OcSpeechEngine.dll")
+    clr.AddReference(str(_oc_dll))
     from OcSpeechEngine import OcSpeechEngine as _OnecoreEngine
     from .oc_utterance import OcSpeechUtterance
     _oc_available = True

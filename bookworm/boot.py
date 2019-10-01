@@ -47,7 +47,5 @@ except FileNotFoundException:
         "https://www.microsoft.com/en-us/download/details.aspx?id=17718",
     )
     sys.exit(1)
-
 del _windows_root
 del _speech_assembly
-clr.AddReference(r"C:\Users\DELL\source\repos\OcSpeechEngine\bin\Release\OcSpeechEngine.dll")
