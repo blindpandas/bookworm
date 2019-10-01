@@ -3,7 +3,6 @@
 import System
 from System.Globalization import CultureInfo
 from System.Speech import Synthesis
-from functools import partial
 from contextlib import suppress
 from bookworm.speech.enumerations import EngineEvent, SynthState
 from bookworm.speech.engine import BaseSpeechEngine, VoiceInfo
@@ -21,12 +20,13 @@ class SapiSpeechEngine(BaseSpeechEngine):
     name = "sapi"
     display_name = _("Microsoft Speech API Version 5")
 
-    def __init__(self, language=None):
-        super().__init__(language)
+    def __init__(self):
+        super().__init__()
         self.synth = Synthesis.SpeechSynthesizer()
         self.synth.SetOutputToDefaultAudioDevice()
-        self._event_table = {}
-        self.__events = {}
+        self.synth.BookmarkReached += self._on_bookmark_reached
+        self.synth.StateChanged += self._on_state_changed
+        self.__event_handlers = {}
 
     @classmethod
     def check(self):
@@ -35,7 +35,8 @@ class SapiSpeechEngine(BaseSpeechEngine):
     def close(self):
         with suppress(System.ObjectDisposedException):
             self.stop()
-        self._unregister_events()
+        self.synth.BookmarkReached -= self._on_bookmark_reached
+        self.synth.StateChanged -= self._on_state_changed
         self.synth.Dispose()
         self.synth.Finalize()
 
@@ -76,7 +77,7 @@ class SapiSpeechEngine(BaseSpeechEngine):
 
     @property
     def rate(self):
-        return self.synth.Rate
+        return (self.synth.Rate * 5) + 50
 
     @rate.setter
     def rate(self, value):
@@ -99,6 +100,7 @@ class SapiSpeechEngine(BaseSpeechEngine):
         # one that sets the voice. Because The Speak()
         # function does not honor  the engine voice.
         voice_utterance = SapiSpeechUtterance()
+        voice_utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(self.voice.language)
         with voice_utterance.set_style(SpeechStyle(voice=self.voice)):
             voice_utterance.append_utterance(utterance)
         self.synth.SpeakAsync(voice_utterance.prompt)
@@ -123,33 +125,16 @@ class SapiSpeechEngine(BaseSpeechEngine):
             self.synth.Resume()
 
     def bind(self, event, handler):
-        if event in self._event_table:
-            if handler in self._event_table[event]:
-                return
-            else:
-                self._event_table[event].append(handler)
-                return
-        self._event_table.setdefault(event, []).append(handler)
-        if event is EngineEvent.state_changed:
-            self.synth.StateChanged += self._on_state_changed
-            self.__events[self.synth.StateChanged] = self._on_state_changed
-        elif event is EngineEvent.bookmark_reached:
-            func = partial(self._handle_sapi_events, EngineEvent.bookmark_reached, "Bookmark")
-            self.synth.BookmarkReached += func
-            self.__events[self.synth.BookmarkReached] = func
-        else:
+        if event not in (EngineEvent.bookmark_reached, EngineEvent.state_changed):
             raise NotImplementedError
+        self.__event_handlers.setdefault(event, []).append(handler)
 
-    def _handle_sapi_events(self, event, attr, sender, args):
-        for handler in self._event_table[event]:
-            handler(getattr(args, attr))
+    def _on_bookmark_reached(self, sender, args):
+        handlers = self.__event_handlers.get(EngineEvent.bookmark_reached, ())
+        for handler in handlers:
+            handler(self, args.Bookmark)
 
     def _on_state_changed(self, sender, args):
-        for handler in self._event_table[EngineEvent.state_changed]:
-            handler(SynthState(sender.State))
-
-    def _unregister_events(self):
-        for delegate, func in self.__events.items():
-            delegate -= func
-        self.__events.clear()
-
+        handlers = self.__event_handlers.get(EngineEvent.state_changed, ())
+        for handler in handlers:
+            handler(self, SynthState(sender.State))

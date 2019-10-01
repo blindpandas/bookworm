@@ -1,15 +1,13 @@
 # coding: utf-8
 
+import System
 from System.Globalization import CultureInfo, CultureNotFoundException
+from contextlib import suppress
+from OcSpeechElements import PromptBuilder as OcPromptBuilder
 from bookworm.speech.enumerations import SpeechElementKind
 from bookworm.speech.utterance import SpeechElement, SpeechStyle
 from bookworm.logger import logger
 from ..sapi.sp_utterance import SapiSpeechUtterance
-
-try:
-    from OcSpeechElements import PromptBuilder as OcPromptBuilder
-except:
-    OcPromptBuilder = None
 
 
 log = logger.getChild(__name__)
@@ -34,9 +32,16 @@ class OcSpeechUtterance(SapiSpeechUtterance):
             super().process_speech_element(elm_kind, content)
 
     def add_bookmark(self, bookmark):
-        """Append application specific data."""
         self._speech_sequence.append(self._pop_prompt_content())
         self._speech_sequence.append(SpeechElement(SpeechElementKind.bookmark, bookmark))
+
+    def end_paragraph(self):
+        with suppress(System.InvalidOperationException):
+            super().end_paragraph()
+
+    def end_style(self, style):
+        with suppress(System.InvalidOperationException):
+            super().end_style(style)
 
     def _pop_prompt_content(self):
         for func, args in self._heal_funcs:
@@ -44,8 +49,9 @@ class OcSpeechUtterance(SapiSpeechUtterance):
         self._heal_funcs.clear()
         voice = self.synth().voice
         voice_utterance = SapiSpeechUtterance()
-        with voice_utterance.set_style(SpeechStyle(voice=voice, rate=self.synth().rate)):
-            voice_utterance.append_utterance(self)
+        with voice_utterance.set_style(SpeechStyle(voice=voice, rate=self.synth().rate_to_spec())):
+            with suppress(System.InvalidOperationException):
+                voice_utterance.append_utterance(self)
         voice_utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(voice.language)
         rv = voice_utterance.prompt.ToXml()
         if not self.prompt.IsEmpty:
@@ -62,3 +68,4 @@ class OcSpeechUtterance(SapiSpeechUtterance):
             elif element.kind is SpeechElementKind.bookmark:
                 oc_prompt.AddBookmark(element.content)
         return oc_prompt
+

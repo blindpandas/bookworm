@@ -43,10 +43,9 @@ class BaseSpeechEngine(metaclass=ABCMeta):
     """The name of this speech engine."""
     display_name = None
 
-    def __init__(self, language=None):
+    def __init__(self):
         if not self.check():
             raise RuntimeError(f"Synthesizer {type(self)} is unavailable")
-        self._language = language
 
     @classmethod
     @abstractmethod
@@ -59,6 +58,21 @@ class BaseSpeechEngine(metaclass=ABCMeta):
 
     def __del__(self):
         self.close()
+
+    def configure(self, engine_config):
+        if engine_config["voice"]:
+            try:
+                self.set_voice_from_string(engine_config["voice"])
+            except ValueError:
+                self.voice = self.get_first_available_voice()
+        try:
+            self.rate = engine_config["rate"]
+        except ValueError:
+            self.rate = 50
+        try:
+            self.volume = engine_config["volume"]
+        except ValueError:
+            self.volume = 75
 
     @abstractmethod
     def get_voices(self):
@@ -135,7 +149,6 @@ class BaseSpeechEngine(metaclass=ABCMeta):
                 self.voice = voice
                 return
         raise ValueError(f"Invalid voice {voice_ident}")
-
 
     @classmethod
     def get_first_available_voice(cls, language=None):

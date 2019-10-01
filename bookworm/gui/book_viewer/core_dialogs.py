@@ -390,7 +390,7 @@ class VoiceProfileDialog(SimpleDialog):
             return
         config.conf.active_profile = config.conf.profiles[profile_name]
         if self.reader.ready:
-            self.reader.tts.configure_engine()
+            self.reader.tts.initialize_engine()
         self.Parent.menuBar.FindItemById(wx.ID_REVERT).Enable(True)
 
     def onEdit(self, event):

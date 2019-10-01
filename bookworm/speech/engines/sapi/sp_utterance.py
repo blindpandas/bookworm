@@ -2,7 +2,7 @@
 
 import System
 from System.Speech.Synthesis import PromptBuilder, PromptStyle
-from contextlib import suppress, contextmanager
+from contextlib import contextmanager
 from pathlib import Path
 from bookworm.speech.enumerations import SpeechElementKind, PauseSpec
 from bookworm.logger import logger
@@ -11,7 +11,6 @@ log = logger.getChild(__name__)
 
 
 class SapiSpeechUtterance:
-    """A blueprint for speaking some content."""
 
     def __init__(self):
         self.prompt = PromptBuilder()
@@ -32,10 +31,9 @@ class SapiSpeechUtterance:
         elif elm_kind is SpeechElementKind.audio:
             self.add_audio(content)
         elif elm_kind is SpeechElementKind.start_paragraph:
-            self.prompt.StartParagraph()
+            self.start_paragraph()
         elif elm_kind is SpeechElementKind.end_paragraph:
-            with suppress(System.InvalidOperationException):
-                self.prompt.EndParagraph()
+            self.end_paragraph()
         elif elm_kind is SpeechElementKind.start_style:
             self.start_style(content)
         elif elm_kind is SpeechElementKind.end_style:
@@ -69,16 +67,11 @@ class SapiSpeechUtterance:
     @contextmanager
     def set_style(self, style):
         """Temperary set the speech style."""
-        _has_voice = style.voice is not None
-        if _has_voice:
-            self.prompt.StartVoice(style.voice.name)
-        self.prompt.StartStyle(self.prompt_style_from_style(style))
+        self.start_style(style)
         try:
             yield
         finally:
-            self.prompt.EndStyle()
-            if _has_voice:
-                self.prompt.EndVoice()
+            self.end_style(style)
 
     def add_pause(self, duration):
         """Append silence to the speech stream.
@@ -111,6 +104,12 @@ class SapiSpeechUtterance:
         if style.emph is not None:
             pstyle.Emphasis = style.emph
         return pstyle
+
+    def start_paragraph(self):
+        self.prompt.StartParagraph()
+
+    def end_paragraph(self):
+        self.prompt.EndParagraph()
 
     def start_style(self, style):
         if style.voice is not None:

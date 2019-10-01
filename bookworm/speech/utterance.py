@@ -40,6 +40,8 @@ class SpeechStyle:
 class SpeechElement:
     kind: SpeechElementKind
     content: Any
+    # A template for SSML content
+    EMPTY_SSML = '<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en"></speak>'
 
 
 @dataclass(order=True, frozen=True)

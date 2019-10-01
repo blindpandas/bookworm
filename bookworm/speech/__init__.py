@@ -38,7 +38,8 @@ def announce(message, urgent=True):
 class SpeechProvider:
     """Text-to-speech controller for bookworm."""
 
-    speech_engines = (SapiSpeechEngine, OcSpeechEngine)
+    __available_engines = (SapiSpeechEngine, OcSpeechEngine)
+    speech_engines = [e for e in __available_engines if e.check()]
 
     def __init__(self, reader):
         self.reader = reader
@@ -47,19 +48,43 @@ class SpeechProvider:
         app_shuttingdown.connect(lambda s: self.close(), weak=False)
         config_updated.connect(self.on_config_changed)
 
-    def initialize_engine(self, engine_name=None):
-        if self.is_ready:
-            if self.engine.name == engine_name:
-                return
-            else:
-                self.close()
+    def initialize_engine(self):
+        engine_name = config.conf["speech"]["engine"]
+        if self.is_ready and (self.engine.name == engine_name):
+            self.configure_engine()
+            return
+        self.close()
         Engine = self.get_engine(engine_name)
-        self.engine = Engine(language=self.reader.document.language)
-        self.configure_engine()
+        self.engine = Engine()
         # Event handlers
         self.engine.bind(EngineEvent.state_changed, self.on_state_changed)
         self.engine.bind(EngineEvent.bookmark_reached, self.on_bookmark_reached)
+        self.configure_engine()
         self._try_set_tts_language()
+
+    def configure_engine(self):
+        if not self.is_ready:
+            return
+        state = self.engine.state
+        if state is not SynthState.ready:
+            self.engine.stop()
+        conf = config.conf["speech"]
+        try:
+            self.engine.configure(conf)
+        except ValueError:
+            conf.restore_defaults()
+            config.save()
+            self.reader.view.notify_user(
+                # Translators: the title of a message telling the user that no TTS voice found
+              _("No TTS Voices"),
+              # Translators: a message telling the user that no TTS voice found
+              _(
+                  "A valid Text-to-speech voice was not found on your computer.\n"
+                  "Text-to-speech functionality will be disabled."
+                ),
+            )
+        if self.reader.ready and state is SynthState.busy:
+            self.reader.speak_current_page()
 
     def _try_set_tts_language(self):
         lang = self.reader.document.language
@@ -106,42 +131,6 @@ class SpeechProvider:
             if sender is not None:
                 sender.reconcile()
 
-    def configure_engine(self):
-        if not self.is_ready:
-            return
-        state = self.engine.state
-        if state is not SynthState.ready:
-            self.engine.stop()
-        conf = config.conf["speech"]
-        configured_voice = conf["voice"]
-        try:
-            self.engine.set_voice_from_string(configured_voice)
-        except ValueError:
-            log.debug(f"Can not set voice to {configured_voice}")
-            first_voice = self.engine.get_first_available_voice(
-              self.reader.document.language
-            )
-            if first_voice is None:
-                self.reader.view.notify_user(
-                    # Translators: the title of a message telling the user that no TTS voice found
-                  _("No TTS Voices"),
-                  # Translators: a message telling the user that no TTS voice found
-                  _(
-                      "A valid Text-to-speech voice was not found on your computer.\n"
-                      "Text-to-speech functionality will be disabled."
-                    ),
-                )
-                return self.close()
-            conf["voice"] = first_voice.id
-            config.save()
-            return self.configure_engine()
-        self.engine.rate = conf["rate"]
-        self.engine.volume = conf["volume"]
-        if self.reader.ready and state is SynthState.busy:
-            self.reader.speak_current_page()
-
-
-
     def enqueue(self, utterance):
         if not self.is_ready:
             raise RuntimeError("Not initialized.")
@@ -158,15 +147,14 @@ class SpeechProvider:
     def is_ready(self):
         return self.engine is not None
 
-    def on_state_changed(self, state):
+    def on_state_changed(self, sender, state):
         speech_engine_state_changed.send(self, state=state)
 
-    def on_bookmark_reached(self, bookmark):
+    def on_bookmark_reached(self, sender, bookmark):
         self.reader.process_bookmark(bookmark)
 
     @classmethod
-    def get_engine(cls, engine_name=None):
-        engine_name = engine_name or config.conf["speech"]["engine"]
+    def get_engine(cls, engine_name):
         match = [e for e in cls.speech_engines if e.name == engine_name]
         if match:
             return match[0]
