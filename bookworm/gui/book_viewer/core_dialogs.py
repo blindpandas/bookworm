@@ -390,6 +390,8 @@ class VoiceProfileDialog(SimpleDialog):
             return
         config.conf.active_profile = config.conf.profiles[profile_name]
         if self.reader.ready:
+            if self.reader.tts.is_ready:
+                self.reader.tts.engine.stop()
             self.reader.tts.initialize_engine()
         self.Parent.menuBar.FindItemById(wx.ID_REVERT).Enable(True)
 
