@@ -32,7 +32,7 @@ class OcSpeechUtterance(SapiSpeechUtterance):
             super().process_speech_element(elm_kind, content)
 
     def add_bookmark(self, bookmark):
-        self._speech_sequence.append(self._pop_prompt_content())
+        self._take_stock()
         self._speech_sequence.append(SpeechElement(SpeechElementKind.bookmark, bookmark))
 
     def end_paragraph(self):
@@ -43,25 +43,24 @@ class OcSpeechUtterance(SapiSpeechUtterance):
         with suppress(System.InvalidOperationException):
             super().end_style(style)
 
-    def _pop_prompt_content(self):
+    def _take_stock(self):
         for func, args in self._heal_funcs:
             func(*args)
         self._heal_funcs.clear()
         voice = self.synth().voice
         voice_utterance = SapiSpeechUtterance()
         with voice_utterance.set_style(SpeechStyle(voice=voice, rate=self.synth().rate_to_spec())):
-            with suppress(System.InvalidOperationException):
-                voice_utterance.append_utterance(self)
+            voice_utterance.append_utterance(self)
         voice_utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(voice.language)
-        rv = voice_utterance.prompt.ToXml()
+        ssml = voice_utterance.prompt.ToXml()
         if not self.prompt.IsEmpty:
             self.prompt.ClearContent()
-        return SpeechElement(SpeechElementKind.ssml, rv)
+        self._speech_sequence.append(SpeechElement(SpeechElementKind.ssml, ssml))
 
     def to_oc_prompt(self):
         oc_prompt = OcPromptBuilder()
         if not self.prompt.IsEmpty:
-            self._speech_sequence.append(self._pop_prompt_content())
+            self._take_stock()
         for element in self._speech_sequence:
             if element.kind is SpeechElementKind.ssml:
                 oc_prompt.AddSsml(element.content)
