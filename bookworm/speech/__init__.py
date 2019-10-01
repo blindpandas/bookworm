@@ -68,6 +68,7 @@ class SpeechProvider:
         state = self.engine.state
         if state is not SynthState.ready:
             self.engine.stop()
+            self.on_state_changed(self.engine, SynthState.ready)
         conf = config.conf["speech"]
         try:
             self.engine.configure(conf)
@@ -158,4 +159,4 @@ class SpeechProvider:
         match = [e for e in cls.speech_engines if e.name == engine_name]
         if match:
             return match[0]
-        raise ValueError(f"Unknown speech engine `{engine_name}`")
+        return SapiSpeechEngine

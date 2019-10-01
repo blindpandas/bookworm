@@ -14,7 +14,7 @@ try:
     from .oc_utterance import OcSpeechUtterance
     _oc_available = True
 except:
-    __oc_available = False
+    _oc_available = False
 
 
 log = logger.getChild(__name__)

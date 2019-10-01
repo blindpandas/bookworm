@@ -479,3 +479,30 @@ class VoiceProfileDialog(SimpleDialog):
 
     def getButtons(self, parent):
         return
+
+
+class SpeechEngineSelector(SimpleDialog):
+    """A dialog to select a speech engine."""
+
+    def __init__(self, choices, init_selection, *args, **kwargs):
+        self.choices = choices
+        self.init_selection = init_selection 
+        self._return_value = wx.ID_CANCEL
+        super().__init__(*args, **kwargs)
+
+    def addControls(self, parent):
+        # Translators: the label of a combobox
+        label = wx.StaticText(parent, -1, _("Select Speech Engine:"))
+        self.engineChoice = wx.Choice(parent, -1, choices=self.choices)
+        self.engineChoice.SetSizerProps(expand=True)
+        self.Bind(wx.EVT_BUTTON, self.onOK, id=wx.ID_OK)
+        self.engineChoice.SetSelection(self.init_selection)
+        self.GetValue = lambda: self.engineChoice.GetSelection()
+
+    def onOK(self, event):
+        self._return_value = wx.ID_OK
+        self.Close()
+
+    def ShowModal(self):
+        super().ShowModal()
+        return self._return_value

@@ -3,7 +3,7 @@
 import System
 from System.Globalization import CultureInfo, CultureNotFoundException
 from contextlib import suppress
-from OcSpeechElements import PromptBuilder as OcPromptBuilder
+from OcPromptBuilder import OcPromptBuilder
 from bookworm.speech.enumerations import SpeechElementKind
 from bookworm.speech.utterance import SpeechElement, SpeechStyle
 from bookworm.logger import logger

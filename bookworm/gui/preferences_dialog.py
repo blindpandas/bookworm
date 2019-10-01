@@ -367,27 +367,36 @@ class SpeechPanel(SettingsPanel):
         for ctrl in (sp, pp, eop, eos, self.engineInfoText):
             ctrl.SetSizerProps(expand=True)
         self.changeEngineBtn.Bind(wx.EVT_BUTTON, self.OnChoosEngine, self.changeEngineBtn)
+        self.current_engine = None
         self.configure_with_engine()
 
-    def configure_with_engine(self):
-        self.current_engine = SpeechProvider.get_engine(self.config["engine"])
+    def configure_with_engine(self, engine_name=""):
+        if (self.current_engine is not None) and (engine_name == self.current_engine.name):
+            return
+        engine_name = engine_name or self.config["engine"]
+        self.current_engine = SpeechProvider.get_engine(engine_name)
         self.engineInfoText.SetValue(_(self.current_engine.display_name))
         self.voices = self.current_engine().get_voices()
         self.voice.Clear()
         self.voice.Append([v.display_name for v in self.voices])
+        self.reconcile()
 
     def OnChoosEngine(self, event):
-        dlg = wx.SingleChoiceDialog(
-            self.Parent,
-            _("Select a speech engine:"),
-            _("Speech Engine"),
-            choices=[e.display_name for e in SpeechProvider.speech_engines]
+        from .book_viewer.core_dialogs import SpeechEngineSelector
+
+        current_engine_index = 0
+        for (index, e) in enumerate(SpeechProvider.speech_engines):
+            if e.name == self.current_engine.name:
+                current_engine_index = index
+        dlg = SpeechEngineSelector(
+            [e.display_name for e in SpeechProvider.speech_engines],
+            current_engine_index,
+            parent=self.Parent,
+            title=_("Speech Engine"),
         )
         with dlg:
             if dlg.ShowModal() == wx.ID_OK:
-                self.config["engine"] = SpeechProvider.speech_engines[dlg.GetSelection()].name
-                self.configure_with_engine()
-                self.reconcile()
+                self.configure_with_engine(SpeechProvider.speech_engines[dlg.GetValue()].name)
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
         if strategy is ReconciliationStrategies.load:
@@ -398,8 +407,8 @@ class SpeechPanel(SettingsPanel):
                     pos = idx
             self.voice.SetSelection(pos)
         elif strategy is ReconciliationStrategies.save:
-            self.config["voice"] = self.voices[self.voice.GetSelection()].id
             self.config["engine"] = self.current_engine.name
+            self.config["voice"] = self.voices[self.voice.GetSelection()].id
         super().reconcile(strategy=strategy)
 
 
