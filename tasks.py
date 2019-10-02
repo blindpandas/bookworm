@@ -422,7 +422,7 @@ def build_and_include_libs(c):
     onecore_path = PROJECT_ROOT / "includes" / "sharp-onecore-synth"
     with c.cd(str(onecore_path)):
         c.run("nuget restore")
-        c.run('"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" OcSpeechEngine.csproj')
+        c.run('"C:\Program Files (x86)\MSBuild\16.0\Bin\msbuild.exe" OcSpeechEngine.csproj')
         src = onecore_path / "bin" / "Release" / "OcSpeechEngine.dll"
         dst = c["build_folder"]
         c.run(f"copy {src} {dst}")
