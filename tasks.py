@@ -419,12 +419,8 @@ def update_version_info(c):
 @task(name="libs")
 @make_env
 def build_and_include_libs(c):
-    with c.cd(str(PROJECT_ROOT)):
-        c.run("git submodule update --init --recursive")
     onecore_path = PROJECT_ROOT / "includes" / "sharp-onecore-synth"
     with c.cd(str(onecore_path)):
-        c.run("git fetch")
-        c.run("git merge")
         c.run("nuget restore")
         c.run("msbuild OcSpeechEngine.csproj")
         src = onecore_path / "bin" / "Release" / "OcSpeechEngine.dll"
