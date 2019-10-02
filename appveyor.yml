@@ -1,6 +1,4 @@
 os: Visual Studio 2019
-# Build worker image (VM template)
-image: Visual Studio 2019
 
 
 branches:
@@ -30,10 +28,18 @@ install:
   - set PATH=%PATH%;C:\Program Files (x86)\NSIS
 
 
+before_build:
+  # Build required dlls
+  - cd includes\sharp-onecore-synth
+  - nuget restore
+  - msbuild /t:Build /p:Configuration=Release
+  - cd %APPVEYOR_BUILD_FOLDER%
+
+
 build_script:
   # 32-bit version
   - ps: Write-Host "Building the 32-bit variant."
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+
   - C:\Python37\python.exe -m venv .venv32
   - call ".venv32\Scripts\activate.bat"
   - py -m pip -q install --upgrade pip
@@ -42,8 +48,7 @@ build_script:
   - deactivate
   # 64-bit version
   - ps: Write-Host "Building the 64-bit variant."
-  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+
   - C:\Python37-x64\python.exe -m venv .venv64
   - call ".venv64\Scripts\activate.bat"
   - py -m pip -q install --upgrade pip
