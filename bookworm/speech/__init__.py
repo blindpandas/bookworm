@@ -50,8 +50,9 @@ class SpeechProvider:
 
     def initialize_engine(self):
         engine_name = config.conf["speech"]["engine"]
+        last_known_state = SynthState.ready if not self.is_ready else self.engine.state
         if self.is_ready and (self.engine.name == engine_name):
-            self.configure_engine()
+            self.configure_engine(last_known_state)
             return
         self.close()
         Engine = self.get_engine(engine_name)
@@ -59,16 +60,14 @@ class SpeechProvider:
         # Event handlers
         self.engine.bind(EngineEvent.state_changed, self.on_state_changed)
         self.engine.bind(EngineEvent.bookmark_reached, self.on_bookmark_reached)
-        self.configure_engine()
+        self.configure_engine(last_known_state)
         self._try_set_tts_language()
 
-    def configure_engine(self):
+    def configure_engine(self, last_known_state=SynthState.ready):
         if not self.is_ready:
             return
-        state = self.engine.state
-        if state is not SynthState.ready:
+        if self.engine.state is not SynthState.ready:
             self.engine.stop()
-            self.on_state_changed(self.engine, SynthState.ready)
         conf = config.conf["speech"]
         try:
             self.engine.configure(conf)
@@ -84,7 +83,7 @@ class SpeechProvider:
                   "Text-to-speech functionality will be disabled."
                 ),
             )
-        if self.reader.ready and state is SynthState.busy:
+        if self.reader.ready and last_known_state is SynthState.busy:
             self.reader.speak_current_page()
 
     def _try_set_tts_language(self):

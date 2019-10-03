@@ -5,12 +5,15 @@ import clr
 import System
 from weakref import ref
 from pathlib import Path
+from bookworm import app
 from bookworm.speech.enumerations import EngineEvent, SynthState, RateSpec
 from bookworm.speech.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.logger import logger
 
 try:
     _oc_dll = Path.cwd().joinpath("OcSpeechEngine.dll")
+    if not app.is_frozen:
+        _oc_dll = Path.cwd() / "includes" / "sharp-onecore-synth" / "bin" / "Debug" / "OcSpeechEngine.dll"
     clr.AddReference(str(_oc_dll))
     from OcSpeechEngine import OcSpeechEngine as _OnecoreEngine
     from .oc_utterance import OcSpeechUtterance
@@ -40,6 +43,7 @@ class OcSpeechEngine(BaseSpeechEngine):
         return platform.version().startswith("10") and _oc_available
 
     def close(self):
+        self.synth.Close()
         self.synth.BookmarkReached -= self._on_bookmark_reached
         self.synth.StateChanged -= self._on_state_changed
         self.synth.Finalize()
