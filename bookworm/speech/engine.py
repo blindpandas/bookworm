@@ -26,7 +26,7 @@ class VoiceInfo:
 
     def speaks_language(self, language):
         language = language.lower()
-        locale, country_code = self.language.lower().split("-")
+        locale, _h, country_code = self.language.lower().partition("-")
         if self.language.lower() == language:
             self.sort_key = 0
             return True

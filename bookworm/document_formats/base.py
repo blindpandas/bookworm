@@ -128,6 +128,11 @@ class Section:
         child.parent = self
         self.children.append(child)
 
+    def iterchildren(self):
+        for child in self.children:
+            yield child
+            yield from child.iterchildren()
+
     @property
     def is_root(self):
         return self.parent is None
