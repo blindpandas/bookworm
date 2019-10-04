@@ -4,14 +4,14 @@ import platform
 import clr
 import System
 from weakref import ref
-from pathlib import Path
 from bookworm import app
+from bookworm.paths import app_path
 from bookworm.speech.enumerations import EngineEvent, SynthState, RateSpec
 from bookworm.speech.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.logger import logger
 
 try:
-    _oc_dll = Path.cwd().joinpath("OcSpeechEngine.dll")
+    _oc_dll = app_path("OcSpeechEngine.dll")
     if not app.is_frozen:
         _oc_dll = Path.cwd() / "includes" / "sharp-onecore-synth" / "bin" / "Debug" / "OcSpeechEngine.dll"
     clr.AddReference(str(_oc_dll))

@@ -419,8 +419,9 @@ def update_version_info(c):
 @task(name="libs")
 @make_env
 def build_and_include_libs(c):
+    build_config = "Release" if "APPVEYOR_BUILD_FOLDER" in os.environ else "Debug"
     onecore_path = PROJECT_ROOT / "includes" / "sharp-onecore-synth"
-    src = onecore_path / "bin" / "Release" / "OcSpeechEngine.dll"
+    src = onecore_path / "bin" / build_config / "OcSpeechEngine.dll"
     dst = c["build_folder"]
     c.run(f"copy {src} {dst}")
 
