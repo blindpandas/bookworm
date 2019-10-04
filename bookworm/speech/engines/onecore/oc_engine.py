@@ -4,6 +4,7 @@ import platform
 import clr
 import System
 from weakref import ref
+from pathlib import Path
 from bookworm import app
 from bookworm.paths import app_path
 from bookworm.speech.enumerations import EngineEvent, SynthState, RateSpec
