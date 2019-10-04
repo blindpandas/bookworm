@@ -20,15 +20,13 @@ class OcSpeechUtterance(SapiSpeechUtterance):
         self._speech_sequence = []
         self._heal_funcs = []
 
-    def process_speech_element(self, elm_kind, content):
-        if elm_kind is SpeechElementKind.start_paragraph:
-            super().process_speech_element(elm_kind, content)
-            self._heal_funcs.append((self.prompt.EndParagraph, ()))
-        elif elm_kind is SpeechElementKind.start_style:
-            super().process_speech_element(elm_kind, content)
-            self._heal_funcs.append((self.end_style, (content,)))
-        else:
-            super().process_speech_element(elm_kind, content)
+    def start_paragraph(self):
+        super().start_paragraph()
+        self._heal_funcs.append((self.prompt.EndParagraph, ()))
+
+    def start_style(self, style):
+        super().start_style(style)
+        self._heal_funcs.append((self.end_style, (style,)))
 
     def add_bookmark(self, bookmark):
         self._take_stock()
