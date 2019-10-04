@@ -26,6 +26,7 @@ class SynthState(IntEnum):
 
 class SpeechElementKind(IntEnum):
     """Represent the kind of a speech element."""
+
     text = auto()
     ssml = auto()
     sentence = auto()
@@ -73,4 +74,3 @@ class PauseSpec(IntEnum):
     medium = PromptBreak.Medium
     large = PromptBreak.Large
     extra_large = PromptBreak.ExtraLarge
-

@@ -315,15 +315,14 @@ class SpeechPanel(SettingsPanel):
         # voiceBox.SetSizerType("form")
         # Translators: the label of a combobox containing a list of tts engines
         wx.StaticText(voiceBox, -1, _("Speech Engine:"))
-        self.engineInfoText = wx.TextCtrl(voiceBox, -1, style=wx.TE_READONLY|wx.TE_MULTILINE)
+        self.engineInfoText = wx.TextCtrl(
+            voiceBox, -1, style=wx.TE_READONLY | wx.TE_MULTILINE
+        )
         # Translators: the label of a button that opens a dialog to change the speech engine
         self.changeEngineBtn = wx.Button(voiceBox, -1, _("Change..."))
         # Translators: the label of a combobox containing a list of tts voices
         wx.StaticText(voiceBox, -1, _("Select Voice:"))
-        self.voice = wx.Choice(
-            voiceBox,
-            -1,
-        )
+        self.voice = wx.Choice(voiceBox, -1)
         # Translators: the label of the speech rate slider
         wx.StaticText(voiceBox, -1, _("Speech Rate:"))
         rt = wx.Slider(voiceBox, -1, minValue=0, maxValue=100, name="speech.rate")
@@ -366,12 +365,16 @@ class SpeechPanel(SettingsPanel):
         )
         for ctrl in (sp, pp, eop, eos, self.engineInfoText):
             ctrl.SetSizerProps(expand=True)
-        self.changeEngineBtn.Bind(wx.EVT_BUTTON, self.OnChoosEngine, self.changeEngineBtn)
+        self.changeEngineBtn.Bind(
+            wx.EVT_BUTTON, self.OnChoosEngine, self.changeEngineBtn
+        )
         self.current_engine = None
         self.configure_with_engine()
 
     def configure_with_engine(self, engine_name=""):
-        if (self.current_engine is not None) and (engine_name == self.current_engine.name):
+        if (self.current_engine is not None) and (
+            engine_name == self.current_engine.name
+        ):
             return
         engine_name = engine_name or self.config["engine"]
         self.current_engine = SpeechProvider.get_engine(engine_name)
@@ -396,7 +399,9 @@ class SpeechPanel(SettingsPanel):
         )
         with dlg:
             if dlg.ShowModal() == wx.ID_OK:
-                self.configure_with_engine(SpeechProvider.speech_engines[dlg.GetValue()].name)
+                self.configure_with_engine(
+                    SpeechProvider.speech_engines[dlg.GetValue()].name
+                )
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
         if strategy is ReconciliationStrategies.load:

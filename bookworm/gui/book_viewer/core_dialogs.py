@@ -260,7 +260,9 @@ class ViewPageAsImageDialog(wx.Dialog):
             return
         self._zoom_factor = value
         self.setDialogImage(reset_scroll_pos=False)
-        self.scroll.SetupScrolling(rate_x=self.scroll_rate, rate_y=self.scroll_rate, scrollToTop=False)
+        self.scroll.SetupScrolling(
+            rate_x=self.scroll_rate, rate_y=self.scroll_rate, scrollToTop=False
+        )
         # Translators: a message announced to the user when the zoom factor changes
         speech.announce(
             _("Zoom is at {factor} percent").format(factor=int(value * 100))
@@ -486,7 +488,7 @@ class SpeechEngineSelector(SimpleDialog):
 
     def __init__(self, choices, init_selection, *args, **kwargs):
         self.choices = choices
-        self.init_selection = init_selection 
+        self.init_selection = init_selection
         self._return_value = wx.ID_CANCEL
         super().__init__(*args, **kwargs)
 

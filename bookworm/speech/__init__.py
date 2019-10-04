@@ -15,8 +15,6 @@ from .enumerations import EngineEvent, SynthState
 from .engines.sapi import SapiSpeechEngine
 
 
-
-
 log = logger.getChild(__name__)
 
 
@@ -75,11 +73,11 @@ class SpeechProvider:
             config.save()
             self.reader.view.notify_user(
                 # Translators: the title of a message telling the user that no TTS voice found
-              _("No TTS Voices"),
-              # Translators: a message telling the user that no TTS voice found
-              _(
-                  "A valid Text-to-speech voice was not found on your computer.\n"
-                  "Text-to-speech functionality will be disabled."
+                _("No TTS Voices"),
+                # Translators: a message telling the user that no TTS voice found
+                _(
+                    "A valid Text-to-speech voice was not found on your computer.\n"
+                    "Text-to-speech functionality will be disabled."
                 ),
             )
         if self.reader.ready and last_known_state is SynthState.busy:

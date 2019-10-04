@@ -14,10 +14,18 @@ from bookworm.logger import logger
 try:
     _oc_dll = app_path("OcSpeechEngine.dll")
     if not app.is_frozen:
-        _oc_dll = Path.cwd() / "includes" / "sharp-onecore-synth" / "bin" / "Debug" / "OcSpeechEngine.dll"
+        _oc_dll = (
+            Path.cwd()
+            / "includes"
+            / "sharp-onecore-synth"
+            / "bin"
+            / "Debug"
+            / "OcSpeechEngine.dll"
+        )
     clr.AddReference(str(_oc_dll))
     from OcSpeechEngine import OcSpeechEngine as _OnecoreEngine
     from .oc_utterance import OcSpeechUtterance
+
     _oc_available = True
 except:
     _oc_available = False
@@ -58,7 +66,7 @@ class OcSpeechEngine(BaseSpeechEngine):
                     name=voice.Name,
                     desc=voice.Description,
                     language=voice.Language,
-                    data={"voice_obj": voice}
+                    data={"voice_obj": voice},
                 )
             )
         return rv

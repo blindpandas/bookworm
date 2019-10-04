@@ -11,7 +11,6 @@ log = logger.getChild(__name__)
 
 
 class SapiSpeechUtterance:
-
     def __init__(self):
         self.prompt = PromptBuilder()
 

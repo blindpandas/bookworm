@@ -79,7 +79,9 @@ class BaseSpeechEngine(metaclass=ABCMeta):
         """Return a list of VoiceInfo objects."""
 
     def get_voices_by_language(self, language):
-        return sorted(voice for voice in self.get_voices() if voice.speaks_language(language))
+        return sorted(
+            voice for voice in self.get_voices() if voice.speaks_language(language)
+        )
 
     @property
     @abstractmethod

@@ -62,11 +62,15 @@ class SpeechUtterance:
     @contextmanager
     def new_paragraph(self):
         """Create a new paragraph."""
-        self.speech_sequence.append(SpeechElement(SpeechElementKind.start_paragraph, None))
+        self.speech_sequence.append(
+            SpeechElement(SpeechElementKind.start_paragraph, None)
+        )
         try:
             yield
         finally:
-            self.speech_sequence.append(SpeechElement(SpeechElementKind.end_paragraph, None))
+            self.speech_sequence.append(
+                SpeechElement(SpeechElementKind.end_paragraph, None)
+            )
 
     def add_bookmark(self, bookmark):
         """Append application specific data."""
@@ -79,7 +83,9 @@ class SpeechUtterance:
         try:
             yield
         finally:
-            self.speech_sequence.append(SpeechElement(SpeechElementKind.end_style, style))
+            self.speech_sequence.append(
+                SpeechElement(SpeechElementKind.end_style, style)
+            )
 
     def add_pause(self, duration):
         """Append silence to the speech stream.
@@ -98,7 +104,9 @@ class SpeechUtterance:
     def add(self, utterance):
         """Append the content of another utterance to this utterance."""
         if not _is_valid_operand(utterance):
-            raise TypeError(f"Could not join utterance of type '{type(utterance)}' to utterance of type '{type(self)}'")
+            raise TypeError(
+                f"Could not join utterance of type '{type(utterance)}' to utterance of type '{type(self)}'"
+            )
         self.speech_sequence.extend(utterance.speech_sequence)
 
     def __iadd__(self, other):

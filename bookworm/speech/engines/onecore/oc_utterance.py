@@ -14,7 +14,6 @@ log = logger.getChild(__name__)
 
 
 class OcSpeechUtterance(SapiSpeechUtterance):
-
     def __init__(self, synth):
         super().__init__()
         self.synth = synth
@@ -33,7 +32,9 @@ class OcSpeechUtterance(SapiSpeechUtterance):
 
     def add_bookmark(self, bookmark):
         self._take_stock()
-        self._speech_sequence.append(SpeechElement(SpeechElementKind.bookmark, bookmark))
+        self._speech_sequence.append(
+            SpeechElement(SpeechElementKind.bookmark, bookmark)
+        )
 
     def end_paragraph(self):
         with suppress(System.InvalidOperationException):
@@ -49,9 +50,13 @@ class OcSpeechUtterance(SapiSpeechUtterance):
         self._heal_funcs.clear()
         voice = self.synth().voice
         voice_utterance = SapiSpeechUtterance()
-        with voice_utterance.set_style(SpeechStyle(voice=voice, rate=self.synth().rate_to_spec())):
+        with voice_utterance.set_style(
+            SpeechStyle(voice=voice, rate=self.synth().rate_to_spec())
+        ):
             voice_utterance.append_utterance(self)
-        voice_utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(voice.language)
+        voice_utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(
+            voice.language
+        )
         ssml = voice_utterance.prompt.ToXml()
         if not self.prompt.IsEmpty:
             self.prompt.ClearContent()
@@ -67,4 +72,3 @@ class OcSpeechUtterance(SapiSpeechUtterance):
             elif element.kind is SpeechElementKind.bookmark:
                 oc_prompt.AddBookmark(element.content)
         return oc_prompt
-

@@ -100,7 +100,9 @@ class SapiSpeechEngine(BaseSpeechEngine):
         # one that sets the voice. Because The Speak()
         # function does not honor  the engine voice.
         voice_utterance = SapiSpeechUtterance()
-        voice_utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(self.voice.language)
+        voice_utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(
+            self.voice.language
+        )
         with voice_utterance.set_style(SpeechStyle(voice=self.voice)):
             voice_utterance.append_utterance(utterance)
         self.synth.SpeakAsync(voice_utterance.prompt)
