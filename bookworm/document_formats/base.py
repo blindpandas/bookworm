@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import gc
 from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
 from functools import wraps
@@ -226,6 +227,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         Subclasses should call super to ensure the standard behavior.
         """
         self._ebook = None
+        gc.collect()
 
     def is_encrypted(self):
         """Does this document need password."""

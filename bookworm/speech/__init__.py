@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import gc
 from queue import PriorityQueue
 from accessible_output2.outputs.auto import Auto
 from bookworm import config
@@ -110,8 +109,6 @@ class SpeechProvider:
         if self.engine:
             self.engine.close()
             self.engine = None
-            # Force a collection here to dispose of any stale  objects
-            gc.collect()
 
     def __del__(self):
         self.close()
