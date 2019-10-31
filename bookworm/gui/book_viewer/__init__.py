@@ -103,7 +103,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         # It is being used also as a label for the page content text area when no book is opened.
         self._no_open_book_status = _("Press (Ctrl + O) to open an ebook")
         self.SetStatusText(self._no_open_book_status)
-        NavigationProvider(
+        self._nav_provider = NavigationProvider(
             ctrl=self.contentTextCtrl,
             reader=self.reader,
             zoom_callback=self.onTextCtrlZoom,
@@ -127,6 +127,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
 
     @only_when_reader_ready
     def unloadCurrentEbook(self):
+        self._page_turn_timer.Stop()
         self.reader.unload()
         self.set_content("")
         self.SetStatusText(self._no_open_book_status)

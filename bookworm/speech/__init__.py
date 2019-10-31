@@ -21,7 +21,7 @@ log = logger.getChild(__name__)
 _auto_output = None
 
 
-def announce(message, urgent=True):
+def announce(message, urgent=False):
     """Speak and braille a message related to UI."""
     global _auto_output
     if not config.conf["general"]["announce_ui_messages"]:

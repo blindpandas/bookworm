@@ -421,11 +421,20 @@ class ReadingPanel(SettingsPanel):
     config_section = "reading"
 
     def addControls(self):
-        # Translators: the title of a group of radio buttons in the reading page
-        # in the application settings related to how to read.
+        # Translators: the label of a group of controls in the reading page
+        generalReadingBox = self.make_static_box(_("Reading Options"))
+        wx.CheckBox(
+            generalReadingBox,
+            -1,
+            # Translators: the label of a checkbox to enable continuous reading
+            _("Use continuous reading mode"),
+            name="reading.use_continuous_reading",
+        )
         self.readingMode = wx.RadioBox(
             self,
             -1,
+            # Translators: the title of a group of radio buttons in the reading page
+            # in the application settings related to how to read.
             _("When Pressing Play:"),
             majorDimension=1,
             style=wx.RA_SPECIFY_COLS,
@@ -438,11 +447,11 @@ class ReadingPanel(SettingsPanel):
                 _("Read the current page"),
             ],
         )
-        # Translators: the title of a group of radio buttons in the reading page
-        # in the application settings related to where to start reading from.
         self.reading_pos = wx.RadioBox(
             self,
             -1,
+            # Translators: the title of a group of radio buttons in the reading page
+            # in the application settings related to where to start reading from.
             _("Start reading from:"),
             majorDimension=1,
             style=wx.RA_SPECIFY_COLS,
@@ -452,21 +461,21 @@ class ReadingPanel(SettingsPanel):
         # Translators: the label of a group of controls in the reading page
         # of the settings related to behavior during reading  aloud
         miscBox = self.make_static_box(_("During Reading Aloud"))
-        # Translators: the label of a checkbox
         wx.CheckBox(
+            # Translators: the label of a checkbox
             miscBox, -1, _("Speak page number"), name="reading.speak_page_number"
         )
-        # Translators: the label of a checkbox
         wx.CheckBox(
             miscBox,
             -1,
+            # Translators: the label of a checkbox
             _("Highlight spoken text"),
             name="reading.highlight_spoken_text",
         )
         wx.CheckBox(
-            # Translators: the label of a checkbox
             miscBox,
             -1,
+            # Translators: the label of a checkbox
             _("Select spoken text"),
             name="reading.select_spoken_text",
         )

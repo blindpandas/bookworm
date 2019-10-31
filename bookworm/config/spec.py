@@ -35,6 +35,7 @@ config_spec = StringIO(
     end_of_page_pause = integer(default=500, min=0, max={END_OF_PAGE_PAUSE_MAX})
     end_of_section_pause = integer(default=900, min=0, max={END_OF_SECTION_PAUSE_MAX})
 [reading]
+    use_continuous_reading = boolean(default=True)
     # 0: entire book, 1: current section, 2: current_page
     reading_mode = integer(default=0, min=0, max=2)
     # 0: from cursor position, 1: from beginning of page

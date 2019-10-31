@@ -45,6 +45,8 @@ class MenubarProvider:
     def __init__(self):
         self.menuBar = wx.MenuBar()
         self._search_list_lock = threading.RLock()
+        self._page_turn_timer = wx.Timer(self)
+        self._last_caret_pos = 0
         self._reset_search_history()
 
         # The menu
@@ -275,6 +277,8 @@ class MenubarProvider:
             _("Show general information about this program"),
         )
 
+        # Event handling
+        self.Bind(wx.EVT_TIMER, self.onTimerTick)
         # Bind menu events to event handlers
         # File menu event handlers
         self.Bind(wx.EVT_MENU, self.onOpenEBook, id=wx.ID_OPEN)
@@ -380,6 +384,12 @@ class MenubarProvider:
             accel.FromString(shortcut)
             entries.append(accel)
         self.SetAcceleratorTable(wx.AcceleratorTable(entries))
+
+    def onTimerTick(self, event):
+        cur_pos = self.contentTextCtrl.GetInsertionPoint()
+        if cur_pos == self.contentTextCtrl.GetLastPosition():
+            self._nav_provider.navigate_to_page("next")
+        self._last_caret_pos = cur_pos
 
     def onOpenEBook(self, event):
         last_folder = config.conf["history"]["last_folder"]
@@ -707,6 +717,8 @@ class MenubarProvider:
         config.conf["history"]["recently_opened"] = newfiles
         config.save()
         self.populate_recent_file_list()
+        if config.conf["reading"]["use_continuous_reading"]:
+            self._page_turn_timer.Start()
 
     def onRestartWithDebugMode(self, event):
         restart_application(debug=True)
