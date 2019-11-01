@@ -5,7 +5,7 @@ import platform
 import argparse
 import wx
 from bookworm import app as appinfo
-from bookworm.paths import logs_path
+from bookworm.paths import logs_path, is_running_portable
 from bookworm.config import setup_config
 from bookworm.i18n import setup_i18n
 from bookworm.database import init_database
@@ -62,6 +62,7 @@ def init_app_and_run_main_loop():
     log.info("Starting the application.")
     log.info(f"Windows version: {platform.platform()}")
     log.info(f"Application architecture: {appinfo.arch}")
+    log.info(f"Portable copy: {'Yes' if is_running_portable() else 'No'}")
 
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", nargs="?", default=None)

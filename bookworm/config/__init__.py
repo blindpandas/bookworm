@@ -131,3 +131,4 @@ def save():
         conf.config.write()
         for profile in conf.profiles.values():
             profile.write()
+

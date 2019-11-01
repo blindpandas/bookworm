@@ -8,12 +8,27 @@ from pathlib import Path
 from platform_utils import paths as paths_
 from functools import wraps
 from bookworm import app
+from bookworm.win_registry import RegKey, Registry
 
 
 log = logging.getLogger("bookworm.paths")
 
 
 DATA_PATH_DEBUG = Path(bookworm.__path__[0]).parent / ".appdata"
+
+
+def is_running_portable():
+    if not app.is_frozen :
+        return False
+    unins_key = RegKey(
+        Registry.LocalMachine,
+        path=fr"Software\Microsoft\Windows\CurrentVersion\Uninstall\{app.name}",
+        writable=False
+    )
+    with unins_key:
+        if unins_key.exists and (Path(unins_key.GetValue("InstallLocation")) == app_path()):
+            return False
+    return True
 
 
 def merge_paths(func):
@@ -29,7 +44,10 @@ def data_path():
     if not app.is_frozen and app.debug:
         data_path = DATA_PATH_DEBUG
     else:
-        data_path = Path(winpaths.get_appdata()) / app.display_name
+        if is_running_portable():
+            data_path = app_path("user-config")
+        else:
+            data_path = Path(winpaths.get_appdata()) / app.display_name
     if not data_path.exists():
         data_path.mkdir(parents=True, exist_ok=True)
     return data_path
@@ -51,10 +69,7 @@ def config_path():
 
 @merge_paths
 def logs_path():
-    if not app.is_frozen:
-        path = DATA_PATH_DEBUG / "logs"
-    else:
-        path = data_path("logs")
+    path = data_path("logs")
     if not path.exists():
         log.debug("%s path does not exist, creating..." % (path,))
         path.mkdir(parents=True, exist_ok=True)
@@ -92,7 +107,10 @@ def docs_path():
 @merge_paths
 def home_data_path():
     if app.is_frozen:
-        path = Path.home() / f".{app.name}"
+        if is_running_portable():
+            path = data_path(".ssaved_data")
+        else:
+            path = Path.home() / f".{app.name}"
     else:
         path = DATA_PATH_DEBUG / "home_data"
     if not path.exists():

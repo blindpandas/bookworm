@@ -7,7 +7,7 @@ from wx.adv import CommandLinkButton
 from enum import IntEnum, auto
 from bookworm import app
 from bookworm import config
-from bookworm.paths import app_path
+from bookworm.paths import app_path, is_running_portable
 from bookworm.utils import restart_application
 from bookworm.i18n import get_available_languages, set_active_language
 from bookworm.speech import SpeechProvider
@@ -147,6 +147,8 @@ def show_file_association_dialog(flag):
 
 @app_started.connect
 def _on_app_first_run(sender):
+    if is_running_portable():
+        return
     ndoctypes = len(get_ext_info())
     confval = config.conf["history"]["set_file_assoc"]
     if (confval >= 0) and (confval != ndoctypes):
