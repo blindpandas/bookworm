@@ -10,6 +10,7 @@ from slugify import slugify
 from bookworm import config
 from bookworm import paths
 from bookworm import app
+from bookworm.signals import config_updated
 from bookworm.otau import check_for_updates
 from bookworm.annotator import Bookmarker
 from bookworm.concurrency import call_threaded
@@ -376,6 +377,7 @@ class MenubarProvider:
         # Populate the recent files submenu
         self._recent_files_data = []
         self.populate_recent_file_list()
+        config_updated.connect(self._on_config_changed_for_cont)
 
     def _set_menu_accelerators(self):
         entries = []
@@ -385,9 +387,12 @@ class MenubarProvider:
             entries.append(accel)
         self.SetAcceleratorTable(wx.AcceleratorTable(entries))
 
+    @gui_thread_safe
     def onTimerTick(self, event):
-        cur_pos = self.contentTextCtrl.GetInsertionPoint()
-        if cur_pos == self.contentTextCtrl.GetLastPosition():
+        cur_pos, end_pos = self.contentTextCtrl.GetInsertionPoint(), self.contentTextCtrl.GetLastPosition()
+        if not end_pos:
+            return
+        if cur_pos == end_pos:
             self._nav_provider.navigate_to_page("next")
         self._last_caret_pos = cur_pos
 
@@ -856,3 +861,11 @@ class MenubarProvider:
                 style=wx.ICON_ERROR,
             )
             return self.decrypt_opened_document()
+
+    def _on_config_changed_for_cont(self, sender, section):
+        if section == "reading":
+            is_enabled = config.conf["reading"]["use_continuous_reading"]
+            if is_enabled:
+                self._page_turn_timer.Start()
+            else:
+                self._page_turn_timer.Stop()

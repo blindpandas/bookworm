@@ -15,7 +15,7 @@ log = logger.getChild(__name__)
 
 
 class SapiSpeechEngine(BaseSpeechEngine):
-    """Our Pythonic Interface to SAPI speech enginge."""
+    """Our Pythonic Interface to SAPI speech engine."""
 
     name = "sapi"
     display_name = _("Microsoft Speech API Version 5")
