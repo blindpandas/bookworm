@@ -5,12 +5,13 @@ import platform
 import argparse
 import wx
 from bookworm import app as appinfo
-from bookworm.paths import logs_path, is_running_portable
+from bookworm.paths import logs_path
 from bookworm.config import setup_config
 from bookworm.i18n import setup_i18n
 from bookworm.database import init_database
 from bookworm.shell_integration import shell_integrate, shell_disintegrate
 from bookworm.signals import app_started, app_shuttingdown
+from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.gui.preferences_dialog import show_file_association_dialog
 from bookworm.otau import check_for_updates_upon_startup
@@ -62,12 +63,12 @@ def init_app_and_run_main_loop():
     log.info("Starting the application.")
     log.info(f"Windows version: {platform.platform()}")
     log.info(f"Application architecture: {appinfo.arch}")
-    log.info(f"Portable copy: {'Yes' if is_running_portable() else 'No'}")
+    log.info(f"Portable copy: {'Yes' if IS_RUNNING_PORTABLE else 'No'}")
 
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", nargs="?", default=None)
     parser.add_argument("--debug", action="store_true")
-    if not is_running_portable():
+    if not IS_RUNNING_PORTABLE:
         parser.add_argument("--shell-integrate", action="store_true")
         parser.add_argument("--shell-disintegrate", action="store_true")
         parser.add_argument("--setup-file-assoc", action="store_true")

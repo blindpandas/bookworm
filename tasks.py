@@ -37,6 +37,16 @@ GUIDE_HTML_TEMPLATE = """<!doctype html>
   </html>
 """
 
+def invert_image(image_path):
+    from PIL import Image
+    from fitz import Pixmap
+
+    pix = Pixmap(image_path)
+    pix.invertIRect(pix.irect)
+    buffer = BytesIO(pix.getImageData())
+    del pix
+    return Image.open(buffer)
+
 
 def _add_envars(context):
     sys.path.insert(0, str(PACKAGE_FOLDER))
@@ -79,27 +89,39 @@ def make_env(func):
 def make_icons(c):
     """Rescale images and embed them in a python module."""
     from PIL import Image
+    from PIL import ImageOps
     from wx.tools.img2py import img2py
 
-    print("Rescaling images and embedding them in bookworm.resources.images.py")
     TARGET_SIZE = (24, 24)
     IMAGE_SOURCE_FOLDER = PROJECT_ROOT / "fullsize_images"
-    PY_MODULE = PACKAGE_FOLDER / "resources" / "images.py"
+    PY_MODULE = PACKAGE_FOLDER / "resources" / "image_data.py"
+    print(f"Rescaling images and embedding them in {PY_MODULE}")
     if PY_MODULE.exists():
         PY_MODULE.unlink()
     with TemporaryDirectory() as temp:
         for index, imgfile in enumerate(Path(IMAGE_SOURCE_FOLDER).iterdir()):
-            if imgfile.is_dir() or imgfile.suffix != ".png":
+            filename, ext = os.path.splitext(imgfile.name)
+            if imgfile.is_dir() or ext != ".png":
                 continue
-            fname = Path(temp) / imgfile.name
-            Image.open(imgfile).resize(TARGET_SIZE).save(fname)
+            save_target = Path(temp) / imgfile.name
+            save_target_hc = Path(temp) / f"{filename}.hg{ext}"
+            Image.open(imgfile).resize(TARGET_SIZE).save(save_target)
+            # Create an inverted version for high contrast
+            invert_image(str(imgfile)).resize(TARGET_SIZE).save(save_target_hc)
             append = bool(index)
             with redirect_stdout(StringIO()):
                 img2py(
                     python_file=str(PY_MODULE),
-                    image_file=str(fname),
-                    imgName=fname.name[:-4],
+                    image_file=str(save_target),
+                    imgName=f"_{filename}",
                     append=append,
+                    compressed=True,
+                )
+                img2py(
+                    python_file=str(PY_MODULE),
+                    image_file=str(save_target_hc),
+                    imgName=f"_{filename}_hc",
+                    append=True,
                     compressed=True,
                 )
         print("*" * 10 + " Done Embedding Images" + "*" * 10)

@@ -10,6 +10,7 @@ from bookworm.speech.enumerations import SynthState
 from bookworm.document_formats import SearchRequest
 from bookworm.signals import reader_page_changed
 from bookworm.utils import gui_thread_safe
+from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
 from bookworm.logger import logger
 from ..components import Dialog, SimpleDialog, DialogListCtrl, EnhancedSpinCtrl
 from ..preferences_dialog import SpeechPanel, ReconciliationStrategies
@@ -280,6 +281,8 @@ class ViewPageAsImageDialog(wx.Dialog):
         page = self.reader.document[self.reader.current_page]
         mat = fitz.Matrix(self._zoom_factor, self._zoom_factor)
         pix = page.getPixmap(matrix=mat, alpha=True)
+        if IS_HIGH_CONTRAST_ACTIVE:
+            pix.invertIRect(pix.irect)
         bmp = wx.Bitmap.FromBufferRGBA(pix.width, pix.height, pix.samples)
         size = (bmp.GetWidth(), bmp.GetHeight())
         return bmp, size

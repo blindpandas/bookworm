@@ -7,12 +7,13 @@ from wx.adv import CommandLinkButton
 from enum import IntEnum, auto
 from bookworm import app
 from bookworm import config
-from bookworm.paths import app_path, is_running_portable
+from bookworm.paths import app_path
 from bookworm.utils import restart_application
 from bookworm.i18n import get_available_languages, set_active_language
 from bookworm.speech import SpeechProvider
 from bookworm.speech.engines.sapi import SapiSpeechEngine as SpeechEngine
 from bookworm.signals import app_started, config_updated
+from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.resources import images
 from bookworm.config.spec import (
     PARAGRAPH_PAUSE_MAX,
@@ -147,7 +148,7 @@ def show_file_association_dialog(flag):
 
 @app_started.connect
 def _on_app_first_run(sender):
-    if is_running_portable():
+    if IS_RUNNING_PORTABLE:
         return
     ndoctypes = len(get_ext_info())
     confval = config.conf["history"]["set_file_assoc"]
@@ -258,7 +259,7 @@ class GeneralPanel(SettingsPanel):
             _("Automatically check for updates"),
             name="general.auto_check_for_updates",
         )
-        if not is_running_portable():
+        if not IS_RUNNING_PORTABLE:
             # Translators: the title of a group of controls shown in the
             # general settings page related to file associations
             assocBox = self.make_static_box(_("File Associations"))
