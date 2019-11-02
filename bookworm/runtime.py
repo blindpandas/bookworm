@@ -2,10 +2,6 @@
 
 """Holds runtime information."""
 
-import clr
-clr.AddReference("System.Windows.Forms")
-from System.Windows.Forms import SystemInformation
-
 import sys
 from pathlib import Path
 from bookworm import app
@@ -27,9 +23,20 @@ def is_running_portable():
 
 
 def is_high_contrast_active():
+    import clr
+    clr.AddReference("System.Windows.Forms")
+    from System.Windows.Forms import SystemInformation
+
     return SystemInformation.HighContrast
 
 
 
-IS_RUNNING_PORTABLE = is_running_portable()
-IS_HIGH_CONTRAST_ACTIVE = is_high_contrast_active()
+try:
+    IS_RUNNING_PORTABLE = is_running_portable()
+except:
+    IS_RUNNING_PORTABLE = False
+
+try:
+    IS_HIGH_CONTRAST_ACTIVE = is_high_contrast_active()
+except:
+    IS_HIGH_CONTRAST_ACTIVE = False

@@ -63,7 +63,7 @@ def init_app_and_run_main_loop():
     log.info("Starting the application.")
     log.info(f"Windows version: {platform.platform()}")
     log.info(f"Application architecture: {appinfo.arch}")
-    log.info(f"Portable copy: {'Yes' if IS_RUNNING_PORTABLE else 'No'}")
+    log.info(f"Running as a portable copy: {'Yes' if IS_RUNNING_PORTABLE else 'No'}")
 
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", nargs="?", default=None)

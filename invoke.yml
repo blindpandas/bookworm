@@ -19,7 +19,7 @@ folders_to_clean:
         - scripts\builder\build
         - scripts\builder\dist
     assets:
-        - bookworm\resources\images.py
+        - bookworm\resources\image_data.py
         - scripts\Bookworm*setup.exe
         - scripts\bookworm.pot
         - scripts\Bookworm*update.bundle
