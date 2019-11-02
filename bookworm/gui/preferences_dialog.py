@@ -258,16 +258,17 @@ class GeneralPanel(SettingsPanel):
             _("Automatically check for updates"),
             name="general.auto_check_for_updates",
         )
-        # Translators: the title of a group of controls shown in the
-        # general settings page related to file associations
-        assocBox = self.make_static_box(_("File Associations"))
-        wx.Button(
-            assocBox,
-            wx.ID_SETUP,
-            # Translators: the label of a button
-            _("Manage File &Associations"),
-        )
-        self.Bind(wx.EVT_BUTTON, self.onRequestFileAssoc, id=wx.ID_SETUP)
+        if not is_running_portable():
+            # Translators: the title of a group of controls shown in the
+            # general settings page related to file associations
+            assocBox = self.make_static_box(_("File Associations"))
+            wx.Button(
+                assocBox,
+                wx.ID_SETUP,
+                # Translators: the label of a button
+                _("Manage File &Associations"),
+            )
+            self.Bind(wx.EVT_BUTTON, self.onRequestFileAssoc, id=wx.ID_SETUP)
         self.langobjs = get_available_languages()
         languages = set(
             (lang.language, lang.description) for lang in self.langobjs.values()

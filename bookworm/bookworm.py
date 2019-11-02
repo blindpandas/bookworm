@@ -67,9 +67,10 @@ def init_app_and_run_main_loop():
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", nargs="?", default=None)
     parser.add_argument("--debug", action="store_true")
-    parser.add_argument("--shell-integrate", action="store_true")
-    parser.add_argument("--shell-disintegrate", action="store_true")
-    parser.add_argument("--setup-file-assoc", action="store_true")
+    if not is_running_portable():
+        parser.add_argument("--shell-integrate", action="store_true")
+        parser.add_argument("--shell-disintegrate", action="store_true")
+        parser.add_argument("--setup-file-assoc", action="store_true")
     appinfo.args, appinfo.extra_args = parser.parse_known_args()
     if appinfo.args.debug:
         appinfo.debug = True

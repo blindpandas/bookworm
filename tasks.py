@@ -17,7 +17,7 @@ from contextlib import redirect_stdout
 from glob import glob
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from zipfile import ZipFile
+from zipfile import ZipFile, ZIP_LZMA
 from lzma import compress
 from invoke import task, call
 from invoke.exceptions import UnexpectedExit
@@ -383,16 +383,12 @@ def bundle_update(c):
     frozen_dir = Path(env["IAPP_FROZEN_DIRECTORY"])
     fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-{env['IAPP_ARCH']}-update.bundle"
     bundle_file = PROJECT_ROOT / "scripts" / fname
-    archive_file = BytesIO()
-    with ZipFile(archive_file, "w") as archive:
+    with ZipFile(bundle_file, "w", compression=ZIP_LZMA, allowZip64=False) as archive:
         for file in recursively_iterdir(frozen_dir):
             archive.write(file, file.relative_to(frozen_dir))
         archive.write(
             PROJECT_ROOT / "scripts" / "executables" / "bootstrap.exe", "bootstrap.exe"
         )
-    archive_file.seek(0)
-    data = compress(archive_file.getbuffer())
-    bundle_file.write_bytes(data)
     print("Done preparing update bundle.")
 
 
@@ -433,6 +429,22 @@ def build_and_include_libs(c):
 @make_env
 def build(c):
     """Freeze, package, and prepare the app for distribution."""
+
+
+@task(name="create-portable")
+@make_env
+def create_portable_copy(c):
+    from bookworm.utils import recursively_iterdir
+
+    print("Creating portable archive...")
+    env = os.environ
+    frozen_dir = Path(env["IAPP_FROZEN_DIRECTORY"])
+    fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-portable.zip"
+    port_arch = PROJECT_ROOT / "scripts" / fname
+    with ZipFile(port_arch, "w", compression=ZIP_LZMA, allowZip64=False) as archive:
+        for file in recursively_iterdir(frozen_dir):
+            archive.write(file, file.relative_to(frozen_dir))
+    print(f"Portable archive created at {port_arch}.")
 
 
 @task(name="dev", pre=(install_packages, make_icons))

@@ -45,6 +45,7 @@ build_script:
   - py -m pip -q install --upgrade pip
   - pip -q install -r requirements-dev.txt
   - invoke build
+  - invoke create-portable
   - deactivate
   # 64-bit version
   - ps: Write-Host "Building the 64-bit variant."
@@ -61,6 +62,7 @@ build_script:
 artifacts:
   - path: scripts\Bookworm*setup.exe
   - path: scripts\Bookworm*update.bundle
+  - path: scripts\Bookworm*portable.zip
   - path: scripts\release-info.json
 
 
@@ -77,7 +79,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
-  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /release-info\.json/
+  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /Bookworm-.*-portable\.zip/, /release-info\.json/
   draft: true
   prerelease: true
   on:

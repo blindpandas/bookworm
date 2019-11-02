@@ -113,6 +113,7 @@ scripts/builder/assets/bookworm.bmp
 scripts/builder/assets/bookworm.ico
 scripts/Bookworm*.exe
 scripts/Bookworm*.bundle
+scripts/Bookworm*.zip
 scripts/release-info.json
 
 # OS generated files

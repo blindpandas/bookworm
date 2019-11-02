@@ -15,11 +15,16 @@ log = logging.getLogger("bookworm.paths")
 
 
 DATA_PATH_DEBUG = Path(bookworm.__path__[0]).parent / ".appdata"
+_IS_PORTABLE = None
 
 
 def is_running_portable():
+    global _IS_PORTABLE
     if not app.is_frozen :
         return False
+    if _IS_PORTABLE is not None:
+        return _IS_PORTABLE
+    rv = True
     unins_key = RegKey(
         Registry.LocalMachine,
         path=fr"Software\Microsoft\Windows\CurrentVersion\Uninstall\{app.name}",
@@ -27,8 +32,9 @@ def is_running_portable():
     )
     with unins_key:
         if unins_key.exists and (Path(unins_key.GetValue("InstallLocation")) == app_path()):
-            return False
-    return True
+            rv = False
+    _IS_PORTABLE = rv
+    return rv
 
 
 def merge_paths(func):
