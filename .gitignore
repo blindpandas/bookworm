@@ -107,7 +107,7 @@ venv.bak/
 .appdata/
 
 # Generated files
-bookworm/resources/images.py
+bookworm/resources/image_data.py
 scripts/builder/assets/bookworm-logo.bmp
 scripts/builder/assets/bookworm.bmp
 scripts/builder/assets/bookworm.ico

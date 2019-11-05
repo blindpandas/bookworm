@@ -97,7 +97,7 @@ def docs_path():
 def home_data_path():
     if app.is_frozen:
         if IS_RUNNING_PORTABLE:
-            path = data_path(".ssaved_data")
+            path = data_path(".saved_data")
         else:
             path = Path.home() / f".{app.name}"
     else:

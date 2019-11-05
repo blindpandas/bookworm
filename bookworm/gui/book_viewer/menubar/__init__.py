@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import time
 import sys
 import os
 import wx
@@ -45,9 +46,9 @@ class MenubarProvider:
 
     def __init__(self):
         self.menuBar = wx.MenuBar()
-        self._search_list_lock = threading.RLock()
+        self._page_turn_lock = threading.Lock()
         self._page_turn_timer = wx.Timer(self)
-        self._last_caret_pos = 0
+        self._last_page_turn = float("inf")
         self._reset_search_history()
 
         # The menu
@@ -387,14 +388,17 @@ class MenubarProvider:
             entries.append(accel)
         self.SetAcceleratorTable(wx.AcceleratorTable(entries))
 
+    @call_threaded
     @gui_thread_safe
     def onTimerTick(self, event):
-        cur_pos, end_pos = self.contentTextCtrl.GetInsertionPoint(), self.contentTextCtrl.GetLastPosition()
-        if not end_pos:
-            return
-        if cur_pos == end_pos:
-            self._nav_provider.navigate_to_page("next")
-        self._last_caret_pos = cur_pos
+        textCtrl = self.contentTextCtrl
+        with self._page_turn_lock:
+            cur_pos, end_pos = textCtrl.GetInsertionPoint(), textCtrl.GetLastPosition()
+            if (self._last_page_turn < 0.5) or not end_pos:
+                return
+            if cur_pos == end_pos:
+                self._nav_provider.navigate_to_page("next")
+            self._last_page_turn = time.perf_counter()
 
     def onOpenEBook(self, event):
         last_folder = config.conf["history"]["last_folder"]
@@ -431,6 +435,7 @@ class MenubarProvider:
         self.populate_recent_file_list()
 
     def onClose(self, evt):
+        self._page_turn_timer.Stop()
         self.unloadCurrentEbook()
         self.Destroy()
         evt.Skip()
@@ -605,8 +610,7 @@ class MenubarProvider:
             if not dlg.IsShown():
                 break
             wx.CallAfter(dlg.addResult, page, snip, section, pos)
-            with self._search_list_lock:
-                self._latest_search_results.append((page, snip, section, pos))
+            self._latest_search_results.append((page, snip, section, pos))
             total += 1
         if dlg.IsShown():
             # Translators: the final title of the search results dialog
