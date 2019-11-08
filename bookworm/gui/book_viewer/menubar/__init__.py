@@ -391,10 +391,12 @@ class MenubarProvider:
     @call_threaded
     @gui_thread_safe
     def onTimerTick(self, event):
+        if (self._last_page_turn < 0.5):
+            return
         textCtrl = self.contentTextCtrl
         with self._page_turn_lock:
             cur_pos, end_pos = textCtrl.GetInsertionPoint(), textCtrl.GetLastPosition()
-            if (self._last_page_turn < 0.5) or not end_pos:
+            if not end_pos:
                 return
             if cur_pos == end_pos:
                 self._nav_provider.navigate_to_page("next")

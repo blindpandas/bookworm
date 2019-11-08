@@ -27,7 +27,7 @@ def merge_paths(func):
 
 @merge_paths
 def data_path():
-    if not app.is_frozen and app.debug:
+    if not app.is_frozen:
         data_path = DATA_PATH_DEBUG
     else:
         if IS_RUNNING_PORTABLE:
@@ -55,10 +55,7 @@ def config_path():
 
 @merge_paths
 def logs_path():
-    if not app.is_frozen:
-        path = DATA_PATH_DEBUG / "logs"
-    else:
-        path = data_path("logs")
+    path = data_path("logs")
     if not path.exists():
         log.debug("%s path does not exist, creating..." % (path,))
         path.mkdir(parents=True, exist_ok=True)
