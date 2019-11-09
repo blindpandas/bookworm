@@ -105,13 +105,15 @@ class NavigationProvider:
         now = time.time()
         last_press = self._key_press_record.get(key_code)
         num_lines = self.textCtrl.NumberOfLines - 1
+        _curr_page = self.reader.current_page
         if (key_code == wx.WXK_UP):
             is_first_line = self.textCtrl.PositionToXY(self.textCtrl.InsertionPoint)[-1] == 0
             if not is_first_line:
                 return
             if (last_press is not None) and (now - last_press) <= DKEY_TIMEOUT:
                 self.navigate_to_page(to="prev")
-                self.textCtrl.InsertionPoint = self.textCtrl.GetLastPosition() - 1
+                if _curr_page != self.reader.current_page:
+                    self.textCtrl.InsertionPoint = self.textCtrl.GetLastPosition() - 1
             self._key_press_record[key_code] = now
         elif key_code == wx.WXK_DOWN:
             is_last_line = self.textCtrl.PositionToXY(self.textCtrl.InsertionPoint)[-1] == num_lines
