@@ -4,7 +4,6 @@ import time
 import sys
 import os
 import wx
-import threading
 import webbrowser
 from pathlib import Path
 from slugify import slugify
@@ -46,7 +45,6 @@ class MenubarProvider:
 
     def __init__(self):
         self.menuBar = wx.MenuBar()
-        self._page_turn_lock = threading.Lock()
         self._page_turn_timer = wx.Timer(self)
         self._last_page_turn = float("inf")
         self._reset_search_history()
@@ -388,19 +386,15 @@ class MenubarProvider:
             entries.append(accel)
         self.SetAcceleratorTable(wx.AcceleratorTable(entries))
 
-    @call_threaded
-    @gui_thread_safe
     def onTimerTick(self, event):
-        with self._page_turn_lock:
-            if self._last_page_turn < 0.5:
-                return
-            textCtrl = self.contentTextCtrl
-            cur_pos, end_pos = textCtrl.GetInsertionPoint(), textCtrl.GetLastPosition()
-            if not end_pos:
-                return
-            if cur_pos == end_pos:
-                self._nav_provider.navigate_to_page("next")
-            self._last_page_turn = time.perf_counter()
+        if self._last_page_turn < 0.5:
+            return
+        cur_pos, end_pos = self.contentTextCtrl.GetInsertionPoint(), self.contentTextCtrl.GetLastPosition()
+        if not end_pos:
+            return
+        if cur_pos == end_pos:
+            self._nav_provider.navigate_to_page("next")
+        self._last_page_turn = time.perf_counter()
 
     def onOpenEBook(self, event):
         last_folder = config.conf["history"]["last_folder"]
@@ -628,8 +622,7 @@ class MenubarProvider:
         if not result_count or (next_result >= result_count):
             return wx.Bell()
         self._last_search_index = next_result
-        with self._search_list_lock:
-            page_number, *_, pos = self._latest_search_results[self._last_search_index]
+        page_number, *_, pos = self._latest_search_results[self._last_search_index]
         self.highlight_search_result(page_number, pos)
 
     @only_when_reader_ready
