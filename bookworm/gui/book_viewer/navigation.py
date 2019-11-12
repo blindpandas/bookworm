@@ -9,8 +9,7 @@ from .decorators import only_when_reader_ready
 
 
 # Time_out of consecutive key presses in seconds
-DKEY_TIMEOUT = 2
-
+DKEY_TIMEOUT = 0.75
 
 class NavigationProvider:
     """Implements keyboard navigation for viewer controls."""

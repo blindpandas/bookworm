@@ -46,7 +46,7 @@ class MenubarProvider:
     def __init__(self):
         self.menuBar = wx.MenuBar()
         self._page_turn_timer = wx.Timer(self)
-        self._last_page_turn = float("inf")
+        self._last_page_turn = 0.0
         self._reset_search_history()
 
         # The menu
@@ -387,14 +387,14 @@ class MenubarProvider:
         self.SetAcceleratorTable(wx.AcceleratorTable(entries))
 
     def onTimerTick(self, event):
-        if self._last_page_turn < 0.5:
-            return
         cur_pos, end_pos = self.contentTextCtrl.GetInsertionPoint(), self.contentTextCtrl.GetLastPosition()
         if not end_pos:
             return
         if cur_pos == end_pos:
+            if (time.perf_counter() - self._last_page_turn) < 0.75:
+                return
             self._nav_provider.navigate_to_page("next")
-        self._last_page_turn = time.perf_counter()
+            self._last_page_turn = time.perf_counter()
 
     def onOpenEBook(self, event):
         last_folder = config.conf["history"]["last_folder"]
