@@ -294,6 +294,10 @@ class ViewPageAsImageDialog(wx.Dialog):
             self.Close()
             self.Destroy()
 
+    def Close(self, *args, **kwargs):
+        super().Close(*args, **kwargs)
+        reader_page_changed.disconnect(self.onPageChange, sender=self.reader)
+
 
 class VoiceProfileEditorDialog(SimpleDialog):
     """Create and edit voice profiles."""

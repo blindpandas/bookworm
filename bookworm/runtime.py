@@ -2,6 +2,10 @@
 
 """Holds runtime information."""
 
+import clr
+clr.AddReference("System.Windows.Forms")
+from System.Windows.Forms import SystemInformation
+
 import sys
 from pathlib import Path
 from bookworm import app
@@ -17,16 +21,12 @@ def is_running_portable():
         writable=False
     )
     with unins_key:
-        if unins_key.exists and (Path(unins_key.GetValue("InstallLocation")) == Path(sys.executable).parent):
+        if unins_key.exists and (Path(unins_key.GetValue("InstallLocation")).resolve() == Path(sys.executable).parent.resolve()):
             return False
     return True
 
 
 def is_high_contrast_active():
-    import clr
-    clr.AddReference("System.Windows.Forms")
-    from System.Windows.Forms import SystemInformation
-
     return SystemInformation.HighContrast
 
 
