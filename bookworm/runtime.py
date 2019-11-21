@@ -31,10 +31,7 @@ def is_high_contrast_active():
 
 
 
-try:
-    IS_RUNNING_PORTABLE = is_running_portable()
-except:
-    IS_RUNNING_PORTABLE = False
+IS_RUNNING_PORTABLE = is_running_portable()
 
 try:
     IS_HIGH_CONTRAST_ACTIVE = is_high_contrast_active()
