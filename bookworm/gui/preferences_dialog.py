@@ -270,12 +270,9 @@ class GeneralPanel(SettingsPanel):
                 _("Manage File &Associations"),
             )
             self.Bind(wx.EVT_BUTTON, self.onRequestFileAssoc, id=wx.ID_SETUP)
-        self.langobjs = get_available_languages()
-        languages = set(
-            (lang.language, lang.description) for lang in self.langobjs.values()
-        )
-        for ident, label in languages:
-            self.languageChoice.Append(label, ident)
+        languages = [l for l in set(get_available_languages().values())]
+        for langobj in languages:
+            self.languageChoice.Append(langobj.description, langobj)
         self.languageChoice.SetStringSelection(app.current_language.description)
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
@@ -284,10 +281,10 @@ class GeneralPanel(SettingsPanel):
             if selection == wx.NOT_FOUND:
                 return
             selected_lang = self.languageChoice.GetClientData(selection)
-            if self.langobjs[selected_lang] is not app.current_language:
-                self.config["language"] = selected_lang
+            if selected_lang.LCID != app.current_language.LCID:
+                self.config["language"] = selected_lang.pylang
                 config.save()
-                set_active_language(selected_lang)
+                set_active_language(selected_lang.pylang)
                 msg = wx.MessageBox(
                     # Translators: the content of a message asking the user to restart
                     _(
