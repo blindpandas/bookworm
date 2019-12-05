@@ -148,7 +148,7 @@ def show_file_association_dialog(flag):
 
 @app_started.connect
 def _on_app_first_run(sender):
-    if IS_RUNNING_PORTABLE:
+    if not app.is_frozen or IS_RUNNING_PORTABLE:
         return
     ndoctypes = len(get_ext_info())
     confval = config.conf["history"]["set_file_assoc"]
