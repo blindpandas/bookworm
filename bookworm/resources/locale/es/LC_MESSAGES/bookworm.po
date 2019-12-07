@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2019-12-05 20:08+0200\n"
+"POT-Creation-Date: 2019-12-07 21:59+0200\n"
 "PO-Revision-Date: 2019-12-05 20:08+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -222,7 +222,7 @@ msgstr ""
 #. Translators: the label of a button to close the dialog
 #: bookworm/gui/book_viewer/annotation_dialogs.py:107
 #: bookworm/gui/book_viewer/annotation_dialogs.py:284
-#: bookworm/gui/book_viewer/core_dialogs.py:345
+#: bookworm/gui/book_viewer/core_dialogs.py:348
 #: bookworm/gui/preferences_dialog.py:94
 msgid "&Close"
 msgstr ""
@@ -537,14 +537,14 @@ msgstr ""
 #. Translators: the label of a button to edit the current note
 #. Translators: the label of a button to edit a voice profile
 #: bookworm/gui/book_viewer/annotation_dialogs.py:80
-#: bookworm/gui/book_viewer/core_dialogs.py:337
+#: bookworm/gui/book_viewer/core_dialogs.py:340
 msgid "&Edit..."
 msgstr ""
 
 #. Translators: the label of a button to remove the selected note
 #. Translators: the label of a button to remove a voice profile
 #: bookworm/gui/book_viewer/annotation_dialogs.py:82
-#: bookworm/gui/book_viewer/core_dialogs.py:339
+#: bookworm/gui/book_viewer/core_dialogs.py:342
 msgid "&Remove"
 msgstr ""
 
@@ -761,44 +761,44 @@ msgid "Zoom is at {factor} percent"
 msgstr ""
 
 #. Translators: the title of a dialog to edit a voice profile
-#: bookworm/gui/book_viewer/core_dialogs.py:308
+#: bookworm/gui/book_viewer/core_dialogs.py:311
 msgid "Voice Profile: {profile}"
 msgstr ""
 
 #. Translators: the label of a combobox to select a voice profile
-#: bookworm/gui/book_viewer/core_dialogs.py:329
+#: bookworm/gui/book_viewer/core_dialogs.py:332
 msgid "Select Voice Profile:"
 msgstr ""
 
 #. Translators: the label of a button to activate a voice profile
-#: bookworm/gui/book_viewer/core_dialogs.py:335
+#: bookworm/gui/book_viewer/core_dialogs.py:338
 msgid "&Activate"
 msgstr ""
 
 #. Translators: the label of a button to create a new voice profile
-#: bookworm/gui/book_viewer/core_dialogs.py:341
+#: bookworm/gui/book_viewer/core_dialogs.py:344
 msgid "&New Profile..."
 msgstr ""
 
 #. Translators: the entry of the active voice profile in the voice profiles
 #. list
-#: bookworm/gui/book_viewer/core_dialogs.py:375
+#: bookworm/gui/book_viewer/core_dialogs.py:378
 msgid "{profile} (active)"
 msgstr ""
 
 #. Translators: the label of an edit field to enter the voice profile name
-#: bookworm/gui/book_viewer/core_dialogs.py:423
+#: bookworm/gui/book_viewer/core_dialogs.py:426
 msgid "Profile Name:"
 msgstr ""
 
 #. Translators: the title of a dialog to enter the name of a new voice profile
-#: bookworm/gui/book_viewer/core_dialogs.py:425
+#: bookworm/gui/book_viewer/core_dialogs.py:428
 msgid "New Voice Profile"
 msgstr ""
 
 #. Translators: the content of a message notifying the user
 #. user of the existance of a voice profile with the same name
-#: bookworm/gui/book_viewer/core_dialogs.py:437
+#: bookworm/gui/book_viewer/core_dialogs.py:440
 msgid ""
 "A voice profile with the same name already exists. Please select another "
 "name."
@@ -806,13 +806,13 @@ msgstr ""
 
 #. Translators: the title of a message telling the user that an error has
 #. occurred
-#: bookworm/gui/book_viewer/core_dialogs.py:441
+#: bookworm/gui/book_viewer/core_dialogs.py:444
 msgid "Error"
 msgstr ""
 
 #. Translators: the content of a message telling the user that the voice
 #. profile he is removing is the active one
-#: bookworm/gui/book_viewer/core_dialogs.py:463
+#: bookworm/gui/book_viewer/core_dialogs.py:466
 msgid ""
 "Voice profile {profile} is the active profile.\n"
 "Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
@@ -821,13 +821,13 @@ msgstr ""
 
 #. Translators: the title of a message telling the user that
 #. it is not possible to remove this voice profile
-#: bookworm/gui/book_viewer/core_dialogs.py:470
+#: bookworm/gui/book_viewer/core_dialogs.py:473
 msgid "Cannot Remove Profile"
 msgstr ""
 
 #. Translators: the title of a message to confirm the removal of the voice
 #. profile
-#: bookworm/gui/book_viewer/core_dialogs.py:476
+#: bookworm/gui/book_viewer/core_dialogs.py:479
 msgid ""
 "Are you sure you want to remove voice profile {profile}?\n"
 "This cannot be undone."
@@ -835,12 +835,12 @@ msgstr ""
 
 #. Translators: the title of a message to confirm the removal of a voice
 #. profile
-#: bookworm/gui/book_viewer/core_dialogs.py:481
+#: bookworm/gui/book_viewer/core_dialogs.py:484
 msgid "Remove Voice Profile?"
 msgstr ""
 
 #. Translators: the label of a combobox
-#: bookworm/gui/book_viewer/core_dialogs.py:504
+#: bookworm/gui/book_viewer/core_dialogs.py:507
 msgid "Select Speech Engine:"
 msgstr ""
 
