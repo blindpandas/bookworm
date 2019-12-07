@@ -39,10 +39,10 @@ class NavigationProvider:
         if isinstance(event.GetEventObject(), wx.TextCtrl) and key_code in (wx.WXK_UP, wx.WXK_DOWN):
             if config.conf["reading"]["use_continuous_reading"]:
                 self._auto_navigate(key_code)
-        elif key_code in (wx.WXK_RETURN, wx.WXK_BACK):
+        elif key_code in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_BACK):
             if (
                 not isinstance(event.GetEventObject(), wx.TextCtrl)
-                and key_code == wx.WXK_RETURN
+                and key_code in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER)
             ):
                 self.navigate_to_page(to="next")
             elif key_code == wx.WXK_BACK:

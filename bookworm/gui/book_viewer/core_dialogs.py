@@ -271,10 +271,13 @@ class ViewPageAsImageDialog(wx.Dialog):
 
     def setDialogImage(self, reset_scroll_pos=True):
         bmp, size = self.getPageImage()
-        self.imageCtrl.SetBitmap(bmp)
         self.imageCtrl.SetSize(size)
+        self.imageCtrl.SetBitmap(bmp)
         self._currently_rendered_page = self.reader.current_page
         if reset_scroll_pos:
+            self.scroll.SetupScrolling(
+                rate_x=self.scroll_rate, rate_y=self.scroll_rate, scrollToTop=False
+            )
             wx.CallLater(50, self.scroll.Scroll, 0, 0)
 
     def getPageImage(self):
