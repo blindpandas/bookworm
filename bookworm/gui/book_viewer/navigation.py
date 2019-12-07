@@ -37,8 +37,7 @@ class NavigationProvider:
         event.Skip()
         key_code = event.GetKeyCode()
         if isinstance(event.GetEventObject(), wx.TextCtrl) and key_code in (wx.WXK_UP, wx.WXK_DOWN):
-            if config.conf["reading"]["use_continuous_reading"]:
-                self._auto_navigate(key_code)
+            self._auto_navigate(key_code)
         elif key_code in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_BACK):
             if (
                 not isinstance(event.GetEventObject(), wx.TextCtrl)

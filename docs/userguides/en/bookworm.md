@@ -45,8 +45,10 @@ The main window of Bookworm consists of the following two parts:
 
 * Enter: navigate to the next page in the current section
 * Backspace: navigate to the previous page in the current section
-* Home: navigate to the first page of the current section
-* End: navigate to the last page of the current section
+* While the caret is at the first line, pressing the up arrow two times in succession navigates to the previous page.
+* While the caret is at the last line, pressing the down arrow two times in succession navigates to the next page.
+* Alt + Home: navigate to the first page of the current section
+* Alt + End: navigate to the last page of the current section
 * Alt + Page down: navigate to next section
 * Alt + Page up: navigate to previous section
 
@@ -114,9 +116,20 @@ In addition to the speech settings, Bookworm gives you the ability to fine-tune 
 * Play end-of-section sound: if this option is turned on, Bookworm plays a little sound when it reaches the end of a section.
 
 
+### Continuous Reading Mode
+
+In addition to Bookworm's built-in text-to-speech features, you can take advantage of your screen reader's continuous reading functionality (also known as "say all"). Bookworm provides support for this functionality through its "continuous reading mode". This mode is active by default, and you can disable it from the reading page of the application preferences. While the continuous reading mode is active, pages are turned automatically as the screen reader progresses through the book.
+
+Note that due to the way this feature is currently implemented, the following limitations should be expected:
+
+* Continuous reading will be interrupted if an empty page is reached. If you reached an empty page, simply navigate to a non-empty page and reactivate your screen reader's continuous reading functionality from there.
+* Moving the caret to the last character in the page will immediately switch to the next page
+
+
+
 ### Viewing A Fully Rendered Version of The Current Page
 
-Bookworm allows you to view a fully rendered version of the book. While a book is opened, you can press Ctrl + R or select the "Render Page" menu item from the tools menu. We call this view "The Render View" as appose to the, default, Textual View.
+Bookworm allows you to view a fully rendered version of the book. While a book is opened, you can press Ctrl + R or select the "Render Page" menu item from the tools menu. We call this view "The Render View" as oppose to the, default, Textual View.
 
 When you are in the Render View, you can use the usual zoom commands to zoom the page in and out:
 
@@ -152,7 +165,7 @@ The "Manage File Associations" button, found in the general page in the applicat
 Once you launch the file associations manager, you will have the following options:
 
 * Associate all: this changes your settings so that if a file is supported by Bookworm, Windows will use Bookworm to open it. 
-* Dessociate all supported file types: this will remove previously registered file associations
+* Dissociate all supported file types: this will remove previously registered file associations
 * Individual buttons for each supported file type: clicking any button of those will associate its respective file type with Bookworm.
 
 
