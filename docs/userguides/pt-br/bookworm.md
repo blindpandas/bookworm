@@ -45,8 +45,10 @@ A janela principal do Bookworm consiste nas seguintes duas partes:
 
 * Enter: navega para a próxima página na seção atual
 * Backspace: navega para a página anterior na seção atual
-* Home: navega para a primeira página da seção atual
-* End: navega para a última página da seção atual
+* Quando o cursor se encontra na primeira linha, pressionar a seta acima duas vezes sucessivamente navega para a página anterior.
+* Quando o cursor se encontra na última linha, pressionar a seta abaixo duas vezes sucessivamente navega para a próxima página.
+* Alt + Home: navega para a primeira página da seção atual
+* Alt + End: navega para a última página da seção atual
 * Alt + Page down: navega para a próxima seção
 * Alt + Page up: navega para a seção anterior
 
@@ -112,6 +114,17 @@ Além das configurações de fala, o Bookworm lhe dá a possibilidade de refinar
 * Realsar texto falado: Se esta opção estiver ligada, o texto atualmente falado é visualmente realsado.
 * Selecionar texto falado: Se esta opção estiver ligada, o texto atualmente falado é selecionado. Isso lhe habilita, por exemplo, a pressionar Ctrl + C para copiar o parágrafo atualmente falado.
 * Tocar som de fim de seção: Se esta opção estiver ligada, o Bookworm toca um sonzinho quando chega ao fim de uma seção.
+
+
+### Modo de Leitura Contínua
+
+Além dos recursos de texto para fala embutidos no Bookworm, você pode tirar proveito da função de leitura contínua de seu leitor de telas (também conhecida como "dizer tudo"). O Bookworm provê suporte a esta função por meio do "modo de leitura contínua". Esse modo está ativo por padrão e você pode desabilitá-lo na página Leitura das Preferências do aplicativo. Enquanto o modo de leitura contínua está ativo, as páginas são viradas automaticamente conforme o leitor de telas avança pelo livro.
+
+Note que devido à maneira como este recurso é atualmente implementado, esperam-se as seguintes limitações:
+
+* A leitura contínua será interrompida se encontrar uma página vazia. Caso tenha chegado a uma página vazia, simplesmente navegue para uma página não-vazia e reative dali a função de leitura contínua do leitor de telas.
+* Mover o cursor para o último caractere da página alternará imediatamente para a próxima página
+
 
 
 ### Exibindo uma versão completamente renderizada da página atual

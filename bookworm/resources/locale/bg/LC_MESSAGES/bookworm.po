@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: Bookworm 0.1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2019-12-07 21:59+0200\n"
-"PO-Revision-Date: 2019-09-13 12:33+0300\n"
+"PO-Revision-Date: 2019-12-09 11:02+0200\n"
 "Last-Translator: Kostadin Kolev <k_kolev1985@mail.bg>\n"
 "Language: bg\n"
 "Language-Team: bg <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
+"X-Generator: Poedit 2.2.4\n"
 
 #. Translators: the content of a message indicating a connection error
 #: bookworm/otau.py:89
@@ -34,11 +35,11 @@ msgstr "Мрежова грешка"
 #. app
 #: bookworm/otau.py:103
 msgid ""
-"We have faced a technical problem while checking for updates. Please try "
-"again later."
+"We have faced a technical problem while checking for updates. Please try again "
+"later."
 msgstr ""
-"Сблъскахме се с технически проблем, докато проверяваме за обновления. "
-"Моля, опитайте отново по-късно."
+"Сблъскахме се с технически проблем, докато проверяваме за обновления. Моля, "
+"опитайте отново по-късно."
 
 #. Translators: the title of a message indicating an error while updating the
 #. app
@@ -51,14 +52,14 @@ msgstr "Грешка при проверката за обновления"
 #: bookworm/otau.py:118
 msgid ""
 "Congratulations, you have already got the latest version of Bookworm.\n"
-"We are working day and night on making Bookworm better. The next version "
-"of Bookworm is on its way, so wait for it. Rest assured, we will notify "
-"you when it is released."
+"We are working day and night on making Bookworm better. The next version of "
+"Bookworm is on its way, so wait for it. Rest assured, we will notify you when "
+"it is released."
 msgstr ""
 "Поздравления, вие разполагате с най-новата версия на Bookworm.\n"
-"Работим денонощно, за да направим Bookworm по-добра. Следващата версия на"
-" Bookworm е на път, така че бъдете търпеливи. Не се притеснявайте – ние "
-"ще ви уведомим, когато бъде издадена."
+"Работим денонощно, за да направим Bookworm по-добра. Следващата версия на "
+"Bookworm е на път, така че бъдете търпеливи. Не се притеснявайте – ние ще ви "
+"уведомим, когато бъде издадена."
 
 #. Translators: the title of a message indicating that there is no new version
 #: bookworm/otau.py:125
@@ -119,8 +120,7 @@ msgid ""
 "download.\n"
 "Would you like to download the update file again?"
 msgstr ""
-"Файлът с обновлението е изтеглен, но е бил повреден по време на "
-"изтеглянето.\n"
+"Файлът с обновлението е изтеглен, но е бил повреден по време на изтеглянето.\n"
 "Желаете ли да изтеглите отново файла с обновлението?"
 
 #. Translators: the title of a message indicating a corrupted file
@@ -132,15 +132,12 @@ msgstr "Грешка при свалянето"
 #. update bundle
 #: bookworm/otau.py:211
 msgid ""
-"The update has been downloaded successfully, and it is ready to be "
-"installed.\n"
-"The application will be restarted in order to complete the update "
-"process.\n"
+"The update has been downloaded successfully, and it is ready to be installed.\n"
+"The application will be restarted in order to complete the update process.\n"
 "Click the OK button to continue."
 msgstr ""
 "Обновлението е изтеглено успешно и е готово за инсталиране.\n"
-"Приложението ще бъде рестартирано, за да завърши процеса по обновяването."
-"\n"
+"Приложението ще бъде рестартирано, за да завърши процеса по обновяването.\n"
 "Задействайте бутона \"OK\", за да продължите."
 
 #. Translators: the title of a message indicating successful download of the
@@ -162,7 +159,7 @@ msgstr "Моля, изчакайте..."
 #. Translators: the name of a built-in voice profile
 #: bookworm/config/spec.py:54
 msgid "Human-like"
-msgstr ""
+msgstr "Естествено-звучащ"
 
 #. Translators: the name of a built-in voice profile
 #: bookworm/config/spec.py:65
@@ -172,7 +169,7 @@ msgstr "Дълбоко четене"
 #. Translators: the name of a built-in voice profile
 #: bookworm/config/spec.py:76
 msgid "Expresse"
-msgstr ""
+msgstr "Изразителен"
 
 #. Translators: the name of a document file format
 #: bookworm/document_formats/mu/__init__.py:27
@@ -204,13 +201,12 @@ msgstr "Асоцииране на файлове с Bookworm"
 #: bookworm/gui/preferences_dialog.py:55
 msgid ""
 "This dialog will help you to setup file associations.\n"
-"Associating files with Bookworm means that when you click on a file in "
-"windows explorer, it will be opend in Bookworm by default "
+"Associating files with Bookworm means that when you click on a file in windows "
+"explorer, it will be opend in Bookworm by default "
 msgstr ""
 "Този прозорец ще ви помогне да настроите файловите асоциации.\n"
-"Асоциирането на файлове с Bookworm означава, че когато натиснете ENTER "
-"върху файл в Windows Explorer, той по подразбиране ще бъде отворен с "
-"Bookworm. "
+"Асоциирането на файлове с Bookworm означава, че когато натиснете ENTER върху "
+"файл в Windows Explorer, той по подразбиране ще бъде отворен с Bookworm. "
 
 #. Translators: the main label of a button
 #: bookworm/gui/preferences_dialog.py:64
@@ -221,8 +217,7 @@ msgstr "Асоциирай всички"
 #: bookworm/gui/preferences_dialog.py:66
 msgid "Use Bookworm to open all supported ebook formats"
 msgstr ""
-"Използвай Bookworm за отваряне на всички поддържани формати за електронни"
-" книги"
+"Използвай Bookworm за отваряне на всички поддържани формати за електронни книги"
 
 #. Translators: the main label of a button
 #: bookworm/gui/preferences_dialog.py:70
@@ -262,8 +257,7 @@ msgstr "Файлове от тип {format} бяха асоциирани с Boo
 #. Translators: the title of a message indicating successful file association
 #. Translators: the title of a message indicating successful removal of file
 #. association
-#: bookworm/gui/preferences_dialog.py:108
-#: bookworm/gui/preferences_dialog.py:126
+#: bookworm/gui/preferences_dialog.py:108 bookworm/gui/preferences_dialog.py:126
 msgid "Success"
 msgstr "Успех"
 
@@ -272,8 +266,8 @@ msgstr "Успех"
 #: bookworm/gui/preferences_dialog.py:117
 msgid "All supported file types have been set to open by default in Bookworm."
 msgstr ""
-"Всички поддържани типове файлове бяха зададени да се отварят по "
-"подразбиране с Bookworm."
+"Всички поддържани типове файлове бяха зададени да се отварят по подразбиране с "
+"Bookworm."
 
 #. Translators: the text of a message indicating successful removal of file
 #. associations
@@ -348,8 +342,7 @@ msgstr "Управление на файловите &асоциации"
 #: bookworm/gui/preferences_dialog.py:290
 msgid ""
 "You have changed the display language of Bookworm.\n"
-"For this setting to fully take effect, you need to restart the "
-"application.\n"
+"For this setting to fully take effect, you need to restart the application.\n"
 "Would you like to restart the application right now?"
 msgstr ""
 "Променихте езика на показване за Bookworm.\n"
@@ -365,21 +358,20 @@ msgstr "Езикът е променен"
 #. Translators: the label of a group of controls in the
 #. speech settings page related to voice selection
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/toolbar.py:111
-#: bookworm/gui/preferences_dialog.py:315
+#: bookworm/gui/book_viewer/toolbar.py:111 bookworm/gui/preferences_dialog.py:315
 msgid "Voice"
 msgstr "Глас"
 
 #. Translators: the label of a combobox containing a list of tts engines
 #: bookworm/gui/preferences_dialog.py:318
 msgid "Speech Engine:"
-msgstr ""
+msgstr "Речева машина:"
 
 #. Translators: the label of a button that opens a dialog to change the speech
 #. engine
 #: bookworm/gui/preferences_dialog.py:323
 msgid "Change..."
-msgstr ""
+msgstr "Промени..."
 
 #. Translators: the label of a combobox containing a list of tts voices
 #: bookworm/gui/preferences_dialog.py:325
@@ -424,17 +416,17 @@ msgstr "Пауза в края на раздела (мсек)"
 
 #: bookworm/gui/preferences_dialog.py:399
 msgid "Speech Engine"
-msgstr ""
+msgstr "Речева машина"
 
 #. Translators: the label of a group of controls in the reading page
 #: bookworm/gui/preferences_dialog.py:426
 msgid "Reading Options"
-msgstr ""
+msgstr "Опции за четенето"
 
 #. Translators: the label of a checkbox to enable continuous reading
 #: bookworm/gui/preferences_dialog.py:431
 msgid "Use continuous reading mode"
-msgstr ""
+msgstr "Използвай режим на непрекъснато четене"
 
 #. Translators: the title of a group of radio buttons in the reading page
 #. in the application settings related to how to read.
@@ -713,11 +705,9 @@ msgstr "Експортиране в"
 #. invalid
 #: bookworm/gui/book_viewer/annotation_dialogs.py:410
 msgid ""
-"The provided file name is not valid. Please try again with a different "
-"name."
+"The provided file name is not valid. Please try again with a different name."
 msgstr ""
-"Предоставеното име на файл не е валидно. Моля, опитайте отново с друго "
-"име."
+"Предоставеното име на файл не е валидно. Моля, опитайте отново с друго име."
 
 #. Translators: the title of a message telling the user that the provided file
 #. name is invalid
@@ -839,8 +829,7 @@ msgstr "Нов гласов профил"
 #. user of the existance of a voice profile with the same name
 #: bookworm/gui/book_viewer/core_dialogs.py:440
 msgid ""
-"A voice profile with the same name already exists. Please select another "
-"name."
+"A voice profile with the same name already exists. Please select another name."
 msgstr "Гласов профил със същото име вече съществува. Моля, изберете друго име."
 
 #. Translators: the title of a message telling the user that an error has
@@ -854,8 +843,8 @@ msgstr "Грешка"
 #: bookworm/gui/book_viewer/core_dialogs.py:466
 msgid ""
 "Voice profile {profile} is the active profile.\n"
-"Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
-"menu item from the speech menu."
+"Please deactivate it first by clicking 'Deactivate Active Voice Profile` menu "
+"item from the speech menu."
 msgstr ""
 "Гласовият профил {profile} е текущо активният профил.\n"
 "Моля, първо го деактивирайте, като задействате командата \"Деактивирай "
@@ -886,7 +875,7 @@ msgstr "Премахване на гласов профил?"
 #. Translators: the label of a combobox
 #: bookworm/gui/book_viewer/core_dialogs.py:507
 msgid "Select Speech Engine:"
-msgstr ""
+msgstr "Избор на речева машина:"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:36
@@ -944,7 +933,7 @@ msgstr "Добавяне на показалец"
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:78
 msgid "Note"
-msgstr "бележка"
+msgstr "Бележка"
 
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:81
@@ -988,7 +977,7 @@ msgstr "Преминаване към следващия абзац"
 #. Translators: the help text of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:114
 msgid "Customize TTS voice parameters."
-msgstr "Персонализиране на гласовите параметри на речевата машина"
+msgstr "Персонализиране на гласовите параметри на речевата машина."
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/toolbar.py:120
@@ -1298,8 +1287,8 @@ msgstr "&Рестартирай в режим за отстраняване на
 #: bookworm/gui/book_viewer/menubar/__init__.py:265
 msgid "Restart the program with debug mode enabled to show errors"
 msgstr ""
-"Рестартиране на програмата със задействан режим за отстраняване на грешки"
-" за показване на грешки"
+"Рестартиране на програмата със задействан режим за отстраняване на грешки за "
+"показване на грешки"
 
 #. Translators: the label of an ietm in the application menubar
 #: bookworm/gui/book_viewer/menubar/__init__.py:275
@@ -1428,7 +1417,7 @@ msgstr "Търсене за \"{term}\""
 #. shown after the search is finished
 #: bookworm/gui/book_viewer/menubar/__init__.py:615
 msgid "Results | {total}"
-msgstr "Резултати | {total}"
+msgstr "Резултати | {total} съвпадения"
 
 #. Translators: the content of the about message
 #: bookworm/gui/book_viewer/menubar/__init__.py:641
@@ -1437,46 +1426,44 @@ msgid ""
 "Version: {version}\n"
 "Website: {website}\n"
 "\n"
-"{display_name} is an accessible e-book reader that enables blind and "
-"visually impaired individuals to read e-books in an easy, accessible, and"
-" hassle-free manor. It is being developed by {author} with some "
-"contributions from the community.\n"
+"{display_name} is an accessible e-book reader that enables blind and visually "
+"impaired individuals to read e-books in an easy, accessible, and hassle-free "
+"manor. It is being developed by {author} with some contributions from the "
+"community.\n"
 "\n"
 "{copyright}\n"
 "This software is offered to you under the terms of The MIT license.\n"
 "You can view the license text from the help menu.\n"
 "\n"
 "As blind developers, our responsibility is to develop applications that "
-"provide independence for us, and for our fellow blind friends all over "
-"the world. So, if you've found Bookworm useful in any way, please help us"
-" in making Bookworm better for you and for others. At this initial stage,"
-" we want you to tell us about any errors you may encounter during your "
-"use of Bookworm. To do so, open a new issue with the details of the error"
-" at the issue tracker (https://github.com/mush42/bookworm/issues/). Your "
-"help is greatly appreciated."
+"provide independence for us, and for our fellow blind friends all over the "
+"world. So, if you've found Bookworm useful in any way, please help us in "
+"making Bookworm better for you and for others. At this initial stage, we want "
+"you to tell us about any errors you may encounter during your use of Bookworm. "
+"To do so, open a new issue with the details of the error at the issue tracker "
+"(https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated."
 msgstr ""
 "{display_name}\n"
 "Версия: {version}\n"
 "Уеб сайт: {website}\n"
 "\n"
-"{display_name} е достъпен четец на електронни книги, който дава "
-"възможност на незрящите и слабовиждащите личности да четат електронни "
-"книги по един лесен, достъпен и безпроблемен начин. Той се разработва от "
-"{author} с приноси от общността.\n"
+"{display_name} е достъпен четец на електронни книги, който дава възможност на "
+"незрящите и слабовиждащите личности да четат електронни книги по един лесен, "
+"достъпен и безпроблемен начин. Той се разработва от {author} с приноси от "
+"общността.\n"
 "\n"
 "{copyright}\n"
 "Този софтуер ви се предлага при условията на лиценза на MIT.\n"
 "Можете да прегледате лиценза от помощното меню.\n"
 "\n"
-"Като незрящи разработчици, нашата отговорност е да разработваме "
-"приложения, които осигуряват независимост за нас и за нашите незрящи "
-"познати и приятели по целия свят. Така че, ако за вас Bookworm е полезен "
-"по някакъв начин, моля, помогнете ни да направим Bookworm по-добър за вас"
-" и за другите. На този начален етап искаме да ни съобщавате за всички "
-"грешки, на които може да сте попаднали по време на работата ви с "
-"Bookworm. За целта създайте нов доклад с подробности за грешката в "
-"портала за доклади (https://github.com/mush42/bookworm/issues/). Ценим "
-"високо вашата помощ."
+"Като незрящи разработчици, нашата отговорност е да разработваме приложения, "
+"които осигуряват независимост за нас и за нашите незрящи познати и приятели по "
+"целия свят. Така че, ако за вас Bookworm е полезен по някакъв начин, моля, "
+"помогнете ни да направим Bookworm по-добър за вас и за другите. На този "
+"начален етап искаме да ни съобщавате за всички грешки, на които може да сте "
+"попаднали по време на работата ви с Bookworm. За целта създайте нов доклад с "
+"подробности за грешката в портала за доклади (https://github.com/mush42/"
+"bookworm/issues/). Ценим високо вашата помощ."
 
 #. Translators: the title of the about dialog
 #: bookworm/gui/book_viewer/menubar/__init__.py:662
@@ -1486,7 +1473,7 @@ msgstr "Относно {app_name}"
 #. Translators: a message that is announced when the speech is paused
 #: bookworm/gui/book_viewer/menubar/__init__.py:682
 msgid "Paused"
-msgstr "Поставено на пауза"
+msgstr "На пауза"
 
 #. Translators: a message that is announced when the speech is resumed
 #: bookworm/gui/book_viewer/menubar/__init__.py:686
@@ -1531,12 +1518,11 @@ msgstr "Поддържани формати за електронни книги
 #. for the password to decrypt the current e-book
 #: bookworm/gui/book_viewer/menubar/__init__.py:846
 msgid ""
-"This document is encrypted, and you need a password to access its "
-"content.\n"
+"This document is encrypted, and you need a password to access its content.\n"
 "Please enter the password billow and press enter."
 msgstr ""
-"Този документ е шифрован и имате нужда от парола за достъп до "
-"съдържанието му.\n"
+"Този документ е шифрован и имате нужда от парола за достъп до съдържанието "
+"му.\n"
 "Моля, въведете паролата по-долу и натиснете Enter."
 
 #. Translators: the title of a dialog asking the user to enter a password to
@@ -1586,12 +1572,12 @@ msgstr "Грешка при отваряне на документа"
 #: bookworm/reader/__init__.py:82
 msgid ""
 "Could not open file {file}\n"
-".Either the file  has been damaged during download, or it has been "
-"corrupted in some other way."
+".Either the file  has been damaged during download, or it has been corrupted "
+"in some other way."
 msgstr ""
 "Неуспешно отваряне на файла {file}.\n"
-"Или файлът се е повредил по време на изтегляне, или е повреден по някакъв"
-" друг начин."
+"Или файлът се е повредил по време на изтегляне, или е повреден по някакъв друг "
+"начин."
 
 #. Translators: the label of the page content text area
 #: bookworm/reader/__init__.py:164
@@ -1624,8 +1610,7 @@ msgid ""
 "A valid Text-to-speech voice was not found on your computer.\n"
 "Text-to-speech functionality will be disabled."
 msgstr ""
-"На вашият компютър не беше намерен съвместим глас за синтезиране на говор"
-" .\n"
+"На вашият компютър не беше намерен съвместим глас за синтезиране на говор .\n"
 "Функцията за преобразуване на текст в говор няма да бъде налична."
 
 #. Translators: the title of a message telling the user that the TTS voice has
@@ -1637,21 +1622,19 @@ msgstr "Открит е несъвместим глас от речева маш
 #. Translators: a message telling the user that the TTS voice has been changed
 #: bookworm/speech/__init__.py:98
 msgid ""
-"Bookworm has noticed that the currently configured Text-to-speech voice "
-"speaks a language different from that of this book. Because of this, "
-"Bookworm has temporary switched to another voice that speaks a language "
-"similar to the language  of this book."
+"Bookworm has noticed that the currently configured Text-to-speech voice speaks "
+"a language different from that of this book. Because of this, Bookworm has "
+"temporary switched to another voice that speaks a language similar to the "
+"language  of this book."
 msgstr ""
-"Bookworm установи, че текущо настроеният глас говори на език, различен от"
-" този на отворената книга. Поради тази причина, Bookworm временно "
-"превключи към друг глас, който говори език, подобен на езика на "
-"отворената книга."
+"Bookworm установи, че текущо настроеният глас говори на език, различен от този "
+"на отворената книга. Поради тази причина, Bookworm временно превключи към друг "
+"глас, който говори език, подобен на езика на отворената книга."
 
 #: bookworm/speech/engines/onecore/oc_engine.py:40
 msgid "One-core Synthesizer"
-msgstr ""
+msgstr "Речев синтезатор OneCore"
 
 #: bookworm/speech/engines/sapi/sp_engine.py:21
 msgid "Microsoft Speech API Version 5"
-msgstr ""
-
+msgstr "Речев ППИ версия 5 от Microsoft (SAPI5)"
