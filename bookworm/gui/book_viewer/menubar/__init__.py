@@ -392,7 +392,7 @@ class MenubarProvider:
             return
         if cur_pos == end_pos:
             wx.WakeUpIdle()
-            if (time.perf_counter() - self._last_page_turn) < 0.75:
+            if (time.perf_counter() - self._last_page_turn) < 0.9:
                 return
             self._nav_provider.navigate_to_page("next")
             self._last_page_turn = time.perf_counter()
