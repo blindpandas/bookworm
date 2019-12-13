@@ -371,6 +371,7 @@ class SpeechPanel(SettingsPanel):
         )
         self.current_engine = None
         self.configure_with_engine()
+        self.changeEngineBtn.Enable(len(SpeechProvider.speech_engines) > 1)
 
     def configure_with_engine(self, engine_name=""):
         if (self.current_engine is not None) and (
