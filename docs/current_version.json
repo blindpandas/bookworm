@@ -1,9 +1,9 @@
 {
   "b": {
-    "version": "0.1b3",
-    "x86_sha1hash": "2d5feea693742afcada4c5dff185477e9af5590c",
-    "x64_sha1hash": "d613e49f3f5c6d9d6e6fde948db9a1a091feb6f8",
-    "x86_download": "https://github.com/mush42/bookworm/releases/download/Bookworm-Release-(Build-v1.0.225)/Bookworm-0.1b3-x86-update.bundle",
-    "x64_download": "https://github.com/mush42/bookworm/releases/download/Bookworm-Release-(Build-v1.0.225)/Bookworm-0.1b3-x64-update.bundle"
+    "version": "0.1b4",
+    "x86_sha1hash": "8d9f9dffee4abaf31e16bf82c3dfeccf3a30c232",
+    "x64_sha1hash": "01707a8c605412a545d498601cf037d6fad9220f",
+    "x86_download": "https://github.com/mush42/bookworm/releases/download/Bookworm-Release-(Build-v1.0.289)/Bookworm-0.1b4-x86-update.bundle",
+    "x64_download": "https://github.com/mush42/bookworm/releases/download/Bookworm-Release-(Build-v1.0.289)/Bookworm-0.1b4-x64-update.bundle"
   }
 }
