@@ -1,7 +1,5 @@
 # coding: utf-8
 
-import gc
-import System
 from queue import PriorityQueue
 from accessible_output2.outputs.auto import Auto
 from bookworm import config
@@ -11,8 +9,11 @@ from bookworm.signals import (
     speech_engine_state_changed,
 )
 from bookworm.logger import logger
-from .engine import SpeechEngine
-from .enumerations import SynthState
+from .engines.sapi import SapiSpeechEngine
+from .engines.onecore import OcSpeechEngine
+from .enumerations import EngineEvent, SynthState
+from .engines.sapi import SapiSpeechEngine
+
 
 log = logger.getChild(__name__)
 
@@ -20,7 +21,7 @@ log = logger.getChild(__name__)
 _auto_output = None
 
 
-def announce(message, urgent=True):
+def announce(message, urgent=False):
     """Speak and braille a message related to UI."""
     global _auto_output
     if not config.conf["general"]["announce_ui_messages"]:
@@ -34,32 +35,62 @@ def announce(message, urgent=True):
 class SpeechProvider:
     """Text-to-speech controller for bookworm."""
 
+    __available_engines = (SapiSpeechEngine, OcSpeechEngine)
+    speech_engines = [e for e in __available_engines if e.check()]
+
     def __init__(self, reader):
         self.reader = reader
         self.queue = PriorityQueue()
         self.engine = None
-
-    def initialize(self):
-        if self.engine is not None:
-            return
-        self.engine = SpeechEngine(language=self.reader.document.language)
-        self.configure_engine()
-        # Event handlers
         app_shuttingdown.connect(lambda s: self.close(), weak=False)
         config_updated.connect(self.on_config_changed)
-        # self.engine.SpeakProgress += self.on_speech_progress
-        self.engine.StateChanged += self.on_state_changed
-        self.engine.BookmarkReached += self.on_bookmark_reached
+
+    def initialize_engine(self):
+        engine_name = config.conf["speech"]["engine"]
+        last_known_state = SynthState.ready if not self.is_ready else self.engine.state
+        if self.is_ready and (self.engine.name == engine_name):
+            self.configure_engine(last_known_state)
+            return
+        self.close()
+        Engine = self.get_engine(engine_name)
+        self.engine = Engine()
+        # Event handlers
+        self.engine.bind(EngineEvent.state_changed, self.on_state_changed)
+        self.engine.bind(EngineEvent.bookmark_reached, self.on_bookmark_reached)
+        self.configure_engine(last_known_state)
         self._try_set_tts_language()
+
+    def configure_engine(self, last_known_state=SynthState.ready):
+        if not self.is_ready:
+            return
+        if self.engine.state is not SynthState.ready:
+            self.engine.stop()
+        conf = config.conf["speech"]
+        try:
+            self.engine.configure(conf)
+        except ValueError:
+            conf.restore_defaults()
+            config.save()
+            self.reader.view.notify_user(
+                # Translators: the title of a message telling the user that no TTS voice found
+                _("No TTS Voices"),
+                # Translators: a message telling the user that no TTS voice found
+                _(
+                    "A valid Text-to-speech voice was not found on your computer.\n"
+                    "Text-to-speech functionality will be disabled."
+                ),
+            )
+        if self.reader.ready and last_known_state is SynthState.busy:
+            self.reader.speak_current_page()
 
     def _try_set_tts_language(self):
         lang = self.reader.document.language
-        if not self.engine.get_current_voice().speaks_language(lang):
-            voice_for_lang = self.reader.tts.engine.get_voices(
+        if not self.engine.voice.speaks_language(lang):
+            voice_for_lang = self.engine.get_voices_by_language(
                 self.reader.document.language
             )
             if voice_for_lang:
-                self.engine.SelectVoice(voice_for_lang[0].name)
+                self.engine.voice = voice_for_lang[0]
                 self.reader.view.notify_user(
                     # Translators: the title of a message telling the user that the TTS voice has been changed
                     _("Incompatible TTS Voice Detected"),
@@ -74,14 +105,8 @@ class SpeechProvider:
 
     def close(self):
         if self.engine:
-            # Unsubscribe
-            # self.engine.SpeakProgress -= self.on_speech_progress
-            self.engine.StateChanged -= self.on_state_changed
-            self.engine.BookmarkReached -= self.on_bookmark_reached
             self.engine.close()
             self.engine = None
-            # Force a collection here to dispose of the .NET object
-            gc.collect()
 
     def __del__(self):
         self.close()
@@ -96,47 +121,10 @@ class SpeechProvider:
                 config.conf.active_profile["name"] == sender.config.main["name"]
             ):
                 should_reconfig = True
-            if should_reconfig:
-                self.configure_engine()
+            if self.is_ready and should_reconfig:
+                self.initialize_engine()
             if sender is not None:
                 sender.reconcile()
-
-    def configure_engine(self):
-        if not self.is_ready:
-            return
-        state = self.engine.state
-        if state is not SynthState.ready:
-            self.engine.stop()
-        conf = config.conf["speech"]
-        configured_voice = conf["voice"]
-        if configured_voice:
-            try:
-                self.engine.voice = configured_voice
-            except ValueError:
-                log.debug(f"Can not set voice to {configured_voice}")
-                configured_voice = self.engine.get_first_available_voice(
-                    self.reader.document.language
-                )
-                if configured_voice is None:
-                    self.reader.view.notify_user(
-                        # Translators: the title of a message telling the user that no TTS voice found
-                        _("No TTS Voices"),
-                        # Translators: a message telling the user that no TTS voice found
-                        _(
-                            "A valid Text-to-speech voice was not found on your computer.\n"
-                            "Text-to-speech functionality will be disabled."
-                        ),
-                    )
-                    conf["voice"] = ""
-                    config.save()
-                    return self.close()
-            self.engine.voice = configured_voice
-            conf["voice"] = configured_voice
-            config.save()
-        self.engine.rate = conf["rate"]
-        self.engine.volume = conf["volume"]
-        if self.reader.ready and state is SynthState.busy:
-            self.reader.speak_current_page()
 
     def enqueue(self, utterance):
         if not self.is_ready:
@@ -154,14 +142,15 @@ class SpeechProvider:
     def is_ready(self):
         return self.engine is not None
 
-    def on_speech_progress(self, sender, args):
-        pos = args.CharacterPosition
-        count = args.CharacterCount
-        log.debug(f"Position: {pos}, Count: {count}")
-
-    def on_state_changed(self, sender, args):
-        state = SynthState(args.State)
+    def on_state_changed(self, sender, state):
         speech_engine_state_changed.send(self, state=state)
 
-    def on_bookmark_reached(self, sender, args):
-        self.reader.process_bookmark(args.Bookmark)
+    def on_bookmark_reached(self, sender, bookmark):
+        self.reader.process_bookmark(bookmark)
+
+    @classmethod
+    def get_engine(cls, engine_name):
+        match = [e for e in cls.speech_engines if e.name == engine_name]
+        if match:
+            return match[0]
+        return SapiSpeechEngine

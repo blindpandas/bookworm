@@ -10,6 +10,7 @@ from bookworm.speech.enumerations import SynthState
 from bookworm.document_formats import SearchRequest
 from bookworm.signals import reader_page_changed
 from bookworm.utils import gui_thread_safe
+from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
 from bookworm.logger import logger
 from ..components import Dialog, SimpleDialog, DialogListCtrl, EnhancedSpinCtrl
 from ..preferences_dialog import SpeechPanel, ReconciliationStrategies
@@ -260,7 +261,9 @@ class ViewPageAsImageDialog(wx.Dialog):
             return
         self._zoom_factor = value
         self.setDialogImage(reset_scroll_pos=False)
-        self.scroll.SetupScrolling(rate_x=self.scroll_rate, rate_y=self.scroll_rate, scrollToTop=False)
+        self.scroll.SetupScrolling(
+            rate_x=self.scroll_rate, rate_y=self.scroll_rate, scrollToTop=False
+        )
         # Translators: a message announced to the user when the zoom factor changes
         speech.announce(
             _("Zoom is at {factor} percent").format(factor=int(value * 100))
@@ -268,16 +271,21 @@ class ViewPageAsImageDialog(wx.Dialog):
 
     def setDialogImage(self, reset_scroll_pos=True):
         bmp, size = self.getPageImage()
-        self.imageCtrl.SetBitmap(bmp)
         self.imageCtrl.SetSize(size)
+        self.imageCtrl.SetBitmap(bmp)
         self._currently_rendered_page = self.reader.current_page
         if reset_scroll_pos:
+            self.scroll.SetupScrolling(
+                rate_x=self.scroll_rate, rate_y=self.scroll_rate, scrollToTop=False
+            )
             wx.CallLater(50, self.scroll.Scroll, 0, 0)
 
     def getPageImage(self):
         page = self.reader.document[self.reader.current_page]
         mat = fitz.Matrix(self._zoom_factor, self._zoom_factor)
         pix = page.getPixmap(matrix=mat, alpha=True)
+        if IS_HIGH_CONTRAST_ACTIVE:
+            pix.invertIRect(pix.irect)
         bmp = wx.Bitmap.FromBufferRGBA(pix.width, pix.height, pix.samples)
         size = (bmp.GetWidth(), bmp.GetHeight())
         return bmp, size
@@ -288,6 +296,10 @@ class ViewPageAsImageDialog(wx.Dialog):
         if code == wx.WXK_ESCAPE:
             self.Close()
             self.Destroy()
+
+    def Close(self, *args, **kwargs):
+        super().Close(*args, **kwargs)
+        reader_page_changed.disconnect(self.onPageChange, sender=self.reader)
 
 
 class VoiceProfileEditorDialog(SimpleDialog):
@@ -390,7 +402,7 @@ class VoiceProfileDialog(SimpleDialog):
             return
         config.conf.active_profile = config.conf.profiles[profile_name]
         if self.reader.ready:
-            self.reader.tts.configure_engine()
+            self.reader.tts.initialize_engine()
         self.Parent.menuBar.FindItemById(wx.ID_REVERT).Enable(True)
 
     def onEdit(self, event):
@@ -479,3 +491,30 @@ class VoiceProfileDialog(SimpleDialog):
 
     def getButtons(self, parent):
         return
+
+
+class SpeechEngineSelector(SimpleDialog):
+    """A dialog to select a speech engine."""
+
+    def __init__(self, choices, init_selection, *args, **kwargs):
+        self.choices = choices
+        self.init_selection = init_selection
+        self._return_value = wx.ID_CANCEL
+        super().__init__(*args, **kwargs)
+
+    def addControls(self, parent):
+        # Translators: the label of a combobox
+        label = wx.StaticText(parent, -1, _("Select Speech Engine:"))
+        self.engineChoice = wx.Choice(parent, -1, choices=self.choices)
+        self.engineChoice.SetSizerProps(expand=True)
+        self.Bind(wx.EVT_BUTTON, self.onOK, id=wx.ID_OK)
+        self.engineChoice.SetSelection(self.init_selection)
+        self.GetValue = lambda: self.engineChoice.GetSelection()
+
+    def onOK(self, event):
+        self._return_value = wx.ID_OK
+        self.Close()
+
+    def ShowModal(self):
+        super().ShowModal()
+        return self._return_value

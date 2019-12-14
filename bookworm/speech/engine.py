@@ -1,156 +1,167 @@
 # coding: utf-8
 
-import System
-from System.Globalization import CultureInfo
-from System.Speech import Synthesis
-from collections import OrderedDict
-from contextlib import suppress
-from dataclasses import dataclass
-from bookworm.i18n.lang_locales import locale_map
+from abc import ABCMeta, abstractmethod
+from dataclasses import field, dataclass
 from bookworm.logger import logger
-from .enumerations import SynthState
-from .utterance import SpeechUtterance, SpeechStyle
+from .utterance import SpeechUtterance
 
 
 log = logger.getChild(__name__)
 
 
-@dataclass
+@dataclass(order=True)
 class VoiceInfo:
-    id: str
-    name: str
-    desc: str
-    language: str
-    gender: int
-    age: int
+    id: str = field(compare=False)
+    name: str = field(compare=False)
+    desc: str = field(compare=False)
+    language: str = field(compare=False)
+    sort_key: int = 0
+    gender: int = field(default=None, compare=False)
+    age: int = field(default=None, compare=False)
+    data: dict = field(default_factory=dict, compare=False)
+
+    @property
+    def display_name(self):
+        return self.desc or self.name
 
     def speaks_language(self, language):
-        return self.language.startswith(language.lower())
+        language = language.lower()
+        locale, _h, country_code = self.language.lower().partition("-")
+        if self.language.lower() == language:
+            self.sort_key = 0
+            return True
+        elif language == locale:
+            self.sort_key = 1
+            return True
+        return False
 
 
-class SpeechEngine(Synthesis.SpeechSynthesizer):
-    """Our Pythonic Interface to SAPI speech enginge."""
+class BaseSpeechEngine(metaclass=ABCMeta):
+    """The base class for speech engines."""
 
-    def __init__(self, language=None):
-        super().__init__()
-        self._language = language
-        self.SetOutputToDefaultAudioDevice()
+    name = None
+    """The name of this speech engine."""
+    display_name = None
 
+    def __init__(self):
+        if not self.check():
+            raise RuntimeError(f"Synthesizer {type(self)} is unavailable")
+
+    @classmethod
+    @abstractmethod
+    def check(self):
+        """Return a bool to indicate whether this engine should be made available."""
+
+    @abstractmethod
     def close(self):
-        with suppress(System.ObjectDisposedException):
-            self.stop()
-        self.Dispose()
-        self.Finalize()
+        """Performe any necessary cleanups."""
 
     def __del__(self):
         self.close()
 
-    def get_voices(self, language=None):
-        rv = []
-        voices = []
-        if language is not None:
-            current_culture = CultureInfo.CurrentCulture
-            if current_culture.IetfLanguageTag.startswith(language.lower()):
-                voices.extend(self.GetInstalledVoices(current_culture))
-            if language in locale_map:
-                for locale in locale_map[language]:
-                    culture = CultureInfo.GetCultureInfoByIetfLanguageTag(
-                        f"{language}-{locale}"
-                    )
-                    voices.extend(self.GetInstalledVoices(culture))
-            voices.extend(self.GetInstalledVoices(CultureInfo(language)))
-        else:
-            voices = self.GetInstalledVoices()
-        if not voices:
-            log.warning("No suitable TTS voice was found.")
-            return rv
-        for voice in voices:
-            if not voice.Enabled:
-                continue
-            info = voice.VoiceInfo
-            rv.append(
-                VoiceInfo(
-                    id=info.Id,
-                    name=info.Name,
-                    desc=info.Description,
-                    language=info.Culture.IetfLanguageTag,
-                    gender=info.Gender,
-                    age=info.Age,
-                )
-            )
-        return rv
+    def configure(self, engine_config):
+        if engine_config["voice"]:
+            try:
+                self.set_voice_from_string(engine_config["voice"])
+            except ValueError:
+                self.voice = self.get_first_available_voice()
+        try:
+            self.rate = engine_config["rate"]
+        except ValueError:
+            self.rate = 50
+        try:
+            self.volume = engine_config["volume"]
+        except ValueError:
+            self.volume = 75
+
+    @abstractmethod
+    def get_voices(self):
+        """Return a list of VoiceInfo objects."""
+
+    def get_voices_by_language(self, language):
+        return sorted(
+            voice for voice in self.get_voices() if voice.speaks_language(language)
+        )
 
     @property
+    @abstractmethod
     def state(self):
-        return SynthState(self.State)
-
-    def get_current_voice(self):
-        for voice in self.get_voices():
-            if voice.name == self.voice:
-                return voice
+        """Return one of the members of synth state enumeration."""
 
     @property
+    @abstractmethod
     def voice(self):
-        return self.Voice.Name
+        """Return the currently configured voice."""
 
     @voice.setter
+    @abstractmethod
     def voice(self, value):
-        try:
-            self.SelectVoice(value)
-        except System.ArgumentException:
-            raise ValueError(f"Can not set voice. {value} is an invalid voice name.")
+        """Set the current voice."""
 
     @property
+    @abstractmethod
     def rate(self):
-        return self.Rate
+        """Get the current speech rate."""
 
     @rate.setter
+    @abstractmethod
     def rate(self, value):
-        if not (0 <= value <= 100):
-            raise ValueError(f"Value {value} for rate is out of range.")
-        self.Rate = (value - 50) / 5
+        """Set the speech rate."""
 
     @property
+    @abstractmethod
     def volume(self):
-        return self.volume
+        """Get the current volume level."""
 
     @volume.setter
+    @abstractmethod
     def volume(self, value):
-        if not (0 <= value <= 100):
-            raise ValueError(f"Value {value} for volume is out of range.")
-        self.Volume = value
+        """Set the current volume level."""
 
     def speak(self, utterance):
+        """Asynchronously speak the given text."""
         if not isinstance(utterance, SpeechUtterance):
             raise TypeError(f"Invalid utterance {utterance}")
-        # We need to wrap the whol utterance in another
-        # one that sets the voice. Because The Speak()
-        # function does not honor  the engine voice.
-        voice_utterance = SpeechUtterance()
-        with voice_utterance.set_style(SpeechStyle(voice=self.voice)):
-            voice_utterance.add(utterance)
-        self.SpeakAsync(voice_utterance.prompt)
+        processed_utterance = self.preprocess_utterance(utterance)
+        self.speak_utterance(processed_utterance)
 
+    @abstractmethod
+    def speak_utterance(self, utterance):
+        """Do the actual speech output."""
+
+    @abstractmethod
     def stop(self):
-        if self.state is not SynthState.ready:
-            if self.state is SynthState.paused:
-                self.Resume()
-            self.SpeakAsyncCancelAll()
+        """Stop the speech."""
 
+    @abstractmethod
     def pause(self):
-        if self.state is SynthState.busy:
-            self.Pause()
+        """Pause the speech."""
 
+    @abstractmethod
     def resume(self):
-        if self.state is SynthState.paused:
-            self.Resume()
+        """Resume the speech."""
+
+    @abstractmethod
+    def bind(self, event, handler):
+        """Bind a member of `EngineEvents` enum to a handler."""
+
+    def set_voice_from_string(self, voice_ident):
+        for voice in self.get_voices():
+            if voice.id == voice_ident:
+                self.voice = voice
+                return
+        raise ValueError(f"Invalid voice {voice_ident}")
 
     @classmethod
     def get_first_available_voice(cls, language=None):
         _test_engine = cls()
-        for voice in _test_engine.get_voices(language=language):
+        for voice in _test_engine.get_voices_by_language(language=language):
             try:
-                _test_engine.voice = voice.name
-                return voice.name
+                _test_engine.set_voice_from_string(voice.id)
+                return voice
             except ValueError:
                 continue
+
+    def preprocess_utterance(self, utterance):
+        """Return engine-specific speech utterance (if necessary)."""
+        return utterance

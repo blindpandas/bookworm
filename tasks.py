@@ -17,7 +17,7 @@ from contextlib import redirect_stdout
 from glob import glob
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from zipfile import ZipFile
+from zipfile import ZipFile, ZIP_LZMA
 from lzma import compress
 from invoke import task, call
 from invoke.exceptions import UnexpectedExit
@@ -36,6 +36,16 @@ GUIDE_HTML_TEMPLATE = """<!doctype html>
   </body>
   </html>
 """
+
+def invert_image(image_path):
+    from PIL import Image
+    from fitz import Pixmap
+
+    pix = Pixmap(image_path)
+    pix.invertIRect(pix.irect)
+    buffer = BytesIO(pix.getImageData())
+    del pix
+    return Image.open(buffer)
 
 
 def _add_envars(context):
@@ -79,27 +89,39 @@ def make_env(func):
 def make_icons(c):
     """Rescale images and embed them in a python module."""
     from PIL import Image
+    from PIL import ImageOps
     from wx.tools.img2py import img2py
 
-    print("Rescaling images and embedding them in bookworm.resources.images.py")
     TARGET_SIZE = (24, 24)
     IMAGE_SOURCE_FOLDER = PROJECT_ROOT / "fullsize_images"
-    PY_MODULE = PACKAGE_FOLDER / "resources" / "images.py"
+    PY_MODULE = PACKAGE_FOLDER / "resources" / "image_data.py"
+    print(f"Rescaling images and embedding them in {PY_MODULE}")
     if PY_MODULE.exists():
         PY_MODULE.unlink()
     with TemporaryDirectory() as temp:
         for index, imgfile in enumerate(Path(IMAGE_SOURCE_FOLDER).iterdir()):
-            if imgfile.is_dir() or imgfile.suffix != ".png":
+            filename, ext = os.path.splitext(imgfile.name)
+            if imgfile.is_dir() or ext != ".png":
                 continue
-            fname = Path(temp) / imgfile.name
-            Image.open(imgfile).resize(TARGET_SIZE).save(fname)
+            save_target = Path(temp) / imgfile.name
+            save_target_hc = Path(temp) / f"{filename}.hg{ext}"
+            Image.open(imgfile).resize(TARGET_SIZE).save(save_target)
+            # Create an inverted version for high contrast
+            invert_image(str(imgfile)).resize(TARGET_SIZE).save(save_target_hc)
             append = bool(index)
             with redirect_stdout(StringIO()):
                 img2py(
                     python_file=str(PY_MODULE),
-                    image_file=str(fname),
-                    imgName=fname.name[:-4],
+                    image_file=str(save_target),
+                    imgName=f"_{filename}",
                     append=append,
+                    compressed=True,
+                )
+                img2py(
+                    python_file=str(PY_MODULE),
+                    image_file=str(save_target_hc),
+                    imgName=f"_{filename}_hc",
+                    append=True,
                     compressed=True,
                 )
         print("*" * 10 + " Done Embedding Images" + "*" * 10)
@@ -383,16 +405,12 @@ def bundle_update(c):
     frozen_dir = Path(env["IAPP_FROZEN_DIRECTORY"])
     fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-{env['IAPP_ARCH']}-update.bundle"
     bundle_file = PROJECT_ROOT / "scripts" / fname
-    archive_file = BytesIO()
-    with ZipFile(archive_file, "w") as archive:
+    with ZipFile(bundle_file, "w", compression=ZIP_LZMA, allowZip64=False) as archive:
         for file in recursively_iterdir(frozen_dir):
             archive.write(file, file.relative_to(frozen_dir))
         archive.write(
             PROJECT_ROOT / "scripts" / "executables" / "bootstrap.exe", "bootstrap.exe"
         )
-    archive_file.seek(0)
-    data = compress(archive_file.getbuffer())
-    bundle_file.write_bytes(data)
     print("Done preparing update bundle.")
 
 
@@ -416,13 +434,39 @@ def update_version_info(c):
     print("Updated version information")
 
 
+@task(name="libs")
+@make_env
+def build_and_include_libs(c):
+    build_config = "Release" if "APPVEYOR_BUILD_FOLDER" in os.environ else "Debug"
+    onecore_path = PROJECT_ROOT / "includes" / "sharp-onecore-synth"
+    src = onecore_path / "bin" / build_config / "OcSpeechEngine.dll"
+    dst = c["build_folder"]
+    c.run(f"copy {src} {dst}")
+
+
 @task(
     pre=(clean, make_icons, install_packages, freeze),
-    post=(build_docs, copy_assets, make_installer, bundle_update),
+    post=(build_docs, copy_assets, build_and_include_libs, make_installer, bundle_update),
 )
 @make_env
 def build(c):
     """Freeze, package, and prepare the app for distribution."""
+
+
+@task(name="create-portable")
+@make_env
+def create_portable_copy(c):
+    from bookworm.utils import recursively_iterdir
+
+    print("Creating portable archive...")
+    env = os.environ
+    frozen_dir = Path(env["IAPP_FROZEN_DIRECTORY"])
+    fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-portable.zip"
+    port_arch = PROJECT_ROOT / "scripts" / fname
+    with ZipFile(port_arch, "w", compression=ZIP_LZMA, allowZip64=False) as archive:
+        for file in recursively_iterdir(frozen_dir):
+            archive.write(file, file.relative_to(frozen_dir))
+    print(f"Portable archive created at {port_arch}.")
 
 
 @task(name="dev", pre=(install_packages, make_icons))

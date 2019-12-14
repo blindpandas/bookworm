@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import gc
 from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
 from functools import wraps
@@ -127,6 +128,11 @@ class Section:
         child.parent = self
         self.children.append(child)
 
+    def iterchildren(self):
+        for child in self.children:
+            yield child
+            yield from child.iterchildren()
+
     @property
     def is_root(self):
         return self.parent is None
@@ -226,6 +232,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         Subclasses should call super to ensure the standard behavior.
         """
         self._ebook = None
+        gc.collect()
 
     def is_encrypted(self):
         """Does this document need password."""

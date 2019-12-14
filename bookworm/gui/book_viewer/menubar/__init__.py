@@ -1,15 +1,16 @@
 # coding: utf-8
 
+import time
 import sys
 import os
 import wx
-import threading
 import webbrowser
 from pathlib import Path
 from slugify import slugify
 from bookworm import config
 from bookworm import paths
 from bookworm import app
+from bookworm.signals import config_updated
 from bookworm.otau import check_for_updates
 from bookworm.annotator import Bookmarker
 from bookworm.concurrency import call_threaded
@@ -44,7 +45,8 @@ class MenubarProvider:
 
     def __init__(self):
         self.menuBar = wx.MenuBar()
-        self._search_list_lock = threading.RLock()
+        self._page_turn_timer = wx.Timer(self)
+        self._last_page_turn = 0.0
         self._reset_search_history()
 
         # The menu
@@ -275,6 +277,8 @@ class MenubarProvider:
             _("Show general information about this program"),
         )
 
+        # Event handling
+        self.Bind(wx.EVT_TIMER, self.onTimerTick)
         # Bind menu events to event handlers
         # File menu event handlers
         self.Bind(wx.EVT_MENU, self.onOpenEBook, id=wx.ID_OPEN)
@@ -372,6 +376,7 @@ class MenubarProvider:
         # Populate the recent files submenu
         self._recent_files_data = []
         self.populate_recent_file_list()
+        config_updated.connect(self._on_config_changed_for_cont)
 
     def _set_menu_accelerators(self):
         entries = []
@@ -380,6 +385,17 @@ class MenubarProvider:
             accel.FromString(shortcut)
             entries.append(accel)
         self.SetAcceleratorTable(wx.AcceleratorTable(entries))
+
+    def onTimerTick(self, event):
+        cur_pos, end_pos = self.contentTextCtrl.GetInsertionPoint(), self.contentTextCtrl.GetLastPosition()
+        if not end_pos:
+            return
+        if cur_pos == end_pos:
+            wx.WakeUpIdle()
+            if (time.perf_counter() - self._last_page_turn) < 0.9:
+                return
+            self._nav_provider.navigate_to_page("next")
+            self._last_page_turn = time.perf_counter()
 
     def onOpenEBook(self, event):
         last_folder = config.conf["history"]["last_folder"]
@@ -416,6 +432,7 @@ class MenubarProvider:
         self.populate_recent_file_list()
 
     def onClose(self, evt):
+        self._page_turn_timer.Stop()
         self.unloadCurrentEbook()
         self.Destroy()
         evt.Skip()
@@ -590,8 +607,7 @@ class MenubarProvider:
             if not dlg.IsShown():
                 break
             wx.CallAfter(dlg.addResult, page, snip, section, pos)
-            with self._search_list_lock:
-                self._latest_search_results.append((page, snip, section, pos))
+            self._latest_search_results.append((page, snip, section, pos))
             total += 1
         if dlg.IsShown():
             # Translators: the final title of the search results dialog
@@ -607,8 +623,7 @@ class MenubarProvider:
         if not result_count or (next_result >= result_count):
             return wx.Bell()
         self._last_search_index = next_result
-        with self._search_list_lock:
-            page_number, *_, pos = self._latest_search_results[self._last_search_index]
+        page_number, *_, pos = self._latest_search_results[self._last_search_index]
         self.highlight_search_result(page_number, pos)
 
     @only_when_reader_ready
@@ -651,7 +666,7 @@ class MenubarProvider:
 
     def onPlay(self, event):
         if not self.reader.tts.is_ready:
-            self.reader.tts.initialize()
+            self.reader.tts.initialize_engine()
         elif self.reader.tts.engine.state is SynthState.busy:
             return wx.Bell()
         setattr(self.reader.tts, "_requested_play", True)
@@ -707,6 +722,8 @@ class MenubarProvider:
         config.conf["history"]["recently_opened"] = newfiles
         config.save()
         self.populate_recent_file_list()
+        if config.conf["reading"]["use_continuous_reading"]:
+            self._page_turn_timer.Start()
 
     def onRestartWithDebugMode(self, event):
         restart_application(debug=True)
@@ -844,3 +861,11 @@ class MenubarProvider:
                 style=wx.ICON_ERROR,
             )
             return self.decrypt_opened_document()
+
+    def _on_config_changed_for_cont(self, sender, section):
+        if section == "reading":
+            is_enabled = config.conf["reading"]["use_continuous_reading"]
+            if is_enabled:
+                self._page_turn_timer.Start()
+            else:
+                self._page_turn_timer.Stop()

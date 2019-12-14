@@ -41,6 +41,8 @@ var StartMenuFolder
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Arabic"
 !insertmacro MUI_LANGUAGE "Bulgarian"
+!insertmacro MUI_LANGUAGE "PortugueseBR"
+!insertmacro MUI_LANGUAGE "Spanish"
 !insertmacro MUI_RESERVEFILE_LANGDLL
 Section
 SetShellVarContext All
@@ -54,13 +56,13 @@ CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$%IAPP_DISPLAY_NAME% English User G
 CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall $%IAPP_DISPLAY_NAME%.lnk" "$INSTDIR\Uninstall.exe"
 !insertmacro MUI_STARTMENU_WRITE_END
 WriteUninstaller "$INSTDIR\Uninstall.exe"
-WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "DisplayName" "$%IAPP_DISPLAY_NAME%"
-WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "UninstallString" '"$INSTDIR\uninstall.exe"'
-WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall" "InstallLocation" $INSTDIR
+WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "DisplayName" "$%IAPP_DISPLAY_NAME% -  The universally accessible eBook reader"
+WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
+WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "InstallLocation" $INSTDIR
 WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall" "Publisher" "$%IAPP_AUTHOR%"
 WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "DisplayVersion" "$%IAPP_VERSION%"
-WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "VersionMajor" 0
-WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "VersionMinor" 1
+WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "Silent Uninstall" "$\"$INSTDIR\uninstall.exe$\" /S"
+WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "DisplayIcon" "$\"$INSTDIR\bookworm.ico$\""
 WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "NoModify" 1
 WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "NoRepair" 1
 SectionEnd
@@ -73,8 +75,16 @@ Delete "$DESKTOP\$%IAPP_DISPLAY_NAME%.lnk"
 !insertmacro MUI_STARTMENU_GETFOLDER startmenu $StartMenuFolder
 RMDir /r "$SMPROGRAMS\$StartMenuFolder"
 SectionEnd
+
 Function .onInit
 !insertmacro MUI_LANGDLL_DISPLAY
-StrCmp $%IAPP_ARCH% "x64" +1 +2
+StrCmp $%IAPP_ARCH% "x64" +1 +3
   StrCpy $instdir "$programfiles64\$%IAPP_DISPLAY_NAME%"
+  SetRegView 64
+FunctionEnd
+
+Function un.onInit
+!insertmacro MUI_LANGDLL_DISPLAY
+StrCmp $%IAPP_ARCH% "x64" +1 +2
+  SetRegView 64
 FunctionEnd

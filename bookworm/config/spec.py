@@ -26,6 +26,7 @@ config_spec = StringIO(
     last_folder = string(default="")
     set_file_assoc = integer(default=0)
 [speech]
+    engine = string(default="sapi")
     voice = string(default="")
     rate = integer(default=50)
     volume = integer(default=75)
@@ -34,6 +35,7 @@ config_spec = StringIO(
     end_of_page_pause = integer(default=500, min=0, max={END_OF_PAGE_PAUSE_MAX})
     end_of_section_pause = integer(default=900, min=0, max={END_OF_SECTION_PAUSE_MAX})
 [reading]
+    use_continuous_reading = boolean(default=True)
     # 0: entire book, 1: current section, 2: current_page
     reading_mode = integer(default=0, min=0, max=2)
     # 0: from cursor position, 1: from beginning of page
@@ -49,7 +51,7 @@ config_spec = StringIO(
 builtin_voice_profiles = [
     (
         # Translators: the name of a built-in voice profile
-        _("Expressive"),
+        _("Human-like"),
         dict(
             rate=60,
             sentence_pause=250,
@@ -71,7 +73,7 @@ builtin_voice_profiles = [
     ),
     (
         # Translators: the name of a built-in voice profile
-        _("Hazy"),
+        _("Expresse"),
         dict(
             rate=65,
             sentence_pause=0,

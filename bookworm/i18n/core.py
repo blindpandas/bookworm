@@ -59,7 +59,7 @@ class LanguageInfo:
         info = self.get_display_info()
         desc = info[1]
         if info[1] != info[2]:
-            desc += f" ({info[2]})"
+            desc = f"{info[2]} ({desc})"
         return desc
 
 
@@ -75,7 +75,7 @@ def get_available_languages(force_update=False):
             if not entry.joinpath(f"LC_MESSAGES/{app.name}.mo").is_file():
                 continue
             langinfo = LanguageInfo(entry.name)
-            langs[langinfo.language] = langinfo
+            langs[langinfo.pylang] = langinfo
         except ValueError:
             continue
     current = None

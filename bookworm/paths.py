@@ -8,6 +8,7 @@ from pathlib import Path
 from platform_utils import paths as paths_
 from functools import wraps
 from bookworm import app
+from bookworm.runtime import IS_RUNNING_PORTABLE
 
 
 log = logging.getLogger("bookworm.paths")
@@ -26,10 +27,13 @@ def merge_paths(func):
 
 @merge_paths
 def data_path():
-    if not app.is_frozen and app.debug:
+    if not app.is_frozen:
         data_path = DATA_PATH_DEBUG
     else:
-        data_path = Path(winpaths.get_appdata()) / app.display_name
+        if IS_RUNNING_PORTABLE:
+            data_path = app_path("user-config")
+        else:
+            data_path = Path(winpaths.get_appdata()) / app.display_name
     if not data_path.exists():
         data_path.mkdir(parents=True, exist_ok=True)
     return data_path
@@ -51,10 +55,7 @@ def config_path():
 
 @merge_paths
 def logs_path():
-    if not app.is_frozen:
-        path = DATA_PATH_DEBUG / "logs"
-    else:
-        path = data_path("logs")
+    path = data_path("logs")
     if not path.exists():
         log.debug("%s path does not exist, creating..." % (path,))
         path.mkdir(parents=True, exist_ok=True)
@@ -92,7 +93,10 @@ def docs_path():
 @merge_paths
 def home_data_path():
     if app.is_frozen:
-        path = Path.home() / f".{app.name}"
+        if IS_RUNNING_PORTABLE:
+            path = data_path(".saved_data")
+        else:
+            path = Path.home() / f".{app.name}"
     else:
         path = DATA_PATH_DEBUG / "home_data"
     if not path.exists():

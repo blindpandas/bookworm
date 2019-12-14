@@ -9,13 +9,34 @@ from System.Speech.Synthesis import (
     PromptRate,
     PromptBreak,
 )
-from enum import IntEnum
+from enum import IntEnum, auto
+
+
+class EngineEvent(IntEnum):
+    bookmark_reached = auto()
+    state_changed = auto()
+    speech_progress = auto()
 
 
 class SynthState(IntEnum):
     ready = SynthesizerState.Ready
     busy = SynthesizerState.Speaking
     paused = SynthesizerState.Paused
+
+
+class SpeechElementKind(IntEnum):
+    """Represent the kind of a speech element."""
+
+    text = auto()
+    ssml = auto()
+    sentence = auto()
+    bookmark = auto()
+    pause = auto()
+    audio = auto()
+    start_paragraph = auto()
+    end_paragraph = auto()
+    start_style = auto()
+    end_style = auto()
 
 
 class EmphSpec(IntEnum):

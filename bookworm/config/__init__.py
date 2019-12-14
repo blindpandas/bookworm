@@ -41,6 +41,7 @@ class ConfigProvider:
         self.validator = Validator()
         self._init_config()
         if not self._profile_path.exists():
+            self._profile_path.mkdir(parents=True)
             self._add_builtin_voice_profiles()
         self.list_voice_profiles()
 
@@ -104,7 +105,6 @@ class ConfigProvider:
         profile_path = Path(self.profiles[name].filename)
         profile_path.unlink()
 
-    @call_threaded
     def _add_builtin_voice_profiles(self):
         for pname, pdata in builtin_voice_profiles:
             profile = self.create_voice_profile(pname)
@@ -131,3 +131,4 @@ def save():
         conf.config.write()
         for profile in conf.profiles.values():
             profile.write()
+

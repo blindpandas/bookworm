@@ -102,8 +102,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         # Translators: the text of the status bar when no book is currently open.
         # It is being used also as a label for the page content text area when no book is opened.
         self._no_open_book_status = _("Press (Ctrl + O) to open an ebook")
+        self._has_text_zoom = False
         self.SetStatusText(self._no_open_book_status)
-        NavigationProvider(
+        self._nav_provider = NavigationProvider(
             ctrl=self.contentTextCtrl,
             reader=self.reader,
             zoom_callback=self.onTextCtrlZoom,
@@ -119,6 +120,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         self.contentTextCtrl.Clear()
         self.contentTextCtrl.WriteText(content)
         self.contentTextCtrl.SetInsertionPoint(0)
+        if self._has_text_zoom:
+            self.contentTextCtrl.SetFont(self.contentTextCtrl.Font.MakeSmaller())
+            self.contentTextCtrl.SetFont(self.contentTextCtrl.Font.MakeLarger())
 
     def SetStatusText(self, text, statusbar_only=False, *args, **kwargs):
         super().SetStatusText(text, *args, **kwargs)
@@ -127,6 +131,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
 
     @only_when_reader_ready
     def unloadCurrentEbook(self):
+        self._page_turn_timer.Stop()
         self.reader.unload()
         self.set_content("")
         self.SetStatusText(self._no_open_book_status)
@@ -154,6 +159,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         self.tocTreeCtrl.SetFocusedItem(tree_id)
 
     def onTextCtrlZoom(self, direction):
+        self._has_text_zoom = True
         font = self.contentTextCtrl.GetFont()
         size = font.GetPointSize()
         if direction == 1:
@@ -172,6 +178,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
             self.contentTextCtrl.SetFont(wx.NullFont)
             # Translators: a message telling the user that the font size has been reset
             msg = _("The font size has been reset")
+            self._has_text_zoom = False
         speech.announce(msg)
 
     def _populate_tree(self, toc, root):

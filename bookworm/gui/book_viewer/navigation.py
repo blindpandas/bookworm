@@ -1,21 +1,30 @@
 # coding: utf-8
 
+import time
 import wx
+from bookworm import config
+from bookworm.signals import reader_page_changed
 from bookworm.logger import logger
 from .decorators import only_when_reader_ready
 
+
+# Time_out of consecutive key presses in seconds
+DKEY_TIMEOUT = 0.75
 
 class NavigationProvider:
     """Implements keyboard navigation for viewer controls."""
 
     def __init__(self, ctrl, reader, callback_func=None, zoom_callback=None):
+        self.textCtrl = ctrl
         self.reader = reader
         self.callback_func = callback_func
         self.zoom_callback = zoom_callback
+        self._key_press_record = {}
         if self.zoom_callback:
             self.zoom_keymap = {ord("0"): 0, ord("="): 1, ord("-"): -1}
         ctrl.Bind(wx.EVT_KEY_UP, self.onKeyUp, ctrl)
-        # Funky  thinks can happen if we use normal `Key up` event with wx.TextCtrl
+        reader_page_changed.connect(self._reset_up_arrow_pressed_time, weak=False)
+        # Funky  thinks can happen if we use normal `Key up` event to capture enter in wx.TextCtrl
         if isinstance(ctrl, wx.TextCtrl):
             ctrl.Bind(wx.EVT_TEXT_ENTER, self._text_ctrl_navigate_next, ctrl)
 
@@ -27,15 +36,20 @@ class NavigationProvider:
     def onKeyUp(self, event):
         event.Skip()
         key_code = event.GetKeyCode()
-        if key_code in (wx.WXK_RETURN, wx.WXK_BACK):
+        if isinstance(event.GetEventObject(), wx.TextCtrl) and key_code in (wx.WXK_UP, wx.WXK_DOWN):
+            self._auto_navigate(key_code)
+        elif key_code in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_BACK):
             if (
                 not isinstance(event.GetEventObject(), wx.TextCtrl)
-                and key_code == wx.WXK_RETURN
+                and key_code in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER)
             ):
                 self.navigate_to_page(to="next")
             elif key_code == wx.WXK_BACK:
                 self.navigate_to_page(to="prev")
             self.callback()
+        elif isinstance(event.GetEventObject(), wx.TextCtrl) and key_code == wx.WXK_PAGEDOWN:
+            self.textCtrl.InsertionPoint = self.textCtrl.GetLastPosition() - 1
+            event.Skip(False)
         if event.GetModifiers() == wx.MOD_ALT and key_code in (
             wx.WXK_PAGEUP,
             wx.WXK_PAGEDOWN,
@@ -56,7 +70,7 @@ class NavigationProvider:
             elif key_code == wx.WXK_LEFT:
                 self.reader.rewind()
             self.callback()
-        elif key_code in (wx.WXK_HOME, wx.WXK_END):
+        if event.GetModifiers() == wx.MOD_ALT  and (key_code in (wx.WXK_HOME, wx.WXK_END)):
             pager = self.reader.active_section.pager
             if key_code == wx.WXK_HOME:
                 to = pager.first
@@ -65,7 +79,7 @@ class NavigationProvider:
             if to != self.reader.current_page:
                 self.reader.current_page = to
                 self.callback()
-        elif (self.zoom_callback is not None) and (
+        if (self.zoom_callback is not None) and (
             event.GetModifiers() == wx.MOD_CONTROL
         ):
             if key_code in self.zoom_keymap:
@@ -84,3 +98,28 @@ class NavigationProvider:
                     self.reader.go_to_page(prev.pager.last)
             else:
                 self.reader.navigate(to=to, unit="section")
+
+    def _auto_navigate(self, key_code):
+        now = time.time()
+        last_press = self._key_press_record.get(key_code)
+        num_lines = self.textCtrl.NumberOfLines - 1
+        _curr_page = self.reader.current_page
+        if (key_code == wx.WXK_UP):
+            is_first_line = self.textCtrl.PositionToXY(self.textCtrl.InsertionPoint)[-1] == 0
+            if not is_first_line:
+                return
+            if (last_press is not None) and (now - last_press) <= DKEY_TIMEOUT:
+                self.navigate_to_page(to="prev")
+                if _curr_page != self.reader.current_page:
+                    self.textCtrl.InsertionPoint = self.textCtrl.GetLastPosition() - 1
+            self._key_press_record[key_code] = now
+        elif key_code == wx.WXK_DOWN:
+            is_last_line = self.textCtrl.PositionToXY(self.textCtrl.InsertionPoint)[-1] == num_lines
+            if not is_last_line:
+                return
+            if (last_press is not None) and (now - last_press) <= DKEY_TIMEOUT:
+                self.navigate_to_page(to="next")
+            self._key_press_record[key_code] = now
+
+    def _reset_up_arrow_pressed_time(self, sender, current, prev):
+        self._key_press_record.clear()

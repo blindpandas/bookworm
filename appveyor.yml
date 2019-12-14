@@ -1,6 +1,4 @@
-os: Visual Studio 2015
-# Build worker image (VM template)
-image: Visual Studio 2015
+os: Visual Studio 2019
 
 
 branches:
@@ -16,26 +14,42 @@ environment:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
 
 
+clone_script:
+  - cmd: >-
+      git clone -q --branch=%APPVEYOR_REPO_BRANCH% https://github.com/%APPVEYOR_REPO_NAME%.git %APPVEYOR_BUILD_FOLDER%
+      && cd %APPVEYOR_BUILD_FOLDER%
+      && git checkout -qf %APPVEYOR_REPO_COMMIT%
+      && git submodule update --init --recursive
+
+
 install:
   # NSIS Paths
   # https://www.appveyor.com/docs/build-environment/#tools
   - set PATH=%PATH%;C:\Program Files (x86)\NSIS
 
 
+before_build:
+  # Build required dlls
+  - cd includes\sharp-onecore-synth
+  - nuget restore
+  - msbuild /t:Build /p:Configuration=Release
+  - cd %APPVEYOR_BUILD_FOLDER%
+
+
 build_script:
   # 32-bit version
   - ps: Write-Host "Building the 32-bit variant."
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+
   - C:\Python37\python.exe -m venv .venv32
   - call ".venv32\Scripts\activate.bat"
   - py -m pip -q install --upgrade pip
   - pip -q install -r requirements-dev.txt
   - invoke build
+  - invoke create-portable
   - deactivate
   # 64-bit version
   - ps: Write-Host "Building the 64-bit variant."
-  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+
   - C:\Python37-x64\python.exe -m venv .venv64
   - call ".venv64\Scripts\activate.bat"
   - py -m pip -q install --upgrade pip
@@ -48,6 +62,7 @@ build_script:
 artifacts:
   - path: scripts\Bookworm*setup.exe
   - path: scripts\Bookworm*update.bundle
+  - path: scripts\Bookworm*portable.zip
   - path: scripts\release-info.json
 
 
@@ -64,7 +79,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
-  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /release-info\.json/
+  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /Bookworm-.*-portable\.zip/, /release-info\.json/
   draft: true
   prerelease: true
   on:

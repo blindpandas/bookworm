@@ -203,13 +203,12 @@ class TextToSpeechProvider:
                 utterance = SpeechUtterance(priority=1)
                 if config.conf["reading"]["play_end_of_section_sound"]:
                     utterance.add_audio(sounds.section_changed.path)
-                with utterance.set_style(SpeechStyle(emph=EmphSpec.strong)):
-                    # Translators: a message to speak at the end of the chapter
-                    utterance.add_text(
-                        _("End of section: {chapter}.").format(
-                            chapter=self.active_section.title
-                        )
+                # Translators: a message to speak at the end of the chapter
+                utterance.add_text(
+                    _("End of section: {chapter}.").format(
+                        chapter=self.active_section.title
                     )
+                )
                 utterance.add_pause(config.conf["speech"]["end_of_section_pause"])
                 if config.conf["reading"]["reading_mode"] == 0:
                     nextsect_bookmark = {"type": "next_section"}

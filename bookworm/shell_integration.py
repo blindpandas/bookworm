@@ -1,9 +1,6 @@
 # coding: utf-8
 
-import clr
 import System
-from Microsoft.Win32 import Registry, RegistryKey, RegistryValueKind
-
 import sys
 import os
 from typing import Iterable
@@ -14,6 +11,7 @@ from bookworm.paths import app_path
 from bookworm.reader import EBookReader
 from bookworm.utils import ignore
 from bookworm.vendor import shellapi
+from bookworm.win_registry import RegKey, RegistryValueKind
 from bookworm.logger import logger
 
 
@@ -31,49 +29,6 @@ def get_ext_info(supported="*"):
                 icon = str(icon) if icon.exists() else None
                 doctypes[cext] = (f"{app.prog_id}.{cls.format}", _(cls.name), icon)
     return doctypes
-
-
-@dataclass
-class RegKey:
-    """Represent a key in the windows registry."""
-
-    root: RegistryKey
-    path: str
-    writable: bool = True
-    ensure_created: bool = False
-
-    def __post_init__(self):
-        self.key = self.root.OpenSubKey(self.path, self.writable)
-        if self.key is None and self.ensure_created:
-            self.create()
-
-    def close(self):
-        if self.key is not None:
-            self.key.Close()
-            self.key.Dispose()
-
-    @property
-    def exists(self):
-        return self.key is not None
-
-    def create(self):
-        self.key = self.root.CreateSubKey(self.path)
-
-    def __getattr__(self, attr):
-        return getattr(self.key, attr)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
-
-    @classmethod
-    def LocalSoftware(cls, *args, **kwargs):
-        root = cls(
-            Registry.CurrentUser, r"SOFTWARE\Classes", kwargs.pop("writable", True)
-        )
-        return cls(root, *args, **kwargs)
 
 
 def add_shell_command(key, executable):
