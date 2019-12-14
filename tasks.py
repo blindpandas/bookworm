@@ -405,12 +405,17 @@ def bundle_update(c):
     frozen_dir = Path(env["IAPP_FROZEN_DIRECTORY"])
     fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-{env['IAPP_ARCH']}-update.bundle"
     bundle_file = PROJECT_ROOT / "scripts" / fname
-    with ZipFile(bundle_file, "w", compression=ZIP_LZMA, allowZip64=False) as archive:
+    archive_buffer = BytesIO()
+    with ZipFile(archive_buffer, "w", compression=ZIP_LZMA, allowZip64=False) as archive:
         for file in recursively_iterdir(frozen_dir):
             archive.write(file, file.relative_to(frozen_dir))
         archive.write(
             PROJECT_ROOT / "scripts" / "executables" / "bootstrap.exe", "bootstrap.exe"
         )
+    archive_buffer.seek(0)
+    # XXX: needs to be refactored
+    with open(bundle_file, "wb") as bnd:
+        bnd.write(compress(archive_buffer.getvalue()))
     print("Done preparing update bundle.")
 
 

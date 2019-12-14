@@ -41,15 +41,13 @@ def kill_other_running_instances():
 
 @ignore(OSError)
 def extract_update_bundle(bundle):
-    past_update_dir = paths.data_path("update")
-    if past_update_dir.exists():
+    update_dir = paths.data_path("update")
+    if update_dir.exists():
         log.info("Found previous update data. Removing...")
-        shutil.rmtree(past_update_dir, ignore_errors=True)
+        shutil.rmtree(update_dir, ignore_errors=True)
     log.debug("Extracting update bundle")
     bundle.seek(0)
-    extraction_dir = paths.data_path("update", "extracted")
-    if extraction_dir.exists():
-        shutil.rmtree(extraction_dir)
+    extraction_dir = update_dir.joinpath("extracted")
     extraction_dir.mkdir(parents=True, exist_ok=True)
     archive_file = BytesIO(decompress(bundle.read()))
     with zipfile.ZipFile(archive_file) as archive:
