@@ -394,7 +394,7 @@ class SpeechPanel(SettingsPanel):
             if e.name == self.current_engine.name:
                 current_engine_index = index
         dlg = SpeechEngineSelector(
-            [e.display_name for e in SpeechProvider.speech_engines],
+            [_(e.display_name) for e in SpeechProvider.speech_engines],
             current_engine_index,
             parent=self.Parent,
             title=_("Speech Engine"),
