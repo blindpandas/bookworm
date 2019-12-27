@@ -60,7 +60,8 @@ def setupSubsystems():
 
 
 def init_app_and_run_main_loop():
-    log.info("Starting the application.")
+    log.info("Starting Bookworm.")
+    log.info(f"Bookworm Version: {appinfo.version}")
     log.info(f"Windows version: {platform.platform()}")
     log.info(f"Application architecture: {appinfo.arch}")
     log.info(f"Running as a portable copy: {'Yes' if IS_RUNNING_PORTABLE else 'No'}")
