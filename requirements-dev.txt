@@ -4,6 +4,6 @@ babel==2.7.0
 black==19.3b0
 invoke==1.2.0
 Pillow==6.2.1
-PyInstaller==3.5
+PyInstaller==3.6
 pytest==5.0.1
 wheel==0.33.4
