@@ -6,9 +6,10 @@ from collections.abc import Sequence
 from functools import wraps
 from dataclasses import field, dataclass
 from pycld2 import detect as detect_language, error as CLD2Error
-from bookworm.concurrency import call_threaded
+from bookworm.concurrency import QueueProcess, call_threaded
 from bookworm.utils import cached_property, generate_sha1hash_async
 from bookworm.logger import logger
+from . import _tools
 
 
 log = logger.getChild(__name__)
@@ -269,18 +270,35 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def metadata(self):
         """Return a `BookMetadata` object holding info about this book."""
 
-    @staticmethod
-    def export_to_text(document_path, target_filename):
-        """Export the content of this  book to a text file.
-        Note: This function should be run concurrently.
-        """
-        raise NotImplementedError
-
-    @staticmethod
-    def search(document_path, request):
-        """Search for some `term` in the entire book."""
-        raise NotImplementedError
-
     @abstractmethod
     def get_page_content(self, page_number):
         """Get the text content of a page."""
+
+    @classmethod
+    def export_to_text(cls, document_path, target_filename):
+        args = (cls, document_path, target_filename)
+        process = QueueProcess(
+            target=_tools.do_export_to_text, args=args, name="bookworm-exporter"
+        )
+        process.start()
+        while True:
+            value = process.queue.get()
+            if value == -1:
+                break
+            yield value
+        process.join()
+
+    @classmethod
+    def search(cls, document_path, request):
+        args = (cls, document_path, request)
+        process = QueueProcess(
+            target=_tools.do_search_book, args=args, name="bookworm-search"
+        )
+        process.start()
+        while True:
+            value = process.queue.get()
+            if value == -1:
+                break
+            yield value
+        process.join()
+

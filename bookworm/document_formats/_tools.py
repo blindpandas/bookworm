@@ -7,7 +7,6 @@ from hashlib import md5
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 from pathlib import Path
-from bookworm.document_formats import mu
 from bookworm.utils import search, recursively_iterdir
 from bookworm.paths import home_data_path
 from bookworm.logger import logger
@@ -16,9 +15,9 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-def do_export_to_text(document_path, target_filename, queue):
+def do_export_to_text(document_cls, document_path, target_filename, queue):
     """This function runs in a separate process."""
-    doc = mu.FitzDocument(document_path)
+    doc = document_cls(document_path)
     doc.read()
     total = len(doc)
     rv = [doc.metadata.title]
@@ -34,9 +33,9 @@ def do_export_to_text(document_path, target_filename, queue):
     queue.put(-1)
 
 
-def do_search_book(document_path, request, queue):
+def do_search_book(document_cls, document_path, request, queue):
     """This function also runs in a separate process."""
-    doc = mu.FitzDocument(document_path)
+    doc = document_cls(document_path)
     doc.read()
     I = re.I if not request.case_sensitive else 0
     ps = fr"({request.term})"

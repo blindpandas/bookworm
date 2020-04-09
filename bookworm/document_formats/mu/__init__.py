@@ -3,7 +3,6 @@
 import os
 import zipfile
 import fitz
-from bookworm.concurrency import QueueProcess
 from bookworm.utils import cached_property
 from bookworm.document_formats.base import (
     BaseDocument,
@@ -14,7 +13,6 @@ from bookworm.document_formats.base import (
     PaginationError,
 )
 from bookworm.logger import logger
-from . import _tools
 
 
 log = logger.getChild(__name__)
@@ -121,34 +119,6 @@ class FitzDocument(BaseDocument):
             author=to_str(meta["author"]),
             publication_year=to_str(meta["creationDate"]),
         )
-
-    @staticmethod
-    def export_to_text(document_path, target_filename):
-        args = (document_path, target_filename)
-        process = QueueProcess(
-            target=_tools.do_export_to_text, args=args, name="bookworm-exporter"
-        )
-        process.start()
-        while True:
-            value = process.queue.get()
-            if value == -1:
-                break
-            yield value
-        process.join()
-
-    @staticmethod
-    def search(document_path, request):
-        args = (document_path, request)
-        process = QueueProcess(
-            target=_tools.do_search_book, args=args, name="bookworm-search"
-        )
-        process.start()
-        while True:
-            value = process.queue.get()
-            if value == -1:
-                break
-            yield value
-        process.join()
 
 
 class FitzEPUBDocument(FitzDocument):
