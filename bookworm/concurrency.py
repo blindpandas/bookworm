@@ -16,7 +16,7 @@ threaded_worker = ThreadPoolExecutor(thread_name_prefix="bookworm_threaded_worke
 
 @app_shuttingdown.connect
 def _shutdown_threaded_worker(sender):
-    """Cancel all running threads in the thread pool."""
+    """Cancel any pending threads in the thread pool."""
     log.debug("Canceling  background tasks.")
     threaded_worker.shutdown(wait=False)
 

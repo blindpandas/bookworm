@@ -11,10 +11,8 @@ import requests
 import wx
 import win32api
 from math import ceil
-from io import BytesIO
 from hashlib import sha1
 from pathlib import Path
-from lzma import decompress
 from System.Diagnostics import Process
 from requests.exceptions import RequestException
 from bookworm import app
@@ -46,13 +44,9 @@ def extract_update_bundle(bundle):
         log.info("Found previous update data. Removing...")
         shutil.rmtree(past_update_dir, ignore_errors=True)
     log.debug("Extracting update bundle")
-    bundle.seek(0)
     extraction_dir = paths.data_path("update", "extracted")
-    if extraction_dir.exists():
-        shutil.rmtree(extraction_dir)
     extraction_dir.mkdir(parents=True, exist_ok=True)
-    archive_file = BytesIO(decompress(bundle.read()))
-    with zipfile.ZipFile(archive_file) as archive:
+    with zipfile.ZipFile(bundle, compression=zipfile.ZIP_LZMA) as archive:
         archive.extractall(extraction_dir)
     return extraction_dir
 
@@ -175,6 +169,8 @@ def perform_update(update_url, sha1hash):
         style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
     )
     bundle = tempfile.SpooledTemporaryFile(max_size=1024 * 30 * 1000)
+    # Monkey patch tempfile.SpooledTemporaryFile to be used with zipfile.ZipFile
+    bundle.seekable = lambda: True
     # Translators: a message indicating the progress of downloading an update bundle
     update_progress = lambda c, t=update_file_size: _(
         "Downloading. {downloaded} MB of {total} MB"
@@ -225,6 +221,7 @@ def perform_update(update_url, sha1hash):
         parent=wx.GetApp().mainFrame,
         style=wx.PD_APP_MODAL,
     )
+    bundle.seek(0)
     extraction_dir = extract_update_bundle(bundle)
     bundle.close()
     wx.CallAfter(ex_dlg.Close)

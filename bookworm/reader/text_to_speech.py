@@ -30,7 +30,7 @@ log = logger.getChild(__name__)
 @dataclass
 class TextInfo:
     """Provides basic structural information  about a blob of text
-    This class is optimized for repeated calls.
+    Most of the properties are executed once, then their value is cached.
     """
 
     text: str
