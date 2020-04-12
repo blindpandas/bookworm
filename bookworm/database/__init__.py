@@ -1,7 +1,7 @@
 # coding: utf-8
 
 """
-Database models for `Bookworm`.
+Persistent stoarage using SQLlite3
 """
 
 import sqlite3

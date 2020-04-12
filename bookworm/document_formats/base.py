@@ -258,9 +258,13 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         num_pages = len(self)
         num_samples = num_pages if num_pages <= 20 else 20
         text = "".join(self[i].getText() for i in range(num_samples)).encode("utf8")
-        (success, _, ((_, lang, _, _), *_)) = detect_language(
-            utf8Bytes=text, isPlainText=True, hintLanguage=None
-        )
+        try:
+            (success, _, ((_, lang, _, _), *_)) = detect_language(
+                utf8Bytes=text, isPlainText=True, hintLanguage=None
+            )
+        except CLD2Error as e:
+            log.error(f"Failed to recognize document language: {e.args}")
+            success = False
         if success:
             return lang
         return "en"
