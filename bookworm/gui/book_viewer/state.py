@@ -31,6 +31,9 @@ class StateProvider:
 
     def on_reader_load_unload(self, sender):
         enable = sender.ready
+        self.tocTreeCtrl.Enable(enable)
+        focus_ctrl = self.tocTreeCtrl if enable else self.contentTextCtrl
+        focus_ctrl.SetFocus()
         for item_id in BookRelatedMenuIds:
             item = self.menuBar.FindItemById(item_id.value)
             if not item:

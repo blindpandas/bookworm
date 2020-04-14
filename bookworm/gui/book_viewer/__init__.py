@@ -31,7 +31,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         self.reader = EBookReader(self)
         MenubarProvider.__init__(self)
         ToolbarProvider.__init__(self)
-        StateProvider.__init__(self)
         self.CreateStatusBar()
 
         # Now create the Panel to put the other controls on.
@@ -104,6 +103,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
         self._no_open_book_status = _("Press (Ctrl + O) to open an ebook")
         self._has_text_zoom = False
         self.SetStatusText(self._no_open_book_status)
+        StateProvider.__init__(self)
         self._nav_provider = NavigationProvider(
             ctrl=self.contentTextCtrl,
             reader=self.reader,
