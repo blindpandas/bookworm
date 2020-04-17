@@ -37,9 +37,9 @@ class FitzDocument(BaseDocument):
     def read(self, filetype=None):
         try:
             self._ebook = fitz.open(self.filename, filetype=filetype)
+            super().read()
         except RuntimeError as e:
             raise DocumentError(*e.args)
-        super().read()
 
     def close(self):
         if self._ebook is None:
@@ -133,7 +133,7 @@ class FitzEPUBDocument(FitzDocument):
             super().read()
         except DocumentError as e:
             if "drm" in e.args[0].lower():
-                log.debug("Got an encrypted file, attempting to decrypt it...")
+                log.debug("Got an encrypted file, will try to decrypt it...")
                 self._original_file_name = self.filename
                 self.filename = _tools.make_unrestricted_file(self.filename)
                 return super().read(filetype="epub")
