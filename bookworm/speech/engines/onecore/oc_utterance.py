@@ -49,7 +49,7 @@ class OcSpeechUtterance(SapiSpeechUtterance):
         voice = self.synth().voice
         voice_utterance = SapiSpeechUtterance()
         with voice_utterance.set_style(
-            SpeechStyle(voice=voice, rate=self.synth().rate_to_spec())
+            SpeechStyle(voice=voice)
         ):
             voice_utterance.append_utterance(self)
         voice_utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(
