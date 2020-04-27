@@ -18,12 +18,6 @@ class BookRelatedMenuIds(enum.IntEnum):
     findNext = 222
     findPrev = 223
     viewRenderedAsImage = 224
-    # Speech
-    play = 251
-    stop = 252
-    pauseToggle = 253
-    rewind = wx.ID_BACKWARD
-    fastforward = wx.ID_FORWARD
     # Annotations
     addBookmark = 241
     addNote = 242

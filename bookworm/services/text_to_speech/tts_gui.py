@@ -2,10 +2,19 @@
 
 
 import wx
+from enum import IntEnum
 from bookworm.speech.enumerations import SynthState
 from bookworm.gui.components import SimpleDialog
 from bookworm.gui.preferences_dialog import SettingsPanel, ReconciliationStrategies
 
+
+
+class SpeechMenuIds(IntEnum):
+    play = 251
+    stop = 252
+    pauseToggle = 253
+    rewind = wx.ID_BACKWARD
+    fastforward = wx.ID_FORWARD
 
 
 # Dialogs
