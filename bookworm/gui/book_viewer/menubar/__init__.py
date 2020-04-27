@@ -476,14 +476,17 @@ class MenubarProvider:
         langidx, zoom_factor, should_enhance = res
         lang = langs[langidx].given_lang
         image, width, height = self.reader.document.get_page_image(self.reader.current_page, zoom_factor, should_enhance)
-        task = process_worker.submit(ocr.recognize, lang, image, width, height)
-        task._page_number = self.reader.current_page
-        task.add_done_callback(self._process_ocr_result)
+        args = (
+            image, lang,
+            width, height,
+            self.reader.current_page
+        )
+        process_worker.submit(ocr.recognize, *args).add_done_callback(self._process_ocr_result)
 
     def _process_ocr_result(self, task):
-        if task._page_number == self.reader.current_page:
-            content = "\n".join(task.result())
-            self.set_content(content)
+        page_number, content = task.result()
+        if page_number == self.reader.current_page:
+            self.set_content("\n".join(content))
 
     @only_when_reader_ready
     def onViewRenderedAsImage(self, event):

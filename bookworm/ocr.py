@@ -36,6 +36,7 @@ def is_ocr_available():
 def get_recognition_languages():
     return [LanguageInfo(lang) for lang in OCRProvider.GetRecognizableLanguages()]
 
-def recognize(lang, imagedata, width, height):
-    ocr = OCRProvider(lang)
-    return ocr.Recognize(imagedata, width, height)
+def recognize(imagedata, lang, width, height, page_number, recognizer=None):
+    ocr = recognizer or OCRProvider(lang)
+    lines = ocr.Recognize(imagedata, width, height)
+    return page_number, lines
