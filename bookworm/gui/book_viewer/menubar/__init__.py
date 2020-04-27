@@ -52,7 +52,6 @@ class MenubarProvider:
         # The menu
         fileMenu = wx.Menu()
         toolsMenu = wx.Menu()
-        speechMenu = wx.Menu()
         annotationsMenu = wx.Menu()
         helpMenu = wx.Menu()
         # A submenu for recent files
@@ -133,56 +132,6 @@ class MenubarProvider:
             _("&Preferences...\tCtrl-Shift-P"),
             # Translators: the help text of an ietm in the application menubar
             _("Configure application"),
-        )
-        # Speech menu
-        speechMenu.Append(
-            BookRelatedMenuIds.play,
-            # Translators: the label of an ietm in the application menubar
-            _("&Play\tF5"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Start reading aloud"),
-        )
-        speechMenu.Append(
-            BookRelatedMenuIds.pauseToggle,
-            # Translators: the label of an ietm in the application menubar
-            _("Pa&use/Resume\tF6"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Pause/Resume reading aloud"),
-        )
-        speechMenu.Append(
-            BookRelatedMenuIds.stop,
-            # Translators: the label of an ietm in the application menubar
-            _("&Stop\tF7"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Stop reading aloud"),
-        )
-        speechMenu.Append(
-            BookRelatedMenuIds.rewind,
-            # Translators: the label of an ietm in the application menubar
-            _("&Rewind\tAlt-LeftArrow"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Skip to previous paragraph"),
-        )
-        speechMenu.Append(
-            BookRelatedMenuIds.fastforward,
-            # Translators: the label of an ietm in the application menubar
-            _("&Fast Forward\tAlt-RightArrow"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Skip to next paragraph"),
-        )
-        speechMenu.Append(
-            ViewerMenuIds.voiceProfiles,
-            # Translators: the label of an ietm in the application menubar
-            _("&Voice Profiles\tCtrl-Shift-V"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Manage voice profiles."),
-        )
-        speechMenu.Append(
-            ViewerMenuIds.deactivateVoiceProfiles,
-            # Translators: the label of an ietm in the application menubar
-            _("&Deactivate Active Voice Profile"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Deactivate the active voice profile."),
         )
         # Annotations menu
         annotationsMenu.Append(
@@ -301,25 +250,6 @@ class MenubarProvider:
             id=BookRelatedMenuIds.viewRenderedAsImage,
         )
         self.Bind(wx.EVT_MENU, self.onPreferences, id=wx.ID_PREFERENCES)
-
-        # Speech menu event handlers
-        self.Bind(wx.EVT_MENU, self.onPlay, id=BookRelatedMenuIds.play)
-        self.Bind(wx.EVT_MENU, self.onPauseToggle, id=BookRelatedMenuIds.pauseToggle)
-        self.Bind(
-            wx.EVT_MENU, lambda e: self.reader.rewind(), id=BookRelatedMenuIds.rewind
-        )
-        self.Bind(
-            wx.EVT_MENU,
-            lambda e: self.reader.fastforward(),
-            id=BookRelatedMenuIds.fastforward,
-        )
-        self.Bind(wx.EVT_MENU, self.onStop, id=BookRelatedMenuIds.stop)
-        self.Bind(wx.EVT_MENU, self.onVoiceProfiles, id=ViewerMenuIds.voiceProfiles)
-        self.Bind(
-            wx.EVT_MENU,
-            self.onDeactivateVoiceProfile,
-            id=ViewerMenuIds.deactivateVoiceProfiles,
-        )
 
         # Annotations menu event handlers
         self.Bind(wx.EVT_MENU, self.onAddBookmark, id=BookRelatedMenuIds.addBookmark)

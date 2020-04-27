@@ -19,7 +19,6 @@ class ToolbarProvider:
         self.toolbar.SetWindowStyle(
             wx.TB_FLAT | wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_TEXT
         )
-        self.ppr_id = wx.NewIdRef()
 
         tsize = (24, 24)
         open_bmp = images.open.GetBitmap()
@@ -80,40 +79,6 @@ class ToolbarProvider:
             # Translators: the help text of a button in the application toolbar
             _("Add note"),
         )
-        self.toolbar.AddSeparator()
-        self.toolbar.AddTool(
-            BookRelatedMenuIds.rewind,
-            # Translators: the label of a button in the application toolbar
-            _("Rewind"),
-            images.rewind.GetBitmap(),
-            # Translators: the help text of a button in the application toolbar
-            _("Skip to previous paragraph"),
-        )
-        self.toolbar.AddTool(
-            self.ppr_id,
-            # Translators: the label of a button in the application toolbar
-            _("Play"),
-            images.play.GetBitmap(),
-            # Translators: the help text of a button in the application toolbar
-            _("Play/Resume"),
-        )
-        self.toolbar.AddTool(
-            BookRelatedMenuIds.fastforward,
-            # Translators: the label of a button in the application toolbar
-            _("Fast Forward"),
-            images.fastforward.GetBitmap(),
-            # Translators: the help text of a button in the application toolbar
-            _("Skip to next paragraph"),
-        )
-        self.toolbar.AddTool(
-            ViewerMenuIds.voiceProfiles,
-            # Translators: the label of a button in the application toolbar
-            _("Voice"),
-            images.profile.GetBitmap(),
-            # Translators: the help text of a button in the application toolbar
-            _("Customize TTS voice parameters."),
-        )
-        self.toolbar.AddSeparator()
         self.toolbar.AddTool(
             wx.ID_PREVIEW_ZOOM_OUT,
             # Translators: the label of a button in the application toolbar

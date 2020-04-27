@@ -51,22 +51,3 @@ class StateProvider:
         # XXX maintain the state upon startup
         speech_engine_state_changed.send(self.reader.tts, state=SynthState.ready)
 
-    @gui_thread_safe
-    def on_tts_state_changed(self, sender, state):
-        if state is SynthState.busy:
-            image = images.pause
-        else:
-            image = images.play
-        self.toolbar.SetToolNormalBitmap(self.ppr_id, image.GetBitmap())
-        if not self.reader.ready:
-            return
-        play = self.menuBar.FindItemById(BookRelatedMenuIds.play)
-        pause_toggle = self.menuBar.FindItemById(BookRelatedMenuIds.pauseToggle)
-        fastforward = self.menuBar.FindItemById(BookRelatedMenuIds.fastforward)
-        rewind = self.menuBar.FindItemById(BookRelatedMenuIds.rewind)
-        stop = self.menuBar.FindItemById(BookRelatedMenuIds.stop)
-        pause_toggle.Enable(state is not SynthState.ready)
-        stop.Enable(state is not SynthState.ready)
-        play.Enable(state is not SynthState.busy)
-        fastforward.Enable(state is not SynthState.ready)
-        rewind.Enable(state is not SynthState.ready)

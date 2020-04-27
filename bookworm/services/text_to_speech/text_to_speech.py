@@ -22,6 +22,7 @@ from bookworm.signals import (
     speech_engine_state_changed,
 )
 from bookworm.logger import logger
+from .base import BookwormService
 
 
 log = logger.getChild(__name__)
@@ -96,12 +97,14 @@ class TextInfo:
         return self.paragraph_markers
 
 
-class TextToSpeechProvider:
-    """A mixin to add text-to-speech functionality to the reader."""
+class TextToSpeechService(BookwormService):
+    """A service to add text-to-speech functionality to Bookworm."""
 
-    def __init__(self):
-        self.tts = SpeechProvider(self)
+    def __post_init__(self):
+        self.tts = SpeechProvider(self.reader)
         self._current_textinfo = None
+
+    def setup_event_handlers(self):
         reader_book_unloaded.connect(self._tts_on_unload, sender=self)
         reader_page_changed.connect(self._change_page_for_tts, sender=self)
         speech_engine_state_changed.connect(self._on_tts_state_changed, sender=self.tts)
