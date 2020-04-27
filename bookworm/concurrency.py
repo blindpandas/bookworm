@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import multiprocessing as mp
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from functools import wraps
 from bookworm.signals import app_shuttingdown
 from bookworm.logger import logger
@@ -13,12 +13,16 @@ log = logger.getChild(__name__)
 # An executor for background tasks (designated for i/o bound tasks)
 threaded_worker = ThreadPoolExecutor(thread_name_prefix="bookworm_threaded_worker")
 
+# An executor for background tasks (designated for CPU bound tasks)
+process_worker = ProcessPoolExecutor()
+
 
 @app_shuttingdown.connect
 def _shutdown_threaded_worker(sender):
-    """Cancel any pending threads in the thread pool."""
+    """Cancel any pending background tasks."""
     log.debug("Canceling  background tasks.")
     threaded_worker.shutdown(wait=False)
+    process_worker.shutdown(wait=False)
 
 
 def call_threaded(func):

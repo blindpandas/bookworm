@@ -278,6 +278,10 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def get_page_content(self, page_number):
         """Get the text content of a page."""
 
+    @abstractmethod
+    def get_page_image(self, page_number, zoom_factor=1.0, enhance=False):
+        """Get the image of a page."""
+
     @classmethod
     def export_to_text(cls, document_path, target_filename):
         args = (cls, document_path, target_filename)

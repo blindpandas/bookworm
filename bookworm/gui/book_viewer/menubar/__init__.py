@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import System
 import time
 import sys
 import os
@@ -10,10 +11,12 @@ from slugify import slugify
 from bookworm import config
 from bookworm import paths
 from bookworm import app
+from bookworm.i18n import is_rtl
 from bookworm.signals import config_updated
 from bookworm.otau import check_for_updates
 from bookworm.annotator import Bookmarker
-from bookworm.concurrency import call_threaded
+from bookworm.concurrency import call_threaded, process_worker
+from bookworm import ocr
 from bookworm import speech
 from bookworm.speech.enumerations import SynthState
 from bookworm.reader import EBookReader
@@ -27,6 +30,7 @@ from bookworm.gui.book_viewer.core_dialogs import (
     SearchResultsDialog,
     ViewPageAsImageDialog,
     VoiceProfileDialog,
+    OCROptionsDialog
 )
 from bookworm.gui.book_viewer.annotation_dialogs import (
     NoteEditorDialog,
@@ -119,6 +123,13 @@ class MenubarProvider:
             _("&Find &Previous\tShift-F3"),
             # Translators: the help text of an ietm in the application menubar
             _("Find previous occurrence."),
+        )
+        self.scanTextOCR = toolsMenu.Append(
+            BookRelatedMenuIds.scanTextOCR,
+            # Translators: the label of an item in the application menubar
+            _("&Scan Text (OCR)...\tCtrl-Shift-R"),
+            # Translators: the help text of an item in the application menubar
+            _("Run OCR on this page."),
         )
         self.renderItem = toolsMenu.Append(
             BookRelatedMenuIds.viewRenderedAsImage,
@@ -297,6 +308,11 @@ class MenubarProvider:
         self.Bind(wx.EVT_MENU, self.onFindPrev, id=BookRelatedMenuIds.findPrev)
         self.Bind(
             wx.EVT_MENU,
+            self.onScanTextOCR,
+            id=BookRelatedMenuIds.scanTextOCR,
+        )
+        self.Bind(
+            wx.EVT_MENU,
             self.onViewRenderedAsImage,
             id=BookRelatedMenuIds.viewRenderedAsImage,
         )
@@ -449,6 +465,25 @@ class MenubarProvider:
             if dlg.ShowModal() == wx.ID_OK:
                 retval = dlg.GetValue()
                 self.reader.go_to_page(retval)
+
+    @only_when_reader_ready
+    def onScanTextOCR(self, event):
+        langs = ocr.get_recognition_languages()
+        dlg = OCROptionsDialog(parent=self, title=_("OCR Options"), choices=[l.description for l in langs])
+        res = dlg.ShowModal()
+        if res is None:
+            return speech.announce(_("Cancelled"))
+        langidx, zoom_factor, should_enhance = res
+        lang = langs[langidx].given_lang
+        image, width, height = self.reader.document.get_page_image(self.reader.current_page, zoom_factor, should_enhance)
+        task = process_worker.submit(ocr.recognize, lang, image, width, height)
+        task._page_number = self.reader.current_page
+        task.add_done_callback(self._process_ocr_result)
+
+    def _process_ocr_result(self, task):
+        if task._page_number == self.reader.current_page:
+            content = "\n".join(task.result())
+            self.set_content(content)
 
     @only_when_reader_ready
     def onViewRenderedAsImage(self, event):
@@ -712,6 +747,7 @@ class MenubarProvider:
         if self.reader.document.is_encrypted():
             self.decrypt_opened_document()
         self.renderItem.Enable(self.reader.document.supports_rendering)
+        self.scanTextOCR.Enable(self.reader.document.supports_rendering)
         self.tocTreeCtrl.Expand(self.tocTreeCtrl.GetRootItem())
         wx.CallAfter(self.tocTreeCtrl.SetFocus)
         recent_files = config.conf["history"]["recently_opened"]
@@ -759,6 +795,7 @@ class MenubarProvider:
             # Translators: the help text of an ietm in the application menubar
             _("Search this book."),
         )
+        # XXX enable only if supports rendering        
         menu.Append(
             BookRelatedMenuIds.viewRenderedAsImage,
             # Translators: the label of an ietm in the application menubar

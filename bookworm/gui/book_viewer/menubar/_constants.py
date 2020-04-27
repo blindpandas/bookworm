@@ -18,6 +18,7 @@ class BookRelatedMenuIds(enum.IntEnum):
     findNext = 222
     findPrev = 223
     viewRenderedAsImage = 224
+    scanTextOCR = 225
     # Speech
     play = 251
     stop = 252
@@ -58,6 +59,7 @@ KEYBOARD_SHORTCUTS = {
     BookRelatedMenuIds.findNext: "F3",
     BookRelatedMenuIds.findPrev: "Shift-F3",
     BookRelatedMenuIds.viewRenderedAsImage: "Ctrl-R",
+    BookRelatedMenuIds.scanTextOCR: "Ctrl-shift-R",
     wx.ID_PREFERENCES: "Ctrl-Shift-P",
     BookRelatedMenuIds.play: "F5",
     BookRelatedMenuIds.pauseToggle: "F6",

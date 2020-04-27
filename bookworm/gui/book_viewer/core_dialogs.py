@@ -518,3 +518,38 @@ class SpeechEngineSelector(SimpleDialog):
     def ShowModal(self):
         super().ShowModal()
         return self._return_value
+
+
+class OCROptionsDialog(SimpleDialog):
+    """OCR options."""
+
+    def __init__(self, *args, choices=(), **kwargs):
+        self.choices = choices
+        self._return_value = None
+        super().__init__(*args, **kwargs)
+
+    def addControls(self, parent):
+        # Translators: the label of a combobox
+        label = wx.StaticText(parent, -1, _("Recognition Language:"))
+        self.langChoice = wx.Choice(parent, -1, choices=self.choices)
+        self.langChoice.SetSizerProps(expand=True)
+        wx.StaticText(parent, -1, _("Zoom Factor::"))
+        self.zoomFactorSlider = wx.Slider(parent, -1, minValue=1, maxValue=20)
+        self.enhanceImageCheckbox =         wx.CheckBox(
+            parent,
+            -1,
+            # Translators: the label of a checkbox
+            _("Enhance page image before recognition"),
+        )
+        self.Bind(wx.EVT_BUTTON, self.onOK, id=wx.ID_OK)
+        self.langChoice.SetSelection(0)
+        self.zoomFactorSlider.SetValue(4)
+        self.enhanceImageCheckbox.SetValue(True)
+
+    def onOK(self, event):
+        self._return_value = self.langChoice.GetSelection(), self.zoomFactorSlider.GetValue(), self.enhanceImageCheckbox.IsChecked()
+        self.Close()
+
+    def ShowModal(self):
+        super().ShowModal()
+        return self._return_value

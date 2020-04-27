@@ -61,6 +61,11 @@ class FitzDocument(BaseDocument):
     def get_page_content(self, page_number):
         return self._text_from_page(self[page_number])
 
+    def get_page_image(self, page_number, zoom_factor=2.5, enhance=False):
+        mat = fitz.Matrix(zoom_factor, zoom_factor)
+        pix = self._ebook[page_number].getPixmap(matrix=mat, alpha=True)
+        return pix.samples, pix.width, pix.height
+
     @cached_property
     def toc_tree(self):
         toc_info = self._ebook.getToC(simple=False)
