@@ -6,11 +6,13 @@ import sys
 import os
 import wx
 import webbrowser
+from threading import Event
 from pathlib import Path
 from slugify import slugify
 from bookworm import config
 from bookworm import paths
 from bookworm import app
+from bookworm import sounds
 from bookworm.i18n import is_rtl
 from bookworm.signals import config_updated
 from bookworm.otau import check_for_updates
@@ -30,7 +32,8 @@ from bookworm.gui.book_viewer.core_dialogs import (
     SearchResultsDialog,
     ViewPageAsImageDialog,
     VoiceProfileDialog,
-    OCROptionsDialog
+    OCROptionsDialog,
+    SnakDialog,
 )
 from bookworm.gui.book_viewer.annotation_dialogs import (
     NoteEditorDialog,
@@ -482,11 +485,28 @@ class MenubarProvider:
             self.reader.current_page
         )
         process_worker.submit(ocr.recognize, *args).add_done_callback(self._process_ocr_result)
+        sounds.ocr_start.play()
+        self._ocr_cancelled = Event()
+        self.contentTextCtrl.Clear()
+        # Show a modal dialog
+        self._ocr_wait_dlg = SnakDialog(parent=self, message=_("Scanning page. Please wait...."), dismiss_callback=self._on_ocr_cancelled)
+        self._ocr_wait_dlg.Show()
 
     def _process_ocr_result(self, task):
+        if self._ocr_cancelled.is_set():
+            return
         page_number, content = task.result()
         if page_number == self.reader.current_page:
             self.set_content("\n".join(content))
+            sounds.ocr_end.play()
+            speech.announce(_("Scan finished."), urgent=True)
+            wx.CallAfter(self._ocr_wait_dlg.Hide)
+            wx.CallAfter(self.contentTextCtrl.SetFocusFromKbd)
+
+    def _on_ocr_cancelled(self):
+        self._ocr_cancelled.set()
+        speech.announce(_("OCR Cancelled"), True)
+        return True
 
     @only_when_reader_ready
     def onViewRenderedAsImage(self, event):

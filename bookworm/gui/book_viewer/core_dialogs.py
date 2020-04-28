@@ -553,3 +553,41 @@ class OCROptionsDialog(SimpleDialog):
     def ShowModal(self):
         super().ShowModal()
         return self._return_value
+
+
+class SnakDialog(SimpleDialog):
+    """For showing a single line message."""
+
+    def __init__(self, message, *args, dismiss_callback=None, **kwargs):
+        self.message = message
+        self.dismiss_callback = dismiss_callback
+        super().__init__(*args, title="", style=0, **kwargs)
+
+    def addControls(self, parent):
+        self.staticMessage = wx.StaticText(parent, -1, self.message)
+        self.staticMessage.SetCanFocus(True)
+        self.staticMessage.SetFocusFromKbd()
+        self.Bind(wx.EVT_CLOSE, self.onClose, self)
+        self.staticMessage.Bind(wx.EVT_KEY_UP, self.onKeyUp, self.staticMessage)
+        self.CenterOnParent()
+
+    def onClose(self, event):
+        if event.CanVeto():
+            if self.dismiss_callback is not None:
+                should_close = self.dismiss_callback()
+                if should_close:
+                    return self.Destroy()
+            event.Veto()
+        else:
+            self.Destroy()
+
+    def onKeyUp(self, event):
+        event.Skip()
+        if event.GetKeyCode() == wx.WXK_ESCAPE:
+            self.Close()
+
+    def Hide(self):
+        self.Destroy()
+
+    def getButtons(self, parent):
+        return
