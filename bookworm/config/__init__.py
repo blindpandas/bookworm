@@ -52,6 +52,8 @@ class ConfigProvider:
             self.config.restore_defaults()
             self.config.write()
 
+    def __getitem__(self, key):
+        return self.config[key]
 
 def setup_config():
     global conf
@@ -62,6 +64,3 @@ def save():
     global conf
     if conf:
         conf.config.write()
-        for profile in conf.profiles.values():
-            profile.write()
-

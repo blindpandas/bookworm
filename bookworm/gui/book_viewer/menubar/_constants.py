@@ -31,9 +31,6 @@ class ViewerMenuIds(enum.IntEnum):
 
     # Tools menu
     preferences = wx.ID_PREFERENCES
-    # Speech menu
-    voiceProfiles = 257
-    deactivateVoiceProfiles = wx.ID_REVERT
     # Help Menu
     documentation = 801
     website = 802
@@ -53,10 +50,6 @@ KEYBOARD_SHORTCUTS = {
     BookRelatedMenuIds.findPrev: "Shift-F3",
     BookRelatedMenuIds.viewRenderedAsImage: "Ctrl-R",
     wx.ID_PREFERENCES: "Ctrl-Shift-P",
-    BookRelatedMenuIds.play: "F5",
-    BookRelatedMenuIds.pauseToggle: "F6",
-    BookRelatedMenuIds.stop: "F7",
-    ViewerMenuIds.voiceProfiles: "Ctrl-Shift-V",
     BookRelatedMenuIds.addBookmark: "Ctrl-B",
     BookRelatedMenuIds.addNote: "Ctrl-N",
     BookRelatedMenuIds.viewBookmarks: "Ctrl-Shift-B",

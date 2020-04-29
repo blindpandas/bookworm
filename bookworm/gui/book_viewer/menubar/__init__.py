@@ -15,7 +15,6 @@ from bookworm.otau import check_for_updates
 from bookworm.annotator import Bookmarker
 from bookworm.concurrency import call_threaded
 from bookworm import speech
-from bookworm.speech.enumerations import SynthState
 from bookworm.reader import EBookReader
 from bookworm.utils import restart_application, cached_property, gui_thread_safe
 from bookworm.logger import logger
@@ -26,7 +25,6 @@ from bookworm.gui.book_viewer.core_dialogs import (
     SearchBookDialog,
     SearchResultsDialog,
     ViewPageAsImageDialog,
-    VoiceProfileDialog,
 )
 from bookworm.gui.book_viewer.annotation_dialogs import (
     NoteEditorDialog,
@@ -292,7 +290,6 @@ class MenubarProvider:
         # Translators: the label of an ietm in the application menubar
         self.menuBar.Append(toolsMenu, _("&Tools"))
         # Translators: the label of an ietm in the application menubar
-        self.menuBar.Append(speechMenu, _("&Speech"))
         # Translators: the label of an ietm in the application menubar
         self.menuBar.Append(annotationsMenu, _("&Annotations"))
         # Translators: the label of an ietm in the application menubar
@@ -300,8 +297,6 @@ class MenubarProvider:
         self.SetMenuBar(self.menuBar)
         # Set accelerators for the menu items
         self._set_menu_accelerators()
-        # Disable this when no voice profile is active
-        self.menuBar.FindItemById(wx.ID_REVERT).Enable(False)
 
         # Populate the recent files submenu
         self._recent_files_data = []
@@ -391,11 +386,6 @@ class MenubarProvider:
         # Translators: the title of the voice profiles dialog
         with VoiceProfileDialog(self, title=_("Voice Profiles")) as dlg:
             dlg.ShowModal()
-
-    def onDeactivateVoiceProfile(self, event):
-        config.conf.active_profile = None
-        self.reader.tts.configure_engine()
-        self.menuBar.FindItemById(wx.ID_REVERT).Enable(False)
 
     @only_when_reader_ready
     def onAddBookmark(self, event):
@@ -593,39 +583,6 @@ class MenubarProvider:
             parent=self,
             style=wx.ICON_INFORMATION,
         )
-
-    def onPlay(self, event):
-        if not self.reader.tts.is_ready:
-            self.reader.tts.initialize_engine()
-        elif self.reader.tts.engine.state is SynthState.busy:
-            return wx.Bell()
-        setattr(self.reader.tts, "_requested_play", True)
-        if self.reader.tts.engine.state is SynthState.paused:
-            return self.onPauseToggle(event)
-        self.reader.speak_current_page()
-
-    def onPauseToggle(self, event):
-        if self.reader.tts.is_ready:
-            if self.reader.tts.engine.state is SynthState.busy:
-                self.reader.tts.engine.pause()
-                # Translators: a message that is announced when the speech is paused
-                return speech.announce(_("Paused"))
-            elif self.reader.tts.engine.state is SynthState.paused:
-                self.reader.tts.engine.resume()
-                # Translators: a message that is announced when the speech is resumed
-                return speech.announce(_("Resumed"))
-        wx.Bell()
-
-    def onStop(self, event):
-        if (
-            self.reader.tts.is_ready
-            and self.reader.tts.engine.state is not SynthState.ready
-        ):
-            self.reader.tts.engine.stop()
-            setattr(self.reader.tts, "_requested_play", False)
-            # Translators: a message that is announced when the speech is stopped
-            return speech.announce(_("Stopped"))
-        wx.Bell()
 
     def open_file(self, filename):
         if not os.path.isfile(filename):

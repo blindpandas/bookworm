@@ -11,7 +11,7 @@ class BookwormService:
     name = None
     gui_manager = None
 
-    def __init__(self, view, reader)):
+    def __init__(self, view, reader):
         self.view = view
         self.reader = reader
         self.__post_init__()
@@ -26,11 +26,14 @@ class BookwormService:
     def __post_init__(self):
         """Any initialization rutines go here."""
 
-    def setup_config(self, spec):
-        """Set any configuration for this service."""
+    def get_config_spec(self):
+        """Return default config values for this service."""
 
     def setup_event_handlers(self):
         """Set any event handlers for this service."""
+
+    def shutdown(self):
+        """Called when the app is about to exit."""
 
 
 class ServiceGUIManager:
@@ -44,11 +47,11 @@ class ServiceGUIManager:
     def add_main_menu(self, menu):
         """Add items to the main menu."""
 
-    def add_context_menu(self, menu):
+    def get_contextmenu(self):
         """Add items to the content text control context menu."""
 
-    def get_settings_panel(self):
-        """Return a tuple of (insertion_order, panel)."""
+    def get_settings_panels(self):
+        """Return a list of (insertion_order, imagename, panelcls, label)."""
 
-    def add_toolbar_items(self, toolbar):
+    def get_toolbar_items(self):
         """Return items to add to the application toolbar."""

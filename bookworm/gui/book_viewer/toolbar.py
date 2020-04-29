@@ -3,7 +3,6 @@
 import wx
 from bookworm.resources import images
 from bookworm import config
-from bookworm.speech.enumerations import SynthState
 from bookworm.logger import logger
 from .menubar import BookRelatedMenuIds, ViewerMenuIds
 
@@ -19,97 +18,12 @@ class ToolbarProvider:
         self.toolbar.SetWindowStyle(
             wx.TB_FLAT | wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_TEXT
         )
-
-        tsize = (24, 24)
-        open_bmp = images.open.GetBitmap()
-        bookmark_bmp = images.bookmark.GetBitmap()
-        search_bmp = images.search.GetBitmap()
-        goto_bmp = images.goto.GetBitmap()
-        view_image_bmp = images.view_image.GetBitmap()
-        self.toolbar.SetToolBitmapSize(tsize)
-
-        # Add toolbar items
-        self.toolbar.AddTool(
-            wx.ID_OPEN,
-            # Translators: the label of a button in the application toolbar
-            _("Open"),
-            open_bmp,
-            # Translators: the help text of a button in the application toolbar
-            _("Open an e-book"),
-        )
-        self.toolbar.AddSeparator()
-        self.toolbar.AddTool(
-            wx.ID_FIND,
-            # Translators: the label of a button in the application toolbar
-            _("Search"),
-            search_bmp,
-            # Translators: the help text of a button in the application toolbar
-            _("Search e-book"),
-        )
-        self.toolbar.AddTool(
-            BookRelatedMenuIds.goToPage,
-            # Translators: the label of a button in the application toolbar
-            _("Go"),
-            goto_bmp,
-            # Translators: the help text of a button in the application toolbar
-            _("Go to page"),
-        )
-        self.toolbar.AddTool(
-            BookRelatedMenuIds.viewRenderedAsImage,
-            # Translators: the label of a button in the application toolbar
-            _("View"),
-            view_image_bmp,
-            # Translators: the help text of a button in the application toolbar
-            _("View a fully rendered version of this page"),
-        )
-        self.toolbar.AddSeparator()
-        self.toolbar.AddTool(
-            BookRelatedMenuIds.addBookmark,
-            # Translators: the label of a button in the application toolbar
-            _("Bookmark"),
-            bookmark_bmp,
-            # Translators: the help text of a button in the application toolbar
-            _("Add bookmark"),
-        )
-        self.toolbar.AddTool(
-            BookRelatedMenuIds.addNote,
-            # Translators: the label of a button in the application toolbar
-            _("Note"),
-            images.note.GetBitmap(),
-            # Translators: the help text of a button in the application toolbar
-            _("Add note"),
-        )
-        self.toolbar.AddTool(
-            wx.ID_PREVIEW_ZOOM_OUT,
-            # Translators: the label of a button in the application toolbar
-            _("Zoom out"),
-            images.zoom_out.GetBitmap(),
-            # Translators: the help text of a button in the application toolbar
-            _("Make font smaller"),
-        )
-        self.toolbar.AddTool(
-            wx.ID_PREVIEW_ZOOM_IN,
-            # Translators: the label of a button in the application toolbar
-            _("Zoom in"),
-            images.zoom_in.GetBitmap(),
-            # Translators: the help text of a button in the application toolbar
-            _("Make font larger"),
-        )
-        self.toolbar.AddSeparator()
-        self.toolbar.AddTool(
-            wx.ID_PREFERENCES,
-            # Translators: the label of a button in the application toolbar
-            _("Preferences"),
-            images.settings.GetBitmap(),
-            # Translators: the help text of a button in the application toolbar
-            _("Configure the application"),
-        )
+        self.add_tools()
 
         # Finalize
         self.toolbar.Realize()
 
         # Events and event handling
-        self.Bind(wx.EVT_TOOL, self.onPPR, id=self.ppr_id)
         self.Bind(
             wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(-1), id=wx.ID_PREVIEW_ZOOM_OUT
         )
@@ -117,10 +31,36 @@ class ToolbarProvider:
             wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(1), id=wx.ID_PREVIEW_ZOOM_IN
         )
 
-    def onPPR(self, event):
-        if (not self.reader.tts.is_ready) or (
-            self.reader.tts.engine.state is SynthState.ready
-        ):
-            self.onPlay(event)
-        else:
-            self.onPauseToggle(event)
+    def add_tools(self):
+        tsize = (16, 16)
+        self.toolbar.SetToolBitmapSize(tsize)
+        tool_info = [
+            # Translators: the label of a button in the application toolbar
+            (0, "open", _("Open"), wx.ID_OPEN),
+            # Translators: the label of a button in the application toolbar
+            (10, "search", _("Search"), wx.ID_FIND),
+            # Translators: the label of a button in the application toolbar
+            (20, "goto", _("Go"), BookRelatedMenuIds.goToPage),
+            # Translators: the label of a button in the application toolbar
+            (30, "view_image", _("View"), BookRelatedMenuIds.viewRenderedAsImage),
+            # Translators: the label of a button in the application toolbar
+            (40, "bookmark", _("Bookmark"), BookRelatedMenuIds.addBookmark),
+            # Translators: the label of a button in the application toolbar
+            (50, "note", _("Note"), BookRelatedMenuIds.addNote),
+            # Translators: the label of a button in the application toolbar
+            (60, "zoom_out", _("Big"), wx.ID_PREVIEW_ZOOM_OUT),
+            # Translators: the label of a button in the application toolbar
+            (70, "zoom_in", _("Small"), wx.ID_PREVIEW_ZOOM_IN),
+            # Translators: the label of a button in the application toolbar
+            (80, "settings", _("Settings"), wx.ID_PREFERENCES),
+        ]
+        tool_info.extend(wx.GetApp().service_handler.get_toolbar_items())
+        tool_info.sort()
+        for (pos, imagename, label, ident) in tool_info:
+            image = getattr(images, imagename).GetBitmap()
+            # Add toolbar item
+            self.toolbar.AddTool(
+                ident,
+                label,
+                image,
+            )

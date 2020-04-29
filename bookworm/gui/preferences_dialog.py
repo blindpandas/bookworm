@@ -10,8 +10,6 @@ from bookworm import config
 from bookworm.paths import app_path
 from bookworm.utils import restart_application
 from bookworm.i18n import get_available_languages, set_active_language
-from bookworm.speech import SpeechProvider
-from bookworm.speech.engines.sapi import SapiSpeechEngine as SpeechEngine
 from bookworm.signals import app_started, config_updated
 from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.resources import images
@@ -389,31 +387,28 @@ class ReadingPanel(SettingsPanel):
 class PreferencesDialog(SimpleDialog):
     """Preferences dialog."""
 
-    imagefiles = ("general", "speech", "reading")
+    def addPanels(self):
+        page_info= [
+            # Translators: the label of a page in the settings dialog
+            (0, "general", GeneralPanel, _("General"),),
+            # Translators: the label of a page in the settings dialog
+            (10, "reading", ReadingPanel, _("Reading"),),
+        ]
+        page_info.extend(wx.GetApp().service_handler.get_settings_panels())
+        page_info.sort()
+        image_list = wx.ImageList(24, 24)
+        self.tabs.AssignImageList(image_list)
+        for (i, imagename, panelcls, label) in page_info:
+            bmp = getattr(images, imagename).GetBitmap()
+            image_list.Add(bmp)
+            # Create settings page
+            page = panelcls(self.tabs)
+            # Add tabs
+            self.tabs.AddPage(page, label, select=(i==0), imageId=i)
 
     def addControls(self, parent):
         self.tabs = wx.Listbook(parent, -1)
-
-        # Image list
-        image_list = wx.ImageList(24, 24)
-        for imgname in self.imagefiles:
-            bmp = getattr(images, imgname).GetBitmap()
-            image_list.Add(bmp)
-        self.tabs.AssignImageList(image_list)
-
-        # Create settings pages
-        generalPage = GeneralPanel(self.tabs)
-        speechPage = SpeechPanel(self.tabs)
-        readingPage = ReadingPanel(self.tabs)
-
-        # Add tabs
-        # Translators: the label of a page in the settings dialog
-        self.tabs.AddPage(generalPage, _("General"), select=True, imageId=0)
-        # Translators: the label of a page in the settings dialog
-        self.tabs.AddPage(speechPage, _("Speech"), imageId=1)
-        # Translators: the label of a page in the settings dialog
-        self.tabs.AddPage(readingPage, _("Reading"), imageId=2)
-
+        self.addPanels()
         # Finalize
         self.SetButtonSizer(self.createButtonsSizer())
         # Event handlers

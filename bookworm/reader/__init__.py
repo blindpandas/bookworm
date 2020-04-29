@@ -21,13 +21,12 @@ from bookworm.signals import (
     reader_section_changed,
 )
 from bookworm.logger import logger
-from .text_to_speech import TextToSpeechProvider
 
 
 log = logger.getChild(__name__)
 
 
-class EBookReader(TextToSpeechProvider):
+class EBookReader:
     """The controller that glues together the
     document model and the view model .
     """
@@ -38,7 +37,6 @@ class EBookReader(TextToSpeechProvider):
         "view",
         "__state",
         "current_book",
-        "tts",
     ]
 
     # A list of document classes
