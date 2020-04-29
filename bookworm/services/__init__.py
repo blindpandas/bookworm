@@ -1,4 +1,4 @@
 # coding: utf-8
 
-from .base import BookwormService, ServiceGUIManager
-from .handler import ServiceHandler, BUILTIN_SERVICES
+from .base import BookwormService
+from .handler import ServiceHandler

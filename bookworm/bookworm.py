@@ -12,9 +12,9 @@ from bookworm.database import init_database
 from bookworm.shell_integration import shell_integrate, shell_disintegrate
 from bookworm.signals import app_started, app_shuttingdown
 from bookworm.runtime import IS_RUNNING_PORTABLE
-from bookworm.services import ServiceHandler, BUILTIN_SERVICES
+from bookworm.services import ServiceHandler
 from bookworm.gui.book_viewer import BookViewerWindow
-from bookworm.gui.preferences_dialog import show_file_association_dialog
+from bookworm.gui.settings import show_file_association_dialog
 from bookworm.otau import check_for_updates_upon_startup
 from bookworm.logger import logger
 
@@ -88,11 +88,9 @@ def init_app_and_run_main_loop():
     wxlogfilename = logs_path("wx.log") if not appinfo.debug else None
     app = BookwormApp(redirect=True, useBestVisual=True, filename=wxlogfilename)
     mainFrame = app.mainFrame = BookViewerWindow(None, appinfo.display_name)
-    log.info("Registering services.")
     app.service_handler = ServiceHandler(mainFrame)
-    for service_cls in BUILTIN_SERVICES:
-        log.info(f"Registering service: {service_cls.name}.")
-        app.service_handler.register_service(service_cls)
+    app.service_handler.register_builtin_services()
+    mainFrame.finalize_gui_creation()
     app_started.send(app)
     log.info("The application has started successfully.")
 

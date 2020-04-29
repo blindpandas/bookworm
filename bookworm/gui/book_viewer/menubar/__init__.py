@@ -10,7 +10,6 @@ from slugify import slugify
 from bookworm import config
 from bookworm import paths
 from bookworm import app
-from bookworm.signals import config_updated
 from bookworm.otau import check_for_updates
 from bookworm.annotator import Bookmarker
 from bookworm.concurrency import call_threaded
@@ -18,15 +17,15 @@ from bookworm import speech
 from bookworm.reader import EBookReader
 from bookworm.utils import restart_application, cached_property, gui_thread_safe
 from bookworm.logger import logger
-from bookworm.gui.preferences_dialog import PreferencesDialog
+from bookworm.gui.settings import PreferencesDialog
 from bookworm.gui.book_viewer.decorators import only_when_reader_ready
-from bookworm.gui.book_viewer.core_dialogs import (
+from bookworm.gui.book_viewer.dialogs.core_dialogs import (
     GoToPageDialog,
     SearchBookDialog,
     SearchResultsDialog,
     ViewPageAsImageDialog,
 )
-from bookworm.gui.book_viewer.annotation_dialogs import (
+from bookworm.gui.book_viewer.dialogs.annotation_dialogs import (
     NoteEditorDialog,
     ViewAnnotationsDialog,
     ExportNotesDialog,
@@ -43,15 +42,13 @@ class MenubarProvider:
 
     def __init__(self):
         self.menuBar = wx.MenuBar()
-        self._page_turn_timer = wx.Timer(self)
-        self._last_page_turn = 0.0
         self._reset_search_history()
 
         # The menu
-        fileMenu = wx.Menu()
-        toolsMenu = wx.Menu()
-        annotationsMenu = wx.Menu()
-        helpMenu = wx.Menu()
+        self.fileMenu = fileMenu = wx.Menu()
+        self.toolsMenu = toolsMenu = wx.Menu()
+        self.annotationsMenu = annotationsMenu = wx.Menu()
+        self.helpMenu = helpMenu = wx.Menu()
         # A submenu for recent files
         self.recentFilesMenu = wx.Menu()
 
@@ -224,8 +221,6 @@ class MenubarProvider:
             _("Show general information about this program"),
         )
 
-        # Event handling
-        self.Bind(wx.EVT_TIMER, self.onTimerTick)
         # Bind menu events to event handlers
         # File menu event handlers
         self.Bind(wx.EVT_MENU, self.onOpenEBook, id=wx.ID_OPEN)
@@ -294,33 +289,20 @@ class MenubarProvider:
         self.menuBar.Append(annotationsMenu, _("&Annotations"))
         # Translators: the label of an ietm in the application menubar
         self.menuBar.Append(helpMenu, _("&Help"))
-        self.SetMenuBar(self.menuBar)
-        # Set accelerators for the menu items
-        self._set_menu_accelerators()
 
         # Populate the recent files submenu
         self._recent_files_data = []
         self.populate_recent_file_list()
-        config_updated.connect(self._on_config_changed_for_cont)
 
     def _set_menu_accelerators(self):
         entries = []
-        for menu_id, shortcut in KEYBOARD_SHORTCUTS.items():
+        k_shourtcuts = KEYBOARD_SHORTCUTS.copy()
+        k_shourtcuts.update(wx.GetApp().service_handler.get_keyboard_shourtcuts())
+        for menu_id, shortcut in k_shourtcuts.items():
             accel = wx.AcceleratorEntry(cmd=menu_id)
             accel.FromString(shortcut)
             entries.append(accel)
         self.SetAcceleratorTable(wx.AcceleratorTable(entries))
-
-    def onTimerTick(self, event):
-        cur_pos, end_pos = self.contentTextCtrl.GetInsertionPoint(), self.contentTextCtrl.GetLastPosition()
-        if not end_pos:
-            return
-        if cur_pos == end_pos:
-            wx.WakeUpIdle()
-            if (time.perf_counter() - self._last_page_turn) < 0.9:
-                return
-            self._nav_provider.navigate_to_page("next")
-            self._last_page_turn = time.perf_counter()
 
     def onOpenEBook(self, event):
         last_folder = config.conf["history"]["last_folder"]
@@ -357,7 +339,6 @@ class MenubarProvider:
         self.populate_recent_file_list()
 
     def onClose(self, evt):
-        self._page_turn_timer.Stop()
         self.unloadCurrentEbook()
         self.Destroy()
         evt.Skip()
@@ -609,8 +590,6 @@ class MenubarProvider:
         config.conf["history"]["recently_opened"] = newfiles
         config.save()
         self.populate_recent_file_list()
-        if config.conf["reading"]["use_continuous_reading"]:
-            self._page_turn_timer.Start()
 
     def onRestartWithDebugMode(self, event):
         restart_application(debug=True)
@@ -749,10 +728,3 @@ class MenubarProvider:
             )
             return self.decrypt_opened_document()
 
-    def _on_config_changed_for_cont(self, sender, section):
-        if section == "reading":
-            is_enabled = config.conf["reading"]["use_continuous_reading"]
-            if is_enabled:
-                self._page_turn_timer.Start()
-            else:
-                self._page_turn_timer.Stop()

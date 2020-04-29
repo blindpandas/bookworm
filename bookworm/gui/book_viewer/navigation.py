@@ -59,17 +59,6 @@ class NavigationProvider:
             elif key_code == wx.WXK_PAGEUP:
                 self.reader.navigate(to="prev", unit="section")
             self.callback()
-        if event.GetModifiers() == wx.MOD_ALT and key_code in (
-            wx.WXK_RIGHT,
-            wx.WXK_LEFT,
-        ):
-            if not self.reader.tts.is_ready:
-                return wx.Bell()
-            if key_code == wx.WXK_RIGHT:
-                self.reader.fastforward()
-            elif key_code == wx.WXK_LEFT:
-                self.reader.rewind()
-            self.callback()
         if event.GetModifiers() == wx.MOD_ALT  and (key_code in (wx.WXK_HOME, wx.WXK_END)):
             pager = self.reader.active_section.pager
             if key_code == wx.WXK_HOME:

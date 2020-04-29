@@ -8,7 +8,7 @@ from bookworm.annotator import Bookmarker, NoteTaker, Book, Note, Bookmark
 from bookworm.notes_exporter import NotesExporter
 from bookworm.signals import notes_export_completed
 from bookworm.logger import logger
-from ..components import Dialog, DialogListCtrl
+from bookworm.gui.components import Dialog, DialogListCtrl
 
 
 log = logger.getChild(__name__)

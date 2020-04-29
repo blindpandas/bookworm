@@ -31,9 +31,9 @@ class ConfigProvider:
             config_spec, encoding="UTF8", list_values=False, _inspec=True
         )
         self.validator = Validator()
-        self._init_config()
+        self.validate_and_write()
 
-    def _init_config(self):
+    def validate_and_write(self):
         config_file = Path(config_path(f"{app.name}.ini"))
         try:
             self.config = ConfigObj(

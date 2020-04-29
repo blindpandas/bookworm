@@ -9,14 +9,13 @@ log = logger.getChild(__name__)
 class BookwormService:
     """Extend the core functionality."""
     name = None
-    gui_manager = None
+    has_gui = False
+    config_spec = {}
 
-    def __init__(self, view, reader):
+    def __init__(self, view):
         self.view = view
-        self.reader = reader
+        self.reader = view.reader
         self.__post_init__()
-        if self.gui_manager:
-            self.gui = self.gui_manager(self)
 
     @classmethod
     def check(self):
@@ -26,32 +25,29 @@ class BookwormService:
     def __post_init__(self):
         """Any initialization rutines go here."""
 
-    def get_config_spec(self):
-        """Return default config values for this service."""
-
     def setup_event_handlers(self):
         """Set any event handlers for this service."""
 
     def shutdown(self):
         """Called when the app is about to exit."""
 
-
-class ServiceGUIManager:
-    """Manages GUI of a service."""
-
-    def __init__(self, service):
-        self.service = service
-        self.frame = self.service.view
-        self.reader = self.service.reader
-
-    def add_main_menu(self, menu):
+    def process_menubar(self, menubar):
         """Add items to the main menu."""
 
     def get_contextmenu(self):
-        """Add items to the content text control context menu."""
+        """Get items to add to  the content text control context menu."""
+        return ()
 
     def get_settings_panels(self):
-        """Return a list of (insertion_order, imagename, panelcls, label)."""
+        """Return a list of SettingsPanelBlueprint."""
+        return ()
 
     def get_toolbar_items(self):
         """Return items to add to the application toolbar."""
+        return ()
+
+    def get_keyboard_shourtcuts(self):
+        """Return a dictionary mapping control id's to keyboard shortcuts."""
+        return {}
+
+

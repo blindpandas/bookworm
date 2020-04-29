@@ -3,8 +3,9 @@
 import sys
 import wx
 import wx.lib.sized_controls as sc
-from wx.adv import CommandLinkButton
 from enum import IntEnum, auto
+from dataclasses import dataclass
+from wx.adv import CommandLinkButton
 from bookworm import app
 from bookworm import config
 from bookworm.paths import app_path
@@ -13,11 +14,6 @@ from bookworm.i18n import get_available_languages, set_active_language
 from bookworm.signals import app_started, config_updated
 from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.resources import images
-from bookworm.config.spec import (
-    PARAGRAPH_PAUSE_MAX,
-    END_OF_PAGE_PAUSE_MAX,
-    END_OF_SECTION_PAUSE_MAX,
-)
 from bookworm.shell_integration import shell_integrate, shell_disintegrate, get_ext_info
 from bookworm.logger import logger
 from .components import SimpleDialog, EnhancedSpinCtrl
@@ -304,107 +300,25 @@ class GeneralPanel(SettingsPanel):
             dlg.ShowModal()
 
 
-class ReadingPanel(SettingsPanel):
-    config_section = "reading"
-
-    def addControls(self):
-        # Translators: the label of a group of controls in the reading page
-        generalReadingBox = self.make_static_box(_("Reading Options"))
-        wx.CheckBox(
-            generalReadingBox,
-            -1,
-            # Translators: the label of a checkbox to enable continuous reading
-            _("Use continuous reading mode"),
-            name="reading.use_continuous_reading",
-        )
-        self.readingMode = wx.RadioBox(
-            self,
-            -1,
-            # Translators: the title of a group of radio buttons in the reading page
-            # in the application settings related to how to read.
-            _("When Pressing Play:"),
-            majorDimension=1,
-            style=wx.RA_SPECIFY_COLS,
-            choices=[
-                # Translators: the label of a radio button
-                _("Read the entire book"),
-                # Translators: the label of a radio button
-                _("Read the current section"),
-                # Translators: the label of a radio button
-                _("Read the current page"),
-            ],
-        )
-        self.reading_pos = wx.RadioBox(
-            self,
-            -1,
-            # Translators: the title of a group of radio buttons in the reading page
-            # in the application settings related to where to start reading from.
-            _("Start reading from:"),
-            majorDimension=1,
-            style=wx.RA_SPECIFY_COLS,
-            # Translators: the label of a radio button
-            choices=[_("Cursor position"), _("Beginning of page")],
-        )
-        # Translators: the label of a group of controls in the reading page
-        # of the settings related to behavior during reading  aloud
-        miscBox = self.make_static_box(_("During Reading Aloud"))
-        wx.CheckBox(
-            # Translators: the label of a checkbox
-            miscBox, -1, _("Speak page number"), name="reading.speak_page_number"
-        )
-        wx.CheckBox(
-            miscBox,
-            -1,
-            # Translators: the label of a checkbox
-            _("Highlight spoken text"),
-            name="reading.highlight_spoken_text",
-        )
-        wx.CheckBox(
-            miscBox,
-            -1,
-            # Translators: the label of a checkbox
-            _("Select spoken text"),
-            name="reading.select_spoken_text",
-        )
-        wx.CheckBox(
-            miscBox,
-            -1,
-            # Translators: the label of a checkbox
-            _("Play end of section sound"),
-            name="reading.play_end_of_section_sound",
-        )
-
-    def reconcile(self, strategy=ReconciliationStrategies.load):
-        if strategy is ReconciliationStrategies.load:
-            self.readingMode.SetSelection(self.config["reading_mode"])
-            self.reading_pos.SetSelection(self.config["start_reading_from_"])
-        elif strategy is ReconciliationStrategies.save:
-            self.config["reading_mode"] = self.readingMode.GetSelection()
-            self.config["start_reading_from_"] = self.reading_pos.GetSelection()
-        super().reconcile(strategy=strategy)
-
-
 class PreferencesDialog(SimpleDialog):
     """Preferences dialog."""
 
     def addPanels(self):
         page_info= [
             # Translators: the label of a page in the settings dialog
-            (0, "general", GeneralPanel, _("General"),),
-            # Translators: the label of a page in the settings dialog
-            (10, "reading", ReadingPanel, _("Reading"),),
+            (0, "general", GeneralPanel, _("General")),
         ]
         page_info.extend(wx.GetApp().service_handler.get_settings_panels())
         page_info.sort()
         image_list = wx.ImageList(24, 24)
         self.tabs.AssignImageList(image_list)
-        for (i, imagename, panelcls, label) in page_info:
-            bmp = getattr(images, imagename).GetBitmap()
+        for idx, (__, image, panel_cls, label) in enumerate(page_info):
+            bmp = getattr(images, image).GetBitmap()
             image_list.Add(bmp)
             # Create settings page
-            page = panelcls(self.tabs)
+            page = panel_cls(self.tabs)
             # Add tabs
-            self.tabs.AddPage(page, label, select=(i==0), imageId=i)
+            self.tabs.AddPage(page, label, select=(idx==0), imageId=idx)
 
     def addControls(self, parent):
         self.tabs = wx.Listbook(parent, -1)
