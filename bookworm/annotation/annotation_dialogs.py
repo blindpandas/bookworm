@@ -3,49 +3,15 @@
 import wx
 from pathlib import Path
 from slugify import slugify
-from bookworm import sounds
-from bookworm.annotator import Bookmarker, NoteTaker, Book, Note, Bookmark
-from bookworm.notes_exporter import NotesExporter
+from bookworm.resources import sounds
 from bookworm.signals import notes_export_completed
 from bookworm.logger import logger
-from ..components import Dialog, DialogListCtrl
+from bookworm.gui.components import Dialog, DialogListCtrl
+from .annotator import Bookmarker, NoteTaker, Book, Note, Bookmark
+from .notes_exporter import NotesExporter
 
 
 log = logger.getChild(__name__)
-
-
-def _annotations_page_handler(reader):
-    q_count = (
-        Note.query.filter(Book.identifier == reader.document.identifier)
-        .filter_by(page_number=reader.current_page)
-        .count()
-    )
-    if q_count:
-        sounds.has_note.play()
-
-
-def play_sound_if_note(sender, current, prev):
-    """Play a sound if the current page has a note."""
-    wx.CallLater(150, _annotations_page_handler, sender)
-
-
-def highlight_bookmarked_positions(sender, current, prev):
-    bookmarks = (
-        Bookmark.query.filter(Book.identifier == sender.document.identifier)
-        .filter(Bookmark.page_number == sender.current_page)
-        .all()
-    )
-    if not bookmarks:
-        return
-    for bookmark in bookmarks:
-        highlight_containing_line(bookmark.position, sender.view)
-
-
-def highlight_containing_line(pos, view):
-    lft, rgt = view.get_containing_line(pos)
-    wx.CallAfter(
-        view.contentTextCtrl.SetStyle, lft, rgt, wx.TextAttr(wx.WHITE, wx.BLACK)
-    )
 
 
 class ViewAnnotationsDialog(Dialog):

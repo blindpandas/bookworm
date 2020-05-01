@@ -6,14 +6,12 @@ import fitz
 from itertools import chain
 from bookworm import config
 from bookworm import speech
-from bookworm.speech.enumerations import SynthState
 from bookworm.document_formats import SearchRequest
 from bookworm.signals import reader_page_changed
 from bookworm.utils import gui_thread_safe
 from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
 from bookworm.logger import logger
-from ..components import Dialog, SimpleDialog, DialogListCtrl, EnhancedSpinCtrl
-from ..preferences_dialog import SpeechPanel, ReconciliationStrategies
+from bookworm.gui.components import Dialog, SimpleDialog, DialogListCtrl, EnhancedSpinCtrl
 from .navigation import NavigationProvider
 
 
@@ -302,6 +300,7 @@ class ViewPageAsImageDialog(wx.Dialog):
         reader_page_changed.disconnect(self.onPageChange, sender=self.reader)
 
 
+<<<<<<< HEAD
 class VoiceProfileEditorDialog(SimpleDialog):
     """Create and edit voice profiles."""
 
@@ -591,3 +590,5 @@ class SnakDialog(SimpleDialog):
 
     def getButtons(self, parent):
         return
+=======
+>>>>>>> services

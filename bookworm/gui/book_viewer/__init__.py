@@ -5,23 +5,22 @@ import wx
 from bookworm import app
 from bookworm import config
 from bookworm import speech
+from bookworm.resources import images
 from bookworm.paths import app_path
 from bookworm.reader import EBookReader
-from bookworm.signals import reader_page_changed
+from bookworm.signals import reader_book_unloaded, reader_page_changed
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from .decorators import only_when_reader_ready
-from .menubar import MenubarProvider
-from .toolbar import ToolbarProvider
+from .menubar import MenubarProvider, BookRelatedMenuIds
 from .state import StateProvider
 from .navigation import NavigationProvider
-from .annotation_dialogs import play_sound_if_note, highlight_bookmarked_positions
 
 
 log = logger.getChild(__name__)
 
 
-class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider):
+class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     """The book viewer window."""
 
     def __init__(self, parent, title):
@@ -30,7 +29,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
 
         self.reader = EBookReader(self)
         MenubarProvider.__init__(self)
-        ToolbarProvider.__init__(self)
+
+        self.toolbar = self.CreateToolBar()
+        self.toolbar.SetWindowStyle(
+            wx.TB_FLAT | wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_TEXT
+        )
         self.CreateStatusBar()
 
         # Now create the Panel to put the other controls on.
@@ -96,6 +99,12 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
 
         # Bind Events
         self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.onTOCItemClick, self.tocTreeCtrl)
+        self.Bind(
+            wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(-1), id=wx.ID_PREVIEW_ZOOM_OUT
+        )
+        self.Bind(
+            wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(1), id=wx.ID_PREVIEW_ZOOM_IN
+        )
 
         # Set statusbar text
         # Translators: the text of the status bar when no book is currently open.
@@ -109,11 +118,52 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
             reader=self.reader,
             zoom_callback=self.onTextCtrlZoom,
         )
-        if config.conf["general"]["play_page_note_sound"]:
-            reader_page_changed.connect(play_sound_if_note, sender=self.reader)
-        if config.conf["general"]["highlight_bookmarked_positions"]:
-            reader_page_changed.connect(
-                highlight_bookmarked_positions, sender=self.reader
+
+    def finalize_gui_creation(self):
+        self.add_tools()
+        self.toolbar.Realize()
+        # Process services menubar
+        wx.GetApp().service_handler.process_menubar(self.menuBar)
+        self.SetMenuBar(self.menuBar)
+        # Set accelerators for the menu items
+        self._set_menu_accelerators()
+        # XXX sent explicitly to disable items upon startup
+        reader_book_unloaded.send(self.reader)
+
+    def add_tools(self):
+        tsize = (16, 16)
+        self.toolbar.SetToolBitmapSize(tsize)
+        tool_info = [
+            # Translators: the label of a button in the application toolbar
+            (0, "open", _("Open"), wx.ID_OPEN),
+            (1, "", "", None),
+            # Translators: the label of a button in the application toolbar
+            (10, "search", _("Search"), wx.ID_FIND),
+            # Translators: the label of a button in the application toolbar
+            (20, "goto", _("Go"), BookRelatedMenuIds.goToPage),
+            # Translators: the label of a button in the application toolbar
+            (30, "view_image", _("View"), BookRelatedMenuIds.viewRenderedAsImage),
+            (31, "", "", None),
+            # Translators: the label of a button in the application toolbar
+            (60, "zoom_out", _("Big"), wx.ID_PREVIEW_ZOOM_OUT),
+            # Translators: the label of a button in the application toolbar
+            (70, "zoom_in", _("Small"), wx.ID_PREVIEW_ZOOM_IN),
+            (71, "", "", None),
+            # Translators: the label of a button in the application toolbar
+            (80, "settings", _("Settings"), wx.ID_PREFERENCES),
+        ]
+        tool_info.extend(wx.GetApp().service_handler.get_toolbar_items())
+        tool_info.sort()
+        for (pos, imagename, label, ident) in tool_info:
+            if ident is None:
+                self.toolbar.AddSeparator()
+                continue
+            image = getattr(images, imagename).GetBitmap()
+            # Add toolbar item
+            self.toolbar.AddTool(
+                ident,
+                label,
+                image,
             )
 
     def set_content(self, content):
@@ -131,7 +181,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, ToolbarProvider, StateProvider
 
     @only_when_reader_ready
     def unloadCurrentEbook(self):
-        self._page_turn_timer.Stop()
         self.reader.unload()
         self.set_content("")
         self.SetStatusText(self._no_open_book_status)

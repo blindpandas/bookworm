@@ -3,31 +3,23 @@
 import sys
 import wx
 import wx.lib.sized_controls as sc
-from wx.adv import CommandLinkButton
 from enum import IntEnum, auto
+from dataclasses import dataclass
+from wx.adv import CommandLinkButton
 from bookworm import app
 from bookworm import config
 from bookworm.paths import app_path
 from bookworm.utils import restart_application
 from bookworm.i18n import get_available_languages, set_active_language
-from bookworm.speech import SpeechProvider
-from bookworm.speech.engines.sapi import SapiSpeechEngine as SpeechEngine
 from bookworm.signals import app_started, config_updated
 from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.resources import images
-from bookworm.config.spec import (
-    PARAGRAPH_PAUSE_MAX,
-    END_OF_PAGE_PAUSE_MAX,
-    END_OF_SECTION_PAUSE_MAX,
-)
 from bookworm.shell_integration import shell_integrate, shell_disintegrate, get_ext_info
 from bookworm.logger import logger
 from .components import SimpleDialog, EnhancedSpinCtrl
 
 
 log = logger.getChild(__name__)
-# Sentinel
-DEFAULT_STEP_SIZE = 5
 
 
 class ReconciliationStrategies(IntEnum):
@@ -306,227 +298,29 @@ class GeneralPanel(SettingsPanel):
             dlg.ShowModal()
 
 
-class SpeechPanel(SettingsPanel):
-    config_section = "speech"
-
-    def addControls(self):
-        # Translators: the label of a group of controls in the
-        # speech settings page related to voice selection
-        voiceBox = self.make_static_box(_("Voice"))
-        # voiceBox.SetSizerType("form")
-        # Translators: the label of a combobox containing a list of tts engines
-        wx.StaticText(voiceBox, -1, _("Speech Engine:"))
-        self.engineInfoText = wx.TextCtrl(
-            voiceBox, -1, style=wx.TE_READONLY | wx.TE_MULTILINE
-        )
-        # Translators: the label of a button that opens a dialog to change the speech engine
-        self.changeEngineBtn = wx.Button(voiceBox, -1, _("Change..."))
-        # Translators: the label of a combobox containing a list of tts voices
-        wx.StaticText(voiceBox, -1, _("Select Voice:"))
-        self.voice = wx.Choice(voiceBox, -1)
-        # Translators: the label of the speech rate slider
-        wx.StaticText(voiceBox, -1, _("Speech Rate:"))
-        rt = wx.Slider(voiceBox, -1, minValue=0, maxValue=100, name="speech.rate")
-        rt.SetPageSize(DEFAULT_STEP_SIZE)
-        # Translators: the label of the speech volume slider
-        wx.StaticText(voiceBox, -1, _("Speech Volume:"))
-        vol = wx.Slider(voiceBox, -1, minValue=0, maxValue=100, name="speech.volume")
-        vol.SetPageSize(DEFAULT_STEP_SIZE)
-        # Translators: the label of a group of controls in the speech
-        # settings page related to speech pauses
-        pausesBox = self.make_static_box(_("Pauses"))
-        # pausesBox.SetSizerType("form")
-        # Translators: the label of an edit field
-        wx.StaticText(pausesBox, -1, _("Additional Pause At Sentence End (Ms)"))
-        sp = EnhancedSpinCtrl(
-            pausesBox, -1, min=0, max=PARAGRAPH_PAUSE_MAX, name="speech.sentence_pause"
-        )
-        # Translators: the label of an edit field
-        wx.StaticText(pausesBox, -1, _("Additional Pause At Paragraph End (Ms)"))
-        pp = EnhancedSpinCtrl(
-            pausesBox, -1, min=0, max=PARAGRAPH_PAUSE_MAX, name="speech.paragraph_pause"
-        )
-        # Translators: the label of an edit field
-        wx.StaticText(pausesBox, -1, _("End of Page Pause (ms)"))
-        eop = EnhancedSpinCtrl(
-            pausesBox,
-            -1,
-            min=0,
-            max=END_OF_PAGE_PAUSE_MAX,
-            name="speech.end_of_page_pause",
-        )
-        # Translators: the label of an edit field
-        wx.StaticText(pausesBox, -1, _("End of Section Pause (ms)"))
-        eos = EnhancedSpinCtrl(
-            pausesBox,
-            -1,
-            min=0,
-            max=END_OF_SECTION_PAUSE_MAX,
-            name="speech.end_of_section_pause",
-        )
-        for ctrl in (sp, pp, eop, eos, self.engineInfoText):
-            ctrl.SetSizerProps(expand=True)
-        self.changeEngineBtn.Bind(
-            wx.EVT_BUTTON, self.OnChoosEngine, self.changeEngineBtn
-        )
-        self.current_engine = None
-        self.configure_with_engine()
-        self.changeEngineBtn.Enable(len(SpeechProvider.speech_engines) > 1)
-
-    def configure_with_engine(self, engine_name=""):
-        if (self.current_engine is not None) and (
-            engine_name == self.current_engine.name
-        ):
-            return
-        engine_name = engine_name or self.config["engine"]
-        self.current_engine = SpeechProvider.get_engine(engine_name)
-        self.engineInfoText.SetValue(_(self.current_engine.display_name))
-        self.voices = self.current_engine().get_voices()
-        self.voice.Clear()
-        self.voice.Append([v.display_name for v in self.voices])
-        self.reconcile()
-
-    def OnChoosEngine(self, event):
-        from .book_viewer.core_dialogs import SpeechEngineSelector
-
-        current_engine_index = 0
-        for (index, e) in enumerate(SpeechProvider.speech_engines):
-            if e.name == self.current_engine.name:
-                current_engine_index = index
-        dlg = SpeechEngineSelector(
-            [_(e.display_name) for e in SpeechProvider.speech_engines],
-            current_engine_index,
-            parent=self.Parent,
-            title=_("Speech Engine"),
-        )
-        with dlg:
-            if dlg.ShowModal() == wx.ID_OK:
-                self.configure_with_engine(
-                    SpeechProvider.speech_engines[dlg.GetValue()].name
-                )
-
-    def reconcile(self, strategy=ReconciliationStrategies.load):
-        if strategy is ReconciliationStrategies.load:
-            configured_voice = self.config["voice"]
-            pos = 0
-            for idx, vinfo in enumerate(self.voices):
-                if vinfo.id == configured_voice:
-                    pos = idx
-            self.voice.SetSelection(pos)
-        elif strategy is ReconciliationStrategies.save:
-            self.config["engine"] = self.current_engine.name
-            self.config["voice"] = self.voices[self.voice.GetSelection()].id
-        super().reconcile(strategy=strategy)
-
-
-class ReadingPanel(SettingsPanel):
-    config_section = "reading"
-
-    def addControls(self):
-        # Translators: the label of a group of controls in the reading page
-        generalReadingBox = self.make_static_box(_("Reading Options"))
-        wx.CheckBox(
-            generalReadingBox,
-            -1,
-            # Translators: the label of a checkbox to enable continuous reading
-            _("Use continuous reading mode"),
-            name="reading.use_continuous_reading",
-        )
-        self.readingMode = wx.RadioBox(
-            self,
-            -1,
-            # Translators: the title of a group of radio buttons in the reading page
-            # in the application settings related to how to read.
-            _("When Pressing Play:"),
-            majorDimension=1,
-            style=wx.RA_SPECIFY_COLS,
-            choices=[
-                # Translators: the label of a radio button
-                _("Read the entire book"),
-                # Translators: the label of a radio button
-                _("Read the current section"),
-                # Translators: the label of a radio button
-                _("Read the current page"),
-            ],
-        )
-        self.reading_pos = wx.RadioBox(
-            self,
-            -1,
-            # Translators: the title of a group of radio buttons in the reading page
-            # in the application settings related to where to start reading from.
-            _("Start reading from:"),
-            majorDimension=1,
-            style=wx.RA_SPECIFY_COLS,
-            # Translators: the label of a radio button
-            choices=[_("Cursor position"), _("Beginning of page")],
-        )
-        # Translators: the label of a group of controls in the reading page
-        # of the settings related to behavior during reading  aloud
-        miscBox = self.make_static_box(_("During Reading Aloud"))
-        wx.CheckBox(
-            # Translators: the label of a checkbox
-            miscBox, -1, _("Speak page number"), name="reading.speak_page_number"
-        )
-        wx.CheckBox(
-            miscBox,
-            -1,
-            # Translators: the label of a checkbox
-            _("Highlight spoken text"),
-            name="reading.highlight_spoken_text",
-        )
-        wx.CheckBox(
-            miscBox,
-            -1,
-            # Translators: the label of a checkbox
-            _("Select spoken text"),
-            name="reading.select_spoken_text",
-        )
-        wx.CheckBox(
-            miscBox,
-            -1,
-            # Translators: the label of a checkbox
-            _("Play end of section sound"),
-            name="reading.play_end_of_section_sound",
-        )
-
-    def reconcile(self, strategy=ReconciliationStrategies.load):
-        if strategy is ReconciliationStrategies.load:
-            self.readingMode.SetSelection(self.config["reading_mode"])
-            self.reading_pos.SetSelection(self.config["start_reading_from_"])
-        elif strategy is ReconciliationStrategies.save:
-            self.config["reading_mode"] = self.readingMode.GetSelection()
-            self.config["start_reading_from_"] = self.reading_pos.GetSelection()
-        super().reconcile(strategy=strategy)
-
-
 class PreferencesDialog(SimpleDialog):
     """Preferences dialog."""
 
-    imagefiles = ("general", "speech", "reading")
+    def addPanels(self):
+        page_info= [
+            # Translators: the label of a page in the settings dialog
+            (0, "general", GeneralPanel, _("General")),
+        ]
+        page_info.extend(wx.GetApp().service_handler.get_settings_panels())
+        page_info.sort()
+        image_list = wx.ImageList(24, 24)
+        self.tabs.AssignImageList(image_list)
+        for idx, (__, image, panel_cls, label) in enumerate(page_info):
+            bmp = getattr(images, image).GetBitmap()
+            image_list.Add(bmp)
+            # Create settings page
+            page = panel_cls(self.tabs)
+            # Add tabs
+            self.tabs.AddPage(page, label, select=(idx==0), imageId=idx)
 
     def addControls(self, parent):
         self.tabs = wx.Listbook(parent, -1)
-
-        # Image list
-        image_list = wx.ImageList(24, 24)
-        for imgname in self.imagefiles:
-            bmp = getattr(images, imgname).GetBitmap()
-            image_list.Add(bmp)
-        self.tabs.AssignImageList(image_list)
-
-        # Create settings pages
-        generalPage = GeneralPanel(self.tabs)
-        speechPage = SpeechPanel(self.tabs)
-        readingPage = ReadingPanel(self.tabs)
-
-        # Add tabs
-        # Translators: the label of a page in the settings dialog
-        self.tabs.AddPage(generalPage, _("General"), select=True, imageId=0)
-        # Translators: the label of a page in the settings dialog
-        self.tabs.AddPage(speechPage, _("Speech"), imageId=1)
-        # Translators: the label of a page in the settings dialog
-        self.tabs.AddPage(readingPage, _("Reading"), imageId=2)
-
+        self.addPanels()
         # Finalize
         self.SetButtonSizer(self.createButtonsSizer())
         # Event handlers
