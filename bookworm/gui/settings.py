@@ -20,8 +20,6 @@ from .components import SimpleDialog, EnhancedSpinCtrl
 
 
 log = logger.getChild(__name__)
-# Sentinel
-DEFAULT_STEP_SIZE = 5
 
 
 class ReconciliationStrategies(IntEnum):

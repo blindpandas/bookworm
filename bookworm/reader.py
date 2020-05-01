@@ -6,7 +6,7 @@ from bookworm import app
 from bookworm import config
 from bookworm import database
 from bookworm import speech
-from bookworm import sounds
+from bookworm.resources import sounds
 from bookworm.i18n import is_rtl
 from bookworm.document_formats import (
     FitzDocument,

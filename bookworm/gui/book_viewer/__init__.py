@@ -8,14 +8,13 @@ from bookworm import speech
 from bookworm.resources import images
 from bookworm.paths import app_path
 from bookworm.reader import EBookReader
-from bookworm.signals import reader_page_changed
+from bookworm.signals import reader_book_unloaded, reader_page_changed
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from .decorators import only_when_reader_ready
 from .menubar import MenubarProvider, BookRelatedMenuIds
 from .state import StateProvider
 from .navigation import NavigationProvider
-from .dialogs.annotation_dialogs import play_sound_if_note, highlight_bookmarked_positions
 
 
 log = logger.getChild(__name__)
@@ -119,12 +118,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             reader=self.reader,
             zoom_callback=self.onTextCtrlZoom,
         )
-        if config.conf["general"]["play_page_note_sound"]:
-            reader_page_changed.connect(play_sound_if_note, sender=self.reader)
-        if config.conf["general"]["highlight_bookmarked_positions"]:
-            reader_page_changed.connect(
-                highlight_bookmarked_positions, sender=self.reader
-            )
 
     def finalize_gui_creation(self):
         self.add_tools()
@@ -134,6 +127,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.SetMenuBar(self.menuBar)
         # Set accelerators for the menu items
         self._set_menu_accelerators()
+        # XXX sent explicitly to disable items upon startup
+        reader_book_unloaded.send(self.reader)
 
     def add_tools(self):
         tsize = (16, 16)
@@ -141,26 +136,28 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         tool_info = [
             # Translators: the label of a button in the application toolbar
             (0, "open", _("Open"), wx.ID_OPEN),
+            (1, "", "", None),
             # Translators: the label of a button in the application toolbar
             (10, "search", _("Search"), wx.ID_FIND),
             # Translators: the label of a button in the application toolbar
             (20, "goto", _("Go"), BookRelatedMenuIds.goToPage),
             # Translators: the label of a button in the application toolbar
             (30, "view_image", _("View"), BookRelatedMenuIds.viewRenderedAsImage),
-            # Translators: the label of a button in the application toolbar
-            (40, "bookmark", _("Bookmark"), BookRelatedMenuIds.addBookmark),
-            # Translators: the label of a button in the application toolbar
-            (50, "note", _("Note"), BookRelatedMenuIds.addNote),
+            (31, "", "", None),
             # Translators: the label of a button in the application toolbar
             (60, "zoom_out", _("Big"), wx.ID_PREVIEW_ZOOM_OUT),
             # Translators: the label of a button in the application toolbar
             (70, "zoom_in", _("Small"), wx.ID_PREVIEW_ZOOM_IN),
+            (71, "", "", None),
             # Translators: the label of a button in the application toolbar
             (80, "settings", _("Settings"), wx.ID_PREFERENCES),
         ]
         tool_info.extend(wx.GetApp().service_handler.get_toolbar_items())
         tool_info.sort()
         for (pos, imagename, label, ident) in tool_info:
+            if ident is None:
+                self.toolbar.AddSeparator()
+                continue
             image = getattr(images, imagename).GetBitmap()
             # Add toolbar item
             self.toolbar.AddTool(

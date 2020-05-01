@@ -12,7 +12,7 @@ from bookworm.utils import gui_thread_safe
 from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
 from bookworm.logger import logger
 from bookworm.gui.components import Dialog, SimpleDialog, DialogListCtrl, EnhancedSpinCtrl
-from ..navigation import NavigationProvider
+from .navigation import NavigationProvider
 
 
 log = logger.getChild(__name__)

@@ -3,11 +3,17 @@
 from bookworm import config
 from bookworm.signals import app_shuttingdown
 from bookworm.logger import logger
-from .cont_reading import ContReadingService
-from .text_to_speech import TextToSpeechService
+from bookworm.annotation import AnnotationService
+from bookworm.continuous_reading import ContReadingService
+from bookworm.text_to_speech import TextToSpeechService
 
 log = logger.getChild(__name__)
-BUILTIN_SERVICES = {ContReadingService,TextToSpeechService}
+
+BUILTIN_SERVICES = (
+    ContReadingService,
+    AnnotationService,
+    TextToSpeechService,
+)
 
 class ServiceHandler:
     """A singleton to manage services."""
@@ -23,8 +29,13 @@ class ServiceHandler:
             log.info(f"Registering service: {service_cls.name}.")
             self.register_service(service_cls)
 
-    def get_services_with_gui(self):
+    def _get_services_with_gui(self):
         return filter(lambda s: s.has_gui, self.registered_services)
+
+    def get_service(self, service_name):
+        for service in self.registered_services:
+            if service.name == service_name:
+                return service
 
     def register_service(self, service_cls):
         if service_cls.check():
@@ -41,29 +52,41 @@ class ServiceHandler:
 
     def get_settings_panels(self):
         rv = set()
-        for service in self.get_services_with_gui():
+        for service in self._get_services_with_gui():
             rv.update(service.get_settings_panels())
         return rv
 
     def process_menubar(self, menubar):
-        for service in self.get_services_with_gui():
+        for service in self._get_services_with_gui():
             service.process_menubar(menubar)
 
     def get_contextmenu_items(self):
         rv = set()
-        for service in self.get_services_with_gui():
+        for service in self._get_services_with_gui():
             rv.update(service.get_contextmenu())
         return rv
 
     def get_toolbar_items(self):
         rv = set()
-        for service in self.get_services_with_gui():
+        for service in self._get_services_with_gui():
             rv.update(service.get_toolbar_items())
+        return rv
+
+    def get_contextmenu_items(self):
+        rv = set()
+        for service in self._get_services_with_gui():
+            rv.update(service.get_contextmenu_items())
+        return rv
+
+    def get_stateful_menu_ids(self):
+        rv = set()
+        for service in self._get_services_with_gui():
+            rv.update(service.stateful_menu_ids)
         return rv
 
     def get_keyboard_shourtcuts(self):
         rv = {}
-        for service in self.get_services_with_gui():
+        for service in self._get_services_with_gui():
             rv.update(service.get_keyboard_shourtcuts())
         return rv
 

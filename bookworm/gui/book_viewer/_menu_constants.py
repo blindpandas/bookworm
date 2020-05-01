@@ -18,13 +18,6 @@ class BookRelatedMenuIds(enum.IntEnum):
     findNext = 222
     findPrev = 223
     viewRenderedAsImage = 224
-    # Annotations
-    addBookmark = 241
-    addNote = 242
-    viewBookmarks = 243
-    viewNotes = 244
-    ExportNotes = 245
-
 
 class ViewerMenuIds(enum.IntEnum):
     """Declares menu ids for all other menu items."""
@@ -50,9 +43,5 @@ KEYBOARD_SHORTCUTS = {
     BookRelatedMenuIds.findPrev: "Shift-F3",
     BookRelatedMenuIds.viewRenderedAsImage: "Ctrl-R",
     wx.ID_PREFERENCES: "Ctrl-Shift-P",
-    BookRelatedMenuIds.addBookmark: "Ctrl-B",
-    BookRelatedMenuIds.addNote: "Ctrl-N",
-    BookRelatedMenuIds.viewBookmarks: "Ctrl-Shift-B",
-    BookRelatedMenuIds.viewNotes: "Ctrl-Shift-N",
     ViewerMenuIds.documentation: "F1",
 }

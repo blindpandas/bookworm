@@ -11,7 +11,6 @@ from bookworm import config
 from bookworm import paths
 from bookworm import app
 from bookworm.otau import check_for_updates
-from bookworm.annotator import Bookmarker
 from bookworm.concurrency import call_threaded
 from bookworm import speech
 from bookworm.reader import EBookReader
@@ -19,19 +18,13 @@ from bookworm.utils import restart_application, cached_property, gui_thread_safe
 from bookworm.logger import logger
 from bookworm.gui.settings import PreferencesDialog
 from bookworm.gui.book_viewer.decorators import only_when_reader_ready
-from bookworm.gui.book_viewer.dialogs.core_dialogs import (
+from bookworm.gui.book_viewer.core_dialogs import (
     GoToPageDialog,
     SearchBookDialog,
     SearchResultsDialog,
     ViewPageAsImageDialog,
 )
-from bookworm.gui.book_viewer.dialogs.annotation_dialogs import (
-    NoteEditorDialog,
-    ViewAnnotationsDialog,
-    ExportNotesDialog,
-    highlight_containing_line,
-)
-from ._constants import *
+from ._menu_constants import *
 
 
 log = logger.getChild(__name__)
@@ -47,7 +40,6 @@ class MenubarProvider:
         # The menu
         self.fileMenu = fileMenu = wx.Menu()
         self.toolsMenu = toolsMenu = wx.Menu()
-        self.annotationsMenu = annotationsMenu = wx.Menu()
         self.helpMenu = helpMenu = wx.Menu()
         # A submenu for recent files
         self.recentFilesMenu = wx.Menu()
@@ -127,42 +119,6 @@ class MenubarProvider:
             _("&Preferences...\tCtrl-Shift-P"),
             # Translators: the help text of an ietm in the application menubar
             _("Configure application"),
-        )
-        # Annotations menu
-        annotationsMenu.Append(
-            BookRelatedMenuIds.addBookmark,
-            # Translators: the label of an ietm in the application menubar
-            _("Add &Bookmark...\tCtrl-B"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Bookmark the current location"),
-        )
-        annotationsMenu.Append(
-            BookRelatedMenuIds.addNote,
-            # Translators: the label of an ietm in the application menubar
-            _("Take &Note...\tCtrl-N"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Add a note at the current location"),
-        )
-        annotationsMenu.Append(
-            BookRelatedMenuIds.viewBookmarks,
-            # Translators: the label of an ietm in the application menubar
-            _("&View Bookmarks...\tCtrl-Shift-B"),
-            # Translators: the help text of an ietm in the application menubar
-            _("View added bookmarks"),
-        )
-        annotationsMenu.Append(
-            BookRelatedMenuIds.viewNotes,
-            # Translators: the label of an ietm in the application menubar
-            _("&Manage Notes...\tCtrl-Shift-N"),
-            # Translators: the help text of an ietm in the application menubar
-            _("View, edit, and remove notes."),
-        )
-        annotationsMenu.Append(
-            BookRelatedMenuIds.ExportNotes,
-            # Translators: the label of an ietm in the application menubar
-            _("Notes &Exporter") + "...",
-            # Translators: the help text of an ietm in the application menubar
-            _("Export notes to a file."),
         )
         # Help menu
         helpMenu.Append(
@@ -244,15 +200,6 @@ class MenubarProvider:
         )
         self.Bind(wx.EVT_MENU, self.onPreferences, id=wx.ID_PREFERENCES)
 
-        # Annotations menu event handlers
-        self.Bind(wx.EVT_MENU, self.onAddBookmark, id=BookRelatedMenuIds.addBookmark)
-        self.Bind(wx.EVT_MENU, self.onAddNote, id=BookRelatedMenuIds.addNote)
-        self.Bind(
-            wx.EVT_MENU, self.onViewBookmarks, id=BookRelatedMenuIds.viewBookmarks
-        )
-        self.Bind(wx.EVT_MENU, self.onViewNotes, id=BookRelatedMenuIds.viewNotes)
-        self.Bind(wx.EVT_MENU, self.onNotesExporter, id=BookRelatedMenuIds.ExportNotes)
-
         # Help menu event handlers
         self.Bind(wx.EVT_MENU, self.onOpenDocumentation, id=ViewerMenuIds.documentation)
         self.Bind(
@@ -284,9 +231,6 @@ class MenubarProvider:
         self.menuBar.Append(fileMenu, _("&File"))
         # Translators: the label of an ietm in the application menubar
         self.menuBar.Append(toolsMenu, _("&Tools"))
-        # Translators: the label of an ietm in the application menubar
-        # Translators: the label of an ietm in the application menubar
-        self.menuBar.Append(annotationsMenu, _("&Annotations"))
         # Translators: the label of an ietm in the application menubar
         self.menuBar.Append(helpMenu, _("&Help"))
 
@@ -324,6 +268,39 @@ class MenubarProvider:
                 self.open_file(filename)
                 config.conf["history"]["last_folder"] = os.path.split(filename)[0]
                 config.save()
+
+    @call_threaded
+    def onExportAsPlainText(self, event):
+        book_title = slugify(self.reader.current_book.title)
+        filename, _nope = wx.FileSelectorEx(
+            # Translators: the title of a dialog to save the exported book
+            _("Save As"),
+            default_path=wx.GetUserHome(),
+            default_filename=f"{book_title}.txt",
+            # Translators: a name of a file format
+            wildcard=_("Plain Text") + " (*.txt)|.txt",
+            flags=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
+            parent=self,
+        )
+        if not filename.strip():
+            return
+        total = len(self.reader.document)
+        dlg = wx.ProgressDialog(
+            # Translators: the title of a dialog showing
+            # the progress of book export process
+            _("Exporting Book"),
+            # Translators: the message of a dialog showing the progress of book export
+            _("Converting your book to plain text."),
+            parent=self,
+            maximum=total - 1,
+            style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
+        )
+        export_func = self.reader.document.export_to_text
+        for progress in export_func(self.reader.document.filename, filename):
+            # Translators: a message shown when the book is being exported
+            dlg.Update(progress, _("Converting book..."))
+        dlg.Close()
+        dlg.Destroy()
 
     def onRecentFileItem(self, event):
         clicked_id = event.GetId()
@@ -363,67 +340,6 @@ class MenubarProvider:
             dlg.Maximize()
             dlg.ShowModal()
 
-    def onVoiceProfiles(self, event):
-        # Translators: the title of the voice profiles dialog
-        with VoiceProfileDialog(self, title=_("Voice Profiles")) as dlg:
-            dlg.ShowModal()
-
-    @only_when_reader_ready
-    def onAddBookmark(self, event):
-        dlg = wx.TextEntryDialog(
-            self,
-            # Translators: the label of an edit field to enter the title for a new bookmark
-            _("Bookmark title:"),
-            # Translators: the title of a dialog to create a new bookmark
-            _("Bookmark This Location"),
-        )
-        insertionPoint = self.contentTextCtrl.GetInsertionPoint()
-        if dlg.ShowModal() == wx.ID_OK:
-            value = dlg.GetValue().strip()
-            if not value:
-                return wx.Bell()
-            Bookmarker(self.reader).create(title=value, position=insertionPoint)
-            if config.conf["general"]["highlight_bookmarked_positions"]:
-                highlight_containing_line(insertionPoint, self)
-        dlg.Destroy()
-
-    @only_when_reader_ready
-    def onAddNote(self, event):
-        insertionPoint = self.contentTextCtrl.GetInsertionPoint()
-        with NoteEditorDialog(self, self.reader, pos=insertionPoint) as dlg:
-            dlg.ShowModal()
-
-    def onViewBookmarks(self, event):
-        dlg = ViewAnnotationsDialog(
-            self,
-            type_="bookmark",
-            # Translators: the title of a dialog to view bookmarks
-            title=_("Bookmarks | {book}").format(book=self.reader.current_book.title),
-        )
-        with dlg:
-            dlg.ShowModal()
-
-    def onViewNotes(self, event):
-        dlg = ViewAnnotationsDialog(
-            self,
-            type_="note",
-            # Translators: the title of a dialog to view notes
-            title=_("Notes | {book}").format(book=self.reader.current_book.title),
-        )
-        with dlg:
-            dlg.ShowModal()
-
-    def onNotesExporter(self, event):
-        dlg = ExportNotesDialog(
-            self.reader,
-            self,
-            # Translators: the title of a dialog for exporting notes
-            title=_("Export Notes | {book}").format(
-                book=self.reader.current_book.title
-            ),
-        )
-        dlg.Show()
-
     def onPreferences(self, event):
         dlg = PreferencesDialog(
             self,
@@ -432,40 +348,6 @@ class MenubarProvider:
         )
         with dlg:
             dlg.ShowModal()
-
-    @only_when_reader_ready
-    @call_threaded
-    def onExportAsPlainText(self, event):
-        book_title = slugify(self.reader.current_book.title)
-        filename, _nope = wx.FileSelectorEx(
-            # Translators: the title of a dialog to save the exported book
-            _("Save As"),
-            default_path=wx.GetUserHome(),
-            default_filename=f"{book_title}.txt",
-            # Translators: a name of a file format
-            wildcard=_("Plain Text") + " (*.txt)|.txt",
-            flags=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
-            parent=self,
-        )
-        if not filename.strip():
-            return
-        total = len(self.reader.document)
-        dlg = wx.ProgressDialog(
-            # Translators: the title of a dialog showing
-            # the progress of book export process
-            _("Exporting Book"),
-            # Translators: the message of a dialog showing the progress of book export
-            _("Converting your book to plain text."),
-            parent=self,
-            maximum=total - 1,
-            style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
-        )
-        export_func = self.reader.document.export_to_text
-        for progress in export_func(self.reader.document.filename, filename):
-            # Translators: a message shown when the book is being exported
-            dlg.Update(progress, _("Converting book..."))
-        dlg.Close()
-        dlg.Destroy()
 
     @only_when_reader_ready
     def onFind(self, event):
@@ -594,44 +476,22 @@ class MenubarProvider:
     def onRestartWithDebugMode(self, event):
         restart_application(debug=True)
 
-    @cached_property
+    @property
     def content_text_ctrl_context_menu(self):
         menu = wx.Menu()
-        menu.Append(
-            BookRelatedMenuIds.addBookmark,
-            # Translators: the label of an ietm in the application menubar
-            _("Add &Bookmark...\tCtrl-B"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Bookmark the current location"),
-        )
-        menu.Append(
-            BookRelatedMenuIds.addNote,
-            # Translators: the label of an ietm in the application menubar
-            _("Take &Note...\tCtrl-N"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Add a note at the current location"),
-        )
-        menu.Append(
-            BookRelatedMenuIds.goToPage,
-            # Translators: the label of an ietm in the application menubar
-            _("&Go To Page...\tCtrl-G"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Go to page"),
-        )
-        menu.Append(
-            wx.ID_FIND,
-            # Translators: the label of an ietm in the application menubar
-            _("&Find in Book...\tCtrl-F"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Search this book."),
-        )
-        menu.Append(
-            BookRelatedMenuIds.viewRenderedAsImage,
-            # Translators: the label of an ietm in the application menubar
-            _("&Render Page...\tCtrl-R"),
-            # Translators: the help text of an ietm in the application menubar
-            _("View a fully rendered version of this page."),
-        )
+        entries = [
+            (10, _("&Go To Page...\tCtrl-G"), _("Jump to a page"), BookRelatedMenuIds.goToPage),
+            (20, _("&Find in Book...\tCtrl-F"), _("Search this book."), wx.ID_FIND),
+            (21, "", "", None),
+            (30, _("&Render Page...\tCtrl-R"), _("View a fully rendered version of this page."), BookRelatedMenuIds.viewRenderedAsImage),
+        ]
+        entries.extend(wx.GetApp().service_handler.get_contextmenu_items())
+        entries.sort()
+        for (__, label, desc, ident) in entries:
+            if ident is None:
+                menu.AppendSeparator()
+                continue
+            menu.Append(ident, label, desc)
         return menu
 
     def onContentTextCtrlContextMenu(self, event):

@@ -1,9 +1,9 @@
 # coding: utf-8
 
-from .logger import logger
-from .utils import cached_property
-from .database import db
-from .database.models import Book, Bookmark, Note
+from bookworm.logger import logger
+from bookworm.utils import cached_property
+from bookworm.database import db
+from bookworm.database.models import Book, Bookmark, Note
 
 
 log = logger.getChild(__name__)

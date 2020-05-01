@@ -7,8 +7,8 @@ from weakref import ref
 from pathlib import Path
 from bookworm import app
 from bookworm.paths import app_path
-from bookworm.speech.enumerations import EngineEvent, SynthState, RateSpec
-from bookworm.speech.engine import BaseSpeechEngine, VoiceInfo
+from bookworm.speechdriver.enumerations import EngineEvent, SynthState, RateSpec
+from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.logger import logger
 
 try:

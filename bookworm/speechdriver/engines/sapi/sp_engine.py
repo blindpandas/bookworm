@@ -4,9 +4,9 @@ import System
 from System.Globalization import CultureInfo
 from System.Speech import Synthesis
 from contextlib import suppress
-from bookworm.speech.enumerations import EngineEvent, SynthState
-from bookworm.speech.engine import BaseSpeechEngine, VoiceInfo
-from bookworm.speech.utterance import SpeechStyle
+from bookworm.speechdriver.enumerations import EngineEvent, SynthState
+from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
+from bookworm.speechdriver.utterance import SpeechStyle
 from bookworm.logger import logger
 from .sp_utterance import SapiSpeechUtterance
 
