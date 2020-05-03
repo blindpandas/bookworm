@@ -8,9 +8,11 @@ packages_to_install:
     binary_x64:
         - "ujson-1.35-cp37-cp37m-win_amd64.whl"
         - "pycld2-0.31-cp37-cp37m-win_amd64.whl"
+        - "lru_dict-1.1.6-cp37-cp37m-win_amd64.whl"
     binary_x86:
         - "ujson-1.35-cp37-cp37m-win32.whl"
         - "pycld2-0.31-cp37-cp37m-win32.whl"
+        - "lru_dict-1.1.6-cp37-cp37m-win32.whl"
 folders_to_clean:
     everytime:
         - build

@@ -332,7 +332,7 @@ class ExportNotesDialog(Dialog):
         return btnsizer
 
     def onSubmit(self, event):
-        suffix = self.reader.get_view_title()
+        suffix = self.reader.current_book.title
         renderer = NotesExporter.renderers[self.formatChoice.GetSelection()]
         if self.outputRangeRb.GetSelection() == 0:
             notes = self.annotator.get_list(asc=True)

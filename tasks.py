@@ -436,17 +436,17 @@ def update_version_info(c):
 
 @task(name="libs")
 @make_env
-def build_and_include_libs(c):
+def copy_uwp_services_lib(c):
     build_config = "Release" if "APPVEYOR_BUILD_FOLDER" in os.environ else "Debug"
-    onecore_path = PROJECT_ROOT / "includes" / "sharp-onecore-synth"
-    src = onecore_path / "bin" / build_config / "OcSpeechEngine.dll"
+    uwp_services_path = PROJECT_ROOT / "includes" / "BookwormUWPServices"
+    src = uwp_services_path / "bin" / build_config / "BookwormUWPServices.dll"
     dst = c["build_folder"]
     c.run(f"copy {src} {dst}")
 
 
 @task(
     pre=(clean, make_icons, install_packages, freeze),
-    post=(build_docs, copy_assets, build_and_include_libs, make_installer, bundle_update),
+    post=(build_docs, copy_assets, copy_uwp_services_lib, make_installer, bundle_update),
 )
 @make_env
 def build(c):

@@ -1,19 +1,27 @@
 # coding: utf-8
 
+from bookworm import app
 from bookworm import config
 from bookworm.signals import app_shuttingdown
 from bookworm.logger import logger
-from bookworm.annotation import AnnotationService
-from bookworm.continuous_reading import ContReadingService
-from bookworm.text_to_speech import TextToSpeechService
+
 
 log = logger.getChild(__name__)
 
+
+# Builtin services
+from bookworm.annotation import AnnotationService
+from bookworm.continuous_reading import ContReadingService
+from bookworm.ocr import OCRService
+from bookworm.text_to_speech import TextToSpeechService
+
 BUILTIN_SERVICES = (
-    ContReadingService,
     AnnotationService,
+    ContReadingService,
+    OCRService,
     TextToSpeechService,
 )
+
 
 class ServiceHandler:
     """A singleton to manage services."""
@@ -26,7 +34,6 @@ class ServiceHandler:
     def register_builtin_services(self):
         log.info("Registering services.")
         for service_cls in BUILTIN_SERVICES:
-            log.info(f"Registering service: {service_cls.name}.")
             self.register_service(service_cls)
 
     def _get_services_with_gui(self):
@@ -38,13 +45,19 @@ class ServiceHandler:
                 return service
 
     def register_service(self, service_cls):
-        if service_cls.check():
-            service = service_cls(self.view)
-            config.conf.spec.update(service.config_spec)
-            config.conf.validate_and_write()
-            self.registered_services.add(service)
-        else:
-            log.error(f"Service {service_cls.name} `check` returned `False`")
+        log.info(f"Registering service: {service_cls.name}.")
+        try:
+            if service_cls.check():
+                service = service_cls(self.view)
+                config.conf.spec.update(service.config_spec)
+                config.conf.validate_and_write()
+                self.registered_services.add(service)
+            else:
+                log.error(f"Service {service_cls.name} `check` returned `False`")
+        except Exception as e:
+            log.exception(f"Exception registering service {service_cls.name}: {e}")
+            if app.debug:
+                raise e
 
     def on_shutdown(self, sender):
         for service in self.registered_services:

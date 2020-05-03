@@ -8,8 +8,29 @@ from System.Windows.Forms import SystemInformation
 
 import sys
 from pathlib import Path
+from platform_utils import paths as paths_
 from bookworm import app
 from bookworm.win_registry import RegKey, Registry
+
+try:
+    _app_path = Path(paths_.app_path())
+    _uwp_services_dll = _app_path / "BookwormUWPServices.dll"
+    if not app.is_frozen:
+        _uwp_services_dll = (
+            Path.cwd()
+            / "includes"
+            / "BookwormUWPServices"
+            / "bin"
+            / "Debug"
+            / "BookwormUWPServices.dll"
+        )
+    clr.AddReference(str(_uwp_services_dll))
+    UWP_SERVICES_AVAILABEL = True
+    del _uwp_services_dll
+except Exception as e:
+    UWP_SERVICES_AVAILABEL = False
+    if '--debug' in sys.argv:
+        print(f"Failed to load BookwormUWPServices.dll. {e}")
 
 
 def is_running_portable():

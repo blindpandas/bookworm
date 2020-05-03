@@ -18,7 +18,7 @@ class BookRelatedMenuIds(enum.IntEnum):
     findNext = 222
     findPrev = 223
     viewRenderedAsImage = 224
-    scanTextOCR = 225
+
 
 class ViewerMenuIds(enum.IntEnum):
     """Declares menu ids for all other menu items."""
@@ -43,7 +43,6 @@ KEYBOARD_SHORTCUTS = {
     BookRelatedMenuIds.findNext: "F3",
     BookRelatedMenuIds.findPrev: "Shift-F3",
     BookRelatedMenuIds.viewRenderedAsImage: "Ctrl-R",
-    BookRelatedMenuIds.scanTextOCR: "Ctrl-shift-R",
     wx.ID_PREFERENCES: "Ctrl-Shift-P",
     ViewerMenuIds.documentation: "F1",
 }

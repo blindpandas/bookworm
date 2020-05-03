@@ -6,27 +6,16 @@ import System
 from weakref import ref
 from pathlib import Path
 from bookworm import app
-from bookworm.paths import app_path
+from bookworm.runtime import UWP_SERVICES_AVAILABEL
 from bookworm.speechdriver.enumerations import EngineEvent, SynthState, RateSpec
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.logger import logger
 
 try:
-    _oc_dll = app_path("OcSpeechEngine.dll")
-    if not app.is_frozen:
-        _oc_dll = (
-            Path.cwd()
-            / "includes"
-            / "sharp-onecore-synth"
-            / "bin"
-            / "Debug"
-            / "OcSpeechEngine.dll"
-        )
-    clr.AddReference(str(_oc_dll))
-    from OcSpeechEngine import OcSpeechEngine as _OnecoreEngine
-    from .oc_utterance import OcSpeechUtterance
-
-    _oc_available = True
+    if UWP_SERVICES_AVAILABEL:
+        from OcSpeechEngine import OcSpeechEngine as _OnecoreEngine
+        from .oc_utterance import OcSpeechUtterance
+        _oc_available = True
 except:
     _oc_available = False
 

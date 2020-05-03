@@ -1,10 +1,9 @@
 # coding: utf-8
 
-
 import time
 import wx
 from bookworm import config
-from bookworm.services import BookwormService
+from bookworm.base_service import BookwormService
 from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,

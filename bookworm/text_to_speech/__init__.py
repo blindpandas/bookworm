@@ -25,7 +25,7 @@ from bookworm.signals import (
     reader_page_changed,
     speech_engine_state_changed,
 )
-from bookworm.services import BookwormService
+from bookworm.base_service import BookwormService
 from bookworm.logger import logger
 from .tts_config import tts_config_spec, TTSConfigManager
 from .tts_gui import (
@@ -207,7 +207,7 @@ class TextToSpeechService(BookwormService):
         text = self.textCtrl.GetRange(current_pos, end_of_page)
         return self.make_text_info(text, start_pos=current_pos)
 
-    def speak_current_page(self, utterance=None, from_caret=False):
+    def speak_current_page(self, utterance=None, from_caret=True):
         start_pos = self.textCtrl.InsertionPoint if from_caret else 0
         textinfo = self.content_tokenized(start_pos=start_pos)
         if self._current_textinfo is None:
@@ -375,7 +375,7 @@ class TextToSpeechService(BookwormService):
         return self.engine is not None
 
     def on_state_changed(self, sender, state):
-        speech_engine_state_changed.send(self, state=state)
+        speech_engine_state_changed.send(self.view, service=self, state=state)
         self.on_engine_state_changed(state)
 
     def on_bookmark_reached(self, sender, bookmark):

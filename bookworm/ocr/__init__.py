@@ -1,24 +1,38 @@
 # coding: utf-8
 
-from bookworm.services import BookwormService
-from .ocr_gui import OCRGUI
+import wx
+from bookworm import config
+from bookworm.signals import reader_page_changed
+from bookworm.resources import sounds
+from bookworm.base_service import BookwormService
+from bookworm.logger import logger
+from .ocr_provider import is_ocr_available
+from .ocr_gui import (
+    OCRMenuIds,
+    OCRMenu,
+    OCR_KEYBOARD_SHORTCUTS
+)
+
+
+log = logger.getChild(__name__)
+
 
 class OCRService(BookwormService):
     name = "ocr"
-    gui_manager = OCRGUI
-
+    stateful_menu_ids = OCRMenuIds
+    has_gui = True
 
     @classmethod
     def check(self):
-        return True
+        return is_ocr_available()
+    def process_menubar(self, menubar):
+        self.menu = OCRMenu(self, menubar)
 
-    def __post_init__(self):
-        """Any initialization rutines go here."""
+    def get_toolbar_items(self):
+        return [
+            (42, "ocr", _("OCR"), None),
+        ]
 
-    def setup_config(self, spec):
-        """Set any configuration for this service."""
-
-    def setup_event_handlers(self):
-        """Set any event handlers for this service."""
-
+    def get_keyboard_shourtcuts(self):
+        return OCR_KEYBOARD_SHORTCUTS
 

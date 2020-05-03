@@ -6,24 +6,18 @@ import sys
 import os
 import wx
 import webbrowser
-from threading import Event
 from pathlib import Path
 from slugify import slugify
 from bookworm import config
 from bookworm import paths
 from bookworm import app
-<<<<<<< HEAD:bookworm/gui/book_viewer/menubar/__init__.py
-from bookworm import sounds
 from bookworm.i18n import is_rtl
 from bookworm.signals import config_updated
 from bookworm.otau import check_for_updates
-from bookworm.annotator import Bookmarker
 from bookworm.concurrency import call_threaded, process_worker
 from bookworm import ocr
-=======
 from bookworm.otau import check_for_updates
 from bookworm.concurrency import call_threaded
->>>>>>> services:bookworm/gui/book_viewer/menubar.py
 from bookworm import speech
 from bookworm.reader import EBookReader
 from bookworm.utils import restart_application, cached_property, gui_thread_safe
@@ -35,12 +29,6 @@ from bookworm.gui.book_viewer.core_dialogs import (
     SearchBookDialog,
     SearchResultsDialog,
     ViewPageAsImageDialog,
-<<<<<<< HEAD:bookworm/gui/book_viewer/menubar/__init__.py
-    VoiceProfileDialog,
-    OCROptionsDialog,
-    SnakDialog,
-=======
->>>>>>> services:bookworm/gui/book_viewer/menubar.py
 )
 from ._menu_constants import *
 
@@ -123,13 +111,6 @@ class MenubarProvider:
             _("&Find &Previous\tShift-F3"),
             # Translators: the help text of an ietm in the application menubar
             _("Find previous occurrence."),
-        )
-        self.scanTextOCR = toolsMenu.Append(
-            BookRelatedMenuIds.scanTextOCR,
-            # Translators: the label of an item in the application menubar
-            _("&Scan Text (OCR)...\tCtrl-Shift-R"),
-            # Translators: the help text of an item in the application menubar
-            _("Run OCR on this page."),
         )
         self.renderItem = toolsMenu.Append(
             BookRelatedMenuIds.viewRenderedAsImage,
@@ -218,11 +199,6 @@ class MenubarProvider:
         self.Bind(wx.EVT_MENU, self.onFind, id=wx.ID_FIND)
         self.Bind(wx.EVT_MENU, self.onFindNext, id=BookRelatedMenuIds.findNext)
         self.Bind(wx.EVT_MENU, self.onFindPrev, id=BookRelatedMenuIds.findPrev)
-        self.Bind(
-            wx.EVT_MENU,
-            self.onScanTextOCR,
-            id=BookRelatedMenuIds.scanTextOCR,
-        )
         self.Bind(
             wx.EVT_MENU,
             self.onViewRenderedAsImage,
@@ -364,45 +340,6 @@ class MenubarProvider:
                 self.reader.go_to_page(retval)
 
     @only_when_reader_ready
-    def onScanTextOCR(self, event):
-        langs = ocr.get_recognition_languages()
-        dlg = OCROptionsDialog(parent=self, title=_("OCR Options"), choices=[l.description for l in langs])
-        res = dlg.ShowModal()
-        if res is None:
-            return speech.announce(_("Cancelled"))
-        langidx, zoom_factor, should_enhance = res
-        lang = langs[langidx].given_lang
-        image, width, height = self.reader.document.get_page_image(self.reader.current_page, zoom_factor, should_enhance)
-        args = (
-            image, lang,
-            width, height,
-            self.reader.current_page
-        )
-        process_worker.submit(ocr.recognize, *args).add_done_callback(self._process_ocr_result)
-        sounds.ocr_start.play()
-        self._ocr_cancelled = Event()
-        self.contentTextCtrl.Clear()
-        # Show a modal dialog
-        self._ocr_wait_dlg = SnakDialog(parent=self, message=_("Scanning page. Please wait...."), dismiss_callback=self._on_ocr_cancelled)
-        self._ocr_wait_dlg.Show()
-
-    def _process_ocr_result(self, task):
-        if self._ocr_cancelled.is_set():
-            return
-        page_number, content = task.result()
-        if page_number == self.reader.current_page:
-            self.set_content("\n".join(content))
-            sounds.ocr_end.play()
-            speech.announce(_("Scan finished."), urgent=True)
-            wx.CallAfter(self._ocr_wait_dlg.Hide)
-            wx.CallAfter(self.contentTextCtrl.SetFocusFromKbd)
-
-    def _on_ocr_cancelled(self):
-        self._ocr_cancelled.set()
-        speech.announce(_("OCR Cancelled"), True)
-        return True
-
-    @only_when_reader_ready
     def onViewRenderedAsImage(self, event):
         # Translators: the title of the render page dialog
         with ViewPageAsImageDialog(self, _("Rendered Page"), style=wx.CLOSE_BOX) as dlg:
@@ -531,7 +468,6 @@ class MenubarProvider:
         if self.reader.document.is_encrypted():
             self.decrypt_opened_document()
         self.renderItem.Enable(self.reader.document.supports_rendering)
-        self.scanTextOCR.Enable(self.reader.document.supports_rendering)
         self.tocTreeCtrl.Expand(self.tocTreeCtrl.GetRootItem())
         wx.CallAfter(self.tocTreeCtrl.SetFocus)
         recent_files = config.conf["history"]["recently_opened"]
@@ -549,44 +485,6 @@ class MenubarProvider:
     @property
     def content_text_ctrl_context_menu(self):
         menu = wx.Menu()
-<<<<<<< HEAD:bookworm/gui/book_viewer/menubar/__init__.py
-        menu.Append(
-            BookRelatedMenuIds.addBookmark,
-            # Translators: the label of an ietm in the application menubar
-            _("Add &Bookmark...\tCtrl-B"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Bookmark the current location"),
-        )
-        menu.Append(
-            BookRelatedMenuIds.addNote,
-            # Translators: the label of an ietm in the application menubar
-            _("Take &Note...\tCtrl-N"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Add a note at the current location"),
-        )
-        menu.Append(
-            BookRelatedMenuIds.goToPage,
-            # Translators: the label of an ietm in the application menubar
-            _("&Go To Page...\tCtrl-G"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Go to page"),
-        )
-        menu.Append(
-            wx.ID_FIND,
-            # Translators: the label of an ietm in the application menubar
-            _("&Find in Book...\tCtrl-F"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Search this book."),
-        )
-        # XXX enable only if supports rendering        
-        menu.Append(
-            BookRelatedMenuIds.viewRenderedAsImage,
-            # Translators: the label of an ietm in the application menubar
-            _("&Render Page...\tCtrl-R"),
-            # Translators: the help text of an ietm in the application menubar
-            _("View a fully rendered version of this page."),
-        )
-=======
         entries = [
             (10, _("&Go To Page...\tCtrl-G"), _("Jump to a page"), BookRelatedMenuIds.goToPage),
             (20, _("&Find in Book...\tCtrl-F"), _("Search this book."), wx.ID_FIND),
@@ -600,7 +498,6 @@ class MenubarProvider:
                 menu.AppendSeparator()
                 continue
             menu.Append(ident, label, desc)
->>>>>>> services:bookworm/gui/book_viewer/menubar.py
         return menu
 
     def onContentTextCtrlContextMenu(self, event):

@@ -160,3 +160,4 @@ def escape_html(text):
     """
     html_escape_table = {'"': "&quot;", "'": "&apos;"}
     return escape(text, html_escape_table)
+

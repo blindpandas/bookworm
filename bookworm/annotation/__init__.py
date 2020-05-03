@@ -4,7 +4,7 @@ import wx
 from bookworm import config
 from bookworm.signals import reader_page_changed
 from bookworm.resources import sounds
-from bookworm.services import BookwormService
+from bookworm.base_service import BookwormService
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from .annotation_gui import (
