@@ -30,6 +30,13 @@ class Note(AnnotationBase):
     content = deferred(db.text())
 
 
+class Quote(AnnotationBase):
+    """Represents a quote from the book."""
+    content = deferred(db.text())
+    start_pos = db.integer(nullable=False)
+    end_pos = db.integer(nullable=False)
+
+
 class Book(db.Model):
     identifier = db.string(512, unique=True, nullable=False)
     title = db.string(512, nullable=False)
@@ -38,4 +45,7 @@ class Book(db.Model):
     )
     notes = db.one_to_many(
         "Note", "book_id", relationship_kw={"backref": "book", "lazy": "dynamic"}
+    )
+    quotes = db.one_to_many(
+        "Quote", "book_id", relationship_kw={"backref": "book", "lazy": "dynamic"}
     )

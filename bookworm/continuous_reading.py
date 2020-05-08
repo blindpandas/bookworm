@@ -24,8 +24,8 @@ class ContReadingService(BookwormService):
         self.view.Bind(wx.EVT_TIMER, self.onTimerTick)
         reader_book_unloaded.connect(lambda s:self._page_turn_timer.Stop(), weak=False, sender=self.reader)
         config_updated.connect(self._on_config_changed_for_cont)
-        if config.conf["reading"]["use_continuous_reading"]:
-            reader_book_loaded.connect(lambda s:self._page_turn_timer.Start(), weak=False, sender=self.reader)
+        #if config.conf["reading"]["use_continuous_reading"]:
+        reader_book_loaded.connect(lambda s:self._page_turn_timer.Start(), weak=False, sender=self.reader)
 
     def shutdown(self):
         self._page_turn_timer.Stop()

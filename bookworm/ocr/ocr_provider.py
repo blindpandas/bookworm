@@ -37,8 +37,17 @@ def get_recognition_languages():
         langs.insert(0, langs.pop(current_lang))
     return langs
 
-def recognize(imagedata, lang, width, height, *, page_number=0, recognizer=None):
-    ocr = recognizer or OCRProvider(lang)
-    lines = ocr.Recognize(imagedata, width, height)
-    return page_number, lines
 
+class ImageRecognizer:
+    __slots__ = ["imagedata", "lang", "width", "height", "cookie"]
+
+    def __init__(self, lang, imagedata, width, height, cookie=0):
+        self.lang = lang
+        self.imagedata = imagedata
+        self.width = width
+        self.height = height
+        self.cookie = cookie
+
+    def recognize(self):
+        lines = OCRProvider.Recognize(self.lang, self.imagedata, self.width, self.height)
+        return self.cookie, os.linesep.join(lines)

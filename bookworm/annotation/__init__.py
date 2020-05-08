@@ -35,18 +35,21 @@ class AnnotationService(BookwormService):
         self.menu = AnnotationMenu(self, menubar)
 
     def get_contextmenu_items(self):
-        return [
-            (3, _("Add &Bookmark...\tCtrl-B"), _("Bookmark the current location"), AnnotationsMenuIds.addBookmark),
-            (4, _("Take &Note...\tCtrl-N"), _("Add a note at the current location"), AnnotationsMenuIds.addNote),
+        rv = [
+            (3, _("&Bookmark...\tCtrl-B"), _("Bookmark the current location"), AnnotationsMenuIds.addBookmark),
+            (4, _("Co&mment...\tCtrl-m"), _("Add a comment at the current location"), AnnotationsMenuIds.addNote),
             (5, "", "", None),
         ]
+        if self.view.contentTextCtrl.GetStringSelection():
+            rv.insert(0, (0, _("Highlight Selection\tCtrl-Shift-H"), _("Highlight and save selected text."), AnnotationsMenuIds.quoteSelection),)
+        return rv
 
     def get_toolbar_items(self):
         return [
             # Translators: the label of a button in the application toolbar
             (32, "bookmark", _("Bookmark"), AnnotationsMenuIds.addBookmark),
             # Translators: the label of a button in the application toolbar
-            (33, "note", _("Note"), AnnotationsMenuIds.addNote),
+            (33, "comment", _("Comment"), AnnotationsMenuIds.addNote),
             (34, "", "", None),
         ]
 
@@ -81,10 +84,11 @@ class AnnotationService(BookwormService):
             cls.highlight_containing_line(bookmark.position, sender.view)
 
     @classmethod
-    def highlight_containing_line(cls, pos, view):
+    def highlight_containing_line(cls, pos, view, fg="white", bg="black"):
+        fg, bg = [wx.Colour(fg), wx.Colour(bg)]
         lft, rgt = view.get_containing_line(pos)
         wx.CallAfter(
-            view.contentTextCtrl.SetStyle, lft, rgt, wx.TextAttr(wx.WHITE, wx.BLACK)
+            view.contentTextCtrl.SetStyle, lft, rgt, wx.TextAttr(fg, bg)
         )
 
 

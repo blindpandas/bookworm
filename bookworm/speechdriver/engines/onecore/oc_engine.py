@@ -31,6 +31,7 @@ class OcSpeechEngine(BaseSpeechEngine):
     def __init__(self):
         super().__init__()
         self.synth = _OnecoreEngine()
+        self.__rate = 50
         self.synth.BookmarkReached += self._on_bookmark_reached
         self.synth.StateChanged += self._on_state_changed
         self.__event_handlers = {}
@@ -76,14 +77,27 @@ class OcSpeechEngine(BaseSpeechEngine):
         except System.InvalidOperationException:
             raise ValueError(f"Can not set voice to  {value}.")
 
+    def rate_to_spec(self):
+        if 0 <= self._rate <= 20:
+            return RateSpec.extra_slow
+        elif 21 <= self._rate <= 40:
+            return RateSpec.slow
+        elif 41 <= self._rate <= 60:
+            return RateSpec.medium
+        elif 61 <= self._rate <= 100:
+            return RateSpec.fast
+
     @property
     def rate(self):
-        return self.synth.Rate
+        return self.synth.Rate if self.synth.IsProsodySupported else self.__rate
 
     @rate.setter
     def rate(self, value):
         if 0 <= value <= 100:
-            self.synth.Rate = value
+            if self.synth.IsProsodySupported:
+                self.synth.Rate = value
+            else:
+                self.__rate = value
         else:
             raise ValueError("The provided rate is out of range")
 

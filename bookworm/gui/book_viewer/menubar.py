@@ -45,6 +45,7 @@ class MenubarProvider:
 
         # The menu
         self.fileMenu = fileMenu = wx.Menu()
+        self.searchMenu = searchMenu = wx.Menu()
         self.toolsMenu = toolsMenu = wx.Menu()
         self.helpMenu = helpMenu = wx.Menu()
         # A submenu for recent files
@@ -52,122 +53,123 @@ class MenubarProvider:
 
         # add items to the menu
         # File menu
-        # Translators: the label of an ietm in the application menubar
+        # Translators: the label of an item in the application menubar
         fileMenu.Append(wx.ID_OPEN, _("Open...\tCtrl-O"))
         fileMenu.AppendSeparator()
-        # Translators: the label of an ietm in the application menubar
+        # Translators: the label of an item in the application menubar
         fileMenu.Append(BookRelatedMenuIds.export, _("&Save As Plain Text..."))
         fileMenu.AppendSeparator()
         fileMenu.Append(
             BookRelatedMenuIds.closeCurrentFile,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("&Close Current Book\tCtrl-W"),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("Close the currently open e-book"),
         )
         fileMenu.AppendSeparator()
         fileMenu.AppendSubMenu(
             self.recentFilesMenu,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("&Recent Books"),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("Opens a list of recently opened books."),
         )
         self.recentFilesMenu.Append(
             wx.ID_CLEAR,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("Clear list"),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("Clear the recent books list."),
         )
         fileMenu.AppendSeparator()
-        # Translators: the label of an ietm in the application menubar
+        # Translators: the label of an item in the application menubar
         fileMenu.Append(wx.ID_EXIT, _("Exit"))
-        # Tools menu
-        toolsMenu.Append(
-            BookRelatedMenuIds.goToPage,
-            # Translators: the label of an ietm in the application menubar
-            _("&Go To Page...\tCtrl-G"),
-            # Translators: the help text of an ietm in the application menubar
-            _("Go to page"),
-        )
-        toolsMenu.Append(
+        # Search menu
+        searchMenu.Append(
             wx.ID_FIND,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("&Find in Book...\tCtrl-F"),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("Search this book."),
         )
-        toolsMenu.Append(
+        searchMenu.Append(
             BookRelatedMenuIds.findNext,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("&Find &Next\tF3"),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("Find next occurrence."),
         )
-        toolsMenu.Append(
+        searchMenu.Append(
             BookRelatedMenuIds.findPrev,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("&Find &Previous\tShift-F3"),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("Find previous occurrence."),
         )
+        searchMenu.Append(
+            BookRelatedMenuIds.goToPage,
+            # Translators: the label of an item in the application menubar
+            _("&Go To Page...\tCtrl-G"),
+            # Translators: the help text of an item in the application menubar
+            _("Go to page"),
+        )
+        # Tools menu
         self.renderItem = toolsMenu.Append(
             BookRelatedMenuIds.viewRenderedAsImage,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("&Render Page...\tCtrl-R"),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("View a fully rendered version of this page."),
         )
         toolsMenu.Append(
             wx.ID_PREFERENCES,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("&Preferences...\tCtrl-Shift-P"),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("Configure application"),
         )
         # Help menu
         helpMenu.Append(
             ViewerMenuIds.documentation,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("&User guide...\tF1"),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("View Bookworm manuals"),
         )
         helpMenu.Append(
             ViewerMenuIds.website,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("Bookworm &website..."),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("Visit the official website of Bookworm"),
         )
         helpMenu.Append(
             ViewerMenuIds.license,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("&License"),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("View legal information about this program ."),
         )
         helpMenu.Append(
             ViewerMenuIds.contributors,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("Con&tributors"),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("View a list of notable contributors to the program."),
         )
         helpMenu.Append(
             ViewerMenuIds.check_for_updates,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("&Check for updates"),
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("Update the application"),
         )
         if app.is_frozen and not app.debug:
             helpMenu.Append(
                 ViewerMenuIds.restart_with_debug,
-                # Translators: the label of an ietm in the application menubar
+                # Translators: the label of an item in the application menubar
                 _("&Restart with debug-mode enabled"),
-                # Translators: the help text of an ietm in the application menubar
+                # Translators: the help text of an item in the application menubar
                 _("Restart the program with debug mode enabled to show errors"),
             )
             self.Bind(
@@ -177,9 +179,9 @@ class MenubarProvider:
             )
         helpMenu.Append(
             ViewerMenuIds.about,
-            # Translators: the label of an ietm in the application menubar
+            # Translators: the label of an item in the application menubar
             _("&About Bookworm") + "...",
-            # Translators: the help text of an ietm in the application menubar
+            # Translators: the help text of an item in the application menubar
             _("Show general information about this program"),
         )
 
@@ -233,11 +235,13 @@ class MenubarProvider:
         self.Bind(wx.EVT_MENU, self.onAbout, id=ViewerMenuIds.about)
 
         # and put the menu on the menubar
-        # Translators: the label of an ietm in the application menubar
+        # Translators: the label of an item in the application menubar
         self.menuBar.Append(fileMenu, _("&File"))
-        # Translators: the label of an ietm in the application menubar
+        # Translators: the label of an item in the application menubar
+        self.menuBar.Append(searchMenu, _("&Search"))
+        # Translators: the label of an item in the application menubar
         self.menuBar.Append(toolsMenu, _("&Tools"))
-        # Translators: the label of an ietm in the application menubar
+        # Translators: the label of an item in the application menubar
         self.menuBar.Append(helpMenu, _("&Help"))
 
         # Populate the recent files submenu

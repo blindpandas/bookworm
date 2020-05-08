@@ -36,3 +36,6 @@ class OCRService(BookwormService):
     def get_keyboard_shourtcuts(self):
         return OCR_KEYBOARD_SHORTCUTS
 
+    def shutdown(self):
+        self.menu._ocr_wait_dlg.Destroy()
+

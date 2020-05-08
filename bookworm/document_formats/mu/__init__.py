@@ -3,6 +3,7 @@
 import os
 import zipfile
 import fitz
+from lru import LRU
 from bookworm.utils import cached_property
 from bookworm.document_formats.base import (
     BaseDocument,
@@ -40,6 +41,7 @@ class FitzDocument(BaseDocument):
             super().read()
         except RuntimeError as e:
             raise DocumentError(*e.args)
+        self.__page_cache = LRU(100)
 
     def close(self):
         if self._ebook is None:
@@ -59,7 +61,12 @@ class FitzDocument(BaseDocument):
         return "\r\n".join(text)
 
     def get_page_content(self, page_number):
-        return self._text_from_page(self[page_number])
+        _cached = self.__page_cache.get(page_number)
+        if _cached is not None:
+            return _cached
+        content = self._text_from_page(self[page_number])
+        self.__page_cache[page_number] = content
+        return content
 
     def get_page_image(self, page_number, zoom_factor=2.5, enhance=False):
         mat = fitz.Matrix(zoom_factor, zoom_factor)

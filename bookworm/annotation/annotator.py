@@ -3,7 +3,7 @@
 from bookworm.logger import logger
 from bookworm.utils import cached_property
 from bookworm.database import db
-from bookworm.database.models import Book, Bookmark, Note
+from bookworm.database.models import Book, Bookmark, Note, Quote
 
 
 log = logger.getChild(__name__)
@@ -84,3 +84,9 @@ class NoteTaker(Annotator):
     """Notes."""
 
     model = Note
+
+
+class Quoter(Annotator):
+    """Notes."""
+
+    model = Quote

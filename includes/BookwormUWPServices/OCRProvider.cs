@@ -14,12 +14,7 @@ namespace OCRProvider
 
     public class OCRProvider
     {
-        private readonly OcrEngine engine;
-
-        public OCRProvider(string language)
-        {
-            engine = OcrEngine.TryCreateFromLanguage(new Language(language));
-        }
+        private readonly static Dictionary<string, OcrEngine> _engines = new Dictionary<string, OcrEngine>();
 
         public static List<string> GetRecognizableLanguages()
         {
@@ -29,22 +24,28 @@ namespace OCRProvider
             return langs;
         }
 
-        public List<string> Recognize(Byte[] image, int width, int height)
+        public static List<string> Recognize(string language, Byte[] image, int width, int height)
         {
+            if (!_engines.ContainsKey(language))
+                _engines.Add(language, OcrEngine.TryCreateFromLanguage(new Language(language)));
+            OcrEngine engine = _engines[language];
             IBuffer buf = CryptographicBuffer.CreateFromByteArray(image);
+            image = null;
             SoftwareBitmap sbitmap = SoftwareBitmap.CreateCopyFromBuffer(buf, BitmapPixelFormat.Bgra8, width, height);
             Task<OcrResult> task = engine.RecognizeAsync(sbitmap).AsTask();
             task.Wait();
             OcrResult result = task.Result;
+            buf = null;
+            GC.Collect();
             List<string> lines = new List<string>();
             foreach (OcrLine line in result.Lines)
                 lines.Add(line.Text);
-            return ProcessLines(lines);
+            return ProcessLines(lines, engine.RecognizerLanguage.LayoutDirection == LanguageLayoutDirection.Rtl);
         }
 
-        private List<string> ProcessLines(List<string> lines)
+        private static List<string> ProcessLines(List<string> lines, bool isRtl)
         {
-            if (engine.RecognizerLanguage.LayoutDirection == LanguageLayoutDirection.Rtl)
+            if (isRtl)
             {
                 // Problems with RTL languages
                 List<string> revlines = new List<string>();

@@ -247,8 +247,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         return wx.Point(100, 100)
 
     @gui_thread_safe
-    def highlight_text(self, start, end):
-        self.contentTextCtrl.SetStyle(start, end, wx.TextAttr(wx.BLACK, wx.LIGHT_GREY))
+    def highlight_range(self, start, end, foreground=None, background=None):
+        foreground = foreground or wx.NullColour
+        background = background or wx.NullColour
+        self.contentTextCtrl.SetStyle(start, end, wx.TextAttr(foreground, background))
 
     @gui_thread_safe
     def clear_highlight(self, start=0, end=-1):
@@ -275,3 +277,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def notify_user(self, title, message, icon=wx.ICON_INFORMATION):
         wx.MessageBox(message, title, style=icon)
+
+    def get_line_number(self, pos=None):
+        pos = pos or self.contentTextCtrl.InsertionPoint
+        __, __, line_number = self.contentTextCtrl.PositionToXY(pos)
+        return line_number

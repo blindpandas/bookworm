@@ -245,7 +245,7 @@ class TextToSpeechService(BookwormService):
                 self.textCtrl.SetInsertionPoint(pos)
             if config.conf["reading"]["highlight_spoken_text"]:
                 self.view.clear_highlight(0, pos)
-                self.view.highlight_text(pos, data["end"])
+                self.view.highlight_range(pos, data["end"], foreground=wx.BLACK, background=wx.LIGHT_GREY)
             if config.conf["reading"]["select_spoken_text"]:
                 self.textCtrl.SetSelection(pos, data["end"])
         elif data["type"] == "end_page":

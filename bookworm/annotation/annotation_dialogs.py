@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import wx
+from math import ceil
 from pathlib import Path
 from slugify import slugify
 from bookworm.resources import sounds
@@ -14,37 +15,29 @@ from .notes_exporter import NotesExporter
 log = logger.getChild(__name__)
 
 
-class ViewAnnotationsDialog(Dialog):
-    """Annotations viewer."""
+class BookmarksViewer(Dialog):
+    """A ddialog to view the bookmarks of the current book."""
 
-    def __init__(self, parent, type_, *args, **kwargs):
-        self.type = type_
-        self.reader = parent.reader
-        annotatorFactory = Bookmarker if type_ == "bookmark" else NoteTaker
-        self.annotator = annotatorFactory(self.reader)
-        super().__init__(parent, *args, **kwargs)
+    def __init__(self, reader, annotator, *args, **kwargs):
+        self.view = reader.view
+        self.reader = reader
+        self.annotator = annotator(self.reader)
+        # Translators: label for unnamed bookmarks
+        self._unamed_bookmark_title = _("(Unnamed)")
+        super().__init__(*args, **kwargs)
 
     def addControls(self, sizer, parent):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         lstSizer = wx.BoxSizer(wx.VERTICAL)
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
-        label = wx.StaticText(
-            # Translators: the title of a dialog showing a list of notes or bookmarks
-            parent,
-            -1,
-            _("Bookmarks") if self.type == "bookmark" else _("Notes"),
-        )
+        # Translators: the title of a dialog showing a list of bookmarks
+        label = wx.StaticText(parent, -1, _("Saved Bookmarks"))
         self.annotationsListCtrl = DialogListCtrl(parent, -1)
         lstSizer.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 10)
         lstSizer.Add(
             self.annotationsListCtrl, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 10
         )
-        if self.type == "note":
-            # Translators: the label of a button to view the selected note
-            btnSizer.Add(wx.Button(parent, wx.ID_PREVIEW, _("&View")))
-            # Translators: the label of a button to edit the current note
-            btnSizer.Add(wx.Button(parent, wx.ID_EDIT, _("&Edit...")))
-        # Translators: the label of a button to remove the selected note
+        # Translators: the label of a button to remove the selected item
         btnSizer.Add(wx.Button(parent, wx.ID_DELETE, _("&Remove")))
         mainSizer.Add(lstSizer, 1, wx.EXPAND | wx.ALL, 10)
         mainSizer.Add(btnSizer, 0, wx.ALL | wx.ALIGN_CENTER, 10)
@@ -57,14 +50,7 @@ class ViewAnnotationsDialog(Dialog):
             wx.EVT_LIST_END_LABEL_EDIT, self.onEndLabelEdit, self.annotationsListCtrl
         )
         self.Bind(wx.EVT_BUTTON, self.onDelete, id=wx.ID_DELETE)
-        if self.type == "note":
-            self.Bind(wx.EVT_BUTTON, self.onView, id=wx.ID_PREVIEW)
-            self.Bind(wx.EVT_BUTTON, self.onEdit, id=wx.ID_EDIT)
-        self.btns = [
-            wx.FindWindowById(i) for i in (wx.ID_DELETE, wx.ID_PREVIEW, wx.ID_EDIT)
-        ]
-        self.btns = [b for b in self.btns if (b is not None) and b.Parent == parent]
-        [b.Enable(False) for b in self.btns]
+        wx.FindWindowById(wx.ID_DELETE).Enable(False)
         self._populate_list()
 
     def getButtons(self, parent):
@@ -78,15 +64,15 @@ class ViewAnnotationsDialog(Dialog):
         self.annotationsListCtrl.ClearAll()
         self.annotationsListCtrl.AppendColumn(
             # Translators: the title of a column in the bookmarks list
-            _("Title"),
-            format=wx.LIST_FORMAT_LEFT,
-            width=50,
+            _("Name"),
+            format=wx.LIST_FORMAT_CENTER,
+            width=20,
         )
         self.annotationsListCtrl.AppendColumn(
             # Translators: the title of a column in the bookmarks list
             _("Page"),
-            format=wx.LIST_FORMAT_CENTER,
-            width=20,
+            format=wx.LIST_FORMAT_LEFT,
+            width=50,
         )
         self.annotationsListCtrl.AppendColumn(
             # Translators: the title of a column in the bookmarks list
@@ -94,15 +80,15 @@ class ViewAnnotationsDialog(Dialog):
             format=wx.LIST_FORMAT_LEFT,
             width=30,
         )
-        self.annotationsListCtrl.SetColumnWidth(0, 100)
-        self.annotationsListCtrl.SetColumnWidth(1, 100)
-        self.annotationsListCtrl.SetColumnWidth(2, 100)
+        for i in range(3):
+            self.annotationsListCtrl.SetColumnWidth(i, 100)
         annotations = self.annotator.get_list().all()
-        for anotation in annotations:
-            index = self.annotationsListCtrl.InsertItem(0, anotation.title)
-            self.annotationsListCtrl.SetItem(index, 1, str(anotation.page_number + 1))
-            self.annotationsListCtrl.SetItem(index, 2, anotation.section_title)
-            self.annotationsListCtrl.SetItemData(index, anotation.id)
+        for item in annotations:
+            name = item.title or self._unamed_bookmark_title
+            index = self.annotationsListCtrl.InsertItem(0, name)
+            self.annotationsListCtrl.SetItem(index, 1, str(item.page_number))
+            self.annotationsListCtrl.SetItem(index, 2, item.section_title)
+            self.annotationsListCtrl.SetItemData(index, item.id)
         page_annotations = self.annotator.get_for_page().all()
         section_annotations = self.annotator.get_for_section().all()
         if page_annotations:
@@ -116,8 +102,7 @@ class ViewAnnotationsDialog(Dialog):
         else:
             item_idx = focus_target
         self.setFocusToListItem(item_idx)
-        should_enable = len(annotations)
-        [btn.Enable(should_enable) for btn in self.btns]
+        self.FindWindowById(wx.ID_DELETE).Enable(len(annotations))
 
     @property
     def selectedItem(self):
@@ -140,6 +125,7 @@ class ViewAnnotationsDialog(Dialog):
         item = self.annotator.get(self.selectedItem[1])
         self.reader.go_to_page(item.page_number)
         self.Close()
+        wx.CallAfter(self.parent.contentTextCtrl.SetFocusFromKbd)
         wx.CallAfter(self.parent.contentTextCtrl.SetInsertionPoint, item.position)
 
     def onKeyDown(self, event):
@@ -154,7 +140,8 @@ class ViewAnnotationsDialog(Dialog):
 
     def onEndLabelEdit(self, event):
         newTitle = event.GetLabel()
-        self.annotator.update(item_id=self.selectedItem[1], title=newTitle)
+        if newTitle != self._unamed_bookmark_title:
+            self.annotator.update(item_id=self.selectedItem[1], title=newTitle)
 
     def onDelete(self, event):
         if self.selectedItem is None:
@@ -163,10 +150,10 @@ class ViewAnnotationsDialog(Dialog):
             wx.MessageBox(
                 # Translators: the content of a message asking the user to delete a bookmark
                 _(
-                    "This action can not be reverted.\r\nAre you sure you want to continue?"
+                    "This action can not be reverted.\r\nAre you sure you want to remove this bookmark?"
                 ),
                 # Translators: the title of a message asking the user to delete a bookmark
-                _("Remove Entry?"),
+                _("Remove Bookmark?"),
                 parent=self,
                 style=wx.YES_NO | wx.ICON_WARNING,
             )
@@ -176,27 +163,9 @@ class ViewAnnotationsDialog(Dialog):
             page_number, pos = item.page_number, item.position
             self.annotator.delete(self.selectedItem[1])
             self._populate_list()
-            if self.type == "bookmark":
-                if page_number == self.reader.current_page:
-                    lft, rgt = self.reader.view.get_containing_line(pos)
-                    self.Parent.clear_highlight(lft, rgt)
-
-    def onView(self, event):
-        assert self.type == "note", "Viewing is only allowed for notes."
-        if self.selectedItem is None:
-            return
-        note = self.annotator.get(self.selectedItem[1])
-        dlg = NoteEditorDialog(self, self.reader, note=note, view_only=True)
-        dlg.ShowModal()
-
-    def onEdit(self, event):
-        assert self.type == "note", "Editing is only allowed for notes."
-        if self.selectedItem is None:
-            return
-        note = self.annotator.get(self.selectedItem[1])
-        dlg = NoteEditorDialog(self, self.reader, note=note)
-        dlg.ShowModal()
-        self._populate_list()
+            if page_number == self.reader.current_page:
+                lft, rgt = self.reader.view.get_containing_line(pos)
+                self.Parent.clear_highlight(lft, rgt)
 
 
 class NoteEditorDialog(Dialog):
@@ -213,35 +182,28 @@ class NoteEditorDialog(Dialog):
             title = _("View Note...")
         elif self.note is None:
             # Translators: the title of a dialog to create a new note
-            title = _("Take A Note...")
+            title = _("New Comment...")
         else:
             # Translators: the title of a dialog to edit the selected note
-            title = _("Edit Note...")
+            title = _("Edit Comment...")
         super().__init__(parent, title=title, **kwargs)
 
     def addControls(self, sizer, parent):
         vsizer = wx.BoxSizer(wx.VERTICAL)
         # Translators: the label of an edit field
-        titleLabel = wx.StaticText(parent, -1, _("Note Title:"))
-        self.titleTextCtrl = wx.TextCtrl(parent, -1)
-        # Translators: the label of an edit field
-        contentLabel = wx.StaticText(parent, -1, _("Note Content:"))
+        contentLabel = wx.StaticText(parent, -1, _("Comment:"))
         self.noteContentTextCtrl = wx.TextCtrl(
             parent, -1, style=wx.TE_MULTILINE | wx.TE_RICH2
         )
-        vsizer.Add(titleLabel, 0, wx.LEFT | wx.RIGHT | wx.TOP, 5)
-        vsizer.Add(self.titleTextCtrl, 0, wx.ALL | wx.EXPAND, 10)
         vsizer.Add(contentLabel, 0, wx.LEFT | wx.RIGHT | wx.TOP, 5)
         vsizer.Add(self.noteContentTextCtrl, 1, wx.EXPAND | wx.ALL, 10)
         sizer.Add(vsizer, 1, wx.EXPAND)
         self.Bind(wx.EVT_BUTTON, self.onSaveNote, id=wx.ID_OK)
         if self.note is not None:
-            self.titleTextCtrl.SetValue(self.note.title)
             self.noteContentTextCtrl.SetValue(self.note.content)
         if self.view_only:
-            for te in (self.titleTextCtrl, self.noteContentTextCtrl):
+            for te in (self.noteContentTextCtrl):
                 te.SetEditable(False)
-            self.titleTextCtrl.SetFocus()
 
     def getButtons(self, parent):
         if self.view_only:
@@ -253,9 +215,8 @@ class NoteEditorDialog(Dialog):
         return super().getButtons(parent)
 
     def onSaveNote(self, event):
-        title = self.titleTextCtrl.GetValue().strip()
         content = self.noteContentTextCtrl.GetValue().strip()
-        if not all((title, content)):
+        if not all((content)):
             wx.MessageBox(
                 # Translators: the title of a message telling the user that the field is empty
                 _(
@@ -267,7 +228,7 @@ class NoteEditorDialog(Dialog):
                 style=wx.ICON_WARNING,
             )
             return
-        kwargs = dict(title=title, content=content)
+        kwargs = dict(content=content)
         if self.note is not None:
             self.annotator.update(item_id=self.note.id, **kwargs)
         else:

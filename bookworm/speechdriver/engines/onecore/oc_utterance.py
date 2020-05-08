@@ -48,9 +48,10 @@ class OcSpeechUtterance(SapiSpeechUtterance):
         self._heal_funcs.clear()
         voice = self.synth().voice
         voice_utterance = SapiSpeechUtterance()
-        with voice_utterance.set_style(
-            SpeechStyle(voice=voice)
-        ):
+        options = dict(voice=voice)
+        if not self.synth().synth.IsProsodySupported:
+            options["rate"] = self.synth().rate_to_spec()
+        with voice_utterance.set_style(SpeechStyle(**options)):
             voice_utterance.append_utterance(self)
         voice_utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(
             voice.language

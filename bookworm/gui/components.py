@@ -125,7 +125,7 @@ class SimpleDialog(sc.SizedDialog):
 
 
 class SnakDialog(SimpleDialog):
-    """For showing a single line message in a dialog."""
+    """A Toast style notification  dialog for showing a simple message without a title."""
 
     def __init__(self, message, *args, dismiss_callback=None, **kwargs):
         self.message = message
@@ -156,8 +156,6 @@ class SnakDialog(SimpleDialog):
         if event.GetKeyCode() == wx.WXK_ESCAPE:
             self.Close()
 
-    def Hide(self):
-        self.Destroy()
-
     def getButtons(self, parent):
         return
+

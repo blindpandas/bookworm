@@ -531,7 +531,7 @@ class SpeechMenu(wx.Menu):
 
         # Append the menu
         # Translators: the label of an item in the application menubar
-        self.menubar.Insert(2, self, _("&Speech"))
+        self.menubar.Insert(2, self, _("S&peech"))
 
         # EventHandlers
         self.view.Bind(wx.EVT_MENU, self.onPlay, id=StatefulSpeechMenuIds.play)
