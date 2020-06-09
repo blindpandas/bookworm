@@ -16,10 +16,10 @@ from bookworm.ocr import OCRService
 from bookworm.text_to_speech import TextToSpeechService
 
 BUILTIN_SERVICES = (
-    AnnotationService,
-    ContReadingService,
-    OCRService,
     TextToSpeechService,
+    AnnotationService,
+    OCRService,
+    ContReadingService,
 )
 
 

@@ -11,13 +11,14 @@ from bookworm.speechdriver.enumerations import EngineEvent, SynthState, RateSpec
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.logger import logger
 
+_oc_available = False
 try:
     if UWP_SERVICES_AVAILABEL:
         from OcSpeechEngine import OcSpeechEngine as _OnecoreEngine
         from .oc_utterance import OcSpeechUtterance
         _oc_available = True
-except:
-    _oc_available = False
+except Exception as e:
+    log.debug(f"Could not load the onecore speech engine: {e.args}")
 
 
 log = logger.getChild(__name__)

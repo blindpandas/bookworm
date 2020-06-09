@@ -12,6 +12,7 @@ from bookworm import config
 from bookworm import paths
 from bookworm import app
 from bookworm.i18n import is_rtl
+from bookworm.document_formats import DocumentCapability as DC
 from bookworm.signals import config_updated
 from bookworm.otau import check_for_updates
 from bookworm.concurrency import call_threaded, process_worker
@@ -471,7 +472,7 @@ class MenubarProvider:
             return
         if self.reader.document.is_encrypted():
             self.decrypt_opened_document()
-        self.renderItem.Enable(self.reader.document.supports_rendering)
+        self.renderItem.Enable(DC.GRAPHICAL_RENDERING in self.reader.document.capabilities)
         self.tocTreeCtrl.Expand(self.tocTreeCtrl.GetRootItem())
         wx.CallAfter(self.tocTreeCtrl.SetFocus)
         recent_files = config.conf["history"]["recently_opened"]
@@ -555,7 +556,8 @@ class MenubarProvider:
     @gui_thread_safe
     def highlight_search_result(self, page_number, pos):
         self.reader.go_to_page(page_number)
-        self.contentTextCtrl.SetSelection(pos, pos + len(self._recent_search_term))
+        start, end = self.get_containing_line(pos) 
+        self.contentTextCtrl.SetSelection(start, end)
 
     def _get_ebooks_wildcards(self):
         rv = []

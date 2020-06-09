@@ -1,15 +1,21 @@
 # coding: utf-8
 
 import time
+import threading
 import wx
 from bookworm import config
 from bookworm.base_service import BookwormService
+from bookworm.concurrency import call_threaded
 from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,
     reader_page_changed,
     config_updated,
 )
+
+
+# Timer Interval
+TIMER_INTERVAL = 50
 
 
 class ContReadingService(BookwormService):
@@ -19,27 +25,25 @@ class ContReadingService(BookwormService):
     def __post_init__(self):
         self.textCtrl = self.view.contentTextCtrl
         self._page_turn_timer = wx.Timer(self.view)
-        self._last_page_turn = 0.0
+        self._start_timer = lambda: self._page_turn_timer.Start(TIMER_INTERVAL, wx.TIMER_ONE_SHOT)
+        self._lock = threading.Lock()
         # Event handling
         self.view.Bind(wx.EVT_TIMER, self.onTimerTick)
         reader_book_unloaded.connect(lambda s:self._page_turn_timer.Stop(), weak=False, sender=self.reader)
         config_updated.connect(self._on_config_changed_for_cont)
-        #if config.conf["reading"]["use_continuous_reading"]:
-        reader_book_loaded.connect(lambda s:self._page_turn_timer.Start(), weak=False, sender=self.reader)
+        if config.conf["reading"]["use_continuous_reading"]:
+            reader_book_loaded.connect(lambda s: self._start_timer(), weak=False, sender=self.reader)
 
-    def shutdown(self):
-        self._page_turn_timer.Stop()
-
+    @call_threaded
     def onTimerTick(self, event):
-        cur_pos, end_pos = self.textCtrl.GetInsertionPoint(), self.textCtrl.GetLastPosition()
-        if not end_pos:
-            return
-        if cur_pos == end_pos:
-            wx.WakeUpIdle()
-            if (time.perf_counter() - self._last_page_turn) < 0.9:
+        with self._lock:
+            cur_pos, end_pos = self.textCtrl.GetInsertionPoint(), self.textCtrl.GetLastPosition()
+            if not end_pos:
                 return
-            self.view._nav_provider.navigate_to_page("next")
-            self._last_page_turn = time.perf_counter()
+            if cur_pos == end_pos:
+                self.view._nav_provider.navigate_to_page("next")
+                wx.WakeUpIdle()
+            self._start_timer()
 
     def _on_config_changed_for_cont(self, sender, section):
         if section == "reading":

@@ -2,10 +2,14 @@
 
 import gc
 from abc import ABCMeta, abstractmethod
-from collections.abc import Sequence
+from collections.abc import Container, Iterable, Sequence, Sized
+from enum import IntFlag
 from functools import wraps
 from dataclasses import field, dataclass
+from weakref import ref
+from lru import LRU
 from pycld2 import detect as detect_language, error as CLD2Error
+from bookworm import typehints as t
 from bookworm.concurrency import QueueProcess, call_threaded
 from bookworm.utils import cached_property, generate_sha1hash_async
 from bookworm.logger import logger
@@ -13,10 +17,16 @@ from . import _tools
 
 
 log = logger.getChild(__name__)
+PAGE_CACHE_CAPACITY = 100
 
 
 class DocumentError(Exception):
-    """The base class of all bookworm exceptions."""
+    """The base class of all document related exceptions."""
+
+
+class PaginationError(DocumentError, IndexError):
+    """Raised when the  `next` or `prev` page is not available."""
+
 
 
 @dataclass
@@ -31,37 +41,30 @@ class BookMetadata:
 @dataclass
 class SearchRequest:
     """Holds information of a user's request for
-    searching for a term in some book.
+    searching for a term in a book.
     """
 
     term: str
+    is_regex: bool
     case_sensitive: bool
     whole_word: bool
     from_page: int
     to_page: int
 
 
-class PaginationError(IndexError):
-    """Raised when the  `next` or `prev` page is not available."""
+@dataclass(frozen=True, order=True)
+class Pager(Container, Iterable, Sized):
+    """Basically, this is a glorified `range` iterator."""
 
-
-@dataclass(frozen=True)
-class Pager:
-    """A simple paginater."""
-
-    __slots__ = ["first", "last", "current"]
+    __slots__ = ["first", "last",]
 
     first: int
     last: int
-    current: int
-
-    def __post_init__(self):
-        object.__setattr__(self, "current", self.first)
 
     def __repr__(self):
-        return f"<Pagination: first={self.first}, last={self.last}, total={self.last - self.first}>"
+        return f"<Pager: first={self.first}, last={self.last}, total={self.last - self.first}>"
 
-    def __iter__(self):
+    def __iter__(self) -> t.Iterable[int]:
         return iter(range(self.first, self.last + 1))
 
     def __len__(self):
@@ -70,38 +73,28 @@ class Pager:
     def __contains__(self, value):
         return self.first <= value <= self.last
 
-    def reset(self):
-        self.set_current(self.first)
-
-    def set_current(self, to):
-        if to not in self:
-            raise PaginationError(f"The page ({to}) is out of range for this pager.")
-        object.__setattr__(self, "current", to)
-
-    def go_to_next(self):
-        next_item = self.current + 1
-        if next_item > self.last:
-            raise PaginationError(f"Page ({next_item}) is out of range.")
-        self.set_current(next_item)
-        return next_item
-
-    def go_to_prev(self):
-        prev_item = self.current - 1
-        if prev_item < self.first:
-            raise PaginationError(f"Page ({prev_item}) is out of range.")
-        self.set_current(prev_item)
-        return prev_item
+    def __hash__(self):
+        return hash((self.first, self.last))
 
 
 class Section:
-    """A `Section` is a part of the book with
-    a page range. It is commonly found in the
-    TOC tree. It can contain other sections as well.
+    """
+    A simple (probably inefficient) custom tree
+    implementation for use in the table of content.
     """
 
-    __slots__ = ["title", "parent", "children", "pager", "data"]
+    __slots__ = ["documentref", "title", "parent", "children", "pager", "data"]
 
-    def __init__(self, title, parent=None, children=None, pager=None, data=None):
+    def __init__(
+        self,
+        document: "BaseDocument",
+        title: str,
+        parent: t.Optional["Section"]=None,
+        children: t.Optional[t.List["Section"]]=None,
+        pager: t.Optional[Pager]=None,
+        data: t.Optional[t.Dict[t.Hashable, t.Any]]=None
+        ):
+        self.documentref = ref(document)
         self.title = title
         self.parent = parent
         self.children = children or []
@@ -110,13 +103,13 @@ class Section:
         for child in self.children:
             child.parent = self
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int) -> "Section":
         return self.children[index]
 
     def __len__(self):
         return len(self.children)
 
-    def __contains__(self, item):
+    def __contains__(self, item: "Section"):
         return item in self.children
 
     def __bool__(self):
@@ -125,31 +118,39 @@ class Section:
     def __repr__(self):
         return f"<{self.__class__.__name__}(title={self.title}, parent={getattr(self.parent, 'title', '')}, child_count={len(self)})>"
 
-    def append(self, child):
+    def append(self, child: "Section"):
         child.parent = self
         self.children.append(child)
 
-    def iterchildren(self):
+    def iter_children(self) -> t.Iterable["Section"]:
         for child in self.children:
             yield child
-            yield from child.iterchildren()
+            yield from child.iter_children()
+
+    def iter_pages(self) -> t.Iterable["BasePage"]:
+        document = self.documentref()
+        if document is not None:
+            for index in self.pager:
+                yield document[index]
+        else:
+            raise RuntimeError("Document ref is dead!")
 
     @property
-    def is_root(self):
+    def is_root(self) -> bool:
         return self.parent is None
 
     @property
-    def first_child(self):
+    def first_child(self) -> t.Optional["Section"]:
         if self:
             return self[0]
 
     @property
-    def last_child(self):
+    def last_child(self) -> t.Optional["Section"]:
         if self:
             return self[-1]
 
     @property
-    def next_sibling(self):
+    def next_sibling(self) -> t.Optional["Section"]:
         if self.is_root:
             return
         next_index = self.parent.children.index(self) + 1
@@ -157,7 +158,7 @@ class Section:
             return self.parent[next_index]
 
     @property
-    def prev_sibling(self):
+    def prev_sibling(self) -> t.Optional["Section"]:
         if self.is_root:
             return
         prev_index = self.parent.children.index(self) - 1
@@ -165,14 +166,14 @@ class Section:
             return self.parent[prev_index]
 
     @property
-    def simple_next(self):
+    def simple_next(self) -> t.Optional["Section"]:
         if self.next_sibling is not None:
             return self.next_sibling
         elif self.parent:
             return self.parent.simple_next
 
     @property
-    def simple_prev(self):
+    def simple_prev(self) -> t.Optional["Section"]:
         if self.prev_sibling is not None:
             return self.prev_sibling
         elif self.parent:
@@ -180,8 +181,17 @@ class Section:
         return self
 
     @property
-    def unique_identifier(self):
+    def unique_identifier(self) -> str:
         return f"{self.title}-{self.pager.first}-{self.pager.last}"
+
+
+class DocumentCapability(IntFlag):
+    """Represents feature flags for a document.""" 
+    TOC_TREE = 1
+    METADATA = 2
+    GRAPHICAL_RENDERING = 3
+    FLUID_PAGINATION = 4
+    IMAGE_EXTRACTION = 5
 
 
 class BaseDocument(Sequence, metaclass=ABCMeta):
@@ -195,19 +205,19 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     extensions: tuple = None
     """The file extension(s) of this format."""
 
-    supports_rendering = False
-    """Whether this document supports rendering its content visually."""
+    capabilities: DocumentCapability = ()
+    """A combination of DocumentCapability flags."""
 
-    def __init__(self, filename):
+    def __init__(self, filename: t.PathLike):
         self.filename = filename
-        self._ebook = None
+        self._ebook: t.Any = None
         super().__init__()
 
-    def __contains__(self, value):
+    def __contains__(self, value: int):
         return -1 < value < len(self)
 
     @cached_property
-    def identifier(self):
+    def identifier(self) -> str:
         """Return a unique identifier for this document.
         By default it returns a `sha1` digest based on
         the document content.
@@ -224,6 +234,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         Subclasses should call super to ensure the standard behavior.
         """
         self._sha1hash = generate_sha1hash_async(self.filename)
+        self.__page_cache = LRU(PAGE_CACHE_CAPACITY)
         # XXX Is this a pre-mature optimization?
         call_threaded(lambda: self.language)
 
@@ -233,9 +244,10 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         Subclasses should call super to ensure the standard behavior.
         """
         self._ebook = None
+        self.__page_cache.clear()
         gc.collect()
 
-    def is_encrypted(self):
+    def is_encrypted(self) -> bool:
         """Does this document need password."""
         return False
 
@@ -245,19 +257,19 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def toc_tree(self):
+    def toc_tree(self) -> t.Iterable[Section]:
         """Return an iterable representing the table of content.
         The items should be of type `Section`.
         """
 
     @cached_property
-    def language(self):
+    def language(self) -> str:
         """Return the language of this document.
         By default we use a heuristic based on Google's CLD2.
         """
         num_pages = len(self)
         num_samples = num_pages if num_pages <= 20 else 20
-        text = "".join(self[i].getText() for i in range(num_samples)).encode("utf8")
+        text = "".join(self[i].get_text() for i in range(num_samples)).encode("utf8")
         try:
             (success, _, ((_, lang, _, _), *_)) = detect_language(
                 utf8Bytes=text, isPlainText=True, hintLanguage=None
@@ -271,19 +283,24 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def metadata(self):
+    def metadata(self) -> BookMetadata:
         """Return a `BookMetadata` object holding info about this book."""
 
-    @abstractmethod
-    def get_page_content(self, page_number):
-        """Get the text content of a page."""
+    def get_page_content(self, page_number: int) -> str:
+        """Convenience method: return the text content of a page."""
+        _cached = self.__page_cache.get(page_number)
+        if _cached is not None:
+            return _cached
+        content = self[page_number].get_text()
+        self.__page_cache[page_number] = content
+        return content
 
-    @abstractmethod
-    def get_page_image(self, page_number, zoom_factor=1.0, enhance=False):
-        """Get the image of a page."""
+    def get_page_image(self, page_number: int, zoom_factor: float=1.0, enhance: bool=False) -> bytes:
+        """Convenience method: return the image of a page."""
+        return self[page_number].get_image(zoom_factor, enhance)
 
     @classmethod
-    def export_to_text(cls, document_path, target_filename):
+    def export_to_text(cls, document_path: t.PathLike, target_filename: t.PathLike):
         args = (cls, document_path, target_filename)
         process = QueueProcess(
             target=_tools.do_export_to_text, args=args, name="bookworm-exporter"
@@ -297,7 +314,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         process.join()
 
     @classmethod
-    def search(cls, document_path, request):
+    def search(cls, document_path: t.PathLike, request: SearchRequest):
         args = (cls, document_path, request)
         process = QueueProcess(
             target=_tools.do_search_book, args=args, name="bookworm-search"
@@ -310,3 +327,47 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
             yield value
         process.join()
 
+
+class BasePage(metaclass=ABCMeta):
+    """Represents a page from the document."""
+    __slots__ = ["document", "index"]
+
+    def __init__(self, document: BaseDocument, index: int):
+        self.document = document
+        self.index = index
+
+    @abstractmethod
+    def get_text(self) -> str:
+        """Return the text content or raise NotImplementedError."""
+
+    @abstractmethod
+    def get_image(self, zoom_factor: float, enhance: bool) -> t.Tuple[bytes, int, int]:
+        """Return page image in the form of (image_data, width, height)
+        or raise NotImplementedError."""
+
+    @property
+    def number(self) -> int:
+        """The user facing page number."""
+        return self.index + 1
+
+    @cached_property
+    def section(self) -> Section:
+        rv = self.document.toc_tree
+        for sect in rv.iter_children():
+            if self.index in sect.pager and not sect:
+                rv = sect
+                break
+        return rv
+
+    @property
+    def is_first_of_section(self) -> bool:
+        return self.index == self.section.pager.first
+
+    @property
+    def is_last_of_section(self) -> bool:
+        return self.index == self.section.pager.last
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return (self.document is other.document) and (self.index == other.index)
+        return NotImplemented

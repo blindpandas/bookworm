@@ -6,30 +6,38 @@ from bookworm.signals import reader_page_changed
 from bookworm.resources import sounds
 from bookworm.base_service import BookwormService
 from bookworm.utils import gui_thread_safe
+from bookworm.concurrency import call_threaded
 from bookworm.logger import logger
 from .annotation_gui import (
+    AnnotationSettingsPanel,
     AnnotationMenu,
     AnnotationsMenuIds,
     ANNOTATIONS_KEYBOARD_SHORTCUTS,
 )
-from .annotator import Bookmarker, NoteTaker, Book, Note, Bookmark
+from .annotator import Bookmarker, NoteTaker, Quoter
 
 
 log = logger.getChild(__name__)
 
 
+ANNOTATION_CONFIG_SPEC = {
+    "annotation": dict(
+        use_visuals="boolean(default=True)",
+        play_sound_for_comments="boolean(default=True)",
+    )
+}
+
+
 class AnnotationService(BookwormService):
     name = "annotation"
+    config_spec = ANNOTATION_CONFIG_SPEC
     stateful_menu_ids = AnnotationsMenuIds
     has_gui = True
 
     def __post_init__(self):
-        if config.conf["general"]["play_page_note_sound"]:
-            reader_page_changed.connect(self.play_sound_if_note, sender=self.reader)
-        if config.conf["general"]["highlight_bookmarked_positions"]:
-            reader_page_changed.connect(
-                self.highlight_bookmarked_positions, sender=self.reader
-            )
+        reader_page_changed.connect(self.comments_page_handler, sender=self.reader)
+        reader_page_changed.connect(self.highlight_bookmarked_positions, sender=self.reader)
+        reader_page_changed.connect(self.highlight_highlighted_text, sender=self.reader)
 
     def process_menubar(self, menubar):
         self.menu = AnnotationMenu(self, menubar)
@@ -56,39 +64,65 @@ class AnnotationService(BookwormService):
     def get_keyboard_shourtcuts(self):
         return ANNOTATIONS_KEYBOARD_SHORTCUTS
 
-    @classmethod
-    def _annotations_page_handler(cls, reader):
-        q_count = (
-            Note.query.filter(Book.identifier == reader.document.identifier)
-            .filter_by(page_number=reader.current_page)
-            .count()
-        )
-        if q_count:
-            sounds.has_note.play()
+    def get_settings_panels(self):
+        return [
+            # Translators: the label of a page in the settings dialog
+            (30, "annotation", AnnotationSettingsPanel, _("Annotation"),),
+        ]
 
     @classmethod
-    def play_sound_if_note(cls, sender, current, prev):
-        """Play a sound if the current page has a note."""
-        wx.CallLater(150, cls._annotations_page_handler, sender)
+    def comments_page_handler(cls, sender, current, prev):
+        comments = NoteTaker(sender).get_for_page()
+        if comments.count():
+            if config.conf["annotation"]["play_sound_for_comments"]:
+                wx.CallLater(150, lambda: sounds.has_note.play())
+        for comment in comments:
+            cls.style_comment(sender.view, comment.position)
 
     @classmethod
     def highlight_bookmarked_positions(cls, sender, current, prev):
-        bookmarks = (
-            Bookmark.query.filter(Book.identifier == sender.document.identifier)
-            .filter(Bookmark.page_number == sender.current_page)
-            .all()
-        )
-        if not bookmarks:
+        if not config.conf["annotation"]["use_visuals"]:
+            return
+        bookmarks = Bookmarker(sender).get_for_page()
+        if not bookmarks.count():
             return
         for bookmark in bookmarks:
-            cls.highlight_containing_line(bookmark.position, sender.view)
+            cls.style_bookmark(sender.view, bookmark.position)
 
     @classmethod
-    def highlight_containing_line(cls, pos, view, fg="white", bg="black"):
-        fg, bg = [wx.Colour(fg), wx.Colour(bg)]
-        lft, rgt = view.get_containing_line(pos)
-        wx.CallAfter(
-            view.contentTextCtrl.SetStyle, lft, rgt, wx.TextAttr(fg, bg)
-        )
+    def highlight_highlighted_text(cls, sender, current, prev):
+        if not config.conf["annotation"]["use_visuals"]:
+            return
+        quoter = Quoter(sender)
+        for_page = quoter.get_for_page()
+        if not for_page.count():
+            return
+        for quote in for_page:
+            cls.style_highlight(sender.view, quote.start_pos, quote.end_pos)
 
+    @staticmethod
+    @gui_thread_safe
+    def style_bookmark(view, position, enable=True):
+        if not config.conf["annotation"]["use_visuals"]:
+            return
+        start, end = view.get_containing_line(position)
+        if config.conf["annotation"]["use_visuals"]:
+            attr = wx.TextAttr(view.contentTextCtrl.GetDefaultStyle())
+            attr.SetFontUnderlined(enable)
+            view.contentTextCtrl.SetStyle(start, end, attr)
 
+    @staticmethod
+    @gui_thread_safe
+    def style_highlight(view, start, end, enable=True):
+        if not config.conf["annotation"]["use_visuals"]:
+            return
+        if enable:
+            view.highlight_range(start, end, background=wx.YELLOW)
+        else:
+            view.clear_highlight(start, end)
+
+    @staticmethod
+    @gui_thread_safe
+    def style_comment(view, pos, enable=True):
+        if not config.conf["annotation"]["use_visuals"]:
+            return

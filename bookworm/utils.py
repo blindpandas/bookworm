@@ -151,6 +151,8 @@ class cached_property(property):
             obj.__dict__[self.__name__] = value
         return value
 
+    def __delete__(self, obj):
+        obj.__dict__.pop(self.__name__)
 
 def escape_html(text):
     """Escape the text so as to be used

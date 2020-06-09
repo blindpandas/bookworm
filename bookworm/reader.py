@@ -2,6 +2,7 @@
 
 import os
 import wx
+from bookworm import typehints as t
 from bookworm import app
 from bookworm import config
 from bookworm import database
@@ -14,6 +15,7 @@ from bookworm.document_formats import (
     DocumentError,
     PaginationError,
 )
+from bookworm.document_formats.base import Section, BasePage
 from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,
@@ -44,7 +46,6 @@ class EBookReader:
     document_classes = (FitzEPUBDocument, FitzDocument)
 
     def __init__(self, view):
-        super().__init__()
         self.supported_ebook_formats = {
             cls.format: cls for cls in self.document_classes
         }
@@ -55,7 +56,7 @@ class EBookReader:
         self.document = None
         self.__state = {}
 
-    def load(self, ebook_path):
+    def load(self, ebook_path: t.PathLike) -> bool:
         ebook_format = self._detect_ebook_format(ebook_path)
         if ebook_format not in self.supported_ebook_formats:
             self.view.notify_user(
@@ -90,7 +91,7 @@ class EBookReader:
         self.current_book = self.document.metadata
         self.view.add_toc_tree(self.document.toc_tree)
         self.view.set_text_direction(is_rtl(self.document.language))
-        self.active_section = self.document.toc_tree
+        self.current_page = 0
         self.view.SetTitle(self.get_view_title(include_author=True))
         last_position = database.get_last_position(ebook_path.lower())
         if last_position is not None:
@@ -119,85 +120,68 @@ class EBookReader:
         )
 
     @property
-    def ready(self):
+    def ready(self) -> bool:
         return self.document is not None
 
     @property
-    def active_section(self):
+    def active_section(self) -> Section:
         return self.__state.get("active_section")
 
     @active_section.setter
-    def active_section(self, value):
-        if (value is None) or (value is self.active_section):
+    def active_section(self, value: Section):
+        if value is self.active_section:
             return
-        elif self.active_section is not None:
-            self.active_section.pager.reset()
-        _prev_page = None if self.active_section is None else self.current_page
         self.__state["active_section"] = value
         self.view.tocTreeSetSelection(value)
-        page_number = value.pager.current
-        if page_number != _prev_page:
-            self.current_page = page_number
+        if self.current_page not in value.pager:
+            self.current_page = value.pager.first
         speech.announce(value.title)
         reader_section_changed.send(self, active=value)
 
     @property
-    def current_page(self):
-        assert self.active_section is not None, "No active section."
-        return self.active_section.pager.current
+    def current_page(self) -> int:
+        return self.__state["current_page_index"]
 
     @current_page.setter
-    def current_page(self, value):
-        assert self.active_section is not None, "No active section."
-        if value is None:
-            return
-        elif value not in self.active_section.pager:
-            raise ValueError(f"Page {value} is out of range for this section.")
-        _prev = self.active_section.pager.current
-        self.active_section.pager.set_current(value)
-        self.view.set_content(self.get_page_content(value))
+    def current_page(self, value: int):
+        if value not in self.document:
+            raise PaginationError("Page out of range.")
+        _prev = self.__state.setdefault("current_page_index", 0)
+        self.__state["current_page_index"] = value
+        page = self.document[value]
+        if page.section is not self.active_section:
+            self.active_section = page.section
+        self.view.set_content(page.get_text())
         if config.conf["general"]["play_pagination_sound"]:
             sounds.pagination.play_after()
         # Translators: the label of the page content text area
         cmsg = _("Page {page} | {chapter}").format(
-            page=value + 1, chapter=self.active_section.title
+            page=page.number, chapter=page.section.title
         )
         # Translators: a message that is announced after navigating to a page
         smsg = _("Page {page} of {total}").format(
-            page=value + 1, total=len(self.document)
+            page=page.number, total=len(self.document)
         )
         self.view.SetStatusText(cmsg)
         speech.announce(smsg)
         reader_page_changed.send(self, current=value, prev=_prev)
 
-    def go_to_page(self, page_number, pos=0):
+    @property
+    def current_page_object(self) -> BasePage:
+        """Return the current page."""
+        return self.document[self.current_page]
+
+    def go_to_page(self, page_number: int, pos: int=0):
         """Go to a page. Takes care of selecting appropriate section."""
-        target_section = self.document.toc_tree
-        for section in self.document.toc_tree.children:
-            if page_number in section.pager:
-                target_section = section
-                break
-        assert (
-            page_number in target_section.pager
-        ), f"Page {page_number} is out of range for this document."
-        self.active_section = target_section
         self.current_page = page_number
         self.view.contentTextCtrl.SetInsertionPoint(pos)
 
-    def get_page_content(self, page_number):
-        if page_number not in self.document:
-            raise PaginationError(
-                f"Page {page_number} is out of range for this document."
-            )
-        page = self.document.get_page_content(page_number)
-        return page
-
-    def navigate(self, to, unit):
+    def navigate(self, to: str, unit: str):
         assert to in ("next", "prev"), f"Invalid value {to} for arg`to`."
         assert unit in ("page", "section"), f"Invalid value {unit} for arg`unit`."
         if unit == "page":
             try:
-                action_func = getattr(self.active_section.pager, f"go_to_{to}")
+                action_func = getattr(self, f"go_to_{to}")
                 self.current_page = action_func()
                 return True
             except PaginationError:
@@ -210,17 +194,15 @@ class EBookReader:
                 self.active_section = this_section.first_child
             return this_section is not self.active_section
 
-    def is_first_of_section(self, page_number):
-        for sect in self.document.toc_tree:
-            if page_number == sect.pager.first:
-                return True
-        return False
+    def go_to_next(self) -> int:
+        """Try to navigate to the next page or raise PaginationError."""
+        next_item = self.current_page + 1
+        self.current_page = next_item
 
-    def is_last_of_section(self, page_number):
-        for sect in self.document.toc_tree:
-            if page_number == sect.pager.last:
-                return True
-        return False
+    def go_to_prev(self) -> int:
+        """Try to navigate to the previous page or raise PaginationError."""
+        prev_item = self.current_page - 1
+        self.current_page = prev_item
 
     def get_view_title(self, include_author=False):
         if config.conf["general"]["show_file_name_as_title"]:

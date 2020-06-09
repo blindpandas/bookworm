@@ -7,16 +7,38 @@ from enum import IntEnum
 from bookworm import config
 from bookworm import speech
 from bookworm.utils import gui_thread_safe
+from bookworm.gui.settings import SettingsPanel
 from bookworm.logger import logger
 from .annotator import Bookmarker, NoteTaker, Quoter
 from .annotation_dialogs import (
-    NoteEditorDialog,
     BookmarksViewer,
     ExportNotesDialog,
 )
 
 
 log = logger.getChild(__name__)
+
+
+class AnnotationSettingsPanel(SettingsPanel):
+    config_section = "annotation"
+
+    def addControls(self):
+        # Translators: the title of a group of controls in the
+        UIBox = self.make_static_box(_("Annotations"))
+        wx.CheckBox(
+            UIBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Use visual styles to indicate annotations"),
+            name="annotation.use_visuals",
+        )
+        wx.CheckBox(
+            UIBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Use sounds to indicate the presence of comments"),
+            name="annotation.play_sound_for_comments",
+        )
 
 
 class AnnotationsMenuIds(IntEnum):
@@ -32,12 +54,9 @@ class AnnotationsMenuIds(IntEnum):
 
 ANNOTATIONS_KEYBOARD_SHORTCUTS = {
     AnnotationsMenuIds.addBookmark: "Ctrl-B",
-    AnnotationsMenuIds.addNamedBookmark: "Ctrl-N",
+    AnnotationsMenuIds.addNamedBookmark: "Ctrl-Shift-B",
     AnnotationsMenuIds.addNote: "Ctrl-M",
     AnnotationsMenuIds.quoteSelection: "Ctrl-H",
-    AnnotationsMenuIds.viewBookmarks: "Ctrl-Shift-B",
-    AnnotationsMenuIds.viewNotes: "Ctrl-Shift-N",
-    AnnotationsMenuIds.viewQuotes: "Ctrl-Shift-H",
 }
 
 
@@ -72,7 +91,7 @@ class AnnotationMenu(wx.Menu):
         self.Append(
             AnnotationsMenuIds.addNamedBookmark,
             # Translators: the label of an item in the application menubar
-            _("Add &Named Bookmark...\tCtrl-N"),
+            _("Add &Named Bookmark...\tCtrl-Shift-B"),
             # Translators: the help text of an item in the application menubar
             _("Add a named bookmark at the current position"),
         )
@@ -93,21 +112,21 @@ class AnnotationMenu(wx.Menu):
         self.Append(
             AnnotationsMenuIds.viewBookmarks,
             # Translators: the label of an item in the application menubar
-            _("Saved &Bookmarks...\tCtrl-Shift-B"),
+            _("Saved &Bookmarks..."),
             # Translators: the help text of an item in the application menubar
             _("View added bookmarks"),
         )
         self.Append(
             AnnotationsMenuIds.viewNotes,
             # Translators: the label of an item in the application menubar
-            _("Saved Co&mments...\tCtrl-Shift-M"),
+            _("Saved Co&mments..."),
             # Translators: the help text of an item in the application menubar
             _("View, edit, and remove comments."),
         )
         self.Append(
             AnnotationsMenuIds.viewQuotes,
             # Translators: the label of an item in the application menubar
-            _("Saved &Highlights...\tCtrl-Shift-H"),
+            _("Saved &Highlights..."),
             # Translators: the help text of an item in the application menubar
             _("View saved highlights."),
         )
@@ -158,51 +177,56 @@ class AnnotationMenu(wx.Menu):
             if lino == current_lino:
                 count += 1
                 bookmarker.delete(bkm.id)
-                lft, rgt = self.view.get_containing_line(bkm.position)
-                self.view.clear_highlight(lft, rgt)
+                self.service.style_bookmark(self.view, bkm.position, enable=False)
         if count and not name:
             return speech.announce("Bookmark removed.")
         Bookmarker(self.reader).create(title=name, position=insertionPoint)
         # Translators: spoken message
         speech.announce(_("Bookmark Added"))
-        if config.conf["general"]["highlight_bookmarked_positions"]:
-            self.service.highlight_containing_line(insertionPoint, self.view)
+        self.service.style_bookmark(self.view, insertionPoint)
 
     def onAddBookmark(self, event):
         self._add_bookmark()
 
     def onAddNamedBookmark(self, event):
-        dlg = wx.TextEntryDialog(
-            self.view,
-            # Translators: the label of an edit field to enter the title for a new bookmark
-            _("Bookmark Name:"),
-            # Translators: the title of a dialog to create a new bookmark
-            _("Bookmark Current Position"),
+        bookmark_name = self.get_text_from_user(
+            # Translators: title of a dialog
+            _("Add Named Bookmark"),
+            # Translators: label of a text entry
+            _("Bookmark name:"),
         )
-        with dlg:
-            if dlg.ShowModal() == wx.ID_OK:
-                value = dlg.GetValue().strip()
-                if not value:
-                    return wx.Bell()
-                self._add_bookmark(value)
+        if bookmark_name:
+            self._add_bookmark(bookmark_name)
 
     def onAddNote(self, event):
+        _with_tags = wx.GetKeyState(wx.WXK_SHIFT)
         insertionPoint = self.view.contentTextCtrl.GetInsertionPoint()
-        dlg = wx.TextEntryDialog(
-            self.view,
-            # Translators: the label of an edit field to enter a comment
-            _("Comment:"),
+        comment_text = self.get_text_from_user(
             # Translators: the title of a dialog to add a comment
             _("New Comment"),
+            # Translators: the label of an edit field to enter a comment
+            _("Comment:"),
             style=wx.OK|wx.CANCEL|wx.TE_MULTILINE|wx.CENTER
         )
-        if dlg.ShowModal() == wx.ID_OK:
-            value = dlg.GetValue().strip()
-            if not value:
-                return wx.Bell()
-            NoteTaker(self.reader).create(title="", content=value)
+        if not comment_text:
+            return
+        note = NoteTaker(self.reader).create(title="", content=comment_text, position=insertionPoint)
+        self.service.style_comment(self.view, insertionPoint)
+        if _with_tags:
+            # add tags
+            tags_text =  self.get_text_from_user(
+                # Translators: title of a dialog
+                _("Tag Comment"),
+                # Translators: label of a text entry
+                _("Tags:"),
+            )
+            if tags_text:
+                for tag in tags_text.split():
+                    note.tags.append(tag.strip())
+                NoteTaker.model.session.commit()
 
     def onQuoteSelection(self, event):
+        _with_tags = wx.GetKeyState(wx.WXK_SHIFT)
         quoter = Quoter(self.reader)
         selected_text = self.view.contentTextCtrl.GetStringSelection()
         if not selected_text:
@@ -212,29 +236,41 @@ class AnnotationMenu(wx.Menu):
             q_range = SelectionRange(q.start_pos, q.end_pos)
             if (q_range.start == x) and (q_range.end == y):
                 quoter.delete(q.id)
-                quoter.session.commit()
-                self.view.clear_highlight(x, y)
+                self.service.style_highlight(self.view, x, y, enable=False)
                 # Translators: spoken message
                 return speech.announce(_("Highlight removed"))
-            elif (x in q_range) and (y in q_range):
+            elif (q.start_pos < x) and (q.end_pos > y):
                 # Translators: spoken message
                 speech.announce(_("Already highlighted"))
                 return wx.Bell()
-            elif x not in q_range:
-                q.start_pos = x
-                quoter.session.commit()
-                self.view.highlight_range(x, q_range.end, background=wx.YELLOW)
-                return speech.announce(_("Highlight extended"))
-            elif y not in q_range:
-                q.end_pos = y
-                q.session.commit()
-                self.view.highlight_range(q_range.start, y, background=wx.YELLOW)
-                # Translators: spoken message
-                return speech.announce(_("Highlight extended"))
-        quoter.create(title="", content=selected_text, start_pos=x, end_pos=y)
+            if (x in q_range) or (y in q_range):
+                if x not in q_range:
+                    q.start_pos = x
+                    q.session.commit()
+                    self.service.style_highlight(self.view, x, q_range.end)
+                    return speech.announce(_("Highlight extended"))
+                elif y not in q_range:
+                    q.end_pos = y
+                    q.session.commit()
+                    self.service.style_highlight(self.view, q_range.start, y)
+                    # Translators: spoken message
+                    return speech.announce(_("Highlight extended"))
+        quote = quoter.create(title="", content=selected_text, start_pos=x, end_pos=y)
         # Translators: spoken message
         speech.announce("Selection highlighted")
-        self.view.contentTextCtrl.SetStyle(x, y, wx.TextAttr(wx.NullColour, wx.YELLOW))
+        self.service.style_highlight(self.view, x, y)
+        if _with_tags:
+            # add tags
+            tags_text =  self.get_text_from_user(
+                # Translators: title of a dialog
+                _("Tag Highlight"),
+                # Translators: label of a text entry
+                _("Tags:"),
+            )
+            if tags_text:
+                for tag in tags_text.split():
+                    quote.tags.append(tag.strip())
+                Quoter.model.session.commit()
 
     def onViewBookmarks(self, event):
         dlg = BookmarksViewer(
@@ -258,3 +294,14 @@ class AnnotationMenu(wx.Menu):
 
     def onExportQuotes(self, event):
         ...
+
+    def get_text_from_user(self, title, label, style=wx.OK|wx.CANCEL|wx.CENTER, value=""):
+        dlg = wx.TextEntryDialog(
+            self.view,
+            label,
+            title,
+            style=style
+        )
+        if dlg.ShowModal() == wx.ID_OK:
+            value = dlg.GetValue().strip()
+            return value or wx.Bell()

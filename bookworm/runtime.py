@@ -1,6 +1,6 @@
 # coding: utf-8
 
-"""Holds runtime information."""
+"""Provides information and functionality needed at runtime."""
 
 import clr
 clr.AddReference("System.Windows.Forms")
@@ -12,6 +12,8 @@ from platform_utils import paths as paths_
 from bookworm import app
 from bookworm.win_registry import RegKey, Registry
 
+
+UWP_SERVICES_AVAILABEL = False
 try:
     _app_path = Path(paths_.app_path())
     _uwp_services_dll = _app_path / "BookwormUWPServices.dll"
@@ -28,7 +30,6 @@ try:
     UWP_SERVICES_AVAILABEL = True
     del _uwp_services_dll
 except Exception as e:
-    UWP_SERVICES_AVAILABEL = False
     if '--debug' in sys.argv:
         print(f"Failed to load BookwormUWPServices.dll. {e}")
 

@@ -2,16 +2,15 @@
 
 import wx
 import wx.lib.scrolledpanel as scrolled
-import fitz
+import wx.lib.sized_controls as sc
 from itertools import chain
 from bookworm import config
 from bookworm import speech
 from bookworm.document_formats import SearchRequest
 from bookworm.signals import reader_page_changed
 from bookworm.utils import gui_thread_safe
-from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
 from bookworm.logger import logger
-from bookworm.gui.components import Dialog, SimpleDialog, DialogListCtrl, EnhancedSpinCtrl
+from bookworm.gui.components import Dialog, SimpleDialog, DialogListCtrl, EnhancedSpinCtrl, PageRangeControl, make_sized_static_box
 from .navigation import NavigationProvider
 
 
@@ -87,15 +86,16 @@ class SearchResultsDialog(Dialog):
         self.searchResultsListCtrl.SetItemData(index, pos)
 
 
-class SearchBookDialog(Dialog):
+class SearchBookDialog(SimpleDialog):
     """Full text search dialog."""
 
-    def addControls(self, sizer, parent):
+    def addControls(self, parent):
         self.reader = self.parent.reader
         num_pages = len(self.parent.reader.document)
         recent_terms = config.conf["history"]["recent_terms"]
+
         # Translators: the label of an edit field in the search dialog
-        st_label = wx.StaticText(parent, -1, _("Search term:"))
+        wx.StaticText(parent, -1, _("Search term:"))
         self.searchTermTextCtrl = wx.ComboBox(
             parent, -1, choices=recent_terms, style=wx.CB_DROPDOWN
         )
@@ -103,76 +103,28 @@ class SearchBookDialog(Dialog):
         self.isCaseSensitive = wx.CheckBox(parent, -1, _("Case sensitive"))
         # Translators: the label of a checkbox
         self.isWholeWord = wx.CheckBox(parent, -1, _("Match whole word only"))
-        # Translators: the title of a group of controls in the search dialog
-        rbTitle = wx.StaticBox(parent, -1, _("Search Range"))
-        searchRangeBox = wx.StaticBoxSizer(rbTitle, wx.VERTICAL)
-        # Translators: the label of a radio button in the search dialog
-        self.hasPage = wx.RadioButton(parent, -1, _("Page Range"), style=wx.RB_GROUP)
-        rsizer = wx.BoxSizer(wx.HORIZONTAL)
-        # Translators: the label of an edit field in the search dialog
-        # to enter the page from which the search will start
-        fpage_label = wx.StaticText(parent, -1, _("From:"))
-        self.fromPage = EnhancedSpinCtrl(parent, -1, min=1, max=num_pages, value="1")
-        # Translators: the label of an edit field in the search dialog
-        # to enter the page number at which the search will stop
-        tpage_label = wx.StaticText(parent, -1, _("To:"))
-        self.toPage = EnhancedSpinCtrl(
-            parent, -1, min=1, max=num_pages, value=str(num_pages)
-        )
-        rsizer.AddMany(
-            [
-                (fpage_label, 0, wx.ALL, 5),
-                (self.fromPage, 1, wx.ALL, 5),
-                (tpage_label, 0, wx.ALL, 5),
-                (self.toPage, 1, wx.ALL, 5),
-            ]
-        )
-        # Translators: the label of a radio button in the search dialog
-        self.hasSection = wx.RadioButton(parent, -1, _("Specific section"))
-        # Translators: the label of a combobox in the search dialog
-        # to choose the section to which the search will be confined
-        sec_label = wx.StaticText(parent, -1, _("Select section:"))
-        self.sectionChoice = wx.Choice(
-            parent, -1, choices=[sect.title for sect in self.reader.document.toc_tree]
-        )
-        secsizer = wx.BoxSizer(wx.HORIZONTAL)
-        secsizer.AddMany(
-            [(sec_label, 0, wx.ALL, 5), (self.sectionChoice, 1, wx.ALL, 5)]
-        )
-        searchRangeBox.Add(self.hasPage, 0, wx.ALL, 10)
-        searchRangeBox.Add(rsizer, wx.EXPAND | wx.ALL, 10)
-        searchRangeBox.Add(self.hasSection, 0, wx.ALL, 10)
-        searchRangeBox.Add(secsizer, wx.EXPAND | wx.ALL, 10)
-        sizer.Add(st_label, 0, wx.LEFT | wx.RIGHT | wx.TOP, 10)
-        sizer.Add(self.searchTermTextCtrl, 0, wx.EXPAND | wx.ALL, 10)
-        sizer.Add(self.isCaseSensitive, 0, wx.TOP | wx.BOTTOM, 10)
-        sizer.Add(self.isWholeWord, 0, wx.BOTTOM, 10)
-        sizer.Add(searchRangeBox, 0, wx.ALL, 10)
-        self.page_controls = (fpage_label, tpage_label, self.fromPage, self.toPage)
-        self.sect_controls = (sec_label, self.sectionChoice)
-        for ctrl in chain(self.page_controls, self.sect_controls):
-            ctrl.Enable(False)
-        for radio in (self.hasPage, self.hasSection):
-            radio.SetValue(0)
-            self.Bind(wx.EVT_RADIOBUTTON, self.onSearchRange, radio)
+        # Translators: the label of a checkbox
+        self.isRegex = wx.CheckBox(parent, -1, _("Regular expression"))
+        self.pageRange = PageRangeControl(parent, self.reader.document)
+        self.Bind(wx.EVT_CHECKBOX, self.onIsRegex, self.isRegex)
 
     def GetValue(self):
-        if self.hasSection.GetValue():
-            selected_section = self.sectionChoice.GetSelection()
-            if selected_section != wx.NOT_FOUND:
-                pager = self.reader.document.toc_tree[selected_section].pager
-                from_page = pager.first
-                to_page = pager.last
-        else:
-            from_page = self.fromPage.GetValue() - 1
-            to_page = self.toPage.GetValue() - 1
+        from_page, to_page = self.pageRange.get_range()
         return SearchRequest(
             term=self.searchTermTextCtrl.GetValue().strip(),
+            is_regex=self.isRegex.IsChecked(),
             case_sensitive=self.isCaseSensitive.IsChecked(),
             whole_word=self.isWholeWord.IsChecked(),
             from_page=from_page,
             to_page=to_page,
         )
+
+    def onIsRegex(self, event):
+        controlledItems = (self.isWholeWord,)
+        enable = not event.IsChecked()
+        for ctrl in controlledItems:
+            ctrl.SetValue(False)
+            ctrl.Enable(enable)
 
     def onSearchRange(self, event):
         radio = event.GetEventObject()
@@ -279,13 +231,12 @@ class ViewPageAsImageDialog(wx.Dialog):
             wx.CallLater(50, self.scroll.Scroll, 0, 0)
 
     def getPageImage(self):
-        page = self.reader.document[self.reader.current_page]
-        mat = fitz.Matrix(self._zoom_factor, self._zoom_factor)
-        pix = page.getPixmap(matrix=mat, alpha=True)
-        if IS_HIGH_CONTRAST_ACTIVE:
-            pix.invertIRect(pix.irect)
-        bmp = wx.Bitmap.FromBufferRGBA(pix.width, pix.height, pix.samples)
-        size = (bmp.GetWidth(), bmp.GetHeight())
+        imagedata, width, height = self.reader.document.get_page_image(
+            self.reader.current_page,
+            zoom_factor=self._zoom_factor
+        )
+        bmp = wx.Bitmap.FromBufferRGBA(width, height, bytearray(imagedata))
+        size = (width, height)
         return bmp, size
 
     def onKeyUp(self, event):

@@ -6,7 +6,7 @@ import threading
 import time
 import operator
 import wx
-from concurrent.futures import ProcessPoolExecutor
+import multiprocessing as mp
 from pathlib import Path
 from lru import LRU
 from enum import IntEnum
@@ -306,34 +306,15 @@ class OCRMenu(wx.Menu):
     def _continue_with_text_extraction(self, options, output_file, progress_dlg):
         lang, zoom_factor, should_enhance = options
         doc = self.service.reader.document
-        total_pages = len(doc)
-
-        def get_recognizer(page_number):
-            image, width, height = doc.get_page_image(page_number, zoom_factor, should_enhance)
-            return ocr.ImageRecognizer(
-                lang=lang,
-                imagedata=image,
-                width=width,
-                height=height,
-                cookie=page_number
-            )
-
-        recognizers = (get_recognizer(pn) for pn in range(total_pages+1))
-        recog_func = operator.methodcaller("recognize")
-        results = []
-        callback = lambda f: results.append(f.result())
-        for recog in recognizers:
-            process_worker.submit(recog.recognize).add_callback(callback)
-        while len(results) < total_pages:
-            count = len(results)
-            time.sleep(.3)
-            wx.CallAfter(progress_dlg.Update, count, f"Scanning page {count} of {total_pages}")
-        # Write the results to the file
-        wx.CallAfter(progress_dlg.Update, total_pages, _("Writing output to the file"))
-        results.sort()
-        content = f"{os.linesep}\f{os.linesep}".join(r[1] for r in results)
-        with open(output_file, "w") as file:
-            file.write(content)
+        total = len(doc)
+        ocr_executor = ocr.scan_to_text(
+            doc.__class__,
+            doc.filename,
+            lang, zoom_factor, should_enhance,
+            output_file
+        )
+        for progress in ocr_executor:
+            wx.CallAfter(progress_dlg.Update, progress, f"Scanning page {progress} of {total}")
         wx.CallAfter(dlg.Close)
         wx.CallAfter(dlg.Destroy)
 

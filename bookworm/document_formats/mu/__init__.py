@@ -3,13 +3,21 @@
 import os
 import zipfile
 import fitz
-from lru import LRU
+from hashlib import md5
+from tempfile import TemporaryDirectory
+from zipfile import ZipFile
+from pathlib import Path
+from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
+from bookworm.paths import home_data_path
+from bookworm.utils import recursively_iterdir
 from bookworm.utils import cached_property
 from bookworm.document_formats.base import (
     BaseDocument,
+    BasePage,
     Section,
     BookMetadata,
     Pager,
+    DocumentCapability as DC,
     DocumentError,
     PaginationError,
 )
@@ -19,20 +27,39 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
+class FitzPage(BasePage):
+
+    def _text_from_page(self, page: fitz.Page) -> str:
+        bloks = page.getTextBlocks()
+        text = [blk[4].replace("\n", " ") for blk in bloks]
+        return "\r\n".join(text)
+
+    def get_text(self):
+        return self._text_from_page(self.document._ebook[self.index])
+
+    def get_image(self, zoom_factor=1.0, enhance=False):
+        mat = fitz.Matrix(zoom_factor, zoom_factor)
+        pix = self.document._ebook[self.index].getPixmap(matrix=mat, alpha=True)
+        if IS_HIGH_CONTRAST_ACTIVE:
+            pix.invertIRect(pix.irect)
+        return pix.samples, pix.width, pix.height
+
+
 class FitzDocument(BaseDocument):
+    """The backend of this document type is Fitz (AKA MuPDF) ."""
 
     format = "pdf"
     # Translators: the name of a document file format
     name = _("Portable Document (PDF)")
     extensions = ("*.pdf",)
-    supports_rendering = True
+    capabilities = DC.TOC_TREE | DC.METADATA | DC.GRAPHICAL_RENDERING | DC.IMAGE_EXTRACTION
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int) -> FitzPage:
         if index not in self:
             raise PaginationError(f"Page {index} is out of range.")
-        return self._ebook[index]
+        return FitzPage(self, index)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self._ebook.pageCount
 
     def read(self, filetype=None):
@@ -41,7 +68,6 @@ class FitzDocument(BaseDocument):
             super().read()
         except RuntimeError as e:
             raise DocumentError(*e.args)
-        self.__page_cache = LRU(100)
 
     def close(self):
         if self._ebook is None:
@@ -55,31 +81,14 @@ class FitzDocument(BaseDocument):
     def decrypt(self, password):
         return bool(self._ebook.authenticate(password))
 
-    def _text_from_page(self, page):
-        bloks = page.getTextBlocks()
-        text = [blk[4].replace("\n", " ") for blk in bloks]
-        return "\r\n".join(text)
-
-    def get_page_content(self, page_number):
-        _cached = self.__page_cache.get(page_number)
-        if _cached is not None:
-            return _cached
-        content = self._text_from_page(self[page_number])
-        self.__page_cache[page_number] = content
-        return content
-
-    def get_page_image(self, page_number, zoom_factor=2.5, enhance=False):
-        mat = fitz.Matrix(zoom_factor, zoom_factor)
-        pix = self._ebook[page_number].getPixmap(matrix=mat, alpha=True)
-        return pix.samples, pix.width, pix.height
-
     @cached_property
     def toc_tree(self):
         toc_info = self._ebook.getToC(simple=False)
         max_page = len(self) - 1
         root_item = Section(
+            document=self,
             title=self.metadata.title,
-            pager=Pager(first=0, last=max_page, current=0),
+            pager=Pager(first=0, last=max_page),
             data={"html_file": None}
         )
         _last_entry = None
@@ -102,8 +111,8 @@ class FitzDocument(BaseDocument):
                 continue
             if first_page > last_page:
                 continue
-            pgn = Pager(first=first_page, last=last_page, current=first_page)
-            sect = Section(title=title, pager=pgn, data={"html_file": infodict.get("name")})
+            pgn = Pager(first=first_page, last=last_page)
+            sect = Section(document=self, title=title, pager=pgn, data={"html_file": infodict.get("name")})
             if level == 1:
                 root_item.append(sect)
                 _last_entry = sect
@@ -139,6 +148,7 @@ class FitzEPUBDocument(FitzDocument):
     # Translators: the name of a document file format
     name = _("Electronic Publication (EPUB)")
     extensions = ("*.epub",)
+    capabilities = DC.TOC_TREE | DC.METADATA | DC.GRAPHICAL_RENDERING | DC.IMAGE_EXTRACTION | DC.FLUID_PAGINATION
 
     def read(self):
         try:
@@ -147,7 +157,7 @@ class FitzEPUBDocument(FitzDocument):
             if "drm" in e.args[0].lower():
                 log.debug("Got an encrypted file, will try to decrypt it...")
                 self._original_file_name = self.filename
-                self.filename = _tools.make_unrestricted_file(self.filename)
+                self.filename = self.make_unrestricted_file(self.filename)
                 return super().read(filetype="epub")
             raise e
         self._book_package = zipfile.ZipFile(self.filename)
@@ -165,3 +175,20 @@ class FitzEPUBDocument(FitzDocument):
         html_doc = html.document_fromstring(self._book_zip.read(html_file))
         if content_id is not None:
             html_doc = html_doc.get_element_by_id(content_id)
+
+    @staticmethod
+    def make_unrestricted_file(filename):
+        """Try to remove digital restrictions from the EPUB document."""
+        hashed_filename = md5(filename.lower().encode("utf8")).hexdigest()
+        processed_book = home_data_path(hashed_filename)
+        if processed_book.exists():
+            return str(processed_book)
+        _temp = TemporaryDirectory()
+        temp_path = Path(_temp.name)
+        ZipFile(filename).extractall(temp_path)
+        (temp_path / "META-INF\\encryption.xml").unlink()
+        with ZipFile(processed_book, "w") as book:
+            for file in recursively_iterdir(temp_path):
+                book.write(file, file.relative_to(temp_path))
+        _temp.cleanup()
+        return str(processed_book)

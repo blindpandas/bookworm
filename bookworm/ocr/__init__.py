@@ -25,6 +25,7 @@ class OCRService(BookwormService):
     @classmethod
     def check(self):
         return is_ocr_available()
+
     def process_menubar(self, menubar):
         self.menu = OCRMenu(self, menubar)
 
@@ -37,5 +38,9 @@ class OCRService(BookwormService):
         return OCR_KEYBOARD_SHORTCUTS
 
     def shutdown(self):
-        self.menu._ocr_wait_dlg.Destroy()
+        try:
+            self.menu._ocr_wait_dlg.Destroy()
+        except RuntimeError:
+            # already destroyed
+            pass
 

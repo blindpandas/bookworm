@@ -200,7 +200,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self._populate_tree(tree.children, root=root)
         tree.data["tree_id"] = root
 
-    def tocTreeSetSelection(self, item):
+    def tocTreeSetSelection(self, item, *, go_to_first=True):
+        if go_to_first:
+            self.reader.go_to_page(item.pager.first)
         tree_id = item.data["tree_id"]
         self.tocTreeCtrl.EnsureVisible(tree_id)
         self.tocTreeCtrl.ScrollTo(tree_id)

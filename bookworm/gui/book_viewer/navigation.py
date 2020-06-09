@@ -3,6 +3,7 @@
 import time
 import wx
 from bookworm import config
+from bookworm.document_formats import PaginationError
 from bookworm.signals import reader_page_changed
 from bookworm.logger import logger
 from .decorators import only_when_reader_ready
@@ -79,14 +80,11 @@ class NavigationProvider:
         self.navigate_to_page(to="next")
 
     def navigate_to_page(self, to):
-        rv = self.reader.navigate(to=to, unit="page")
-        if not rv:
-            if to == "prev":
-                prev = self.reader.active_section.simple_prev
-                if prev is not None and not prev.is_root:
-                    self.reader.go_to_page(prev.pager.last)
-            else:
-                self.reader.navigate(to=to, unit="section")
+        func = self.reader.go_to_next if to == "next" else self.reader.go_to_prev
+        try:
+            func()
+        except PaginationError:
+            pass
 
     def _auto_navigate(self, key_code):
         now = time.time()

@@ -234,20 +234,6 @@ class GeneralPanel(SettingsPanel):
             miscBox,
             -1,
             # Translators: the label of a checkbox
-            _("Play a sound when the current page contains notes"),
-            name="general.play_page_note_sound",
-        )
-        wx.CheckBox(
-            miscBox,
-            -1,
-            # Translators: the label of a checkbox
-            _("Highlight bookmarked positions"),
-            name="general.highlight_bookmarked_positions",
-        )
-        wx.CheckBox(
-            miscBox,
-            -1,
-            # Translators: the label of a checkbox
             _("Automatically check for updates"),
             name="general.auto_check_for_updates",
         )

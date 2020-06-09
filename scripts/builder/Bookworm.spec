@@ -21,7 +21,7 @@ block_cipher = None
 
 a = Analysis(
     ["launcher.py"],
-    pathex=["C:\\Users\\ibnom\\app"],
+    pathex=[""],
     binaries=[],
     datas=get_datafiles(),
     hiddenimports=[],

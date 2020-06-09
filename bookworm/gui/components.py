@@ -3,10 +3,18 @@
 import wx
 import wx.lib.mixins.listctrl as listmix
 import wx.lib.sized_controls as sc
+from itertools import chain
 from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
+
+
+def make_sized_static_box(parent, title):
+    stbx = sc.SizedStaticBox(parent, -1, title)
+    stbx.SetSizerProp("expand", True)
+    stbx.Sizer.AddSpacer(25)
+    return stbx
 
 
 class EnhancedSpinCtrl(wx.SpinCtrl):
@@ -23,6 +31,68 @@ class EnhancedSpinCtrl(wx.SpinCtrl):
         event.Skip()
         length = len(str(self.GetValue()))
         self.SetSelection(0, length)
+
+
+class PageRangeControl(sc.SizedPanel):
+
+    def __init__(self, parent, document):
+        parent = parent
+        self.doc = document
+        num_pages = len(self.doc)
+
+        # Translators: the title of a group of controls in the search dialog
+        rangeBox = make_sized_static_box(parent, _("Search Range"))
+        # Translators: the label of a radio button in the search dialog
+        self.hasPage = wx.RadioButton(rangeBox, -1, _("Page Range"), style=wx.RB_GROUP)
+        fromToPagePanel = make_sized_static_box(rangeBox, "")
+        fromToPagePanel.SetSizerProps(expand=True)
+        fromToPagePanel.SetSizerType("horizontal")
+        # Translators: the label of an edit field in the search dialog
+        # to enter the page from which the search will start
+        fpage_label = wx.StaticText(fromToPagePanel, -1, _("From:"))
+        self.fromPage = EnhancedSpinCtrl(fromToPagePanel, -1, min=1, max=num_pages, value="1")
+        # Translators: the label of an edit field in the search dialog
+        # to enter the page number at which the search will stop
+        tpage_label = wx.StaticText(fromToPagePanel, -1, _("To:"))
+        self.toPage = EnhancedSpinCtrl(
+            fromToPagePanel, -1, min=1, max=num_pages, value=str(num_pages)
+        )
+        # Translators: the label of a radio button in the search dialog
+        self.hasSection = wx.RadioButton(rangeBox, -1, _("Specific section"))
+        # Translators: the label of a combobox in the search dialog
+        # to choose the section to which the search will be confined
+        sec_label = wx.StaticText(rangeBox, -1, _("Select section:"))
+        self.sectionChoice = wx.Choice(
+            rangeBox, -1, choices=[sect.title for sect in self.doc.toc_tree]
+        )
+        self.page_controls = (fpage_label, tpage_label, self.fromPage, self.toPage)
+        self.sect_controls = (sec_label, self.sectionChoice)
+        for ctrl in chain(self.page_controls, self.sect_controls):
+            ctrl.Enable(False)
+        for radio in (self.hasPage, self.hasSection):
+            radio.SetValue(0)
+            parent.Bind(wx.EVT_RADIOBUTTON, self.onRangeTypeChange, radio)
+
+    def onRangeTypeChange(self, event):
+        radio = event.GetEventObject()
+        if radio == self.hasPage:
+            controls = self.page_controls
+        else:
+            controls = self.sect_controls
+        for ctrl in chain(self.page_controls, self.sect_controls):
+            ctrl.Enable(ctrl in controls)
+
+    def get_range(self):
+        if self.hasSection.GetValue():
+            selected_section = self.sectionChoice.GetSelection()
+            if selected_section != wx.NOT_FOUND:
+                pager = self.doc.toc_tree[selected_section].pager
+                from_page = pager.first
+                to_page = pager.last
+        else:
+            from_page = self.fromPage.GetValue() - 1
+            to_page = self.toPage.GetValue() - 1
+        return from_page, to_page
 
 
 class DialogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
