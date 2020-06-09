@@ -8,6 +8,7 @@ log = logger.getChild(__name__)
 
 class BookwormService:
     """Extend the core functionality."""
+
     name = None
     stateful_menu_ids = []
     has_gui = False
@@ -47,5 +48,3 @@ class BookwormService:
     def get_keyboard_shourtcuts(self):
         """Return a dictionary mapping control id's to keyboard shortcuts."""
         return {}
-
-

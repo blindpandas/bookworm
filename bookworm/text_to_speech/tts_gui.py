@@ -39,6 +39,7 @@ SPEECH_KEYBOARD_SHORTCUTS = {
     StatelessSpeechMenuIds.voiceProfiles: "Ctrl-Shift-V",
 }
 
+
 class ReadingPanel(SettingsPanel):
     config_section = "reading"
 
@@ -85,7 +86,10 @@ class ReadingPanel(SettingsPanel):
         miscBox = self.make_static_box(_("During Reading Aloud"))
         wx.CheckBox(
             # Translators: the label of a checkbox
-            miscBox, -1, _("Speak page number"), name="reading.speak_page_number"
+            miscBox,
+            -1,
+            _("Speak page number"),
+            name="reading.speak_page_number",
         )
         wx.CheckBox(
             miscBox,
@@ -239,7 +243,7 @@ class SpeechPanel(SettingsPanel):
         active_profile = self.service.config_manager.active_profile
         should_init_engine = active_profile == self.profile_name == None
         if active_profile is not None:
-            if self.profile_name == active_profile['name']:
+            if self.profile_name == active_profile["name"]:
                 should_init_engine = True
             else:
                 should_init_engine = False
@@ -257,7 +261,9 @@ class VoiceProfileEditorDialog(SimpleDialog):
         super().__init__(parent, title)
 
     def addControls(self, parent):
-        cPanel = self.spPanel = SpeechPanel(parent, config_object=self.profile, profile_name=self.profile['name'])
+        cPanel = self.spPanel = SpeechPanel(
+            parent, config_object=self.profile, profile_name=self.profile["name"]
+        )
         self.Bind(wx.EVT_BUTTON, self.onSubmit, id=wx.ID_OK)
         cPanel.reconcile()
         cPanel.Children[0].Children[1].SetFocus()
@@ -352,7 +358,9 @@ class VoiceProfileDialog(SimpleDialog):
         self.config_manager.active_profile = self.config_manager.profiles[profile_name]
         if self.service.reader.ready:
             self.service.initialize_engine()
-        self.service.view.menuBar.FindItemById(StatelessSpeechMenuIds.deactivateActiveVoiceProfile).Enable(True)
+        self.service.view.menuBar.FindItemById(
+            StatelessSpeechMenuIds.deactivateActiveVoiceProfile
+        ).Enable(True)
 
     def onEdit(self, event):
         profile_name = self.selected_profile
@@ -535,9 +543,13 @@ class SpeechMenu(wx.Menu):
 
         # EventHandlers
         self.view.Bind(wx.EVT_MENU, self.onPlay, id=StatefulSpeechMenuIds.play)
-        self.view.Bind(wx.EVT_MENU, self.onPauseToggle, id=StatefulSpeechMenuIds.pauseToggle)
         self.view.Bind(
-            wx.EVT_MENU, lambda e: self.service.rewind(), id=StatefulSpeechMenuIds.rewind
+            wx.EVT_MENU, self.onPauseToggle, id=StatefulSpeechMenuIds.pauseToggle
+        )
+        self.view.Bind(
+            wx.EVT_MENU,
+            lambda e: self.service.rewind(),
+            id=StatefulSpeechMenuIds.rewind,
         )
         self.view.Bind(
             wx.EVT_MENU,
@@ -545,16 +557,24 @@ class SpeechMenu(wx.Menu):
             id=StatefulSpeechMenuIds.fastforward,
         )
         self.view.Bind(wx.EVT_MENU, self.onStop, id=StatefulSpeechMenuIds.stop)
-        self.view.Bind(wx.EVT_MENU, self.onVoiceProfiles, id=StatelessSpeechMenuIds.voiceProfiles)
+        self.view.Bind(
+            wx.EVT_MENU, self.onVoiceProfiles, id=StatelessSpeechMenuIds.voiceProfiles
+        )
         self.view.Bind(
             wx.EVT_MENU,
             self.onDeactivateVoiceProfile,
             id=StatelessSpeechMenuIds.deactivateActiveVoiceProfile,
         )
-        self.view.Bind(wx.EVT_MENU, self.onPlayToggle, id=StatefulSpeechMenuIds.playToggle)
-        self.view.contentTextCtrl.Bind(wx.EVT_KEY_UP, self.onKeyUp, self.view.contentTextCtrl)
-       # Disable this when no voice profile is active
-        self.menubar.FindItemById(StatelessSpeechMenuIds.deactivateActiveVoiceProfile).Enable(False)
+        self.view.Bind(
+            wx.EVT_MENU, self.onPlayToggle, id=StatefulSpeechMenuIds.playToggle
+        )
+        self.view.contentTextCtrl.Bind(
+            wx.EVT_KEY_UP, self.onKeyUp, self.view.contentTextCtrl
+        )
+        # Disable this when no voice profile is active
+        self.menubar.FindItemById(
+            StatelessSpeechMenuIds.deactivateActiveVoiceProfile
+        ).Enable(False)
 
     def onPlay(self, event):
         if not self.service.is_engine_ready:
@@ -606,7 +626,9 @@ class SpeechMenu(wx.Menu):
         config_manager = self.service.config_manager
         config_manager.active_profile = None
         self.service.configure_engine()
-        self.menubar.FindItemById(StatelessSpeechMenuIds.deactivateActiveVoiceProfile).Enable(False)
+        self.menubar.FindItemById(
+            StatelessSpeechMenuIds.deactivateActiveVoiceProfile
+        ).Enable(False)
 
     def onKeyUp(self, event):
         event.Skip(True)

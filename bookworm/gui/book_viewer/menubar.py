@@ -472,7 +472,9 @@ class MenubarProvider:
             return
         if self.reader.document.is_encrypted():
             self.decrypt_opened_document()
-        self.renderItem.Enable(DC.GRAPHICAL_RENDERING in self.reader.document.capabilities)
+        self.renderItem.Enable(
+            DC.GRAPHICAL_RENDERING in self.reader.document.capabilities
+        )
         self.tocTreeCtrl.Expand(self.tocTreeCtrl.GetRootItem())
         wx.CallAfter(self.tocTreeCtrl.SetFocus)
         recent_files = config.conf["history"]["recently_opened"]
@@ -491,10 +493,20 @@ class MenubarProvider:
     def content_text_ctrl_context_menu(self):
         menu = wx.Menu()
         entries = [
-            (10, _("&Go To Page...\tCtrl-G"), _("Jump to a page"), BookRelatedMenuIds.goToPage),
+            (
+                10,
+                _("&Go To Page...\tCtrl-G"),
+                _("Jump to a page"),
+                BookRelatedMenuIds.goToPage,
+            ),
             (20, _("&Find in Book...\tCtrl-F"), _("Search this book."), wx.ID_FIND),
             (21, "", "", None),
-            (30, _("&Render Page...\tCtrl-R"), _("View a fully rendered version of this page."), BookRelatedMenuIds.viewRenderedAsImage),
+            (
+                30,
+                _("&Render Page...\tCtrl-R"),
+                _("View a fully rendered version of this page."),
+                BookRelatedMenuIds.viewRenderedAsImage,
+            ),
         ]
         entries.extend(wx.GetApp().service_handler.get_contextmenu_items())
         entries.sort()
@@ -556,7 +568,7 @@ class MenubarProvider:
     @gui_thread_safe
     def highlight_search_result(self, page_number, pos):
         self.reader.go_to_page(page_number)
-        start, end = self.get_containing_line(pos) 
+        start, end = self.get_containing_line(pos)
         self.contentTextCtrl.SetSelection(start, end)
 
     def _get_ebooks_wildcards(self):
@@ -599,4 +611,3 @@ class MenubarProvider:
                 style=wx.ICON_ERROR,
             )
             return self.decrypt_opened_document()
-

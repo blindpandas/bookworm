@@ -22,5 +22,3 @@ def announce(message, urgent=False):
         _auto_output = Auto()
     _auto_output.speak(message, interrupt=urgent)
     _auto_output.braille(message)
-
-

@@ -21,6 +21,7 @@ log = logger.getChild(__name__)
 try:
     if UWP_SERVICES_AVAILABEL:
         from OCRProvider import OCRProvider
+
         _ocr_available = True
 except:
     _ocr_available = False
@@ -29,11 +30,15 @@ except:
 def is_ocr_available():
     return platform.version().startswith("10") and _ocr_available
 
+
 def get_recognition_languages():
     langs = [LanguageInfo(lang) for lang in OCRProvider.GetRecognizableLanguages()]
     if langs:
         current_lang = 0
-        possible = [CultureInfo.CurrentCulture.Parent.LCID, CultureInfo.CurrentCulture.LCID]
+        possible = [
+            CultureInfo.CurrentCulture.Parent.LCID,
+            CultureInfo.CurrentCulture.LCID,
+        ]
         for (i, lang) in enumerate(langs):
             if lang.LCID in possible:
                 current_lang = i
@@ -53,27 +58,29 @@ class ImageRecognizer:
         self.cookie = cookie
 
     def recognize(self):
-        lines = OCRProvider.Recognize(self.lang, self.imagedata, self.width, self.height)
+        lines = OCRProvider.Recognize(
+            self.lang, self.imagedata, self.width, self.height
+        )
         return self.cookie, os.linesep.join(lines)
 
 
-def do_scan_to_text(doc_cls, doc_path, lang, zoom_factor, should_enhance, output_file, queue):
+def do_scan_to_text(
+    doc_cls, doc_path, lang, zoom_factor, should_enhance, output_file, queue
+):
     doc = doc_cls(doc_path)
     doc.read()
     total = len(doc)
     scanned = []
     pool = ProcessPoolExecutor(8)
     check_lock = RLock()
-    recognizers = (get_recognizer(pn) for pn in range(total+1))
+    recognizers = (get_recognizer(pn) for pn in range(total + 1))
 
     def get_recognizer(page_number):
-        image, width, height = doc.get_page_image(page_number, zoom_factor, should_enhance)
+        image, width, height = doc.get_page_image(
+            page_number, zoom_factor, should_enhance
+        )
         return ImageRecognizer(
-            lang=lang,
-            imagedata=image,
-            width=width,
-            height=height,
-            cookie=page_number
+            lang=lang, imagedata=image, width=width, height=height, cookie=page_number
         )
 
     def callback(future):
@@ -97,8 +104,10 @@ def do_scan_to_text(doc_cls, doc_path, lang, zoom_factor, should_enhance, output
 
 
 def scan_to_text(doc_cls, doc_path, lang, zoom_factor, should_enhance, output_file):
-    args = (doc_cls, doc_path, lang, zoom_factor, should_enhance, output_file,)
-    process = QueueProcess(target=do_scan_to_text, args=args, name="bookworm-ocr-to-text")
+    args = (doc_cls, doc_path, lang, zoom_factor, should_enhance, output_file)
+    process = QueueProcess(
+        target=do_scan_to_text, args=args, name="bookworm-ocr-to-text"
+    )
     process.start()
     while True:
         value = process.queue.get()
@@ -106,4 +115,3 @@ def scan_to_text(doc_cls, doc_path, lang, zoom_factor, should_enhance, output_fi
             break
         yield value
     process.join()
-

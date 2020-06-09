@@ -20,11 +20,7 @@ conf = None
 class ConfigProvider:
     """Handles app configurations."""
 
-    __slots__ = [
-        "spec",
-        "config",
-        "validator",
-    ]
+    __slots__ = ["spec", "config", "validator"]
 
     def __init__(self):
         self.spec = ConfigObj(
@@ -54,6 +50,7 @@ class ConfigProvider:
 
     def __getitem__(self, key):
         return self.config[key]
+
 
 def setup_config():
     global conf

@@ -48,7 +48,9 @@ class TaggedMixin:
                     backref="related_tags",
                 ),
             }
-            cls.Tag = type(f"{cls.__name__}Tag", (GetOrCreateMixin, db.Model), tag_attrs)
+            cls.Tag = type(
+                f"{cls.__name__}Tag", (GetOrCreateMixin, db.Model), tag_attrs
+            )
             # The many-to-many association table
             cls.__tags_association_table__ = cls._prepare_association_table(
                 table_name=f"{cls.__tablename__}s_tags",
@@ -67,26 +69,18 @@ class AnnotationBase(db.Model):
     position = db.integer(nullable=False, default=0)
     section_title = db.string(1024, nullable=False)
     section_identifier = db.string(1024, nullable=False)
-    date_created= sa.Column(sa.DateTime, default=datetime.now)
+    date_created = sa.Column(sa.DateTime, default=datetime.now)
     date_updated = sa.Column(sa.DateTime, onupdate=datetime.now)
 
     @declared_attr
     def book_id(cls):
-        return sa.Column(
-            sa.Integer,
-            sa.ForeignKey("book.id"),
-            nullable=False
-        )
+        return sa.Column(sa.Integer, sa.ForeignKey("book.id"), nullable=False)
 
     @declared_attr
     def book(cls):
         reverse_name = f"{cls.__name__.lower()}s"
-        return relationship(
-            "Book",
-            foreign_keys=[cls.book_id],
-            backref=reverse_name
-        )
-        
+        return relationship("Book", foreign_keys=[cls.book_id], backref=reverse_name)
+
 
 class Bookmark(AnnotationBase):
     """Represents a user-defined bookmark."""
@@ -109,4 +103,3 @@ class Quote(TaggedContent):
 
     start_pos = db.integer(nullable=False)
     end_pos = db.integer(nullable=False)
-

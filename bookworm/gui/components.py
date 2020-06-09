@@ -34,7 +34,6 @@ class EnhancedSpinCtrl(wx.SpinCtrl):
 
 
 class PageRangeControl(sc.SizedPanel):
-
     def __init__(self, parent, document):
         parent = parent
         self.doc = document
@@ -50,7 +49,9 @@ class PageRangeControl(sc.SizedPanel):
         # Translators: the label of an edit field in the search dialog
         # to enter the page from which the search will start
         fpage_label = wx.StaticText(fromToPagePanel, -1, _("From:"))
-        self.fromPage = EnhancedSpinCtrl(fromToPagePanel, -1, min=1, max=num_pages, value="1")
+        self.fromPage = EnhancedSpinCtrl(
+            fromToPagePanel, -1, min=1, max=num_pages, value="1"
+        )
         # Translators: the label of an edit field in the search dialog
         # to enter the page number at which the search will stop
         tpage_label = wx.StaticText(fromToPagePanel, -1, _("To:"))
@@ -228,4 +229,3 @@ class SnakDialog(SimpleDialog):
 
     def getButtons(self, parent):
         return
-

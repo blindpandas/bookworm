@@ -7,11 +7,7 @@ from bookworm.resources import sounds
 from bookworm.base_service import BookwormService
 from bookworm.logger import logger
 from .ocr_provider import is_ocr_available
-from .ocr_gui import (
-    OCRMenuIds,
-    OCRMenu,
-    OCR_KEYBOARD_SHORTCUTS
-)
+from .ocr_gui import OCRMenuIds, OCRMenu, OCR_KEYBOARD_SHORTCUTS
 
 
 log = logger.getChild(__name__)
@@ -30,9 +26,7 @@ class OCRService(BookwormService):
         self.menu = OCRMenu(self, menubar)
 
     def get_toolbar_items(self):
-        return [
-            (42, "ocr", _("OCR"), None),
-        ]
+        return [(42, "ocr", _("OCR"), None)]
 
     def get_keyboard_shourtcuts(self):
         return OCR_KEYBOARD_SHORTCUTS
@@ -43,4 +37,3 @@ class OCRService(BookwormService):
         except RuntimeError:
             # already destroyed
             pass
-

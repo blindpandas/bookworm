@@ -16,6 +16,7 @@ try:
     if UWP_SERVICES_AVAILABEL:
         from OcSpeechEngine import OcSpeechEngine as _OnecoreEngine
         from .oc_utterance import OcSpeechUtterance
+
         _oc_available = True
 except Exception as e:
     log.debug(f"Could not load the onecore speech engine: {e.args}")

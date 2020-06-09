@@ -2,6 +2,7 @@
 
 import os
 import wx
+from contextlib import suppress
 from bookworm import typehints as t
 from bookworm import app
 from bookworm import config
@@ -129,12 +130,12 @@ class EBookReader:
 
     @active_section.setter
     def active_section(self, value: Section):
-        if value is self.active_section:
+        if (self.active_section is not None) and (
+            value.unique_identifier == self.active_section.unique_identifier
+        ):
             return
         self.__state["active_section"] = value
         self.view.tocTreeSetSelection(value)
-        if self.current_page not in value.pager:
-            self.current_page = value.pager.first
         speech.announce(value.title)
         reader_section_changed.send(self, active=value)
 
@@ -144,14 +145,15 @@ class EBookReader:
 
     @current_page.setter
     def current_page(self, value: int):
+        _prev = self.__state.setdefault("current_page_index", 0)
+        if value == self.current_page:
+            return
         if value not in self.document:
             raise PaginationError("Page out of range.")
-        _prev = self.__state.setdefault("current_page_index", 0)
         self.__state["current_page_index"] = value
         page = self.document[value]
-        if page.section is not self.active_section:
-            self.active_section = page.section
         self.view.set_content(page.get_text())
+        self.active_section = page.section
         if config.conf["general"]["play_pagination_sound"]:
             sounds.pagination.play_after()
         # Translators: the label of the page content text area
@@ -171,38 +173,61 @@ class EBookReader:
         """Return the current page."""
         return self.document[self.current_page]
 
-    def go_to_page(self, page_number: int, pos: int=0):
-        """Go to a page. Takes care of selecting appropriate section."""
+    def go_to_page(self, page_number: int, pos: int = 0) -> bool:
         self.current_page = page_number
         self.view.contentTextCtrl.SetInsertionPoint(pos)
 
-    def navigate(self, to: str, unit: str):
+    def navigate(self, to: str, unit: str) -> bool:
+        """
+        Navigate to `to` by unit `unit`.
+        Return `True` if navigation was successful, `False` otherwise.
+        If unit is page and the target is in another section, this method
+        returns False.
+        """
         assert to in ("next", "prev"), f"Invalid value {to} for arg`to`."
         assert unit in ("page", "section"), f"Invalid value {unit} for arg`unit`."
         if unit == "page":
-            try:
-                action_func = getattr(self, f"go_to_{to}")
-                self.current_page = action_func()
-                return True
-            except PaginationError:
-                return False
+            step = 1 if to == "next" else -1
+            next_move = self.current_page + step
+            page = None if next_move not in self.document else self.document[next_move]
+            if page is not None:
+                if (to == "next" and not page.is_first_of_section) or (
+                    to == "prev" and not page.is_last_of_section
+                ):
+                    self.current_page = next_move
+                    return True
+                else:
+                    return False
         elif unit == "section":
             this_section = self.active_section
             target = "simple_next" if to == "next" else "simple_prev"
             self.active_section = getattr(self.active_section, target)
             if this_section.is_root and to == "next":
                 self.active_section = this_section.first_child
-            return this_section is not self.active_section
+            navigated = this_section is not self.active_section
+            if navigated:
+                self.go_to_first_of_section()
+            return navigated
 
     def go_to_next(self) -> int:
-        """Try to navigate to the next page or raise PaginationError."""
+        """Try to navigate to the next page."""
         next_item = self.current_page + 1
-        self.current_page = next_item
+        with suppress(PaginationError):
+            self.current_page = next_item
 
     def go_to_prev(self) -> int:
-        """Try to navigate to the previous page or raise PaginationError."""
+        """Try to navigate to the previous page."""
         prev_item = self.current_page - 1
-        self.current_page = prev_item
+        with suppress(PaginationError):
+            self.current_page = prev_item
+
+    def go_to_first_of_section(self, section: Section = None):
+        section = section or self.active_section
+        self.current_page = section.pager.first
+
+    def go_to_last_of_section(self, section: Section = None):
+        section = section or self.active_section
+        self.current_page = section.pager.last
 
     def get_view_title(self, include_author=False):
         if config.conf["general"]["show_file_name_as_title"]:

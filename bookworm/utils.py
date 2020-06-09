@@ -154,6 +154,7 @@ class cached_property(property):
     def __delete__(self, obj):
         obj.__dict__.pop(self.__name__)
 
+
 def escape_html(text):
     """Escape the text so as to be used
     as a part of an HTML document.
@@ -162,4 +163,3 @@ def escape_html(text):
     """
     html_escape_table = {'"': "&quot;", "'": "&apos;"}
     return escape(text, html_escape_table)
-

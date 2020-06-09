@@ -10,7 +10,12 @@ from bookworm import config
 from bookworm.resources import sounds
 from bookworm.resources import images
 from bookworm.speechdriver.utterance import SpeechUtterance, SpeechStyle
-from bookworm.speechdriver.enumerations import EngineEvent, SynthState, EmphSpec, PauseSpec
+from bookworm.speechdriver.enumerations import (
+    EngineEvent,
+    SynthState,
+    EmphSpec,
+    PauseSpec,
+)
 from bookworm.speechdriver.engines.sapi import SapiSpeechEngine
 from bookworm.speechdriver.engines.onecore import OcSpeechEngine
 from bookworm.utils import cached_property, gui_thread_safe
@@ -40,11 +45,10 @@ from .tts_gui import (
 log = logger.getChild(__name__)
 
 
-
 @dataclass
 class TextInfo:
     """Provides basic structural information  about a blob of text
-    Most of the properties are executed once, then their value is cached.
+    Most of the properties have their values cached.
     """
 
     text: str
@@ -112,9 +116,9 @@ class TextInfo:
 
 class TextToSpeechService(BookwormService):
     name = "text_to_speech"
+    config_spec = tts_config_spec
     has_gui = True
     stateful_menu_ids = StatefulSpeechMenuIds
-    config_spec = tts_config_spec
     __available_engines = (SapiSpeechEngine, OcSpeechEngine)
     speech_engines = [e for e in __available_engines if e.check()]
 
@@ -138,9 +142,9 @@ class TextToSpeechService(BookwormService):
     def get_settings_panels(self):
         return [
             # Translators: the label of a page in the settings dialog
-            (10, "reading", ReadingPanel, _("Reading"),),
+            (10, "reading", ReadingPanel, _("Reading")),
             # Translators: the label of a page in the settings dialog
-            (15, "speech", SpeechPanel, _("Voice"),),
+            (15, "speech", SpeechPanel, _("Voice")),
         ]
 
     def get_contextmenu_items(self):
@@ -175,7 +179,8 @@ class TextToSpeechService(BookwormService):
                 utterance.add_text(
                     # Translators: a message to announce when navigating to another page
                     _("Page {page} of {total}").format(
-                        page=self.reader.current_page + 1, total=len(self.reader.document)
+                        page=self.reader.current_page + 1,
+                        total=len(self.reader.document),
                     )
                 )
                 utterance.add_pause(PauseSpec.medium)
@@ -245,7 +250,9 @@ class TextToSpeechService(BookwormService):
                 self.textCtrl.SetInsertionPoint(pos)
             if config.conf["reading"]["highlight_spoken_text"]:
                 self.view.clear_highlight(0, pos)
-                self.view.highlight_range(pos, data["end"], foreground=wx.BLACK, background=wx.LIGHT_GREY)
+                self.view.highlight_range(
+                    pos, data["end"], foreground=wx.BLACK, background=wx.LIGHT_GREY
+                )
             if config.conf["reading"]["select_spoken_text"]:
                 self.textCtrl.SetSelection(pos, data["end"])
         elif data["type"] == "end_page":
@@ -297,7 +304,9 @@ class TextToSpeechService(BookwormService):
 
     def initialize_engine(self):
         engine_name = self.config_manager["engine"]
-        last_known_state = SynthState.ready if not self.is_engine_ready else self.engine.state
+        last_known_state = (
+            SynthState.ready if not self.is_engine_ready else self.engine.state
+        )
         if self.is_engine_ready and (self.engine.name == engine_name):
             self.configure_engine(last_known_state)
             return
@@ -389,7 +398,9 @@ class TextToSpeechService(BookwormService):
             image = images.pause
         else:
             image = images.play
-        self.view.toolbar.SetToolNormalBitmap(StatefulSpeechMenuIds.playToggle, image.GetBitmap())
+        self.view.toolbar.SetToolNormalBitmap(
+            StatefulSpeechMenuIds.playToggle, image.GetBitmap()
+        )
         if not self.reader.ready:
             return
         menubar = self.view.menuBar
@@ -410,5 +421,3 @@ class TextToSpeechService(BookwormService):
         if match:
             return match[0]
         return SapiSpeechEngine
-
-

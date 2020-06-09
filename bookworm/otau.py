@@ -29,6 +29,7 @@ log = logger.getChild(__name__)
 # Update check interval (in seconds)
 UPDATE_CHECK_INTERVAL = 20 * 60 * 60
 
+
 def kill_other_running_instances():
     """Ensure that only this instance is running."""
     log.debug("Killing other running instances of the application.")
@@ -58,7 +59,9 @@ def check_for_updates_upon_startup():
     if not app.command_line_mode and config.conf["general"]["auto_check_for_updates"]:
         _last_update_check = config.conf["general"]["last_update_check"]
         if (time.time() - _last_update_check) < UPDATE_CHECK_INTERVAL:
-            log.info(f"Ignoring update check for this run. Last update check was {_last_update_check}.")
+            log.info(
+                f"Ignoring update check for this run. Last update check was {_last_update_check}."
+            )
         else:
             check_for_updates()
     else:

@@ -3,7 +3,6 @@
 from io import StringIO
 
 
-
 config_spec = StringIO(
     f"""
 [general]
@@ -21,5 +20,3 @@ config_spec = StringIO(
     set_file_assoc = integer(default=0)
 """
 )
-
-

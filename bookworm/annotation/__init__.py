@@ -36,7 +36,9 @@ class AnnotationService(BookwormService):
 
     def __post_init__(self):
         reader_page_changed.connect(self.comments_page_handler, sender=self.reader)
-        reader_page_changed.connect(self.highlight_bookmarked_positions, sender=self.reader)
+        reader_page_changed.connect(
+            self.highlight_bookmarked_positions, sender=self.reader
+        )
         reader_page_changed.connect(self.highlight_highlighted_text, sender=self.reader)
 
     def process_menubar(self, menubar):
@@ -44,12 +46,30 @@ class AnnotationService(BookwormService):
 
     def get_contextmenu_items(self):
         rv = [
-            (3, _("&Bookmark...\tCtrl-B"), _("Bookmark the current location"), AnnotationsMenuIds.addBookmark),
-            (4, _("Co&mment...\tCtrl-m"), _("Add a comment at the current location"), AnnotationsMenuIds.addNote),
+            (
+                3,
+                _("&Bookmark...\tCtrl-B"),
+                _("Bookmark the current location"),
+                AnnotationsMenuIds.addBookmark,
+            ),
+            (
+                4,
+                _("Co&mment...\tCtrl-m"),
+                _("Add a comment at the current location"),
+                AnnotationsMenuIds.addNote,
+            ),
             (5, "", "", None),
         ]
         if self.view.contentTextCtrl.GetStringSelection():
-            rv.insert(0, (0, _("Highlight Selection\tCtrl-Shift-H"), _("Highlight and save selected text."), AnnotationsMenuIds.quoteSelection),)
+            rv.insert(
+                0,
+                (
+                    0,
+                    _("Highlight Selection\tCtrl-Shift-H"),
+                    _("Highlight and save selected text."),
+                    AnnotationsMenuIds.quoteSelection,
+                ),
+            )
         return rv
 
     def get_toolbar_items(self):
@@ -67,7 +87,7 @@ class AnnotationService(BookwormService):
     def get_settings_panels(self):
         return [
             # Translators: the label of a page in the settings dialog
-            (30, "annotation", AnnotationSettingsPanel, _("Annotation"),),
+            (30, "annotation", AnnotationSettingsPanel, _("Annotation"))
         ]
 
     @classmethod

@@ -3,6 +3,7 @@
 """Provides information and functionality needed at runtime."""
 
 import clr
+
 clr.AddReference("System.Windows.Forms")
 from System.Windows.Forms import SystemInformation
 
@@ -30,27 +31,29 @@ try:
     UWP_SERVICES_AVAILABEL = True
     del _uwp_services_dll
 except Exception as e:
-    if '--debug' in sys.argv:
+    if "--debug" in sys.argv:
         print(f"Failed to load BookwormUWPServices.dll. {e}")
 
 
 def is_running_portable():
-    if not app.is_frozen :
+    if not app.is_frozen:
         return False
     unins_key = RegKey(
         Registry.LocalMachine,
         path=fr"Software\Microsoft\Windows\CurrentVersion\Uninstall\{app.name}",
-        writable=False
+        writable=False,
     )
     with unins_key:
-        if unins_key.exists and (Path(unins_key.GetValue("InstallLocation")).resolve() == Path(sys.executable).parent.resolve()):
+        if unins_key.exists and (
+            Path(unins_key.GetValue("InstallLocation")).resolve()
+            == Path(sys.executable).parent.resolve()
+        ):
             return False
     return True
 
 
 def is_high_contrast_active():
     return SystemInformation.HighContrast
-
 
 
 IS_RUNNING_PORTABLE = is_running_portable()

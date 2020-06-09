@@ -53,5 +53,3 @@ def do_search_book(document_cls, document_path, request, queue):
         queue.put((n, snip, sect.title, pos))
     doc.close()
     queue.put(-1)
-
-

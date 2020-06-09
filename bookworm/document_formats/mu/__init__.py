@@ -19,7 +19,6 @@ from bookworm.document_formats.base import (
     Pager,
     DocumentCapability as DC,
     DocumentError,
-    PaginationError,
 )
 from bookworm.logger import logger
 
@@ -28,7 +27,6 @@ log = logger.getChild(__name__)
 
 
 class FitzPage(BasePage):
-
     def _text_from_page(self, page: fitz.Page) -> str:
         bloks = page.getTextBlocks()
         text = [blk[4].replace("\n", " ") for blk in bloks]
@@ -52,11 +50,11 @@ class FitzDocument(BaseDocument):
     # Translators: the name of a document file format
     name = _("Portable Document (PDF)")
     extensions = ("*.pdf",)
-    capabilities = DC.TOC_TREE | DC.METADATA | DC.GRAPHICAL_RENDERING | DC.IMAGE_EXTRACTION
+    capabilities = (
+        DC.TOC_TREE | DC.METADATA | DC.GRAPHICAL_RENDERING | DC.IMAGE_EXTRACTION
+    )
 
-    def __getitem__(self, index: int) -> FitzPage:
-        if index not in self:
-            raise PaginationError(f"Page {index} is out of range.")
+    def get_page(self, index: int) -> FitzPage:
         return FitzPage(self, index)
 
     def __len__(self) -> int:
@@ -89,7 +87,7 @@ class FitzDocument(BaseDocument):
             document=self,
             title=self.metadata.title,
             pager=Pager(first=0, last=max_page),
-            data={"html_file": None}
+            data={"html_file": None},
         )
         _last_entry = None
         for (index, (level, title, start_page, infodict)) in enumerate(toc_info):
@@ -112,7 +110,12 @@ class FitzDocument(BaseDocument):
             if first_page > last_page:
                 continue
             pgn = Pager(first=first_page, last=last_page)
-            sect = Section(document=self, title=title, pager=pgn, data={"html_file": infodict.get("name")})
+            sect = Section(
+                document=self,
+                title=title,
+                pager=pgn,
+                data={"html_file": infodict.get("name")},
+            )
             if level == 1:
                 root_item.append(sect)
                 _last_entry = sect
@@ -148,7 +151,13 @@ class FitzEPUBDocument(FitzDocument):
     # Translators: the name of a document file format
     name = _("Electronic Publication (EPUB)")
     extensions = ("*.epub",)
-    capabilities = DC.TOC_TREE | DC.METADATA | DC.GRAPHICAL_RENDERING | DC.IMAGE_EXTRACTION | DC.FLUID_PAGINATION
+    capabilities = (
+        DC.TOC_TREE
+        | DC.METADATA
+        | DC.GRAPHICAL_RENDERING
+        | DC.IMAGE_EXTRACTION
+        | DC.FLUID_PAGINATION
+    )
 
     def read(self):
         try:

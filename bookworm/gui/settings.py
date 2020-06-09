@@ -288,9 +288,9 @@ class PreferencesDialog(SimpleDialog):
     """Preferences dialog."""
 
     def addPanels(self):
-        page_info= [
+        page_info = [
             # Translators: the label of a page in the settings dialog
-            (0, "general", GeneralPanel, _("General")),
+            (0, "general", GeneralPanel, _("General"))
         ]
         page_info.extend(wx.GetApp().service_handler.get_settings_panels())
         page_info.sort()
@@ -302,7 +302,7 @@ class PreferencesDialog(SimpleDialog):
             # Create settings page
             page = panel_cls(self.tabs)
             # Add tabs
-            self.tabs.AddPage(page, label, select=(idx==0), imageId=idx)
+            self.tabs.AddPage(page, label, select=(idx == 0), imageId=idx)
 
     def addControls(self, parent):
         self.tabs = wx.Listbook(parent, -1)

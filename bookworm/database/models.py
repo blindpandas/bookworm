@@ -13,7 +13,7 @@ class Book(db.Model):
 
 
 class GetOrCreateMixin:
-    """Adds the `get_or_create` method to a sqlalchemy Model class.""" 
+    """Adds the `get_or_create` method to a sqlalchemy Model class."""
 
     @classmethod
     def get_or_create(cls, **kwargs):

@@ -137,7 +137,10 @@ class BookmarksViewer(Dialog):
                 return
             item = selected[0]
             editCtrl = self.annotationsListCtrl.EditLabel(item)
-            if self.annotationsListCtrl.GetItemText(item) == self._unamed_bookmark_title:
+            if (
+                self.annotationsListCtrl.GetItemText(item)
+                == self._unamed_bookmark_title
+            ):
                 editCtrl.SetValue("")
         elif kcode == wx.WXK_DELETE:
             self.onDelete(event)
@@ -176,6 +179,7 @@ class BookmarksViewer(Dialog):
 
 class AnnotationFilterDialog(SimpleDialog):
     pass
+
 
 class ExportNotesDialog(Dialog):
     """Customization for note exporting."""

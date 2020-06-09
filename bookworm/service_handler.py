@@ -25,6 +25,7 @@ BUILTIN_SERVICES = (
 
 class ServiceHandler:
     """A singleton to manage services."""
+
     registered_services = set()
 
     def __init__(self, view):
@@ -102,4 +103,3 @@ class ServiceHandler:
         for service in self._get_services_with_gui():
             rv.update(service.get_keyboard_shourtcuts())
         return rv
-

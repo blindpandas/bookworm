@@ -50,5 +50,3 @@ class RegKey:
             Registry.CurrentUser, r"SOFTWARE\Classes", kwargs.pop("writable", True)
         )
         return cls(root, *args, **kwargs)
-
-

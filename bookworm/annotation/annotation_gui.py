@@ -10,10 +10,7 @@ from bookworm.utils import gui_thread_safe
 from bookworm.gui.settings import SettingsPanel
 from bookworm.logger import logger
 from .annotator import Bookmarker, NoteTaker, Quoter
-from .annotation_dialogs import (
-    BookmarksViewer,
-    ExportNotesDialog,
-)
+from .annotation_dialogs import BookmarksViewer, ExportNotesDialog
 
 
 log = logger.getChild(__name__)
@@ -63,6 +60,7 @@ ANNOTATIONS_KEYBOARD_SHORTCUTS = {
 @dataclass
 class SelectionRange(Container):
     """Represents a text range in an edit control."""
+
     start: int
     end: int
 
@@ -155,10 +153,16 @@ class AnnotationMenu(wx.Menu):
         self.menubar.Insert(2, self, _("&Annotations"))
 
         # EventHandlers
-        self.view.Bind(wx.EVT_MENU, self.onAddBookmark, id=AnnotationsMenuIds.addBookmark)
-        self.view.Bind(wx.EVT_MENU, self.onAddNamedBookmark, id=AnnotationsMenuIds.addNamedBookmark)
+        self.view.Bind(
+            wx.EVT_MENU, self.onAddBookmark, id=AnnotationsMenuIds.addBookmark
+        )
+        self.view.Bind(
+            wx.EVT_MENU, self.onAddNamedBookmark, id=AnnotationsMenuIds.addNamedBookmark
+        )
         self.view.Bind(wx.EVT_MENU, self.onAddNote, id=AnnotationsMenuIds.addNote)
-        self.view.Bind(wx.EVT_MENU, self.onQuoteSelection, id=AnnotationsMenuIds.quoteSelection)
+        self.view.Bind(
+            wx.EVT_MENU, self.onQuoteSelection, id=AnnotationsMenuIds.quoteSelection
+        )
         self.view.Bind(
             wx.EVT_MENU, self.onViewBookmarks, id=AnnotationsMenuIds.viewBookmarks
         )
@@ -206,15 +210,17 @@ class AnnotationMenu(wx.Menu):
             _("New Comment"),
             # Translators: the label of an edit field to enter a comment
             _("Comment:"),
-            style=wx.OK|wx.CANCEL|wx.TE_MULTILINE|wx.CENTER
+            style=wx.OK | wx.CANCEL | wx.TE_MULTILINE | wx.CENTER,
         )
         if not comment_text:
             return
-        note = NoteTaker(self.reader).create(title="", content=comment_text, position=insertionPoint)
+        note = NoteTaker(self.reader).create(
+            title="", content=comment_text, position=insertionPoint
+        )
         self.service.style_comment(self.view, insertionPoint)
         if _with_tags:
             # add tags
-            tags_text =  self.get_text_from_user(
+            tags_text = self.get_text_from_user(
                 # Translators: title of a dialog
                 _("Tag Comment"),
                 # Translators: label of a text entry
@@ -261,7 +267,7 @@ class AnnotationMenu(wx.Menu):
         self.service.style_highlight(self.view, x, y)
         if _with_tags:
             # add tags
-            tags_text =  self.get_text_from_user(
+            tags_text = self.get_text_from_user(
                 # Translators: title of a dialog
                 _("Tag Highlight"),
                 # Translators: label of a text entry
@@ -295,13 +301,10 @@ class AnnotationMenu(wx.Menu):
     def onExportQuotes(self, event):
         ...
 
-    def get_text_from_user(self, title, label, style=wx.OK|wx.CANCEL|wx.CENTER, value=""):
-        dlg = wx.TextEntryDialog(
-            self.view,
-            label,
-            title,
-            style=style
-        )
+    def get_text_from_user(
+        self, title, label, style=wx.OK | wx.CANCEL | wx.CENTER, value=""
+    ):
+        dlg = wx.TextEntryDialog(self.view, label, title, style=style)
         if dlg.ShowModal() == wx.ID_OK:
             value = dlg.GetValue().strip()
             return value or wx.Bell()

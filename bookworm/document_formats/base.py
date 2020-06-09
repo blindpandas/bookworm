@@ -28,7 +28,6 @@ class PaginationError(DocumentError, IndexError):
     """Raised when the  `next` or `prev` page is not available."""
 
 
-
 @dataclass
 class BookMetadata:
     title: str
@@ -56,7 +55,7 @@ class SearchRequest:
 class Pager(Container, Iterable, Sized):
     """Basically, this is a glorified `range` iterator."""
 
-    __slots__ = ["first", "last",]
+    __slots__ = ["first", "last"]
 
     first: int
     last: int
@@ -89,11 +88,11 @@ class Section:
         self,
         document: "BaseDocument",
         title: str,
-        parent: t.Optional["Section"]=None,
-        children: t.Optional[t.List["Section"]]=None,
-        pager: t.Optional[Pager]=None,
-        data: t.Optional[t.Dict[t.Hashable, t.Any]]=None
-        ):
+        parent: t.Optional["Section"] = None,
+        children: t.Optional[t.List["Section"]] = None,
+        pager: t.Optional[Pager] = None,
+        data: t.Optional[t.Dict[t.Hashable, t.Any]] = None,
+    ):
         self.documentref = ref(document)
         self.title = title
         self.parent = parent
@@ -186,7 +185,8 @@ class Section:
 
 
 class DocumentCapability(IntFlag):
-    """Represents feature flags for a document.""" 
+    """Represents feature flags for a document."""
+
     TOC_TREE = 1
     METADATA = 2
     GRAPHICAL_RENDERING = 3
@@ -195,6 +195,7 @@ class DocumentCapability(IntFlag):
 
 
 class BaseDocument(Sequence, metaclass=ABCMeta):
+    """Defines the core interface of a document."""
 
     format: str = None
     """The developer oriented format of this document."""
@@ -216,6 +217,15 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def __contains__(self, value: int):
         return -1 < value < len(self)
 
+    def __getitem__(self, index: int) -> "BasePage":
+        if index not in self:
+            raise PaginationError(f"Page {index} is out of range.")
+        if index in self.__page_cache:
+            return self.__page_cache[index]
+        page = self.get_page(index)
+        self.__page_cache[index] = page
+        return page
+
     @cached_property
     def identifier(self) -> str:
         """Return a unique identifier for this document.
@@ -235,6 +245,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """
         self._sha1hash = generate_sha1hash_async(self.filename)
         self.__page_cache = LRU(PAGE_CACHE_CAPACITY)
+        self.__page_content_cache = LRU(PAGE_CACHE_CAPACITY)
         # XXX Is this a pre-mature optimization?
         call_threaded(lambda: self.language)
 
@@ -245,7 +256,12 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """
         self._ebook = None
         self.__page_cache.clear()
+        self.__page_content_cache.clear()
         gc.collect()
+
+    @abstractmethod
+    def get_page(self, index: int) -> "BasePage":
+        """Return the page object at index."""
 
     def is_encrypted(self) -> bool:
         """Does this document need password."""
@@ -288,14 +304,16 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
     def get_page_content(self, page_number: int) -> str:
         """Convenience method: return the text content of a page."""
-        _cached = self.__page_cache.get(page_number)
+        _cached = self.__page_content_cache.get(page_number)
         if _cached is not None:
             return _cached
         content = self[page_number].get_text()
-        self.__page_cache[page_number] = content
+        self.__page_content_cache[page_number] = content
         return content
 
-    def get_page_image(self, page_number: int, zoom_factor: float=1.0, enhance: bool=False) -> bytes:
+    def get_page_image(
+        self, page_number: int, zoom_factor: float = 1.0, enhance: bool = False
+    ) -> bytes:
         """Convenience method: return the image of a page."""
         return self[page_number].get_image(zoom_factor, enhance)
 
@@ -330,6 +348,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
 class BasePage(metaclass=ABCMeta):
     """Represents a page from the document."""
+
     __slots__ = ["document", "index"]
 
     def __init__(self, document: BaseDocument, index: int):
@@ -342,8 +361,10 @@ class BasePage(metaclass=ABCMeta):
 
     @abstractmethod
     def get_image(self, zoom_factor: float, enhance: bool) -> t.Tuple[bytes, int, int]:
-        """Return page image in the form of (image_data, width, height)
-        or raise NotImplementedError."""
+        """
+        Return page image in the form of (image_data, width, height)
+        or raise NotImplementedError.
+        """
 
     @property
     def number(self) -> int:
@@ -352,11 +373,13 @@ class BasePage(metaclass=ABCMeta):
 
     @cached_property
     def section(self) -> Section:
+        """The (most specific) section that this page blongs to."""
         rv = self.document.toc_tree
         for sect in rv.iter_children():
-            if self.index in sect.pager and not sect:
+            if self.index in sect.pager:
                 rv = sect
-                break
+                if sect.pager.first > self.index:
+                    break
         return rv
 
     @property

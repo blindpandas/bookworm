@@ -129,10 +129,16 @@ class FilterableAnnotator(Annotator):
                 q = self.model.query
             q = q.filter_by(book_id=filter_opts.book)
             # Secondary criteria
-            if filter_opts.secondary_filter is AnnotationFilteringOptions.SecondaryFilteringCriteria.page_range:
+            if (
+                filter_opts.secondary_filter
+                is AnnotationFilteringOptions.SecondaryFilteringCriteria.page_range
+            ):
                 start, end = filter_opts.page_range
                 q = q.filter(sa.between(self.model.page_number, start, end))
-            elif filter_opts.secondary_filter is AnnotationFilteringOptions.SecondaryFilteringCriteria.section:
+            elif (
+                filter_opts.secondary_filter
+                is AnnotationFilteringOptions.SecondaryFilteringCriteria.section
+            ):
                 q = q.filter_by(section_identifier=section_identifier)
         return q
 

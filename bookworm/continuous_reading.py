@@ -25,24 +25,33 @@ class ContReadingService(BookwormService):
     def __post_init__(self):
         self.textCtrl = self.view.contentTextCtrl
         self._page_turn_timer = wx.Timer(self.view)
-        self._start_timer = lambda: self._page_turn_timer.Start(TIMER_INTERVAL, wx.TIMER_ONE_SHOT)
+        self._start_timer = lambda: self._page_turn_timer.Start(
+            TIMER_INTERVAL, wx.TIMER_ONE_SHOT
+        )
         self._lock = threading.Lock()
         # Event handling
         self.view.Bind(wx.EVT_TIMER, self.onTimerTick)
-        reader_book_unloaded.connect(lambda s:self._page_turn_timer.Stop(), weak=False, sender=self.reader)
+        reader_book_unloaded.connect(
+            lambda s: self._page_turn_timer.Stop(), weak=False, sender=self.reader
+        )
         config_updated.connect(self._on_config_changed_for_cont)
         if config.conf["reading"]["use_continuous_reading"]:
-            reader_book_loaded.connect(lambda s: self._start_timer(), weak=False, sender=self.reader)
+            reader_book_loaded.connect(
+                lambda s: self._start_timer(), weak=False, sender=self.reader
+            )
 
     @call_threaded
     def onTimerTick(self, event):
         with self._lock:
-            cur_pos, end_pos = self.textCtrl.GetInsertionPoint(), self.textCtrl.GetLastPosition()
+            wx.WakeUpIdle()
+            cur_pos, end_pos = (
+                self.textCtrl.GetInsertionPoint(),
+                self.textCtrl.GetLastPosition(),
+            )
             if not end_pos:
                 return
             if cur_pos == end_pos:
-                self.view._nav_provider.navigate_to_page("next")
-                wx.WakeUpIdle()
+                self.reader.go_to_next()
             self._start_timer()
 
     def _on_config_changed_for_cont(self, sender, section):
@@ -52,5 +61,3 @@ class ContReadingService(BookwormService):
                 self._page_turn_timer.Start()
             else:
                 self._page_turn_timer.Stop()
-
-

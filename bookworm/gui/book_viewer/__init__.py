@@ -160,11 +160,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 continue
             image = getattr(images, imagename).GetBitmap()
             # Add toolbar item
-            self.toolbar.AddTool(
-                ident,
-                label,
-                image,
-            )
+            self.toolbar.AddTool(ident, label, image)
 
     def set_content(self, content):
         self.contentTextCtrl.Clear()
@@ -193,6 +189,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def onTOCItemClick(self, event):
         selectedItem = event.GetItem()
         self.reader.active_section = self.tocTreeCtrl.GetItemData(selectedItem)
+        self.reader.go_to_first_of_section()
 
     def add_toc_tree(self, tree):
         self.tocTreeCtrl.DeleteAllItems()
@@ -200,9 +197,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self._populate_tree(tree.children, root=root)
         tree.data["tree_id"] = root
 
-    def tocTreeSetSelection(self, item, *, go_to_first=True):
-        if go_to_first:
-            self.reader.go_to_page(item.pager.first)
+    def tocTreeSetSelection(self, item):
         tree_id = item.data["tree_id"]
         self.tocTreeCtrl.EnsureVisible(tree_id)
         self.tocTreeCtrl.ScrollTo(tree_id)

@@ -3,11 +3,7 @@
 import wx
 from bookworm.resources import images
 from bookworm.utils import gui_thread_safe
-from bookworm.signals import (
-    reader_book_loaded,
-    reader_book_unloaded,
-    app_shuttingdown,
-)
+from bookworm.signals import reader_book_loaded, reader_book_unloaded, app_shuttingdown
 from bookworm.logger import logger
 from .menubar import BookRelatedMenuIds
 

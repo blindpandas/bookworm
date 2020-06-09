@@ -10,7 +10,14 @@ from bookworm.document_formats import SearchRequest
 from bookworm.signals import reader_page_changed
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
-from bookworm.gui.components import Dialog, SimpleDialog, DialogListCtrl, EnhancedSpinCtrl, PageRangeControl, make_sized_static_box
+from bookworm.gui.components import (
+    Dialog,
+    SimpleDialog,
+    DialogListCtrl,
+    EnhancedSpinCtrl,
+    PageRangeControl,
+    make_sized_static_box,
+)
 from .navigation import NavigationProvider
 
 
@@ -232,8 +239,7 @@ class ViewPageAsImageDialog(wx.Dialog):
 
     def getPageImage(self):
         imagedata, width, height = self.reader.document.get_page_image(
-            self.reader.current_page,
-            zoom_factor=self._zoom_factor
+            self.reader.current_page, zoom_factor=self._zoom_factor
         )
         bmp = wx.Bitmap.FromBufferRGBA(width, height, bytearray(imagedata))
         size = (width, height)
@@ -249,4 +255,3 @@ class ViewPageAsImageDialog(wx.Dialog):
     def Close(self, *args, **kwargs):
         super().Close(*args, **kwargs)
         reader_page_changed.disconnect(self.onPageChange, sender=self.reader)
-
