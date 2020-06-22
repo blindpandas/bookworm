@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import wx
+from bookworm import typehints as t
 from bookworm.logger import logger
 
 
@@ -9,18 +11,18 @@ log = logger.getChild(__name__)
 class BookwormService:
     """Extend the core functionality."""
 
-    name = None
-    stateful_menu_ids = []
-    has_gui = False
-    config_spec = {}
+    name: str = None
+    stateful_menu_ids: t.Iterable[int] = None
+    has_gui: bool = False
+    config_spec: t.Dict[str, str] = None
 
-    def __init__(self, view):
+    def __init__(self, view: "BookViewer"):
         self.view = view
         self.reader = view.reader
         self.__post_init__()
 
     @classmethod
-    def check(self):
+    def check(self) -> bool:
         """Return `True ` if this service is available."""
         return True
 
@@ -30,21 +32,21 @@ class BookwormService:
     def shutdown(self):
         """Called when the app is about to exit."""
 
-    def process_menubar(self, menubar):
+    def process_menubar(self, menubar: wx.MenuBar):
         """Add items to the main menu."""
 
-    def get_contextmenu_items(self):
+    def get_contextmenu_items(self) -> t.Iterable[t.Tuple[int, str, str, int]]:
         """Get items to add to  the content text control context menu."""
         return ()
 
-    def get_settings_panels(self):
+    def get_settings_panels(self) -> t.Iterable[t.Tuple[int, str, "bookworm.gui.settings.SettingPanel", str]]:
         """Return a list of SettingsPanelBlueprint."""
         return ()
 
-    def get_toolbar_items(self):
+    def get_toolbar_items(self) -> t.Iterable[t.Tuple[int, str, str, int]]:
         """Return items to add to the application toolbar."""
         return ()
 
-    def get_keyboard_shourtcuts(self):
+    def get_keyboard_shourtcuts(self) -> t.Dict[int, str]:
         """Return a dictionary mapping control id's to keyboard shortcuts."""
         return {}

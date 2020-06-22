@@ -8,6 +8,7 @@ import platform
 from multiprocessing import RLock
 from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor
+from bookworm import typehints as t
 from bookworm import app
 from bookworm.runtime import UWP_SERVICES_AVAILABEL
 from bookworm.i18n import LanguageInfo
@@ -18,20 +19,20 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
+_ocr_available = False
 try:
     if UWP_SERVICES_AVAILABEL:
         from OCRProvider import OCRProvider
-
         _ocr_available = True
-except:
-    _ocr_available = False
+except Exception as e:
+    log .error(f"Could not load the OCR functionality: {e}")
 
 
-def is_ocr_available():
+def is_ocr_available() -> bool:
     return platform.version().startswith("10") and _ocr_available
 
 
-def get_recognition_languages():
+def get_recognition_languages() -> t.List[LanguageInfo]:
     langs = [LanguageInfo(lang) for lang in OCRProvider.GetRecognizableLanguages()]
     if langs:
         current_lang = 0
@@ -50,14 +51,14 @@ def get_recognition_languages():
 class ImageRecognizer:
     __slots__ = ["imagedata", "lang", "width", "height", "cookie"]
 
-    def __init__(self, lang, imagedata, width, height, cookie=0):
+    def __init__(self, lang: str, imagedata: bytes, width: int, height: int, cookie: int=0):
         self.lang = lang
         self.imagedata = imagedata
         self.width = width
         self.height = height
         self.cookie = cookie
 
-    def recognize(self):
+    def recognize(self) -> t.Tuple[int, str]:
         lines = OCRProvider.Recognize(
             self.lang, self.imagedata, self.width, self.height
         )
@@ -65,7 +66,13 @@ class ImageRecognizer:
 
 
 def do_scan_to_text(
-    doc_cls, doc_path, lang, zoom_factor, should_enhance, output_file, queue
+    doc_cls: "BaseDocument",
+    doc_path: t.PathLike,
+    lang: str,
+    zoom_factor: float,
+    should_enhance: bool,
+    output_file: t.PathLike,
+    queue: "Queue"
 ):
     doc = doc_cls(doc_path)
     doc.read()

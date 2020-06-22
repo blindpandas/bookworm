@@ -45,7 +45,7 @@ class BaseSpeechEngine(metaclass=ABCMeta):
 
     def __init__(self):
         if not self.check():
-            raise RuntimeError(f"Synthesizer {type(self)} is unavailable")
+            raise RuntimeError(f"Could not load {self.name} speech engine.")
 
     @classmethod
     @abstractmethod

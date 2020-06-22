@@ -2,9 +2,12 @@
 
 import sys
 import os
+import winpaths
+import glob
+import clr
 import wx
 import hashlib
-from functools import wraps
+from functools import wraps, lru_cache
 from subprocess import list2cmdline
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -41,6 +44,21 @@ def ignore(*exceptions, retval=None):
         return wrapped
 
     return wrapper
+
+
+@lru_cache(maxsize=10)
+def reference_gac_assembly(glob_pattern: str):
+    """
+    Locate an assembly from the GAC and reference it.
+
+    Recent versions of Pythonnet does not auto discover certain .NET framework
+    assemblies, so add what we need from the global Assembly Cache (GAC).
+    """
+    gac_home = "Microsoft.NET\\assembly\\GAC_MSIL\\"
+    assemblies = tuple(Path(winpaths.get_windows(), gac_home).rglob(glob_pattern))
+    if not assemblies:
+        raise OSError(f"Could not find assembily: {glob_pattern}")
+    clr.AddReference(str(assemblies[0]))
 
 
 def restart_application(*extra_args, debug=False, restore=True):

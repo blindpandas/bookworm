@@ -50,8 +50,9 @@ class ServiceHandler:
         try:
             if service_cls.check():
                 service = service_cls(self.view)
-                config.conf.spec.update(service.config_spec)
-                config.conf.validate_and_write()
+                if service.config_spec is not None:
+                    config.conf.spec.update(service.config_spec)
+                    config.conf.validate_and_write()
                 self.registered_services.add(service)
             else:
                 log.error(f"Service {service_cls.name} `check` returned `False`")

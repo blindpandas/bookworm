@@ -475,24 +475,22 @@ def prepare_dev_environment(c):
 
 
 @task(name="run")
-def run_application(c, _filename=None, debug=True):
+def run_application(c, debug=True):
     """Runs the app."""
     try:
-        from bookworm.bookworm import main
+        from bookworm import bootstrap
         from bookworm import app
 
         print(f"{app.display_name} v{app.version}")
-        del main, app
+        if debug:
+            os.environ["BOOKWORM_DEBUG"] = '1'
+        bootstrap.run()
     except ImportError as e:
-        print("An import error was raised when trying to open the application.")
+        print("An import error was raised when starting the application.")
         print("Make sure that your development environment is ready.")
         print("To prepare your development environment run: invoke dev\r\n")
         print("Here is the traceback:\r\n")
-        raise e
-    args = []
-    if _filename:
-        args.append(f"--filename {_filename}")
-    if debug:
-        args.append("--debug")
-    print(f"Debug mode is {'on' if debug else 'off'}.")
-    c.run(f"py -m bookworm {' '.join(args)}")
+        raise
+    except:
+        print("An error has occured while starting Bookworm.")
+        raise

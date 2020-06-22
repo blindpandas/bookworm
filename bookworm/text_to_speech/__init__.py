@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from bookworm import config
 from bookworm.resources import sounds
 from bookworm.resources import images
+from bookworm.speechdriver import DummySpeechEngine
 from bookworm.speechdriver.utterance import SpeechUtterance, SpeechStyle
 from bookworm.speechdriver.enumerations import (
     EngineEvent,
@@ -119,7 +120,7 @@ class TextToSpeechService(BookwormService):
     config_spec = tts_config_spec
     has_gui = True
     stateful_menu_ids = StatefulSpeechMenuIds
-    __available_engines = (SapiSpeechEngine, OcSpeechEngine)
+    __available_engines = (SapiSpeechEngine, OcSpeechEngine, DummySpeechEngine)
     speech_engines = [e for e in __available_engines if e.check()]
 
     def __post_init__(self):
@@ -364,9 +365,6 @@ class TextToSpeechService(BookwormService):
             self.engine.close()
             self.engine = None
 
-    def __del__(self):
-        self.close()
-
     def enqueue(self, utterance):
         if not self.is_engine_ready:
             raise RuntimeError("Not initialized.")
@@ -417,7 +415,9 @@ class TextToSpeechService(BookwormService):
 
     @classmethod
     def get_engine(cls, engine_name):
-        match = [e for e in cls.speech_engines if e.name == engine_name]
-        if match:
-            return match[0]
-        return SapiSpeechEngine
+        engine = DummySpeechEngine
+        for e in cls.speech_engines:
+            if e.name == engine_name:
+                engine = e
+                break
+        return engine

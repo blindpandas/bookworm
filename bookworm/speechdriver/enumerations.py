@@ -2,13 +2,6 @@
 
 """Constants for controlling speech."""
 
-from System.Speech.Synthesis import (
-    SynthesizerState,
-    PromptEmphasis,
-    PromptVolume,
-    PromptRate,
-    PromptBreak,
-)
 from enum import IntEnum, auto
 
 
@@ -19,9 +12,9 @@ class EngineEvent(IntEnum):
 
 
 class SynthState(IntEnum):
-    ready = SynthesizerState.Ready
-    busy = SynthesizerState.Speaking
-    paused = SynthesizerState.Paused
+    ready = 0
+    busy = 1
+    paused = 2
 
 
 class SpeechElementKind(IntEnum):
@@ -40,37 +33,37 @@ class SpeechElementKind(IntEnum):
 
 
 class EmphSpec(IntEnum):
-    not_set = PromptEmphasis.NotSet
-    null = getattr(PromptEmphasis, "None")
-    reduced = PromptEmphasis.Reduced
-    moderate = PromptEmphasis.Moderate
-    strong = PromptEmphasis.Strong
+    not_set = 0
+    strong = 1
+    moderate = 2
+    null = 3
+    reduced = 4
 
 
 class VolumeSpec(IntEnum):
-    not_set = PromptVolume.NotSet
-    default = PromptVolume.Default
-    silent = PromptVolume.Silent
-    extra_soft = PromptVolume.ExtraSoft
-    soft = PromptVolume.Soft
-    medium = PromptVolume.Medium
-    loud = PromptVolume.Loud
-    extra_loud = PromptVolume.ExtraLoud
+    not_set = 0
+    silent = 1
+    extra_soft = 2
+    soft = 3
+    medium = 4
+    loud = 5
+    extra_loud = 6
+    default = 7
 
 
 class RateSpec(IntEnum):
-    not_set = PromptRate.NotSet
-    extra_slow = PromptRate.ExtraSlow
-    slow = PromptRate.Slow
-    medium = PromptRate.Medium
-    fast = PromptRate.Fast
-    extra_fast = PromptRate.ExtraFast
+    not_set = 0
+    extra_fast = 1
+    fast = 2
+    medium = 3
+    slow = 4
+    extra_slow = 5
 
 
 class PauseSpec(IntEnum):
-    null = getattr(PromptBreak, "None")
-    extra_small = PromptBreak.ExtraSmall
-    small = PromptBreak.Small
-    medium = PromptBreak.Medium
-    large = PromptBreak.Large
-    extra_large = PromptBreak.ExtraLarge
+    null = 0
+    extra_small = 1
+    small = 2
+    medium = 3
+    large = 4
+    extra_large = 5

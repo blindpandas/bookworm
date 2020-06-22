@@ -26,9 +26,9 @@ class TTSConfigManager:
         if not self._profile_path.exists():
             self._profile_path.mkdir(parents=True)
             self._add_builtin_voice_profiles()
-        self.list_voice_profiles()
+        self.refresh_voice_profiles()
 
-    def list_voice_profiles(self):
+    def refresh_voice_profiles(self):
         self.profiles.clear()
         if not self._profile_path.exists():
             self._profile_path.mkdir()

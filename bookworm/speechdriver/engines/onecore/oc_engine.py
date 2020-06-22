@@ -7,19 +7,28 @@ from weakref import ref
 from pathlib import Path
 from bookworm import app
 from bookworm.runtime import UWP_SERVICES_AVAILABEL
+from bookworm.utils import reference_gac_assembly
 from bookworm.speechdriver.enumerations import EngineEvent, SynthState, RateSpec
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.logger import logger
+
+log = logger.getChild(__name__)
 
 _oc_available = False
 try:
     if UWP_SERVICES_AVAILABEL:
         from OcSpeechEngine import OcSpeechEngine as _OnecoreEngine
-        from .oc_utterance import OcSpeechUtterance
-
         _oc_available = True
 except Exception as e:
-    log.debug(f"Could not load the onecore speech engine: {e.args}")
+    log.error(f"Could not load the onecore speech engine", exc_info=True)
+
+
+try:
+    reference_gac_assembly("System.Speech\*\System.Speech.dll")
+    from .oc_utterance import OcSpeechUtterance
+except OSError as e:
+    _oc_available = False
+    log.error(f"Could not load the onecore speech engine: {e}")
 
 
 log = logger.getChild(__name__)

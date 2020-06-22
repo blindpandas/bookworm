@@ -2,16 +2,24 @@
 
 import System
 from System.Globalization import CultureInfo
-from System.Speech import Synthesis
 from contextlib import suppress
+from bookworm.utils import reference_gac_assembly
 from bookworm.speechdriver.enumerations import EngineEvent, SynthState
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.speechdriver.utterance import SpeechStyle
 from bookworm.logger import logger
-from .sp_utterance import SapiSpeechUtterance
-
 
 log = logger.getChild(__name__)
+
+
+_sapi_available = False
+try:
+    reference_gac_assembly("System.Speech\*\System.Speech.dll")
+    from System.Speech import Synthesis
+    from .sp_utterance import SapiSpeechUtterance
+    _sapi_available = True
+except OSError as e:
+    log.error(f"Could not load Sapi5 speech engine: {e}")
 
 
 class SapiSpeechEngine(BaseSpeechEngine):
@@ -30,7 +38,7 @@ class SapiSpeechEngine(BaseSpeechEngine):
 
     @classmethod
     def check(self):
-        return True
+        return _sapi_available
 
     def close(self):
         with suppress(System.ObjectDisposedException):
