@@ -471,7 +471,8 @@ def create_portable_copy(c):
 
 @task(name="dev", pre=(install_packages, make_icons))
 def prepare_dev_environment(c):
-    print("\r\nHappy hacking...")
+    print("\r\n🎆 Your environment is now ready for Bookworm...")
+    print("😊 Happy hacking...")
 
 
 @task(name="run")

@@ -1,12 +1,9 @@
 # coding: utf-8
 
-import gc
 import os
 import threading
 import time
-import operator
 import wx
-import multiprocessing as mp
 from pathlib import Path
 from lru import LRU
 from enum import IntEnum
@@ -20,7 +17,7 @@ from bookworm.signals import (
     ocr_ended,
     speech_engine_state_changed,
 )
-from bookworm.concurrency import call_threaded, process_worker
+from bookworm.concurrency import QueueProcess, call_threaded, threaded_worker
 from bookworm.resources import sounds
 from bookworm.speechdriver.enumerations import SynthState
 from bookworm.gui.components import SimpleDialog, SnakDialog
@@ -63,7 +60,7 @@ class OCROptionsDialog(SimpleDialog):
         self.langChoice = wx.Choice(parent, -1, choices=self.choices)
         self.langChoice.SetSizerProps(expand=True)
         wx.StaticText(parent, -1, _("Supplied Image resolution::"))
-        self.zoomFactorSlider = wx.Slider(parent, -1, minValue=1, maxValue=20)
+        self.zoomFactorSlider = wx.Slider(parent, -1, minValue=1, maxValue=10)
         self.enhanceImageCheckbox = wx.CheckBox(
             parent,
             -1,
@@ -243,18 +240,11 @@ class OCRMenu(wx.Menu):
         image, width, height = reader.document.get_page_image(
             reader.current_page, zoom_factor, should_enhance
         )
-        recog = ocr.ImageRecognizer(
-            lang=lang,
-            imagedata=image,
-            width=width,
-            height=height,
-            cookie=reader.current_page,
-        )
         ocr_started.send(sender=self.view)
         # Show a modal dialog
         self._ocr_wait_dlg.Show()
         sounds.ocr_start.play()
-        process_worker.submit(recog.recognize).add_done_callback(
+        threaded_worker.submit(ocr.recognize, lang, image, width, height, reader.current_page).add_done_callback(
             self._process_ocr_result
         )
 
@@ -309,15 +299,23 @@ class OCRMenu(wx.Menu):
         lang, zoom_factor, should_enhance = options
         doc = self.service.reader.document
         total = len(doc)
-        ocr_executor = ocr.scan_to_text(
-            doc.__class__, doc.filename, lang, zoom_factor, should_enhance, output_file
+        args = (            doc.__class__,
+            doc.filename,
+            lang, zoom_factor,
+            should_enhance, output_file
         )
-        for progress in ocr_executor:
+        for progress in QueueProcess(target=ocr.scan_to_text, args=args):
             wx.CallAfter(
                 progress_dlg.Update, progress, f"Scanning page {progress} of {total}"
             )
-        wx.CallAfter(dlg.Close)
-        wx.CallAfter(dlg.Destroy)
+        wx.CallAfter(progress_dlg.Close)
+        wx.CallAfter(progress_dlg.Destroy)
+        wx.CallAfter(
+            wx.MessageBox,
+            _("Successfully processed {} pages.\nExtracted text was written to: {}").format(total, output_file),
+            _("OCR Completed"),
+            wx.ICON_INFORMATION
+        )
 
     def onChangeOCROptions(self, event):
         self._get_ocr_options(from_cache=False)
@@ -347,7 +345,7 @@ class OCRMenu(wx.Menu):
         if openFileDlg.ShowModal() == wx.ID_OK:
             filename = openFileDlg.GetPath().strip()
             openFileDlg.Destroy()
-            if not filename:
+            if not filename or not os.path.isfile(filename):
                 return
             image = Pixmap(filename)
             # Force include the alpha channel
@@ -360,20 +358,6 @@ class OCRMenu(wx.Menu):
                 parent=self.view, message=_("Running OCR on image. Please wait....")
             )
 
-            @gui_thread_safe
-            def ocr_done_callback(future):
-                __, content = future.result()
-                wait_dlg.Destroy()
-                # Translators: label for a text control
-                self.view.SetStatusText(_("Recognition Results"))
-                self.view.set_content(content)
-
-            wait_dlg.Show()
-            recog = ocr.ImageRecognizer(
-                lang=lang, imagedata=image.samples, width=image.w, height=image.h
-            )
-            process_worker.submit(recog.recognize).add_done_callback(ocr_done_callback)
-
     @gui_thread_safe
     def _process_ocr_result(self, task):
         if self._ocr_cancelled.is_set():
@@ -383,10 +367,9 @@ class OCRMenu(wx.Menu):
             page_number, content = task.result()
         except Exception as e:
             self._ocr_wait_dlg.Hide()
-            log.exception(f"Error getting OCR recognition results: {e}")
+            log.exception(f"Error getting OCR recognition results.", exc_info=True)
             ocr_ended.send(sender=self.view, isfaulted=True)
             return
-        ocr_ended.send(sender=self.view, isfaulted=False)
         self._scanned_pages[page_number] = content
         if page_number == self.view.reader.current_page:
             self.view.set_content(content)
@@ -394,6 +377,7 @@ class OCRMenu(wx.Menu):
             speech.announce(_("Scan finished."), urgent=True)
             self._ocr_wait_dlg.Hide()
             self.view.contentTextCtrl.SetFocusFromKbd()
+            ocr_ended.send(sender=self.view, isfaulted=False)
 
     def _on_ocr_cancelled(self):
         self._ocr_cancelled.set()

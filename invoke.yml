@@ -6,11 +6,10 @@ packages_to_install:
         - "accessible_output2-0.13-py3-none-any.whl"
         - "db_magic-1.0-py3-none-any.whl"
     binary_x64:
-        - "ujson-1.35-cp37-cp37m-win_amd64.whl"
-        - "pycld2-0.31-cp37-cp37m-win_amd64.whl"
-        - "lru_dict-1.1.6-cp37-cp37m-win_amd64.whl"
+        - "docrpy-0.1.0-cp38-none-win_amd64.whl"
+        - "lru_dict-1.1.6-cp38-cp38-win_amd64.whl"
+        - "pycld2-0.41-cp38-cp38-win_amd64.whl"
     binary_x86:
-        - "ujson-1.35-cp37-cp37m-win32.whl"
         - "pycld2-0.31-cp37-cp37m-win32.whl"
         - "lru_dict-1.1.6-cp37-cp37m-win32.whl"
 folders_to_clean:

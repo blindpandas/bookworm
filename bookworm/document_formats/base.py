@@ -13,7 +13,7 @@ from bookworm import typehints as t
 from bookworm.concurrency import QueueProcess, call_threaded
 from bookworm.utils import cached_property, generate_sha1hash_async
 from bookworm.logger import logger
-from . import _tools
+from . import doctools
 
 
 log = logger.getChild(__name__)
@@ -321,29 +321,22 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def export_to_text(cls, document_path: t.PathLike, target_filename: t.PathLike):
         args = (cls, document_path, target_filename)
         process = QueueProcess(
-            target=_tools.do_export_to_text, args=args, name="bookworm-exporter"
+            target=doctools.export_to_plain_text,
+            args=args,
+            name="bookworm-exporter"
         )
-        process.start()
-        while True:
-            value = process.queue.get()
-            if value == -1:
-                break
-            yield value
-        process.join()
+        yield from process
 
     @classmethod
     def search(cls, document_path: t.PathLike, request: SearchRequest):
         args = (cls, document_path, request)
         process = QueueProcess(
-            target=_tools.do_search_book, args=args, name="bookworm-search"
+            target=doctools.search_book,
+            args=args,
+            name="bookworm-search"
         )
-        process.start()
-        while True:
-            value = process.queue.get()
-            if value == -1:
-                break
-            yield value
-        process.join()
+        yield from process
+
 
 
 class BasePage(metaclass=ABCMeta):

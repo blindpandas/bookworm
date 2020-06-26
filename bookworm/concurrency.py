@@ -1,8 +1,11 @@
 # coding: utf-8
 
 import multiprocessing as mp
+from enum import IntEnum
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from functools import wraps
+from dataclasses import dataclass
+import bookworm.typehints as t
 from bookworm.signals import app_shuttingdown
 from bookworm.logger import logger
 
@@ -25,7 +28,7 @@ def _shutdown_threaded_worker(sender):
     process_worker.shutdown(wait=False)
 
 
-def call_threaded(func):
+def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., "Future"]:
     """Call `func` in a separate thread. It wraps the function
     in another function that returns a `concurrent.futures.Future`
     object when called.
@@ -43,10 +46,35 @@ def call_threaded(func):
     return wrapper
 
 
+class QPResult(IntEnum):
+    COMPLETED = -1
+    OK = 0
+    FAILED = 1
+
+
+@dataclass
+class QPChannel:
+    queue: mp.Queue
+
+    def push(self, value: t.Any):
+        self.queue.put((QPResult.OK, value))
+
+    def exception(self, exc: Exception):
+        self.queue.put((QPResult.FAILED, exc))
+
+    def close(self):
+        self.queue.put((QPResult.COMPLETED, None))
+
+
 class QueueProcess(mp.Process):
-    """A `Process` that passes a queue to
-    its target function.
     """
+    A process that runs its target in a separate process.
+    The process could be iterated over to get the produced
+    results as they are generated.
+    The target should recieve a keyword argument `channel`
+    and use it to send results to the caller.
+    """
+    QPIteratorType = t.Iterator[t.Any]
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("daemon", True)
@@ -54,8 +82,31 @@ class QueueProcess(mp.Process):
         self.queue = mp.Queue()
 
     def run(self):
-        self._target(*self._args, **self._kwargs, queue=self.queue)
+        channel = QPChannel(self.queue)
+        try:
+            self._target(*self._args, **self._kwargs, channel=channel)
+        except Exception as e:
+            channel.exception(e)
 
     def close(self):
         super().close()
         self.queue.close()
+
+    def __iter__(self) -> QPIteratorType:
+        return self.iter_queue()
+
+    def iter_queue(self) -> QPIteratorType:
+        if self.is_alive():
+            raise RuntimeError("Can only iterate process once.")
+        self.start()
+        while True:
+            flag, result = self.queue.get()
+            if flag is QPResult.OK:
+                yield result
+            elif flag is QPResult.COMPLETED:
+                break
+            elif flag is QPResult.FAILED:
+                raise result
+        self.join()
+        self.close()
+        
