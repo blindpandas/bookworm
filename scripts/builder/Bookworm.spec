@@ -24,7 +24,8 @@ a = Analysis(
     pathex=[""],
     binaries=[],
     datas=get_datafiles(),
-    hiddenimports=[],
+    # See: https://stackoverflow.com/questions/37815371/
+    hiddenimports=["pkg_resources.py2_warn"],
     hookspath=[],
     runtime_hooks=[],
     excludes=[],
