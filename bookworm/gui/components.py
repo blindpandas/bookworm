@@ -124,7 +124,7 @@ class Dialog(wx.Dialog):
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.addControls(sizer, panel)
         line = wx.StaticLine(panel, -1, size=(20, -1), style=wx.LI_HORIZONTAL)
-        sizer.Add(line, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 10)
+        sizer.Add(line, 0, wx.GROW | wx.RIGHT | wx.TOP, 10)
         buttonsSizer = self.getButtons(panel)
         if buttonsSizer:
             sizer.Add(buttonsSizer, 0, wx.ALIGN_CENTER | wx.ALL, 10)

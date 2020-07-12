@@ -6,7 +6,6 @@ from enum import Enum, auto
 import sqlalchemy as sa
 from sqlalchemy.exc import SQLAlchemyError
 from bookworm.logger import logger
-from bookworm.utils import cached_property
 from bookworm.database import db
 from bookworm.database.models import Book
 from .annotation_models import Bookmark, Note, Quote
@@ -34,16 +33,9 @@ class Annotator:
         book = self.get_book_by_identifier(ident)
         if book is None:
             book = Book(title=self.reader.current_book.title, identifier=ident)
-            session = self.session()
-            try:
-                session.add(book)
-                session.commit()
-            except SQLAlchemyError as e:
-                session.rollback()
-                session.close()
-                log.exception(f"An error occured while creating a new book: {e.args}")
-                # XXX: Fix this
-                return self.get_book_by_identifier(ident)
+            self.session.add(book)
+            self.session.commit()
+            self.session.refresh(book)
         return book
 
     def create(self, **kwargs):
@@ -56,14 +48,8 @@ class Annotator:
             )
         )
         annot = self.model(**kwargs)
-        session = self.session()
-        try:
-            session.add(annot)
-            session.commit()
-        except SQLAlchemyError as e:
-            session.rollback()
-            session.close()
-            log.exception(f"An error occured while creating a new annotation: {e.args}")
+        self.session.add(annot)
+        self.session.commit()
         return annot
 
     def get(self, item_id):
@@ -84,13 +70,11 @@ class Annotator:
         return self.get_list(asc).filter_by(section_identifier=section_ident)
 
     def delete(self, item_id):
-        session = self.session()
         try:
-            session.delete(self.get(item_id))
-            session.commit()
+            self.session.delete(self.get(item_id))
+            self.session.commit()
         except SQLAlchemyError as e:
-            session.rollback()
-            session.close()
+            self.session.rollback()
             log.exception(f"An error occured while deleting annotation: {e.args}")
 
     def update(self, item_id, **kwargs):
@@ -99,13 +83,11 @@ class Annotator:
             raise ValueError(f"There is no record with id={item_id}.")
         for attr, value in kwargs.items():
             setattr(item, attr, value)
-        session = self.session()
         try:
-            session.add(item)
-            session.commit()
+            self.session.add(item)
+            self.session.commit()
         except SQLAlchemyError as e:
-            session.rollback()
-            session.close()
+            self.session.rollback()
             log.exception(f"An error occured while updating annotation: {e.args}")
 
 

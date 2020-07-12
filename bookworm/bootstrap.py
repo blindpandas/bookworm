@@ -78,8 +78,8 @@ def init_app_and_run_main_loop():
         parser.add_argument("--shell-integrate", action="store_true")
         parser.add_argument("--shell-disintegrate", action="store_true")
         parser.add_argument("--setup-file-assoc", action="store_true")
-    appinfo.args, appinfo.extra_args =  parser.parse_known_args()
-    if appinfo.args.debug or os.environ.get('BOOKWORM_DEBUG'):
+    appinfo.args, appinfo.extra_args = parser.parse_known_args()
+    if appinfo.args.debug or os.environ.get("BOOKWORM_DEBUG"):
         appinfo.debug = True
 
     log.info(f"Debug mode is {'on' if appinfo.debug else 'off'}.")

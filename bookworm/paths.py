@@ -41,7 +41,12 @@ def data_path():
 
 @merge_paths
 def app_path():
-    return Path(paths_.app_path())
+    if app.is_frozen:
+        return Path(paths_.app_path())
+    else:
+        import bookworm
+
+        return Path(bookworm.__path__[0])
 
 
 @merge_paths

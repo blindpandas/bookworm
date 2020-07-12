@@ -56,7 +56,11 @@ def extract_update_bundle(bundle):
 
 
 def check_for_updates_upon_startup():
-    if app.is_frozen and not app.command_line_mode and config.conf["general"]["auto_check_for_updates"]:
+    if (
+        app.is_frozen
+        and not app.command_line_mode
+        and config.conf["general"]["auto_check_for_updates"]
+    ):
         _last_update_check = config.conf["general"]["last_update_check"]
         if (time.time() - _last_update_check) < UPDATE_CHECK_INTERVAL:
             log.info(

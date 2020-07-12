@@ -92,6 +92,7 @@ class EBookReader:
         self.current_book = self.document.metadata
         self.view.add_toc_tree(self.document.toc_tree)
         self.view.set_text_direction(is_rtl(self.document.language))
+        self.__state.setdefault("current_page_index", -1)
         self.current_page = 0
         self.view.SetTitle(self.get_view_title(include_author=True))
         last_position = database.get_last_position(ebook_path.lower())
@@ -145,7 +146,6 @@ class EBookReader:
 
     @current_page.setter
     def current_page(self, value: int):
-        _prev = self.__state.setdefault("current_page_index", 0)
         if value == self.current_page:
             return
         if value not in self.document:
@@ -155,7 +155,7 @@ class EBookReader:
         self.view.set_content(page.get_text())
         self.active_section = page.section
         if config.conf["general"]["play_pagination_sound"]:
-            sounds.pagination.play_after()
+            sounds.pagination.play()
         # Translators: the label of the page content text area
         cmsg = _("Page {page} | {chapter}").format(
             page=page.number, chapter=page.section.title
@@ -166,7 +166,7 @@ class EBookReader:
         )
         self.view.SetStatusText(cmsg)
         speech.announce(smsg)
-        reader_page_changed.send(self, current=value, prev=_prev)
+        reader_page_changed.send(self, current=value, prev=-1)
 
     @property
     def current_page_object(self) -> BasePage:

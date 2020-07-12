@@ -1,13 +1,10 @@
 # coding: utf-8
 
 import wx
-import wx.lib.scrolledpanel as scrolled
 import wx.lib.sized_controls as sc
 from itertools import chain
 from bookworm import config
-from bookworm import speech
 from bookworm.document_formats import SearchRequest
-from bookworm.signals import reader_page_changed
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from bookworm.gui.components import (
@@ -26,6 +23,10 @@ log = logger.getChild(__name__)
 
 class SearchResultsDialog(Dialog):
     """Search Results."""
+
+    def __init__(self, highlight_func, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.highlight_func = highlight_func
 
     def addControls(self, sizer, parent):
         self.reader = self.parent.reader
@@ -59,9 +60,7 @@ class SearchResultsDialog(Dialog):
         pbarlabel = wx.StaticText(parent, -1, _("Search Progress:"))
         self.progressbar = wx.Gauge(parent, -1, style=wx.GA_HORIZONTAL | wx.GA_SMOOTH)
         sizer.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 10)
-        sizer.Add(
-            self.searchResultsListCtrl, 1, wx.EXPAND | wx.ALIGN_CENTER | wx.ALL, 10
-        )
+        sizer.Add(self.searchResultsListCtrl, 1, wx.EXPAND | wx.ALL, 10)
         sizer.Add(pbarlabel, 0, wx.TOP | wx.LEFT | wx.RIGHT, 10)
         sizer.Add(self.progressbar, 0, wx.EXPAND | wx.ALL, 10)
         self.Bind(
@@ -82,7 +81,7 @@ class SearchResultsDialog(Dialog):
             pos = self.searchResultsListCtrl.GetItemData(idx)
             self.Close()
             self.Destroy()
-            self.parent.highlight_search_result(int(page) - 1, pos)
+            self.highlight_func(int(page) - 1, pos)
             self.parent._last_search_index = idx
 
     def addResult(self, page, snip, section, pos):
@@ -163,95 +162,3 @@ class GoToPageDialog(SimpleDialog):
 
     def GetValue(self):
         return self.pageNumberCtrl.GetValue() - 1
-
-
-class ViewPageAsImageDialog(wx.Dialog):
-    """Show the page rendered as an image."""
-
-    def __init__(self, parent, title, size=(450, 450), style=wx.DEFAULT_DIALOG_STYLE):
-        super().__init__(parent, title=title, style=style)
-        self.parent = parent
-        self.reader = self.parent.reader
-        # Zoom support
-        self.scaling_factor = 0.2
-        self._zoom_factor = 1
-        self.scroll_rate = 30
-        # Translators: the label of the image of a page in a dialog to render the current page
-        panel = self.scroll = scrolled.ScrolledPanel(self, -1, name=_("Page"))
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
-        self.imageCtrl = wx.StaticBitmap(panel)
-        sizer.Add(self.imageCtrl, 1, wx.CENTER | wx.BOTH)
-        panel.SetSizer(sizer)
-        sizer.Fit(panel)
-        panel.Layout()
-        self.setDialogImage()
-        NavigationProvider(
-            ctrl=panel,
-            reader=self.reader,
-            callback_func=self.setDialogImage,
-            zoom_callback=self.set_zoom,
-        )
-        panel.Bind(wx.EVT_KEY_UP, self.onKeyUp, panel)
-        panel.SetupScrolling(rate_x=self.scroll_rate, rate_y=self.scroll_rate)
-        self._currently_rendered_page = self.reader.current_page
-        reader_page_changed.connect(self.onPageChange, sender=self.reader)
-
-    @gui_thread_safe
-    def onPageChange(self, sender, current, prev):
-        if self._currently_rendered_page != current:
-            self.setDialogImage()
-
-    def set_zoom(self, val):
-        if val == 0:
-            self.zoom_factor = 1
-        else:
-            self.zoom_factor += val * self.scaling_factor
-
-    @property
-    def zoom_factor(self):
-        return self._zoom_factor
-
-    @zoom_factor.setter
-    def zoom_factor(self, value):
-        if (value < 1.0) or (value > 10.0):
-            return
-        self._zoom_factor = value
-        self.setDialogImage(reset_scroll_pos=False)
-        self.scroll.SetupScrolling(
-            rate_x=self.scroll_rate, rate_y=self.scroll_rate, scrollToTop=False
-        )
-        # Translators: a message announced to the user when the zoom factor changes
-        speech.announce(
-            _("Zoom is at {factor} percent").format(factor=int(value * 100))
-        )
-
-    def setDialogImage(self, reset_scroll_pos=True):
-        bmp, size = self.getPageImage()
-        self.imageCtrl.SetSize(size)
-        self.imageCtrl.SetBitmap(bmp)
-        self._currently_rendered_page = self.reader.current_page
-        if reset_scroll_pos:
-            self.scroll.SetupScrolling(
-                rate_x=self.scroll_rate, rate_y=self.scroll_rate, scrollToTop=False
-            )
-            wx.CallLater(50, self.scroll.Scroll, 0, 0)
-
-    def getPageImage(self):
-        imagedata, width, height = self.reader.document.get_page_image(
-            self.reader.current_page, zoom_factor=self._zoom_factor
-        )
-        bmp = wx.Bitmap.FromBufferRGBA(width, height, bytearray(imagedata))
-        size = (width, height)
-        return bmp, size
-
-    def onKeyUp(self, event):
-        event.Skip()
-        code = event.GetKeyCode()
-        if code == wx.WXK_ESCAPE:
-            self.Close()
-            self.Destroy()
-
-    def Close(self, *args, **kwargs):
-        super().Close(*args, **kwargs)
-        reader_page_changed.disconnect(self.onPageChange, sender=self.reader)

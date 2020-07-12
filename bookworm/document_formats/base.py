@@ -2,18 +2,17 @@
 
 import gc
 from abc import ABCMeta, abstractmethod
-from collections.abc import Container, Iterable, Sequence, Sized
+from collections.abc import Sequence
 from enum import IntFlag
 from functools import wraps
-from dataclasses import field, dataclass
-from weakref import ref
 from lru import LRU
 from pycld2 import detect as detect_language, error as CLD2Error
 from bookworm import typehints as t
 from bookworm.concurrency import QueueProcess, call_threaded
 from bookworm.utils import cached_property, generate_sha1hash_async
 from bookworm.logger import logger
-from . import doctools
+from .elements import *
+from . import tools as doctools
 
 
 log = logger.getChild(__name__)
@@ -26,162 +25,6 @@ class DocumentError(Exception):
 
 class PaginationError(DocumentError, IndexError):
     """Raised when the  `next` or `prev` page is not available."""
-
-
-@dataclass
-class BookMetadata:
-    title: str
-    author: str
-    publisher: str = ""
-    publication_year: str = ""
-    additional_info: dict = field(default_factory=dict)
-
-
-@dataclass
-class SearchRequest:
-    """Holds information of a user's request for
-    searching for a term in a book.
-    """
-
-    term: str
-    is_regex: bool
-    case_sensitive: bool
-    whole_word: bool
-    from_page: int
-    to_page: int
-
-
-@dataclass(frozen=True, order=True)
-class Pager(Container, Iterable, Sized):
-    """Basically, this is a glorified `range` iterator."""
-
-    __slots__ = ["first", "last"]
-
-    first: int
-    last: int
-
-    def __repr__(self):
-        return f"<Pager: first={self.first}, last={self.last}, total={self.last - self.first}>"
-
-    def __iter__(self) -> t.Iterable[int]:
-        return iter(range(self.first, self.last + 1))
-
-    def __len__(self):
-        return self.last - self.first
-
-    def __contains__(self, value):
-        return self.first <= value <= self.last
-
-    def __hash__(self):
-        return hash((self.first, self.last))
-
-
-class Section:
-    """
-    A simple (probably inefficient) custom tree
-    implementation for use in the table of content.
-    """
-
-    __slots__ = ["documentref", "title", "parent", "children", "pager", "data"]
-
-    def __init__(
-        self,
-        document: "BaseDocument",
-        title: str,
-        parent: t.Optional["Section"] = None,
-        children: t.Optional[t.List["Section"]] = None,
-        pager: t.Optional[Pager] = None,
-        data: t.Optional[t.Dict[t.Hashable, t.Any]] = None,
-    ):
-        self.documentref = ref(document)
-        self.title = title
-        self.parent = parent
-        self.children = children or []
-        self.pager = pager
-        self.data = data or {}
-        for child in self.children:
-            child.parent = self
-
-    def __getitem__(self, index: int) -> "Section":
-        return self.children[index]
-
-    def __len__(self):
-        return len(self.children)
-
-    def __contains__(self, item: "Section"):
-        return item in self.children
-
-    def __bool__(self):
-        return len(self) > 0
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__}(title={self.title}, parent={getattr(self.parent, 'title', '')}, child_count={len(self)})>"
-
-    def append(self, child: "Section"):
-        child.parent = self
-        self.children.append(child)
-
-    def iter_children(self) -> t.Iterable["Section"]:
-        for child in self.children:
-            yield child
-            yield from child.iter_children()
-
-    def iter_pages(self) -> t.Iterable["BasePage"]:
-        document = self.documentref()
-        if document is not None:
-            for index in self.pager:
-                yield document[index]
-        else:
-            raise RuntimeError("Document ref is dead!")
-
-    @property
-    def is_root(self) -> bool:
-        return self.parent is None
-
-    @property
-    def first_child(self) -> t.Optional["Section"]:
-        if self:
-            return self[0]
-
-    @property
-    def last_child(self) -> t.Optional["Section"]:
-        if self:
-            return self[-1]
-
-    @property
-    def next_sibling(self) -> t.Optional["Section"]:
-        if self.is_root:
-            return
-        next_index = self.parent.children.index(self) + 1
-        if next_index < len(self.parent):
-            return self.parent[next_index]
-
-    @property
-    def prev_sibling(self) -> t.Optional["Section"]:
-        if self.is_root:
-            return
-        prev_index = self.parent.children.index(self) - 1
-        if prev_index >= 0:
-            return self.parent[prev_index]
-
-    @property
-    def simple_next(self) -> t.Optional["Section"]:
-        if self.next_sibling is not None:
-            return self.next_sibling
-        elif self.parent:
-            return self.parent.simple_next
-
-    @property
-    def simple_prev(self) -> t.Optional["Section"]:
-        if self.prev_sibling is not None:
-            return self.prev_sibling
-        elif self.parent:
-            return self.parent
-        return self
-
-    @property
-    def unique_identifier(self) -> str:
-        return f"{self.title}-{self.pager.first}-{self.pager.last}"
 
 
 class DocumentCapability(IntFlag):
@@ -225,6 +68,15 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         page = self.get_page(index)
         self.__page_cache[index] = page
         return page
+
+    def __getstate__(self) -> dict:
+        """Support for pickling."""
+        return dict(filename=self.filename)
+
+    def __setstate__(self, state):
+        """Support for unpickling."""
+        self.__dict__.update(state)
+        self.read()
 
     @cached_property
     def identifier(self) -> str:
@@ -317,26 +169,17 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """Convenience method: return the image of a page."""
         return self[page_number].get_image(zoom_factor, enhance)
 
-    @classmethod
-    def export_to_text(cls, document_path: t.PathLike, target_filename: t.PathLike):
-        args = (cls, document_path, target_filename)
-        process = QueueProcess(
+    def export_to_text(self, target_filename: t.PathLike):
+        yield from QueueProcess(
             target=doctools.export_to_plain_text,
-            args=args,
-            name="bookworm-exporter"
+            args=(self, target_filename),
+            name="bookworm-exporter",
         )
-        yield from process
 
-    @classmethod
-    def search(cls, document_path: t.PathLike, request: SearchRequest):
-        args = (cls, document_path, request)
-        process = QueueProcess(
-            target=doctools.search_book,
-            args=args,
-            name="bookworm-search"
+    def search(self, request: SearchRequest):
+        yield from QueueProcess(
+            target=doctools.search_book, args=(self, request), name="bookworm-search"
         )
-        yield from process
-
 
 
 class BasePage(metaclass=ABCMeta):

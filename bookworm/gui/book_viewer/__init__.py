@@ -182,8 +182,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.SetStatusText(self._no_open_book_status)
         self.tocTreeCtrl.DeleteAllItems()
         self.Title = app.display_name
-        self._reset_search_history()
-        self.populate_recent_file_list()
 
     @only_when_reader_ready
     def onTOCItemClick(self, event):

@@ -4,6 +4,7 @@ import os
 import threading
 import time
 import wx
+import functools
 from pathlib import Path
 from lru import LRU
 from enum import IntEnum
@@ -60,7 +61,7 @@ class OCROptionsDialog(SimpleDialog):
         self.langChoice = wx.Choice(parent, -1, choices=self.choices)
         self.langChoice.SetSizerProps(expand=True)
         wx.StaticText(parent, -1, _("Supplied Image resolution::"))
-        self.zoomFactorSlider = wx.Slider(parent, -1, minValue=1, maxValue=10)
+        self.zoomFactorSlider = wx.Slider(parent, -1, minValue=0, maxValue=10)
         self.enhanceImageCheckbox = wx.CheckBox(
             parent,
             -1,
@@ -78,7 +79,7 @@ class OCROptionsDialog(SimpleDialog):
         self.Bind(wx.EVT_BUTTON, self.onOK, id=wx.ID_OK)
         if not self.saved_values:
             self.langChoice.SetSelection(0)
-            self.zoomFactorSlider.SetValue(4)
+            self.zoomFactorSlider.SetValue(1)
             self.enhanceImageCheckbox.SetValue(True)
         else:
             self.langChoice.SetSelection(self.saved_values["lang"])
@@ -90,7 +91,7 @@ class OCROptionsDialog(SimpleDialog):
     def onOK(self, event):
         self._return_value = (
             self.langChoice.GetSelection(),
-            self.zoomFactorSlider.GetValue(),
+            self.zoomFactorSlider.GetValue() or 1,
             self.enhanceImageCheckbox.IsChecked(),
             self.force_save or self.saveOptionsCheckbox.IsChecked(),
         )
@@ -130,7 +131,7 @@ class OCRMenu(wx.Menu):
         self.auto_scan_item = self.Append(
             OCRMenuIds.autoScanPages,
             # Translators: the label of an item in the application menubar
-            _("&Realtime OCR\tCtrl-F4"),
+            _("&Automatic OCR\tCtrl-F4"),
             # Translators: the help text of an item in the application menubar
             _("Auto run  OCR when turning pages."),
             kind=wx.ITEM_CHECK,
@@ -240,25 +241,36 @@ class OCRMenu(wx.Menu):
         image, width, height = reader.document.get_page_image(
             reader.current_page, zoom_factor, should_enhance
         )
+
+        def _ocr_callback(page_number, content):
+            self._scanned_pages[page_number] = content
+            if page_number == self.view.reader.current_page:
+                self.view.set_content(content)
+
+        self._run_ocr(
+            lang, image, width, height, _ocr_callback, data=reader.current_page
+        )
+
+    def _run_ocr(self, lang, image, width, height, callback, data=None):
         ocr_started.send(sender=self.view)
         # Show a modal dialog
         self._ocr_wait_dlg.Show()
         sounds.ocr_start.play()
-        threaded_worker.submit(ocr.recognize, lang, image, width, height, reader.current_page).add_done_callback(
-            self._process_ocr_result
-        )
+        future_callback = functools.partial(self._process_ocr_result, callback)
+        threaded_worker.submit(
+            ocr.recognize, lang, image, width, height, data
+        ).add_done_callback(future_callback)
 
     def onAutoScanPages(self, event):
         event.Skip()
         if not self._saved_ocr_options:
             self._get_ocr_options(force_save=True)
         if self.auto_scan_item.IsChecked():
-            speech.announce(_("Realtime OCR is enabled"))
+            speech.announce(_("Automatic OCR is enabled"))
         else:
-            speech.announce(_("Realtime OCR is disabled"))
+            speech.announce(_("Automatic OCR is disabled"))
         if not self.view.contentTextCtrl.GetValue():
-            pass
-            # self.onScanCurrentPage(event)
+            self.onScanCurrentPage(event)
 
     def onScanToTextFile(self, event):
         res = self._get_ocr_options(from_cache=False, force_save=True)
@@ -299,11 +311,7 @@ class OCRMenu(wx.Menu):
         lang, zoom_factor, should_enhance = options
         doc = self.service.reader.document
         total = len(doc)
-        args = (            doc.__class__,
-            doc.filename,
-            lang, zoom_factor,
-            should_enhance, output_file
-        )
+        args = (doc, lang, zoom_factor, should_enhance, output_file)
         for progress in QueueProcess(target=ocr.scan_to_text, args=args):
             wx.CallAfter(
                 progress_dlg.Update, progress, f"Scanning page {progress} of {total}"
@@ -312,10 +320,13 @@ class OCRMenu(wx.Menu):
         wx.CallAfter(progress_dlg.Destroy)
         wx.CallAfter(
             wx.MessageBox,
-            _("Successfully processed {} pages.\nExtracted text was written to: {}").format(total, output_file),
+            _(
+                "Successfully processed {} pages.\nExtracted text was written to: {}"
+            ).format(total, output_file),
             _("OCR Completed"),
-            wx.ICON_INFORMATION
+            wx.ICON_INFORMATION,
         )
+        wx.CallAfter(self.view.contentTextCtrl.SetFocus)
 
     def onChangeOCROptions(self, event):
         self._get_ocr_options(from_cache=False)
@@ -353,31 +364,36 @@ class OCRMenu(wx.Menu):
             options = self._get_ocr_options_from_dlg(force_save=True)
             if not options:
                 return
-            lang, *rest = options
-            wait_dlg = SnakDialog(
-                parent=self.view, message=_("Running OCR on image. Please wait....")
+            lang, *__ = options
+
+            def _ocr_callback(data, content):
+                if self.service.reader.ready:
+                    self.view.unloadCurrentEbook()
+                self.view.set_content(content)
+                self.view.SetStatusText(_("OCR Results"))
+
+            self._run_ocr(
+                lang, image.samples, image.w, image.h, _ocr_callback, data=None
             )
 
     @gui_thread_safe
-    def _process_ocr_result(self, task):
+    def _process_ocr_result(self, callback, task):
         if self._ocr_cancelled.is_set():
             ocr_ended.send(sender=self.view, isfaulted=True)
             return
         try:
-            page_number, content = task.result()
+            data, content = task.result()
         except Exception as e:
             self._ocr_wait_dlg.Hide()
             log.exception(f"Error getting OCR recognition results.", exc_info=True)
             ocr_ended.send(sender=self.view, isfaulted=True)
             return
-        self._scanned_pages[page_number] = content
-        if page_number == self.view.reader.current_page:
-            self.view.set_content(content)
-            sounds.ocr_end.play()
-            speech.announce(_("Scan finished."), urgent=True)
-            self._ocr_wait_dlg.Hide()
-            self.view.contentTextCtrl.SetFocusFromKbd()
-            ocr_ended.send(sender=self.view, isfaulted=False)
+        callback(data, content)
+        sounds.ocr_end.play()
+        speech.announce(_("Scan finished."), urgent=True)
+        self._ocr_wait_dlg.Hide()
+        self.view.contentTextCtrl.SetFocusFromKbd()
+        ocr_ended.send(sender=self.view, isfaulted=False)
 
     def _on_ocr_cancelled(self):
         self._ocr_cancelled.set()

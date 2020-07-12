@@ -12,7 +12,6 @@ class DummySpeechEngine(BaseSpeechEngine):
     name = "dummy"
     display_name = _("No Speech")
 
-
     @classmethod
     def check(cls):
         return True
@@ -33,7 +32,7 @@ class DummySpeechEngine(BaseSpeechEngine):
 
     @voice.setter
     def voice(self, value):
-            pass
+        pass
 
     @property
     def rate(self):

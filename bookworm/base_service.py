@@ -39,7 +39,9 @@ class BookwormService:
         """Get items to add to  the content text control context menu."""
         return ()
 
-    def get_settings_panels(self) -> t.Iterable[t.Tuple[int, str, "bookworm.gui.settings.SettingPanel", str]]:
+    def get_settings_panels(
+        self
+    ) -> t.Iterable[t.Tuple[int, str, "bookworm.gui.settings.SettingPanel", str]]:
         """Return a list of SettingsPanelBlueprint."""
         return ()
 

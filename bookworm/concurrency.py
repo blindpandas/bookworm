@@ -64,16 +64,18 @@ class QPChannel:
 
     def close(self):
         self.queue.put((QPResult.COMPLETED, None))
+        self.queue.close()
 
 
 class QueueProcess(mp.Process):
     """
-    A process that runs its target in a separate process.
+    A process that passes a channel to its target.
     The process could be iterated over to get the produced
     results as they are generated.
     The target should recieve a keyword argument `channel`
     and use it to send results to the caller.
     """
+
     QPIteratorType = t.Iterator[t.Any]
 
     def __init__(self, *args, **kwargs):
@@ -109,4 +111,3 @@ class QueueProcess(mp.Process):
                 raise result
         self.join()
         self.close()
-        

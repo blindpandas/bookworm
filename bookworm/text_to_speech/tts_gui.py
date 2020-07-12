@@ -317,7 +317,7 @@ class VoiceProfileDialog(SimpleDialog):
 
     def refresh_profile_list(self):
         self.voiceProfilesChoice.Clear()
-        self.config_manager.list_voice_profiles()
+        self.config_manager.refresh_voice_profiles()
         profiles = list(sorted(self.config_manager.profiles.keys()))
         self.voiceProfilesChoice.SetFocus()
         for btn in (wx.ID_EDIT, wx.ID_DEFAULT, wx.ID_REMOVE):

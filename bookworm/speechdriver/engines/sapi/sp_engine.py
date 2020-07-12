@@ -17,6 +17,7 @@ try:
     reference_gac_assembly("System.Speech\*\System.Speech.dll")
     from System.Speech import Synthesis
     from .sp_utterance import SapiSpeechUtterance
+
     _sapi_available = True
 except OSError as e:
     log.error(f"Could not load Sapi5 speech engine: {e}")

@@ -353,7 +353,7 @@ def clean(c, assets=False, siteconfig=False):
 @make_env
 def copy_deps(c):
     """Copies the system dlls."""
-    print("Statically linking vcredis 2015 ucrt ...")
+    print("Copying vcredis 2015 ucrt support DLLs...")
     arch = os.environ["IAPP_ARCH"]
     dist_dir = os.environ["IAPP_FROZEN_DIRECTORY"]
     dlls = (
@@ -368,7 +368,7 @@ def copy_deps(c):
         except UnexpectedExit:
             print(f"Faild to copy  {dll} to {dist_dir}")
             continue
-    print("Static linking of vcredis 2015 ucrt is done.")
+    print("Done copying vcredis 2015 ucrt DLLs.")
 
 
 @task

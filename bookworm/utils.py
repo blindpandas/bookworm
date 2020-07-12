@@ -23,6 +23,9 @@ log = logger.getChild(__name__)
 # Sentinel
 _missing = object()
 
+# New line character
+NEWLINE = "\n"
+
 
 def ignore(*exceptions, retval=None):
     """Execute function ignoring any one of the given exceptions if raised."""

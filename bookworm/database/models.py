@@ -7,11 +7,6 @@ Database models for `Bookworm`.
 from . import db
 
 
-class Book(db.Model):
-    identifier = db.string(512, unique=True, nullable=False)
-    title = db.string(512, nullable=False)
-
-
 class GetOrCreateMixin:
     """Adds the `get_or_create` method to a sqlalchemy Model class."""
 
@@ -21,3 +16,8 @@ class GetOrCreateMixin:
         if obj is not None:
             return obj
         return cls(**kwargs)
+
+
+class Book(db.Model):
+    identifier = db.string(512, unique=True, nullable=False)
+    title = db.string(512, nullable=False)
