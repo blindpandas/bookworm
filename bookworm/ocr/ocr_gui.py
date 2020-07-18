@@ -11,12 +11,10 @@ from enum import IntEnum
 from bookworm import app
 from bookworm import config
 from bookworm import speech
+from bookworm.text_to_speech import speech_engine_state_changed
 from bookworm.signals import (
     reader_book_unloaded,
     reader_page_changed,
-    ocr_started,
-    ocr_ended,
-    speech_engine_state_changed,
 )
 from bookworm.concurrency import QueueProcess, call_threaded, threaded_worker
 from bookworm.resources import sounds
@@ -25,6 +23,7 @@ from bookworm.gui.components import SimpleDialog, SnakDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from . import ocr_provider as ocr
+from . import     ocr_started, ocr_ended
 
 
 log = logger.getChild(__name__)
@@ -62,12 +61,12 @@ class OCROptionsDialog(SimpleDialog):
         self.langChoice.SetSizerProps(expand=True)
         wx.StaticText(parent, -1, _("Supplied Image resolution::"))
         self.zoomFactorSlider = wx.Slider(parent, -1, minValue=0, maxValue=10)
-        self.enhanceImageCheckbox = wx.CheckBox(
-            parent,
-            -1,
-            # Translators: the label of a checkbox
-            _("Enhance image before recognition"),
-        )
+        # self.enhanceImageCheckbox = wx.CheckBox(
+            # parent,
+            # -1,
+            # # Translators: the label of a checkbox
+            # _("Enhance image before recognition"),
+        # )
         wx.StaticLine(parent)
         if not self.force_save:
             self.saveOptionsCheckbox = wx.CheckBox(
@@ -80,11 +79,11 @@ class OCROptionsDialog(SimpleDialog):
         if not self.saved_values:
             self.langChoice.SetSelection(0)
             self.zoomFactorSlider.SetValue(1)
-            self.enhanceImageCheckbox.SetValue(True)
+            # self.enhanceImageCheckbox.SetValue(True)
         else:
             self.langChoice.SetSelection(self.saved_values["lang"])
             self.zoomFactorSlider.SetValue(self.saved_values["zoom_factor"])
-            self.enhanceImageCheckbox.SetValue(self.saved_values["should_enhance"])
+            # self.enhanceImageCheckbox.SetValue(self.saved_values["should_enhance"])
             if not self.force_save:
                 self.saveOptionsCheckbox.SetValue(self.saved_values["save_options"])
 
@@ -92,7 +91,7 @@ class OCROptionsDialog(SimpleDialog):
         self._return_value = (
             self.langChoice.GetSelection(),
             self.zoomFactorSlider.GetValue() or 1,
-            self.enhanceImageCheckbox.IsChecked(),
+            True, # self.enhanceImageCheckbox.IsChecked(),
             self.force_save or self.saveOptionsCheckbox.IsChecked(),
         )
         self.Close()

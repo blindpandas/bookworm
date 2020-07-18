@@ -11,7 +11,7 @@ from bookworm import config
 from bookworm.paths import home_data_path, db_path as get_db_path
 from bookworm.logger import logger
 from .models import *
-
+from .schema import upgrade_database_schema
 
 log = logger.getChild(__name__)
 
@@ -22,7 +22,8 @@ def init_database():
     db_path = os.path.join(get_db_path(), "db.sqlite")
     if not os.path.isfile(FILE_HISTORY_DB_PATH):
         create_file_history_db()
-    return db.Model.setup_database(f"sqlite:///{db_path}", create=True)
+    db.Model.setup_database(f"sqlite:///{db_path}", create=True)
+    upgrade_database_schema(db.Model.session)
 
 
 def create_file_history_db():

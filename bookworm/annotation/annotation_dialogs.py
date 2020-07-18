@@ -4,11 +4,10 @@ import wx
 from pathlib import Path
 from slugify import slugify
 from bookworm.resources import sounds
-from bookworm.signals import notes_export_completed
 from bookworm.logger import logger
 from bookworm.gui.components import Dialog, SimpleDialog, DialogListCtrl
 from .annotator import Bookmarker, NoteTaker, Book, Note, Bookmark
-from .exporters import NotesExporter
+from .exporters import Exporter, export_completed
 
 
 log = logger.getChild(__name__)
@@ -289,7 +288,7 @@ class ExportNotesDialog(Dialog):
             filename=file_path,
         )
         self.shouldOpenAfterExport = self.openAfterExportCheckBox.GetValue()
-        notes_export_completed.connect(self.onExportCompleted, sender=exporter)
+        export_completed.connect(self.onExportCompleted, sender=exporter)
         exporter.render_to_file()
         self.Close()
 

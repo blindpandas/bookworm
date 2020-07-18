@@ -22,12 +22,3 @@ reader_section_changed = _signals.signal("reader/section_changed")
 
 # Configuration
 config_updated = _signals.signal("config/updated")
-
-# OCR
-ocr_started = _signals.signal("ocr-started")
-ocr_ended = _signals.signal("ocr-ended")
-
-
-# Miscellaneous signals
-notes_export_completed = _signals.signal("note-export-completed")
-speech_engine_state_changed = _signals.signal("speech-engine.state-changed")

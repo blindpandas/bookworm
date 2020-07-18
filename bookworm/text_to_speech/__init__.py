@@ -19,6 +19,7 @@ from bookworm.speechdriver.enumerations import (
 )
 from bookworm.speechdriver.engines.sapi import SapiSpeechEngine
 from bookworm.speechdriver.engines.onecore import OcSpeechEngine
+from bookworm.signals import _signals
 from bookworm.utils import cached_property, gui_thread_safe
 from bookworm.vendor.sentence_splitter import (
     SentenceSplitter,
@@ -29,7 +30,6 @@ from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,
     reader_page_changed,
-    speech_engine_state_changed,
 )
 from bookworm.base_service import BookwormService
 from bookworm.logger import logger
@@ -44,6 +44,7 @@ from .tts_gui import (
 )
 
 log = logger.getChild(__name__)
+speech_engine_state_changed = _signals.signal("speech-engine.state-changed")
 
 
 @dataclass

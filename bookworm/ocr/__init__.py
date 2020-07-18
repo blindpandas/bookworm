@@ -2,15 +2,19 @@
 
 import wx
 from bookworm import config
-from bookworm.signals import reader_page_changed
+from bookworm.signals import _signals, reader_page_changed
 from bookworm.resources import sounds
 from bookworm.base_service import BookwormService
 from bookworm.logger import logger
+
+log = logger.getChild(__name__)
+# Signals
+ocr_started = _signals.signal("ocr-started")
+ocr_ended = _signals.signal("ocr-ended")
+
 from .ocr_provider import is_ocr_available
 from .ocr_gui import OCRMenuIds, OCRMenu, OCR_KEYBOARD_SHORTCUTS
 
-
-log = logger.getChild(__name__)
 
 
 class OCRService(BookwormService):

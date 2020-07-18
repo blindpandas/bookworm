@@ -6,7 +6,7 @@ from .base_renderer import BaseRenderer
 
 
 class PlainTextRenderer(BaseRenderer):
-    """Renders notes to a text document."""
+    """Renders items to a text document."""
 
     name = "text"
     # Translators: the name of a document file format
@@ -14,7 +14,7 @@ class PlainTextRenderer(BaseRenderer):
     output_ext = ".txt"
 
     def start_document(self):
-        self.output.write(f"Notes For {self.title}\n")
+        self.output.write(f"self.title}\n")
         self.output.write("=" * 30)
         self.output.write("\n\n")
 

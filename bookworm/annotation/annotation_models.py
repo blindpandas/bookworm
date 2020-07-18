@@ -22,7 +22,7 @@ class TaggedMixin:
     .. admonition::: the dynamically generated table is shared by this model
      class and all it's subclasses.
      
-     Adopted from oy-cms.
+     Adapted from oy-cms.
      Copyright (c) 2018 Musharraf Omer
     """
 

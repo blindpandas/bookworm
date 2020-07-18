@@ -42,7 +42,7 @@ def main():
         logging.critical("Error details:", exc_info=True)
         wx.SafeShowMessage(
             "Application Error",
-            "An error has occured while starting Bookworm.\n"
+            "Bookworm has faced some issues.\n"
             f"The error details has been written to the file:\n{logfile}",
         )
         sys.exit(1)
