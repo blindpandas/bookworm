@@ -27,6 +27,8 @@ log = logger.getChild(__name__)
 
 
 class FitzPage(BasePage):
+    """Wrapps fitz.Page."""
+
     def _text_from_page(self, page: fitz.Page) -> str:
         bloks = page.getTextBlocks()
         text = [blk[4].replace("\n", " ") for blk in bloks]
@@ -60,6 +62,10 @@ class FitzDocument(BaseDocument):
     def __len__(self) -> int:
         return self._ebook.pageCount
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._ebook: fitz.Document = None
+
     def read(self, filetype=None):
         try:
             self._ebook = fitz.open(self.filename, filetype=filetype)
@@ -71,6 +77,7 @@ class FitzDocument(BaseDocument):
         if self._ebook is None:
             return
         self._ebook.close()
+        self._ebook = None
         super().close()
 
     def is_encrypted(self):

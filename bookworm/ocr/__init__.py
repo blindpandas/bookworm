@@ -16,7 +16,6 @@ from .ocr_provider import is_ocr_available
 from .ocr_gui import OCRMenuIds, OCRMenu, OCR_KEYBOARD_SHORTCUTS
 
 
-
 class OCRService(BookwormService):
     name = "ocr"
     stateful_menu_ids = OCRMenuIds

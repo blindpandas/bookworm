@@ -30,6 +30,7 @@ class PaginationError(DocumentError, IndexError):
 class DocumentCapability(IntFlag):
     """Represents feature flags for a document."""
 
+    NULL_CAPABILITY = 0
     TOC_TREE = 1
     METADATA = 2
     GRAPHICAL_RENDERING = 3
@@ -49,13 +50,11 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     extensions: tuple = None
     """The file extension(s) of this format."""
 
-    capabilities: DocumentCapability = ()
+    capabilities: DocumentCapability = DocumentCapability.NULL_CAPABILITY
     """A combination of DocumentCapability flags."""
 
     def __init__(self, filename: t.PathLike):
         self.filename = filename
-        self._ebook: t.Any = None
-        super().__init__()
 
     def __contains__(self, value: int):
         return -1 < value < len(self)
@@ -106,7 +105,6 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """Perform the actual IO operations for unloading the ebook.
         Subclasses should call super to ensure the standard behavior.
         """
-        self._ebook = None
         self.__page_cache.clear()
         self.__page_content_cache.clear()
         gc.collect()

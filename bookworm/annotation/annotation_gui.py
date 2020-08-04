@@ -10,7 +10,12 @@ from bookworm.utils import gui_thread_safe
 from bookworm.gui.settings import SettingsPanel
 from bookworm.logger import logger
 from .annotator import Bookmarker, NoteTaker, Quoter
-from .annotation_dialogs import BookmarksViewer, ExportNotesDialog
+from .annotation_dialogs import (
+    BookmarksViewer,
+    CommentsDialog,
+    QuotesDialog,
+    ExportNotesDialog,
+)
 
 
 log = logger.getChild(__name__)
@@ -46,7 +51,6 @@ class AnnotationsMenuIds(IntEnum):
     viewBookmarks = 245
     viewNotes = 246
     viewQuotes = 247
-    ExportAnnotations = 248
 
 
 ANNOTATIONS_KEYBOARD_SHORTCUTS = {
@@ -128,26 +132,6 @@ class AnnotationMenu(wx.Menu):
             # Translators: the help text of an item in the application menubar
             _("View saved highlights."),
         )
-        # Export submenu
-        exportMenu = wx.Menu()
-        exportCommentsId = wx.NewIdRef()
-        exportQuotesId = wx.NewIdRef()
-        exportMenu.Append(
-            exportCommentsId,
-            # Translators: the label of an item in the application menubar
-            _("Export Co&mments") + "...",
-            # Translators: the help text of an item in the application menubar
-            _("Export comments to a file."),
-        )
-        exportMenu.Append(
-            exportQuotesId,
-            # Translators: the label of an item in the application menubar
-            _("Export &Highlights") + "...",
-            # Translators: the help text of an item in the application menubar
-            _("Export quotes to a file."),
-        )
-        # Translators: the label of an item in the application menubar
-        self.Append(wx.ID_ANY, _("&Export"), exportMenu)
 
         # Translators: the label of an item in the application menubar
         self.menubar.Insert(2, self, _("&Annotations"))
@@ -168,8 +152,6 @@ class AnnotationMenu(wx.Menu):
         )
         self.view.Bind(wx.EVT_MENU, self.onViewNotes, id=AnnotationsMenuIds.viewNotes)
         self.view.Bind(wx.EVT_MENU, self.onViewQuotes, id=AnnotationsMenuIds.viewQuotes)
-        self.view.Bind(wx.EVT_MENU, self.onExportComments, id=exportCommentsId)
-        self.view.Bind(wx.EVT_MENU, self.onExportQuotes, id=exportQuotesId)
 
     def _add_bookmark(self, name=""):
         bookmarker = Bookmarker(self.reader)
@@ -279,27 +261,30 @@ class AnnotationMenu(wx.Menu):
                 Quoter.model.session.commit()
 
     def onViewBookmarks(self, event):
-        dlg = BookmarksViewer(
+        with BookmarksViewer(
             parent=self.view,
             reader=self.reader,
             annotator=Bookmarker,
             # Translators: the title of a dialog to view bookmarks
             title=_("Bookmarks | {book}").format(book=self.reader.current_book.title),
-        )
-        with dlg:
+        ) as dlg:
             dlg.ShowModal()
 
     def onViewNotes(self, event):
-        ...
+        with CommentsDialog(
+            parent=self.view,
+            title=_("Comments"),
+            reader=self.reader,
+        ) as dlg:
+            dlg.ShowModal()
 
     def onViewQuotes(self, event):
-        ...
-
-    def onExportComments(self, event):
-        ...
-
-    def onExportQuotes(self, event):
-        ...
+        with QuotesDialog(
+            parent=self.view,
+            title=_("Highlights"),
+            reader=self.reader,
+        ) as dlg:
+            dlg.ShowModal()
 
     def get_text_from_user(
         self, title, label, style=wx.OK | wx.CANCEL | wx.CENTER, value=""

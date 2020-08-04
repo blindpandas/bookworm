@@ -121,7 +121,7 @@ class TextToSpeechService(BookwormService):
     config_spec = tts_config_spec
     has_gui = True
     stateful_menu_ids = StatefulSpeechMenuIds
-    __available_engines = (SapiSpeechEngine, OcSpeechEngine, DummySpeechEngine)
+    __available_engines = (SapiSpeechEngine, OcSpeechEngine)
     speech_engines = [e for e in __available_engines if e.check()]
 
     def __post_init__(self):
@@ -331,21 +331,24 @@ class TextToSpeechService(BookwormService):
         except ValueError:
             self.config_manager.restore_defaults()
             self.config_manager.save()
-            self.reader.view.notify_user(
-                # Translators: the title of a message telling the user that no TTS voice found
-                _("No TTS Voices"),
-                # Translators: a message telling the user that no TTS voice found
-                _(
-                    "A valid Text-to-speech voice was not found on your computer.\n"
-                    "Text-to-speech functionality will be disabled."
-                ),
-            )
+            if self.engine.get_first_available_voice() is None:
+                self.reader.view.notify_user(
+                    # Translators: the title of a message telling the user that no TTS voice found
+                    _("No TTS Voices"),
+                    # Translators: a message telling the user that no TTS voice found
+                    _(
+                        "A valid Text-to-speech voice was not found for the current speech engine.\n"
+                        "Text-to-speech functionality will be disabled."
+                    ),
+                )
         if self.reader.ready and last_known_state is SynthState.busy:
             self.speak_current_page()
 
     def _try_set_tts_language(self):
         lang = self.reader.document.language
-        if not self.engine.voice.speaks_language(lang):
+        if (self.engine.voice is not None) and (
+            not self.engine.voice.speaks_language(lang)
+        ):
             voice_for_lang = self.engine.get_voices_by_language(lang)
             if voice_for_lang:
                 self.engine.voice = voice_for_lang[0]

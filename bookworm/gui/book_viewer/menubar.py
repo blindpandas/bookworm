@@ -524,6 +524,13 @@ class MenubarProvider:
 
     def __init__(self):
         self.menuBar = wx.MenuBar()
+        # Context menu
+        self.contentTextCtrl.Bind(
+            wx.EVT_KEY_UP, self.onKeyUp, self.contentTextCtrl
+        )
+        self.contentTextCtrl.Bind(
+            wx.EVT_RIGHT_UP, self.onContentTextCtrlContextMenu, self.contentTextCtrl
+        )
 
         # The menus
         self.fileMenu = FileMenu(self, self.reader)
@@ -554,6 +561,15 @@ class MenubarProvider:
         self.unloadCurrentEbook()
         self.Destroy()
         evt.Skip()
+
+    def onKeyUp(self, event):
+        event.Skip()
+        if event.GetKeyCode() == wx.WXK_WINDOWS_MENU:
+            event.Skip(True)
+            try:
+                self.onContentTextCtrlContextMenu(event)
+            except wx.wxAssertionError:
+                pass
 
     @property
     def content_text_ctrl_context_menu(self):

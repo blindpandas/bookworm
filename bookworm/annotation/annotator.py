@@ -38,6 +38,10 @@ class Annotator:
             self.session.refresh(book)
         return book
 
+    @classmethod
+    def get_sections(cls):
+        return cls.model.session.query(cls.model.section_title).distinct().all()
+
     def create(self, **kwargs):
         kwargs.update(
             dict(
@@ -97,56 +101,39 @@ class Bookmarker(Annotator):
     model = Bookmark
 
 
-class FilterableAnnotator(Annotator):
-    """Adds filtering."""
+class TaggedAnnotator(Annotator):
+    @classmethod
+    def get_tags(cls):
+        session = cls.model.session()
+        orphan_tags = [tag for tag in cls.model.Tag.query if len(tag.items) == 0]
+        for otag in orphan_tags:
+            session.delete(otag)
+        session.commit()
+        return [tag.title for tag in cls.model.Tag.query.all()]
 
-    def filter(self, filter_opts):
-        """Filter based on filteropts."""
-        # Primary query
-        q = None
-        if filter_opts.tag:
-            q = self.model.query.filter_by(self.model.Tag.id == tag_id)
-        if filter_opts.book:
-            if q is None:
-                q = self.model.query
-            q = q.filter_by(book_id=filter_opts.book)
-            # Secondary criteria
-            if (
-                filter_opts.secondary_filter
-                is AnnotationFilteringOptions.SecondaryFilteringCriteria.page_range
-            ):
-                start, end = filter_opts.page_range
-                q = q.filter(sa.between(self.model.page_number, start, end))
-            elif (
-                filter_opts.secondary_filter
-                is AnnotationFilteringOptions.SecondaryFilteringCriteria.section
-            ):
-                q = q.filter_by(section_identifier=section_identifier)
-        return q
+    @classmethod
+    def get_filtered(cls, tag, section_title, content, *, clauses=()):
+        model = cls.model
+        clauses = list(clauses)
+        if tag:
+            clauses.append(model.tags.contains(tag))
+        if section_title:
+            clauses.append(model.section_title == section_title)
+        if content:
+            clauses.append(model.content.ilike(f"%{content}%"))
+        return model.query.filter(sa.and_(*clauses))
+
+    def get_filtered_for_book(self, *args):
+        return self.get_filtered(*args, clauses=(self.model.book == self.current_book,))
 
 
-class NoteTaker(FilterableAnnotator):
+class NoteTaker(TaggedAnnotator):
     """Comments."""
 
     model = Note
 
 
-class Quoter(FilterableAnnotator):
+class Quoter(TaggedAnnotator):
     """Highlights."""
 
     model = Quote
-
-
-@dataclass
-class AnnotationFilteringOptions:
-    """Filter annotation using several criteria."""
-
-    class SecondaryFilteringCriteria(Enum):
-        page_range = auto
-        section = auto()
-
-    tag_id: int
-    book_id: int
-    secondary_filter: SecondaryFilteringCriteria
-    page_range: Tuple[int, int]
-    section_id: int

@@ -14,7 +14,6 @@ log = logger.getChild(__name__)
 
 
 class ImageView(wx.Control):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
@@ -29,7 +28,7 @@ class ImageView(wx.Control):
     def OnPaint(self, event):
         bmp, width, height = self.data
         dc = wx.BufferedPaintDC(self)
-        dc.SetBackground(wx.Brush('white'))
+        dc.SetBackground(wx.Brush("white"))
         dc.Clear()
         gc = wx.GraphicsContext.Create(dc)
         gc.DrawBitmap(bmp, 0, 0, width, height)
@@ -38,7 +37,6 @@ class ImageView(wx.Control):
         self.SetInitialSize(wx.Size(width, height))
         self.data = (bmp, width, height)
         self.Refresh()
-
 
 
 class ViewPageAsImageDialog(wx.Dialog):
@@ -75,11 +73,11 @@ class ViewPageAsImageDialog(wx.Dialog):
 
     @property
     def scroll_rate_x(self):
-        return  self.imageCtrl.Size[0] * .05
+        return self.imageCtrl.Size[0] * 0.05
 
     @property
     def scroll_rate_y(self):
-        return  self.imageCtrl.Size[1] * .025
+        return self.imageCtrl.Size[1] * 0.025
 
     @gui_thread_safe
     def onPageChange(self, sender, current, prev):

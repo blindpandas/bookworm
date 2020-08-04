@@ -42,6 +42,8 @@ class BaseSpeechEngine(metaclass=ABCMeta):
     name = None
     """The name of this speech engine."""
     display_name = None
+    default_rate = 50
+    default_volume = 75
 
     def __init__(self):
         if not self.check():
@@ -66,13 +68,19 @@ class BaseSpeechEngine(metaclass=ABCMeta):
             except ValueError:
                 self.voice = self.get_first_available_voice()
         try:
-            self.rate = engine_config["rate"]
+            if engine_config["rate"] != -1:
+                self.rate = engine_config["rate"]
+            else:
+                self.rate = self.default_rate
         except ValueError:
-            self.rate = 50
+            self.rate = self.default_rate
         try:
-            self.volume = engine_config["volume"]
+            if engine_config["volume"] != -1:
+                self.volume = engine_config["volume"]
+            else:
+                self.volume = self.default_volume
         except ValueError:
-            self.volume = 75
+            self.volume = self.default_volume
 
     @abstractmethod
     def get_voices(self):
@@ -155,7 +163,12 @@ class BaseSpeechEngine(metaclass=ABCMeta):
     @classmethod
     def get_first_available_voice(cls, language=None):
         _test_engine = cls()
-        for voice in _test_engine.get_voices_by_language(language=language):
+        voices = (
+            _test_engine.get_voices_by_language(language=language)
+            if language is not None
+            else _test_engine.get_voices()
+        )
+        for voice in voices:
             try:
                 _test_engine.set_voice_from_string(voice.id)
                 return voice

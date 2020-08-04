@@ -19,26 +19,19 @@ try:
     if UWP_SERVICES_AVAILABEL:
         from OcSpeechEngine import OcSpeechEngine as _OnecoreEngine
 
+        reference_gac_assembly("System.Speech\*\System.Speech.dll")
+        from .oc_utterance import OcSpeechUtterance
+
         _oc_available = True
 except Exception as e:
     log.error(f"Could not load the onecore speech engine", exc_info=True)
-
-
-try:
-    reference_gac_assembly("System.Speech\*\System.Speech.dll")
-    from .oc_utterance import OcSpeechUtterance
-except OSError as e:
-    _oc_available = False
-    log.error(f"Could not load the onecore speech engine: {e}")
-
-
-log = logger.getChild(__name__)
 
 
 class OcSpeechEngine(BaseSpeechEngine):
 
     name = "onecore"
     display_name = _("One-core Synthesizer")
+    default_rate = 20
 
     def __init__(self):
         super().__init__()

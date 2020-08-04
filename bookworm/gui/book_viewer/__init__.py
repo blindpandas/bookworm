@@ -28,14 +28,38 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.setFrameIcon()
 
         self.reader = EBookReader(self)
-        MenubarProvider.__init__(self)
+        self.createControls()
 
         self.toolbar = self.CreateToolBar()
         self.toolbar.SetWindowStyle(
             wx.TB_FLAT | wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_TEXT
         )
         self.CreateStatusBar()
+        self._nav_provider = NavigationProvider(
+            ctrl=self.contentTextCtrl,
+            reader=self.reader,
+            zoom_callback=self.onTextCtrlZoom,
+        )
 
+        # Bind Events
+        self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.onTOCItemClick, self.tocTreeCtrl)
+        self.Bind(
+            wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(-1), id=wx.ID_PREVIEW_ZOOM_OUT
+        )
+        self.Bind(
+            wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(1), id=wx.ID_PREVIEW_ZOOM_IN
+        )
+
+        # Set statusbar text
+        # Translators: the text of the status bar when no book is currently open.
+        # It is being used also as a label for the page content text area when no book is opened.
+        self._no_open_book_status = _("Press (Ctrl + O) to open an ebook")
+        self._has_text_zoom = False
+        self.SetStatusText(self._no_open_book_status)
+        MenubarProvider.__init__(self)
+        StateProvider.__init__(self)
+
+    def createControls(self):
         # Now create the Panel to put the other controls on.
         rect = wx.GetClientDisplayRect()
         panel = wx.Panel(self, size=(rect.width * 0.8, rect.height * 0.75))
@@ -66,12 +90,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             | wx.TE_NOHIDESEL,
             name="content_view",
         )
-        self.contentTextCtrl.Bind(
-            wx.EVT_CONTEXT_MENU, lambda e: e.Skip(False), self.contentTextCtrl
-        )
-        self.contentTextCtrl.Bind(
-            wx.EVT_RIGHT_UP, self.onContentTextCtrlContextMenu, self.contentTextCtrl
-        )
         self.contentTextCtrl.SetMargins(self._get_text_view_margins())
 
         # Use a sizer to layout the controls, stacked horizontally and with
@@ -96,28 +114,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.Fit()
         self.SetMinSize(self.GetSize())
         self.CenterOnScreen(wx.BOTH)
-
-        # Bind Events
-        self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.onTOCItemClick, self.tocTreeCtrl)
-        self.Bind(
-            wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(-1), id=wx.ID_PREVIEW_ZOOM_OUT
-        )
-        self.Bind(
-            wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(1), id=wx.ID_PREVIEW_ZOOM_IN
-        )
-
-        # Set statusbar text
-        # Translators: the text of the status bar when no book is currently open.
-        # It is being used also as a label for the page content text area when no book is opened.
-        self._no_open_book_status = _("Press (Ctrl + O) to open an ebook")
-        self._has_text_zoom = False
-        self.SetStatusText(self._no_open_book_status)
-        StateProvider.__init__(self)
-        self._nav_provider = NavigationProvider(
-            ctrl=self.contentTextCtrl,
-            reader=self.reader,
-            zoom_callback=self.onTextCtrlZoom,
-        )
 
     def finalize_gui_creation(self):
         self.add_tools()
@@ -277,3 +273,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         pos = pos or self.contentTextCtrl.InsertionPoint
         __, __, line_number = self.contentTextCtrl.PositionToXY(pos)
         return line_number
+
+    def select_text(self, fpos, tpos):
+        self.contentTextCtrl.SetFocusFromKbd()
+        self.contentTextCtrl.SetSelection(fpos, tpos)
+
+    def set_insertion_point(self, to):
+        self.contentTextCtrl.SetFocusFromKbd()
+        self.contentTextCtrl.SetInsertionPoint(to)

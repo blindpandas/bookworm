@@ -112,13 +112,16 @@ def set_active_language(language):
                     locale_changed = True
         if not lang.startswith("en"):
             app_started.connect(lambda s: set_wx_language(lang), weak=False)
+        CultureInfo.CurrentCulture = langinfo.culture
         CultureInfo.CurrentUICulture = langinfo.culture
         CultureInfo.DefaultThreadCurrentUICulture = langinfo.culture
         ctypes.windll.kernel32.SetThreadLocale(langinfo.LCID)
         app.current_language = langinfo
     except IOError:
-        log.error(f"Translation catalog for language {lang} was not found.")
+        if lang != "en":
+            log.error(f"Translation catalog for language {lang} was not found.")
         en_culture = CultureInfo.GetCultureInfoByIetfLanguageTag("en")
+        CultureInfo.CurrentCulture = en_culture
         CultureInfo.CurrentUICulture = en_culture
         CultureInfo.DefaultThreadCurrentUICulture = en_culture
         ctypes.windll.kernel32.SetThreadLocale(en_culture.LCID)

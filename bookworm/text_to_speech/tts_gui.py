@@ -1,10 +1,12 @@
 # coding: utf-8
 
 import wx
+import wx.lib.sized_controls as sc
 from enum import IntEnum
 from bookworm import speech
 from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.gui.components import SimpleDialog, EnhancedSpinCtrl
+from bookworm.speechdriver import DummySpeechEngine
 from bookworm.speechdriver.enumerations import SynthState
 from bookworm.speechdriver.engines.sapi import SapiSpeechEngine as SpeechEngine
 from bookworm.logger import logger
@@ -143,20 +145,25 @@ class SpeechPanel(SettingsPanel):
         )
         # Translators: the label of a button that opens a dialog to change the speech engine
         self.changeEngineBtn = wx.Button(voiceBox, -1, _("Change..."))
+        self.engineSettingsPanel = engineSettingsPanel = sc.SizedPanel(voiceBox)
         # Translators: the label of a combobox containing a list of tts voices
-        wx.StaticText(voiceBox, -1, _("Select Voice:"))
-        self.voice = wx.Choice(voiceBox, -1)
+        wx.StaticText(engineSettingsPanel, -1, _("Select Voice:"))
+        self.voice = wx.Choice(engineSettingsPanel, -1)
         # Translators: the label of the speech rate slider
-        wx.StaticText(voiceBox, -1, _("Speech Rate:"))
-        rt = wx.Slider(voiceBox, -1, minValue=0, maxValue=100, name="speech.rate")
-        rt.SetPageSize(5)
+        wx.StaticText(engineSettingsPanel, -1, _("Speech Rate:"))
+        self.rateSlider = wx.Slider(
+            engineSettingsPanel, -1, minValue=0, maxValue=100, name="speech.rate"
+        )
+        self.rateSlider.SetPageSize(5)
         # Translators: the label of the speech volume slider
-        wx.StaticText(voiceBox, -1, _("Speech Volume:"))
-        vol = wx.Slider(voiceBox, -1, minValue=0, maxValue=100, name="speech.volume")
-        vol.SetPageSize(5)
+        wx.StaticText(engineSettingsPanel, -1, _("Speech Volume:"))
+        self.volumeSlider = wx.Slider(
+            engineSettingsPanel, -1, minValue=0, maxValue=100, name="speech.volume"
+        )
+        self.volumeSlider.SetPageSize(5)
         # Translators: the label of a group of controls in the speech
         # settings page related to speech pauses
-        pausesBox = self.make_static_box(_("Pauses"))
+        pausesBox = self.make_static_box(_("Pauses"), parent=engineSettingsPanel)
         # pausesBox.SetSizerType("form")
         # Translators: the label of an edit field
         wx.StaticText(pausesBox, -1, _("Additional Pause At Sentence End (Ms)"))
@@ -207,6 +214,11 @@ class SpeechPanel(SettingsPanel):
         self.voice.Clear()
         self.voice.Append([v.display_name for v in self.voices])
         self.reconcile()
+        if self.current_engine is DummySpeechEngine:
+            self.engineSettingsPanel.Enable(False)
+            return
+        else:
+            self.engineSettingsPanel.Enable(True)
 
     def OnChoosEngine(self, event):
         current_engine_index = 0
@@ -235,9 +247,18 @@ class SpeechPanel(SettingsPanel):
             self.voice.SetSelection(pos)
         elif strategy is ReconciliationStrategies.save:
             self.config["engine"] = self.current_engine.name
-            self.config["voice"] = self.voices[self.voice.GetSelection()].id
+            if self.voice.GetSelection() != wx.NOT_FOUND:
+                self.config["voice"] = self.voices[self.voice.GetSelection()].id
             self.process_config_save()
         super().reconcile(strategy=strategy)
+        if strategy is ReconciliationStrategies.load:
+            self._set_default_engine_config()
+
+    def _set_default_engine_config(self):
+        if self.config.get("rate") == -1:
+            self.rateSlider.Value = self.current_engine.default_rate
+        if self.config.get("volume") == -1:
+            self.volumeSlider.Value = self.current_engine.default_volume
 
     def process_config_save(self):
         active_profile = self.service.config_manager.active_profile
@@ -635,12 +656,6 @@ class SpeechMenu(wx.Menu):
         if not self.service.is_engine_ready:
             return wx.Bell()
         keycode = event.GetKeyCode()
-        if event.GetModifiers() == wx.MOD_ALT and keycode not in (
-            wx.WXK_RIGHT,
-            wx.WXK_LEFT,
-        ):
-            return
-        if keycode == wx.WXK_RIGHT:
-            self.service.fastforward()
-        elif keycode == wx.WXK_LEFT:
-            self.service.rewind()
+        if event.GetModifiers() == wx.MOD_ALT:
+            if keycode == wx.WXK_RIGHT: self.service.fastforward()
+            elif keycode == wx.WXK_LEFT: self.service.rewind()

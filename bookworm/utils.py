@@ -1,16 +1,20 @@
 # coding: utf-8
 
+import clr
+import System
+from System.Globalization import CultureInfo
+
 import sys
 import os
 import winpaths
 import glob
-import clr
 import wx
 import hashlib
 from functools import wraps, lru_cache
 from subprocess import list2cmdline
 from pathlib import Path
 from xml.sax.saxutils import escape
+from datetime import datetime
 from bookworm.vendor import shellapi
 from bookworm import app
 from bookworm.concurrency import call_threaded
@@ -125,6 +129,13 @@ def search(pattern, text):
     lseg, tseg, rseg = pattern.split(text, maxsplit=1)
     snipit = "".join([lseg[-20:], tseg, rseg[:20]])
     return (pos, snipit)
+
+
+def format_datetime(date: datetime) -> str:
+    if not date:
+        return ""
+    formatter = CultureInfo.CurrentUICulture.DateTimeFormat
+    return System.DateTime.Parse(str(date), None).ToString(formatter)
 
 
 class cached_property(property):

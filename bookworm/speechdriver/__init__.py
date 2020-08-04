@@ -7,10 +7,14 @@ from .enumerations import EngineEvent, SynthState
 
 
 class DummySpeechEngine(BaseSpeechEngine):
-    """A dummy speech engine."""
+    """A singleton that is used when there are no speech engines."""
 
     name = "dummy"
     display_name = _("No Speech")
+
+    @classmethod
+    def __init_subclass__(cls):
+        raise TypeError(f"type 'DummySpeechEngine' is not an acceptable base type")
 
     @classmethod
     def check(cls):
@@ -36,7 +40,7 @@ class DummySpeechEngine(BaseSpeechEngine):
 
     @property
     def rate(self):
-        pass
+        return 50
 
     @rate.setter
     def rate(self, value):
@@ -44,7 +48,7 @@ class DummySpeechEngine(BaseSpeechEngine):
 
     @property
     def volume(self):
-        pass
+        return 100
 
     @volume.setter
     def volume(self, value):

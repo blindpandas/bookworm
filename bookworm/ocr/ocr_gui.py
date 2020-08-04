@@ -23,10 +23,11 @@ from bookworm.gui.components import SimpleDialog, SnakDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from . import ocr_provider as ocr
-from . import     ocr_started, ocr_ended
+from . import ocr_started, ocr_ended
 
 
 log = logger.getChild(__name__)
+PAGE_CACHE_SIZE = 500
 
 
 class OCRMenuIds(IntEnum):
@@ -62,10 +63,10 @@ class OCROptionsDialog(SimpleDialog):
         wx.StaticText(parent, -1, _("Supplied Image resolution::"))
         self.zoomFactorSlider = wx.Slider(parent, -1, minValue=0, maxValue=10)
         # self.enhanceImageCheckbox = wx.CheckBox(
-            # parent,
-            # -1,
-            # # Translators: the label of a checkbox
-            # _("Enhance image before recognition"),
+        # parent,
+        # -1,
+        # # Translators: the label of a checkbox
+        # _("Enhance image before recognition"),
         # )
         wx.StaticLine(parent)
         if not self.force_save:
@@ -91,7 +92,7 @@ class OCROptionsDialog(SimpleDialog):
         self._return_value = (
             self.langChoice.GetSelection(),
             self.zoomFactorSlider.GetValue() or 1,
-            True, # self.enhanceImageCheckbox.IsChecked(),
+            True,  # self.enhanceImageCheckbox.IsChecked(),
             self.force_save or self.saveOptionsCheckbox.IsChecked(),
         )
         self.Close()
@@ -116,7 +117,7 @@ class OCRMenu(wx.Menu):
         )
         self._ocr_cancelled = threading.Event()
         self._saved_ocr_options = []
-        self._scanned_pages = LRU(size=100)
+        self._scanned_pages = LRU(size=PAGE_CACHE_SIZE)
         image2textId = wx.NewIdRef()
 
         # Add menu items

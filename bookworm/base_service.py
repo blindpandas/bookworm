@@ -40,7 +40,7 @@ class BookwormService:
         return ()
 
     def get_settings_panels(
-        self
+        self,
     ) -> t.Iterable[t.Tuple[int, str, "bookworm.gui.settings.SettingPanel", str]]:
         """Return a list of SettingsPanelBlueprint."""
         return ()
