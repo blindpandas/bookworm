@@ -5,7 +5,7 @@ Database models for Annotations.
 """
 
 import sqlalchemy as sa
-from sqlalchemy.orm import relationship, deferred
+from sqlalchemy.orm import synonym, relationship, deferred
 from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
@@ -58,7 +58,9 @@ class TaggedMixin:
                 remote2=cls.Tag.__tablename__,
             )
         return association_proxy(
-            "related_tags", "title", creator=lambda t: cls.Tag.get_or_create(title=t)
+            "related_tags",
+            "title",
+            creator=lambda t: cls.Tag.get_or_create(title=t.lower()),
         )
 
 
@@ -71,6 +73,10 @@ class AnnotationBase(db.Model):
     section_identifier = db.string(1024, nullable=False)
     date_created = sa.Column(sa.DateTime, default=datetime.now)
     date_updated = sa.Column(sa.DateTime, onupdate=datetime.now)
+
+    @declared_attr
+    def text_column(cls):
+        return synonym("title")
 
     @declared_attr
     def book_id(cls):
@@ -92,6 +98,10 @@ class TaggedContent(AnnotationBase, TaggedMixin):
     @declared_attr
     def content(cls):
         return deferred(db.text(nullable=False))
+
+    @declared_attr
+    def text_column(cls):
+        return synonym("content")
 
 
 class Note(TaggedContent):

@@ -657,5 +657,7 @@ class SpeechMenu(wx.Menu):
             return wx.Bell()
         keycode = event.GetKeyCode()
         if event.GetModifiers() == wx.MOD_ALT:
-            if keycode == wx.WXK_RIGHT: self.service.fastforward()
-            elif keycode == wx.WXK_LEFT: self.service.rewind()
+            if keycode == wx.WXK_RIGHT:
+                self.service.fastforward()
+            elif keycode == wx.WXK_LEFT:
+                self.service.rewind()

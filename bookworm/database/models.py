@@ -21,3 +21,4 @@ class GetOrCreateMixin:
 class Book(db.Model):
     identifier = db.string(512, unique=True, nullable=False)
     title = db.string(512, nullable=False)
+    file_path = db.string(1024, nullable=False)

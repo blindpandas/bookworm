@@ -1,6 +1,6 @@
 # coding: utf-8
 
-"""Provides data classes  that are building blocks for an e-book."""
+"""Provides value objects that are building blocks for an e-book."""
 
 from dataclasses import field, dataclass
 from collections.abc import Container, Iterable, Sequence, Sized
@@ -19,8 +19,8 @@ class BookMetadata:
 
 @dataclass
 class SearchRequest:
-    """Holds information of a user's request for
-    searching for a term in a book.
+    """
+    Contains info about a search operation.
     """
 
     term: str

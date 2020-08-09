@@ -10,6 +10,7 @@ from bookworm.paths import app_path
 from bookworm.reader import EBookReader
 from bookworm.signals import reader_book_unloaded, reader_page_changed
 from bookworm.utils import gui_thread_safe
+from bookworm.gui.components import CustomContextMenuTextCtrl
 from bookworm.logger import logger
 from .decorators import only_when_reader_ready
 from .menubar import MenubarProvider, BookRelatedMenuIds
@@ -79,7 +80,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         # Translators: the label of the text area which shows the
         # content of the current page
         self.contentTextCtrlLabel = wx.StaticText(panel, -1, _("Content"))
-        self.contentTextCtrl = wx.TextCtrl(
+        self.contentTextCtrl = CustomContextMenuTextCtrl(
             panel,
             size=(200, 160),
             style=wx.TE_READONLY
@@ -157,6 +158,58 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             image = getattr(images, imagename).GetBitmap()
             # Add toolbar item
             self.toolbar.AddTool(ident, label, image)
+
+    def open_file(self, filename):
+        if not os.path.isfile(filename):
+            wx.MessageBox(
+                # Translators: the content of an error message
+                _("Could not open file: {file}\nThe file does not exist.").format(
+                    file=filename
+                ),
+                # Translators: the title of an error message
+                _("File not found"),
+                parent=self.view,
+                style=wx.ICON_ERROR,
+            )
+            return False
+        if not self.reader.load(filename):
+            return False
+        if self.reader.document.is_encrypted():
+            self.decrypt_opened_document()
+        self.tocTreeCtrl.Expand(self.tocTreeCtrl.GetRootItem())
+        if self.contentTextCtrl.HasFocus():
+            wx.CallAfter(self.tocTreeCtrl.SetFocus)
+        recent_files = config.conf["history"]["recently_opened"]
+        if filename in recent_files:
+            recent_files.remove(filename)
+        recent_files.insert(0, filename)
+        newfiles = recent_files if len(recent_files) < 10 else recent_files[:10]
+        config.conf["history"]["recently_opened"] = newfiles
+        config.save()
+        return True
+
+    def decrypt_opened_document(self):
+        pwd = wx.GetPasswordFromUser(
+            # Translators: the content of a dialog asking the user
+            # for the password to decrypt the current e-book
+            _(
+                "This document is encrypted, and you need a password to access its content.\nPlease enter the password billow and press enter."
+            ),
+            # Translators: the title of a dialog asking the user to enter a password to decrypt the e-book
+            "Enter Password",
+            parent=self,
+        )
+        res = self.reader.document.decrypt(pwd.GetValue())
+        if not res:
+            wx.MessageBox(
+                # Translators: the content of a message
+                _("The password you've entered is invalid.\nPlease try again."),
+                # Translators: the title of an error message
+                _("Invalid Password"),
+                parent=self,
+                style=wx.ICON_ERROR,
+            )
+            return self.decrypt_opened_document()
 
     def set_content(self, content):
         self.contentTextCtrl.Clear()
@@ -281,3 +334,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def set_insertion_point(self, to):
         self.contentTextCtrl.SetFocusFromKbd()
         self.contentTextCtrl.SetInsertionPoint(to)
+
+    def get_text_from_user(
+        self, title, label, style=wx.OK | wx.CANCEL | wx.CENTER, value=""
+    ):
+        dlg = wx.TextEntryDialog(self, label, title, style=style, value=value)
+        if dlg.ShowModal() == wx.ID_OK:
+            return dlg.GetValue().strip()

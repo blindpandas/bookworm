@@ -5,7 +5,7 @@ from io import StringIO
 
 
 class BaseRenderer(metaclass=ABCMeta):
-    """Renders a list of items to a string."""
+    """Renders a list of items (Comments or Quotes."""
 
     name = None
     """The name of this renderer."""
@@ -16,11 +16,14 @@ class BaseRenderer(metaclass=ABCMeta):
     output_ext = None
     """File extension of the output for this renderer."""
 
-    def __init__(self, items, title):
+    def __init__(self, items, options, filter_options):
         self.items = items
-        self.title = title
-        self.output = StringIO()
-        self._done_sections = set()
+        self.options = options
+        self.book = (
+            self.items[0].book.title if filter_options.book_id is not None else None
+        )
+        self.tag = filter_options.tag
+        self.section = filter_options.section_title
 
     @abstractmethod
     def start_document(self):
@@ -31,27 +34,28 @@ class BaseRenderer(metaclass=ABCMeta):
         """End this document."""
 
     @abstractmethod
-    def start_section(self, title):
-        """Begin a new section."""
-
-    @abstractmethod
-    def end_section(self):
-        """End the current section."""
-
-    @abstractmethod
     def render_item(self, item):
         """Render a single item."""
 
-    def render(self):
+    @abstractmethod
+    def render_to_file(self):
+        """Render the items to the output file."""
+
+
+class TextRenderer(BaseRenderer, metaclass=ABCMeta):
+    """A renderer that renders its content to a string buffer."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.output = StringIO()
+
+    def render_to_file(self):
         self.start_document()
         for item in self.items:
-            if item.section_identifier not in self._done_sections:
-                if self._done_sections:
-                    self.end_section()
-                self.start_section(item.section_title)
-                self._done_sections.add(item.section_identifier)
             self.render_item(item)
         self.end_document()
         text = self.output.getvalue()
         self.output.close()
-        return text
+        with open(self.options.output_file, "w", encoding="utf8") as file:
+            file.write(text)
+        return self.options.output_file

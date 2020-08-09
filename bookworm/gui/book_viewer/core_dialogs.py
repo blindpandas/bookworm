@@ -105,6 +105,7 @@ class SearchBookDialog(SimpleDialog):
         self.searchTermTextCtrl = wx.ComboBox(
             parent, -1, choices=recent_terms, style=wx.CB_DROPDOWN
         )
+        self.searchTermTextCtrl.SetSizerProps(expand=True)
         # Translators: the label of a checkbox
         self.isCaseSensitive = wx.CheckBox(parent, -1, _("Case sensitive"))
         # Translators: the label of a checkbox

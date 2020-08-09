@@ -2,6 +2,7 @@
 
 import wx
 import wx.lib.sized_controls as sc
+from dataclasses import dataclass
 from pathlib import Path
 from slugify import slugify
 from bookworm.utils import format_datetime
@@ -14,15 +15,37 @@ from bookworm.gui.components import (
     ColumnDefn,
     make_sized_static_box,
 )
-from .annotator import Bookmarker, NoteTaker, Quoter, Book, Note, Bookmark
-from .exporters import Exporter, export_completed
+from .annotator import (
+    Bookmarker,
+    NoteTaker,
+    Quoter,
+    AnnotationFilterCriteria,
+    AnnotationSortCriteria,
+)
+from .exporters import ExportOptions, renderers
 
 
 log = logger.getChild(__name__)
 
 
-class ViewAndEditAnnotationDialog(SimpleDialog):
+@dataclass
+class FilterAndSortState:
+    filter_criteria: AnnotationFilterCriteria
+    sort_criteria: AnnotationSortCriteria
+    asc: bool
 
+    @classmethod
+    def create_default(cls, annotator):
+        has_book = annotator.current_book is not None
+        book_id = annotator.current_book.id if has_book else None
+        return cls(
+            filter_criteria=AnnotationFilterCriteria(book_id=book_id),
+            sort_criteria=AnnotationSortCriteria.Page if has_book else AnnotationSortCriteria.Date,
+            asc=has_book
+        )
+
+
+class ViewAndEditAnnotationDialog(SimpleDialog):
     def __init__(self, *args, annotation, editable=False, **kwargs):
         self.annotation = annotation
         self.editable = editable
@@ -34,30 +57,40 @@ class ViewAndEditAnnotationDialog(SimpleDialog):
         parent.Layout()
         parent.Fit()
         CAN_EDIT = 0 if self.editable else wx.TE_READONLY
+        # Translators: label of an edit control in the dialog
+        # of viewing or editing a comment/highlight
         wx.StaticText(parent, -1, _("Content"))
-        self.contentText = wx.TextCtrl(parent, -1, style=CAN_EDIT|wx.TE_MULTILINE)
+        self.contentText = wx.TextCtrl(parent, -1, style=CAN_EDIT | wx.TE_MULTILINE)
         self.contentText.SetSizerProps(expand=True)
+        # Translators: header of a group of controls in a dialog to view/edit comments/highlights
         metadataBox = make_sized_static_box(parent, _("Metadata"))
         metadataBox.SetSizerProps(expand=True)
+        # Translators: lable of an edit control in a dialog to view/edit comments/highlights
         wx.StaticText(metadataBox, -1, _("Tags"))
-        self.tagsText = wx.TextCtrl(metadataBox, -1, style=CAN_EDIT|wx.TE_MULTILINE)
+        self.tagsText = wx.TextCtrl(metadataBox, -1, style=CAN_EDIT | wx.TE_MULTILINE)
         self.tagsText.SetSizerProps(expand=True)
         if not self.editable:
+            # Translators: label of an edit control in a dialog to view/edit comments/highlights
             wx.StaticText(metadataBox, -1, _("Date Created"))
-            self.createdText = wx.TextCtrl(metadataBox, -1, style=wx.TE_READONLY|wx.TE_MULTILINE)
+            self.createdText = wx.TextCtrl(
+                metadataBox, -1, style=wx.TE_READONLY | wx.TE_MULTILINE
+            )
             self.createdText.SetSizerProps(expand=True)
+            # Translators: label of an edit control in a dialog to view/edit comments/highlights
             wx.StaticText(metadataBox, -1, _("Last updated"))
-            self.updatedText = wx.TextCtrl(metadataBox, -1, style=wx.TE_READONLY|wx.TE_MULTILINE)
+            self.updatedText = wx.TextCtrl(
+                metadataBox, -1, style=wx.TE_READONLY | wx.TE_MULTILINE
+            )
             self.updatedText.SetSizerProps(expand=True)
         if self.editable:
             self.Bind(wx.EVT_BUTTON, self.onOk, id=wx.ID_OK)
         self.set_values()
-    
+
     def getButtons(self, parent):
         if self.editable:
             return super().getButtons(parent)
         btnsizer = wx.StdDialogButtonSizer()
-        # Translators: the label of a button to close the dialog
+        # Translators: the label of a button to close a dialog
         btnsizer.AddButton(wx.Button(self, wx.ID_CANCEL, _("&Close")))
         btnsizer.Realize()
         return btnsizer
@@ -70,12 +103,8 @@ class ViewAndEditAnnotationDialog(SimpleDialog):
             self.updatedText.Value = format_datetime(self.annotation.date_updated)
 
     def get_values(self):
-        assert self.editable, "Read only mode."
         tags = [t.strip() for t in self.tagsText.GetValue().split()]
-        return dict(
-            content=self.contentText.GetValue().strip(),
-            tags=tags
-        )
+        return dict(content=self.contentText.GetValue().strip(), tags=tags)
 
     def onOk(self, event):
         self.__saving = True
@@ -87,7 +116,6 @@ class ViewAndEditAnnotationDialog(SimpleDialog):
             return self.get_values()
 
 
-
 class BookmarksViewer(SimpleDialog):
     """A ddialog to view the bookmarks of the current book."""
 
@@ -95,13 +123,16 @@ class BookmarksViewer(SimpleDialog):
         self.view = reader.view
         self.reader = reader
         self.annotator = annotator(self.reader)
-        # Translators: label for unnamed bookmarks
+        # Translators: label for unnamed bookmarks shown
+        # when editing a single bookmark which has no name
         self._unamed_bookmark_title = _("(Unnamed)")
         super().__init__(*args, **kwargs)
 
     def addControls(self, parent):
+        # Translators: label of a list control containing bookmarks
         wx.StaticText(parent, -1, _("Saved Bookmarks"))
         self.annotationsListCtrl = ImmutableObjectListView(parent, wx.ID_ANY)
+        # Translators: text of a button to remove bookmarks
         wx.Button(parent, wx.ID_DELETE, _("&Remove"))
         self.Bind(
             wx.EVT_LIST_ITEM_ACTIVATED, self.onItemClick, self.annotationsListCtrl
@@ -116,13 +147,13 @@ class BookmarksViewer(SimpleDialog):
 
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
-        # Translators: the label of a button to close the dialog
+        # Translators: the label of a button to close a dialog
         btnsizer.AddButton(wx.Button(self, wx.ID_CANCEL, _("&Close")))
         btnsizer.Realize()
         return btnsizer
 
     def _populate_list(self, focus_target=0):
-        annotations = self.annotator.get_list().all()
+        annotations = self.annotator.get_for_book()
         self.annotationsListCtrl.set_columns(
             [
                 # Translators: the title of a column in the bookmarks list
@@ -177,11 +208,11 @@ class BookmarksViewer(SimpleDialog):
             return
         if (
             wx.MessageBox(
-                # Translators: the content of a message asking the user to delete a bookmark
+                # Translators: content of a message asking the user if they want to delete a bookmark
                 _(
                     "This action can not be reverted.\r\nAre you sure you want to remove this bookmark?"
                 ),
-                # Translators: the title of a message asking the user to delete a bookmark
+                # Translators: title of a message asking the user if they want to delete a bookmark
                 _("Remove Bookmark?"),
                 parent=self,
                 style=wx.YES_NO | wx.ICON_WARNING,
@@ -198,42 +229,71 @@ class BookmarksViewer(SimpleDialog):
 class AnnotationFilterPanel(sc.SizedPanel):
     """Filter by several criteria."""
 
-    def __init__(self, *args, annotator, filter_callback, **kwargs):
+    def __init__(
+        self, *args, annotator, filter_callback, filter_by_book=False, **kwargs
+    ):
         super().__init__(*args, **kwargs)
         self.SetSizerProps(expand=True)
         self.SetSizerType("horizontal")
         self.annotator = annotator
         self.filter_callback = filter_callback
-        # Translators: the header of the filtering controls in the annotations viewer
+        self.filter_by_book = filter_by_book
+        if self.filter_by_book:
+            # Translators: label of an editable combobox to filter annotations by book
+            wx.StaticText(self, -1, _("Book"))
+            self.GetSizer().AddSpacer(10)
+            self.bookChoice = wx.ComboBox(self, -1)
+            self.GetSizer().AddSpacer(20)
+        # Translators: label of an editable combobox to filter annotations by tag
         wx.StaticText(self, -1, _("Tag"))
         self.GetSizer().AddSpacer(10)
         self.tagsCombo = wx.ComboBox(self, -1)
         self.GetSizer().AddSpacer(20)
-        wx.StaticText(self, -1, _("Section"))
-        self.GetSizer().AddSpacer(10)
-        self.sectionChoice = wx.ComboBox(self, -1)
-        self.GetSizer().AddSpacer(20)
+        if not self.filter_by_book:
+            # Translators: label of an editable combobox to filter annotations by section
+            wx.StaticText(self, -1, _("Section"))
+            self.GetSizer().AddSpacer(10)
+            self.sectionChoice = wx.ComboBox(self, -1)
+            self.GetSizer().AddSpacer(20)
+        # Translators: label of an edit control to filter annotations by content
         wx.StaticText(self, -1, _("Content"))
         self.GetSizer().AddSpacer(10)
         self.contentFilterText = wx.TextCtrl(self, -1)
         self.GetSizer().AddSpacer(20)
-        applyFilterButton = wx.Button(self, -1, _("Apply &Filter"))
-        self.Bind(wx.EVT_BUTTON, self.onApplyFilter, applyFilterButton)
+        # Translators: text of a button to apply chosen filters in a dialog to view user's comments/highlights
+        applyButton = wx.Button(self, -1, _("&Apply"))
+        self.Bind(wx.EVT_BUTTON, self.onApplyFilter, applyButton)
         self.update_choices()
 
     def update_choices(self):
+        if self.filter_by_book:
+            self.bookChoice.Clear()
+            for book in self.annotator.get_books_for_model():
+                self.bookChoice.Append(book.title, book.id)
+        else:
+            self.sectionChoice.Clear()
+            self.sectionChoice.AppendItems(
+                [s[0] for s in self.annotator.get_sections()]
+            )
         self.tagsCombo.Clear()
-        self.sectionChoice.Clear()
         self.tagsCombo.AppendItems(self.annotator.get_tags())
-        self.sectionChoice.AppendItems([s[0] for s in self.annotator.get_sections()])
 
     def SetFocus(self):
-        self.tagsCombo.SetFocus()
+        focusableCtrl = self.bookChoice if self.filter_by_book else self.tagsCombo
+        focusableCtrl.SetFocus()
 
     def onApplyFilter(self, event):
+        book_id = None
+        if self.filter_by_book:
+            book_selection = self.bookChoice.GetSelection()
+            if book_selection != wx.NOT_FOUND:
+                book_id = self.bookChoice.GetClientData(book_selection)
         self.filter_callback(
+            book_id=book_id,
             tag=self.tagsCombo.GetValue().strip(),
-            section_title=self.sectionChoice.GetValue().strip(),
+            section_title=self.sectionChoice.GetValue().strip()
+            if not self.filter_by_book
+            else "",
             content=self.contentFilterText.GetValue().strip(),
         )
 
@@ -241,66 +301,125 @@ class AnnotationFilterPanel(sc.SizedPanel):
 class AnnotationWithContentDialog(SimpleDialog):
     """View, edit, and manage notes and quotes."""
 
-    annotator_cls = None
-    can_edit = False
-    column_defns = [
-        ColumnDefn("Excerpt", "left", 250, "content"),
-        ColumnDefn("Section", "left", 200, "section_title"),
-        ColumnDefn("Page", "center", 150, "page_number"),
-        ColumnDefn("Added", "right", 180, lambda a: format_datetime(a.date_created)),
-    ]
+    @classmethod
+    def column_defn(cls):
+        return (
+            # Translators: the title of a column in the comments/highlights list
+            ColumnDefn("Excerpt", "left", 250, lambda a: a.content[:20]),
+            # Translators: the title of a column in the comments/highlights list
+            ColumnDefn("Section", "left", 200, "section_title"),
+            # Translators: the title of a column in the comments/highlights list
+            ColumnDefn("Page", "center", 150, "page_number"),
+            # Translators: the title of a column in the comments/highlights list
+            ColumnDefn("Added", "right", 200, lambda a: format_datetime(a.date_created)),
+        )
 
-    def __init__(self, reader, *args, **kwargs):
+    def __init__(self, reader, annotator_cls, *args, can_edit=False, **kwargs):
         self.reader = reader
+        self.annotator_cls = annotator_cls
         self.annotator = self.annotator_cls(reader)
+        self.can_edit = can_edit
         self.service = wx.GetApp().service_handler.get_service("annotation")
-        self.__last_filter = ("", "", "")
+        self._filter_and_sort_state = FilterAndSortState.create_default(self.annotator)
+        self._sort_toggles = {}
         super().__init__(*args, **kwargs)
 
     def addControls(self, parent):
-        filterBox = make_sized_static_box(parent, _("Filter"))
+        # Translators: header of a group of controls in a dialog to view user's comments/highlights
+        filterBox = make_sized_static_box(parent, _("Filter By"))
         self.filterPanel = AnnotationFilterPanel(
-            filterBox, -1, annotator=self.annotator, filter_callback=self.onFilter
+            filterBox,
+            -1,
+            annotator=self.annotator,
+            filter_callback=self.onFilter,
+            filter_by_book=not self.reader.ready,
         )
+        # Translators: header of a group of controls in a dialog to view user's comments/highlights
+        sortBox = make_sized_static_box(parent, _("Sort By"))
+        sortPanel = sc.SizedPanel(sortBox, -1)
+        sortPanel.SetSizerType("horizontal")
+        sortPanel.SetSizerProps(expand=True)
+        sort_options = [
+            # Translators: text of a toggle button to sort comments/highlights list
+            (_("Date"), AnnotationSortCriteria.Date),
+            # Translators: text of a toggle button to sort comments/highlights list
+            (_("Page"), AnnotationSortCriteria.Page),
+        ]
+        if not self.reader.ready:
+            # Translators: text of a toggle button to sort comments/highlights list
+            sort_options.append((_("Book"), AnnotationSortCriteria.Book))
+        for bt_label, srt_criteria in sort_options:
+            tglButton = wx.ToggleButton(sortPanel, -1, bt_label)
+            self._sort_toggles[tglButton] = srt_criteria
+            self.Bind(wx.EVT_TOGGLEBUTTON, self.onSortToggle, tglButton)
+        # Translators: text of a toggle button to sort comments/highlights list
+        self.sortMethodToggle = wx.ToggleButton(sortPanel, -1, _("Ascending"))
         wx.StaticText(parent, -1, self.Title)
         self.itemsView = ImmutableObjectListView(
             parent, id=wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER
         )
+        self.itemsView.SetSizerProps(expand=True)
         self.buttonPanel = sc.SizedPanel(parent, -1)
         self.buttonPanel.SetSizerType("horizontal")
+        # Translators: text of a button in a dialog to view comments/highlights 
         wx.Button(self.buttonPanel, wx.ID_PREVIEW, _("&View..."))
         if self.can_edit:
+            # Translators: text of a button in a dialog to view comments/highlights 
             wx.Button(self.buttonPanel, wx.ID_EDIT, _("&Edit..."))
             self.Bind(wx.EVT_BUTTON, self.onEdit, id=wx.ID_EDIT)
+        # Translators: text of a button in a dialog to view comments/highlights 
         wx.Button(self.buttonPanel, wx.ID_DELETE, _("&Delete..."))
-        exportButton = wx.Button(self.buttonPanel, -1, _("E&xport Annotations..."))
-        self.Bind(
-            wx.EVT_LIST_ITEM_ACTIVATED, self.onItemClick, self.itemsView
-        )
+        # Translators: text of a button in a dialog to view comments/highlights 
+        exportButton = wx.Button(self.buttonPanel, -1, _("E&xport..."))
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.onSortMethodToggle, self.sortMethodToggle)
+        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onItemClick, self.itemsView)
         self.Bind(wx.EVT_LIST_KEY_DOWN, self.onKeyDown, self.itemsView)
-        self.Bind(
-            wx.EVT_BUTTON, self.onView, id=wx.ID_PREVIEW
-        )
+        self.Bind(wx.EVT_BUTTON, self.onView, id=wx.ID_PREVIEW)
         self.Bind(wx.EVT_BUTTON, self.onDelete, id=wx.ID_DELETE)
         self.Bind(wx.EVT_BUTTON, self.onExport, exportButton)
+        self.on_filter_and_sort_state_changed()
         self.set_items()
+
+    def get_items(self):
+        getter_func = self.annotator.get_for_book if self.reader.ready else self.annotator.get_all
+        return getter_func(
+            self._filter_and_sort_state.filter_criteria,
+            self._filter_and_sort_state.sort_criteria,
+            self._filter_and_sort_state.asc
+        )
 
     def set_items(self, items=None):
         items = items or self.get_items()
-        self.itemsView.set_columns(self.column_defns)
+        self.itemsView.set_columns(self.column_defn())
         self.itemsView.set_objects(items)
         self.itemsView.SetFocusFromKbd()
         if not self.itemsView.ItemCount:
             self.buttonPanel.Disable()
 
-    def onFilter(self, tag, section_title, content):
-        self.__last_filter = (tag, section_title, content)
+    def on_filter_and_sort_state_changed(self):
         self.set_items(self.get_items())
+        self.sortMethodToggle.SetValue(self._filter_and_sort_state.asc)
+        for btn, sort_criteria in self._sort_toggles.items():
+            if self._filter_and_sort_state.sort_criteria is sort_criteria:
+                btn.SetValue(True)
+            else:
+                btn.SetValue(False)
 
-    def get_items(self):
-        if any(self.__last_filter):
-            return self.annotator.get_filtered_for_book(*self.__last_filter)
-        return self.annotator.get_list().all()
+    def onFilter(self, book_id, tag, section_title, content):
+        self._filter_and_sort_state.filter_criteria= AnnotationFilterCriteria(
+            book_id=book_id, tag=tag, section_title=section_title, content_snip=content
+        )
+        self.on_filter_and_sort_state_changed()
+
+    def onSortToggle(self, event):
+        if event.IsChecked():
+            event.GetEventObject().SetValue(False)
+            self._filter_and_sort_state.sort_criteria = self._sort_toggles[event.GetEventObject()]
+        self.on_filter_and_sort_state_changed()
+
+    def onSortMethodToggle(self, event):
+        self._filter_and_sort_state.asc = event.IsChecked()
+        self.on_filter_and_sort_state_changed()
 
     def go_to_item(self, item):
         self.reader.go_to_page(item.page_number)
@@ -317,7 +436,11 @@ class AnnotationWithContentDialog(SimpleDialog):
             return wx.Bell()
         editable = self.can_edit and not is_viewing
         dlg = ViewAndEditAnnotationDialog(
-            self, title=_("Annotation"), annotation=item, editable=editable
+            self,
+            # Translators: title of a dialog to view or edit a single comment/highlight
+            title=_("Editing") if editable else _("View"),
+            annotation=item,
+            editable=editable
         )
         with dlg:
             return dlg.ShowModal()
@@ -329,12 +452,19 @@ class AnnotationWithContentDialog(SimpleDialog):
         item = self.itemsView.get_selected()
         if item is None:
             return
-        if wx.MessageBox(
-            _("This action can not be reverted.\r\nAre you sure you want to remove this item?"),
-            _("Delete Annotation?"),
-            parent=self,
-            style=wx.YES_NO | wx.ICON_WARNING,
-        ) == wx.YES:
+        if (
+            wx.MessageBox(
+                # Translators: content of a message asking the user if they want to delete a comment/highlight
+                _(
+                    "This action can not be reverted.\r\nAre you sure you want to remove this item?"
+                ),
+                # Translators: title of a message asking the user if they want to delete a bookmark
+                _("Delete Annotation?"),
+                parent=self,
+                style=wx.YES_NO | wx.ICON_WARNING,
+            )
+            == wx.YES
+        ):
             self.annotator.delete(item.id)
             self.filterPanel.update_choices()
             self.set_items(self.get_items())
@@ -358,143 +488,176 @@ class AnnotationWithContentDialog(SimpleDialog):
             self.onDelete(event)
         elif kcode == wx.WXK_F6:
             self.filterPanel.SetFocus()
+        elif kcode == wx.WXK_F2:
+            self.edit_tags(item)
         event.Skip()
+
+    def edit_tags(self, item):
+        new_tags = self.service.view.get_text_from_user(
+            # Translators: title of a dialog that allows the user to edit the tag set of a comment/highlight
+            title=_("Edit Tags"),
+            # Translators: label of an edit control that allows the user to edit the tag set of a comment/highlight
+            label=_("Tags"), value=" ".join(item.tags)
+        )
+        if new_tags is not None:
+            self.annotator.update(item.id, tags=[t.strip() for t in new_tags.split()])
+            self.filterPanel.update_choices()
 
     def onExport(self, event):
         items = tuple(self.get_items())
-        if not items:
-            return
+        # Translators: title of a dialog that allows the user to customize 
+        # how comments/highlights are exported
+        with ExportNotesDialog(parent=self, title=_("Export Options")) as dlg:
+            retval = dlg.ShowModal()
+            if retval is None:
+                return wx.Bell()
+            renderer_cls, open_after_export, export_options = retval
+            self.export_items(renderer_cls, items, export_options, open_after_export)
+
+    def export_items(self, renderer_cls, items, export_options, open_after_export):
+        renderer = renderer_cls(items, export_options, self._filter_and_sort_state.filter_criteria)
+        resulting_file = renderer.render_to_file()
+        if open_after_export:
+            wx.LaunchDefaultApplication(resulting_file)
+
+
+class GenericAnnotationWithContentDialog(AnnotationWithContentDialog):
+
+    @classmethod
+    def column_defn(cls):
+        column_defn = list(super().column_defn())
+        # Translators: the title of a column in the comments/highlights list
+        column_defn.insert(1, ColumnDefn(_("Book"), "left", 300, lambda a: a.book.title))
+        return column_defn
+
+    def set_default_state(self):
+        self._filter_and_sort_state.sort_criteria = AnnotationSortCriteria.Date
+        self._filter_and_sort_state.asc = False
+
+    def go_to_item(self, item):
+        book_path = Path(item.book.file_path)
+        if book_path.exists():
+            if self.service.view.open_file(str(book_path)):
+                super().go_to_item(item)
+                if isinstance(self.annotator, NoteTaker):
+                    self.service.view.set_insertion_point(item.position)
+                else:
+                    self.service.view.select_text(item.start_pos, item.end_pos)
+        else:
+            wx.MessageBox(
+                # Translators: content of a dialog informing the user
+                _(
+                    "Could not find eBook file. The file has been renamed, moved, or deleted."
+                ),
+                # Translators: title of a dialog informing the user
+                _("Could not open eBook"),
+                style=wx.ICON_WARNING,
+            )
 
 
 class CommentsDialog(AnnotationWithContentDialog):
-    annotator_cls = NoteTaker
-    can_edit = True
-
     def go_to_item(self, item):
         super().go_to_item(item)
         self.service.view.set_insertion_point(item.position)
 
-class QuotesDialog(AnnotationWithContentDialog):
-    annotator_cls = Quoter
-    can_edit = False
 
+class QuotesDialog(AnnotationWithContentDialog):
     def go_to_item(self, item):
         super().go_to_item(item)
         self.service.view.select_text(item.start_pos, item.end_pos)
 
 
-class ExportNotesDialog(Dialog):
+class ExportNotesDialog(SimpleDialog):
     """Customization for note exporting."""
 
-    def __init__(self, reader, *args, **kwargs):
-        self.reader = reader
-        self.annotator = NoteTaker(reader)
-        super().__init__(*args, **kwargs)
-
-    def addControls(self, sizer, parent):
-        # Translators: the label of a radio button
-        self.output_ranges = [_("Whole Book"), _("Current Section")]
-        formats = [_(rend.display_name) for rend in NotesExporter.renderers]
-        self.outputRangeRb = wx.RadioBox(
-            parent,
-            -1,
-            # Translators: the title of a group of radio buttons in the Export Notes dialog
-            _("Export Range"),
-            choices=self.output_ranges,
-            majorDimension=2,
-            style=wx.RA_SPECIFY_COLS,
+    def addControls(self, parent):
+        self._save = False
+        # Translators: label of a checkbox in a dialog to set export options for comments/highlights
+        self.includeBookTitleCheckbox = wx.CheckBox(parent, -1, _("Include book title"))
+        self.includeSectionTitleCheckbox = wx.CheckBox(
+            # Translators: label of a checkbox in a dialog to set export options for comments/highlights
+            parent, -1, _("Include section title")
         )
-        # Translators: the label of a combobox of available export formats
-        formatChoiceLabel = wx.StaticText(parent, -1, _("Output format:"))
-        self.formatChoice = wx.Choice(parent, -1, choices=formats)
+        self.includePageNumberCheckbox = wx.CheckBox(
+            # Translators: label of a checkbox in a dialog to set export options for comments/highlights
+            parent, -1, _("Include  page number")
+        )
+        # Translators: label of a checkbox in a dialog to set export options for comments/highlights
+        self.includeTagsCheckbox = wx.CheckBox(parent, -1, _("Include tags"))
+        # Translators: label of a choice control in a dialog to set export options for comments/highlights
+        wx.StaticText(parent, -1, _("Output format:"))
+        self.formatChoice = wx.Choice(
+            parent, -1, choices=[r.display_name for r in renderers]
+        )
+        # Translators: label of an edit control in a dialog to set export options for comments/highlights
+        wx.StaticText(parent, -1, _("Output File"))
+        self.outputFileTextCtrl = wx.TextCtrl(
+            parent, -1, style=wx.TE_READONLY | wx.TE_MULTILINE
+        )
+        # Translators: text of a button in a dialog to set export options for comments/highlights
+        browseButton = wx.Button(parent, -1, _("&Browse"))
         self.openAfterExportCheckBox = wx.CheckBox(
             parent,
             -1,
-            # Translators: the label of a checkbox
+            # Translators: label of a checkbox in a dialog to set export options for comments/highlights
             _("Open file after exporting"),
         )
-        sizer.Add(self.outputRangeRb, 0, wx.EXPAND | wx.ALL, 10)
-        sizer.Add(formatChoiceLabel, 0, wx.EXPAND | wx.TOP | wx.LEFT | wx.RIGHT, 10)
-        sizer.Add(self.formatChoice, 0, wx.EXPAND | wx.ALL, 10)
-        sizer.Add(self.openAfterExportCheckBox, 0, wx.EXPAND | wx.ALL, 10)
+        self.Bind(wx.EVT_BUTTON, self.onBrowse, browseButton)
+        self.Bind(wx.EVT_BUTTON, self.onSubmit, id=wx.ID_OK)
         self.formatChoice.SetSelection(0)
-        self.openAfterExportCheckBox.SetValue(True)
-        self.Bind(wx.EVT_BUTTON, self.onSubmit, id=wx.ID_SAVE)
+        checkboxs = (
+            self.includeBookTitleCheckbox,
+            self.includeSectionTitleCheckbox,
+            self.includePageNumberCheckbox,
+            self.includeTagsCheckbox,
+            self.openAfterExportCheckBox,
+        )
+        for cb in checkboxs:
+            cb.SetValue(True)
 
-    def getButtons(self, parent):
-        btnsizer = wx.StdDialogButtonSizer()
-        # Translators: the label of a button in the Export Notes dialog
-        export_btn = wx.Button(parent, wx.ID_SAVE, _("&Export"))
-        export_btn.SetDefault()
-        btnsizer.AddButton(export_btn)
-        # Translators: the label of a button to cancel the current action
-        btnsizer.AddButton(wx.Button(parent, wx.ID_CANCEL, _("&Cancel")))
-        btnsizer.Realize()
-        return btnsizer
+    @property
+    def selected_renderer(self):
+        return [
+            rend
+            for rend in renderers
+            if rend.display_name == self.formatChoice.GetStringSelection()
+        ][0]
 
-    def onSubmit(self, event):
-        suffix = self.reader.current_book.title
-        renderer = NotesExporter.renderers[self.formatChoice.GetSelection()]
-        if self.outputRangeRb.GetSelection() == 0:
-            notes = self.annotator.get_list(asc=True)
-        else:
-            notes = self.annotator.get_for_section(
-                self.reader.active_section.unique_identifier, asc=True
-            )
-            pager = self.reader.active_section.pager
-            suffix += f" {pager.first + 1}-{pager.last + 1}"
-        if not notes.count():
-            wx.MessageBox(
-                # Translators: the content of a message dialog
-                _(
-                    "There are no notes for this book or the selected section.\n"
-                    "Please make sure you have added some notes before using the export functionality."
-                ),
-                # Translators: the title of a message dialog
-                _("No Notes"),
-                style=wx.ICON_WARNING,
-            )
-            return self.Close()
-        filename = slugify(suffix) + renderer.output_ext
+    def onBrowse(self, event):
         saveExportedFD = wx.FileDialog(
             self,
-            # Translators: the title of a save file dialog asking the user for a filename to export notes to
-            _("Export To"),
+            # Translators: the title of a save file dialog asking the user for a filename to export annotations to
+            _("Save As"),
             defaultDir=wx.GetUserHome(),
-            defaultFile=filename,
-            wildcard=f"{_(renderer.display_name)} (*{renderer.output_ext})|{renderer.output_ext}",
+            defaultFile="",
+            wildcard=(
+                f"{_(self.selected_renderer.display_name)} (*{self.selected_renderer.output_ext})"
+                f"|{self.selected_renderer.output_ext}"
+            ),
             style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
         )
-        if saveExportedFD.ShowModal() != wx.ID_OK:
-            return
-        file_path = saveExportedFD.GetPath().strip()
+        if saveExportedFD.ShowModal() == wx.ID_OK:
+            self.outputFileTextCtrl.SetValue(saveExportedFD.GetPath().strip())
         saveExportedFD.Destroy()
-        try:
-            file_path = file_path.encode("mbcs")
-        except UnicodeEncodeError:
-            wx.MessageBox(
-                # Translators: the content of a message telling the user that the file name is invalid
-                _(
-                    "The provided file name is not valid. Please try again with a different name."
-                ),
-                # Translators: the title of a message telling the user that the provided file name is invalid
-                _("Invalid File Name"),
-                style=wx.ICON_ERROR,
-            )
-            self.fileCtrl.SetValue("")
-            self.fileCtrl.SetFocus()
-            return
-        exporter = NotesExporter(
-            renderer_name=renderer.name,
-            notes=notes,
-            doc_title=self.reader.current_book.title,
-            filename=file_path,
-        )
-        self.shouldOpenAfterExport = self.openAfterExportCheckBox.GetValue()
-        export_completed.connect(self.onExportCompleted, sender=exporter)
-        exporter.render_to_file()
+
+    def onSubmit(self, event):
+        if not self.outputFileTextCtrl.GetValue().strip():
+            self.outputFileTextCtrl.SetFocus()
+            return wx.Bell()
+        self._save = True
         self.Close()
 
-    def onExportCompleted(self, sender, filename):
-        if self.shouldOpenAfterExport:
-            wx.LaunchDefaultApplication(document=filename)
+    def ShowModal(self):
+        super().ShowModal()
+        if self._save:
+            return (
+                self.selected_renderer,
+                self.openAfterExportCheckBox.IsChecked(),
+                ExportOptions(
+                    output_file=self.outputFileTextCtrl.GetValue().strip(),
+                    include_book_title=self.includeBookTitleCheckbox.IsChecked(),
+                    include_section_title=self.includeSectionTitleCheckbox.IsChecked(),
+                    include_page_number=self.includePageNumberCheckbox.IsChecked(),
+                    include_tags=self.includeTagsCheckbox.IsChecked(),
+                ),
+            )

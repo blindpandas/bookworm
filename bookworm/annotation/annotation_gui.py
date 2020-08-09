@@ -15,6 +15,7 @@ from .annotation_dialogs import (
     CommentsDialog,
     QuotesDialog,
     ExportNotesDialog,
+    GenericAnnotationWithContentDialog,
 )
 
 
@@ -49,6 +50,9 @@ class AnnotationsMenuIds(IntEnum):
     addNote = 243
     quoteSelection = 244
     viewBookmarks = 245
+
+
+class StatelessAnnotationsMenuIds(IntEnum):
     viewNotes = 246
     viewQuotes = 247
 
@@ -119,14 +123,14 @@ class AnnotationMenu(wx.Menu):
             _("View added bookmarks"),
         )
         self.Append(
-            AnnotationsMenuIds.viewNotes,
+            StatelessAnnotationsMenuIds.viewNotes,
             # Translators: the label of an item in the application menubar
             _("Saved Co&mments..."),
             # Translators: the help text of an item in the application menubar
             _("View, edit, and remove comments."),
         )
         self.Append(
-            AnnotationsMenuIds.viewQuotes,
+            StatelessAnnotationsMenuIds.viewQuotes,
             # Translators: the label of an item in the application menubar
             _("Saved &Highlights..."),
             # Translators: the help text of an item in the application menubar
@@ -150,8 +154,12 @@ class AnnotationMenu(wx.Menu):
         self.view.Bind(
             wx.EVT_MENU, self.onViewBookmarks, id=AnnotationsMenuIds.viewBookmarks
         )
-        self.view.Bind(wx.EVT_MENU, self.onViewNotes, id=AnnotationsMenuIds.viewNotes)
-        self.view.Bind(wx.EVT_MENU, self.onViewQuotes, id=AnnotationsMenuIds.viewQuotes)
+        self.view.Bind(
+            wx.EVT_MENU, self.onViewNotes, id=StatelessAnnotationsMenuIds.viewNotes
+        )
+        self.view.Bind(
+            wx.EVT_MENU, self.onViewQuotes, id=StatelessAnnotationsMenuIds.viewQuotes
+        )
 
     def _add_bookmark(self, name=""):
         bookmarker = Bookmarker(self.reader)
@@ -175,7 +183,7 @@ class AnnotationMenu(wx.Menu):
         self._add_bookmark()
 
     def onAddNamedBookmark(self, event):
-        bookmark_name = self.get_text_from_user(
+        bookmark_name = self.view.get_text_from_user(
             # Translators: title of a dialog
             _("Add Named Bookmark"),
             # Translators: label of a text entry
@@ -187,7 +195,7 @@ class AnnotationMenu(wx.Menu):
     def onAddNote(self, event):
         _with_tags = wx.GetKeyState(wx.WXK_SHIFT)
         insertionPoint = self.view.contentTextCtrl.GetInsertionPoint()
-        comment_text = self.get_text_from_user(
+        comment_text = self.view.get_text_from_user(
             # Translators: the title of a dialog to add a comment
             _("New Comment"),
             # Translators: the label of an edit field to enter a comment
@@ -202,7 +210,7 @@ class AnnotationMenu(wx.Menu):
         self.service.style_comment(self.view, insertionPoint)
         if _with_tags:
             # add tags
-            tags_text = self.get_text_from_user(
+            tags_text = self.view.get_text_from_user(
                 # Translators: title of a dialog
                 _("Tag Comment"),
                 # Translators: label of a text entry
@@ -249,7 +257,7 @@ class AnnotationMenu(wx.Menu):
         self.service.style_highlight(self.view, x, y)
         if _with_tags:
             # add tags
-            tags_text = self.get_text_from_user(
+            tags_text = self.view.get_text_from_user(
                 # Translators: title of a dialog
                 _("Tag Highlight"),
                 # Translators: label of a text entry
@@ -271,25 +279,26 @@ class AnnotationMenu(wx.Menu):
             dlg.ShowModal()
 
     def onViewNotes(self, event):
-        with CommentsDialog(
+        Dialog = (
+            CommentsDialog if self.reader.ready else GenericAnnotationWithContentDialog
+        )
+        with Dialog(
             parent=self.view,
             title=_("Comments"),
             reader=self.reader,
+            annotator_cls=NoteTaker,
+            can_edit=True,
         ) as dlg:
             dlg.ShowModal()
 
     def onViewQuotes(self, event):
-        with QuotesDialog(
+        Dialog = (
+            QuotesDialog if self.reader.ready else GenericAnnotationWithContentDialog
+        )
+        with Dialog(
             parent=self.view,
             title=_("Highlights"),
             reader=self.reader,
+            annotator_cls=Quoter,
         ) as dlg:
             dlg.ShowModal()
-
-    def get_text_from_user(
-        self, title, label, style=wx.OK | wx.CANCEL | wx.CENTER, value=""
-    ):
-        dlg = wx.TextEntryDialog(self.view, label, title, style=style)
-        if dlg.ShowModal() == wx.ID_OK:
-            value = dlg.GetValue().strip()
-            return value or wx.Bell()

@@ -91,6 +91,7 @@ class AnnotationService(BookwormService):
         ]
 
     @classmethod
+    @call_threaded
     def comments_page_handler(cls, sender, current, prev):
         comments = NoteTaker(sender).get_for_page()
         if comments.count():
@@ -100,6 +101,7 @@ class AnnotationService(BookwormService):
             cls.style_comment(sender.view, comment.position)
 
     @classmethod
+    @call_threaded
     def highlight_bookmarked_positions(cls, sender, current, prev):
         if not config.conf["annotation"]["use_visuals"]:
             return
@@ -110,6 +112,7 @@ class AnnotationService(BookwormService):
             cls.style_bookmark(sender.view, bookmark.position)
 
     @classmethod
+    @call_threaded
     def highlight_highlighted_text(cls, sender, current, prev):
         if not config.conf["annotation"]["use_visuals"]:
             return

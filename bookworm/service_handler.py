@@ -26,7 +26,7 @@ BUILTIN_SERVICES = (
 class ServiceHandler:
     """A singleton to manage services."""
 
-    registered_services = set()
+    registered_services = []
 
     def __init__(self, view):
         self.view = view
@@ -53,7 +53,7 @@ class ServiceHandler:
                 if service.config_spec is not None:
                     config.conf.spec.update(service.config_spec)
                     config.conf.validate_and_write()
-                self.registered_services.add(service)
+                self.registered_services.insert(0, service)
             else:
                 log.error(f"Service {service_cls.name} `check` returned `False`")
         except Exception as e:

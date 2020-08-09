@@ -115,15 +115,17 @@ class FileMenu(BaseMenu):
         # Translators: the label of an item in the application menubar
         self.Append(wx.ID_EXIT, _("Exit"))
         # Bind event handlers
-        self.Bind(wx.EVT_MENU, self.onOpenEBook, id=wx.ID_OPEN)
-        self.Bind(wx.EVT_MENU, self.onExportAsPlainText, id=BookRelatedMenuIds.export)
-        self.Bind(
+        self.view.Bind(wx.EVT_MENU, self.onOpenEBook, id=wx.ID_OPEN)
+        self.view.Bind(
+            wx.EVT_MENU, self.onExportAsPlainText, id=BookRelatedMenuIds.export
+        )
+        self.view.Bind(
             wx.EVT_MENU, self.onCloseCurrentFile, id=BookRelatedMenuIds.closeCurrentFile
         )
-        self.Bind(wx.EVT_MENU, self.onClearRecentFileList, id=wx.ID_CLEAR)
-        self.Bind(wx.EVT_MENU, self.onPreferences, id=wx.ID_PREFERENCES)
-        self.Bind(wx.EVT_MENU, lambda e: self.view.onClose(e), id=wx.ID_EXIT)
-        self.Bind(wx.EVT_CLOSE, lambda e: self.view.onClose(e), self.view)
+        self.view.Bind(wx.EVT_MENU, self.onClearRecentFileList, id=wx.ID_CLEAR)
+        self.view.Bind(wx.EVT_MENU, self.onPreferences, id=wx.ID_PREFERENCES)
+        self.view.Bind(wx.EVT_MENU, lambda e: self.view.onClose(e), id=wx.ID_EXIT)
+        self.view.Bind(wx.EVT_CLOSE, lambda e: self.view.onClose(e), self.view)
         # Populate the recent files submenu
         self._recent_files_data = []
         self.populate_recent_file_list()
@@ -240,7 +242,7 @@ class FileMenu(BaseMenu):
             for idx, filename in enumerate(recent_files):
                 fname = os.path.split(filename)[-1]
                 item = self.recentFilesMenu.Append(wx.ID_ANY, f"{idx + 1}. {fname}")
-                self.Bind(wx.EVT_MENU, self.onRecentFileItem, item)
+                self.view.Bind(wx.EVT_MENU, self.onRecentFileItem, item)
                 self._recent_files_data.append((item, item.GetId(), filename))
                 if self.reader.ready:
                     for (it, id, fn) in self._recent_files_data:
@@ -281,10 +283,10 @@ class SearchMenu(BaseMenu):
             _("Go to page"),
         )
         # Bind events
-        self.Bind(wx.EVT_MENU, self.onGoToPage, id=BookRelatedMenuIds.goToPage)
-        self.Bind(wx.EVT_MENU, self.onFind, id=wx.ID_FIND)
-        self.Bind(wx.EVT_MENU, self.onFindNext, id=BookRelatedMenuIds.findNext)
-        self.Bind(wx.EVT_MENU, self.onFindPrev, id=BookRelatedMenuIds.findPrev)
+        self.view.Bind(wx.EVT_MENU, self.onGoToPage, id=BookRelatedMenuIds.goToPage)
+        self.view.Bind(wx.EVT_MENU, self.onFind, id=wx.ID_FIND)
+        self.view.Bind(wx.EVT_MENU, self.onFindNext, id=BookRelatedMenuIds.findNext)
+        self.view.Bind(wx.EVT_MENU, self.onFindPrev, id=BookRelatedMenuIds.findPrev)
         self._reset_search_history()
 
     def after_unloading_book(self, sender):
@@ -394,7 +396,7 @@ class ToolsMenu(BaseMenu):
             _("View a fully rendered version of this page."),
         )
         # Bind event handlers
-        self.Bind(
+        self.view.Bind(
             wx.EVT_MENU,
             self.onViewRenderedAsImage,
             id=BookRelatedMenuIds.viewRenderedAsImage,
@@ -462,7 +464,7 @@ class HelpMenu(BaseMenu):
                 # Translators: the help text of an item in the application menubar
                 _("Restart the program with debug mode enabled to show errors"),
             )
-            self.Bind(
+            self.view.Bind(
                 wx.EVT_MENU,
                 self.onRestartWithDebugMode,
                 id=ViewerMenuIds.restart_with_debug,
@@ -475,30 +477,32 @@ class HelpMenu(BaseMenu):
             _("Show general information about this program"),
         )
         # Bind menu events
-        self.Bind(wx.EVT_MENU, self.onOpenDocumentation, id=ViewerMenuIds.documentation)
-        self.Bind(
+        self.view.Bind(
+            wx.EVT_MENU, self.onOpenDocumentation, id=ViewerMenuIds.documentation
+        )
+        self.view.Bind(
             wx.EVT_MENU,
             lambda e: webbrowser.open(app.website),
             id=ViewerMenuIds.website,
         )
-        self.Bind(
+        self.view.Bind(
             wx.EVT_MENU,
             lambda e: wx.LaunchDefaultApplication(str(paths.docs_path("license.txt"))),
             id=ViewerMenuIds.license,
         )
-        self.Bind(
+        self.view.Bind(
             wx.EVT_MENU,
             lambda e: wx.LaunchDefaultApplication(
                 str(paths.docs_path("contributors.txt"))
             ),
             id=ViewerMenuIds.contributors,
         )
-        self.Bind(
+        self.view.Bind(
             wx.EVT_MENU,
             lambda e: check_for_updates(verbose=True),
             id=ViewerMenuIds.check_for_updates,
         )
-        self.Bind(wx.EVT_MENU, self.onAbout, id=ViewerMenuIds.about)
+        self.view.Bind(wx.EVT_MENU, self.onAbout, id=ViewerMenuIds.about)
 
     def onAbout(self, event):
         wx.MessageBox(
@@ -526,10 +530,9 @@ class MenubarProvider:
         self.menuBar = wx.MenuBar()
         # Context menu
         self.contentTextCtrl.Bind(
-            wx.EVT_KEY_UP, self.onKeyUp, self.contentTextCtrl
-        )
-        self.contentTextCtrl.Bind(
-            wx.EVT_RIGHT_UP, self.onContentTextCtrlContextMenu, self.contentTextCtrl
+            self.contentTextCtrl.EVT_CONTEXTMENU_REQUESTED,
+            self.onContentTextCtrlContextMenu,
+            self.contentTextCtrl,
         )
 
         # The menus
@@ -562,17 +565,7 @@ class MenubarProvider:
         self.Destroy()
         evt.Skip()
 
-    def onKeyUp(self, event):
-        event.Skip()
-        if event.GetKeyCode() == wx.WXK_WINDOWS_MENU:
-            event.Skip(True)
-            try:
-                self.onContentTextCtrlContextMenu(event)
-            except wx.wxAssertionError:
-                pass
-
-    @property
-    def content_text_ctrl_context_menu(self):
+    def get_content_text_ctrl_context_menu(self):
         menu = wx.Menu()
         entries = [
             (
@@ -600,36 +593,12 @@ class MenubarProvider:
         return menu
 
     def onContentTextCtrlContextMenu(self, event):
-        event.Skip(False)
-        if self.reader.ready:
-            pos = self.contentTextCtrl.PositionToCoords(
-                self.contentTextCtrl.InsertionPoint
-            )
-            self.PopupMenu(self.content_text_ctrl_context_menu, pos=pos)
-
-    def open_file(self, filename):
-        if not os.path.isfile(filename):
-            return wx.MessageBox(
-                # Translators: the content of an error message
-                _("The file\n{file}\nwas not found.").format(file=filename),
-                # Translators: the title of an error message
-                _("File Not Found"),
-                parent=self.view,
-                style=wx.ICON_ERROR,
-            )
-        if not self.reader.load(filename):
-            return
-        if self.reader.document.is_encrypted():
-            self.decrypt_opened_document()
-        self.tocTreeCtrl.Expand(self.tocTreeCtrl.GetRootItem())
-        wx.CallAfter(self.tocTreeCtrl.SetFocus)
-        recent_files = config.conf["history"]["recently_opened"]
-        if filename in recent_files:
-            recent_files.remove(filename)
-        recent_files.insert(0, filename)
-        newfiles = recent_files if len(recent_files) < 10 else recent_files[:10]
-        config.conf["history"]["recently_opened"] = newfiles
-        config.save()
+        pos = self.contentTextCtrl.PositionToCoords(self.contentTextCtrl.InsertionPoint)
+        context_menu = self.get_content_text_ctrl_context_menu()
+        if not self.reader.ready:
+            for item in context_menu.GetMenuItems():
+                item.Enable(False)
+        self.PopupMenu(context_menu, pos=pos)
 
     def _get_ebooks_wildcards(self):
         rv = []
@@ -648,26 +617,3 @@ class MenubarProvider:
             ),
         )
         return "".join(rv)
-
-    def decrypt_opened_document(self):
-        pwd = wx.GetPasswordFromUser(
-            # Translators: the content of a dialog asking the user
-            # for the password to decrypt the current e-book
-            _(
-                "This document is encrypted, and you need a password to access its content.\nPlease enter the password billow and press enter."
-            ),
-            # Translators: the title of a dialog asking the user to enter a password to decrypt the e-book
-            "Enter Password",
-            parent=self,
-        )
-        res = self.reader.document.decrypt(pwd.GetValue())
-        if not res:
-            wx.MessageBox(
-                # Translators: the content of a message
-                _("The password you've entered is invalid.\nPlease try again."),
-                # Translators: the title of an error message
-                _("Invalid Password"),
-                parent=self,
-                style=wx.ICON_ERROR,
-            )
-            return self.decrypt_opened_document()
