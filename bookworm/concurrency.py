@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import os
 import multiprocessing as mp
 from enum import IntEnum
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
@@ -50,6 +51,7 @@ class QPResult(IntEnum):
     COMPLETED = -1
     OK = 0
     FAILED = 1
+    DEBUG = 2
 
 
 @dataclass
@@ -61,6 +63,9 @@ class QPChannel:
 
     def exception(self, exc: Exception):
         self.queue.put((QPResult.FAILED, exc))
+
+    def log(self, msg: str):
+        self.queue.put((QPResult.DEBUG, f"PID: {os.getpid()}; {msg}"))
 
     def close(self):
         self.queue.put((QPResult.COMPLETED, None))
@@ -105,6 +110,8 @@ class QueueProcess(mp.Process):
             flag, result = self.queue.get()
             if flag is QPResult.OK:
                 yield result
+            elif flag is QPResult.DEBUG:
+                log.debug(f"REMOTE PROCESS: {result}")
             elif flag is QPResult.COMPLETED:
                 break
             elif flag is QPResult.FAILED:

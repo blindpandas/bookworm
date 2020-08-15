@@ -24,21 +24,23 @@ log = logger.getChild(__name__)
 class SearchResultsDialog(Dialog):
     """Search Results."""
 
-    def __init__(self, highlight_func, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, highlight_func, num_pages, *args, **kwargs):
         self.highlight_func = highlight_func
+        self.num_pages = num_pages
+        super().__init__(*args, **kwargs)
 
     def addControls(self, sizer, parent):
         self.reader = self.parent.reader
         # Translators: the label of a list of search results
         label = wx.StaticText(parent, -1, _("Search Results"))
         self.searchResultsListCtrl = DialogListCtrl(parent, -1)
-        self.searchResultsListCtrl.AppendColumn(
-            # Translators: the title of a column in the search results list
-            _("Page"),
-            format=wx.LIST_FORMAT_LEFT,
-            width=20,
-        )
+        if not self.reader.document.is_fluid:
+            self.searchResultsListCtrl.AppendColumn(
+                # Translators: the title of a column in the search results list
+                _("Page"),
+                format=wx.LIST_FORMAT_LEFT,
+                width=20,
+            )
         self.searchResultsListCtrl.AppendColumn(
             # Translators: the title of a column in the search results list showing
             # an excerpt of the text of the search result
@@ -46,13 +48,14 @@ class SearchResultsDialog(Dialog):
             format=wx.LIST_FORMAT_CENTER,
             width=50,
         )
-        self.searchResultsListCtrl.AppendColumn(
-            # Translators: the title of a column in the search results list
-            # showing the title of the chapter in which this occurrence was found
-            _("Section"),
-            format=wx.LIST_FORMAT_LEFT,
-            width=30,
-        )
+        if self.reader.document.has_toc_tree:
+            self.searchResultsListCtrl.AppendColumn(
+                # Translators: the title of a column in the search results list
+                # showing the title of the chapter in which this occurrence was found
+                _("Section"),
+                format=wx.LIST_FORMAT_LEFT,
+                width=30,
+            )
         self.searchResultsListCtrl.SetColumnWidth(0, 100)
         self.searchResultsListCtrl.SetColumnWidth(1, 100)
         self.searchResultsListCtrl.SetColumnWidth(2, 100)
@@ -63,6 +66,7 @@ class SearchResultsDialog(Dialog):
         sizer.Add(self.searchResultsListCtrl, 1, wx.EXPAND | wx.ALL, 10)
         sizer.Add(pbarlabel, 0, wx.TOP | wx.LEFT | wx.RIGHT, 10)
         sizer.Add(self.progressbar, 0, wx.EXPAND | wx.ALL, 10)
+        self.progressbar.SetRange(self.num_pages)
         self.Bind(
             wx.EVT_LIST_ITEM_ACTIVATED, self.onItemClick, self.searchResultsListCtrl
         )
@@ -74,10 +78,17 @@ class SearchResultsDialog(Dialog):
         btnsizer.Realize()
         return btnsizer
 
+    def updateProgress(self, value):
+        self.progressbar.SetValue(value)
+
     def onItemClick(self, event):
         idx = self.searchResultsListCtrl.GetFocusedItem()
         if idx != wx.NOT_FOUND:
-            page = self.searchResultsListCtrl.GetItemText(idx)
+            page = (
+                self.searchResultsListCtrl.GetItemText(idx)
+                if not self.reader.document.is_fluid
+                else 1
+            )
             pos = self.searchResultsListCtrl.GetItemData(idx)
             self.Close()
             self.Destroy()
@@ -86,9 +97,13 @@ class SearchResultsDialog(Dialog):
 
     def addResult(self, page, snip, section, pos):
         count = self.searchResultsListCtrl.ItemCount
-        index = self.searchResultsListCtrl.InsertItem(count, str(page + 1))
-        self.searchResultsListCtrl.SetItem(index, 1, snip)
-        self.searchResultsListCtrl.SetItem(index, 2, section)
+        if self.reader.document.is_fluid:
+            index = self.searchResultsListCtrl.InsertItem(count, snip)
+        else:
+            index = self.searchResultsListCtrl.InsertItem(count, str(page + 1))
+            self.searchResultsListCtrl.SetItem(index, 1, snip)
+        if self.reader.document.has_toc_tree:
+            self.searchResultsListCtrl.SetItem(index, 2, section)
         self.searchResultsListCtrl.SetItemData(index, pos)
 
 

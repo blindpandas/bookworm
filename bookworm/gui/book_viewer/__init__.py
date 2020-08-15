@@ -2,17 +2,17 @@
 
 import os
 import wx
+import bookworm.typehints as t
 from bookworm import app
 from bookworm import config
 from bookworm import speech
-from bookworm.resources import images
+from bookworm.resources import sounds, images
 from bookworm.paths import app_path
-from bookworm.reader import EBookReader
-from bookworm.signals import reader_book_unloaded, reader_page_changed
+from bookworm.reader import EBookReader, ReaderError, UnsupportedDocumentError
+from bookworm.signals import reader_book_unloaded
 from bookworm.utils import gui_thread_safe
 from bookworm.gui.components import CustomContextMenuTextCtrl
 from bookworm.logger import logger
-from .decorators import only_when_reader_ready
 from .menubar import MenubarProvider, BookRelatedMenuIds
 from .state import StateProvider
 from .navigation import NavigationProvider
@@ -159,7 +159,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             # Add toolbar item
             self.toolbar.AddTool(ident, label, image)
 
-    def open_file(self, filename):
+    def open_file(self, filename: t.PathLike) -> bool:
         if not os.path.isfile(filename):
             wx.MessageBox(
                 # Translators: the content of an error message
@@ -172,13 +172,35 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 style=wx.ICON_ERROR,
             )
             return False
-        if not self.reader.load(filename):
+        try:
+            self.reader.load(filename)
+        except UnsupportedDocumentError:
+            self.notify_user(
+                # Translators: the title of a message shown
+                # when the format of the e-book is not supported
+                _("Unsupported Document Format"),
+                # Translators: the content of a message shown
+                # when the format of the e-book is not supported
+                _("The format of the given document is not supported by Bookworm."),
+                icon=wx.ICON_WARNING,
+            )
+            return False
+        except ReaderError as e:
+            self.notify_user(
+                # Translators: the title of an error message
+                _("Error Openning Document"),
+                # Translators: the content of an error message
+                _(
+                    "Could not open file {file}\n."
+                    "Either the file  has been damaged during download, "
+                    "or it has been corrupted in some other way."
+                ).format(file=filename),
+                icon=wx.ICON_ERROR,
+            )
+            log.exception(f"Error opening document.\r\n{e.args}", exc_info=True)
             return False
         if self.reader.document.is_encrypted():
             self.decrypt_opened_document()
-        self.tocTreeCtrl.Expand(self.tocTreeCtrl.GetRootItem())
-        if self.contentTextCtrl.HasFocus():
-            wx.CallAfter(self.tocTreeCtrl.SetFocus)
         recent_files = config.conf["history"]["recently_opened"]
         if filename in recent_files:
             recent_files.remove(filename)
@@ -186,6 +208,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         newfiles = recent_files if len(recent_files) < 10 else recent_files[:10]
         config.conf["history"]["recently_opened"] = newfiles
         config.save()
+        if self.contentTextCtrl.HasFocus():
+            wx.CallAfter(self.tocTreeCtrl.SetFocus)
         return True
 
     def decrypt_opened_document(self):
@@ -224,7 +248,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if not statusbar_only:
             self.contentTextCtrlLabel.SetLabel(text)
 
-    @only_when_reader_ready
     def unloadCurrentEbook(self):
         self.reader.unload()
         self.set_content("")
@@ -232,7 +255,30 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.tocTreeCtrl.DeleteAllItems()
         self.Title = app.display_name
 
-    @only_when_reader_ready
+    def set_state_on_page_change(self, page):
+        self.set_content(page.get_text())
+        if config.conf["general"]["play_pagination_sound"]:
+            sounds.pagination.play()
+        if self.reader.document.is_fluid:
+            # Translators: label of content text control when the currently opened
+            # document is fluid (does not support paging)
+            self.SetStatusText(_("Document content"))
+        else:
+            # Translators: the label of the page content text area
+            cmsg = _("Page {page} | {chapter}").format(
+                page=page.number, chapter=page.section.title
+            )
+            # Translators: a message that is announced after navigating to a page
+            smsg = _("Page {page} of {total}").format(
+                page=page.number, total=len(self.reader.document)
+            )
+            self.SetStatusText(cmsg)
+            speech.announce(smsg)
+
+    def set_state_on_section_change(self, current):
+        self.tocTreeSetSelection(current)
+        speech.announce(current.title)
+
     def onTOCItemClick(self, event):
         selectedItem = event.GetItem()
         self.reader.active_section = self.tocTreeCtrl.GetItemData(selectedItem)
@@ -243,6 +289,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         root = self.tocTreeCtrl.AddRoot(tree.title, data=tree)
         self._populate_tree(tree.children, root=root)
         tree.data["tree_id"] = root
+        self.tocTreeCtrl.Expand(self.tocTreeCtrl.GetRootItem())
 
     def tocTreeSetSelection(self, item):
         tree_id = item.data["tree_id"]
@@ -319,8 +366,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         style.SetAlignment(wx.TEXT_ALIGNMENT_RIGHT if rtl else wx.TEXT_ALIGNMENT_LEFT)
         self.contentTextCtrl.SetDefaultStyle(style)
 
-    def notify_user(self, title, message, icon=wx.ICON_INFORMATION):
-        wx.MessageBox(message, title, style=icon)
+    def notify_user(self, title, message, icon=wx.ICON_INFORMATION, parent=None):
+        return wx.MessageBox(message, title, style=icon, parent=parent or self)
 
     def get_line_number(self, pos=None):
         pos = pos or self.contentTextCtrl.InsertionPoint
@@ -334,6 +381,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def set_insertion_point(self, to):
         self.contentTextCtrl.SetFocusFromKbd()
         self.contentTextCtrl.SetInsertionPoint(to)
+
+    def get_insertion_point(self):
+        return self.contentTextCtrl.GetInsertionPoint()
 
     def get_text_from_user(
         self, title, label, style=wx.OK | wx.CANCEL | wx.CENTER, value=""

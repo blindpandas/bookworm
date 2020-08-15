@@ -5,7 +5,7 @@ from bookworm.resources import images
 from bookworm.utils import gui_thread_safe
 from bookworm.signals import reader_book_loaded, reader_book_unloaded, app_shuttingdown
 from bookworm.logger import logger
-from .menubar import BookRelatedMenuIds
+from .menu_constants import BookRelatedMenuIds
 
 
 log = logger.getChild(__name__)
@@ -20,8 +20,9 @@ class StateProvider:
 
     def on_reader_load_unload(self, sender):
         enable = sender.ready
-        self.tocTreeCtrl.Enable(enable)
-        focus_ctrl = self.tocTreeCtrl if enable else self.contentTextCtrl
+        enable_tree = enable and sender.document.has_toc_tree
+        self.tocTreeCtrl.Enable(enable_tree)
+        focus_ctrl = self.tocTreeCtrl if enable_tree else self.contentTextCtrl
         focus_ctrl.SetFocus()
         stateful_menu_ids = []
         stateful_menu_ids.extend([v.value for v in BookRelatedMenuIds])

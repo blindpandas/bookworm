@@ -5,10 +5,6 @@
 import regex as re
 from io import StringIO
 from bookworm.utils import NEWLINE, search
-from bookworm.logger import logger
-
-
-log = logger.getChild(__name__)
 
 
 def export_to_plain_text(doc, target_filename, channel):
@@ -41,13 +37,10 @@ def search_book(doc, request, channel):
             term = fr"\b{term}\b"
     pattern = re.compile(term, I | re.M)
     for n in range(request.from_page, request.to_page + 1):
-        found = search(pattern, doc.get_page_content(n))
-        if not found:
-            channel.push((n, None, None, None))
-            continue
-        pos, snip = found
-        sect = [s for s in doc.toc_tree if n in s.pager]
-        sect = doc.toc_tree if not sect else sect[-1]
-        channel.push((n, snip, sect.title, pos))
+        resultset = []
+        sect = doc[n].section.title
+        for pos, snip in search(pattern, doc.get_page_content(n)):
+            resultset.append((n, snip, sect, pos))
+        channel.push(resultset)
     doc.close()
     channel.close()

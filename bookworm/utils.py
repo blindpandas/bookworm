@@ -122,13 +122,17 @@ def generate_sha1hash_async(filename):
 
 def search(pattern, text):
     """Search the given text using a compiled regular expression."""
-    mat = pattern.search(text, concurrent=True)
-    if not mat:
-        return
-    pos = mat.span()[0]
-    lseg, tseg, rseg = pattern.split(text, maxsplit=1)
-    snipit = "".join([lseg[-20:], tseg, rseg[:20]])
-    return (pos, snipit)
+    snip_reach = 25
+    len_text = len(text)
+    for mat in pattern.finditer(text, concurrent=True):
+        start, end = mat.span()
+        snip_start = 0 if start <= snip_reach else (start - snip_reach)
+        snip_end = len_text if (end + snip_reach) >= len_text else (end + snip_reach)
+        snip = text[snip_start:snip_end].split()
+        if len(snip) > 3:
+            snip.pop(0)
+            snip.pop(-1)
+        yield (start, " ".join(snip))
 
 
 def format_datetime(date: datetime) -> str:

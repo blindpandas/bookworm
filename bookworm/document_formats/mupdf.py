@@ -158,13 +158,6 @@ class FitzEPUBDocument(FitzDocument):
     # Translators: the name of a document file format
     name = _("Electronic Publication (EPUB)")
     extensions = ("*.epub",)
-    capabilities = (
-        DC.TOC_TREE
-        | DC.METADATA
-        | DC.GRAPHICAL_RENDERING
-        | DC.IMAGE_EXTRACTION
-        | DC.FLUID_PAGINATION
-    )
 
     def read(self):
         try:

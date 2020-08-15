@@ -19,6 +19,12 @@ def announce(message, urgent=False):
     if not config.conf["general"]["announce_ui_messages"]:
         return
     if _auto_output is None:
-        _auto_output = Auto()
+        try:
+            _auto_output = Auto()
+        except AttributeError:
+            import shutil, win32com
+
+            shutil.rmtree(win32com.__gen_path__, ignore_errors=True)
+            return announce(message, urgent)
     _auto_output.speak(message, interrupt=urgent)
     _auto_output.braille(message)

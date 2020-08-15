@@ -40,8 +40,10 @@ class FilterAndSortState:
         book_id = annotator.current_book.id if has_book else None
         return cls(
             filter_criteria=AnnotationFilterCriteria(book_id=book_id),
-            sort_criteria=AnnotationSortCriteria.Page if has_book else AnnotationSortCriteria.Date,
-            asc=has_book
+            sort_criteria=AnnotationSortCriteria.Page
+            if has_book
+            else AnnotationSortCriteria.Date,
+            asc=has_book,
         )
 
 
@@ -125,7 +127,7 @@ class BookmarksViewer(SimpleDialog):
         self.annotator = annotator(self.reader)
         # Translators: label for unnamed bookmarks shown
         # when editing a single bookmark which has no name
-        self._unamed_bookmark_title = _("(Unnamed)")
+        self._unamed_bookmark_title = _("[Unnamed Bookmark]")
         super().__init__(*args, **kwargs)
 
     def addControls(self, parent):
@@ -154,16 +156,24 @@ class BookmarksViewer(SimpleDialog):
 
     def _populate_list(self, focus_target=0):
         annotations = self.annotator.get_for_book()
-        self.annotationsListCtrl.set_columns(
-            [
-                # Translators: the title of a column in the bookmarks list
-                ColumnDefn(_("Name"), "left", 250, "title"),
-                # Translators: the title of a column in the bookmarks list
-                ColumnDefn(_("Page"), "center", 150, "page_number"),
-                # Translators: the title of a column in the bookmarks list
-                ColumnDefn(_("Section"), "left", 250, "section_title"),
-            ]
-        )
+        # Translators: the title of a column in the bookmarks list
+        column_defn = [
+            ColumnDefn(
+                _("Name"),
+                "left",
+                250,
+                lambda bk: bk.title or self._unamed_bookmark_title,
+            ),
+        ]
+        if not self.reader.document.is_fluid:
+            # Translators: the title of a column in the bookmarks list
+            column_defn.append(
+                ColumnDefn(_("Page"), "center", 150, lambda bk: bk.page_number + 1)
+            )
+        if self.reader.document.has_toc_tree:
+            # Translators: the title of a column in the bookmarks list
+            column_defn.append(ColumnDefn(_("Section"), "left", 250, "section_title"))
+        self.annotationsListCtrl.set_columns(column_defn)
         self.annotationsListCtrl.set_objects(annotations)
         self.FindWindowById(wx.ID_DELETE).Enable(len(annotations))
 
@@ -309,9 +319,11 @@ class AnnotationWithContentDialog(SimpleDialog):
             # Translators: the title of a column in the comments/highlights list
             ColumnDefn("Section", "left", 200, "section_title"),
             # Translators: the title of a column in the comments/highlights list
-            ColumnDefn("Page", "center", 150, "page_number"),
+            ColumnDefn("Page", "center", 150, lambda anot: anot.page_number + 1),
             # Translators: the title of a column in the comments/highlights list
-            ColumnDefn("Added", "right", 200, lambda a: format_datetime(a.date_created)),
+            ColumnDefn(
+                "Added", "right", 200, lambda a: format_datetime(a.date_created)
+            ),
         )
 
     def __init__(self, reader, annotator_cls, *args, can_edit=False, **kwargs):
@@ -361,15 +373,15 @@ class AnnotationWithContentDialog(SimpleDialog):
         self.itemsView.SetSizerProps(expand=True)
         self.buttonPanel = sc.SizedPanel(parent, -1)
         self.buttonPanel.SetSizerType("horizontal")
-        # Translators: text of a button in a dialog to view comments/highlights 
+        # Translators: text of a button in a dialog to view comments/highlights
         wx.Button(self.buttonPanel, wx.ID_PREVIEW, _("&View..."))
         if self.can_edit:
-            # Translators: text of a button in a dialog to view comments/highlights 
+            # Translators: text of a button in a dialog to view comments/highlights
             wx.Button(self.buttonPanel, wx.ID_EDIT, _("&Edit..."))
             self.Bind(wx.EVT_BUTTON, self.onEdit, id=wx.ID_EDIT)
-        # Translators: text of a button in a dialog to view comments/highlights 
+        # Translators: text of a button in a dialog to view comments/highlights
         wx.Button(self.buttonPanel, wx.ID_DELETE, _("&Delete..."))
-        # Translators: text of a button in a dialog to view comments/highlights 
+        # Translators: text of a button in a dialog to view comments/highlights
         exportButton = wx.Button(self.buttonPanel, -1, _("E&xport..."))
         self.Bind(wx.EVT_TOGGLEBUTTON, self.onSortMethodToggle, self.sortMethodToggle)
         self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onItemClick, self.itemsView)
@@ -381,11 +393,13 @@ class AnnotationWithContentDialog(SimpleDialog):
         self.set_items()
 
     def get_items(self):
-        getter_func = self.annotator.get_for_book if self.reader.ready else self.annotator.get_all
+        getter_func = (
+            self.annotator.get_for_book if self.reader.ready else self.annotator.get_all
+        )
         return getter_func(
             self._filter_and_sort_state.filter_criteria,
             self._filter_and_sort_state.sort_criteria,
-            self._filter_and_sort_state.asc
+            self._filter_and_sort_state.asc,
         )
 
     def set_items(self, items=None):
@@ -406,7 +420,7 @@ class AnnotationWithContentDialog(SimpleDialog):
                 btn.SetValue(False)
 
     def onFilter(self, book_id, tag, section_title, content):
-        self._filter_and_sort_state.filter_criteria= AnnotationFilterCriteria(
+        self._filter_and_sort_state.filter_criteria = AnnotationFilterCriteria(
             book_id=book_id, tag=tag, section_title=section_title, content_snip=content
         )
         self.on_filter_and_sort_state_changed()
@@ -414,7 +428,9 @@ class AnnotationWithContentDialog(SimpleDialog):
     def onSortToggle(self, event):
         if event.IsChecked():
             event.GetEventObject().SetValue(False)
-            self._filter_and_sort_state.sort_criteria = self._sort_toggles[event.GetEventObject()]
+            self._filter_and_sort_state.sort_criteria = self._sort_toggles[
+                event.GetEventObject()
+            ]
         self.on_filter_and_sort_state_changed()
 
     def onSortMethodToggle(self, event):
@@ -440,7 +456,7 @@ class AnnotationWithContentDialog(SimpleDialog):
             # Translators: title of a dialog to view or edit a single comment/highlight
             title=_("Editing") if editable else _("View"),
             annotation=item,
-            editable=editable
+            editable=editable,
         )
         with dlg:
             return dlg.ShowModal()
@@ -497,7 +513,8 @@ class AnnotationWithContentDialog(SimpleDialog):
             # Translators: title of a dialog that allows the user to edit the tag set of a comment/highlight
             title=_("Edit Tags"),
             # Translators: label of an edit control that allows the user to edit the tag set of a comment/highlight
-            label=_("Tags"), value=" ".join(item.tags)
+            label=_("Tags"),
+            value=" ".join(item.tags),
         )
         if new_tags is not None:
             self.annotator.update(item.id, tags=[t.strip() for t in new_tags.split()])
@@ -505,7 +522,7 @@ class AnnotationWithContentDialog(SimpleDialog):
 
     def onExport(self, event):
         items = tuple(self.get_items())
-        # Translators: title of a dialog that allows the user to customize 
+        # Translators: title of a dialog that allows the user to customize
         # how comments/highlights are exported
         with ExportNotesDialog(parent=self, title=_("Export Options")) as dlg:
             retval = dlg.ShowModal()
@@ -515,19 +532,22 @@ class AnnotationWithContentDialog(SimpleDialog):
             self.export_items(renderer_cls, items, export_options, open_after_export)
 
     def export_items(self, renderer_cls, items, export_options, open_after_export):
-        renderer = renderer_cls(items, export_options, self._filter_and_sort_state.filter_criteria)
+        renderer = renderer_cls(
+            items, export_options, self._filter_and_sort_state.filter_criteria
+        )
         resulting_file = renderer.render_to_file()
         if open_after_export:
             wx.LaunchDefaultApplication(resulting_file)
 
 
 class GenericAnnotationWithContentDialog(AnnotationWithContentDialog):
-
     @classmethod
     def column_defn(cls):
         column_defn = list(super().column_defn())
         # Translators: the title of a column in the comments/highlights list
-        column_defn.insert(1, ColumnDefn(_("Book"), "left", 300, lambda a: a.book.title))
+        column_defn.insert(
+            1, ColumnDefn(_("Book"), "left", 300, lambda a: a.book.title)
+        )
         return column_defn
 
     def set_default_state(self):
@@ -576,11 +596,15 @@ class ExportNotesDialog(SimpleDialog):
         self.includeBookTitleCheckbox = wx.CheckBox(parent, -1, _("Include book title"))
         self.includeSectionTitleCheckbox = wx.CheckBox(
             # Translators: label of a checkbox in a dialog to set export options for comments/highlights
-            parent, -1, _("Include section title")
+            parent,
+            -1,
+            _("Include section title"),
         )
         self.includePageNumberCheckbox = wx.CheckBox(
             # Translators: label of a checkbox in a dialog to set export options for comments/highlights
-            parent, -1, _("Include  page number")
+            parent,
+            -1,
+            _("Include  page number"),
         )
         # Translators: label of a checkbox in a dialog to set export options for comments/highlights
         self.includeTagsCheckbox = wx.CheckBox(parent, -1, _("Include tags"))

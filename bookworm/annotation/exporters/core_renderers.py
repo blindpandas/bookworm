@@ -131,4 +131,3 @@ class HTMLRenderer(MarkdownRenderer):
     # Translators: the name of a document file format
     display_name = _("HTML")
     output_ext = ".html"
-

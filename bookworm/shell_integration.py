@@ -86,7 +86,7 @@ def shell_integrate(supported="*"):
         return log.warning(
             "File association is not available when running from source."
         )
-    log.info(f"Registring file associations for extensions {supported}.")
+    log.info(f"Registering file associations for extensions {supported}.")
     register_application(app.prog_id, sys.executable, supported)
     doctypes = get_ext_info(supported)
     for (ext, (prog_id, desc, icon)) in doctypes.items():
@@ -99,7 +99,7 @@ def shell_disintegrate(supported="*"):
         return log.warning(
             "File association is not available when running from source."
         )
-    log.info(f"Unregistring file associations for extensions {supported}.")
+    log.info(f"Unregistering file associations for extensions {supported}.")
     exe = os.path.split(sys.executable)[-1]
     with RegKey.LocalSoftware("Applications") as apps_key:
         should_remove = False

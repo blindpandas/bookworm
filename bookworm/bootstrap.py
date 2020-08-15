@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import sys
 import os
 import platform
 import argparse
@@ -63,6 +64,7 @@ def setupSubsystems():
 def init_app_and_run_main_loop():
     log.info("Starting Bookworm.")
     log.info(f"Bookworm Version: {appinfo.version}")
+    log.info(f"Python version: {sys.version}")
     log.info(f"Platform: {wx.GetOsDescription()}")
     log.info(f"Windows version: {platform.platform()}")
     log.info(f"Application architecture: {appinfo.arch}")

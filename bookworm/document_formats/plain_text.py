@@ -1,11 +1,12 @@
 # coding: utf-8
 
-import io
+import os
+from io import StringIO
 from bookworm.utils import cached_property
 from bookworm.document_formats.base import (
-    BaseDocument,
-    BasePage,
+    FluidDocument,
     Section,
+    Pager,
     BookMetadata,
     DocumentCapability as DC,
     DocumentError,
@@ -16,17 +17,7 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-class PlainTextPage(BasePage):
-    """Simulate a page for a plain text document."""
-
-    def get_text(self):
-        return ""
-
-    def get_image(self, zoom_factor=1.0, enhance=False):
-        raise NotImplementedError
-
-
-class PlainTextDocument(BaseDocument):
+class PlainTextDocument(FluidDocument):
     """For plain text files"""
 
     format = "txt"
@@ -35,29 +26,21 @@ class PlainTextDocument(BaseDocument):
     extensions = ("*.txt",)
     capabilities = DC.FLUID_PAGINATION
 
-    def get_page(self, index: int) -> PlainTextPage:
-        return PlainTextPage
-
-    def __len__(self) -> int:
-        return self._ebook.pageCount
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.text_buffer: io.TextIOBase = None
-
-    def read(self, filetype=None):
+    def read(self):
+        self.text_buffer = StringIO()
+        with open(self.filename, "r", encoding="utf8") as file:
+            self.text_buffer.write(file.read())
         super().read()
+
+    def get_content(self):
+        return self.text_buffer.getvalue()
 
     def close(self):
         super().close()
 
     @cached_property
     def toc_tree(self):
-        return Section(
-            document=self,
-            title=self.metadata.title,
-            pager=Pager(first=0, last=max_page),
-        )
+        return Section(document=self, title="", pager=Pager(first=0, last=0),)
 
     @cached_property
     def metadata(self):

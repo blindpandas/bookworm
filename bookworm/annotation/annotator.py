@@ -108,10 +108,7 @@ class Annotator:
 
     @classmethod
     def get_all(
-        cls,
-        filter_criteria=None,
-        sort_criteria=AnnotationSortCriteria.Date,
-        asc=False,
+        cls, filter_criteria=None, sort_criteria=AnnotationSortCriteria.Date, asc=False,
     ):
         model = cls.model
         query = model.query

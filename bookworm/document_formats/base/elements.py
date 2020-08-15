@@ -62,7 +62,7 @@ class Section:
     implementation for use in the table of content.
     """
 
-    __slots__ = ["documentref", "title", "parent", "children", "pager", "data"]
+    __slots__ = ["documentref", "title", "parent", "children", "pager", "level", "data"]
 
     def __init__(
         self,
@@ -71,6 +71,7 @@ class Section:
         parent: t.Optional["Section"] = None,
         children: t.Optional[t.List["Section"]] = None,
         pager: t.Optional[Pager] = None,
+        level: t.Optional[int]=None,
         data: t.Optional[t.Dict[t.Hashable, t.Any]] = None,
     ):
         self.documentref = ref(document)
@@ -78,6 +79,7 @@ class Section:
         self.parent = parent
         self.children = children or []
         self.pager = pager
+        self.level = level
         self.data = data or {}
         for child in self.children:
             child.parent = self
@@ -162,3 +164,37 @@ class Section:
     @property
     def unique_identifier(self) -> str:
         return f"{self.title}-{self.pager.first}-{self.pager.last}"
+
+
+class TreeStackBuilder(list):
+    """
+    Helps in building a tree of nodes with appropriate nesting.
+    Use to build a toc tree consisting of `Section` nodes.
+    """
+
+    def __init__(self, root, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.root = root
+
+    @property
+    def top(self):
+        return self[-1] if self else self.root
+
+    @top.setter
+    def top(self, value):
+        self.append(value)
+
+    def push(self, node):
+        top_level, node_level = self.top.level, node.level
+        if  top_level < node_level:
+            self.top.append(node)
+            self.top = node
+        elif top_level > node_level:
+            top_node = self.top
+            while self and (top_node.level > node.level):
+                top_node = self.pop()
+            return self.push(node)
+        else:
+            parent = self.top if self.top.is_root else self.top.parent
+            parent.append(node)
+            self.top = node

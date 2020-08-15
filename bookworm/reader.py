@@ -7,12 +7,13 @@ from bookworm import typehints as t
 from bookworm import app
 from bookworm import config
 from bookworm import database
-from bookworm import speech
-from bookworm.resources import sounds
 from bookworm.i18n import is_rtl
 from bookworm.document_formats import (
     FitzDocument,
     FitzEPUBDocument,
+    PlainTextDocument,
+    HtmlDocument,
+    DocumentCapability,
     DocumentError,
     PaginationError,
 )
@@ -27,6 +28,14 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
+
+
+class ReaderError(Exception):
+    """Base class for all reader exceptions."""
+
+
+class UnsupportedDocumentError(ReaderError):
+    """File type/format is not supported."""
 
 
 class EBookReader:
@@ -44,7 +53,12 @@ class EBookReader:
 
     # A list of document classes
     # Each class supports a different file format
-    document_classes = (FitzEPUBDocument, FitzDocument)
+    document_classes = (
+        FitzEPUBDocument,
+        FitzDocument,
+        PlainTextDocument,
+        HtmlDocument,
+    )
 
     def __init__(self, view):
         self.supported_ebook_formats = {
@@ -60,46 +74,28 @@ class EBookReader:
     def load(self, ebook_path: t.PathLike) -> bool:
         ebook_format = self._detect_ebook_format(ebook_path)
         if ebook_format not in self.supported_ebook_formats:
-            self.view.notify_user(
-                # Translators: the title of a message shown
-                # when the format of the e-book is not supported
-                _("Unsupported Document Format"),
-                # Translators: the content of a message shown
-                # when the format of the e-book is not supported
-                _("The format of the given document is not supported by Bookworm."),
-                icon=wx.ICON_WARNING,
+            raise UnsupportedDocumentError(
+                f"The file type {ebook_format} is not supported"
             )
-            return
         document_cls = self.supported_ebook_formats[ebook_format]
         try:
             self.document = document_cls(filename=ebook_path)
             self.document.read()
         except DocumentError as e:
-            self.view.notify_user(
-                # Translators: the title of an error message
-                _("Error Openning Document"),
-                # Translators: the content of an error message
-                _(
-                    "Could not open file {file}\n."
-                    "Either the file  has been damaged during download, "
-                    "or it has been corrupted in some other way."
-                ).format(file=ebook_path),
-                icon=wx.ICON_ERROR,
-            )
-            log.exception(f"Error opening document.\r\n{e.args}", exc_info=True)
             self.reset()
-            return
+            raise ReaderError("Failed to open document", e)
         self.current_book = self.document.metadata
-        self.view.add_toc_tree(self.document.toc_tree)
+        # Set the view parameters
+        self.view.SetTitle(self.get_view_title(include_author=True))
         self.view.set_text_direction(is_rtl(self.document.language))
+        self.view.add_toc_tree(self.document.toc_tree)
+        # Set the context parameters
         self.__state.setdefault("current_page_index", -1)
         self.current_page = 0
-        self.view.SetTitle(self.get_view_title(include_author=True))
         last_position = database.get_last_position(ebook_path.lower())
         if last_position is not None:
             self.go_to_page(*last_position)
         reader_book_loaded.send(self)
-        return True
 
     def unload(self):
         if self.ready:
@@ -116,9 +112,7 @@ class EBookReader:
         if getattr(self.document, "_original_file_name", None):
             filename = self.document._original_file_name
         database.save_last_position(
-            filename.lower(),
-            self.current_page,
-            self.view.contentTextCtrl.InsertionPoint,
+            filename.lower(), self.current_page, self.view.get_insertion_point(),
         )
 
     @property
@@ -135,9 +129,14 @@ class EBookReader:
             value.unique_identifier == self.active_section.unique_identifier
         ):
             return
+        if not self.document.has_toc_tree:
+            self.__state["active_section"] = self.document.toc_tree
+            return
         self.__state["active_section"] = value
-        self.view.tocTreeSetSelection(value)
-        speech.announce(value.title)
+        if self.document.is_fluid:
+            self.view.set_insertion_point(value.data["position"])
+        else:
+            self.view.set_state_on_section_change(value)
         reader_section_changed.send(self, active=value)
 
     @property
@@ -152,21 +151,9 @@ class EBookReader:
             raise PaginationError("Page out of range.")
         self.__state["current_page_index"] = value
         page = self.document[value]
-        self.view.set_content(page.get_text())
         self.active_section = page.section
-        if config.conf["general"]["play_pagination_sound"]:
-            sounds.pagination.play()
-        # Translators: the label of the page content text area
-        cmsg = _("Page {page} | {chapter}").format(
-            page=page.number, chapter=page.section.title
-        )
-        # Translators: a message that is announced after navigating to a page
-        smsg = _("Page {page} of {total}").format(
-            page=page.number, total=len(self.document)
-        )
-        self.view.SetStatusText(cmsg)
-        speech.announce(smsg)
-        reader_page_changed.send(self, current=value, prev=-1)
+        self.view.set_state_on_page_change(page)
+        reader_page_changed.send(self, current=page, prev=None)
 
     @property
     def current_page_object(self) -> BasePage:
@@ -175,7 +162,7 @@ class EBookReader:
 
     def go_to_page(self, page_number: int, pos: int = 0) -> bool:
         self.current_page = page_number
-        self.view.contentTextCtrl.SetInsertionPoint(pos)
+        self.view.set_insertion_point(pos)
 
     def navigate(self, to: str, unit: str) -> bool:
         """

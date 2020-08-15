@@ -6,7 +6,6 @@ from bookworm import config
 from bookworm.document_formats import PaginationError
 from bookworm.signals import reader_page_changed
 from bookworm.logger import logger
-from .decorators import only_when_reader_ready
 
 
 # Time_out of consecutive key presses in seconds
@@ -34,9 +33,10 @@ class NavigationProvider:
         if self.callback_func is not None:
             return self.callback_func()
 
-    @only_when_reader_ready
     def onKeyUp(self, event):
         event.Skip()
+        if not self.reader.ready:
+            return
         key_code = event.GetKeyCode()
         if isinstance(event.GetEventObject(), wx.TextCtrl) and key_code in (
             wx.WXK_UP,
@@ -81,7 +81,6 @@ class NavigationProvider:
             if key_code in self.zoom_keymap:
                 self.zoom_callback(self.zoom_keymap[key_code])
 
-    @only_when_reader_ready
     def onTextCtrlNavigateNext(self, event):
         self.reader.go_to_next()
 

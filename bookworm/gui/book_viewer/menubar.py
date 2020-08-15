@@ -24,14 +24,13 @@ from bookworm.reader import EBookReader
 from bookworm.utils import restart_application, cached_property, gui_thread_safe
 from bookworm.logger import logger
 from bookworm.gui.settings import PreferencesDialog
-from bookworm.gui.book_viewer.decorators import only_when_reader_ready
 from bookworm.gui.book_viewer.core_dialogs import (
     GoToPageDialog,
     SearchBookDialog,
     SearchResultsDialog,
 )
 from .render_view import ViewPageAsImageDialog
-from ._menu_constants import *
+from .menu_constants import *
 
 
 log = logger.getChild(__name__)
@@ -215,7 +214,6 @@ class FileMenu(BaseMenu):
         with dlg:
             dlg.ShowModal()
 
-    @only_when_reader_ready
     def onCloseCurrentFile(self, event):
         self.view.unloadCurrentEbook()
         self.populate_recent_file_list()
@@ -292,7 +290,6 @@ class SearchMenu(BaseMenu):
     def after_unloading_book(self, sender):
         self._reset_search_history()
 
-    @only_when_reader_ready
     def onGoToPage(self, event):
         # Translators: the title of the go to page dialog
         with GoToPageDialog(parent=self.view, title=_("Go To Page")) as dlg:
@@ -300,7 +297,6 @@ class SearchMenu(BaseMenu):
                 retval = dlg.GetValue()
                 self.reader.go_to_page(retval)
 
-    @only_when_reader_ready
     def onFind(self, event):
         # Translators: the title of the search dialog
         dlg = SearchBookDialog(parent=self.view, title=_("Search book"))
@@ -323,6 +319,7 @@ class SearchMenu(BaseMenu):
         # shown when the search process is not done yet
         dlg = SearchResultsDialog(
             self.highlight_search_result,
+            (request.to_page - request.to_page) or 1,
             self.view,
             title=_("Searching For '{term}'").format(term=term),
         )
@@ -333,17 +330,14 @@ class SearchMenu(BaseMenu):
     def _add_search_results(self, request, dlg):
         search_func = self.reader.document.search
         total = 0
-        for page, snip, section, pos in search_func(request):
-            if pos is None:
-                wx.CallAfter(
-                    dlg.progressbar.SetValue, round((page / request.to_page) * 100)
-                )
-                continue
-            if not dlg.IsShown():
-                break
-            wx.CallAfter(dlg.addResult, page, snip, section, pos)
-            self._latest_search_results.append((page, snip, section, pos))
-            total += 1
+        for (i, resultset) in enumerate(search_func(request)):
+            wx.CallAfter(dlg.updateProgress, i + 1)
+            for page, snip, section, pos in resultset:
+                if not dlg.IsShown():
+                    break
+                wx.CallAfter(dlg.addResult, page, snip, section, pos)
+                self._latest_search_results.append((page, snip, section, pos))
+                total += 1
         if dlg.IsShown():
             # Translators: the final title of the search results dialog
             # shown after the search is finished
@@ -351,7 +345,6 @@ class SearchMenu(BaseMenu):
             dlg.SetTitle(msg)
             speech.announce(msg, True)
 
-    @only_when_reader_ready
     def onFindNext(self, event):
         result_count = len(self._latest_search_results)
         next_result = self._last_search_index + 1
@@ -361,7 +354,6 @@ class SearchMenu(BaseMenu):
         page_number, *_, pos = self._latest_search_results[self._last_search_index]
         self.highlight_search_result(page_number, pos)
 
-    @only_when_reader_ready
     def onFindPrev(self, event):
         result_count = len(self._latest_search_results)
         prev_result = self._last_search_index - 1
@@ -407,7 +399,6 @@ class ToolsMenu(BaseMenu):
             DC.GRAPHICAL_RENDERING in self.reader.document.capabilities
         )
 
-    @only_when_reader_ready
     def onViewRenderedAsImage(self, event):
         # Translators: the title of the render page dialog
         with ViewPageAsImageDialog(
