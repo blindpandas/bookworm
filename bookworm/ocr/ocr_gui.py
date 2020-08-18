@@ -370,7 +370,7 @@ class OCRMenu(wx.Menu):
                 if self.service.reader.ready:
                     self.view.unloadCurrentEbook()
                 self.view.set_content(content)
-                self.view.SetStatusText(_("OCR Results"))
+                self.view.set_status(_("OCR Results"))
 
             self._run_ocr(
                 lang, image.samples, image.w, image.h, _ocr_callback, data=None

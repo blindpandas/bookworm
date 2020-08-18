@@ -96,7 +96,7 @@ class ServiceHandler:
     def get_stateful_menu_ids(self):
         rv = set()
         for service in self._get_services_with_gui():
-            rv.update(service.stateful_menu_ids)
+            rv.update(service.stateful_menu_ids or ())
         return rv
 
     def get_keyboard_shourtcuts(self):

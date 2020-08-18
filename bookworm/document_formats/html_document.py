@@ -1,6 +1,5 @@
 # coding: utf-8
 
-
 from pathlib import Path
 from io import StringIO
 from selectolax.parser import HTMLParser
@@ -20,7 +19,7 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 HEADING_TAGS = {f"{h}{level}" for level in range(1, 7) for h in ("h", "H")}
-BLOCK_TAGS = {"p", "br", "div", "ul", "ol", "li",}
+BLOCK_TAGS = {"p", "br", "div", "ul", "ol", "li", "table"}
 IGNORED_TAGS = {"script", "style",}
 
 
@@ -31,18 +30,21 @@ class HtmlDocument(FluidDocument):
     # Translators: the name of a document file format
     name = _("Web page")
     extensions = ("*.html", "*.htm", "*.xhtml")
-    capabilities = DC.FLUID_PAGINATION|DC.TOC_TREE|DC.METADATA
+    capabilities = DC.FLUID_PAGINATION|DC.TOC_TREE|DC.METADATA|DC.ASYNC_READ
+
+    def _get_document_content(self):
+        with open(self.filename, "r", encoding="utf8") as file:
+            return file.read()
 
     def read(self):
         self.text_buffer = StringIO()
         self._outline = None
         self._metainfo = None
-        with open(self.filename, "r", encoding="utf8") as file:
-            self._parse_html(file.read())
+        self._parse_html(self._get_document_content())
         super().read()
 
     def get_content(self):
-        return self.text_buffer.getvalue()
+        return self.text_buffer.getvalue().strip()
 
     def close(self):
         super().close()
@@ -72,7 +74,7 @@ class HtmlDocument(FluidDocument):
         pager = Pager(first=0, last=0)
         root = Section(document=self, pager=pager, title=title, level=1, data={"position": 0})
         stack = TreeStackBuilder(root)
-        for node in html.body.traverse():
+        for node in html.body.iter():
             if node.tag in IGNORED_TAGS:
                 continue
             node_text = node.text().strip("\n")
@@ -87,5 +89,8 @@ class HtmlDocument(FluidDocument):
                 stack.push(section)
                 self.text_buffer.write(NEWLINE + node_text + NEWLINE)
             elif node.tag in BLOCK_TAGS:
-                self.text_buffer.write(NEWLINE + node_text + NEWLINE)
+                self.text_buffer.write(node_text + NEWLINE)
+            else:
+                self.text_buffer.write(node_text)
         self._outline = root
+

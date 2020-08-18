@@ -78,8 +78,10 @@ class SearchResultsDialog(Dialog):
         btnsizer.Realize()
         return btnsizer
 
+    @gui_thread_safe
     def updateProgress(self, value):
-        self.progressbar.SetValue(value)
+        if self.IsShown():
+            self.progressbar.SetValue(value)
 
     def onItemClick(self, event):
         idx = self.searchResultsListCtrl.GetFocusedItem()
@@ -95,16 +97,19 @@ class SearchResultsDialog(Dialog):
             self.highlight_func(int(page) - 1, pos)
             self.parent._last_search_index = idx
 
-    def addResult(self, page, snip, section, pos):
+    @gui_thread_safe
+    def addResult(self, result):
+        if not self.IsShown():
+            return
         count = self.searchResultsListCtrl.ItemCount
         if self.reader.document.is_fluid:
-            index = self.searchResultsListCtrl.InsertItem(count, snip)
+            index = self.searchResultsListCtrl.InsertItem(count, result.excerpt)
         else:
-            index = self.searchResultsListCtrl.InsertItem(count, str(page + 1))
-            self.searchResultsListCtrl.SetItem(index, 1, snip)
+            index = self.searchResultsListCtrl.InsertItem(count, str(result.page + 1))
+            self.searchResultsListCtrl.SetItem(index, 1, result.excerpt)
         if self.reader.document.has_toc_tree:
-            self.searchResultsListCtrl.SetItem(index, 2, section)
-        self.searchResultsListCtrl.SetItemData(index, pos)
+            self.searchResultsListCtrl.SetItem(index, 2, result.section)
+        self.searchResultsListCtrl.SetItemData(index, result.position)
 
 
 class SearchBookDialog(SimpleDialog):

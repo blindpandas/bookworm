@@ -555,24 +555,13 @@ class GenericAnnotationWithContentDialog(AnnotationWithContentDialog):
         self._filter_and_sort_state.asc = False
 
     def go_to_item(self, item):
-        book_path = Path(item.book.file_path)
-        if book_path.exists():
-            if self.service.view.open_file(str(book_path)):
-                super().go_to_item(item)
-                if isinstance(self.annotator, NoteTaker):
-                    self.service.view.set_insertion_point(item.position)
-                else:
-                    self.service.view.select_text(item.start_pos, item.end_pos)
-        else:
-            wx.MessageBox(
-                # Translators: content of a dialog informing the user
-                _(
-                    "Could not find eBook file. The file has been renamed, moved, or deleted."
-                ),
-                # Translators: title of a dialog informing the user
-                _("Could not open eBook"),
-                style=wx.ICON_WARNING,
-            )
+        def book_load_callback():
+            super(GenericAnnotationWithContentDialog, self).go_to_item(item)
+            if isinstance(self.annotator, NoteTaker):
+                self.service.view.set_insertion_point(item.position)
+            else:
+                self.service.view.select_text(item.start_pos, item.end_pos)
+        self.service.view.open_file(item.book.file_path, callback=book_load_callback)
 
 
 class CommentsDialog(AnnotationWithContentDialog):

@@ -6,6 +6,7 @@ import wx
 import wx.lib.mixins.listctrl as listmix
 import wx.lib.sized_controls as sc
 import wx.lib.newevent
+from collections.abc import Container
 from dataclasses import dataclass
 from itertools import chain
 import bookworm.typehints as t
@@ -20,6 +21,20 @@ def make_sized_static_box(parent, title):
     stbx.SetSizerProp("expand", True)
     stbx.Sizer.AddSpacer(25)
     return stbx
+
+
+@dataclass
+class SelectionRange(Container):
+    """Represents a text range in an edit control."""
+
+    start: int
+    end: int
+
+    def __contains__(self, x):
+        return self.start <= x <= self.end
+
+    def __iter__(self):
+        return iter((self.start, self.end))
 
 
 class CustomContextMenuTextCtrl(wx.TextCtrl):

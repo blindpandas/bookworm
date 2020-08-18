@@ -19,6 +19,7 @@ from bookworm.document_formats.base import (
     Pager,
     DocumentCapability as DC,
     DocumentError,
+    TreeStackBuilder,
 )
 from bookworm.logger import logger
 

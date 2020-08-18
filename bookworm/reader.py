@@ -33,6 +33,9 @@ log = logger.getChild(__name__)
 class ReaderError(Exception):
     """Base class for all reader exceptions."""
 
+class ResourceDoesNotExist(ReaderError):
+    """The file does not exist."""
+
 
 class UnsupportedDocumentError(ReaderError):
     """File type/format is not supported."""
@@ -77,6 +80,8 @@ class EBookReader:
             raise UnsupportedDocumentError(
                 f"The file type {ebook_format} is not supported"
             )
+        if not os.path.isfile(ebook_path):
+            raise ResourceDoesNotExist(f"Could not open file: {ebook_path}")
         document_cls = self.supported_ebook_formats[ebook_format]
         try:
             self.document = document_cls(filename=ebook_path)
@@ -86,7 +91,7 @@ class EBookReader:
             raise ReaderError("Failed to open document", e)
         self.current_book = self.document.metadata
         # Set the view parameters
-        self.view.SetTitle(self.get_view_title(include_author=True))
+        self.view.set_title(self.get_view_title(include_author=True))
         self.view.set_text_direction(is_rtl(self.document.language))
         self.view.add_toc_tree(self.document.toc_tree)
         # Set the context parameters
@@ -155,8 +160,7 @@ class EBookReader:
         self.view.set_state_on_page_change(page)
         reader_page_changed.send(self, current=page, prev=None)
 
-    @property
-    def current_page_object(self) -> BasePage:
+    def get_current_page_object(self) -> BasePage:
         """Return the current page."""
         return self.document[self.current_page]
 

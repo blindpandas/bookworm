@@ -176,6 +176,10 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         return self[page_number].get_image(zoom_factor, enhance)
 
     @property
+    def supports_async_read(self):
+        return DocumentCapability.ASYNC_READ in self.capabilities
+
+    @property
     def is_fluid(self):
         return DocumentCapability.FLUID_PAGINATION in self.capabilities
 

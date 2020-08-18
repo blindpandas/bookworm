@@ -31,6 +31,15 @@ class SearchRequest:
     to_page: int
 
 
+@dataclass
+class SearchResult:
+    """Holds information about a single search result."""
+    excerpt: str
+    page: int
+    position: int
+    section: str
+
+
 @dataclass(frozen=True, order=True)
 class Pager(Container, Iterable, Sized):
     """Basically, this is a glorified `range` iterator."""

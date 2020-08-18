@@ -6,7 +6,9 @@ import sys
 import os
 import wx
 import webbrowser
+from operator import ge, le
 from pathlib import Path
+from chemical import it
 from slugify import slugify
 from bookworm import config
 from bookworm import paths
@@ -329,42 +331,47 @@ class SearchMenu(BaseMenu):
     @call_threaded
     def _add_search_results(self, request, dlg):
         search_func = self.reader.document.search
-        total = 0
+        results = []
         for (i, resultset) in enumerate(search_func(request)):
-            wx.CallAfter(dlg.updateProgress, i + 1)
-            for page, snip, section, pos in resultset:
-                if not dlg.IsShown():
-                    break
-                wx.CallAfter(dlg.addResult, page, snip, section, pos)
-                self._latest_search_results.append((page, snip, section, pos))
-                total += 1
+            results.extend(resultset)
+            dlg.updateProgress(i + 1)
+            it(resultset).for_each(lambda res: dlg.addResult(res)).go()
         if dlg.IsShown():
             # Translators: the final title of the search results dialog
             # shown after the search is finished
-            msg = _("Results | {total}").format(total=total)
+            msg = _("Results | {total}").format(total=len(results))
             dlg.SetTitle(msg)
             speech.announce(msg, True)
+        self._latest_search_results = tuple(results)
+
+    def go_to_search_result(self, foreword=True):
+        result = None
+        page, (sol, eol) = self.reader.current_page, self.view.get_selection_range()
+        if foreword:
+            filter_func  = lambda sr: (
+                ((sr.page == page) and (sr.position > eol))
+                or (sr.page > page)
+            )
+        else:
+            filter_func  = lambda sr: (
+                ((sr.page == page) and (sr.position < sol))
+                or (sr.page < page)
+            )
+        result_iter = it(self._latest_search_results).filter(filter_func)
+        try:
+            result = (result_iter if foreword else result_iter.rev()).next()
+        except StopIteration:
+            return wx.Bell()
+        self.highlight_search_result(result.page, result.position)
 
     def onFindNext(self, event):
-        result_count = len(self._latest_search_results)
-        next_result = self._last_search_index + 1
-        if not result_count or (next_result >= result_count):
-            return wx.Bell()
-        self._last_search_index = next_result
-        page_number, *_, pos = self._latest_search_results[self._last_search_index]
-        self.highlight_search_result(page_number, pos)
+        self.go_to_search_result(foreword=True)
 
     def onFindPrev(self, event):
-        result_count = len(self._latest_search_results)
-        prev_result = self._last_search_index - 1
-        if not result_count or (prev_result < 0):
-            return wx.Bell()
-        self._last_search_index = prev_result
-        page_number, *_, pos = self._latest_search_results[self._last_search_index]
-        self.highlight_search_result(page_number, pos)
+        self.go_to_search_result(foreword=False)
 
     def _reset_search_history(self):
-        self._latest_search_results = []
+        self._latest_search_results = ()
         self._last_search_index = 0
         self._recent_search_term = ""
 
@@ -372,7 +379,7 @@ class SearchMenu(BaseMenu):
     def highlight_search_result(self, page_number, pos):
         self.reader.go_to_page(page_number)
         start, end = self.view.get_containing_line(pos)
-        self.view.contentTextCtrl.SetSelection(start, end)
+        self.view.select_text(start, end)
 
 
 class ToolsMenu(BaseMenu):

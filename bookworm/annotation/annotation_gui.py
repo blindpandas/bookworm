@@ -1,13 +1,12 @@
 # coding: utf-8
 
 import wx
-from collections.abc import Container
-from dataclasses import dataclass
 from enum import IntEnum
 from bookworm import config
 from bookworm import speech
 from bookworm.utils import gui_thread_safe
 from bookworm.gui.settings import SettingsPanel
+from bookworm.gui.components import SelectionRange 
 from bookworm.logger import logger
 from .annotator import Bookmarker, NoteTaker, Quoter
 from .annotation_dialogs import (
@@ -63,17 +62,6 @@ ANNOTATIONS_KEYBOARD_SHORTCUTS = {
     AnnotationsMenuIds.addNote: "Ctrl-M",
     AnnotationsMenuIds.quoteSelection: "Ctrl-H",
 }
-
-
-@dataclass
-class SelectionRange(Container):
-    """Represents a text range in an edit control."""
-
-    start: int
-    end: int
-
-    def __contains__(self, x):
-        return self.start <= x <= self.end
 
 
 class AnnotationMenu(wx.Menu):
@@ -227,7 +215,7 @@ class AnnotationMenu(wx.Menu):
         selected_text = self.view.contentTextCtrl.GetStringSelection()
         if not selected_text:
             return speech.announce(_("No selection"))
-        x, y = self.view.contentTextCtrl.GetSelection()
+        x, y = self.view.get_selection_range()
         for q in quoter.get_for_page():
             q_range = SelectionRange(q.start_pos, q.end_pos)
             if (q_range.start == x) and (q_range.end == y):

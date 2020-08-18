@@ -5,6 +5,8 @@
 import regex as re
 from io import StringIO
 from bookworm.utils import NEWLINE, search
+from .elements import SearchResult
+
 
 
 def export_to_plain_text(doc, target_filename, channel):
@@ -17,8 +19,11 @@ def export_to_plain_text(doc, target_filename, channel):
         text = doc.get_page_content(n)
         out.write(f"{text}{NEWLINE}\f{NEWLINE}")
         channel.push(n)
+    full_text = out.getvalue()
+    if doc.is_fluid:
+        full_text = full_text.strip()
     with open(target_filename, "w", encoding="utf8") as file:
-        file.write(out.getvalue())
+        file.write(full_text)
     out.close()
     doc.close()
     channel.close()
@@ -40,7 +45,12 @@ def search_book(doc, request, channel):
         resultset = []
         sect = doc[n].section.title
         for pos, snip in search(pattern, doc.get_page_content(n)):
-            resultset.append((n, snip, sect, pos))
+            resultset.append(SearchResult(
+                excerpt=snip,
+                page=n,
+                position=pos,
+                section=sect
+            ))
         channel.push(resultset)
     doc.close()
     channel.close()

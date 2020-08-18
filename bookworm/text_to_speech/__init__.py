@@ -44,6 +44,7 @@ from .tts_gui import (
 )
 
 log = logger.getChild(__name__)
+MAX_TOKENIZED_CHARS = 7500
 speech_engine_state_changed = _signals.signal("speech-engine.state-changed")
 
 
@@ -210,7 +211,8 @@ class TextToSpeechService(BookwormService):
                 current_pos = self.textCtrl.GetInsertionPoint()
             else:
                 current_pos = 0
-        end_of_page = self.textCtrl.GetLastPosition()
+        text_length = self.textCtrl.GetLastPosition()
+        end_of_page = text_length if text_length <= MAX_TOKENIZED_CHARS else MAX_TOKENIZED_CHARS
         text = self.textCtrl.GetRange(current_pos, end_of_page)
         return self.make_text_info(text, start_pos=current_pos)
 
