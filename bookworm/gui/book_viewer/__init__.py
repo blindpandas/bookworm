@@ -9,7 +9,12 @@ from bookworm import config
 from bookworm import speech
 from bookworm.resources import sounds, images
 from bookworm.paths import app_path
-from bookworm.reader import EBookReader, ReaderError, ResourceDoesNotExist, UnsupportedDocumentError
+from bookworm.reader import (
+    EBookReader,
+    ReaderError,
+    ResourceDoesNotExist,
+    UnsupportedDocumentError,
+)
 from bookworm.signals import reader_book_loaded, reader_book_unloaded
 from bookworm.utils import gui_thread_safe
 from bookworm.gui.components import CustomContextMenuTextCtrl, SelectionRange
@@ -31,7 +36,9 @@ class ResourceLoader:
         self.callback = callback
 
     def load(self):
-        with reader_book_loaded.connected_to(self.book_loaded_handler, sender=self.view.reader):
+        with reader_book_loaded.connected_to(
+            self.book_loaded_handler, sender=self.view.reader
+        ):
             with self.handle_reader_exceptions():
                 self.view.reader.load(self.filename)
 
@@ -144,7 +151,6 @@ class ResourceLoader:
                 style=wx.ICON_ERROR,
             )
         return bool(res)
-    
 
 
 class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
@@ -290,7 +296,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.tocTreeCtrl.SetFocus()
 
     def open_file(self, filename: t.PathLike, callback=None):
-        ResourceLoader(self, filename, callback=callback or self.default_book_loaded_callback).load()
+        ResourceLoader(
+            self, filename, callback=callback or self.default_book_loaded_callback
+        ).load()
 
     @gui_thread_safe
     def set_content(self, content):
@@ -408,7 +416,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         return wx.Point(100, 100)
 
     @gui_thread_safe
-    def highlight_range(self, start, end, foreground=wx.NullColour, background=wx.NullColour):
+    def highlight_range(
+        self, start, end, foreground=wx.NullColour, background=wx.NullColour
+    ):
         self.contentTextCtrl.SetStyle(start, end, wx.TextAttr(foreground, background))
 
     @gui_thread_safe

@@ -22,7 +22,7 @@ debug = False
 # The programatic identifier used in file association
 prog_id = "bookworm.a11y.reader.1"
 # These variables are set upon app initialization
-args = extra_args = command_line_mode = current_language = None
+args = extra_args = command_line_mode = as_main = current_language = None
 
 # Version pattern
 VERSION_PATTERN = r"""

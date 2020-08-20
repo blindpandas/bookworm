@@ -6,7 +6,7 @@ from bookworm import config
 from bookworm import speech
 from bookworm.utils import gui_thread_safe
 from bookworm.gui.settings import SettingsPanel
-from bookworm.gui.components import SelectionRange 
+from bookworm.gui.components import SelectionRange
 from bookworm.logger import logger
 from .annotator import Bookmarker, NoteTaker, Quoter
 from .annotation_dialogs import (

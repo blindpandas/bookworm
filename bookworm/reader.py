@@ -33,6 +33,7 @@ log = logger.getChild(__name__)
 class ReaderError(Exception):
     """Base class for all reader exceptions."""
 
+
 class ResourceDoesNotExist(ReaderError):
     """The file does not exist."""
 
@@ -94,7 +95,6 @@ class EBookReader:
         self.view.set_title(self.get_view_title(include_author=True))
         self.view.set_text_direction(is_rtl(self.document.language))
         self.view.add_toc_tree(self.document.toc_tree)
-        # Set the context parameters
         self.__state.setdefault("current_page_index", -1)
         self.current_page = 0
         last_position = database.get_last_position(ebook_path.lower())
@@ -104,13 +104,16 @@ class EBookReader:
 
     def unload(self):
         if self.ready:
-            self.save_current_position()
+            log.debug("Saving current position.")
+            try:
+                self.save_current_position()
+            except:
+                log.exception("Failed to save current position.", exc_info=True)
             self.document.close()
             self.reset()
             reader_book_unloaded.send(self)
 
     def save_current_position(self):
-        log.debug("Saving current position.")
         filename = self.document.filename
         # Some times we may need to shadow the original document with another
         #  one, for example when we decrypt it, or when we make it a11y friendly
@@ -134,13 +137,8 @@ class EBookReader:
             value.unique_identifier == self.active_section.unique_identifier
         ):
             return
-        if not self.document.has_toc_tree:
-            self.__state["active_section"] = self.document.toc_tree
-            return
         self.__state["active_section"] = value
-        if self.document.is_fluid:
-            self.view.set_insertion_point(value.data["position"])
-        else:
+        if self.document.has_toc_tree:
             self.view.set_state_on_section_change(value)
         reader_section_changed.send(self, active=value)
 
@@ -153,7 +151,10 @@ class EBookReader:
         if value == self.current_page:
             return
         if value not in self.document:
-            raise PaginationError("Page out of range.")
+            raise PaginationError(
+                f"Page {value} is out of range."
+                f"Total number of pages in the document is: {len(self.document)}"
+            )
         self.__state["current_page_index"] = value
         page = self.document[value]
         self.active_section = page.section

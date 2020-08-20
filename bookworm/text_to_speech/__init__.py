@@ -212,7 +212,9 @@ class TextToSpeechService(BookwormService):
             else:
                 current_pos = 0
         text_length = self.textCtrl.GetLastPosition()
-        end_of_page = text_length if text_length <= MAX_TOKENIZED_CHARS else MAX_TOKENIZED_CHARS
+        end_of_page = (
+            text_length if text_length <= MAX_TOKENIZED_CHARS else MAX_TOKENIZED_CHARS
+        )
         text = self.textCtrl.GetRange(current_pos, end_of_page)
         return self.make_text_info(text, start_pos=current_pos)
 

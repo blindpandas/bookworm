@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import regex
 from io import StringIO
 from bookworm.utils import cached_property
 from bookworm.document_formats.base import (
@@ -15,6 +16,7 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
+MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
 
 
 class PlainTextDocument(FluidDocument):
@@ -33,7 +35,7 @@ class PlainTextDocument(FluidDocument):
         super().read()
 
     def get_content(self):
-        return self.text_buffer.getvalue()
+        return MORE_THAN_ONE_LINE.sub("\n", self.text_buffer.getvalue())
 
     def close(self):
         super().close()

@@ -156,20 +156,22 @@ class BookmarksViewer(SimpleDialog):
 
     def _populate_list(self, focus_target=0):
         annotations = self.annotator.get_for_book()
-        # Translators: the title of a column in the bookmarks list
         column_defn = [
             ColumnDefn(
+                # Translators: the title of a column in the bookmarks list
                 _("Name"),
                 "left",
                 250,
                 lambda bk: bk.title or self._unamed_bookmark_title,
             ),
+            ColumnDefn(
+                # Translators: the title of a column in the bookmarks list
+                _("Page"),
+                "center",
+                150,
+                lambda bk: bk.page_number + 1,
+            ),
         ]
-        if not self.reader.document.is_fluid:
-            # Translators: the title of a column in the bookmarks list
-            column_defn.append(
-                ColumnDefn(_("Page"), "center", 150, lambda bk: bk.page_number + 1)
-            )
         if self.reader.document.has_toc_tree:
             # Translators: the title of a column in the bookmarks list
             column_defn.append(ColumnDefn(_("Section"), "left", 250, "section_title"))
@@ -561,6 +563,7 @@ class GenericAnnotationWithContentDialog(AnnotationWithContentDialog):
                 self.service.view.set_insertion_point(item.position)
             else:
                 self.service.view.select_text(item.start_pos, item.end_pos)
+
         self.service.view.open_file(item.book.file_path, callback=book_load_callback)
 
 

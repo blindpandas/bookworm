@@ -1,7 +1,9 @@
 # coding: utf-8
 
+import sys
 import os
 import multiprocessing as mp
+from traceback import format_exception
 from enum import IntEnum
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from functools import wraps
@@ -61,8 +63,9 @@ class QPChannel:
     def push(self, value: t.Any):
         self.queue.put((QPResult.OK, value))
 
-    def exception(self, exc: Exception):
-        self.queue.put((QPResult.FAILED, exc))
+    def exception(self, exc_type, exc_value, tb):
+        tb_text = "".join(format_exception(exc_type, exc_value, tb))
+        self.queue.put((QPResult.FAILED, (exc_value, tb_text)))
 
     def log(self, msg: str):
         self.queue.put((QPResult.DEBUG, f"PID: {os.getpid()}; {msg}"))
@@ -92,8 +95,8 @@ class QueueProcess(mp.Process):
         channel = QPChannel(self.queue)
         try:
             self._target(*self._args, **self._kwargs, channel=channel)
-        except Exception as e:
-            channel.exception(e)
+        except:
+            channel.exception(*sys.exc_info())
 
     def close(self):
         super().close()
@@ -115,6 +118,8 @@ class QueueProcess(mp.Process):
             elif flag is QPResult.COMPLETED:
                 break
             elif flag is QPResult.FAILED:
-                raise result
+                exc_value, tb_text = result
+                log.exception(f"Remote exception from {self}.\nTraceback:\n{tb_text}")
+                raise exc_value
         self.join()
         self.close()

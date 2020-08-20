@@ -34,13 +34,12 @@ class SearchResultsDialog(Dialog):
         # Translators: the label of a list of search results
         label = wx.StaticText(parent, -1, _("Search Results"))
         self.searchResultsListCtrl = DialogListCtrl(parent, -1)
-        if not self.reader.document.is_fluid:
-            self.searchResultsListCtrl.AppendColumn(
-                # Translators: the title of a column in the search results list
-                _("Page"),
-                format=wx.LIST_FORMAT_LEFT,
-                width=20,
-            )
+        self.searchResultsListCtrl.AppendColumn(
+            # Translators: the title of a column in the search results list
+            _("Page"),
+            format=wx.LIST_FORMAT_LEFT,
+            width=20,
+        )
         self.searchResultsListCtrl.AppendColumn(
             # Translators: the title of a column in the search results list showing
             # an excerpt of the text of the search result
@@ -102,11 +101,11 @@ class SearchResultsDialog(Dialog):
         if not self.IsShown():
             return
         count = self.searchResultsListCtrl.ItemCount
-        if self.reader.document.is_fluid:
-            index = self.searchResultsListCtrl.InsertItem(count, result.excerpt)
-        else:
-            index = self.searchResultsListCtrl.InsertItem(count, str(result.page + 1))
-            self.searchResultsListCtrl.SetItem(index, 1, result.excerpt)
+        page_display_text = (
+            str(result.page + 1) if not self.reader.document.is_fluid else ""
+        )
+        index = self.searchResultsListCtrl.InsertItem(count, page_display_text)
+        self.searchResultsListCtrl.SetItem(index, 1, result.excerpt)
         if self.reader.document.has_toc_tree:
             self.searchResultsListCtrl.SetItem(index, 2, result.section)
         self.searchResultsListCtrl.SetItemData(index, result.position)

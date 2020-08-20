@@ -34,6 +34,7 @@ class SearchRequest:
 @dataclass
 class SearchResult:
     """Holds information about a single search result."""
+
     excerpt: str
     page: int
     position: int
@@ -71,7 +72,16 @@ class Section:
     implementation for use in the table of content.
     """
 
-    __slots__ = ["documentref", "title", "parent", "children", "pager", "level", "data"]
+    __slots__ = [
+        "documentref",
+        "title",
+        "parent",
+        "children",
+        "pager",
+        "position",
+        "level",
+        "data",
+    ]
 
     def __init__(
         self,
@@ -80,7 +90,8 @@ class Section:
         parent: t.Optional["Section"] = None,
         children: t.Optional[t.List["Section"]] = None,
         pager: t.Optional[Pager] = None,
-        level: t.Optional[int]=None,
+        position: int = 0,
+        level: t.Optional[int] = None,
         data: t.Optional[t.Dict[t.Hashable, t.Any]] = None,
     ):
         self.documentref = ref(document)
@@ -88,6 +99,7 @@ class Section:
         self.parent = parent
         self.children = children or []
         self.pager = pager
+        self.position = position
         self.level = level
         self.data = data or {}
         for child in self.children:
@@ -195,7 +207,7 @@ class TreeStackBuilder(list):
 
     def push(self, node):
         top_level, node_level = self.top.level, node.level
-        if  top_level < node_level:
+        if top_level < node_level:
             self.top.append(node)
             self.top = node
         elif top_level > node_level:

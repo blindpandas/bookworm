@@ -8,7 +8,6 @@ from bookworm.utils import NEWLINE, search
 from .elements import SearchResult
 
 
-
 def export_to_plain_text(doc, target_filename, channel):
     """This function runs in a separate process."""
     total = len(doc)
@@ -45,12 +44,9 @@ def search_book(doc, request, channel):
         resultset = []
         sect = doc[n].section.title
         for pos, snip in search(pattern, doc.get_page_content(n)):
-            resultset.append(SearchResult(
-                excerpt=snip,
-                page=n,
-                position=pos,
-                section=sect
-            ))
+            resultset.append(
+                SearchResult(excerpt=snip, page=n, position=pos, section=sect)
+            )
         channel.push(resultset)
     doc.close()
     channel.close()

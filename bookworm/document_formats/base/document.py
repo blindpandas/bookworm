@@ -70,10 +70,10 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def __getitem__(self, index: int) -> "BasePage":
         if index not in self:
             raise PaginationError(f"Page {index} is out of range.")
-        if index in self.__page_cache:
-            return self.__page_cache[index]
+        if index in self._page_cache:
+            return self._page_cache[index]
         page = self.get_page(index)
-        self.__page_cache[index] = page
+        self._page_cache[index] = page
         return page
 
     def __getstate__(self) -> dict:
@@ -102,9 +102,9 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         to generate a `sha1` hash based on the content of the file.
         Subclasses should call super to ensure the standard behavior.
         """
+        self._page_cache = LRU(PAGE_CACHE_CAPACITY)
+        self._page_content_cache = LRU(PAGE_CACHE_CAPACITY)
         self._sha1hash = generate_sha1hash_async(self.filename)
-        self.__page_cache = LRU(PAGE_CACHE_CAPACITY)
-        self.__page_content_cache = LRU(PAGE_CACHE_CAPACITY)
         # XXX Is this a pre-mature optimization?
         call_threaded(lambda: self.language)
 
@@ -113,8 +113,8 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """Perform the actual IO operations for unloading the ebook.
         Subclasses should call super to ensure the standard behavior.
         """
-        self.__page_cache.clear()
-        self.__page_content_cache.clear()
+        self._page_cache.clear()
+        self._page_content_cache.clear()
         gc.collect()
 
     @abstractmethod
@@ -162,11 +162,11 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
     def get_page_content(self, page_number: int) -> str:
         """Convenience method: return the text content of a page."""
-        _cached = self.__page_content_cache.get(page_number)
+        _cached = self._page_content_cache.get(page_number)
         if _cached is not None:
             return _cached
         content = self[page_number].get_text()
-        self.__page_content_cache[page_number] = content
+        self._page_content_cache[page_number] = content
         return content
 
     def get_page_image(

@@ -1,5 +1,5 @@
 import pytest
-from bookworm.document_formats.mu import FitzEPUBDocument
+from bookworm.document_formats import FitzEPUBDocument
 
 def test_epub_metadata(asset):
     epub = FitzEPUBDocument(asset("The Diary of a Nobody.epub"))

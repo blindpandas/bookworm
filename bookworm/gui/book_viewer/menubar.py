@@ -348,14 +348,12 @@ class SearchMenu(BaseMenu):
         result = None
         page, (sol, eol) = self.reader.current_page, self.view.get_selection_range()
         if foreword:
-            filter_func  = lambda sr: (
-                ((sr.page == page) and (sr.position > eol))
-                or (sr.page > page)
+            filter_func = lambda sr: (
+                ((sr.page == page) and (sr.position > eol)) or (sr.page > page)
             )
         else:
-            filter_func  = lambda sr: (
-                ((sr.page == page) and (sr.position < sol))
-                or (sr.page < page)
+            filter_func = lambda sr: (
+                ((sr.page == page) and (sr.position < sol)) or (sr.page < page)
             )
         result_iter = it(self._latest_search_results).filter(filter_func)
         try:
