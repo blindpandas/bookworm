@@ -60,7 +60,7 @@ class HtmlDocument(FluidDocument):
 
     format = "html"
     # Translators: the name of a document file format
-    name = _("Web page")
+    name = _("HTML Document")
     extensions = ("*.html", "*.htm", "*.xhtml")
     capabilities = DC.TOC_TREE | DC.METADATA | DC.ASYNC_READ
 

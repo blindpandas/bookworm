@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from bookworm import config
 from bookworm.resources import sounds
 from bookworm.resources import images
-from bookworm.speechdriver import DummySpeechEngine
+from bookworm.speechdriver import DummySpeechEngine, speech_engine_state_changed
 from bookworm.speechdriver.utterance import SpeechUtterance, SpeechStyle
 from bookworm.speechdriver.enumerations import (
     EngineEvent,
@@ -19,7 +19,6 @@ from bookworm.speechdriver.enumerations import (
 )
 from bookworm.speechdriver.engines.sapi import SapiSpeechEngine
 from bookworm.speechdriver.engines.onecore import OcSpeechEngine
-from bookworm.signals import _signals
 from bookworm.utils import cached_property, gui_thread_safe
 from bookworm.vendor.sentence_splitter import (
     SentenceSplitter,
@@ -44,8 +43,6 @@ from .tts_gui import (
 )
 
 log = logger.getChild(__name__)
-MAX_TOKENIZED_CHARS = 7500
-speech_engine_state_changed = _signals.signal("speech-engine.state-changed")
 
 
 @dataclass
@@ -211,11 +208,7 @@ class TextToSpeechService(BookwormService):
                 current_pos = self.textCtrl.GetInsertionPoint()
             else:
                 current_pos = 0
-        text_length = self.textCtrl.GetLastPosition()
-        end_of_page = (
-            text_length if text_length <= MAX_TOKENIZED_CHARS else MAX_TOKENIZED_CHARS
-        )
-        text = self.textCtrl.GetRange(current_pos, end_of_page)
+        text = self.textCtrl.GetRange(current_pos, self.textCtrl.GetLastPosition())
         return self.make_text_info(text, start_pos=current_pos)
 
     def speak_current_page(self, utterance=None, from_caret=True):

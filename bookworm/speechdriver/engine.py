@@ -2,6 +2,7 @@
 
 from abc import ABCMeta, abstractmethod
 from dataclasses import field, dataclass
+from contextlib import suppress
 from bookworm.logger import logger
 from .utterance import SpeechUtterance
 
@@ -59,7 +60,8 @@ class BaseSpeechEngine(metaclass=ABCMeta):
         """Performe any necessary cleanups."""
 
     def __del__(self):
-        self.close()
+        with suppress():
+            self.close()
 
     def configure(self, engine_config):
         if engine_config["voice"]:

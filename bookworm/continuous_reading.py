@@ -30,7 +30,7 @@ class ContReadingService(BookwormService):
         )
         self._lock = threading.Lock()
         # Event handling
-        self.view.Bind(wx.EVT_TIMER, self.onTimerTick)
+        self.view.Bind(wx.EVT_TIMER, self.onTimerTick, self._page_turn_timer)
         reader_book_unloaded.connect(
             lambda s: self._page_turn_timer.Stop(), weak=False, sender=self.reader
         )

@@ -7,6 +7,7 @@ from bookworm import typehints as t
 from bookworm import app
 from bookworm import config
 from bookworm import speech
+from bookworm.concurrency import threaded_worker
 from bookworm.resources import sounds, images
 from bookworm.paths import app_path
 from bookworm.reader import (
@@ -126,6 +127,8 @@ class ResourceLoader:
         finally:
             if has_exception:
                 self.view.unloadCurrentEbook()
+                if app.debug:
+                    raise
 
     def decrypt_opened_document(self):
         reader = self.view.reader
@@ -174,7 +177,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             zoom_callback=self.onTextCtrlZoom,
         )
 
+        # A timer to save the current position to the database
+        self.userPositionTimer = wx.Timer(self)
+
         # Bind Events
+        self.Bind(wx.EVT_TIMER, self.onUserPositionTimerTick, self.userPositionTimer)
         self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.onTOCItemClick, self.tocTreeCtrl)
         self.Bind(
             wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(-1), id=wx.ID_PREVIEW_ZOOM_OUT
@@ -292,6 +299,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.toolbar.AddTool(ident, label, image)
 
     def default_book_loaded_callback(self):
+        self.userPositionTimer.Start(1500)
         if self.contentTextCtrl.HasFocus():
             self.tocTreeCtrl.SetFocus()
 
@@ -300,7 +308,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self, filename, callback=callback or self.default_book_loaded_callback
         ).load()
 
-    @gui_thread_safe
     def set_content(self, content):
         self.contentTextCtrl.Clear()
         self.contentTextCtrl.WriteText(content)
@@ -309,17 +316,16 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.contentTextCtrl.SetFont(self.contentTextCtrl.Font.MakeSmaller())
             self.contentTextCtrl.SetFont(self.contentTextCtrl.Font.MakeLarger())
 
-    @gui_thread_safe
     def set_title(self, title):
         self.SetTitle(title)
 
-    @gui_thread_safe
     def set_status(self, text, statusbar_only=False, *args, **kwargs):
         super().SetStatusText(text, *args, **kwargs)
         if not statusbar_only:
             self.contentTextCtrlLabel.SetLabel(text)
 
     def unloadCurrentEbook(self):
+        self.userPositionTimer.Stop()
         self.reader.unload()
         self.clear_toc_tree()
         self.clear_highlight()
@@ -351,12 +357,17 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.tocTreeSetSelection(current)
         speech.announce(current.title)
 
+    def onUserPositionTimerTick(self, event):
+        try:
+            threaded_worker.submit(self.reader.save_current_position)
+        except:
+            log.exception("Failed to save current position", exc_info=True)
+
     def onTOCItemClick(self, event):
         selectedItem = event.GetItem()
         self.reader.active_section = self.tocTreeCtrl.GetItemData(selectedItem)
         self.reader.go_to_first_of_section()
 
-    @gui_thread_safe
     def add_toc_tree(self, tree):
         self.tocTreeCtrl.DeleteAllItems()
         root = self.tocTreeCtrl.AddRoot(tree.title, data=tree)
@@ -364,7 +375,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         tree.data["tree_id"] = root
         self.tocTreeCtrl.Expand(self.tocTreeCtrl.GetRootItem())
 
-    @gui_thread_safe
     def tocTreeSetSelection(self, item):
         tree_id = item.data["tree_id"]
         self.tocTreeCtrl.EnsureVisible(tree_id)
@@ -372,7 +382,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.tocTreeCtrl.SelectItem(tree_id)
         self.tocTreeCtrl.SetFocusedItem(tree_id)
 
-    @gui_thread_safe
     def clear_toc_tree(self):
         self.tocTreeCtrl.DeleteAllItems()
 
@@ -415,13 +424,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         # XXX need to do some work here to obtain appropriate margins
         return wx.Point(100, 100)
 
-    @gui_thread_safe
     def highlight_range(
         self, start, end, foreground=wx.NullColour, background=wx.NullColour
     ):
         self.contentTextCtrl.SetStyle(start, end, wx.TextAttr(foreground, background))
 
-    @gui_thread_safe
     def clear_highlight(self, start=0, end=-1):
         textCtrl = self.contentTextCtrl
         end = textCtrl.LastPosition if end < 0 else end
@@ -442,13 +449,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         left = pos - col
         return (left, left + self.contentTextCtrl.GetLineLength(lino))
 
-    @gui_thread_safe
     def set_text_direction(self, rtl=False):
         style = self.contentTextCtrl.GetDefaultStyle()
         style.SetAlignment(wx.TEXT_ALIGNMENT_RIGHT if rtl else wx.TEXT_ALIGNMENT_LEFT)
         self.contentTextCtrl.SetDefaultStyle(style)
 
-    @gui_thread_safe
     def notify_user(self, title, message, icon=wx.ICON_INFORMATION, parent=None):
         return wx.MessageBox(message, title, style=icon, parent=parent or self)
 
@@ -457,12 +462,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         __, __, line_number = self.contentTextCtrl.PositionToXY(pos)
         return line_number
 
-    @gui_thread_safe
     def select_text(self, fpos, tpos):
         self.contentTextCtrl.SetFocusFromKbd()
         self.contentTextCtrl.SetSelection(fpos, tpos)
 
-    @gui_thread_safe
     def set_insertion_point(self, to):
         self.contentTextCtrl.SetFocusFromKbd()
         self.contentTextCtrl.SetInsertionPoint(to)
@@ -470,7 +473,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def get_insertion_point(self):
         return self.contentTextCtrl.GetInsertionPoint()
 
-    @gui_thread_safe
     def get_text_from_user(
         self, title, label, style=wx.OK | wx.CANCEL | wx.CENTER, value=""
     ):

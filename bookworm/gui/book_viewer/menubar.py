@@ -14,6 +14,7 @@ from bookworm import config
 from bookworm import paths
 from bookworm import app
 from bookworm.i18n import is_rtl
+from bookworm.resources import sounds
 from bookworm.document_formats import DocumentCapability as DC
 from bookworm.signals import config_updated, reader_book_loaded, reader_book_unloaded
 from bookworm.otau import check_for_updates
@@ -359,7 +360,8 @@ class SearchMenu(BaseMenu):
         try:
             result = (result_iter if foreword else result_iter.rev()).next()
         except StopIteration:
-            return wx.Bell()
+            sounds.navigation.play()
+            return
         self.highlight_search_result(result.page, result.position)
 
     def onFindNext(self, event):
