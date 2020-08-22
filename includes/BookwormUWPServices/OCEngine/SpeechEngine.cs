@@ -141,7 +141,7 @@ namespace OcSpeechEngine
                 player.CurrentStateChanged += OnPlaybackStateChanged;
             }
             // Remove the scilence after speech utterance
-            if ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 6, 0))
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 6, 0))
                 synth.Options.AppendedSilence = SpeechAppendedSilence.Min;
         }
 
