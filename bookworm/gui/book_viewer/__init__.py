@@ -352,19 +352,21 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.set_status(_("Document content"))
         else:
             # Translators: the label of the page content text area
-            cmsg = _("Page {page} | {chapter}").format(
-                page=page.number, chapter=page.section.title
+            cmsg = _("Page {page} of {total} — {chapter}").format(
+                page=page.number, total=len(self.reader.document), chapter=page.section.title
             )
             # Translators: a message that is announced after navigating to a page
             smsg = _("Page {page} of {total}").format(
                 page=page.number, total=len(self.reader.document)
             )
             self.set_status(cmsg)
-            speech.announce(smsg)
+            if config.conf["general"]["speak_page_number"]:
+                speech.announce(smsg)
 
     def set_state_on_section_change(self, current):
         self.tocTreeSetSelection(current)
-        speech.announce(current.title)
+        if config.conf["general"]["speak_section_title"]:
+            speech.announce(current.title)
 
     def onUserPositionTimerTick(self, event):
         try:
@@ -451,7 +453,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         return SelectionRange(*self.contentTextCtrl.GetSelection())
 
     def get_containing_line(self, pos):
-        """Returns the left and right boundaries
+        """
+        Returns the left and right boundaries
         for the line containing the given position.
         """
         _, col, lino = self.contentTextCtrl.PositionToXY(pos)

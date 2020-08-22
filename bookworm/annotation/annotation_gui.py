@@ -26,7 +26,14 @@ class AnnotationSettingsPanel(SettingsPanel):
 
     def addControls(self):
         # Translators: the title of a group of controls in the
-        UIBox = self.make_static_box(_("Annotations"))
+        UIBox = self.make_static_box(_("Annotation"))
+        wx.CheckBox(
+            UIBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Exclude named bookmarks when jumping between bookmarks"),
+            name="annotation.exclude_named_bookmarks_when_jumping",
+        )
         wx.CheckBox(
             UIBox,
             -1,
@@ -176,7 +183,7 @@ class AnnotationMenu(wx.Menu):
             _("Add Named Bookmark"),
             # Translators: label of a text entry
             _("Bookmark name:"),
-        )
+        ).strip()
         if bookmark_name:
             self._add_bookmark(bookmark_name)
 

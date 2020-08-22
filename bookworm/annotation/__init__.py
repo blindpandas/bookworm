@@ -2,7 +2,7 @@
 
 import wx
 from bookworm import config
-from bookworm.signals import reader_page_changed
+from bookworm.signals import reader_page_changed, reader_book_loaded, reader_book_unloaded
 from bookworm.resources import sounds
 from bookworm.base_service import BookwormService
 from bookworm.utils import gui_thread_safe
@@ -24,6 +24,7 @@ ANNOTATION_CONFIG_SPEC = {
     "annotation": dict(
         use_visuals="boolean(default=True)",
         play_sound_for_comments="boolean(default=True)",
+        exclude_named_bookmarks_when_jumping="boolean(default=False)",
     )
 }
 
@@ -35,6 +36,9 @@ class AnnotationService(BookwormService):
     has_gui = True
 
     def __post_init__(self):
+        self.view.contentTextCtrl.Bind(wx.EVT_KEY_UP, self.onKeyUp, self.view.contentTextCtrl)
+        reader_book_loaded.connect(self.on_book_load, sender=self.reader)
+        reader_book_unloaded.connect(self.on_book_unload, sender=self.reader)
         reader_page_changed.connect(self.comments_page_handler, sender=self.reader)
         reader_page_changed.connect(
             self.highlight_bookmarked_positions, sender=self.reader
@@ -54,11 +58,17 @@ class AnnotationService(BookwormService):
             ),
             (
                 4,
+                _("&Named Bookmark...\tCtrl-Shift-B"),
+                _("Bookmark the current location"),
+                AnnotationsMenuIds.addNamedBookmark,
+            ),
+            (
+                5,
                 _("Co&mment...\tCtrl-m"),
                 _("Add a comment at the current location"),
                 AnnotationsMenuIds.addNote,
             ),
-            (5, "", "", None),
+            (6, "", "", None),
         ]
         if self.view.contentTextCtrl.GetStringSelection():
             rv.insert(
@@ -89,6 +99,35 @@ class AnnotationService(BookwormService):
             # Translators: the label of a page in the settings dialog
             (30, "annotation", AnnotationSettingsPanel, _("Annotation"))
         ]
+
+    def onKeyUp(self, event):
+        event.Skip()
+        if not self.reader.ready:
+            return
+        if event.GetKeyCode() == wx.WXK_F2:
+            if event.GetModifiers() == wx.MOD_SHIFT:
+                self.go_to_bookmark(foreword=False)
+            else:
+                self.go_to_bookmark(foreword=True)
+
+    def go_to_bookmark(self, *, foreword):
+        page_number = self.reader.current_page
+        start, end = self.view.get_containing_line(self.view.get_insertion_point())
+        if foreword:
+            bookmark = self.bookmarker.get_first_after(page_number, end)
+        else:        
+            bookmark = self.bookmarker.get_first_before(page_number, start)
+        if bookmark is not None:
+            self.reader.go_to_page(bookmark.page_number, bookmark.position)
+            self.view.select_text(*self.view.get_containing_line(bookmark.position))
+        else:
+            sounds.navigation.play()
+
+    def on_book_load(self, sender):
+        self.bookmarker = Bookmarker(sender)
+
+    def on_book_unload(self, sender):
+        self.bookmarker = None
 
     @classmethod
     @call_threaded

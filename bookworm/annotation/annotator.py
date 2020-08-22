@@ -5,6 +5,8 @@ from dataclasses import dataclass, field, astuple
 from typing import Tuple
 import sqlalchemy as sa
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext import baked
+from bookworm import config
 from bookworm.logger import logger
 from bookworm.database import Book, db
 from bookworm.database.models import Book
@@ -12,6 +14,8 @@ from .annotation_models import Bookmark, Note, Quote
 
 
 log = logger.getChild(__name__)
+# The bakery caches querie objects to avoid recompiling them into strings in every call
+BAKERY = baked.bakery()
 
 
 @dataclass
@@ -135,6 +139,48 @@ class Annotator:
 
     def get(self, item_id):
         return self.model.query.get(item_id)
+
+    def get_first_after(self, page_number, pos):
+        model = self.model
+        clauses = (
+            sa.and_(
+                model.page_number == sa.bindparam('current_page_number'),
+                model.position > sa.bindparam('current_position')
+            ),
+            model.page_number > sa.bindparam('current_page_number')
+        )
+        baked_query = BAKERY(lambda session: session.query(model))
+        baked_query += lambda q: q.filter_by(book_id=sa.bindparam('current_book_id'))
+        baked_query += lambda q: q.filter(sa.or_(*clauses))
+        if config.conf["annotation"]["exclude_named_bookmarks_when_jumping"]:
+            baked_query += lambda q: q.filter(model.title == "")
+        return baked_query(self.session()).params(
+            current_page_number=page_number,
+            current_position=pos,
+            current_book_id=self.current_book.id
+        ).first()
+
+    def get_first_before(self, page_number, pos):
+        model = self.model
+        clauses = (
+            sa.and_(
+                model.page_number == sa.bindparam('current_page_number'),
+                model.position < sa.bindparam('current_position')
+            ),
+            model.page_number < sa.bindparam('current_page_number')
+        )
+        baked_query = BAKERY(lambda session: session.query(model))
+        baked_query += lambda q: q.filter_by(book_id=sa.bindparam('current_book_id'))
+        baked_query += lambda q: q.filter(sa.or_(*clauses))
+        if config.conf["annotation"]["exclude_named_bookmarks_when_jumping"]:
+            baked_query += lambda q: q.filter(model.title == "")
+        baked_query += lambda q: q.order_by(model.page_number.desc())
+        baked_query += lambda q: q.order_by(model.position.desc())
+        return baked_query(self.session()).params(
+            current_page_number=page_number,
+            current_position=pos,
+            current_book_id=self.current_book.id
+        ).first()
 
     def create(self, **kwargs):
         kwargs.update(

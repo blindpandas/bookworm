@@ -10,9 +10,11 @@ config_spec = StringIO(
     announce_ui_messages = boolean(default=True)
     show_file_name_as_title = boolean(default=False)
     open_with_last_position = boolean(default=True)
-    play_pagination_sound = boolean(default=True)
     auto_check_for_updates = boolean(default=True)
     last_update_check = integer(default=0)
+    play_pagination_sound = boolean(default=True)
+    speak_page_number = boolean(default=True)
+    speak_section_title = boolean(default=True)
 [history]
     recently_opened = list(default=list())
     recent_terms = list(default=list())

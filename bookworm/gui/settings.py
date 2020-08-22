@@ -210,8 +210,22 @@ class GeneralPanel(SettingsPanel):
             UIBox,
             -1,
             # Translators: the label of a checkbox
-            _("Open recently opened books from the last position"),
-            name="general.open_with_last_position",
+            _("Speak page number"),
+            name="general.speak_page_number",
+        )
+        wx.CheckBox(
+            UIBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Speak section title"),
+            name="general.speak_section_title",
+        )
+        wx.CheckBox(
+            UIBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Play pagination sound"),
+            name="general.play_pagination_sound",
         )
         wx.CheckBox(
             UIBox,
@@ -227,8 +241,8 @@ class GeneralPanel(SettingsPanel):
             miscBox,
             -1,
             # Translators: the label of a checkbox
-            _("Play pagination sound"),
-            name="general.play_pagination_sound",
+            _("Open recently opened books from the last position"),
+            name="general.open_with_last_position",
         )
         wx.CheckBox(
             miscBox,
