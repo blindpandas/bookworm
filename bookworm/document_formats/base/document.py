@@ -187,6 +187,10 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def has_toc_tree(self):
         return DocumentCapability.TOC_TREE in self.capabilities
 
+    @property
+    def can_render_pages(self):
+        return DocumentCapability.GRAPHICAL_RENDERING in self.capabilities
+
     def export_to_text(self, target_filename: t.PathLike):
         yield from QueueProcess(
             target=doctools.export_to_plain_text,

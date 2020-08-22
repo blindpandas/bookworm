@@ -54,6 +54,7 @@ class ResourceLoader:
                     break
                 else:
                     result = self.decrypt_opened_document()
+        self.view.invoke_load_handlers()
         self.add_file_to_recent_files_history(self.filename)
         if self.callback is not None:
             self.callback()
@@ -164,6 +165,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.setFrameIcon()
 
         self.reader = EBookReader(self)
+        self._book_loaded_handlers = []
         self.createControls()
 
         self.toolbar = self.CreateToolBar()
@@ -196,8 +198,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self._no_open_book_status = _("Press (Ctrl + O) to open an ebook")
         self._has_text_zoom = False
         self.set_status(self._no_open_book_status)
-        MenubarProvider.__init__(self)
         StateProvider.__init__(self)
+        MenubarProvider.__init__(self)
 
     def createControls(self):
         # Now create the Panel to put the other controls on.
@@ -297,6 +299,13 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             image = getattr(images, imagename).GetBitmap()
             # Add toolbar item
             self.toolbar.AddTool(ident, label, image)
+
+    def add_load_handler(self, func):
+        self._book_loaded_handlers.append(func)
+
+    def invoke_load_handlers(self):
+        for func in self._book_loaded_handlers:
+            func(self.reader)
 
     def default_book_loaded_callback(self):
         self.userPositionTimer.Start(1500)

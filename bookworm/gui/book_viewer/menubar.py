@@ -64,10 +64,6 @@ class BaseMenu(wx.Menu):
         self.view = view
         self.reader = reader
         self.create()
-        if "after_loading_book" in self.__dict__:
-            reader_book_loaded.connect(self.after_loading_book, sender=self.reader)
-        if "after_unloading_book" in self.__dict__:
-            reader_book_unloaded.connect(self.after_unloading_book, sender=self.reader)
 
 
 class FileMenu(BaseMenu):
@@ -254,6 +250,10 @@ class FileMenu(BaseMenu):
 class SearchMenu(BaseMenu):
     """The search menu for the book viewer."""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        reader_book_unloaded.connect(self.after_unloading_book, sender=self.reader)
+
     def create(self):
         self.Append(
             wx.ID_FIND,
@@ -385,9 +385,13 @@ class SearchMenu(BaseMenu):
 class ToolsMenu(BaseMenu):
     """The tools menu for the book viewer."""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.view.add_load_handler(self.after_loading_book)
+
     def create(self):
         # Tools menu
-        self.renderItem = self.Append(
+        self.Append(
             BookRelatedMenuIds.viewRenderedAsImage,
             # Translators: the label of an item in the application menubar
             _("&Render Page...\tCtrl-R"),
@@ -402,8 +406,9 @@ class ToolsMenu(BaseMenu):
         )
 
     def after_loading_book(self, sender):
-        self.renderItem.Enable(
-            DC.GRAPHICAL_RENDERING in self.reader.document.capabilities
+        self.Enable(
+            BookRelatedMenuIds.viewRenderedAsImage,
+            self.reader.document.can_render_pages
         )
 
     def onViewRenderedAsImage(self, event):
@@ -574,13 +579,16 @@ class MenubarProvider:
             ),
             (20, _("&Find in Book...\tCtrl-F"), _("Search this book."), wx.ID_FIND),
             (21, "", "", None),
-            (
-                30,
-                _("&Render Page...\tCtrl-R"),
-                _("View a fully rendered version of this page."),
-                BookRelatedMenuIds.viewRenderedAsImage,
-            ),
         ]
+        if self.reader.document.can_render_pages:
+            entries.append(
+                (
+                    30,
+                    _("&Render Page...\tCtrl-R"),
+                    _("View a fully rendered version of this page."),
+                    BookRelatedMenuIds.viewRenderedAsImage,
+                ),
+            )
         entries.extend(wx.GetApp().service_handler.get_contextmenu_items())
         entries.sort()
         for (__, label, desc, ident) in entries:

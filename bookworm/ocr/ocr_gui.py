@@ -13,6 +13,7 @@ from bookworm import config
 from bookworm import speech
 from bookworm.text_to_speech import speech_engine_state_changed
 from bookworm.signals import (
+    reader_book_loaded,
     reader_book_unloaded,
     reader_page_changed,
 )
@@ -159,7 +160,7 @@ class OCRMenu(wx.Menu):
         )
         # Add the menu to the menubar
         # Translators: the label of the OCR menu in the application menubar
-        self.view.toolsMenu.Append(wx.ID_ANY, _("OCR Tools"), self)
+        self.view.toolsMenu.Append(wx.ID_ANY, _("OCR"), self)
 
         # Event handlers
         self.view.Bind(
@@ -171,6 +172,7 @@ class OCRMenu(wx.Menu):
             wx.EVT_MENU, self.onChangeOCROptions, id=OCRMenuIds.changeOCROptions
         )
         self.view.Bind(wx.EVT_MENU, self.onScanImageFile, id=image2textId)
+        self.view.add_load_handler(self._on_reader_loaded)
         reader_book_unloaded.connect(self._on_reader_unloaded, sender=self.view.reader)
         reader_page_changed.connect(
             self._on_reader_page_changed, sender=self.service.reader
@@ -209,8 +211,9 @@ class OCRMenu(wx.Menu):
             wx.MessageBox(
                 # Translators: content of a message
                 _(
-                    "No language for OCR is present.\bPlease use Windos Regional Settings to download some languages."
+                    "No language for OCR is present.\nPlease use Windos Regional Settings to download some languages."
                 ),
+                # Translators: title for a message
                 _("No OCR Languages"),
                 style=wx.ICON_ERROR,
             )
@@ -399,6 +402,11 @@ class OCRMenu(wx.Menu):
         self._ocr_cancelled.set()
         speech.announce(_("OCR cancelled"), True)
         return True
+
+    def _on_reader_loaded(self, sender):
+        can_render = sender.document.can_render_pages
+        for item_id in OCRMenuIds:
+            self.Enable(item_id, can_render)
 
     def _on_reader_unloaded(self, sender):
         self._scanned_pages.clear()

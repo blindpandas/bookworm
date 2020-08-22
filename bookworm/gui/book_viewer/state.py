@@ -15,7 +15,7 @@ class StateProvider:
     """Enables/disables functionality based on current state."""
 
     def __init__(self):
-        reader_book_loaded.connect(self.on_reader_load_unload, sender=self.reader)
+        self.add_load_handler(self.on_reader_load_unload)
         reader_book_unloaded.connect(self.on_reader_load_unload, sender=self.reader)
 
     def on_reader_load_unload(self, sender):

@@ -1,10 +1,12 @@
 # coding: utf-8
 
+import clr
+from System.Globalization import CultureInfo, CultureNotFoundException
+
 import ctypes
 import os
 import gettext
 import locale
-from System.Globalization import CultureInfo, CultureNotFoundException
 from collections import OrderedDict
 from contextlib import suppress
 from pathlib import Path
@@ -38,6 +40,17 @@ class LanguageInfo:
 
     def __repr__(self):
         return f'LanguageInfo(language="{self.language}")'
+
+    def should_be_considered_equal_to(self, other):
+        if not isinstance(other, self.__class__):
+            raise TypeError(f"{other} is not a LanguageInfo object.")
+        if self.language.lower() == other.language.lower():
+            return True
+        this_root = self.language.split("-")[0].lower()
+        other_root = other.language.split("-")[0].lower()
+        if this_root == other_root:
+            return True
+        return False
 
     @property
     def LCID(self):

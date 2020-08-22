@@ -7,6 +7,8 @@ from System.Globalization import CultureInfo
 import platform
 from io import StringIO
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import suppress
+from chemical import it, ChemicalException
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.runtime import UWP_SERVICES_AVAILABEL
@@ -33,17 +35,14 @@ def is_ocr_available() -> bool:
 
 def get_recognition_languages() -> t.List[LanguageInfo]:
     langs = [LanguageInfo(lang) for lang in DocrEngine.get_supported_languages()]
-    if langs:
-        current_lang = 0
-        possible = [
-            CultureInfo.CurrentCulture.Parent.LCID,
-            CultureInfo.CurrentCulture.LCID,
-        ]
-        for (i, lang) in enumerate(langs):
-            if lang.LCID in possible:
-                current_lang = i
-                break
-        langs.insert(0, langs.pop(current_lang))
+    current_lang = None
+    with suppress(ChemicalException):
+        current_lang = it(langs).find(
+            lambda lang: lang.should_be_considered_equal_to(app.current_language)
+        )
+    if current_lang is not None:
+        langs.remove(current_lang)
+        langs.insert(0, current_lang)
     return langs
 
 
