@@ -1,1 +1,1 @@
-blinker==1.4chemical==1.0.1configobj==5.0.6mistune==0.8.4PyMuPDF==1.17.3pythonnet==2.5.1pywin32==228regex ==2020.7.14requests==2.24.0selectolax==0.2.7SQLAlchemy==1.3.19unicode-slugify==0.1.3wxPython==4.1.0
+blinker==1.4chemical==1.0.1configobj==5.0.6mistune==0.8.4PyMuPDF==1.17.3pythonnet==2.5.1pywin32==228regex ==2020.7.14requests==2.24.0selectolax==0.2.7SQLAlchemy==1.3.19ujson==3.1.0unicode-slugify==0.1.3wxPython==4.1.0
