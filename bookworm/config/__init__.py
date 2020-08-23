@@ -39,12 +39,14 @@ class ConfigProvider:
                 encoding="UTF8",
             )
         except ConfigObjError:
+            log.exception("Failed to initialize config", exc_info=True)
             config_file.unlink()
-            self.init_config()
+            return self.validate_and_write()
         validated = self.config.validate(self.validator, copy=True)
         if validated == True:
             self.config.write()
         else:
+            log.debug("Failed to validate config.")
             self.config.restore_defaults()
             self.config.write()
 
@@ -59,5 +61,5 @@ def setup_config():
 
 def save():
     global conf
-    if conf:
+    if conf is not None:
         conf.config.write()
