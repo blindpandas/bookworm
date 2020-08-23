@@ -71,7 +71,7 @@ class Annotator:
 
     def __init__(self, reader):
         self.reader = reader
-        self.session = self.model.session
+        self.session = self.model.session()
 
     def get_book_by_identifier(self, ident):
         return Book.query.filter(Book.identifier == ident).one_or_none()

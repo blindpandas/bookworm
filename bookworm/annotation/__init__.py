@@ -6,7 +6,6 @@ from bookworm.signals import reader_page_changed, reader_book_loaded, reader_boo
 from bookworm.resources import sounds
 from bookworm.base_service import BookwormService
 from bookworm.utils import gui_thread_safe
-from bookworm.concurrency import call_threaded
 from bookworm.logger import logger
 from .annotation_gui import (
     AnnotationSettingsPanel,
@@ -130,7 +129,6 @@ class AnnotationService(BookwormService):
         self.bookmarker = None
 
     @classmethod
-    @call_threaded
     def comments_page_handler(cls, sender, current, prev):
         comments = NoteTaker(sender).get_for_page()
         if comments.count():
@@ -140,7 +138,6 @@ class AnnotationService(BookwormService):
             cls.style_comment(sender.view, comment.position)
 
     @classmethod
-    @call_threaded
     def highlight_bookmarked_positions(cls, sender, current, prev):
         if not config.conf["annotation"]["use_visuals"]:
             return
@@ -151,7 +148,6 @@ class AnnotationService(BookwormService):
             cls.style_bookmark(sender.view, bookmark.position)
 
     @classmethod
-    @call_threaded
     def highlight_highlighted_text(cls, sender, current, prev):
         if not config.conf["annotation"]["use_visuals"]:
             return

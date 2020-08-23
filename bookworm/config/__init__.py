@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from pathlib import Path
-from configobj import ConfigObj, ConfigObjError, ParseError
+from configobj import ConfigObj, ConfigObjError, ParseError, flatten_errors
 from configobj.validate import Validator, ValidateError
 from bookworm import app
 from bookworm.paths import config_path
@@ -20,9 +20,10 @@ conf = None
 class ConfigProvider:
     """Handles app configurations."""
 
-    __slots__ = ["spec", "config", "validator"]
+    __slots__ = ["config_file", "spec", "config", "validator"]
 
     def __init__(self):
+        self.config_file = str(Path(config_path(f"{app.name}.ini")))
         self.spec = ConfigObj(
             config_spec, encoding="UTF8", list_values=False, _inspec=True
         )
@@ -30,23 +31,25 @@ class ConfigProvider:
         self.validate_and_write()
 
     def validate_and_write(self):
-        config_file = Path(config_path(f"{app.name}.ini"))
         try:
             self.config = ConfigObj(
-                infile=str(config_file),
+                infile=self.config_file,
                 configspec=self.spec,
-                #create_empty=True,
+                create_empty=True,
                 encoding="UTF8",
             )
+            self.config.filename = self.config_file
         except ConfigObjError:
             log.exception("Failed to initialize config", exc_info=True)
-            config_file.unlink()
+            Path(self.config_file).unlink()
             return self.validate_and_write()
-        validated = self.config.validate(self.validator, copy=True)
+        validated = self.config.validate(self.validator, copy=True, preserve_errors=True)
         if validated == True:
             self.config.write()
         else:
-            log.debug("Failed to validate config.")
+            log.error("Failed to validate config.")
+            validation_errors = flatten_errors(self.config, validated)
+            log.error(f"Configuration validation errors: {validation_errors}")
             self.config.restore_defaults()
             self.config.write()
 
