@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from configobj import ConfigObj, ConfigObjError, ParseError
-from validate import Validator, ValidateError
+from configobj.validate import Validator, ValidateError
 from bookworm import app
 from bookworm.paths import config_path
 from bookworm.concurrency import call_threaded
@@ -35,7 +35,7 @@ class ConfigProvider:
             self.config = ConfigObj(
                 infile=str(config_file),
                 configspec=self.spec,
-                create_empty=True,
+                #create_empty=True,
                 encoding="UTF8",
             )
         except ConfigObjError:

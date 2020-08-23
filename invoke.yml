@@ -1,5 +1,6 @@
 packages_to_install:
     pure_python:
+        - "configobj-5.1.0.dev0-py2.py3-none-any.whl"
         - "winpaths-0.2-py3-none-any.whl"
         - "platform_utils-0.4-py3-none-any.whl"
         - "libloader-0.21-py3-none-any.whl"

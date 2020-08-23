@@ -3,7 +3,7 @@
 import uuid
 from pathlib import Path
 from configobj import ConfigObj, ConfigObjError, ParseError
-from validate import Validator, ValidateError
+from configobj.validate import Validator, ValidateError
 from bookworm import config
 from bookworm.paths import config_path
 from bookworm.concurrency import call_threaded
