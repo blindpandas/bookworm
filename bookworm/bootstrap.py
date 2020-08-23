@@ -4,6 +4,7 @@ import sys
 import os
 import platform
 import argparse
+import multiprocessing
 import wx
 from bookworm import app as appinfo
 from bookworm.paths import logs_path
@@ -86,9 +87,7 @@ def init_app_and_run_main_loop():
 
     log.info(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
     if appinfo.is_frozen:
-        from multiprocessing import freeze_support
-
-        freeze_support()
+        multiprocessing.freeze_support()
     setupSubsystems()
 
     wxlogfilename = logs_path("wx.log") if not appinfo.debug else None
