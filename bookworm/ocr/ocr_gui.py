@@ -61,7 +61,7 @@ class OCROptionsDialog(SimpleDialog):
         label = wx.StaticText(parent, -1, _("Recognition Language:"))
         self.langChoice = wx.Choice(parent, -1, choices=self.choices)
         self.langChoice.SetSizerProps(expand=True)
-        wx.StaticText(parent, -1, _("Supplied Image resolution::"))
+        wx.StaticText(parent, -1, _("Supplied Image resolution:"))
         self.zoomFactorSlider = wx.Slider(parent, -1, minValue=0, maxValue=10)
         # self.enhanceImageCheckbox = wx.CheckBox(
         # parent,
@@ -113,7 +113,7 @@ class OCRMenu(wx.Menu):
         self.view = service.view
         self._ocr_wait_dlg = SnakDialog(
             parent=self.view,
-            message=_("Scanning page. Please wait...."),
+            message=_("Scanning page. Please wait..."),
             dismiss_callback=self._on_ocr_cancelled,
         )
         self._ocr_cancelled = threading.Event()
@@ -211,7 +211,7 @@ class OCRMenu(wx.Menu):
             wx.MessageBox(
                 # Translators: content of a message
                 _(
-                    "No language for OCR is present.\nPlease use Windos Regional Settings to download some languages."
+                    "No language for OCR is present.\nPlease use Windows Regional Settings to download some languages."
                 ),
                 # Translators: title for a message
                 _("No OCR Languages"),

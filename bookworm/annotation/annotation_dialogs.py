@@ -604,7 +604,7 @@ class ExportNotesDialog(SimpleDialog):
             # Translators: label of a checkbox in a dialog to set export options for comments/highlights
             parent,
             -1,
-            _("Include  page number"),
+            _("Include page number"),
         )
         # Translators: label of a checkbox in a dialog to set export options for comments/highlights
         self.includeTagsCheckbox = wx.CheckBox(parent, -1, _("Include tags"))
@@ -619,7 +619,7 @@ class ExportNotesDialog(SimpleDialog):
             parent, -1, style=wx.TE_READONLY | wx.TE_MULTILINE
         )
         # Translators: text of a button in a dialog to set export options for comments/highlights
-        browseButton = wx.Button(parent, -1, _("&Browse"))
+        browseButton = wx.Button(parent, -1, _("&Browse..."))
         self.openAfterExportCheckBox = wx.CheckBox(
             parent,
             -1,
