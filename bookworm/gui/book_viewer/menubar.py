@@ -590,7 +590,7 @@ class MenubarProvider:
             (20, _("&Find in Book...\tCtrl-F"), _("Search this book."), wx.ID_FIND),
             (21, "", "", None),
         ]
-        if self.reader.document.can_render_pages:
+        if self.reader.ready and self.reader.document.can_render_pages:
             entries.append(
                 (
                     30,
