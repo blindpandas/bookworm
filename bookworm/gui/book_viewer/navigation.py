@@ -82,7 +82,8 @@ class NavigationProvider:
                 self.zoom_callback(self.zoom_keymap[key_code])
 
     def onTextCtrlNavigateNext(self, event):
-        self.reader.go_to_next()
+        if self.reader.ready:
+            self.reader.go_to_next()
 
     def _auto_navigate(self, key_code):
         now = time.time()

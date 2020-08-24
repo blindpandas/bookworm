@@ -154,7 +154,7 @@ class Annotator:
         baked_query += lambda q: q.filter(sa.or_(*clauses))
         if config.conf["annotation"]["exclude_named_bookmarks_when_jumping"]:
             baked_query += lambda q: q.filter(model.title == "")
-        return baked_query(self.session()).params(
+        return baked_query(self.session).params(
             current_page_number=page_number,
             current_position=pos,
             current_book_id=self.current_book.id
@@ -176,7 +176,7 @@ class Annotator:
             baked_query += lambda q: q.filter(model.title == "")
         baked_query += lambda q: q.order_by(model.page_number.desc())
         baked_query += lambda q: q.order_by(model.position.desc())
-        return baked_query(self.session()).params(
+        return baked_query(self.session).params(
             current_page_number=page_number,
             current_position=pos,
             current_book_id=self.current_book.id
