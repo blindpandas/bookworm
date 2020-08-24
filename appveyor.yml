@@ -1,5 +1,6 @@
 os: Visual Studio 2019
 
+clone_depth: 1
 
 branches:
   only:
@@ -7,19 +8,10 @@ branches:
     - /dev.*/
     - /release-.*/
 
-
 environment:
   PY_PYTHON: 3.7-32
   github_access_token:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
-
-
-clone_script:
-  - cmd: >-
-      git clone -q --branch=%APPVEYOR_REPO_BRANCH% https://github.com/%APPVEYOR_REPO_NAME%.git %APPVEYOR_BUILD_FOLDER%
-      && cd %APPVEYOR_BUILD_FOLDER%
-      && git checkout -qf %APPVEYOR_REPO_COMMIT%
-
 
 install:
   # NSIS Paths
@@ -28,6 +20,7 @@ install:
 
 
 before_build:
+  - cd %APPVEYOR_BUILD_FOLDER%
   # Build required dlls
   - cd includes\BookwormUWPServices
   - nuget restore
@@ -38,7 +31,6 @@ before_build:
 build_script:
   # 32-bit version
   - ps: Write-Host "Building the 32-bit variant."
-
   - C:\Python37\python.exe -m venv .venv32
   - call ".venv32\Scripts\activate.bat"
   - py -m pip -q install --upgrade pip
@@ -48,7 +40,6 @@ build_script:
   - deactivate
   # 64-bit version
   - ps: Write-Host "Building the 64-bit variant."
-
   - C:\Python37-x64\python.exe -m venv .venv64
   - call ".venv64\Scripts\activate.bat"
   - py -m pip -q install --upgrade pip
@@ -82,5 +73,4 @@ deploy:
   draft: true
   prerelease: true
   on:
-    branch: /release-.*/
     APPVEYOR_REPO_TAG: true
