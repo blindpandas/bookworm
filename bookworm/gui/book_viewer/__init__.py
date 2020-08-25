@@ -17,8 +17,8 @@ from bookworm.reader import (
     UnsupportedDocumentError,
 )
 from bookworm.signals import reader_book_loaded, reader_book_unloaded
+from bookworm.gui.contentview_ctrl import ContentViewCtrl, SelectionRange
 from bookworm.utils import gui_thread_safe
-from bookworm.gui.components import CustomContextMenuTextCtrl, SelectionRange
 from bookworm.logger import logger
 from .menubar import MenubarProvider, BookRelatedMenuIds
 from .state import StateProvider
@@ -210,15 +210,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         # Translators: the label of the text area which shows the
         # content of the current page
         self.contentTextCtrlLabel = wx.StaticText(panel, -1, _("Content"))
-        self.contentTextCtrl = CustomContextMenuTextCtrl(
+        self.contentTextCtrl = ContentViewCtrl(
             panel,
             size=(200, 160),
-            style=wx.TE_READONLY
-            | wx.TE_MULTILINE
-            | wx.TE_RICH2
-            | wx.TE_AUTO_URL
-            | wx.TE_PROCESS_ENTER
-            | wx.TE_NOHIDESEL,
             name="content_view",
         )
         self.contentTextCtrl.SetMargins(self._get_text_view_margins())
@@ -446,9 +440,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         Returns the left and right boundaries
         for the line containing the given position.
         """
-        _, col, lino = self.contentTextCtrl.PositionToXY(pos)
-        left = pos - col
-        return (left, left + self.contentTextCtrl.GetLineLength(lino))
+        return self.contentTextCtrl.GetContainingLine(pos)
 
     def set_text_direction(self, rtl=False):
         style = self.contentTextCtrl.GetDefaultStyle()

@@ -21,11 +21,11 @@ from bookworm.otau import check_for_updates
 from bookworm.concurrency import call_threaded, process_worker
 from bookworm import ocr
 from bookworm.otau import check_for_updates
-from bookworm.concurrency import call_threaded
 from bookworm import speech
 from bookworm.reader import EBookReader
 from bookworm.utils import restart_application, cached_property, gui_thread_safe
 from bookworm.logger import logger
+from bookworm.gui.contentview_ctrl import EVT_CONTEXTMENU_REQUESTED
 from bookworm.gui.settings import PreferencesDialog
 from bookworm.gui.book_viewer.core_dialogs import (
     GoToPageDialog,
@@ -543,7 +543,7 @@ class MenubarProvider:
         self.menuBar = wx.MenuBar()
         # Context menu
         self.contentTextCtrl.Bind(
-            self.contentTextCtrl.EVT_CONTEXTMENU_REQUESTED,
+            EVT_CONTEXTMENU_REQUESTED,
             self.onContentTextCtrlContextMenu,
             self.contentTextCtrl,
         )

@@ -1,12 +1,9 @@
 # coding: utf-8
 
-import System
 import contextlib
 import wx
 import wx.lib.mixins.listctrl as listmix
 import wx.lib.sized_controls as sc
-import wx.lib.newevent
-from collections.abc import Container
 from dataclasses import dataclass
 from itertools import chain
 import bookworm.typehints as t
@@ -21,44 +18,6 @@ def make_sized_static_box(parent, title):
     stbx.SetSizerProp("expand", True)
     stbx.Sizer.AddSpacer(25)
     return stbx
-
-
-@dataclass
-class SelectionRange(Container):
-    """Represents a text range in an edit control."""
-
-    start: int
-    end: int
-
-    def __contains__(self, x):
-        return self.start <= x <= self.end
-
-    def __iter__(self):
-        return iter((self.start, self.end))
-
-
-class CustomContextMenuTextCtrl(wx.TextCtrl):
-    """
-    Provides a unified method to capture context menu requests in TextCtrl's.
-    Also contains some work arounds.
-    """
-
-    ContextMenuEvent, EVT_CONTEXTMENU_REQUESTED = wx.lib.newevent.NewCommandEvent()
-
-    def TryBefore(self, event):
-        evtType = event.GetEventType()
-        if evtType == wx.EVT_CONTEXT_MENU.typeId:
-            wx.PostEvent(self, self.ContextMenuEvent(self.GetId(), fromMouse=False))
-            return True
-        elif evtType == wx.EVT_RIGHT_UP.typeId:
-            wx.PostEvent(self, self.ContextMenuEvent(self.GetId(), fromMouse=True))
-            return True
-        elif evtType == wx.EVT_KEY_UP.typeId and (
-            event.GetKeyCode() == wx.WXK_WINDOWS_MENU
-        ):
-            # Prevent duplication
-            return True
-        return super().TryBefore(event)
 
 
 class EnhancedSpinCtrl(wx.SpinCtrl):
