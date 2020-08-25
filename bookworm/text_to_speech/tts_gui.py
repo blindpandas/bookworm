@@ -653,8 +653,6 @@ class SpeechMenu(wx.Menu):
 
     def onKeyUp(self, event):
         event.Skip(True)
-        if not self.service.is_engine_ready:
-            return wx.Bell()
         keycode = event.GetKeyCode()
         if event.GetModifiers() == wx.MOD_ALT:
             if keycode == wx.WXK_RIGHT:
