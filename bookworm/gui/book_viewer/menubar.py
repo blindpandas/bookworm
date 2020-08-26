@@ -262,6 +262,7 @@ class SearchMenu(BaseMenu):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.view.add_load_handler(self.after_loading_book)
         reader_book_unloaded.connect(self.after_unloading_book, sender=self.reader)
 
     def create(self):
@@ -300,6 +301,9 @@ class SearchMenu(BaseMenu):
         self.view.Bind(wx.EVT_MENU, self.onFindPrev, id=BookRelatedMenuIds.findPrev)
         self._reset_search_history()
 
+    def after_loading_book(self, sender):
+        self.maintain_state(False)
+
     def after_unloading_book(self, sender):
         self._reset_search_history()
 
@@ -326,6 +330,7 @@ class SearchMenu(BaseMenu):
             config.conf["history"]["recent_terms"] = last_searches[:9]
         config.conf["history"]["recent_terms"].insert(0, term)
         config.save()
+        self.maintain_state(False)
         self._reset_search_history()
         self._recent_search_term = term
         # Translators: the initial title of the search results dialog
@@ -354,6 +359,7 @@ class SearchMenu(BaseMenu):
             dlg.SetTitle(msg)
             speech.announce(msg, True)
         self._latest_search_results = tuple(results)
+        self.maintain_state(True)
 
     def go_to_search_result(self, foreword=True):
         result = None
@@ -384,6 +390,11 @@ class SearchMenu(BaseMenu):
         self._latest_search_results = ()
         self._last_search_index = 0
         self._recent_search_term = ""
+
+    @gui_thread_safe
+    def maintain_state(self, enable):
+        for item_id in {BookRelatedMenuIds.findNext, BookRelatedMenuIds.findPrev}:
+            wx.CallAfter(self.Enable, item_id, enable)
 
     @gui_thread_safe
     def highlight_search_result(self, page_number, pos):

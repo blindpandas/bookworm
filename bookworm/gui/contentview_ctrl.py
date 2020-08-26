@@ -47,7 +47,6 @@ class ContentViewCtrl(wx.TextCtrl):
             | wx.TE_MULTILINE
             | wx.TE_RICH2
             | wx.TE_AUTO_URL
-            | wx.TE_PROCESS_ENTER
             | wx.TE_NOHIDESEL,
             **kwargs
         )

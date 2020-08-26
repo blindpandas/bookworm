@@ -130,8 +130,9 @@ class TextToSpeechService(BookwormService):
         self.engine = None
         reader_book_unloaded.connect(self.on_reader_unload, sender=self.reader)
         reader_page_changed.connect(self._change_page_for_tts, sender=self.reader)
-        # maintain state upon startup
-        self.on_engine_state_changed(state=SynthState.ready)
+        # maintain state upon book load
+        self.view.add_load_handler(lambda s: self.on_engine_state_changed(state=SynthState.ready))
+
 
     def shutdown(self):
         self.close()
@@ -402,17 +403,12 @@ class TextToSpeechService(BookwormService):
         )
         if not self.reader.ready:
             return
-        menubar = self.view.menuBar
-        play = menubar.FindItemById(StatefulSpeechMenuIds.play)
-        pause_toggle = menubar.FindItemById(StatefulSpeechMenuIds.pauseToggle)
-        fastforward = menubar.FindItemById(StatefulSpeechMenuIds.fastforward)
-        rewind = menubar.FindItemById(StatefulSpeechMenuIds.rewind)
-        stop = menubar.FindItemById(StatefulSpeechMenuIds.stop)
-        pause_toggle.Enable(state is not SynthState.ready)
-        stop.Enable(state is not SynthState.ready)
-        play.Enable(state is not SynthState.busy)
-        fastforward.Enable(state is not SynthState.ready)
-        rewind.Enable(state is not SynthState.ready)
+        menu = self.menu
+        menu.Enable(StatefulSpeechMenuIds.pauseToggle, state is not SynthState.ready)
+        menu.Enable(StatefulSpeechMenuIds.stop, state is not SynthState.ready)
+        menu.Enable(StatefulSpeechMenuIds.play, state is not SynthState.busy)
+        menu.Enable(StatefulSpeechMenuIds.fastforward, state is SynthState.busy)
+        menu.Enable(StatefulSpeechMenuIds.rewind, state is SynthState.busy)
 
     @classmethod
     def get_engine(cls, engine_name):
