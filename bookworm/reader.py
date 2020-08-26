@@ -104,14 +104,18 @@ class EBookReader:
 
     def unload(self):
         if self.ready:
-            log.debug("Saving current position.")
             try:
+                log.debug("Saving current position.")
                 self.save_current_position()
+                log.debug("Closing current document.")
+                self.document.close()
             except:
-                log.exception("Failed to save current position.", exc_info=True)
-            self.document.close()
-            self.reset()
-            reader_book_unloaded.send(self)
+                log.exception("An exception was raised while closing the ebook", exc_info=True)
+                if app.debug:
+                    raise
+            finally:
+                self.reset()
+                reader_book_unloaded.send(self)
 
     def save_current_position(self):
         filename = self.document.filename

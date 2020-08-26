@@ -574,9 +574,13 @@ class MenubarProvider:
         self.SetAcceleratorTable(wx.AcceleratorTable(entries))
 
     def onClose(self, evt):
-        self.unloadCurrentEbook()
-        self.Destroy()
-        evt.Skip()
+        try:
+            self.unloadCurrentEbook()
+            self.Destroy()
+            evt.Skip()
+        except:
+            log.exception("An unhandled error was occured while exiting Bookworm", exc_info=True)
+            wx.Abort()
 
     def get_content_text_ctrl_context_menu(self):
         menu = wx.Menu()
