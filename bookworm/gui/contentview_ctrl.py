@@ -75,7 +75,7 @@ class ContentViewCtrl(wx.TextCtrl):
             and not event.HasAnyModifiers()
             and event.GetKeyCode() in NAVIGATION_KEYS
         ):
-            if evtType == wx.EVT_KEY_UP.typeId:
+            if evtType == wx.EVT_CHAR_HOOK.typeId:
                 wx.QueueEvent(self, ContentNavigationEvent(KeyCode=event.GetKeyCode()))
             return True
         return super().TryBefore(event)
