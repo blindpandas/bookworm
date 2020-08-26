@@ -350,16 +350,20 @@ class SearchMenu(BaseMenu):
         results = []
         for (i, resultset) in enumerate(search_func(request)):
             results.extend(resultset)
+            for res in resultset:
+                dlg.addResult(res)
             dlg.updateProgress(i + 1)
-            it(resultset).for_each(lambda res: dlg.addResult(res)).go()
+        # Translators: message to announce the number of search results
+        # also used as the final title of the search results dialog
+        msg = _("Results | {total}").format(total=len(results))
+        speech.announce(msg, True)
         if dlg.IsShown():
-            # Translators: the final title of the search results dialog
-            # shown after the search is finished
-            msg = _("Results | {total}").format(total=len(results))
             dlg.SetTitle(msg)
-            speech.announce(msg, True)
+        else:
+            sounds.ready.play()
         self._latest_search_results = tuple(results)
         self.maintain_state(True)
+        
 
     def go_to_search_result(self, foreword=True):
         result = None

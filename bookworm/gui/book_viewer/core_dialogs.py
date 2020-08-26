@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import threading
 import wx
 import wx.lib.sized_controls as sc
 from itertools import chain
@@ -27,6 +28,7 @@ class SearchResultsDialog(Dialog):
     def __init__(self, highlight_func, num_pages, *args, **kwargs):
         self.highlight_func = highlight_func
         self.num_pages = num_pages
+        self.list_lock = threading.Lock()
         super().__init__(*args, **kwargs)
 
     def addControls(self, sizer, parent):
@@ -77,10 +79,9 @@ class SearchResultsDialog(Dialog):
         btnsizer.Realize()
         return btnsizer
 
-    @gui_thread_safe
     def updateProgress(self, value):
         if self.IsShown():
-            self.progressbar.SetValue(value)
+            wx.CallAfter(self.progressbar.SetValue, value)
 
     def onItemClick(self, event):
         idx = self.searchResultsListCtrl.GetFocusedItem()
@@ -96,10 +97,13 @@ class SearchResultsDialog(Dialog):
             self.highlight_func(int(page) - 1, pos)
             self.parent._last_search_index = idx
 
-    @gui_thread_safe
     def addResult(self, result):
         if not self.IsShown():
             return
+        with self.list_lock:
+            self.addResultToList(result)
+
+    def addResultToList(self, result):
         count = self.searchResultsListCtrl.ItemCount
         page_display_text = (
             str(result.page + 1) if not self.reader.document.is_fluid else ""
