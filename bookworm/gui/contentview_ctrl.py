@@ -69,11 +69,11 @@ class ContentViewCtrl(wx.TextCtrl):
         elif evtType == wx.EVT_KEY_UP.typeId and (
             event.GetKeyCode() == wx.WXK_WINDOWS_MENU
         ):
-            # Prevent duplication
+            # This event is redundant
             return True
         elif (
             isinstance(event, wx.KeyEvent)
-            and event.GetModifiers() == wx.MOD_NONE
+            and not event.HasAnyModifiers()
             and event.GetKeyCode() in NAVIGATION_KEYS
         ):
             if evtType == wx.EVT_KEY_UP.typeId:

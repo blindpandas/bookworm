@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import time
 import os
 import wx
 from contextlib import suppress
@@ -159,7 +160,11 @@ class EBookReader:
                 f"Page {value} is out of range."
                 f"Total number of pages in the document is: {len(self.document)}"
             )
+        # XXX: This is a workaround page turning twice when exiting a dialog
+        if time.time() - self.__state.get("last_page_turn", 2.0) <= 0.1:
+            return
         self.__state["current_page_index"] = value
+        self.__state["last_page_turn"] = time.time()
         page = self.document[value]
         self.active_section = page.section
         self.view.set_state_on_page_change(page)
