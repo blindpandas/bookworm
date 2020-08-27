@@ -1,0 +1,3 @@
+files:
+  - source: '*.po'
+    translation: LC_MESSAGES/%original_file_name%
