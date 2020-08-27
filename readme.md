@@ -1,4 +1,4 @@
-[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/mush42/bookworm?branch=master&svg=true)
+[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/bookworm-devs/bookworm?branch=develop&svg=true)
 
 # Bookworm
 
@@ -18,8 +18,8 @@
 
 ## Resources
 
-* The official website: [mush42.github.io/bookworm](https://mush42.github.io/bookworm/)
-* User guide: [Bookworm user guide](https://mush42.github.io/bookworm/user-guide/)
+* The official website: [bookworm-devs.github.io/bookworm](https://bookworm-devs.github.io/bookworm/)
+* User guide: [Bookworm user guide](https://bookworm-devs.github.io/bookworm/user-guide/)
 
 
 ## Development
@@ -34,7 +34,7 @@ py -m venv .env
 ``
 * Get the source code by cloneing this repo:
 ```shell
-git clone https://github.com/mush42/bookworm.git
+git clone https://github.com/bookworm-devs/bookworm.git
 cd bookworm
 ```
 * Install the requirements from *PyPI* using *pip*:
@@ -72,4 +72,4 @@ invoke build
 
 ## License
 
-**Bookworm** is copyright (c) 2019 Musharraf Omer. It is licensed under the [MIT License](https://github.com/mush42/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2019 Musharraf Omer. It is licensed under the [MIT License](https://github.com/bookworm-devs/bookworm/blob/master/LICENSE).

@@ -337,7 +337,7 @@ class SearchMenu(BaseMenu):
         # shown when the search process is not done yet
         dlg = SearchResultsDialog(
             self.highlight_search_result,
-            (request.to_page - request.to_page) or 1,
+            (request.to_page - request.from_page) or 1,
             self.view,
             title=_("Searching For '{term}'").format(term=term),
         )
@@ -350,20 +350,18 @@ class SearchMenu(BaseMenu):
         results = []
         for (i, resultset) in enumerate(search_func(request)):
             results.extend(resultset)
-            for res in resultset:
-                dlg.addResult(res)
-            dlg.updateProgress(i + 1)
+            if dlg.IsShown():
+                dlg.addResultSet(resultset)
         # Translators: message to announce the number of search results
         # also used as the final title of the search results dialog
         msg = _("Results | {total}").format(total=len(results))
         speech.announce(msg, True)
+        sounds.ready.play()
         if dlg.IsShown():
             dlg.SetTitle(msg)
-        else:
-            sounds.ready.play()
         self._latest_search_results = tuple(results)
         self.maintain_state(True)
-        
+
 
     def go_to_search_result(self, foreword=True):
         result = None

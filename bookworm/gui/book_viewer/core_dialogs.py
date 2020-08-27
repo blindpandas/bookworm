@@ -79,10 +79,6 @@ class SearchResultsDialog(Dialog):
         btnsizer.Realize()
         return btnsizer
 
-    def updateProgress(self, value):
-        if self.IsShown():
-            wx.CallAfter(self.progressbar.SetValue, value)
-
     def onItemClick(self, event):
         idx = self.searchResultsListCtrl.GetFocusedItem()
         if idx != wx.NOT_FOUND:
@@ -96,6 +92,11 @@ class SearchResultsDialog(Dialog):
             self.Destroy()
             self.highlight_func(int(page) - 1, pos)
             self.parent._last_search_index = idx
+
+    def addResultSet(self, resultset):
+        for result in resultset:
+            self.addResult(result)
+        wx.CallAfter(self.progressbar.SetValue, self.progressbar.GetValue() + 1)
 
     def addResult(self, result):
         if not self.IsShown():
