@@ -1,3 +1,0 @@
-files:
-  - source: bookworm/resources/locale/**/*.po
-    translation: bookworm/resources/locale/%locale_with_underscore%/LC_MESSAGES/bookworm.po
