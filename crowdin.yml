@@ -1,5 +1,0 @@
-files:
-  - source: 'bookworm/resources/locale/%locale_with_underscore%/LC_MESSAGES/bookworm.po'
-    translation: 'bookworm/resources/locale/%locale_with_underscore%/LC_MESSAGES/bookworm.po'
-  - source: 'bookworm/docs/userguides/%locale_with_underscore%/bookworm.md'
-    translation: 'bookworm/docs/userguides/%locale_with_underscore%/bookworm.md'
