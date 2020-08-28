@@ -31,14 +31,11 @@ class ContReadingService(BookwormService):
         self._lock = threading.Lock()
         # Event handling
         self.view.Bind(wx.EVT_TIMER, self.onTimerTick, self._page_turn_timer)
+        reader_book_loaded.connect(self.on_reader_load, weak=False, sender=self.reader)
         reader_book_unloaded.connect(
             lambda s: self._page_turn_timer.Stop(), weak=False, sender=self.reader
         )
         config_updated.connect(self._on_config_changed_for_cont)
-        if config.conf["reading"]["use_continuous_reading"]:
-            reader_book_loaded.connect(
-                lambda s: self._start_timer(), weak=False, sender=self.reader
-            )
 
     @call_threaded
     def onTimerTick(self, event):
@@ -52,6 +49,10 @@ class ContReadingService(BookwormService):
                 return
             if cur_pos == end_pos:
                 self.reader.go_to_next()
+            self._start_timer()
+
+    def on_reader_load(self, sender):
+        if config.conf["reading"]["use_continuous_reading"]:
             self._start_timer()
 
     def _on_config_changed_for_cont(self, sender, section):
