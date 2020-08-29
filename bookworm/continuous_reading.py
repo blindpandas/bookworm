@@ -35,19 +35,15 @@ class ContReadingService(BookwormService):
         reader_book_unloaded.connect(
             lambda s: self._page_turn_timer.Stop(), weak=False, sender=self.reader
         )
-        config_updated.connect(self._on_config_changed_for_cont)
 
     @call_threaded
     def onTimerTick(self, event):
         with self._lock:
             wx.WakeUpIdle()
-            cur_pos, end_pos = (
-                self.textCtrl.GetInsertionPoint(),
-                self.textCtrl.GetLastPosition(),
-            )
+            end_pos = self.textCtrl.GetLastPosition()
             if not end_pos:
                 return
-            if cur_pos == end_pos:
+            if self.textCtrl.GetInsertionPoint() == end_pos:
                 self.reader.go_to_next()
             self._start_timer()
 
@@ -55,10 +51,3 @@ class ContReadingService(BookwormService):
         if config.conf["reading"]["use_continuous_reading"]:
             self._start_timer()
 
-    def _on_config_changed_for_cont(self, sender, section):
-        if section == "reading":
-            is_enabled = config.conf["reading"]["use_continuous_reading"]
-            if is_enabled:
-                self._page_turn_timer.Start()
-            else:
-                self._page_turn_timer.Stop()
