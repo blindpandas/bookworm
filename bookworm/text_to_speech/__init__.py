@@ -396,11 +396,17 @@ class TextToSpeechService(BookwormService):
         if not self.reader.ready:
             return
         menu = self.menu
-        menu.Enable(StatefulSpeechMenuIds.pauseToggle, state is not SynthState.ready)
-        menu.Enable(StatefulSpeechMenuIds.stop, state is not SynthState.ready)
-        menu.Enable(StatefulSpeechMenuIds.play, state is not SynthState.busy)
-        menu.Enable(StatefulSpeechMenuIds.fastforward, state is SynthState.busy)
-        menu.Enable(StatefulSpeechMenuIds.rewind, state is SynthState.busy)
+        toolbar =             self.view.toolbar
+        gui_state = {
+            (StatefulSpeechMenuIds.pauseToggle, state is not SynthState.ready),
+            (StatefulSpeechMenuIds.stop, state is not SynthState.ready),
+            (StatefulSpeechMenuIds.play, state is not SynthState.busy),
+            (StatefulSpeechMenuIds.fastforward, state is SynthState.busy),
+            (StatefulSpeechMenuIds.rewind, state is SynthState.busy),
+        }
+        for ctrl_id, enable in gui_state:
+            menu.Enable(ctrl_id, enable)
+            toolbar.EnableTool(ctrl_id, enable)
 
     @classmethod
     def get_engine(cls, engine_name):

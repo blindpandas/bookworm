@@ -401,7 +401,7 @@ class SearchMenu(BaseMenu):
     @gui_thread_safe
     def maintain_state(self, enable):
         for item_id in {BookRelatedMenuIds.findNext, BookRelatedMenuIds.findPrev}:
-            wx.CallAfter(self.Enable, item_id, enable)
+            self.Enable(item_id, enable)
 
     @gui_thread_safe
     def highlight_search_result(self, page_number, pos):
@@ -434,10 +434,12 @@ class ToolsMenu(BaseMenu):
         )
 
     def after_loading_book(self, sender):
+        ctrl_id, enable = BookRelatedMenuIds.viewRenderedAsImage, self.reader.document.can_render_pages
         self.Enable(
-            BookRelatedMenuIds.viewRenderedAsImage,
-            self.reader.document.can_render_pages
+            ctrl_id,
+            enable
         )
+        self.view.toolbar.EnableTool(ctrl_id, enable)
 
     def onViewRenderedAsImage(self, event):
         # Translators: the title of the render page dialog
