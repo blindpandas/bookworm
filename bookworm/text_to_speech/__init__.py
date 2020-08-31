@@ -233,10 +233,18 @@ class TextToSpeechService(BookwormService):
                         utterance.add_pause(sent_pause)
                 utterance.add_pause(self.config_manager["paragraph_pause"])
         if config.conf["reading"]["reading_mode"] < 2:
-            utterance.add_pause(self.config_manager["end_of_page_pause"])
-            page_bookmark = {"type": "end_page", "current": self.reader.current_page}
-            utterance.add_bookmark(self.encode_bookmark(page_bookmark))
-            utterance.add_text(",\f")
+            page = self.reader.get_current_page_object()
+            if page.is_last_of_section and not page.section.has_children:
+                utterance.add_pause(self.config_manager["end_of_section_pause"])
+                if config.conf["reading"]["play_end_of_section_sound"]:
+                    utterance.add_audio(sounds.section_changed.path)
+                # Translators: a message to speak at the end of the chapter
+                utterance.add_text(_("End of section: {chapter}.").format(chapter=page.section.title))
+            else:
+                utterance.add_pause(self.config_manager["end_of_page_pause"])
+            page_bookmark = self.encode_bookmark({"type": "end_page", "current": self.reader.current_page})
+            utterance.add_bookmark(page_bookmark)
+        utterance.add_text(",\f")
         self.enqueue(utterance)
         self.process_queue()
 
@@ -256,25 +264,9 @@ class TextToSpeechService(BookwormService):
             if config.conf["reading"]["select_spoken_text"]:
                 self.textCtrl.SetSelection(pos, data["end"])
         elif data["type"] == "end_page":
-            has_next_page = self.reader.navigate(to="next", unit="page")
-            if not has_next_page:
-                utterance = SpeechUtterance(priority=1)
-                if config.conf["reading"]["play_end_of_section_sound"]:
-                    utterance.add_audio(sounds.section_changed.path)
-                # Translators: a message to speak at the end of the chapter
-                utterance.add_text(
-                    _("End of section: {chapter}.").format(
-                        chapter=self.reader.active_section.title
-                    )
-                )
-                utterance.add_pause(self.config_manager["end_of_section_pause"])
-                if config.conf["reading"]["reading_mode"] == 0:
-                    nextsect_bookmark = {"type": "next_section"}
-                    utterance.add_bookmark(self.encode_bookmark(nextsect_bookmark))
-                self.enqueue(utterance)
-                self.process_queue()
-        elif data["type"] == "next_section":
-            self.reader.navigate(to="next", unit="section")
+            navigated = self.reader.go_to_next()
+            if navigated:
+                self.speak_current_page()
 
     def fastforward(self):
         if not self._current_textinfo or (self.engine.state is not SynthState.busy):

@@ -142,6 +142,10 @@ class Section:
         return self.parent is None
 
     @property
+    def has_children(self):
+        return bool(self)
+
+    @property
     def first_child(self) -> t.Optional["Section"]:
         if self:
             return self[0]
