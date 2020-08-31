@@ -1,9 +1,8 @@
 # coding: utf-8
 
-import System
-import time
 import sys
 import os
+import threading
 import wx
 import webbrowser
 from operator import ge, le
@@ -263,6 +262,7 @@ class SearchMenu(BaseMenu):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.view.add_load_handler(self.after_loading_book)
+        self.search_lock = threading.Lock()
         reader_book_unloaded.connect(self.after_unloading_book, sender=self.reader)
 
     def create(self):
@@ -333,6 +333,8 @@ class SearchMenu(BaseMenu):
         self.maintain_state(False)
         self._reset_search_history()
         self._recent_search_term = term
+        with self.search_lock:
+            self._last_search_request = request
         # Translators: the initial title of the search results dialog
         # shown when the search process is not done yet
         dlg = SearchResultsDialog(
@@ -355,13 +357,15 @@ class SearchMenu(BaseMenu):
         # Translators: message to announce the number of search results
         # also used as the final title of the search results dialog
         msg = _("Results | {total}").format(total=len(results))
-        speech.announce(msg, True)
-        sounds.ready.play()
-        if dlg.IsShown():
-            dlg.SetTitle(msg)
-        self._latest_search_results = tuple(results)
-        self.maintain_state(True)
-
+        with self.search_lock:
+            if self._last_search_request != request:
+                return
+            speech.announce(msg, True)
+            sounds.ready.play()
+            if dlg.IsShown():
+                dlg.SetTitle(msg)
+            self._latest_search_results = tuple(results)
+            self.maintain_state(True)
 
     def go_to_search_result(self, foreword=True):
         result = None
@@ -392,6 +396,7 @@ class SearchMenu(BaseMenu):
         self._latest_search_results = ()
         self._last_search_index = 0
         self._recent_search_term = ""
+        self._last_search_request = None
 
     @gui_thread_safe
     def maintain_state(self, enable):

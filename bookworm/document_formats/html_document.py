@@ -21,12 +21,29 @@ from bookworm.logger import logger
 
 log = logger.getChild(__name__)
 
-HEADING_TAGS = {f"{h}{level}" for level in range(1, 7) for h in ("h", "H")}
-BLOCK_TAGS = {"p", "br", "div", "ul", "ol", "li", "table", "td", "tr"}
-IGNORED_TAGS = {
+HEADING_TAGS = {f"h{level}" for level in range(1, 7)}
+BLOCK_TAGS = {
+    "p", "br", "hr", "section",
+    "code", "nav", "main",
+    "aside", "footer", "article",
+    "table", "ol", "ul", "thead", "tbody", "dl"
+}
+DECORATIVE_TAGS = [
+    "span", "a", "div",
+    "strong", "b", "i",
+    "pre", "em",  "dd",
+    "dt", "cite",  "col", "colgroup",
+]
+IGNORED_TAGS = [
     "script",
     "style",
-}
+    "img",
+    "_comment",
+    "iframe",
+    "button",
+    "input",
+    "form",
+]
 
 
 class HtmlPage(BasePage):
@@ -70,7 +87,7 @@ class HtmlDocument(FluidDocument):
     def get_page(self, index: int) -> HtmlPage:
         return HtmlPage(self, index)
 
-    def _get_document_content(self):
+    def get_html(self):
         with open(self.filename, "r", encoding="utf8") as file:
             return file.read()
 
@@ -79,7 +96,7 @@ class HtmlDocument(FluidDocument):
         self.text_buffer = StringIO()
         self._outline = None
         self._metainfo = None
-        self._parse_html(self._get_document_content())
+        self._parse_html(self.get_html())
 
     def get_content(self):
         return self.text_buffer.getvalue().strip()
@@ -111,12 +128,12 @@ class HtmlDocument(FluidDocument):
                 if el_author is not None
                 else "",
             )
+        html.body.strip_tags(IGNORED_TAGS)
+        html.body.unwrap_tags(DECORATIVE_TAGS)
         root = Section(document=self, pager=None, title=title, level=1, position=0)
         stack = TreeStackBuilder(root)
-        for node in html.body.traverse():
-            if node.tag in IGNORED_TAGS:
-                continue
-            node_text = node.text(deep=False)
+        for node in html.body.iter():
+            node_text = node.text(deep=True)
             if node.tag in HEADING_TAGS:
                 section = Section(
                     document=self,
@@ -132,7 +149,7 @@ class HtmlDocument(FluidDocument):
             else:
                 text = node_text + " "
             self.text_buffer.write(text)
-        self._sections = list(root.iter_children())
+        self._sections = list(root.iter_children()) or [root,]
         self._outline = root
         root.pager = Pager(first=0, last=len(self._sections))
         for i, sect in enumerate(self._sections):

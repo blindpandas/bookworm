@@ -7,7 +7,6 @@ Persistent stoarage using SQLlite3
 import sqlite3
 import os
 import db_magic as db
-from bookworm import config
 from bookworm.paths import home_data_path, db_path as get_db_path
 from bookworm.logger import logger
 from .models import *
@@ -36,8 +35,6 @@ def create_file_history_db():
 
 
 def get_last_position(file_path):
-    if not config.conf["general"]["open_with_last_position"]:
-        return
     sql = "SELECT last_page, last_pos FROM file_history WHERE file_path=?"
     try:
         con = sqlite3.connect(FILE_HISTORY_DB_PATH)

@@ -97,9 +97,16 @@ class EBookReader:
         self.view.add_toc_tree(self.document.toc_tree)
         self.__state.setdefault("current_page_index", -1)
         self.current_page = 0
-        last_position = database.get_last_position(ebook_path.lower())
-        if last_position is not None:
-            self.go_to_page(*last_position)
+        if config.conf["general"]["open_with_last_position"]:
+            try:
+                log.debug("Retreving last saved reading position from the database")
+                pos_info = database.get_last_position(ebook_path.lower())
+                if pos_info is not None:
+                    page_number, pos = pos_info
+                    log.debug("Navigating to the last saved position.")
+                    self.go_to_page(page_number, pos)
+            except:
+                log.exception("Failed to restore last saved reading position", exc_info=True)
         reader_book_loaded.send(self)
 
     def unload(self):
