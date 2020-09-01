@@ -241,10 +241,12 @@ class TextToSpeechService(BookwormService):
                 # Translators: a message to speak at the end of the chapter
                 utterance.add_text(_("End of section: {chapter}.").format(chapter=page.section.title))
             else:
+                # XXX: we need to add extra text to make sure the pause happens
+                utterance.add_text(".\f")
                 utterance.add_pause(self.config_manager["end_of_page_pause"])
-            page_bookmark = self.encode_bookmark({"type": "end_page", "current": self.reader.current_page})
+                utterance.add_text(".")
+            page_bookmark = self.encode_bookmark({"type": "end_page", "current": page.index})
             utterance.add_bookmark(page_bookmark)
-        utterance.add_text(",\f")
         self.enqueue(utterance)
         self.process_queue()
 

@@ -262,12 +262,9 @@ class SpeechPanel(SettingsPanel):
 
     def process_config_save(self):
         active_profile = self.service.config_manager.active_profile
-        should_init_engine = active_profile == self.profile_name == None
-        if active_profile is not None:
-            if self.profile_name == active_profile["name"]:
-                should_init_engine = True
-            else:
-                should_init_engine = False
+        should_init_engine = active_profile is None
+        if active_profile is not None and self.profile_name == active_profile["name"]:
+            should_init_engine = True
         if self.service.is_engine_ready and should_init_engine:
             self.service.initialize_engine()
 

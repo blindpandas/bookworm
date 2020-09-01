@@ -262,7 +262,7 @@ class SearchMenu(BaseMenu):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.view.add_load_handler(self.after_loading_book)
-        self.search_lock = threading.Lock()
+        self.search_lock = threading.RLock()
         reader_book_unloaded.connect(self.after_unloading_book, sender=self.reader)
 
     def create(self):

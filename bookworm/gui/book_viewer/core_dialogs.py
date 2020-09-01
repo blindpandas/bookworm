@@ -28,7 +28,7 @@ class SearchResultsDialog(Dialog):
     def __init__(self, highlight_func, num_pages, *args, **kwargs):
         self.highlight_func = highlight_func
         self.num_pages = num_pages
-        self.list_lock = threading.Lock()
+        self.list_lock = threading.RLock()
         super().__init__(*args, **kwargs)
 
     def addControls(self, sizer, parent):

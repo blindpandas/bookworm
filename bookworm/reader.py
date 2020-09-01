@@ -214,19 +214,17 @@ class EBookReader:
 
     def go_to_next(self) -> bool:
         """Try to navigate to the next page."""
-        next_item = self.current_page + 1
+        current = self.current_page
         with suppress(PaginationError):
-            self.current_page = next_item
-            return True
-        return False
+            self.current_page = current + 1
+        return current != self.current_page
 
     def go_to_prev(self) -> bool:
         """Try to navigate to the previous page."""
-        prev_item = self.current_page - 1
+        current = self.current_page
         with suppress(PaginationError):
-            self.current_page = prev_item
-            return True
-        return False
+            self.current_page = current - 1
+        return current != self.current_page
 
     def go_to_first_of_section(self, section: Section = None):
         section = section or self.active_section
