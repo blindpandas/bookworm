@@ -103,7 +103,7 @@ class SpeechUtterance:
 
     def add(self, utterance):
         """Append the content of another utterance to this utterance."""
-        if not _is_valid_operand(utterance):
+        if not self._is_valid_operand(utterance):
             raise TypeError(
                 f"Could not join utterance of type '{type(utterance)}' to utterance of type '{type(self)}'"
             )

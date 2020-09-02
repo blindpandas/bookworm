@@ -1,9 +1,10 @@
 # coding: utf-8
 
 import wx
+import queue 
 import bisect
 import ujson as json
-from queue import PriorityQueue
+from contextlib import suppress
 from base64 import urlsafe_b64encode, urlsafe_b64decode
 from dataclasses import dataclass
 from bookworm import config
@@ -126,7 +127,7 @@ class TextToSpeechService(BookwormService):
         self.config_manager = TTSConfigManager()
         self.textCtrl = self.view.contentTextCtrl
         self._current_textinfo = None
-        self.queue = PriorityQueue()
+        self.queue = queue.PriorityQueue()
         self.engine = None
         reader_book_unloaded.connect(self.on_reader_unload, sender=self.reader)
         reader_page_changed.connect(self._change_page_for_tts, sender=self.reader)
@@ -165,11 +166,11 @@ class TextToSpeechService(BookwormService):
 
     def on_reader_unload(self, sender):
         self.close()
-        self._current_textinfo = None
 
     def _change_page_for_tts(self, sender, current, prev):
         if not self.is_engine_ready:
             return
+        self.drain_speech_queue()
         self._current_textinfo = self.content_tokenized(start_pos=0)
         is_speaking = getattr(self, "_requested_play", False)
         if self.engine.state is not SynthState.ready:
@@ -212,12 +213,7 @@ class TextToSpeechService(BookwormService):
         text = self.textCtrl.GetRange(current_pos, self.textCtrl.GetLastPosition())
         return self.make_text_info(text, start_pos=current_pos)
 
-    def speak_current_page(self, utterance=None, from_caret=True):
-        start_pos = self.textCtrl.InsertionPoint if from_caret else 0
-        textinfo = self.content_tokenized(start_pos=start_pos)
-        if self._current_textinfo is None:
-            self._current_textinfo = textinfo
-        utterance = utterance or SpeechUtterance()
+    def add_text_segments_to_utterance(self, utterance, textinfo):
         for text, pos in textinfo.paragraphs:
             with utterance.new_paragraph():
                 bookmark_data = {
@@ -232,28 +228,63 @@ class TextToSpeechService(BookwormService):
                     if sent_pause:
                         utterance.add_pause(sent_pause)
                 utterance.add_pause(self.config_manager["paragraph_pause"])
-        if config.conf["reading"]["reading_mode"] < 2:
-            page = self.reader.get_current_page_object()
-            if page.is_last_of_section and not page.section.has_children:
-                utterance.add_pause(self.config_manager["end_of_section_pause"])
-                if config.conf["reading"]["play_end_of_section_sound"]:
-                    utterance.add_audio(sounds.section_changed.path)
+
+    def start_page_utterance(self, utterance, page):
+        if not (
+            config.conf["reading"]["notify_on_section_start"]
+            and page.is_first_of_section
+        ):
+            return
+        sound_utterance = SpeechUtterance()
+        sound_utterance.add_audio(sounds.section_start.path)
+        if isinstance(self.engine, OcSpeechEngine):
+            utterance.add(sound_utterance)
+        else:
+            self.add_end_of_utterance_bookmark(sound_utterance)
+            self.enqueue(sound_utterance)
+        utterance.add_text("Starting sub section")
+        utterance.add_pause(900)
+
+
+    def end_page_utterance(self, utterance, page):
+        if config.conf["reading"]["reading_mode"] == 2:
+            return
+        if page.is_last_of_section and not page.section.has_children:
+            if config.conf["reading"]["notify_on_section_end"]:
+                utterance.add_audio(sounds.section_end.path)
                 # Translators: a message to speak at the end of the chapter
                 utterance.add_text(_("End of section: {chapter}.").format(chapter=page.section.title))
-            else:
-                # XXX: we need to add extra text to make sure the pause happens
-                utterance.add_text(".\f")
-                utterance.add_pause(self.config_manager["end_of_page_pause"])
-                utterance.add_text(".")
-            page_bookmark = self.encode_bookmark({"type": "end_page", "current": page.index})
-            utterance.add_bookmark(page_bookmark)
+            utterance.add_pause(self.config_manager["end_of_section_pause"])
+        else:
+            utterance.add_text(".")
+            utterance.add_pause(self.config_manager["end_of_page_pause"])
+        utterance.add_text(".")
+        page_bookmark = self.encode_bookmark({"type": "end_page", "current": page.index})
+        utterance.add_bookmark(page_bookmark)
+
+    def speak_current_page(self, utterance=None, from_caret=True):
+        start_pos=self.textCtrl.GetInsertionPoint() if from_caret else 0
+        textinfo = self.content_tokenized(start_pos=start_pos)
+        if self._current_textinfo is None:
+            self._current_textinfo = textinfo
+        utterance = utterance or SpeechUtterance()
+        page = self.reader.get_current_page_object()
+        if start_pos == 0:
+            self.start_page_utterance(utterance, page)
+        self.add_text_segments_to_utterance(utterance, textinfo)
+        self.end_page_utterance(utterance, page)
         self.enqueue(utterance)
-        self.process_queue()
+        self.process_next_queued_element()
+
+    def add_end_of_utterance_bookmark(self, utterance):
+        utterance.add_bookmark(self.encode_bookmark({"type": "utterance_end"}))
 
     @gui_thread_safe
     def process_bookmark(self, bookmark):
         data = self.decode_bookmark(bookmark)
-        if data["type"] == "start_segment":
+        if data["type"] == "utterance_end":
+            self.process_next_queued_element()
+        elif data["type"] == "start_segment":
             pos = data["pos"]
             self.textCtrl.ShowPosition(pos)
             if self.textCtrl.GetInsertionPoint() != pos:
@@ -333,6 +364,7 @@ class TextToSpeechService(BookwormService):
                         "Text-to-speech functionality will be disabled."
                     ),
                 )
+                return
         if self.reader.ready and last_known_state is SynthState.busy:
             self.speak_current_page()
 
@@ -357,19 +389,26 @@ class TextToSpeechService(BookwormService):
                 )
 
     def close(self):
-        if self.engine:
+        if self.engine is not None:
+            self.engine.stop()
             self.engine.close()
             self.engine = None
+        self.drain_speech_queue()
+        self._current_textinfo = None
 
     def enqueue(self, utterance):
         if not self.is_engine_ready:
             raise RuntimeError("Not initialized.")
         self.queue.put_nowait(utterance)
 
-    def process_queue(self):
+    def drain_speech_queue(self):
+        while not self.queue.empty():
+            self.queue.get_nowait()
+
+    def process_next_queued_element(self):
         if not self.is_engine_ready:
             raise RuntimeError("Not initialized.")
-        while not self.queue.empty():
+        with suppress(queue.Empty):
             utterance = self.queue.get_nowait()
             self.engine.speak(utterance)
 

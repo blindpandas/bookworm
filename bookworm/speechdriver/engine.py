@@ -60,7 +60,7 @@ class BaseSpeechEngine(metaclass=ABCMeta):
         """Performe any necessary cleanups."""
 
     def __del__(self):
-        with suppress():
+        with suppress(Exception):
             self.close()
 
     def configure(self, engine_config):

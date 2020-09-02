@@ -46,10 +46,12 @@ class OcSpeechEngine(BaseSpeechEngine):
         return platform.version().startswith("10") and _oc_available
 
     def close(self):
-        self.synth.Close()
-        self.synth.BookmarkReached -= self._on_bookmark_reached
-        self.synth.StateChanged -= self._on_state_changed
-        self.synth.Finalize()
+        try:
+            self.synth.BookmarkReached -= self._on_bookmark_reached
+            self.synth.StateChanged -= self._on_state_changed
+        finally:
+            self.synth.Close()
+            self.synth.Finalize()
 
     def get_voices(self):
         rv = []

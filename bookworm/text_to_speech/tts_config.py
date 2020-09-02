@@ -103,7 +103,8 @@ tts_config_spec = {
         speak_page_number="boolean(default=False)",
         highlight_spoken_text="boolean(default=True)",
         select_spoken_text="boolean(default=False)",
-        play_end_of_section_sound="boolean(default=True)",
+        notify_on_section_start="boolean(default=False)",
+        notify_on_section_end="boolean(default=True)",
     ),
     "speech": dict(
         engine="string(default='sapi')",
@@ -142,7 +143,7 @@ builtin_voice_profiles = [
     ),
     (
         # Translators: the name of a built-in voice profile
-        _("Expresse"),
+        _("Express"),
         dict(
             rate=65,
             sentence_pause=0,

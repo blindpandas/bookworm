@@ -97,6 +97,20 @@ class ReadingPanel(SettingsPanel):
             miscBox,
             -1,
             # Translators: the label of a checkbox
+            _("Announce the start of sections (Experimental)"),
+            name="reading.notify_on_section_start",
+        )
+        wx.CheckBox(
+            miscBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Announce the end of sections"),
+            name="reading.notify_on_section_end",
+        )
+        wx.CheckBox(
+            miscBox,
+            -1,
+            # Translators: the label of a checkbox
             _("Highlight spoken text"),
             name="reading.highlight_spoken_text",
         )
@@ -106,13 +120,6 @@ class ReadingPanel(SettingsPanel):
             # Translators: the label of a checkbox
             _("Select spoken text"),
             name="reading.select_spoken_text",
-        )
-        wx.CheckBox(
-            miscBox,
-            -1,
-            # Translators: the label of a checkbox
-            _("Play end of section sound"),
-            name="reading.play_end_of_section_sound",
         )
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
@@ -249,10 +256,11 @@ class SpeechPanel(SettingsPanel):
             self.config["engine"] = self.current_engine.name
             if self.voice.GetSelection() != wx.NOT_FOUND:
                 self.config["voice"] = self.voices[self.voice.GetSelection()].id
-            self.process_config_save()
         super().reconcile(strategy=strategy)
         if strategy is ReconciliationStrategies.load:
             self._set_default_engine_config()
+        else:
+            self.process_config_save()
 
     def _set_default_engine_config(self):
         if self.config.get("rate") == -1:

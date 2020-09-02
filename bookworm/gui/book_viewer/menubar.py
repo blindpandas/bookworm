@@ -206,6 +206,7 @@ class FileMenu(BaseMenu):
         if self.reader.ready and (filename == self.reader.document.filename):
             return
         self.view.open_file(filename)
+        self.add_file_to_recent_files_history(filename)
         self.populate_recent_file_list()
 
     def onClearRecentFileList(self, event):
