@@ -31,10 +31,11 @@ log = logger.getChild(__name__)
 class ResourceLoader:
     """Loads an ebook into the view."""
 
-    def __init__(self, view, filename, callback=None):
+    def __init__(self, view, filename, callback=None, add_to_recents=True):
         self.view = view
         self.filename = filename
         self.callback = callback
+        self.add_to_recents = add_to_recents
 
     def load(self):
         with reader_book_loaded.connected_to(
@@ -54,6 +55,8 @@ class ResourceLoader:
                     break
                 else:
                     result = self.decrypt_opened_document()
+        if self.add_to_recents:
+            self.view.add_file_to_recent_files_history(self.filename)
         self.view.invoke_load_handlers()
         if self.callback is not None:
             self.callback()
@@ -299,6 +302,15 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         ResourceLoader(
             self, filename, callback=callback or self.default_book_loaded_callback
         ).load()
+
+    def add_file_to_recent_files_history(self, filename):
+        recent_files = config.conf["history"]["recently_opened"]
+        if filename in recent_files:
+            recent_files.remove(filename)
+        recent_files.insert(0, filename)
+        newfiles = recent_files if len(recent_files) < 10 else recent_files[:10]
+        config.conf["history"]["recently_opened"] = newfiles
+        config.save()
 
     def set_content(self, content):
         self.contentTextCtrl.Clear()
