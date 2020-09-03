@@ -68,6 +68,11 @@ class BaseMenu(wx.Menu):
 class FileMenu(BaseMenu):
     """The file menu for the book viewer."""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        reader_book_loaded.connect(self.after_loading_book)
+        reader_book_unloaded.connect(lambda s: self.populate_recent_file_list(), weak=False, sender=self.reader)
+
     def create(self):
         # A submenu for recent files
         self.recentFilesMenu = wx.Menu()
@@ -127,6 +132,10 @@ class FileMenu(BaseMenu):
         self._recent_files_data = []
         self.populate_recent_file_list()
 
+    def after_loading_book(self, sender):
+        self.add_file_to_recent_files_history(sender.document.filename)
+        self.populate_recent_file_list()
+
     def onOpenEBook(self, event):
         last_folder = config.conf["history"]["last_folder"]
         if not os.path.isdir(last_folder):
@@ -145,7 +154,6 @@ class FileMenu(BaseMenu):
             openFileDlg.Destroy()
             if filename:
                 self.view.open_file(filename)
-                self.populate_recent_file_list()
                 config.conf["history"]["last_folder"] = os.path.split(filename)[0]
                 config.save()
 
@@ -196,7 +204,6 @@ class FileMenu(BaseMenu):
         if self.reader.ready and (filename == self.reader.document.filename):
             return
         self.view.open_file(filename)
-        self.populate_recent_file_list()
 
     def onClearRecentFileList(self, event):
         config.conf["history"]["recently_opened"] = []
@@ -214,7 +221,15 @@ class FileMenu(BaseMenu):
 
     def onCloseCurrentFile(self, event):
         self.view.unloadCurrentEbook()
-        self.populate_recent_file_list()
+
+    def add_file_to_recent_files_history(self, filename):
+        recent_files = config.conf["history"]["recently_opened"]
+        if filename in recent_files:
+            recent_files.remove(filename)
+        recent_files.insert(0, filename)
+        newfiles = recent_files if len(recent_files) < 10 else recent_files[:10]
+        config.conf["history"]["recently_opened"] = newfiles
+        config.save()
 
     def populate_recent_file_list(self):
         clear_item = self.recentFilesMenu.FindItemById(wx.ID_CLEAR)

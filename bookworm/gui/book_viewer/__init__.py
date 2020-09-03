@@ -14,6 +14,7 @@ from bookworm.reader import (
     EBookReader,
     ReaderError,
     ResourceDoesNotExist,
+    PasswordError,
     UnsupportedDocumentError,
 )
 from bookworm.signals import reader_book_loaded, reader_book_unloaded
@@ -31,11 +32,10 @@ log = logger.getChild(__name__)
 class ResourceLoader:
     """Loads an ebook into the view."""
 
-    def __init__(self, view, filename, callback=None, add_to_recents=True):
+    def __init__(self, view, filename, callback=None):
         self.view = view
         self.filename = filename
         self.callback = callback
-        self.add_to_recents = add_to_recents
 
     def load(self):
         with reader_book_loaded.connected_to(
@@ -46,17 +46,6 @@ class ResourceLoader:
 
     @gui_thread_safe
     def book_loaded_handler(self, sender):
-        if sender.document.is_encrypted():
-            while True:
-                result = self.decrypt_opened_document()
-                if result is None:
-                    return self.view.unloadCurrentEbook()
-                elif result:
-                    break
-                else:
-                    result = self.decrypt_opened_document()
-        if self.add_to_recents:
-            self.view.add_file_to_recent_files_history(self.filename)
         self.view.invoke_load_handlers()
         if self.callback is not None:
             self.callback()
@@ -90,6 +79,16 @@ class ResourceLoader:
             )
             log.exception("Unsupported file format", exc_info=True)
             has_exception = True
+        except PasswordError as e:
+            self.view.notify_user(
+                # Translators: title of a message telling the user that they've entered an incorrect password for 3 times
+                _("Maximom Trials Exceeded"),
+                # Translators: content of a message telling the user that they've
+                # entered an incorrect password for 3 times
+                _("You have entered an incorrect password for three times.\nPlease re-open this book again, and provide the correct password."),
+                icon=wx.ICON_ERROR
+            )
+            has_exception = True
         except ReaderError as e:
             self.view.notify_user(
                 # Translators: the title of an error message
@@ -122,31 +121,6 @@ class ResourceLoader:
                 self.view.unloadCurrentEbook()
                 if app.debug:
                     raise
-
-    def decrypt_opened_document(self):
-        reader = self.view.reader
-        pwd = wx.GetPasswordFromUser(
-            # Translators: the content of a dialog asking the user
-            # for the password to decrypt the current e-book
-            _(
-                "This document is encrypted, and you need a password to access its content.\nPlease enter the password billow and press enter."
-            ),
-            # Translators: the title of a dialog asking the user to enter a password to decrypt the e-book
-            _("Enter Password"),
-            parent=self.view,
-        )
-        if not pwd:
-            return
-        res = reader.document.decrypt(pwd.GetValue())
-        if not res:
-            self.view.notify_user(
-                # Translators: the title of an error message
-                _("Invalid Password"),
-                # Translators: the content of a message
-                _("The password you've entered is invalid.\nPlease try again."),
-                style=wx.ICON_ERROR,
-            )
-        return bool(res)
 
 
 class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
@@ -299,18 +273,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.tocTreeCtrl.SetFocus()
 
     def open_file(self, filename: t.PathLike, callback=None):
+        self.unloadCurrentEbook()
         ResourceLoader(
             self, filename, callback=callback or self.default_book_loaded_callback
         ).load()
-
-    def add_file_to_recent_files_history(self, filename):
-        recent_files = config.conf["history"]["recently_opened"]
-        if filename in recent_files:
-            recent_files.remove(filename)
-        recent_files.insert(0, filename)
-        newfiles = recent_files if len(recent_files) < 10 else recent_files[:10]
-        config.conf["history"]["recently_opened"] = newfiles
-        config.save()
 
     def set_content(self, content):
         self.contentTextCtrl.Clear()
@@ -429,6 +395,43 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def _get_text_view_margins(self):
         # XXX need to do some work here to obtain appropriate margins
         return wx.Point(100, 100)
+
+    def try_decrypt_document(self, document, num_trials=0):
+        if num_trials == 3:
+            return False
+        if not document.is_encrypted():
+            return True
+        password = wx.GetPasswordFromUser(
+            # Translators: the content of a dialog asking the user
+            # for the password to decrypt the current e-book
+            _(
+                "This document is encrypted with a password.\n"
+                "You need to provide the password in order to access its content.\n"
+                "Please provide the password and press enter."
+            ),
+            # Translators: the title of a dialog asking the user to enter a password to decrypt the e-book
+            _("Enter Password"),
+            parent=self,
+        ).strip()
+        if not password:
+            return ""
+        result = document.decrypt(password)
+        if not result:
+            if num_trials  == 2:
+                return False
+            self.notify_user(
+                # Translators: title of a message telling the user that they entered an incorrect
+                # password for opening the book
+                _("Incorrect Password"),
+                # Translators: content of a message telling the user that they entered an incorrect
+                # password for opening the book
+                _(
+                "The password you provided is incorrect.\n"
+                "Please try again with the correct password."),
+                icon=wx.ICON_ERROR
+            )
+            return self.try_decrypt_document(document, num_trials+1)
+        return result
 
     def highlight_range(
         self, start, end, foreground=wx.NullColour, background=wx.NullColour
