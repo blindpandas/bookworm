@@ -10,6 +10,7 @@ from bookworm.i18n import is_rtl
 from bookworm.document_formats import (
     FitzDocument,
     FitzEPUBDocument,
+    FitzFB2Document,
     PlainTextDocument,
     HtmlDocument,
     DocumentCapability,
@@ -59,6 +60,7 @@ class EBookReader:
     document_classes = (
         FitzEPUBDocument,
         FitzDocument,
+        FitzFB2Document,
         PlainTextDocument,
         HtmlDocument,
     )

@@ -202,3 +202,12 @@ class FitzEPUBDocument(FitzDocument):
                 book.write(file, file.relative_to(temp_path))
         _temp.cleanup()
         return str(processed_book)
+
+
+class FitzFB2Document(FitzDocument):
+
+    format = "fb2"
+    # Translators: the name of a document file format
+    name = _("Fiction Book (FB2)")
+    extensions = ("*.fb2",)
+
