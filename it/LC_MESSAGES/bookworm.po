@@ -4,21 +4,19 @@ msgstr ""
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2020-08-08 18:02+0200\n"
 "PO-Revision-Date: 2020-09-04 14:45\n"
-"Last-Translator: Musharraf Omer <ibnomer2011@hotmail.com>\n"
+"Last-Translator: \n"
+"Language: it\n"
 "Language-Team: Italian\n"
-"Language: it_IT\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
-"X-Generator: Poedit 2.4\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.8.0\n"
 "X-Crowdin-Project: bookworm\n"
 "X-Crowdin-Project-ID: 417962\n"
 "X-Crowdin-Language: it\n"
-"X-Crowdin-File: /develop/bookworm/resources/locale/zh_CN/LC_MESSAGES/bookworm.po\n"
-"X-Crowdin-File-ID: 50\n"
+"X-Crowdin-File: /develop/bookworm/resources/locale/hr/LC_MESSAGES/bookworm.po\n"
+"X-Crowdin-File-ID: 40\n"
 
 #. Translators: the content of a message indicating a connection error
 #: bookworm/otau.py:97
@@ -166,7 +164,7 @@ msgstr ""
 
 #. Translators: the title of the window when an e-book is open
 #: bookworm/reader.py:241
-msgid "{title} â€” by {author}"
+msgid "{title} — by {author}"
 msgstr ""
 
 #: bookworm/annotation/__init__.py:51
@@ -613,7 +611,7 @@ msgstr ""
 #. Translators: used as a title for an html file when exporting comments or
 #. highlights
 #: bookworm/annotation/exporters/core_renderers.py:104
-msgid "Annotations â€” {}"
+msgid "Annotations — {}"
 msgstr ""
 
 #. Translators: the name of a document file format
@@ -1319,7 +1317,7 @@ msgstr ""
 
 #. Translators: content of a message
 #: bookworm/ocr/ocr_gui.py:211
-msgid "No language for OCR is present.\\bPlease use Windos Regional Settings to download some languages."
+msgid "No language for OCR is present.Please use Windos Regional Settings to download some languages."
 msgstr ""
 
 #: bookworm/ocr/ocr_gui.py:214
@@ -1784,148 +1782,4 @@ msgstr ""
 #: bookworm/text_to_speech/tts_gui.py:643
 msgid "Voice Profiles"
 msgstr ""
-
-#~ msgid "Play a sound when the current page contains notes"
-#~ msgstr "当前页含有注释内容时播放音效"
-
-#~ msgid "Highlight bookmarked positions"
-#~ msgstr "高亮显示书签位置"
-
-#~ msgid "Notes"
-#~ msgstr "笔记"
-
-#~ msgid "Title"
-#~ msgstr "标题"
-
-#~ msgid "Remove Entry?"
-#~ msgstr "删除条目？"
-
-#~ msgid "View Note..."
-#~ msgstr "查看笔记..."
-
-#~ msgid "Take A Note..."
-#~ msgstr "添加笔记..."
-
-#~ msgid "Edit Note..."
-#~ msgstr "编辑笔记..."
-
-#~ msgid "Note Title:"
-#~ msgstr "笔记标题："
-
-#~ msgid "Note Content:"
-#~ msgstr "笔记内容"
-
-#~ msgid ""
-#~ "Empty fields are present. Please make sure you have filled-in all fields."
-#~ msgstr "存在空白条目。请确保您已填写了所有条目。"
-
-#~ msgid "Cannot Save Note"
-#~ msgstr "无法保存笔记"
-
-#~ msgid "Whole Book"
-#~ msgstr "整本书"
-
-#~ msgid "Current Section"
-#~ msgstr "当前章节"
-
-#~ msgid "Export Range"
-#~ msgstr "导出范围"
-
-#~ msgid "&Cancel"
-#~ msgstr "取消(&C)"
-
-#~ msgid ""
-#~ "There are no notes for this book or the selected section.\n"
-#~ "Please make sure you have added some notes before using the export "
-#~ "functionality."
-#~ msgstr ""
-#~ "此书籍或当前所选章节没有笔记。\\ n\n"
-#~ "使用导出功能之前，请确保已添加过笔记。"
-
-#~ msgid "No Notes"
-#~ msgstr "无笔记"
-
-#~ msgid ""
-#~ "The provided file name is not valid. Please try again with a different "
-#~ "name."
-#~ msgstr "提供的文件名无效。请换个名称再试一次。"
-
-#~ msgid "Invalid File Name"
-#~ msgstr "无效的文件名"
-
-#~ msgid "Open an e-book"
-#~ msgstr "打开一本电子书"
-
-#~ msgid "Search e-book"
-#~ msgstr "搜索电子书"
-
-#~ msgid "View a fully rendered version of this page"
-#~ msgstr "查看此页面的完整版本"
-
-#~ msgid "Note"
-#~ msgstr "笔记"
-
-#~ msgid "Add note"
-#~ msgstr "添加笔记"
-
-#~ msgid "Rewind"
-#~ msgstr "回放"
-
-#~ msgid "Play/Resume"
-#~ msgstr "朗读/继续"
-
-#~ msgid "Customize TTS voice parameters."
-#~ msgstr "自定义TTS语音参数。"
-
-#~ msgid "Zoom out"
-#~ msgstr "缩小"
-
-#~ msgid "Make font smaller"
-#~ msgstr "减小字体"
-
-#~ msgid "Zoom in"
-#~ msgstr "放大"
-
-#~ msgid "Make font larger"
-#~ msgstr "增大字体"
-
-#~ msgid "Preferences"
-#~ msgstr "优先"
-
-#~ msgid "Configure the application"
-#~ msgstr "配置应用程序"
-
-#~ msgid "Take &Note...\tCtrl-N"
-#~ msgstr "添加笔记(&N)... \tCtrl-N"
-
-#~ msgid "&Manage Notes...\tCtrl-Shift-N"
-#~ msgstr "管理笔记(&M)... \tCtrl-Shift-N"
-
-#~ msgid "Notes &Exporter"
-#~ msgstr "导出笔记(&E)"
-
-#~ msgid "Export notes to a file."
-#~ msgstr "将笔记导出到文件。"
-
-#~ msgid "&Speech"
-#~ msgstr "语音(&S)"
-
-#~ msgid "Bookmark This Location"
-#~ msgstr "在此位置添加书签"
-
-#~ msgid "Export Notes | {book}"
-#~ msgstr "导出笔记 | {book}"
-
-#~ msgid "Converting book..."
-#~ msgstr "正在转换书籍..."
-
-#~ msgid ""
-#~ "The file\n"
-#~ "{file}\n"
-#~ "was not found."
-#~ msgstr ""
-#~ "文件\n"
-#~ "\n"
-#~ "{file} \\ n\n"
-#~ "未找到。"
 
