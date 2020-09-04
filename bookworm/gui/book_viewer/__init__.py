@@ -14,7 +14,6 @@ from bookworm.reader import (
     EBookReader,
     ReaderError,
     ResourceDoesNotExist,
-    PasswordError,
     UnsupportedDocumentError,
 )
 from bookworm.signals import reader_book_loaded, reader_book_unloaded
@@ -78,16 +77,6 @@ class ResourceLoader:
                 icon=wx.ICON_WARNING,
             )
             log.exception("Unsupported file format", exc_info=True)
-            has_exception = True
-        except PasswordError as e:
-            self.view.notify_user(
-                # Translators: title of a message telling the user that they've entered an incorrect password for 3 times
-                _("Maximom Trials Exceeded"),
-                # Translators: content of a message telling the user that they've
-                # entered an incorrect password for 3 times
-                _("You have entered an incorrect password for three times.\nPlease re-open this book again, and provide the correct password."),
-                icon=wx.ICON_ERROR
-            )
             has_exception = True
         except ReaderError as e:
             self.view.notify_user(
@@ -396,9 +385,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         # XXX need to do some work here to obtain appropriate margins
         return wx.Point(100, 100)
 
-    def try_decrypt_document(self, document, num_trials=0):
-        if num_trials == 3:
-            return False
+    def try_decrypt_document(self, document):
         if not document.is_encrypted():
             return True
         password = wx.GetPasswordFromUser(
@@ -414,11 +401,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             parent=self,
         ).strip()
         if not password:
-            return ""
+            return False
         result = document.decrypt(password)
         if not result:
-            if num_trials  == 2:
-                return False
             self.notify_user(
                 # Translators: title of a message telling the user that they entered an incorrect
                 # password for opening the book
@@ -430,7 +415,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 "Please try again with the correct password."),
                 icon=wx.ICON_ERROR
             )
-            return self.try_decrypt_document(document, num_trials+1)
+            return self.try_decrypt_document(document)
         return result
 
     def highlight_range(

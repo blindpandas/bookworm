@@ -37,13 +37,6 @@ class ResourceDoesNotExist(ReaderError):
     """The file does not exist."""
 
 
-class PasswordError(ReaderError):
-    """The user failed to provide a correct password."""
-    def __init__(self, cancelled, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.cancelled = cancelled
-
-
 class UnsupportedDocumentError(ReaderError):
     """File type/format is not supported."""
 
@@ -94,12 +87,10 @@ class EBookReader:
             self.document = document_cls(filename=ebook_path)
             self.document.read()
             result = self.view.try_decrypt_document(self.document)
-            if result == "":
+            if not result:
                 with suppress(Exception):
                     self.unload()
                 return
-            elif not result:
-                raise PasswordError(cancelled=False)
         except DocumentError as e:
             self.reset()
             raise ReaderError("Failed to open document", e)
