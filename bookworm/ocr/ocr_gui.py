@@ -11,6 +11,7 @@ from enum import IntEnum
 from bookworm import app
 from bookworm import config
 from bookworm import speech
+from bookworm.i18n import is_rtl
 from bookworm.text_to_speech import speech_engine_state_changed
 from bookworm.signals import (
     reader_book_loaded,
@@ -249,6 +250,7 @@ class OCRMenu(wx.Menu):
             self._scanned_pages[page_number] = content
             if page_number == self.view.reader.current_page:
                 self.view.set_content(content)
+                self.view.set_text_direction(is_rtl(lang))
 
         self._run_ocr(
             lang, image, width, height, _ocr_callback, data=reader.current_page
@@ -317,8 +319,9 @@ class OCRMenu(wx.Menu):
         args = (doc, lang, zoom_factor, should_enhance, output_file)
         for progress in QueueProcess(target=ocr.scan_to_text, args=args):
             wx.CallAfter(
-                progress_dlg.Update, progress, f"Scanning page {progress} of {total}"
+                progress_dlg.Update, progress + 1, f"Scanning page {progress} of {total}"
             )
+        wx.CallAfter(progress_dlg.Hide)
         wx.CallAfter(progress_dlg.Close)
         wx.CallAfter(progress_dlg.Destroy)
         wx.CallAfter(
@@ -373,6 +376,7 @@ class OCRMenu(wx.Menu):
                 if self.service.reader.ready:
                     self.view.unloadCurrentEbook()
                 self.view.set_content(content)
+                self.view.set_text_direction(is_rtl(lang))
                 self.view.set_status(_("OCR Results"))
 
             self._run_ocr(
