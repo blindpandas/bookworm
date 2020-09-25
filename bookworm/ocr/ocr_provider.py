@@ -69,7 +69,7 @@ def scan_to_text(
 
     with ThreadPoolExecutor(3) as pool:
         for (idx, text) in enumerate(pool.map(recognize_page, doc)):
-            out.write(f"Page{idx + 1}{NEWLINE}{text}{NEWLINE}\f{NEWLINE}")
+            out.write(f"Page {idx + 1}{NEWLINE}{text}{NEWLINE}\f{NEWLINE}")
             channel.push(idx)
     with open(output_file, "w", encoding="utf8") as file:
         file.write(out.getvalue())
