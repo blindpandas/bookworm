@@ -8,13 +8,13 @@ import re
 
 name = "bookworm"
 display_name = "Bookworm"
-author = "Musharraf Omer"
-author_email = "ibnomer2011@hotmail.com"
+author = "Blind Pandas Team"
+author_email = "info@blindpandas.com"
 version = "0.2a4"
 version_ex = "0.2.0.4"
-url = "https://github.com/bookworm-devs/bookworm"
-website = "https://bookworm-devs.github.io/bookworm/"
-update_url = "https://bookworm-devs.github.io/bookworm/current_version.json"
+url = "https://github.com/blindpandas/bookworm"
+website = "https://blindpandas.com/bookworm/"
+update_url = "https://blindpandas.com/bookworm/current_version.json"
 copyright = f"Copyright (c) 2020 {author} and {display_name} contributors."
 is_frozen = hasattr(sys, "frozen") and hasattr(sys, "_MEIPASS")
 arch = "x86" if struct.calcsize("P") == 4 else "x64"
