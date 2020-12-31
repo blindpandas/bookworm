@@ -14,12 +14,16 @@ from bookworm.annotation import AnnotationService
 from bookworm.continuous_reading import ContReadingService
 from bookworm.ocr import OCRService
 from bookworm.text_to_speech import TextToSpeechService
+from bookworm.webservices import WebservicesBaseService, WikipediaService, UrlOpenService
 
 BUILTIN_SERVICES = (
     TextToSpeechService,
     AnnotationService,
+    WebservicesBaseService,
     OCRService,
     ContReadingService,
+    UrlOpenService,
+    WikipediaService,
 )
 
 
