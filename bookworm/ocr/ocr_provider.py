@@ -12,7 +12,7 @@ from chemical import it, ChemicalException
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.runtime import UWP_SERVICES_AVAILABEL
-from bookworm.i18n import LanguageInfo
+from bookworm.i18n import LocaleInfo
 from bookworm.utils import NEWLINE
 from bookworm.logger import logger
 
@@ -33,8 +33,8 @@ def is_ocr_available() -> bool:
     return platform.version().startswith("10") and _ocr_available
 
 
-def get_recognition_languages() -> t.List[LanguageInfo]:
-    langs = [LanguageInfo(lang) for lang in DocrEngine.get_supported_languages()]
+def get_recognition_languages() -> t.List[LocaleInfo]:
+    langs = [LocaleInfo(lang) for lang in DocrEngine.get_supported_languages()]
     current_lang = None
     with suppress(ChemicalException):
         current_lang = it(langs).find(

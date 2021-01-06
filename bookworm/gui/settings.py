@@ -10,7 +10,7 @@ from bookworm import app
 from bookworm import config
 from bookworm.paths import app_path
 from bookworm.utils import restart_application
-from bookworm.i18n import get_available_languages, set_active_language
+from bookworm.i18n import get_available_locales, set_locale
 from bookworm.signals import app_started, config_updated
 from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.resources import images
@@ -262,7 +262,7 @@ class GeneralPanel(SettingsPanel):
                 _("Manage File &Associations"),
             )
             self.Bind(wx.EVT_BUTTON, self.onRequestFileAssoc, id=wx.ID_SETUP)
-        languages = [l for l in set(get_available_languages().values())]
+        languages = [l for l in set(get_available_locales().values())]
         for langobj in languages:
             self.languageChoice.Append(langobj.description, langobj)
         self.languageChoice.SetStringSelection(app.current_language.description)
@@ -273,10 +273,10 @@ class GeneralPanel(SettingsPanel):
             if selection == wx.NOT_FOUND:
                 return
             selected_lang = self.languageChoice.GetClientData(selection)
-            if selected_lang.LCID != app.current_language.LCID:
+            if selected_lang.pylang != app.current_language.pylang:
                 self.config["language"] = selected_lang.pylang
                 config.save()
-                set_active_language(selected_lang.pylang)
+                set_locale(selected_lang.pylang)
                 msg = wx.MessageBox(
                     # Translators: the content of a message asking the user to restart
                     _(
