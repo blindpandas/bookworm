@@ -11,8 +11,8 @@ from bookworm.paths import app_path
 from bookworm.reader import EBookReader
 from bookworm.utils import ignore
 from bookworm.vendor import shellapi
-from bookworm.win_registry import RegKey, RegistryValueKind
 from bookworm.logger import logger
+from .win_registry import RegKey, RegistryValueKind
 
 
 log = logger.getChild(__name__)

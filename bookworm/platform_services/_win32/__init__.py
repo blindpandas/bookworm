@@ -1,17 +1,17 @@
 # coding: utf-8
 
-from .user import *
+__all__ = [
+    "get_user_locale", "set_app_locale",
+    "is_running_portable", "is_high_contrast_active",
+    "shell_integrate", "shell_disintegrate",
+    "is_ocr_available", "get_recognition_languages", "recognize", "scan_to_text",
+    "TTS_ENGINES"
+]
 
-def check_runtime_components():
-    """
-    Make sure that critical runtime components are OK.
-    Raise EnvironmentError.
-    """
-    # TODO: Make sure that .NET Framework 4.0 or higher
-    # is available in the target system.
-    try:
-        # This is a basic sanity check
-        import clr
-        import System
-    except:
-        raise EnvironmentError
+from .user import get_user_locale, set_app_locale
+from .winruntime import is_running_portable, is_high_contrast_active
+from .shell_integration import shell_integrate, shell_disintegrate
+from .ocr_provider import is_ocr_available, get_recognition_languages, recognize, scan_to_text
+from .speech_engines import OcSpeechEngine, SapiSpeechEngine
+
+TTS_ENGINES = (OcSpeechEngine, SapiSpeechEngine,)

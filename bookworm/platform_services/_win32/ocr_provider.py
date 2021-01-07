@@ -11,10 +11,10 @@ from contextlib import suppress
 from chemical import it, ChemicalException
 from bookworm import typehints as t
 from bookworm import app
-from bookworm.runtime import UWP_SERVICES_AVAILABEL
 from bookworm.i18n import LocaleInfo
 from bookworm.utils import NEWLINE
 from bookworm.logger import logger
+from .winruntime import UWP_SERVICES_AVAILABEL
 
 log = logger.getChild(__name__)
 

@@ -1,12 +1,7 @@
 # coding: utf-8
 
-import clr
-import System
-from System.Globalization import CultureInfo
-
 import sys
 import os
-import winpaths
 import glob
 import wx
 import hashlib
@@ -15,6 +10,7 @@ from subprocess import list2cmdline
 from pathlib import Path
 from xml.sax.saxutils import escape
 from datetime import datetime
+from babel.dates import format_datetime as babel_format_datetime
 from bookworm.vendor import shellapi
 from bookworm import app
 from bookworm.concurrency import call_threaded
@@ -51,21 +47,6 @@ def ignore(*exceptions, retval=None):
         return wrapped
 
     return wrapper
-
-
-@lru_cache(maxsize=10)
-def reference_gac_assembly(glob_pattern: str):
-    """
-    Locate an assembly from the GAC and reference it.
-
-    Recent versions of Pythonnet does not auto discover certain .NET framework
-    assemblies, so add what we need from the global Assembly Cache (GAC).
-    """
-    gac_home = "Microsoft.NET\\assembly\\GAC_MSIL\\"
-    assemblies = tuple(Path(winpaths.get_windows(), gac_home).rglob(glob_pattern))
-    if not assemblies:
-        raise OSError(f"Could not find assembily: {glob_pattern}")
-    clr.AddReference(str(assemblies[0]))
 
 
 def restart_application(*extra_args, debug=False, restore=True):
@@ -136,11 +117,7 @@ def search(pattern, text):
 
 
 def format_datetime(date: datetime) -> str:
-    if not date:
-        return ""
-    formatter = CultureInfo.CurrentUICulture.DateTimeFormat
-    return System.DateTime.Parse(str(date), None).ToString(formatter)
-
+    return babel_format_datetime(date, locale=app.current_language)
 
 class cached_property(property):
 
