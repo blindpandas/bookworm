@@ -9,7 +9,7 @@ from bookworm import app
 from bookworm.speechdriver.enumerations import EngineEvent, SynthState, RateSpec
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.logger import logger
-from bookworm.platform_services._win32.winruntime import UWP_SERVICES_AVAILABEL, reference_gac_assembly
+from bookworm.platform_services._win32.runtime import UWP_SERVICES_AVAILABEL, reference_gac_assembly
 
 
 log = logger.getChild(__name__)

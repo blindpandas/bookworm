@@ -2,10 +2,9 @@
 
 import logging
 import platform
-import winpaths
 import bookworm
 from pathlib import Path
-from platform_utils import paths as paths_
+from platform_utils import paths as path_finder
 from functools import wraps
 from bookworm import app
 from bookworm.runtime import IS_RUNNING_PORTABLE
@@ -33,7 +32,7 @@ def data_path():
         if IS_RUNNING_PORTABLE:
             data_path = app_path("user-config")
         else:
-            data_path = Path(winpaths.get_appdata()) / app.display_name
+            data_path = Path(path_finder.app_data_path(app.display_name))
     if not data_path.exists():
         data_path.mkdir(parents=True, exist_ok=True)
     return data_path
@@ -42,7 +41,7 @@ def data_path():
 @merge_paths
 def app_path():
     if app.is_frozen:
-        return Path(paths_.app_path())
+        return Path(path_finder.app_path())
     else:
         import bookworm
 

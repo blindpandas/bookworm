@@ -3,7 +3,7 @@
 """Provides information and functionality needed at runtime."""
 
 
-from bookworm.platform_services import is_running_portable, is_high_contrast_active
+from bookworm.platform_services.runtime import is_running_portable, is_high_contrast_active
 
 
 IS_RUNNING_PORTABLE = is_running_portable()

@@ -11,7 +11,7 @@ from bookworm.paths import logs_path
 from bookworm.config import setup_config
 from bookworm.i18n import setup_i18n
 from bookworm.database import init_database
-from bookworm.shell_integration import shell_integrate, shell_disintegrate
+from bookworm.platform_services.shell import shell_integrate, shell_disintegrate
 from bookworm.signals import app_started, app_shuttingdown
 from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.service_handler import ServiceHandler

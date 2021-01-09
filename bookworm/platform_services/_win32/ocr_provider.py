@@ -14,7 +14,7 @@ from bookworm import app
 from bookworm.i18n import LocaleInfo
 from bookworm.utils import NEWLINE
 from bookworm.logger import logger
-from .winruntime import UWP_SERVICES_AVAILABEL
+from .runtime import UWP_SERVICES_AVAILABEL
 
 log = logger.getChild(__name__)
 

@@ -14,6 +14,7 @@ from bookworm import speech
 from bookworm.i18n import is_rtl
 from bookworm.text_to_speech import speech_engine_state_changed
 from bookworm.signals import (
+    _signals,
     reader_book_loaded,
     reader_book_unloaded,
     reader_page_changed,
@@ -24,12 +25,15 @@ from bookworm.speechdriver.enumerations import SynthState
 from bookworm.gui.components import SimpleDialog, SnakDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
-from . import ocr_provider as ocr
-from . import ocr_started, ocr_ended
+from bookworm.platform_services.ocr_provider import get_recognition_languages, recognize, scan_to_text
 
 
 log = logger.getChild(__name__)
 PAGE_CACHE_SIZE = 500
+
+# Signals
+ocr_started = _signals.signal("ocr-started")
+ocr_ended = _signals.signal("ocr-ended")
 
 
 class OCRMenuIds(IntEnum):
@@ -193,7 +197,7 @@ class OCRMenu(wx.Menu):
             saved_values = {}
             if pre_saved:
                 saved_values["lang"] = [
-                    l.given_lang for l in ocr.get_recognition_languages()
+                    l.given_lang for l in get_recognition_languages()
                 ].index(pre_saved[0])
                 saved_values["zoom_factor"] = pre_saved[1]
                 saved_values["should_enhance"] = pre_saved[2]
@@ -207,7 +211,7 @@ class OCRMenu(wx.Menu):
         return rv
 
     def _get_ocr_options_from_dlg(self, saved_values=None, **dlg_kw):
-        langs = ocr.get_recognition_languages()
+        langs = get_recognition_languages()
         if not langs:
             wx.MessageBox(
                 # Translators: content of a message
@@ -263,7 +267,7 @@ class OCRMenu(wx.Menu):
         sounds.ocr_start.play()
         future_callback = functools.partial(self._process_ocr_result, callback)
         threaded_worker.submit(
-            ocr.recognize, lang, image, width, height, data
+            recognize, lang, image, width, height, data
         ).add_done_callback(future_callback)
 
     def onAutoScanPages(self, event):
@@ -317,7 +321,7 @@ class OCRMenu(wx.Menu):
         doc = self.service.reader.document
         total = len(doc)
         args = (doc, lang, zoom_factor, should_enhance, output_file)
-        for progress in QueueProcess(target=ocr.scan_to_text, args=args):
+        for progress in QueueProcess(target=scan_to_text, args=args):
             wx.CallAfter(
                 progress_dlg.Update, progress + 1, f"Scanning page {progress} of {total}"
             )

@@ -8,6 +8,7 @@ from contextlib import suppress
 from base64 import urlsafe_b64encode, urlsafe_b64decode
 from dataclasses import dataclass
 from bookworm import config
+from bookworm.platform_services.speech_engines import TTS_ENGINES
 from bookworm.resources import sounds
 from bookworm.resources import images
 from bookworm.speechdriver import DummySpeechEngine, speech_engine_state_changed
@@ -18,8 +19,6 @@ from bookworm.speechdriver.enumerations import (
     EmphSpec,
     PauseSpec,
 )
-from bookworm.speechdriver.engines.sapi import SapiSpeechEngine
-from bookworm.speechdriver.engines.onecore import OcSpeechEngine
 from bookworm.utils import cached_property, gui_thread_safe
 from bookworm.vendor.sentence_splitter import (
     SentenceSplitter,
@@ -120,7 +119,7 @@ class TextToSpeechService(BookwormService):
     config_spec = tts_config_spec
     has_gui = True
     stateful_menu_ids = StatefulSpeechMenuIds
-    __available_engines = (SapiSpeechEngine, OcSpeechEngine)
+    __available_engines = TTS_ENGINES
     speech_engines = [e for e in __available_engines if e.check()]
 
     def __post_init__(self):

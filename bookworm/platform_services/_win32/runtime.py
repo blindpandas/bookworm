@@ -5,8 +5,11 @@ import clr
 clr.AddReference("System.Windows.Forms")
 from System.Windows.Forms import SystemInformation
 
+import sys
 import winpaths
+from functools import lru_cache
 from pathlib import Path
+from bookworm import app
 from bookworm import paths
 from .win_registry import RegKey, Registry
 

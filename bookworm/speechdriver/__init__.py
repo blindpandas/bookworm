@@ -5,8 +5,6 @@ from bookworm.signals import _signals
 speech_engine_state_changed = _signals.signal("speech-engine.state-changed")
 
 from .engine import BaseSpeechEngine
-from .engines.sapi import SapiSpeechEngine
-from .engines.onecore import OcSpeechEngine
 from .enumerations import EngineEvent, SynthState
 
 

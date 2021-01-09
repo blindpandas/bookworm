@@ -11,7 +11,7 @@ from babel import UnknownLocaleError, Locale, parse_locale, default_locale
 from bookworm import app
 from bookworm import paths
 from bookworm import config
-from bookworm.platform_services import get_user_locale, set_app_locale as _set_app_locale
+from bookworm.platform_services.user import get_user_locale, set_app_locale as _set_app_locale
 from bookworm.signals import app_started
 from bookworm.logger import logger
 from .localeinfo import LocaleInfo

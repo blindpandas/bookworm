@@ -5,7 +5,7 @@ import os
 import glob
 import wx
 import hashlib
-from functools import wraps, lru_cache
+from functools import wraps
 from subprocess import list2cmdline
 from pathlib import Path
 from xml.sax.saxutils import escape
