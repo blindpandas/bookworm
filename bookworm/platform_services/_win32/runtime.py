@@ -2,6 +2,7 @@
 
 
 import clr
+
 clr.AddReference("System.Windows.Forms")
 from System.Windows.Forms import SystemInformation
 
@@ -10,13 +11,13 @@ import winpaths
 from functools import lru_cache
 from pathlib import Path
 from bookworm import app
-from bookworm import paths
+from platform_utils.paths import app_path
 from .win_registry import RegKey, Registry
 
 
 UWP_SERVICES_AVAILABEL = False
 try:
-    _app_path = Path(paths_.app_path())
+    _app_path = Path(app_path())
     _uwp_services_dll = _app_path / "BookwormUWPServices.dll"
     if not app.is_frozen:
         _uwp_services_dll = (
@@ -48,7 +49,6 @@ def reference_gac_assembly(glob_pattern: str):
     if not assemblies:
         raise OSError(f"Could not find assembily: {glob_pattern}")
     clr.AddReference(str(assemblies[0]))
-
 
 
 def is_running_portable():

@@ -12,14 +12,15 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-
 class UrlOpenService(BookwormService):
     name = "url_open"
     config_spec = {}
     has_gui = True
 
     def process_menubar(self, menubar):
-        webservices_menu = wx.GetApp().service_handler.get_service("webservices").web_sservices_menu
+        webservices_menu = (
+            wx.GetApp().service_handler.get_service("webservices").web_sservices_menu
+        )
         open_url = webservices_menu.Insert(0, -1, _("&Open URL\tCtrl+U"))
         self.view.Bind(wx.EVT_MENU, self.onOpenUrl, open_url)
 
@@ -28,10 +29,12 @@ class UrlOpenService(BookwormService):
             # Translators: title of a dialog for entering a URL
             _("Enter URL"),
             # Translators: label of a textbox in a dialog for entering a URL
-            _("URL")
+            _("URL"),
         )
         canonical_url = url_normalize(url)
-        threaded_worker.submit(trafilatura.fetch_url, canonical_url).add_done_callback(self.show_page)
+        threaded_worker.submit(trafilatura.fetch_url, canonical_url).add_done_callback(
+            self.show_page
+        )
 
     @gui_thread_safe
     def show_page(self, future):

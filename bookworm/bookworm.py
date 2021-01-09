@@ -20,7 +20,6 @@ def check_runtime_components():
         raise EnvironmentError
 
 
-
 def main():
     try:
         check_runtime_components()

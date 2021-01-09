@@ -119,6 +119,7 @@ def search(pattern, text):
 def format_datetime(date: datetime) -> str:
     return babel_format_datetime(date, locale=app.current_language)
 
+
 class cached_property(property):
 
     """A decorator that converts a function into a lazy property.  The
@@ -135,7 +136,7 @@ class cached_property(property):
 
     The class has to have a `__dict__` in order for this property to
     work.
-    
+
     Taken as is from werkzeug, a WSGI toolkit for python.
     :copyright: (c) 2014 by the Werkzeug Team.
     """
@@ -171,7 +172,7 @@ class cached_property(property):
 def escape_html(text):
     """Escape the text so as to be used
     as a part of an HTML document.
-    
+
     Taken from python Wiki.
     """
     html_escape_table = {'"': "&quot;", "'": "&apos;"}

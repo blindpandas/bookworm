@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import wx
-import queue 
+import queue
 import bisect
 import ujson as json
 from contextlib import suppress
@@ -131,8 +131,9 @@ class TextToSpeechService(BookwormService):
         reader_book_unloaded.connect(self.on_reader_unload, sender=self.reader)
         reader_page_changed.connect(self._change_page_for_tts, sender=self.reader)
         # maintain state upon book load
-        self.view.add_load_handler(lambda s: self.on_engine_state_changed(state=SynthState.ready))
-
+        self.view.add_load_handler(
+            lambda s: self.on_engine_state_changed(state=SynthState.ready)
+        )
 
     def shutdown(self):
         self.close()
@@ -244,7 +245,6 @@ class TextToSpeechService(BookwormService):
         utterance.add_text("Starting sub section")
         utterance.add_pause(900)
 
-
     def end_page_utterance(self, utterance, page):
         if config.conf["reading"]["reading_mode"] == 2:
             return
@@ -252,17 +252,21 @@ class TextToSpeechService(BookwormService):
             if config.conf["reading"]["notify_on_section_end"]:
                 utterance.add_audio(sounds.section_end.path)
                 # Translators: a message to speak at the end of the chapter
-                utterance.add_text(_("End of section: {chapter}.").format(chapter=page.section.title))
+                utterance.add_text(
+                    _("End of section: {chapter}.").format(chapter=page.section.title)
+                )
             utterance.add_pause(self.config_manager["end_of_section_pause"])
         else:
             utterance.add_text(".")
             utterance.add_pause(self.config_manager["end_of_page_pause"])
         utterance.add_text(".")
-        page_bookmark = self.encode_bookmark({"type": "end_page", "current": page.index})
+        page_bookmark = self.encode_bookmark(
+            {"type": "end_page", "current": page.index}
+        )
         utterance.add_bookmark(page_bookmark)
 
     def speak_current_page(self, utterance=None, from_caret=True):
-        start_pos=self.textCtrl.GetInsertionPoint() if from_caret else 0
+        start_pos = self.textCtrl.GetInsertionPoint() if from_caret else 0
         textinfo = self.content_tokenized(start_pos=start_pos)
         if self._current_textinfo is None:
             self._current_textinfo = textinfo
@@ -436,7 +440,7 @@ class TextToSpeechService(BookwormService):
         if not self.reader.ready:
             return
         menu = self.menu
-        toolbar =             self.view.toolbar
+        toolbar = self.view.toolbar
         gui_state = {
             (StatefulSpeechMenuIds.pauseToggle, state is not SynthState.ready),
             (StatefulSpeechMenuIds.stop, state is not SynthState.ready),

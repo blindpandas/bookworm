@@ -71,7 +71,9 @@ class FileMenu(BaseMenu):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         reader_book_loaded.connect(self.after_loading_book)
-        reader_book_unloaded.connect(lambda s: self.populate_recent_file_list(), weak=False, sender=self.reader)
+        reader_book_unloaded.connect(
+            lambda s: self.populate_recent_file_list(), weak=False, sender=self.reader
+        )
 
     def create(self):
         # A submenu for recent files
@@ -439,11 +441,11 @@ class ToolsMenu(BaseMenu):
         )
 
     def after_loading_book(self, sender):
-        ctrl_id, enable = BookRelatedMenuIds.viewRenderedAsImage, self.reader.document.can_render_pages
-        self.Enable(
-            ctrl_id,
-            enable
+        ctrl_id, enable = (
+            BookRelatedMenuIds.viewRenderedAsImage,
+            self.reader.document.can_render_pages,
         )
+        self.Enable(ctrl_id, enable)
         self.view.toolbar.EnableTool(ctrl_id, enable)
 
     def onViewRenderedAsImage(self, event):
@@ -604,7 +606,9 @@ class MenubarProvider:
             self.Destroy()
             evt.Skip()
         except:
-            log.exception("An unhandled error was occured while exiting Bookworm", exc_info=True)
+            log.exception(
+                "An unhandled error was occured while exiting Bookworm", exc_info=True
+            )
             wx.Abort()
 
     def get_content_text_ctrl_context_menu(self):

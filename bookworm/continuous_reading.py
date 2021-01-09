@@ -50,4 +50,3 @@ class ContReadingService(BookwormService):
     def on_reader_load(self, sender):
         if config.conf["reading"]["use_continuous_reading"]:
             self._start_timer()
-

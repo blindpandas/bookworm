@@ -55,4 +55,3 @@ class LocaleInfo:
         if info[1] != info[2]:
             desc = f"{info[2]} ({desc})"
         return desc
-

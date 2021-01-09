@@ -13,4 +13,6 @@ class WikipediaService(BookwormService):
     has_gui = True
 
     def process_menubar(self, menubar):
-        webservices_menu = wx.GetApp().service_handler.get_service("webservices").web_sservices_menu
+        webservices_menu = (
+            wx.GetApp().service_handler.get_service("webservices").web_sservices_menu
+        )

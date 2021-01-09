@@ -210,4 +210,3 @@ class FitzFB2Document(FitzDocument):
     # Translators: the name of a document file format
     name = _("Fiction Book (FB2)")
     extensions = ("*.fb2",)
-

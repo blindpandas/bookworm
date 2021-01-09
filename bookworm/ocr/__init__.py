@@ -11,7 +11,6 @@ from .ocr_gui import OCRMenuIds, OCRMenu, OCR_KEYBOARD_SHORTCUTS, ocr_started, o
 log = logger.getChild(__name__)
 
 
-
 class OCRService(BookwormService):
     name = "ocr"
     stateful_menu_ids = OCRMenuIds

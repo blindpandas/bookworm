@@ -25,7 +25,11 @@ from bookworm.speechdriver.enumerations import SynthState
 from bookworm.gui.components import SimpleDialog, SnakDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
-from bookworm.platform_services.ocr_provider import get_recognition_languages, recognize, scan_to_text
+from bookworm.platform_services.ocr_provider import (
+    get_recognition_languages,
+    recognize,
+    scan_to_text,
+)
 
 
 log = logger.getChild(__name__)
@@ -323,7 +327,9 @@ class OCRMenu(wx.Menu):
         args = (doc, lang, zoom_factor, should_enhance, output_file)
         for progress in QueueProcess(target=scan_to_text, args=args):
             wx.CallAfter(
-                progress_dlg.Update, progress + 1, f"Scanning page {progress} of {total}"
+                progress_dlg.Update,
+                progress + 1,
+                f"Scanning page {progress} of {total}",
             )
         wx.CallAfter(progress_dlg.Hide)
         wx.CallAfter(progress_dlg.Close)

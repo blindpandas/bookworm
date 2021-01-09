@@ -3,4 +3,7 @@
 from .onecore import OcSpeechEngine
 from .sapi import SapiSpeechEngine
 
-TTS_ENGINES = (OcSpeechEngine, SapiSpeechEngine,)
+TTS_ENGINES = (
+    OcSpeechEngine,
+    SapiSpeechEngine,
+)

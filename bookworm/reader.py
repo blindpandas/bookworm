@@ -112,7 +112,9 @@ class EBookReader:
                     log.debug("Navigating to the last saved position.")
                     self.go_to_page(page_number, pos)
             except:
-                log.exception("Failed to restore last saved reading position", exc_info=True)
+                log.exception(
+                    "Failed to restore last saved reading position", exc_info=True
+                )
         reader_book_loaded.send(self)
 
     def unload(self):
@@ -123,7 +125,9 @@ class EBookReader:
                 log.debug("Closing current document.")
                 self.document.close()
             except:
-                log.exception("An exception was raised while closing the ebook", exc_info=True)
+                log.exception(
+                    "An exception was raised while closing the ebook", exc_info=True
+                )
                 if app.debug:
                     raise
             finally:
@@ -137,7 +141,9 @@ class EBookReader:
         if getattr(self.document, "_original_file_name", None):
             filename = self.document._original_file_name
         database.save_last_position(
-            filename.lower(), self.current_page, self.view.get_insertion_point(),
+            filename.lower(),
+            self.current_page,
+            self.view.get_insertion_point(),
         )
 
     @property

@@ -22,6 +22,3 @@ def set_app_locale(localeinfo):
     CultureInfo.CurrentUICulture = culture
     CultureInfo.DefaultThreadCurrentUICulture = culture
     ctypes.windll.kernel32.SetThreadLocale(culture.LCID)
-
-
-

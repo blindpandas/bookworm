@@ -2,7 +2,11 @@
 
 import wx
 from bookworm import config
-from bookworm.signals import reader_page_changed, reader_book_loaded, reader_book_unloaded
+from bookworm.signals import (
+    reader_page_changed,
+    reader_book_loaded,
+    reader_book_unloaded,
+)
 from bookworm.resources import sounds
 from bookworm.base_service import BookwormService
 from bookworm.utils import gui_thread_safe
@@ -35,7 +39,9 @@ class AnnotationService(BookwormService):
     has_gui = True
 
     def __post_init__(self):
-        self.view.contentTextCtrl.Bind(wx.EVT_KEY_UP, self.onKeyUp, self.view.contentTextCtrl)
+        self.view.contentTextCtrl.Bind(
+            wx.EVT_KEY_UP, self.onKeyUp, self.view.contentTextCtrl
+        )
         reader_book_loaded.connect(self.on_book_load, sender=self.reader)
         reader_book_unloaded.connect(self.on_book_unload, sender=self.reader)
         reader_page_changed.connect(self.comments_page_handler, sender=self.reader)
@@ -114,7 +120,7 @@ class AnnotationService(BookwormService):
         start, end = self.view.get_containing_line(self.view.get_insertion_point())
         if foreword:
             bookmark = self.bookmarker.get_first_after(page_number, end)
-        else:        
+        else:
             bookmark = self.bookmarker.get_first_before(page_number, start)
         if bookmark is not None:
             self.reader.go_to_page(bookmark.page_number, bookmark.position)

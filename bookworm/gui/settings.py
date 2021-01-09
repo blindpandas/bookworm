@@ -14,7 +14,11 @@ from bookworm.i18n import get_available_locales, set_locale
 from bookworm.signals import app_started, config_updated
 from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.resources import images
-from bookworm.platform_services.shell  import shell_integrate, shell_disintegrate, get_ext_info
+from bookworm.platform_services.shell import (
+    shell_integrate,
+    shell_disintegrate,
+    get_ext_info,
+)
 from bookworm.logger import logger
 from .components import SimpleDialog, EnhancedSpinCtrl
 

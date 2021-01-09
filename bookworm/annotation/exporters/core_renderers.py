@@ -141,11 +141,11 @@ class HTMLRenderer(MarkdownRenderer):
             title[_("Tag")] = escape_html("# " + self.tag)
         html_title = " — ".join(t.strip() for t in title.values() if t.strip())
         self.output.write(
-            '<!doctype html>\n'
-            '<html>\n<head>\n'
+            "<!doctype html>\n"
+            "<html>\n<head>\n"
             '<meta charset="UTF-8">\n'
-            f'<title>{html_title}</title>\n'
-            '</head>\n<body>\n'
+            f"<title>{html_title}</title>\n"
+            "</head>\n<body>\n"
         )
         self.output.write("<h1>" + _("Exported Annotations") + "</h1>\n")
         for label, value in title.items():
@@ -155,7 +155,7 @@ class HTMLRenderer(MarkdownRenderer):
         self.output.write(
             '<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>\n'
             '<script>new ClipboardJS("button");</script>\n'
-            '</body>\n</html>'
+            "</body>\n</html>"
         )
 
     def render_item(self, item):
@@ -168,7 +168,9 @@ class HTMLRenderer(MarkdownRenderer):
         if self.options.include_book_title:
             self.output.write(f"<span>{item.book.title}</span> ")
         if self.options.include_page_number:
-            self.output.write("<span>{}: {}</span> ".format(_("Page"), item.page_number + 1))
+            self.output.write(
+                "<span>{}: {}</span> ".format(_("Page"), item.page_number + 1)
+            )
         if self.options.include_section_title:
             self.output.write(f"<span>{item.section_title}</span> ")
         self.output.write("</p>")
@@ -180,27 +182,20 @@ class HTMLRenderer(MarkdownRenderer):
         self.output.write(
             f'<button data-clipboard-target="#{element_id}" '
             f'aria-label="{copy_clip_text}">'
-            '&#x1f4cb'
-            '</button>\n'
+            "&#x1f4cb"
+            "</button>\n"
         )
         self.output.write(
             f'<p><article><blockquote id="{element_id}">\n'
-            f'{item.content.strip()}\n'
-            '</blockquote></article></p>\n'
+            f"{item.content.strip()}\n"
+            "</blockquote></article></p>\n"
         )
         if self.options.include_tags and item.tags:
             # Translators: written to output document when exporting a comment/highlight
             tag_str = _("Tags")
-            self.output.write(
-                '<p>'
-                f'<aside aria-label="{tag_str}">'
-            )
+            self.output.write("<p>" f'<aside aria-label="{tag_str}">')
             for tag in item.tags:
                 self.output.write(f"<span># {tag}</span>")
-            self.output.write(
-                '</p>'
-                '</aside>'
-            )
+            self.output.write("</p>" "</aside>")
             self.add_newline()
         self.output.write("<hr /></section>")
-
