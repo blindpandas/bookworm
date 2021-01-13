@@ -201,7 +201,7 @@ class OCRMenu(wx.Menu):
             saved_values = {}
             if pre_saved:
                 saved_values["lang"] = [
-                    l.given_lang for l in get_recognition_languages()
+                    l.pylang for l in get_recognition_languages()
                 ].index(pre_saved[0])
                 saved_values["zoom_factor"] = pre_saved[1]
                 saved_values["should_enhance"] = pre_saved[2]
@@ -237,7 +237,7 @@ class OCRMenu(wx.Menu):
         ocr_opts = dlg.ShowModal()
         if ocr_opts is not None:
             res = list(ocr_opts)
-            res[0] = langs[res[0]].given_lang
+            res[0] = langs[res[0]].pylang
             return res
 
     def onScanCurrentPage(self, event):

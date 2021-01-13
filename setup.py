@@ -27,7 +27,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     entry_points={
-        "gui_scripts": ["bookworm=bookworm.__main__:main"]
+        "gui_scripts": ["bookworm=bookworm.__main__:main"],
     },
     install_requires=REQUIREMENTS,
     platforms=["Windows", "Linux"],

@@ -62,13 +62,12 @@ def get_available_locales(force_update=False):
 def set_locale(locale_identifier):
     log.debug(f"Setting application locale to {locale_identifier}.")
     available_locales = tuple(get_available_locales().values())
-    localeinfo = LocaleInfo(locale_identifier)
-    if localeinfo not in available_locales:
-        localeinfo = (
-            localeinfo.parent
-            if localeinfo.parent in available_locales
-            else _AVAILABLE_LOCALES["default"]
-        )
+    if locale_identifier in _AVAILABLE_LOCALES:
+        localeinfo = _AVAILABLE_LOCALES[locale_identifier]
+    else:
+        localeinfo = _AVAILABLE_LOCALES["default"]
+        config.conf["general"]["language"] = "default"
+        config.save()
     lang = localeinfo.pylang
     try:
         translation = gettext.translation(

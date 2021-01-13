@@ -2,7 +2,7 @@
 
 """
 This file contains Bookworm's build system.
-It uses the `invoke` package to define and run commands.
+It uses the `invoke` command runner to define and run commands.
 """
 
 import sys
@@ -18,13 +18,13 @@ from glob import glob
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile, ZIP_LZMA
-from lzma import compress
 from invoke import task, call
 from invoke.exceptions import UnexpectedExit
 
 
 PROJECT_ROOT = Path.cwd()
 PACKAGE_FOLDER = PROJECT_ROOT / "bookworm"
+RESOURCES_FOLDER = PACKAGE_FOLDER / "resources"
 ICON_SIZE = (256, 256)
 GUIDE_HTML_TEMPLATE = """<!doctype html>
   <html lang="{lang}">
@@ -166,7 +166,7 @@ def build_docs(c):
     for folder in [fd for fd in docs_src.iterdir() if fd.is_dir()]:
         lang = folder.name
         md = folder / "bookworm.md"
-        html = c["build_folder"] / "resources" / "docs" / lang / "bookworm.html"
+        html = RESOURCES_FOLDER / "docs" / lang / "bookworm.html"
         html.parent.mkdir(parents=True, exist_ok=True)
         content_md = md.read_text(encoding="utf8")
         content = markdown(content_md, escape=False)
@@ -177,7 +177,8 @@ def build_docs(c):
             ),
             encoding="utf8"
         )
-        print("Done building the documentations.")
+        print(f"Built docs for language '{lang}'")
+    print("Done building the documentations.")
 
 
 @task
@@ -188,14 +189,14 @@ def copy_assets(c):
 
     print("Copying files...")
     files_to_copy = {
-        PROJECT_ROOT / "LICENSE": c["build_folder"] / "resources" / "docs" / "license.txt",
-        PROJECT_ROOT / "contributors.txt": c["build_folder"] / "resources" / "docs" / "contributors.txt",
-        PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico": c["build_folder"],
+        PROJECT_ROOT / "LICENSE": RESOURCES_FOLDER / "docs" / "license.txt",
+        PROJECT_ROOT / "contributors.txt": RESOURCES_FOLDER / "docs" / "contributors.txt",
+        PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico": PACKAGE_FOLDER,
     }
     for src, dst in files_to_copy.items():
         c.run(f"copy {src} {dst}", hide="stdout")
     ficos_src = PROJECT_ROOT / "fullsize_images"/ "file_icons"
-    ficos_dst = c["build_folder"] / "resources" / "icons"
+    ficos_dst = RESOURCES_FOLDER  / "icons"
     ficos_dst.mkdir(parents=True, exist_ok=True)
     for img in [i for i in ficos_src.iterdir() if i.suffix == ".png"]:
         Image.open(img)\
@@ -282,28 +283,6 @@ def init_lang(c, lang):
     )
 
 
-@task(name="install", pre=(compile_msgs, copy_wx_catalogs))
-def install_packages(c):
-    print("Installing packages")
-    with c.cd(str(PROJECT_ROOT / "packages")):
-        pkg_names = c["packages_to_install"]
-        arch = "x86" if "32bit" in platform.architecture()[0] else "x64"
-        binary_packages = pkg_names[f"binary_{arch}"]
-        packages = pkg_names["pure_python"] + [
-            f"{arch}\\{pkg}" for pkg in binary_packages
-        ]
-        for package in packages:
-            print(f"Installing package {package}")
-            c.run(f"pip install --upgrade {package}", hide="stdout")
-    with c.cd(str(PROJECT_ROOT)):
-        print("Building Bookworm wheel.")
-        c.run("py setup.py bdist_wheel", hide="stdout")
-        wheel_path = next(Path(PROJECT_ROOT / "dist").glob("*.whl"))
-        print("Installing Bookworm wheel")
-        c.run(f"pip install --upgrade {wheel_path}", hide="stdout")
-    print("Finished installing packages.")
-
-
 @task
 @make_env
 def make_installer(c):
@@ -338,7 +317,7 @@ def clean(c, assets=False, siteconfig=False):
             folders_to_clean.remove(entry)
             folders_to_clean.extend(glbs)
         for to_remove in folders_to_clean:
-            path = Path(to_remove)
+            path = Path(os.path.normpath(to_remove))
             if not path.exists():
                 continue
             print(f"Removing {path}")
@@ -353,6 +332,8 @@ def clean(c, assets=False, siteconfig=False):
 @make_env
 def copy_deps(c):
     """Copies the system dlls."""
+    if sys.platform != 'win32':
+        return print("Not Windows")
     print("Copying vcredis 2015 ucrt support DLLs...")
     arch = os.environ["IAPP_ARCH"]
     dist_dir = os.environ["IAPP_FROZEN_DIRECTORY"]
@@ -370,26 +351,6 @@ def copy_deps(c):
             continue
     print("Done copying vcredis 2015 ucrt DLLs.")
 
-
-@task
-@make_env
-def freeze(c):
-    """Freeze the app using pyinstaller."""
-    from bookworm import app
-
-    print("Freezing the application...")
-    with c.cd(str(PROJECT_ROOT / "scripts" / "builder")):
-        if app.get_version_info()["pre_type"] is None:
-            print(
-                "The current build is a final release. Turnning on python optimizations..."
-            )
-            os.environ["PYTHONOPTIMIZE"] = "2"
-        c.run(
-            f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}",
-            hide=True,
-        )
-    print("App freezed. Trying to copy system dlls.")
-    copy_deps(c)
 
 
 @task
@@ -437,6 +398,8 @@ def update_version_info(c):
 @task(name="libs")
 @make_env
 def copy_uwp_services_lib(c):
+    if sys.platform != 'win32':
+        return print("Not Windows.")
     build_config = "Release" if "APPVEYOR_BUILD_FOLDER" in os.environ else "Debug"
     uwp_services_path = PROJECT_ROOT / "includes" / "BookwormUWPServices"
     src = uwp_services_path / "bin" / build_config / "BookwormUWPServices.dll"
@@ -445,8 +408,61 @@ def copy_uwp_services_lib(c):
 
 
 @task(
-    pre=(clean, make_icons, install_packages, freeze),
-    post=(build_docs, copy_assets, copy_uwp_services_lib, make_installer, bundle_update),
+    name="install",
+    pre=(
+        clean, make_icons, build_docs,
+        copy_assets, compile_msgs, copy_wx_catalogs,
+    )
+)
+def install_packages(c):
+    print("Installing packages")
+    arch = os.environ['IAPP_ARCH']
+    with c.cd(str(PROJECT_ROOT / "packages")):
+        pkg_names = c["packages_to_install"]
+        platform_packages = pkg_names[sys.platform]
+        pure_python = platform_packages['pure_python']
+        binary_packages = platform_packages[arch]
+        packages = pkg_names["pure_python"] + [Path(sys.platform) / pkg for pkg in pure_python]
+        packages += [
+            Path(sys.platform) / arch / pkg for pkg in binary_packages
+        ]
+        for package in packages:
+            print(f"Installing package {package}")
+            c.run(f"pip install --upgrade {package}", hide="stdout")
+    with c.cd(str(PROJECT_ROOT)):
+        print("Building Bookworm wheel.")
+        c.run("py setup.py bdist_wheel", hide="stdout")
+        wheel_path = next(Path(PROJECT_ROOT / "dist").glob("*.whl"))
+        print("Installing Bookworm wheel")
+        c.run(f"pip install --upgrade {wheel_path}", hide="stdout")
+    print("Finished installing packages.")
+
+
+@task(post=(copy_deps, copy_uwp_services_lib,))
+@make_env
+def freeze(c):
+    """Freeze the app using pyinstaller."""
+    from bookworm import app
+
+    print("Freezing the application...")
+    with c.cd(str(PROJECT_ROOT / "scripts" / "builder")):
+        if app.get_version_info()["pre_type"] is None:
+            print(
+                "The current build is a final release. Turnning on python optimizations..."
+            )
+            os.environ["PYTHONOPTIMIZE"] = "2"
+        c.run(
+            f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}",
+            hide=True,
+        )
+    print("App freezed. Trying to copy system dlls.")
+
+
+
+
+@task(
+    pre=(install_packages, freeze),
+    post=(make_installer, bundle_update),
 )
 @make_env
 def build(c):
@@ -469,7 +485,7 @@ def create_portable_copy(c):
     print(f"Portable archive created at {port_arch}.")
 
 
-@task(name="dev", pre=(install_packages, make_icons))
+@task(name="dev", pre=(install_packages,))
 def prepare_dev_environment(c):
     print("\r\n🎆 Your environment is now ready for Bookworm...")
     print("😊 Happy hacking...")
@@ -479,6 +495,16 @@ def prepare_dev_environment(c):
 def run_application(c, debug=True):
     """Runs the app."""
     try:
+        # Ensure we import from source not from an installed package
+        import bookworm
+        
+        if Path(bookworm.__path__[0]).parent != Path.cwd():
+            print(
+                "WARNGING: bookworm is being imported from a different location.\n"
+                "This may happen because bookworm is not installed in dev mode.\n"
+                "Changes you make in the bookworm pacakge will not show up.\n"
+                "To fix this, run:\n\tpip uninstall bookworm\n\tpip install -e .\n"
+            )
         from bookworm import bootstrap
         from bookworm import app
 

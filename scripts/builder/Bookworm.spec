@@ -1,34 +1,33 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-import bookworm
 from pathlib import Path
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 
-def get_datafiles():
-    bwpath = Path(bookworm.__path__[0])
-    res = bwpath / "resources"
-    rv = []
-    wavs = res.rglob("*.wav")
-    txts = res.rglob("*.txt")
-    mos = res.rglob("*.mo")
-    for collect in (wavs, txts, mos):
-        rv.extend([(str(f), str(f.relative_to(bwpath).parent)) for f in collect])
-    return rv
+# Data files
+BOOKWORM_RESOURCES = collect_data_files('bookworm', excludes=['__pyinstaller', '*.po'])
+DATA_FILES = [
+    (src, Path(dst).relative_to("bookworm"),)
+    for src, dst in BOOKWORM_RESOURCES
+]
+DATA_FILES += collect_data_files("justext")
+DATA_FILES += collect_data_files("trafilatura")
 
+# Hidden imports
+HIDDEN_IMPORTS = ["pkg_resources.py2_warn"] + collect_submodules("babel")
 
 block_cipher = None
-
 
 a = Analysis(
     ["launcher.py"],
     pathex=[""],
+    datas=DATA_FILES,
     binaries=[],
-    datas=get_datafiles(),
     # See: https://stackoverflow.com/questions/37815371/
-    hiddenimports=["pkg_resources.py2_warn"],
+    hiddenimports=HIDDEN_IMPORTS,
     hookspath=[],
     runtime_hooks=[],
-    excludes=["numpy", "PIL"],
+    excludes=["numpy", "PIL", "tkinter",],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,

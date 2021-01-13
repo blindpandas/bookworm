@@ -557,9 +557,10 @@ class HelpMenu(BaseMenu):
         restart_application(debug=True)
 
     def onOpenDocumentation(self, event):
-        help_filename = f"bookworm.{'html' if app.is_frozen else 'md'}"
-        lang = app.current_language.given_lang
-        docs = paths.docs_path(lang, help_filename)
+        docs = paths.docs_path(
+            app.current_language.pylang,
+            "bookworm.html"
+        )
         wx.LaunchDefaultApplication(str(docs))
 
 
