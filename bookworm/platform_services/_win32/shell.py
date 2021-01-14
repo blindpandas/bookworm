@@ -7,8 +7,6 @@ from typing import Iterable
 from dataclasses import dataclass
 from functools import wraps
 from bookworm import app
-from bookworm.paths import app_path
-from bookworm.reader import EBookReader
 from bookworm.utils import ignore
 from bookworm.vendor import shellapi
 from bookworm.logger import logger
@@ -17,18 +15,6 @@ from .win_registry import RegKey, RegistryValueKind
 
 log = logger.getChild(__name__)
 
-
-def get_ext_info(supported="*"):
-    ficos_path = app_path("resources", "icons")
-    doctypes = {}
-    for cls in EBookReader.document_classes:
-        for ext in cls.extensions:
-            cext = ext.replace("*", "")
-            if (supported == "*") or (cext in supported):
-                icon = ficos_path.joinpath(cls.format + ".ico")
-                icon = str(icon) if icon.exists() else None
-                doctypes[cext] = (f"{app.prog_id}.{cls.format}", _(cls.name), icon)
-    return doctypes
 
 
 def add_shell_command(key, executable):

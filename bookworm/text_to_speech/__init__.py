@@ -122,6 +122,10 @@ class TextToSpeechService(BookwormService):
     __available_engines = TTS_ENGINES
     speech_engines = [e for e in __available_engines if e.check()]
 
+    @classmethod
+    def check(cls):
+        return any(cls.speech_engines)
+
     def __post_init__(self):
         self.config_manager = TTSConfigManager()
         self.textCtrl = self.view.contentTextCtrl

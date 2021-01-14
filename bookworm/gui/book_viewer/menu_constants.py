@@ -30,7 +30,6 @@ class ViewerMenuIds(enum.IntEnum):
     website = 802
     license = 803
     contributors = 812
-    check_for_updates = 810
     restart_with_debug = 804
     about = 805
 

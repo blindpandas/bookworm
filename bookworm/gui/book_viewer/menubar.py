@@ -16,10 +16,8 @@ from bookworm.i18n import is_rtl
 from bookworm.resources import sounds
 from bookworm.document_formats import DocumentCapability as DC
 from bookworm.signals import config_updated, reader_book_loaded, reader_book_unloaded
-from bookworm.otau import check_for_updates
 from bookworm.concurrency import call_threaded, process_worker
 from bookworm import ocr
-from bookworm.otau import check_for_updates
 from bookworm import speech
 from bookworm.reader import EBookReader
 from bookworm.utils import restart_application, cached_property, gui_thread_safe
@@ -489,13 +487,6 @@ class HelpMenu(BaseMenu):
             # Translators: the help text of an item in the application menubar
             _("View a list of notable contributors to the program."),
         )
-        self.Append(
-            ViewerMenuIds.check_for_updates,
-            # Translators: the label of an item in the application menubar
-            _("&Check for updates"),
-            # Translators: the help text of an item in the application menubar
-            _("Update the application"),
-        )
         if app.is_frozen and not app.debug:
             self.Append(
                 ViewerMenuIds.restart_with_debug,
@@ -536,11 +527,6 @@ class HelpMenu(BaseMenu):
                 str(paths.docs_path("contributors.txt"))
             ),
             id=ViewerMenuIds.contributors,
-        )
-        self.view.Bind(
-            wx.EVT_MENU,
-            lambda e: check_for_updates(verbose=True),
-            id=ViewerMenuIds.check_for_updates,
         )
         self.view.Bind(wx.EVT_MENU, self.onAbout, id=ViewerMenuIds.about)
 

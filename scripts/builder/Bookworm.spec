@@ -5,7 +5,7 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 
 # Data files
-BOOKWORM_RESOURCES = collect_data_files('bookworm', excludes=['__pyinstaller', '*.po'])
+BOOKWORM_RESOURCES = collect_data_files('bookworm', excludes=['*.po',])
 DATA_FILES = [
     (src, Path(dst).relative_to("bookworm"),)
     for src, dst in BOOKWORM_RESOURCES

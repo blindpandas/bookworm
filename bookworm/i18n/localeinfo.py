@@ -35,11 +35,15 @@ class LocaleInfo:
 
     @property
     def parent(self):
-        return LocaleInfo(self.pylang.split("_")[0])
+        return LocaleInfo(self.language)
 
     @property
     def pylang(self):
         return str(self.locale)
+
+    @property
+    def ietf_tag(self):
+        return "-".join((self.language, self.locale.territory))
 
     def get_display_info(self):
         return (

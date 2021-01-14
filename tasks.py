@@ -48,6 +48,25 @@ def invert_image(image_path):
     return Image.open(buffer)
 
 
+def make_installer_image(logo_file):
+    from PIL import Image
+    from PIL.ImageColor import getrgb
+
+    color = getrgb('#77216F')
+    logo = Image.open(logo_file).convert("RGB").resize((164, 164))
+    newdata = []
+    for item in logo.getdata():
+        if item == (0, 0, 0):
+            newdata.append(color)
+        else:
+            newdata.append(item)
+    logo.putdata(newdata)
+    region = logo.crop((0, 0, 164, 164))
+    img = Image.new('RGB', (164, 314), color)
+    img.paste(region, (0, 75))
+    return img
+
+
 def _add_envars(context):
     sys.path.insert(0, str(PACKAGE_FOLDER))
     import app
@@ -130,8 +149,8 @@ def make_icons(c):
     inst_imgs = {
         "bookworm.ico": ICON_SIZE,
         "bookworm.bmp": (48, 48),
-        "bookworm-logo.bmp": (164, 164),
     }
+    make_installer_image(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").save(inst_dst / "bookworm-logo.bmp")
     for fname, imgsize in inst_imgs.items():
         imgfile = inst_dst.joinpath(fname)
         if not imgfile.exists():
@@ -438,7 +457,7 @@ def install_packages(c):
     print("Finished installing packages.")
 
 
-@task(post=(copy_deps, copy_uwp_services_lib,))
+@task(pre=(install_packages,), post=(copy_deps, copy_uwp_services_lib,))
 @make_env
 def freeze(c):
     """Freeze the app using pyinstaller."""
@@ -455,13 +474,12 @@ def freeze(c):
             f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}",
             hide=True,
         )
-    print("App freezed. Trying to copy system dlls.")
-
+    print("App freezed.")
 
 
 
 @task(
-    pre=(install_packages, freeze),
+    pre=(freeze,),
     post=(make_installer, bundle_update),
 )
 @make_env
@@ -487,6 +505,7 @@ def create_portable_copy(c):
 
 @task(name="dev", pre=(install_packages,))
 def prepare_dev_environment(c):
+    c.run("pip install -e .")
     print("\r\n🎆 Your environment is now ready for Bookworm...")
     print("😊 Happy hacking...")
 

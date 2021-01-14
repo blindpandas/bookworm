@@ -74,19 +74,19 @@ def set_locale(locale_identifier):
             app.name, localedir=paths.locale_path(), languages=[lang]
         )
         translation.install(names=["ngettext"])
+        os.environ["LANG"] = localeinfo.pylang
         locale.setlocale(locale.LC_ALL, lang)
-        app_started.connect(lambda s: set_wx_locale(localeinfo), weak=False)
         _set_app_locale(localeinfo)
         app.current_language = localeinfo
-        os.environ["LANG"] = localeinfo.pylang
     except Exception as e:
         if lang != "en":
             log.error(
                 f"An error was occured while initializing i18n system.", exc_info=True
             )
+        os.environ["LANG"] = "en"
+        locale.setlocale(locale.LC_ALL, "en")
         _set_app_locale(LocaleInfo("en"))
         app.current_language = get_available_locales()["en"]
-        os.environ["LANG"] = "en"
 
 
 def setup_i18n():

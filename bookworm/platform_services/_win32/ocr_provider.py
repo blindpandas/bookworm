@@ -49,7 +49,8 @@ def get_recognition_languages() -> t.List[LocaleInfo]:
 def recognize(
     lang_tag: str, imagedata: bytes, width: int, height: int, cookie: t.Any = None
 ) -> t.Tuple[t.Any, str]:
-    return cookie, DocrEngine(lang_tag).recognize(imagedata, width, height)
+    lang = LocaleInfo(lang_tag).ietf_tag
+    return cookie, DocrEngine(lang).recognize(imagedata, width, height)
 
 
 def scan_to_text(
