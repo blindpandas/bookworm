@@ -5,7 +5,6 @@ import wx
 import wx.lib.sized_controls as sc
 from enum import IntEnum, auto
 from dataclasses import dataclass
-from itertools import cycle
 from wx.adv import CommandLinkButton
 from bookworm import app
 from bookworm import config
