@@ -6,14 +6,13 @@ import glob
 import wx
 import hashlib
 from functools import wraps
-from subprocess import list2cmdline
 from pathlib import Path
 from xml.sax.saxutils import escape
 from datetime import datetime
 from babel.dates import format_datetime as babel_format_datetime
-from bookworm.vendor import shellapi
 from bookworm import app
 from bookworm.concurrency import call_threaded
+from bookworm.platform_services.runtime import system_restart_app
 from bookworm.logger import logger
 
 
@@ -58,8 +57,7 @@ def restart_application(*extra_args, debug=False, restore=True):
     if debug and ("--debug" not in args):
         args.append("--debug")
     wx.GetApp().ExitMainLoop()
-    shellapi.ShellExecute(None, None, sys.executable, list2cmdline(args), None, 1)
-    sys.exit(0)
+    system_restart_app(sys.executable, args)
 
 
 def recursively_iterdir(path):

@@ -1,10 +1,9 @@
 # coding: utf-8
 
-import winsound
+from wx.adv import Sound, SOUND_ASYNC
 from bookworm.paths import app_path
 
 
-PLAYER_FLAGS = winsound.SND_ASYNC | winsound.SND_FILENAME
 _sounds_cache = {}
 
 
@@ -15,9 +14,10 @@ class _SoundObj:
 
     def __init__(self, filename):
         self.path = app_path("resources", "soundfiles", f"{filename}.wav")
+        self.sound = Sound(str(self.path))
 
     def play(self):
-        winsound.PlaySound(str(self.path), PLAYER_FLAGS)
+        self.sound.Play(SOUND_ASYNC)
 
 
 def __getattr__(sound):

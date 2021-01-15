@@ -213,7 +213,7 @@ def copy_assets(c):
         PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico": PACKAGE_FOLDER,
     }
     for src, dst in files_to_copy.items():
-        c.run(f"copy {src} {dst}", hide="stdout")
+        c.run(f"cp {src} {dst}", hide="stdout")
     ficos_src = PROJECT_ROOT / "fullsize_images"/ "file_icons"
     ficos_dst = RESOURCES_FOLDER  / "icons"
     ficos_dst.mkdir(parents=True, exist_ok=True)
@@ -235,7 +235,7 @@ def copy_wx_catalogs(c):
     to_copy = wx_langs.intersection(app_langs)
     for lang in to_copy:
         c.run(
-            f'copy "{src / lang / "LC_MESSAGES" / "wxstd.mo"}" "{dst / lang / "LC_MESSAGES"}"'
+            f'cp "{src / lang / "LC_MESSAGES" / "wxstd.mo"}" "{dst / lang / "LC_MESSAGES"}"'
         )
 
 
@@ -364,7 +364,7 @@ def copy_deps(c):
     )
     for dll in dlls:
         try:
-            c.run(f'copy "{dll}" "{dist_dir}"', hide="stdout")
+            c.run(f'cp "{dll}" "{dist_dir}"', hide="stdout")
         except UnexpectedExit:
             print(f"Faild to copy  {dll} to {dist_dir}")
             continue
@@ -423,7 +423,7 @@ def copy_uwp_services_lib(c):
     uwp_services_path = PROJECT_ROOT / "includes" / "BookwormUWPServices"
     src = uwp_services_path / "bin" / build_config / "BookwormUWPServices.dll"
     dst = c["build_folder"]
-    c.run(f"copy {src} {dst}")
+    c.run(f"cp {src} {dst}")
 
 
 @task(
@@ -436,15 +436,17 @@ def copy_uwp_services_lib(c):
 def install_packages(c):
     print("Installing packages")
     arch = os.environ['IAPP_ARCH']
-    with c.cd(str(PROJECT_ROOT / "packages")):
-        pkg_names = c["packages_to_install"]
+    pkg_names = c["packages_to_install"]
+    packages = pkg_names["pure_python"]
+    if sys.platform in pkg_names:
         platform_packages = pkg_names[sys.platform]
         pure_python = platform_packages['pure_python']
         binary_packages = platform_packages[arch]
-        packages = pkg_names["pure_python"] + [Path(sys.platform) / pkg for pkg in pure_python]
+        packages +=  [Path(sys.platform) / pkg for pkg in pure_python]
         packages += [
             Path(sys.platform) / arch / pkg for pkg in binary_packages
         ]
+    with c.cd(str(PROJECT_ROOT / "packages")):
         for package in packages:
             print(f"Installing package {package}")
             c.run(f"pip install --upgrade {package}", hide="stdout")

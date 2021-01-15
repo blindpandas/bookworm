@@ -1,6 +1,13 @@
 # coding: utf-8
 
 
+import sys
+
+
+def system_restart_app(executable, args):
+    sys.exit(0)
+
+
 def is_running_portable():
     return False
 

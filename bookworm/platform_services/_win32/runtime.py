@@ -8,10 +8,12 @@ from System.Windows.Forms import SystemInformation
 
 import sys
 import winpaths
+from subprocess import list2cmdline
 from functools import lru_cache
 from pathlib import Path
 from bookworm import app
 from platform_utils.paths import app_path
+from . import shellapi
 from .win_registry import RegKey, Registry
 
 
@@ -34,6 +36,11 @@ try:
 except Exception as e:
     if "--debug" in sys.argv:
         print(f"Failed to load BookwormUWPServices.dll. {e}")
+
+
+def system_restart_app(executable, args):
+    shellapi.ShellExecute(None, None, executable, list2cmdline(args), None, 1)
+    sys.exit(0)
 
 
 @lru_cache(maxsize=10)

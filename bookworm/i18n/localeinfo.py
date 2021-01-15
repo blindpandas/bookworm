@@ -15,6 +15,10 @@ class LocaleInfo:
         except UnknownLocaleError:
             raise ValueError(f"Invalid locale identifier {identifier}.")
 
+    @classmethod
+    def from_babel_locale(cls, babel_locale):
+        return cls(str(babel_locale))
+
     def __repr__(self):
         return f'LocaleInfo(identifier="{self.identifier}");language={self.language}'
 
