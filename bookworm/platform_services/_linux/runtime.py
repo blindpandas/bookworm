@@ -4,7 +4,7 @@
 import sys
 
 
-def system_restart_app(executable, args):
+def system_start_app(executable, args):
     sys.exit(0)
 
 

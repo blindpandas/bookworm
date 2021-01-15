@@ -38,9 +38,8 @@ except Exception as e:
         print(f"Failed to load BookwormUWPServices.dll. {e}")
 
 
-def system_restart_app(executable, args):
+def system_start_app(executable, args):
     shellapi.ShellExecute(None, None, executable, list2cmdline(args), None, 1)
-    sys.exit(0)
 
 
 @lru_cache(maxsize=10)

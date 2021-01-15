@@ -2,7 +2,6 @@
 
 import os
 import gettext
-import locale
 from collections import OrderedDict
 from contextlib import suppress
 from pathlib import Path
@@ -75,7 +74,6 @@ def set_locale(locale_identifier):
         )
         translation.install(names=["ngettext"])
         os.environ["LANG"] = localeinfo.pylang
-        locale.setlocale(locale.LC_ALL, lang)
         _set_app_locale(localeinfo)
         app.current_language = localeinfo
     except Exception as e:
@@ -84,7 +82,6 @@ def set_locale(locale_identifier):
                 f"An error was occured while initializing i18n system.", exc_info=True
             )
         os.environ["LANG"] = "en"
-        locale.setlocale(locale.LC_ALL, "en")
         _set_app_locale(LocaleInfo("en"))
         app.current_language = get_available_locales()["en"]
 

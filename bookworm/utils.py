@@ -12,7 +12,7 @@ from datetime import datetime
 from babel.dates import format_datetime as babel_format_datetime
 from bookworm import app
 from bookworm.concurrency import call_threaded
-from bookworm.platform_services.runtime import system_restart_app
+from bookworm.platform_services.runtime import system_start_app
 from bookworm.logger import logger
 
 
@@ -57,7 +57,8 @@ def restart_application(*extra_args, debug=False, restore=True):
     if debug and ("--debug" not in args):
         args.append("--debug")
     wx.GetApp().ExitMainLoop()
-    system_restart_app(sys.executable, args)
+    system_start_app(sys.executable, args)
+    sys.exit(0)
 
 
 def recursively_iterdir(path):

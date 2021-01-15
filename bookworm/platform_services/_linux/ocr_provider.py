@@ -16,5 +16,5 @@ def scan_to_text(
     zoom_factor: float,
     should_enhance: bool,
     output_file: t.PathLike,
-    channel: "QPChannel",
-)
+    channel: "QPChannel",):
+    """Scan the given ebook to text file."""
