@@ -1,5 +1,9 @@
 # coding: utf-8
 
+
+from bookworm import typehints as t
+
+ 
 def is_ocr_available():
     return False
 

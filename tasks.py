@@ -143,6 +143,11 @@ def make_icons(c):
                     append=True,
                     compressed=True,
                 )
+        # Fix for some import issues with Img2Py
+        imgdata_py = PY_MODULE.read_text()
+        imp_statement = 'from wx.lib.embeddedimage import PyEmbeddedImage'
+        if imp_statement not in imgdata_py:
+            PY_MODULE.write_text(f"{imp_statement}\n{imgdata_py}")
         print("*" * 10 + " Done Embedding Images" + "*" * 10)
     print ("Creating installer images...")
     inst_dst = PROJECT_ROOT / "scripts" / "builder" / "assets"
