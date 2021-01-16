@@ -7,6 +7,7 @@ clr.AddReference("System.Windows.Forms")
 from System.Windows.Forms import SystemInformation
 
 import sys
+import winsound
 import winpaths
 from subprocess import list2cmdline
 from functools import lru_cache
@@ -17,6 +18,7 @@ from . import shellapi
 from .win_registry import RegKey, Registry
 
 
+PLAYER_FLAGS = winsound.SND_ASYNC | winsound.SND_FILENAME
 UWP_SERVICES_AVAILABEL = False
 try:
     _app_path = Path(app_path())
@@ -36,6 +38,18 @@ try:
 except Exception as e:
     if "--debug" in sys.argv:
         print(f"Failed to load BookwormUWPServices.dll. {e}")
+
+
+class SoundFile:
+    """Represent a sound file."""
+
+    __slots__ = ["path",]
+
+    def __init__(self, filepath):
+        self.path = filepath
+
+    def play(self):
+        winsound.PlaySound(self.path, PLAYER_FLAGS)
 
 
 def system_start_app(executable, args):
