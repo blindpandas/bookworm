@@ -1,19 +1,10 @@
 packages_to_install:
     pure_python:
-        - "lru-dict-1.1.6.tar.gz"
-        - "configobj-5.1.0.dev0-py2.py3-none-any.whl"
-        - "platform_utils-0.4-py3-none-any.whl"
-        - "libloader-0.21-py3-none-any.whl"
-        - "accessible_output2-0.13-py3-none-any.whl"
-        - "db_magic-1.0-py3-none-any.whl"
     win32:
         pure_python:
-            - "winpaths-0.2-py3-none-any.whl"
         x64:
-            - "docrpy-0.1.0-cp37-none-win_amd64.whl"
             - "pycld2-0.41-cp37-cp37m-win_amd64.whl"
         x86:
-            - "docrpy-0.1.0-cp37-none-win32.whl"
             - "pycld2-0.41-cp37-cp37m-win32.whl"
 folders_to_clean:
     everytime:

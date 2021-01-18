@@ -9,7 +9,7 @@ CWD = Path(__file__).parent
 LONG_DESCRIPTION = (CWD / "README.md").read_text()
 
 with open(CWD / "requirements.txt", "r") as reqs:
-    REQUIREMENTS = [l.strip() for l in reqs.readlines()]
+    REQUIREMENTS = [l.strip() for l in reqs.readlines() if not l.startswith("git")]
 
 
 setup(

@@ -442,15 +442,17 @@ def install_packages(c):
     print("Installing packages")
     arch = os.environ['IAPP_ARCH']
     pkg_names = c["packages_to_install"]
-    packages = pkg_names["pure_python"]
+    packages = pkg_names["pure_python"] or []
     if sys.platform in pkg_names:
         platform_packages = pkg_names[sys.platform]
         pure_python = platform_packages['pure_python']
         binary_packages = platform_packages[arch]
-        packages +=  [Path(sys.platform) / pkg for pkg in pure_python]
-        packages += [
-            Path(sys.platform) / arch / pkg for pkg in binary_packages
-        ]
+        if pure_python:
+            packages += [Path(sys.platform) / pkg for pkg in pure_python]
+        if binary_packages:
+            packages += [
+                Path(sys.platform) / arch / pkg for pkg in binary_packages
+            ]
     with c.cd(str(PROJECT_ROOT / "packages")):
         for package in packages:
             print(f"Installing package {package}")
