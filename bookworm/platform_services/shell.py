@@ -30,7 +30,7 @@ class SupportedFileFormat:
         return _(self.name)
 
     def astuple(self):
-        return (self.ext_prog_id, self.display_name, str(self.icon))
+        return (self.ext_prog_id, _(self.display_name), str(self.icon))
 
 
 def get_ext_info(supported="*"):

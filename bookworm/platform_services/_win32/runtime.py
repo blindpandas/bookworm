@@ -80,11 +80,12 @@ def is_running_portable():
         writable=False,
     )
     with unins_key:
-        if unins_key.exists and (
-            Path(unins_key.GetValue("InstallLocation")).resolve()
-            == Path(sys.executable).parent.resolve()
-        ):
-            return False
+        if unins_key.exists():
+            unins_path_value = unins_key.GetValue("InstallLocation")
+            if unins_path_value is None:
+                return True
+            elif Path(unins_path_value).resolve() == Path(sys.executable).parent.resolve():
+                return False
     return True
 
 
