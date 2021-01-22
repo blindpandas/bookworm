@@ -543,10 +543,7 @@ class HelpMenu(BaseMenu):
         restart_application(debug=True)
 
     def onOpenDocumentation(self, event):
-        docs = paths.docs_path(
-            app.current_language.pylang,
-            "bookworm.html"
-        )
+        docs = paths.docs_path(app.current_language.pylang, "bookworm.html")
         wx.LaunchDefaultApplication(str(docs))
 
 

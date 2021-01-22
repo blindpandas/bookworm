@@ -8,7 +8,6 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-
 def perform_update(upstream_version, update_url, sha1hash):
     wx.MessageBox(
         # Translators: the content of a message indicating the availability of an update

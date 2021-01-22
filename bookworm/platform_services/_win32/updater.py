@@ -26,7 +26,6 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-
 def kill_other_running_instances():
     """Ensure that only this instance is running."""
     log.debug("Killing other running instances of the application.")
@@ -50,7 +49,6 @@ def extract_update_bundle(bundle):
     with zipfile.ZipFile(bundle, compression=zipfile.ZIP_LZMA) as archive:
         archive.extractall(extraction_dir)
     return extraction_dir
-
 
 
 def perform_update(upstream_version, update_url, sha1hash):

@@ -466,7 +466,11 @@ class TextToSpeechService(BookwormService):
                 break
         if engine is None:
             if first_available:
-                return cls.speech_engines[0] if any(cls.speech_engines) else DummySpeechEngine
+                return (
+                    cls.speech_engines[0]
+                    if any(cls.speech_engines)
+                    else DummySpeechEngine
+                )
             else:
                 raise LookupError(f"Engine {engine_name} was not found or unavailable.")
         return engine

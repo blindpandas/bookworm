@@ -54,7 +54,7 @@ class FileAssociationDialog(SimpleDialog):
             ),
         )
         masterPanel = sc.SizedPanel(parent, -1)
-        masterPanel.SetSizerType('horizontal')
+        masterPanel.SetSizerType("horizontal")
         panel1 = sc.SizedPanel(masterPanel, -1)
         panel2 = sc.SizedPanel(masterPanel, -1)
         assoc_btn = CommandLinkButton(

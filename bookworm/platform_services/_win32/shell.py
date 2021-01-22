@@ -17,7 +17,6 @@ from .win_registry import RegKey, RegistryValueKind
 log = logger.getChild(__name__)
 
 
-
 def add_shell_command(key, executable):
     key.CreateSubKey(r"shell\Open\Command").SetValue(
         "", f'"{executable}" "%1"', RegistryValueKind.String

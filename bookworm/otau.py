@@ -29,7 +29,6 @@ def parse_update_info(update_info):
     return upstream_version["version"], dl_url, dl_sha1hash
 
 
-
 @call_threaded
 def check_for_updates(verbose=False):
     log.info("Checking for updates...")
@@ -112,10 +111,13 @@ class OTAUService(BookwormService):
         self.view.Bind(
             wx.EVT_MENU,
             lambda e: check_for_updates(verbose=True),
-            checkForUpdatesMmenuItem
+            checkForUpdatesMmenuItem,
         )
 
     def check_for_updates_upon_startup(self):
         _last_update_check = config.conf["general"]["last_update_check"]
-        if config.conf["general"]["auto_check_for_updates"] and (time.time() - _last_update_check) > UPDATE_CHECK_INTERVAL:
+        if (
+            config.conf["general"]["auto_check_for_updates"]
+            and (time.time() - _last_update_check) > UPDATE_CHECK_INTERVAL
+        ):
             check_for_updates()

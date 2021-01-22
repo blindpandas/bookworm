@@ -10,13 +10,13 @@ name = "bookworm"
 display_name = "Bookworm"
 author = "Blind Pandas Team"
 author_email = "info@blindpandas.com"
-version = "0.2a4"
-version_ex = "0.2.0.4"
+version = "0.2a5"
+version_ex = "0.2.0.5"
 url = "https://github.com/blindpandas/bookworm"
 website = "https://blindpandas.com/bookworm/"
 update_url = "https://blindpandas.com/bookworm/current_version.json"
 copyright = f"Copyright (c) 2020 {author} and {display_name} contributors."
-is_frozen = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
+is_frozen = getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
 arch = "x86" if struct.calcsize("P") == 4 else "x64"
 debug = False
 # The programatic identifier used in file association

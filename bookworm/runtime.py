@@ -11,13 +11,10 @@ from bookworm.platform_services.runtime import (
 )
 
 
-
 class PackagingMode(Enum):
     Source = auto()
     Installed = auto()
     Portable = auto()
-
-
 
 
 IS_RUNNING_PORTABLE = is_running_portable()

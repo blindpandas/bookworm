@@ -43,7 +43,9 @@ except Exception as e:
 class SoundFile:
     """Represent a sound file."""
 
-    __slots__ = ["path",]
+    __slots__ = [
+        "path",
+    ]
 
     def __init__(self, filepath):
         self.path = filepath
@@ -84,7 +86,10 @@ def is_running_portable():
             unins_path_value = unins_key.GetValue("InstallLocation")
             if unins_path_value is None:
                 return True
-            elif Path(unins_path_value).resolve() == Path(sys.executable).parent.resolve():
+            elif (
+                Path(unins_path_value).resolve()
+                == Path(sys.executable).parent.resolve()
+            ):
                 return False
     return True
 

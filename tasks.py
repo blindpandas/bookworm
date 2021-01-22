@@ -37,6 +37,7 @@ GUIDE_HTML_TEMPLATE = """<!doctype html>
   </html>
 """
 
+
 def invert_image(image_path):
     from PIL import Image
     from fitz import Pixmap
@@ -52,7 +53,7 @@ def make_installer_image(logo_file):
     from PIL import Image
     from PIL.ImageColor import getrgb
 
-    color = getrgb('#77216F')
+    color = getrgb("#77216F")
     logo = Image.open(logo_file).convert("RGB").resize((164, 164))
     newdata = []
     for item in logo.getdata():
@@ -62,7 +63,7 @@ def make_installer_image(logo_file):
             newdata.append(item)
     logo.putdata(newdata)
     region = logo.crop((0, 0, 164, 164))
-    img = Image.new('RGB', (164, 314), color)
+    img = Image.new("RGB", (164, 314), color)
     img.paste(region, (0, 75))
     return img
 
@@ -70,6 +71,7 @@ def make_installer_image(logo_file):
 def _add_envars(context):
     sys.path.insert(0, str(PACKAGE_FOLDER))
     import app
+
     del sys.path[0]
 
     arch = app.arch
@@ -145,24 +147,26 @@ def make_icons(c):
                 )
         # Fix for some import issues with Img2Py
         imgdata_py = PY_MODULE.read_text()
-        imp_statement = 'from wx.lib.embeddedimage import PyEmbeddedImage'
+        imp_statement = "from wx.lib.embeddedimage import PyEmbeddedImage"
         if imp_statement not in imgdata_py:
             PY_MODULE.write_text(f"{imp_statement}\n{imgdata_py}")
         print("*" * 10 + " Done Embedding Images" + "*" * 10)
-    print ("Creating installer images...")
+    print("Creating installer images...")
     inst_dst = PROJECT_ROOT / "scripts" / "builder" / "assets"
     inst_imgs = {
         "bookworm.ico": ICON_SIZE,
         "bookworm.bmp": (48, 48),
     }
-    make_installer_image(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").save(inst_dst / "bookworm-logo.bmp")
+    make_installer_image(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").save(
+        inst_dst / "bookworm-logo.bmp"
+    )
     for fname, imgsize in inst_imgs.items():
         imgfile = inst_dst.joinpath(fname)
         if not imgfile.exists():
             print(f"Creating image {fname}.")
-            Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png")\
-            .resize(imgsize)\
-            .save(imgfile)
+            Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").resize(
+                imgsize
+            ).save(imgfile)
             print(f"Copied image {fname} to the assets folder.")
     website_header = PROJECT_ROOT / "docs" / "img" / "bookworm.png"
     if not website_header.exists():
@@ -199,7 +203,7 @@ def build_docs(c):
             GUIDE_HTML_TEMPLATE.format(
                 lang=lang, title=page_title.strip(), content=content
             ),
-            encoding="utf8"
+            encoding="utf8",
         )
         print(f"Built docs for language '{lang}'")
     print("Done building the documentations.")
@@ -214,18 +218,25 @@ def copy_assets(c):
     print("Copying files...")
     files_to_copy = {
         PROJECT_ROOT / "LICENSE": RESOURCES_FOLDER / "docs" / "license.txt",
-        PROJECT_ROOT / "contributors.txt": RESOURCES_FOLDER / "docs" / "contributors.txt",
-        PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico": PACKAGE_FOLDER,
+        PROJECT_ROOT
+        / "contributors.txt": RESOURCES_FOLDER
+        / "docs"
+        / "contributors.txt",
+        PROJECT_ROOT
+        / "scripts"
+        / "builder"
+        / "assets"
+        / "bookworm.ico": PACKAGE_FOLDER,
     }
     for src, dst in files_to_copy.items():
         c.run(f"cp {src} {dst}", hide="stdout")
-    ficos_src = PROJECT_ROOT / "fullsize_images"/ "file_icons"
-    ficos_dst = RESOURCES_FOLDER  / "icons"
+    ficos_src = PROJECT_ROOT / "fullsize_images" / "file_icons"
+    ficos_dst = RESOURCES_FOLDER / "icons"
     ficos_dst.mkdir(parents=True, exist_ok=True)
     for img in [i for i in ficos_src.iterdir() if i.suffix == ".png"]:
-        Image.open(img)\
-        .resize(ICON_SIZE)\
-        .save(ficos_dst.joinpath(img.name.split(".")[0] + ".ico"))
+        Image.open(img).resize(ICON_SIZE).save(
+            ficos_dst.joinpath(img.name.split(".")[0] + ".ico")
+        )
     print("Done copying files.")
 
 
@@ -356,7 +367,7 @@ def clean(c, assets=False, siteconfig=False):
 @make_env
 def copy_deps(c):
     """Copies the system dlls."""
-    if sys.platform != 'win32':
+    if sys.platform != "win32":
         return print("Not Windows")
     print("Copying vcredis 2015 ucrt support DLLs...")
     arch = os.environ["IAPP_ARCH"]
@@ -374,7 +385,6 @@ def copy_deps(c):
             print(f"Faild to copy  {dll} to {dist_dir}")
             continue
     print("Done copying vcredis 2015 ucrt DLLs.")
-
 
 
 @task
@@ -422,7 +432,7 @@ def update_version_info(c):
 @task(name="libs")
 @make_env
 def copy_uwp_services_lib(c):
-    if sys.platform != 'win32':
+    if sys.platform != "win32":
         return print("Not Windows.")
     build_config = "Release" if "APPVEYOR_BUILD_FOLDER" in os.environ else "Debug"
     uwp_services_path = PROJECT_ROOT / "includes" / "BookwormUWPServices"
@@ -431,27 +441,23 @@ def copy_uwp_services_lib(c):
     c.run(f"cp {src} {dst}")
 
 
-
-
 @task
 @make_env
 def install_local_packages(c):
     print("Upgrading pip...")
     c.run("python -m pip install --upgrade pip")
     print("Installing local packages")
-    arch = os.environ['IAPP_ARCH']
+    arch = os.environ["IAPP_ARCH"]
     pkg_names = c["packages_to_install"]
     packages = pkg_names["pure_python"] or []
     if sys.platform in pkg_names:
         platform_packages = pkg_names[sys.platform]
-        pure_python = platform_packages['pure_python']
+        pure_python = platform_packages["pure_python"]
         binary_packages = platform_packages[arch]
         if pure_python:
             packages += [Path(sys.platform) / pkg for pkg in pure_python]
         if binary_packages:
-            packages += [
-                Path(sys.platform) / arch / pkg for pkg in binary_packages
-            ]
+            packages += [Path(sys.platform) / arch / pkg for pkg in binary_packages]
     with c.cd(str(PROJECT_ROOT / "packages")):
         for package in packages:
             print(f"Installing package {package}")
@@ -469,9 +475,13 @@ def pip_install(c):
     name="install",
     pre=(
         pip_install,
-        clean, make_icons, build_docs,
-        copy_assets, compile_msgs, copy_wx_catalogs,
-    )
+        clean,
+        make_icons,
+        build_docs,
+        copy_assets,
+        compile_msgs,
+        copy_wx_catalogs,
+    ),
 )
 def install_bookworm(c):
     with c.cd(str(PROJECT_ROOT)):
@@ -487,7 +497,13 @@ def install_bookworm(c):
     print("Finished installing packages.")
 
 
-@task(pre=(install_bookworm,), post=(copy_deps, copy_uwp_services_lib,))
+@task(
+    pre=(install_bookworm,),
+    post=(
+        copy_deps,
+        copy_uwp_services_lib,
+    ),
+)
 @make_env
 def freeze(c):
     """Freeze the app using pyinstaller."""
@@ -505,7 +521,6 @@ def freeze(c):
             hide=True,
         )
     print("App freezed.")
-
 
 
 @task(
@@ -546,7 +561,7 @@ def run_application(c, debug=True):
     try:
         # Ensure we import from source not from an installed package
         import bookworm
-        
+
         if Path(bookworm.__path__[0]).parent != Path.cwd():
             print(
                 "WARNGING: bookworm is being imported from a different location.\n"
@@ -559,7 +574,7 @@ def run_application(c, debug=True):
 
         print(f"{app.display_name} v{app.version}")
         if debug:
-            os.environ["BOOKWORM_DEBUG"] = '1'
+            os.environ["BOOKWORM_DEBUG"] = "1"
         bootstrap.run()
     except ImportError as e:
         print("An import error was raised when starting the application.")

@@ -39,14 +39,13 @@ def get_ext_info(supported="*"):
         for ext in cls.extensions:
             cext = ext.replace("*", "")
             if (supported == "*") or (cext in supported):
-                doctypes[cext] = SupportedFileFormat(cls.format, ext, cls.name).astuple()
+                doctypes[cext] = SupportedFileFormat(
+                    cls.format, ext, cls.name
+                ).astuple()
     return doctypes
-
 
 
 if PLATFORM == "win32":
     from ._win32.shell import shell_integrate, shell_disintegrate
 elif PLATFORM == "linux":
     from ._linux.shell import shell_integrate, shell_disintegrate
-
-
