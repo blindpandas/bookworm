@@ -13,7 +13,7 @@ from bookworm.runtime import CURRENT_PACKAGING_MODE, PackagingMode
 log = logging.getLogger("bookworm.paths")
 
 # The appdata path when running from source
-DATA_PATH_SOURCE = Path.cwd() / ".appdata"
+DATA_PATH_SOURCE = Path(bookworm.__path__[0]).parent / ".appdata"
 
 
 def merge_paths(func):
