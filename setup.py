@@ -5,12 +5,19 @@ from setuptools import setup, find_packages
 from bookworm import app
 
 
+# Invalid requirement specifier prefixes
+INVALID_PREFIXES = ('http://', 'https://', 'git+',)
+
+
 CWD = Path(__file__).parent
 LONG_DESCRIPTION = (CWD / "README.md").read_text()
 
+REQUIREMENTS = []
 with open(CWD / "requirements.txt", "r") as reqs:
-    REQUIREMENTS = [l.strip() for l in reqs.readlines() if not l.startswith("git")]
-
+    for line in reqs:
+        if any(line.startswith(prfx) for prfx in INVALID_PREFIXES):
+            continue
+        REQUIREMENTS.append(line)
 
 setup(
     name=app.name,

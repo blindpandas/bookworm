@@ -431,15 +431,14 @@ def copy_uwp_services_lib(c):
     c.run(f"cp {src} {dst}")
 
 
-@task(
-    name="install",
-    pre=(
-        clean, make_icons, build_docs,
-        copy_assets, compile_msgs, copy_wx_catalogs,
-    )
-)
-def install_packages(c):
-    print("Installing packages")
+
+
+@task
+@make_env
+def install_local_packages(c):
+    print("Upgrading pip...")
+    c.run("python -m pip install --upgrade pip")
+    print("Installing local packages")
     arch = os.environ['IAPP_ARCH']
     pkg_names = c["packages_to_install"]
     packages = pkg_names["pure_python"] or []
@@ -457,16 +456,38 @@ def install_packages(c):
         for package in packages:
             print(f"Installing package {package}")
             c.run(f"pip install --upgrade {package}", hide="stdout")
+
+
+@task(pre=(install_local_packages,))
+def pip_install(c):
+    with c.cd(PROJECT_ROOT):
+        print("Installing application dependencies using pip...")
+        c.run("pip install -r requirements-dev.txt")
+
+
+@task(
+    name="install",
+    pre=(
+        pip_install,
+        clean, make_icons, build_docs,
+        copy_assets, compile_msgs, copy_wx_catalogs,
+    )
+)
+def install_bookworm(c):
     with c.cd(str(PROJECT_ROOT)):
-        print("Building Bookworm wheel.")
-        c.run("py setup.py bdist_wheel", hide="stdout")
-        wheel_path = next(Path(PROJECT_ROOT / "dist").glob("*.whl"))
-        print("Installing Bookworm wheel")
-        c.run(f"pip install --upgrade {wheel_path}", hide="stdout")
+        c.run("pip uninstall bookworm -y -q")
+        if "BK_DEVELOPMENT" in c:
+            c.run("pip install -e .")
+        else:
+            print("Building Bookworm wheel.")
+            c.run("py setup.py bdist_wheel", hide="stdout")
+            wheel_path = next(Path(PROJECT_ROOT / "dist").glob("*.whl"))
+            print("Installing Bookworm wheel")
+            c.run(f"pip install {wheel_path}", hide="stdout")
     print("Finished installing packages.")
 
 
-@task(pre=(install_packages,), post=(copy_deps, copy_uwp_services_lib,))
+@task(pre=(install_bookworm,), post=(copy_deps, copy_uwp_services_lib,))
 @make_env
 def freeze(c):
     """Freeze the app using pyinstaller."""
@@ -512,9 +533,9 @@ def create_portable_copy(c):
     print(f"Portable archive created at {port_arch}.")
 
 
-@task(name="dev", pre=(install_packages,))
+@task(name="dev", pre=(install_bookworm,))
 def prepare_dev_environment(c):
-    c.run("pip install -e .")
+    c["BK_DEVELOPMENT"] = True
     print("\r\n🎆 Your environment is now ready for Bookworm...")
     print("😊 Happy hacking...")
 

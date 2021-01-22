@@ -80,7 +80,7 @@ def is_running_portable():
         writable=False,
     )
     with unins_key:
-        if unins_key.exists():
+        if unins_key.exists:
             unins_path_value = unins_key.GetValue("InstallLocation")
             if unins_path_value is None:
                 return True

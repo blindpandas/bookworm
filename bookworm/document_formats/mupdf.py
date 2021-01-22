@@ -33,7 +33,7 @@ class FitzPage(BasePage):
 
     def _text_from_page(self, page: fitz.Page) -> str:
         bloks = page.getTextBlocks()
-        text = [blk[4].replace("\n", " ") for blk in bloks]
+        text = [blk[4].replace("\n", " ") for blk in bloks if blk[-1] == 0]
         text = "\r\n".join(text)
         return ftfy.fix_text(text, normalization="NFKC")
 

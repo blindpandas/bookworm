@@ -1,4 +1,4 @@
-[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/bookworm-devs/bookworm?branch=develop&svg=true)
+[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/blindpandas/bookworm?branch=develop&svg=true)
 
 # Bookworm
 
@@ -18,35 +18,49 @@
 
 ## Resources
 
-* The official website: [bookworm-devs.github.io/bookworm](https://bookworm-devs.github.io/bookworm/)
-* User guide: [Bookworm user guide](https://bookworm-devs.github.io/bookworm/user-guide/)
+* The official website: [blindpandas.com/bookworm](https://blindpandas.com/bookworm/)
+* User guide: [Bookworm user guide](https://blindpandas.com/bookworm/user-guide/)
 
 
 ## Development
 
 If you would like to contribute to *Bookworm's* development, please follow the following steps to get bookworm up and running on your computer:
 
-* Make sure you are running Windows 7 or later, and you've installed Python 3.7 or a later version:
-* Create a virtual environment:
-```bash
-py -m venv .env
-.env\\scripts\\activate
-``
+
+### Required Binaries
+
+You need the following binaries to develop Bookworm:
+
+1. Python: currently we use Python 3.9 series: Grap the latest version from [python.org](https://www.python.org/downloads/)
+2. GNU win32 tools: the easiest way to get those is to install Git. Since Git comes with these binaries you can simply add them to your path.
+For example, if git was installed to: "C:\Program Files\Git". Then you need to add the following directory to your path: "C:\Program Files\Git\mingw64\bin".
+3. NSIS: for creating Windows installers. Get it from [NSIS download page](https://nsis.sourceforge.io/Download) and add it to your path.
+4. Optionally, you need Visual Studio 2019 with the Windows 10 development workload to compile some libraries.
+
+###  Prepare the source tree
+
+Bookworm is composed of many components. To prepare your source tree and run Bookworm for the first time, follow these steps:
+
 * Get the source code by cloneing this repo:
 ```shell
-git clone https://github.com/bookworm-devs/bookworm.git
+git clone https://github.com/blindpandas/bookworm.git
 cd bookworm
 ```
-* Install the requirements from *PyPI* using *pip*:
-```shell
-pip install -r requirements-dev.txt
-```
-This should install the, pip installable, application and development dependencies.
-* After installing dependencies, run the following command to prepare your environment:
+* Create a virtual environment:
+```bash
+python -m venv .env
+.env\\scripts\\activate
+``
+* Install "invoke" : invoke is the command runner we use to define and run the build process. Install it from pip using:
+```bash
+pip install invoke
+``
+* Then run the following command to prepare your development environment:
 ```shell
 invoke dev
 ```
-* Run bookworm:
+This should install the development and application dependencies and prepare the source tree.
+* If everything worked as expected, you can now run Bookworm using the following command:
 ```shell
 invoke run
 ```
@@ -72,4 +86,4 @@ invoke build
 
 ## License
 
-**Bookworm** is copyright (c) 2019 Musharraf Omer. It is licensed under the [MIT License](https://github.com/bookworm-devs/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2021 Blind Pandas Team. It is licensed under the [MIT License](https://github.com/bookworm-devs/bookworm/blob/master/LICENSE).

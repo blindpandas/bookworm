@@ -3,9 +3,13 @@ packages_to_install:
     win32:
         pure_python:
         x64:
-            - "pycld2-0.41-cp37-cp37m-win_amd64.whl"
+            - "docrpy-0.1.0-cp39-none-win_amd64.whl"
+            - "pycld2-0.41-cp39-cp39-win_amd64.whl"
+            - "pythonnet-2.5.1-cp39-cp39-win_amd64.whl"
         x86:
-            - "pycld2-0.41-cp37-cp37m-win32.whl"
+            - "docrpy-0.1.0-cp39-none-win32.whl"
+            - "pycld2-0.41-cp39-cp39-win32.whl"
+            - "pythonnet-2.5.1-cp39-cp39-win32.whl"
 folders_to_clean:
     everytime:
         - build
