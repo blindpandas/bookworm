@@ -458,10 +458,15 @@ class TextToSpeechService(BookwormService):
             toolbar.EnableTool(ctrl_id, enable)
 
     @classmethod
-    def get_engine(cls, engine_name):
-        engine = DummySpeechEngine
+    def get_engine(cls, engine_name, first_available=True):
+        engine = None
         for e in cls.speech_engines:
             if e.name == engine_name:
                 engine = e
                 break
+        if engine is None:
+            if first_available:
+                return cls.speech_engines[0] if any(cls.speech_engines) else DummySpeechEngine
+            else:
+                raise LookupError(f"Engine {engine_name} was not found or unavailable.")
         return engine
