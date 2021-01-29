@@ -2,12 +2,14 @@
 
 import locale
 from babel import UnknownLocaleError, Locale, parse_locale, default_locale
-
+from languagecodes import iso_639_alpha2
+from languagecodes.synonyms import expand_synonyms
 
 class LocaleInfo:
-    __slots__ = ["identifier", "language", "locale"]
+    __slots__ = ["identifier", "original_code", "language", "locale"]
 
-    def __init__(self, identifier):
+    def __init__(self, identifier, *, original_code=None):
+        self.original_code = original_code if original_code is not None else identifier
         self.identifier = identifier.replace(" ", "_").replace("-", "_")
         try:
             self.locale = Locale.parse(self.identifier)
@@ -16,8 +18,20 @@ class LocaleInfo:
             raise ValueError(f"Invalid locale identifier {identifier}.")
 
     @classmethod
-    def from_babel_locale(cls, babel_locale):
-        return cls(str(babel_locale))
+    def from_babel_locale(cls, babel_locale, *args, **kwargs):
+        return cls(str(babel_locale), *args, **kwargs)
+
+    @classmethod
+    def from_three_letter_code(cls, lang_code, *args, **kwargs):
+        try:
+            return cls.from_babel_locale(Locale.parse(lang_code), original_code=lang_code)
+        except (ValueError, UnknownLocaleError):
+            lang = iso_639_alpha2(lang_code)
+            if lang is None:
+                lang = iso_639_alpha2(lang_code.split("_")[0])
+            if lang is not None:
+                return cls(lang, original_code=lang_code)
+        raise ValueError(f"Invalid 3-letter language code {lang_code}.")
 
     def __repr__(self):
         return f'LocaleInfo(identifier="{self.identifier}");language={self.language}'
