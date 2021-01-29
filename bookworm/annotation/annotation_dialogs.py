@@ -4,7 +4,10 @@ import wx
 import wx.lib.sized_controls as sc
 from dataclasses import dataclass
 from pathlib import Path
-from platform_utils.clipboard import copy as copy_to_clipboard, get_text as get_clipboard_text
+from platform_utils.clipboard import (
+    copy as copy_to_clipboard,
+    get_text as get_clipboard_text,
+)
 from slugify import slugify
 from bookworm.utils import format_datetime
 from bookworm.resources import sounds
@@ -515,7 +518,9 @@ class AnnotationWithContentDialog(SimpleDialog):
                     copy_to_clipboard(item.content)
                     sounds.clipboard.play()
             except:
-                log.exception("Failed to copy annotation text to the clipbard", evc_info=True)
+                log.exception(
+                    "Failed to copy annotation text to the clipbard", evc_info=True
+                )
         event.Skip()
 
     def edit_tags(self, item):

@@ -42,10 +42,16 @@ class PlainTextDocument(FluidDocument):
 
     @cached_property
     def toc_tree(self):
-        return Section(document=self, title="", pager=Pager(first=0, last=0),)
+        return Section(
+            document=self,
+            title="",
+            pager=Pager(first=0, last=0),
+        )
 
     @cached_property
     def metadata(self):
         return BookMetadata(
-            title=os.path.split(self.filename)[-1][:-4], author="", publication_year="",
+            title=os.path.split(self.filename)[-1][:-4],
+            author="",
+            publication_year="",
         )

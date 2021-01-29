@@ -10,11 +10,15 @@ from bookworm import app
 from bookworm import config
 from bookworm.paths import app_path
 from bookworm.utils import restart_application
-from bookworm.i18n import get_available_languages, set_active_language
+from bookworm.i18n import get_available_locales, set_locale
 from bookworm.signals import app_started, config_updated
 from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.resources import images
-from bookworm.shell_integration import shell_integrate, shell_disintegrate, get_ext_info
+from bookworm.platform_services.shell import (
+    shell_integrate,
+    shell_disintegrate,
+    get_ext_info,
+)
 from bookworm.logger import logger
 from .components import SimpleDialog, EnhancedSpinCtrl
 
@@ -46,32 +50,40 @@ class FileAssociationDialog(SimpleDialog):
             -1,
             _(
                 "This dialog will help you to setup file associations.\n"
-                "Associating files with Bookworm means that when you click on a file in windows explorer, it will be opend in Bookworm by default "
+                "Associating files with Bookworm means that when you click on a file in windows explorer, it will be opened in Bookworm by default "
             ),
         )
+        masterPanel = sc.SizedPanel(parent, -1)
+        masterPanel.SetSizerType("horizontal")
+        panel1 = sc.SizedPanel(masterPanel, -1)
+        panel2 = sc.SizedPanel(masterPanel, -1)
         assoc_btn = CommandLinkButton(
-            parent,
+            panel1,
             -1,
             # Translators: the main label of a button
             _("Associate all"),
             # Translators: the note of a button
             _("Use Bookworm to open all supported ebook formats"),
         )
-        for ext, metadata in self.ext_info:
+        half = len(self.ext_info) / 2
+        buttonPanel = panel1
+        for i, (ext, metadata) in enumerate(self.ext_info):
+            if i >= half:
+                buttonPanel = panel2
             # Translators: the main label of a button
             mlbl = _("Associate files of type {format}").format(format=metadata[1])
             # Translators: the note of a button
             nlbl = _(
                 "Associate files with {ext} extension so they always open in Bookworm"
             ).format(ext=ext)
-            btn = CommandLinkButton(parent, -1, mlbl, nlbl)
+            btn = CommandLinkButton(buttonPanel, -1, mlbl, nlbl)
             self.Bind(
                 wx.EVT_BUTTON,
                 lambda e, args=(ext, metadata[1]): self.onFileAssoc(*args),
                 btn,
             )
         dissoc_btn = CommandLinkButton(
-            parent,
+            panel2,
             -1,
             # Translators: the main label of a button
             _("Dissociate all supported file types"),
@@ -262,7 +274,7 @@ class GeneralPanel(SettingsPanel):
                 _("Manage File &Associations"),
             )
             self.Bind(wx.EVT_BUTTON, self.onRequestFileAssoc, id=wx.ID_SETUP)
-        languages = [l for l in set(get_available_languages().values())]
+        languages = [l for l in set(get_available_locales().values())]
         for langobj in languages:
             self.languageChoice.Append(langobj.description, langobj)
         self.languageChoice.SetStringSelection(app.current_language.description)
@@ -273,10 +285,10 @@ class GeneralPanel(SettingsPanel):
             if selection == wx.NOT_FOUND:
                 return
             selected_lang = self.languageChoice.GetClientData(selection)
-            if selected_lang.LCID != app.current_language.LCID:
+            if selected_lang.pylang != app.current_language.pylang:
                 self.config["language"] = selected_lang.pylang
                 config.save()
-                set_active_language(selected_lang.pylang)
+                set_locale(selected_lang.pylang)
                 msg = wx.MessageBox(
                     # Translators: the content of a message asking the user to restart
                     _(

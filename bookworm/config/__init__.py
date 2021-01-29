@@ -43,7 +43,9 @@ class ConfigProvider:
             log.exception("Failed to initialize config", exc_info=True)
             Path(self.config_file).unlink()
             return self.validate_and_write()
-        validated = self.config.validate(self.validator, copy=True, preserve_errors=True)
+        validated = self.config.validate(
+            self.validator, copy=True, preserve_errors=True
+        )
         if validated == True:
             self.config.write()
         else:

@@ -8,7 +8,6 @@ from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.gui.components import SimpleDialog, EnhancedSpinCtrl
 from bookworm.speechdriver import DummySpeechEngine
 from bookworm.speechdriver.enumerations import SynthState
-from bookworm.speechdriver.engines.sapi import SapiSpeechEngine as SpeechEngine
 from bookworm.logger import logger
 from .tts_config import (
     PARAGRAPH_PAUSE_MAX,

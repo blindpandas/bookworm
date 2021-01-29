@@ -9,7 +9,7 @@ from bookworm.gui.contentview_ctrl import (
     EVT_CONTENT_NAVIGATION,
     NAVIGATION_KEYS,
     NAV_FOREWORD_KEYS,
-    NAV_BACKWORD_KEYS
+    NAV_BACKWORD_KEYS,
 )
 from bookworm.logger import logger
 
@@ -17,6 +17,7 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 # Time_out of consecutive key presses in seconds
 DKEY_TIMEOUT = 0.75
+
 
 class NavigationProvider:
     """Implements keyboard navigation for viewer controls."""
@@ -43,7 +44,10 @@ class NavigationProvider:
         if not self.reader.ready:
             return
         key_code = event.GetKeyCode()
-        if isinstance(self._nav_ctrl, wx.TextCtrl) and key_code in {wx.WXK_UP, wx.WXK_DOWN}:
+        if isinstance(self._nav_ctrl, wx.TextCtrl) and key_code in {
+            wx.WXK_UP,
+            wx.WXK_DOWN,
+        }:
             self._auto_navigate(key_code)
         elif key_code in NAVIGATION_KEYS:
             if key_code in NAV_FOREWORD_KEYS:
@@ -51,10 +55,7 @@ class NavigationProvider:
             elif key_code in NAV_BACKWORD_KEYS:
                 self.reader.go_to_prev()
             self.callback()
-        elif (
-            isinstance(self._nav_ctrl, wx.TextCtrl)
-            and key_code == wx.WXK_PAGEDOWN
-        ):
+        elif isinstance(self._nav_ctrl, wx.TextCtrl) and key_code == wx.WXK_PAGEDOWN:
             self._nav_ctrl.InsertionPoint = self._nav_ctrl.GetLastPosition() - 1
             event.Skip(False)
         if event.GetModifiers() == wx.MOD_ALT and key_code in (

@@ -18,10 +18,10 @@ class TaggedMixin:
     """Provides a generic many-to-many relationship
     to a  dynamically generated tags table  using
     the `table-per-related` pattern.
-    
+
     .. admonition::: the dynamically generated table is shared by this model
      class and all it's subclasses.
-     
+
      Adapted from oy-cms.
      Copyright (c) 2018 Musharraf Omer
     """

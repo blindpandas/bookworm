@@ -1,23 +1,18 @@
 # coding: utf-8
 
-import clr
-import System
-from System.Globalization import CultureInfo
-
 import sys
 import os
-import winpaths
 import glob
 import wx
 import hashlib
-from functools import wraps, lru_cache
-from subprocess import list2cmdline
+from functools import wraps
 from pathlib import Path
 from xml.sax.saxutils import escape
 from datetime import datetime
-from bookworm.vendor import shellapi
+from babel.dates import format_datetime as babel_format_datetime
 from bookworm import app
 from bookworm.concurrency import call_threaded
+from bookworm.platform_services.runtime import system_start_app
 from bookworm.logger import logger
 
 
@@ -53,21 +48,6 @@ def ignore(*exceptions, retval=None):
     return wrapper
 
 
-@lru_cache(maxsize=10)
-def reference_gac_assembly(glob_pattern: str):
-    """
-    Locate an assembly from the GAC and reference it.
-
-    Recent versions of Pythonnet does not auto discover certain .NET framework
-    assemblies, so add what we need from the global Assembly Cache (GAC).
-    """
-    gac_home = "Microsoft.NET\\assembly\\GAC_MSIL\\"
-    assemblies = tuple(Path(winpaths.get_windows(), gac_home).rglob(glob_pattern))
-    if not assemblies:
-        raise OSError(f"Could not find assembily: {glob_pattern}")
-    clr.AddReference(str(assemblies[0]))
-
-
 def restart_application(*extra_args, debug=False, restore=True):
     args = list(extra_args) + ["--restarted"]
     reader = wx.GetApp().mainFrame.reader
@@ -77,7 +57,7 @@ def restart_application(*extra_args, debug=False, restore=True):
     if debug and ("--debug" not in args):
         args.append("--debug")
     wx.GetApp().ExitMainLoop()
-    shellapi.ShellExecute(None, None, sys.executable, list2cmdline(args), None, 1)
+    system_start_app(sys.executable, args)
     sys.exit(0)
 
 
@@ -136,10 +116,7 @@ def search(pattern, text):
 
 
 def format_datetime(date: datetime) -> str:
-    if not date:
-        return ""
-    formatter = CultureInfo.CurrentUICulture.DateTimeFormat
-    return System.DateTime.Parse(str(date), None).ToString(formatter)
+    return babel_format_datetime(date, locale=app.current_language)
 
 
 class cached_property(property):
@@ -158,7 +135,7 @@ class cached_property(property):
 
     The class has to have a `__dict__` in order for this property to
     work.
-    
+
     Taken as is from werkzeug, a WSGI toolkit for python.
     :copyright: (c) 2014 by the Werkzeug Team.
     """
@@ -194,7 +171,7 @@ class cached_property(property):
 def escape_html(text):
     """Escape the text so as to be used
     as a part of an HTML document.
-    
+
     Taken from python Wiki.
     """
     html_escape_table = {'"': "&quot;", "'": "&apos;"}

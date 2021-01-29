@@ -3,6 +3,7 @@
 import os
 import zipfile
 import fitz
+import ftfy
 from hashlib import md5
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
@@ -32,8 +33,9 @@ class FitzPage(BasePage):
 
     def _text_from_page(self, page: fitz.Page) -> str:
         bloks = page.getTextBlocks()
-        text = [blk[4].replace("\n", " ") for blk in bloks]
-        return "\r\n".join(text)
+        text = [blk[4].replace("\n", " ") for blk in bloks if blk[-1] == 0]
+        text = "\r\n".join(text)
+        return ftfy.fix_text(text, normalization="NFKC")
 
     def get_text(self):
         return self._text_from_page(self.document._ebook[self.index])
@@ -210,4 +212,3 @@ class FitzFB2Document(FitzDocument):
     # Translators: the name of a document file format
     name = _("Fiction Book (FB2)")
     extensions = ("*.fb2",)
-

@@ -10,13 +10,18 @@ log = logger.getChild(__name__)
 
 
 # Builtin services
+from bookworm.otau import OTAUService
 from bookworm.annotation import AnnotationService
-from bookworm.continuous_reading import ContReadingService
 from bookworm.ocr import OCRService
-from bookworm.text_to_speech import TextToSpeechService
-from bookworm.webservices import WebservicesBaseService, WikipediaService, UrlOpenService
+from bookworm.text_to_speech import TextToSpeechService, ContReadingService
+from bookworm.webservices import (
+    WebservicesBaseService,
+    WikipediaService,
+    UrlOpenService,
+)
 
 BUILTIN_SERVICES = (
+    OTAUService,
     TextToSpeechService,
     AnnotationService,
     WebservicesBaseService,

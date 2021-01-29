@@ -1,13 +1,14 @@
 # coding: utf-8
 
 import wx
-import queue 
+import queue
 import bisect
 import ujson as json
 from contextlib import suppress
 from base64 import urlsafe_b64encode, urlsafe_b64decode
 from dataclasses import dataclass
 from bookworm import config
+from bookworm.platform_services.speech_engines import TTS_ENGINES
 from bookworm.resources import sounds
 from bookworm.resources import images
 from bookworm.speechdriver import DummySpeechEngine, speech_engine_state_changed
@@ -18,8 +19,6 @@ from bookworm.speechdriver.enumerations import (
     EmphSpec,
     PauseSpec,
 )
-from bookworm.speechdriver.engines.sapi import SapiSpeechEngine
-from bookworm.speechdriver.engines.onecore import OcSpeechEngine
 from bookworm.utils import cached_property, gui_thread_safe
 from bookworm.vendor.sentence_splitter import (
     SentenceSplitter,
@@ -33,6 +32,7 @@ from bookworm.signals import (
 )
 from bookworm.base_service import BookwormService
 from bookworm.logger import logger
+from .continuous_reading import ContReadingService
 from .tts_config import tts_config_spec, TTSConfigManager
 from .tts_gui import (
     ReadingPanel,
@@ -120,8 +120,12 @@ class TextToSpeechService(BookwormService):
     config_spec = tts_config_spec
     has_gui = True
     stateful_menu_ids = StatefulSpeechMenuIds
-    __available_engines = (SapiSpeechEngine, OcSpeechEngine)
+    __available_engines = TTS_ENGINES
     speech_engines = [e for e in __available_engines if e.check()]
+
+    @classmethod
+    def check(cls):
+        return any(cls.speech_engines)
 
     def __post_init__(self):
         self.config_manager = TTSConfigManager()
@@ -132,8 +136,9 @@ class TextToSpeechService(BookwormService):
         reader_book_unloaded.connect(self.on_reader_unload, sender=self.reader)
         reader_page_changed.connect(self._change_page_for_tts, sender=self.reader)
         # maintain state upon book load
-        self.view.add_load_handler(lambda s: self.on_engine_state_changed(state=SynthState.ready))
-
+        self.view.add_load_handler(
+            lambda s: self.on_engine_state_changed(state=SynthState.ready)
+        )
 
     def shutdown(self):
         self.close()
@@ -245,7 +250,6 @@ class TextToSpeechService(BookwormService):
         utterance.add_text("Starting sub section")
         utterance.add_pause(900)
 
-
     def end_page_utterance(self, utterance, page):
         if config.conf["reading"]["reading_mode"] == 2:
             return
@@ -253,17 +257,21 @@ class TextToSpeechService(BookwormService):
             if config.conf["reading"]["notify_on_section_end"]:
                 utterance.add_audio(sounds.section_end.path)
                 # Translators: a message to speak at the end of the chapter
-                utterance.add_text(_("End of section: {chapter}.").format(chapter=page.section.title))
+                utterance.add_text(
+                    _("End of section: {chapter}.").format(chapter=page.section.title)
+                )
             utterance.add_pause(self.config_manager["end_of_section_pause"])
         else:
             utterance.add_text(".")
             utterance.add_pause(self.config_manager["end_of_page_pause"])
         utterance.add_text(".")
-        page_bookmark = self.encode_bookmark({"type": "end_page", "current": page.index})
+        page_bookmark = self.encode_bookmark(
+            {"type": "end_page", "current": page.index}
+        )
         utterance.add_bookmark(page_bookmark)
 
     def speak_current_page(self, utterance=None, from_caret=True):
-        start_pos=self.textCtrl.GetInsertionPoint() if from_caret else 0
+        start_pos = self.textCtrl.GetInsertionPoint() if from_caret else 0
         textinfo = self.content_tokenized(start_pos=start_pos)
         if self._current_textinfo is None:
             self._current_textinfo = textinfo
@@ -437,7 +445,7 @@ class TextToSpeechService(BookwormService):
         if not self.reader.ready:
             return
         menu = self.menu
-        toolbar =             self.view.toolbar
+        toolbar = self.view.toolbar
         gui_state = {
             (StatefulSpeechMenuIds.pauseToggle, state is not SynthState.ready),
             (StatefulSpeechMenuIds.stop, state is not SynthState.ready),
@@ -450,10 +458,19 @@ class TextToSpeechService(BookwormService):
             toolbar.EnableTool(ctrl_id, enable)
 
     @classmethod
-    def get_engine(cls, engine_name):
-        engine = DummySpeechEngine
+    def get_engine(cls, engine_name, first_available=True):
+        engine = None
         for e in cls.speech_engines:
             if e.name == engine_name:
                 engine = e
                 break
+        if engine is None:
+            if first_available:
+                return (
+                    cls.speech_engines[0]
+                    if any(cls.speech_engines)
+                    else DummySpeechEngine
+                )
+            else:
+                raise LookupError(f"Engine {engine_name} was not found or unavailable.")
         return engine

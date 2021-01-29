@@ -171,6 +171,7 @@ class SimpleDialog(sc.SizedDialog):
         if buttonsSizer:
             self.SetButtonSizer(buttonsSizer)
 
+        self.Layout()
         self.Fit()
         self.SetMinSize(self.GetSize())
         self.Center(wx.BOTH)

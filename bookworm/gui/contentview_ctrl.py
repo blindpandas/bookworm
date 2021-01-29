@@ -17,8 +17,11 @@ NAV_FOREWORD_KEYS = {
     wx.WXK_RETURN,
     wx.WXK_NUMPAD_ENTER,
 }
-NAV_BACKWORD_KEYS = {wx.WXK_BACK,}
+NAV_BACKWORD_KEYS = {
+    wx.WXK_BACK,
+}
 NAVIGATION_KEYS = NAV_FOREWORD_KEYS.union(NAV_BACKWORD_KEYS)
+
 
 @dataclass
 class SelectionRange(Container):
@@ -79,5 +82,3 @@ class ContentViewCtrl(wx.TextCtrl):
                 wx.QueueEvent(self, ContentNavigationEvent(KeyCode=event.GetKeyCode()))
             return True
         return super().TryBefore(event)
-
-

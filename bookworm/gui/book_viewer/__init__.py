@@ -303,7 +303,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         else:
             # Translators: the label of the page content text area
             cmsg = _("Page {page} of {total} — {chapter}").format(
-                page=page.number, total=len(self.reader.document), chapter=page.section.title
+                page=page.number,
+                total=len(self.reader.document),
+                chapter=page.section.title,
             )
             # Translators: a message that is announced after navigating to a page
             smsg = _("Page {page} of {total}").format(
@@ -411,9 +413,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 # Translators: content of a message telling the user that they entered an incorrect
                 # password for opening the book
                 _(
-                "The password you provided is incorrect.\n"
-                "Please try again with the correct password."),
-                icon=wx.ICON_ERROR
+                    "The password you provided is incorrect.\n"
+                    "Please try again with the correct password."
+                ),
+                icon=wx.ICON_ERROR,
             )
             return self.try_decrypt_document(document)
         return result

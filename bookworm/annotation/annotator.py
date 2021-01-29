@@ -112,7 +112,10 @@ class Annotator:
 
     @classmethod
     def get_all(
-        cls, filter_criteria=None, sort_criteria=AnnotationSortCriteria.Date, asc=False,
+        cls,
+        filter_criteria=None,
+        sort_criteria=AnnotationSortCriteria.Date,
+        asc=False,
     ):
         model = cls.model
         query = model.query
@@ -144,43 +147,51 @@ class Annotator:
         model = self.model
         clauses = (
             sa.and_(
-                model.page_number == sa.bindparam('current_page_number'),
-                model.position > sa.bindparam('current_position')
+                model.page_number == sa.bindparam("current_page_number"),
+                model.position > sa.bindparam("current_position"),
             ),
-            model.page_number > sa.bindparam('current_page_number')
+            model.page_number > sa.bindparam("current_page_number"),
         )
         baked_query = BAKERY(lambda session: session.query(model))
-        baked_query += lambda q: q.filter_by(book_id=sa.bindparam('current_book_id'))
+        baked_query += lambda q: q.filter_by(book_id=sa.bindparam("current_book_id"))
         baked_query += lambda q: q.filter(sa.or_(*clauses))
         if config.conf["annotation"]["exclude_named_bookmarks_when_jumping"]:
             baked_query += lambda q: q.filter(model.title == "")
-        return baked_query(self.session).params(
-            current_page_number=page_number,
-            current_position=pos,
-            current_book_id=self.current_book.id
-        ).first()
+        return (
+            baked_query(self.session)
+            .params(
+                current_page_number=page_number,
+                current_position=pos,
+                current_book_id=self.current_book.id,
+            )
+            .first()
+        )
 
     def get_first_before(self, page_number, pos):
         model = self.model
         clauses = (
             sa.and_(
-                model.page_number == sa.bindparam('current_page_number'),
-                model.position < sa.bindparam('current_position')
+                model.page_number == sa.bindparam("current_page_number"),
+                model.position < sa.bindparam("current_position"),
             ),
-            model.page_number < sa.bindparam('current_page_number')
+            model.page_number < sa.bindparam("current_page_number"),
         )
         baked_query = BAKERY(lambda session: session.query(model))
-        baked_query += lambda q: q.filter_by(book_id=sa.bindparam('current_book_id'))
+        baked_query += lambda q: q.filter_by(book_id=sa.bindparam("current_book_id"))
         baked_query += lambda q: q.filter(sa.or_(*clauses))
         if config.conf["annotation"]["exclude_named_bookmarks_when_jumping"]:
             baked_query += lambda q: q.filter(model.title == "")
         baked_query += lambda q: q.order_by(model.page_number.desc())
         baked_query += lambda q: q.order_by(model.position.desc())
-        return baked_query(self.session).params(
-            current_page_number=page_number,
-            current_position=pos,
-            current_book_id=self.current_book.id
-        ).first()
+        return (
+            baked_query(self.session)
+            .params(
+                current_page_number=page_number,
+                current_position=pos,
+                current_book_id=self.current_book.id,
+            )
+            .first()
+        )
 
     def create(self, **kwargs):
         kwargs.update(

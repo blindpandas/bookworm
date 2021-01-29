@@ -16,10 +16,8 @@ from bookworm.i18n import is_rtl
 from bookworm.resources import sounds
 from bookworm.document_formats import DocumentCapability as DC
 from bookworm.signals import config_updated, reader_book_loaded, reader_book_unloaded
-from bookworm.otau import check_for_updates
 from bookworm.concurrency import call_threaded, process_worker
 from bookworm import ocr
-from bookworm.otau import check_for_updates
 from bookworm import speech
 from bookworm.reader import EBookReader
 from bookworm.utils import restart_application, cached_property, gui_thread_safe
@@ -71,7 +69,9 @@ class FileMenu(BaseMenu):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         reader_book_loaded.connect(self.after_loading_book)
-        reader_book_unloaded.connect(lambda s: self.populate_recent_file_list(), weak=False, sender=self.reader)
+        reader_book_unloaded.connect(
+            lambda s: self.populate_recent_file_list(), weak=False, sender=self.reader
+        )
 
     def create(self):
         # A submenu for recent files
@@ -439,11 +439,11 @@ class ToolsMenu(BaseMenu):
         )
 
     def after_loading_book(self, sender):
-        ctrl_id, enable = BookRelatedMenuIds.viewRenderedAsImage, self.reader.document.can_render_pages
-        self.Enable(
-            ctrl_id,
-            enable
+        ctrl_id, enable = (
+            BookRelatedMenuIds.viewRenderedAsImage,
+            self.reader.document.can_render_pages,
         )
+        self.Enable(ctrl_id, enable)
         self.view.toolbar.EnableTool(ctrl_id, enable)
 
     def onViewRenderedAsImage(self, event):
@@ -487,13 +487,6 @@ class HelpMenu(BaseMenu):
             # Translators: the help text of an item in the application menubar
             _("View a list of notable contributors to the program."),
         )
-        self.Append(
-            ViewerMenuIds.check_for_updates,
-            # Translators: the label of an item in the application menubar
-            _("&Check for updates"),
-            # Translators: the help text of an item in the application menubar
-            _("Update the application"),
-        )
         if app.is_frozen and not app.debug:
             self.Append(
                 ViewerMenuIds.restart_with_debug,
@@ -535,11 +528,6 @@ class HelpMenu(BaseMenu):
             ),
             id=ViewerMenuIds.contributors,
         )
-        self.view.Bind(
-            wx.EVT_MENU,
-            lambda e: check_for_updates(verbose=True),
-            id=ViewerMenuIds.check_for_updates,
-        )
         self.view.Bind(wx.EVT_MENU, self.onAbout, id=ViewerMenuIds.about)
 
     def onAbout(self, event):
@@ -555,9 +543,7 @@ class HelpMenu(BaseMenu):
         restart_application(debug=True)
 
     def onOpenDocumentation(self, event):
-        help_filename = f"bookworm.{'html' if app.is_frozen else 'md'}"
-        lang = app.current_language.given_lang
-        docs = paths.docs_path(lang, help_filename)
+        docs = paths.docs_path(app.current_language.pylang, "bookworm.html")
         wx.LaunchDefaultApplication(str(docs))
 
 
@@ -604,7 +590,9 @@ class MenubarProvider:
             self.Destroy()
             evt.Skip()
         except:
-            log.exception("An unhandled error was occured while exiting Bookworm", exc_info=True)
+            log.exception(
+                "An unhandled error was occured while exiting Bookworm", exc_info=True
+            )
             wx.Abort()
 
     def get_content_text_ctrl_context_menu(self):

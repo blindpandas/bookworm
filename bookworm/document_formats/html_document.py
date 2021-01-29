@@ -23,16 +23,37 @@ log = logger.getChild(__name__)
 
 HEADING_TAGS = {f"h{level}" for level in range(1, 7)}
 BLOCK_TAGS = {
-    "p", "br", "hr", "section",
-    "code", "nav", "main",
-    "aside", "footer", "article",
-    "table", "ol", "ul", "thead", "tbody", "dl"
+    "p",
+    "br",
+    "hr",
+    "section",
+    "code",
+    "nav",
+    "main",
+    "aside",
+    "footer",
+    "article",
+    "table",
+    "ol",
+    "ul",
+    "thead",
+    "tbody",
+    "dl",
 }
 DECORATIVE_TAGS = [
-    "span", "a", "div",
-    "strong", "b", "i",
-    "pre", "em",  "dd",
-    "dt", "cite",  "col", "colgroup",
+    "span",
+    "a",
+    "div",
+    "strong",
+    "b",
+    "i",
+    "pre",
+    "em",
+    "dd",
+    "dt",
+    "cite",
+    "col",
+    "colgroup",
 ]
 IGNORED_TAGS = [
     "script",
@@ -149,7 +170,9 @@ class HtmlDocument(FluidDocument):
             else:
                 text = node_text + " "
             self.text_buffer.write(text)
-        self._sections = list(root.iter_children()) or [root,]
+        self._sections = list(root.iter_children()) or [
+            root,
+        ]
         self._outline = root
         root.pager = Pager(first=0, last=len(self._sections))
         for i, sect in enumerate(self._sections):
