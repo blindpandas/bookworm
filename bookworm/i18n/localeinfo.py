@@ -30,6 +30,14 @@ class LocaleInfo:
     def __hash__(self):
         return hash(self.locale)
 
+    def __getstate__(self) -> dict:
+        """Support for pickling."""
+        return dict(identifier=self.identifier)
+
+    def __setstate__(self, state):
+        """Support for unpickling."""
+        self.__init__(**state)
+
     def should_be_considered_equal_to(self, other):
         if not isinstance(other, self.__class__):
             raise TypeError(f"{other} is not a LocaleInfo object.")
