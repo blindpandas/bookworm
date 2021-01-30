@@ -62,7 +62,7 @@ def scan_to_text(
     channel: "QPChannel",
 ):
     total = len(doc)
-    engine = DocrEngine(lang)
+    engine = DocrEngine(LocaleInfo(lang).ietf_tag)
     out = StringIO()
 
     def recognize_page(page):

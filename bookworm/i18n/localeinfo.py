@@ -47,7 +47,9 @@ class LocaleInfo:
 
     @property
     def ietf_tag(self):
-        return "-".join((self.language, self.locale.territory))
+        if self.locale.territory is None:
+            return self.language
+        return "-".join([self.language, self.locale.territory.upper()])
 
     def get_display_info(self):
         return (
