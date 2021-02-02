@@ -22,5 +22,5 @@ def set_wx_locale(locale):
         if wx_lang:
             try:
                 wx_locale.Init(wx_lang.Language)
-            except:
-                log.error(f"Cannot set wx locale to {locale}.")
+            except Exception as e:
+                log.exception(f"Cannot set wx locale to {locale}.", exc_info=True)

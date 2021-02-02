@@ -59,6 +59,10 @@ class LocaleInfo:
             return self.language
         return "-".join([self.language, self.locale.territory.upper()])
 
+    @property
+    def is_rtl(self):
+        return self.locale.text_direction == "RTL"
+
     def get_display_info(self):
         return (
             self.locale.english_name,

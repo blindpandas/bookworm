@@ -92,6 +92,6 @@ def setup_i18n():
 
 def is_rtl(lang):
     try:
-        return LocaleInfo(lang).locale.text_direction == "RTL"
+        return LocaleInfo(lang).is_rtl
     except ValueError:
         return False

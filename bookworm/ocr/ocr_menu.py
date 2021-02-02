@@ -11,7 +11,7 @@ from enum import IntEnum
 from bookworm import app
 from bookworm import config
 from bookworm import speech
-from bookworm.i18n import is_rtl
+from bookworm.ocr_engines import OcrRequest
 from bookworm.text_to_speech import speech_engine_state_changed
 from bookworm.signals import (
     _signals,
@@ -20,16 +20,13 @@ from bookworm.signals import (
     reader_page_changed,
 )
 from bookworm.concurrency import QueueProcess, call_threaded, threaded_worker
+from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.resources import sounds
 from bookworm.speechdriver.enumerations import SynthState
 from bookworm.gui.components import SimpleDialog, SnakDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
-from bookworm.platform_services.ocr_provider import (
-    get_recognition_languages,
-    recognize,
-    scan_to_text,
-)
+from .ocr_dialogs import OCROptionsDialog
 
 
 log = logger.getChild(__name__)
@@ -53,71 +50,13 @@ OCR_KEYBOARD_SHORTCUTS = {
 }
 
 
-class OCROptionsDialog(SimpleDialog):
-    """OCR options."""
-
-    def __init__(
-        self, *args, saved_values=None, choices=(), force_save=False, **kwargs
-    ):
-        self.saved_values = saved_values
-        self.choices = choices
-        self.force_save = force_save
-        self._return_value = None
-        super().__init__(*args, **kwargs)
-
-    def addControls(self, parent):
-        # Translators: the label of a combobox
-        label = wx.StaticText(parent, -1, _("Recognition Language:"))
-        self.langChoice = wx.Choice(parent, -1, choices=self.choices)
-        self.langChoice.SetSizerProps(expand=True)
-        wx.StaticText(parent, -1, _("Supplied Image resolution::"))
-        self.zoomFactorSlider = wx.Slider(parent, -1, minValue=0, maxValue=10)
-        # self.enhanceImageCheckbox = wx.CheckBox(
-        # parent,
-        # -1,
-        # # Translators: the label of a checkbox
-        # _("Enhance image before recognition"),
-        # )
-        wx.StaticLine(parent)
-        if not self.force_save:
-            self.saveOptionsCheckbox = wx.CheckBox(
-                parent,
-                -1,
-                # Translators: the label of a checkbox
-                _("&Save these options until I close the current book"),
-            )
-        self.Bind(wx.EVT_BUTTON, self.onOK, id=wx.ID_OK)
-        if not self.saved_values:
-            self.langChoice.SetSelection(0)
-            self.zoomFactorSlider.SetValue(1)
-            # self.enhanceImageCheckbox.SetValue(True)
-        else:
-            self.langChoice.SetSelection(self.saved_values["lang"])
-            self.zoomFactorSlider.SetValue(self.saved_values["zoom_factor"])
-            # self.enhanceImageCheckbox.SetValue(self.saved_values["should_enhance"])
-            if not self.force_save:
-                self.saveOptionsCheckbox.SetValue(self.saved_values["save_options"])
-
-    def onOK(self, event):
-        self._return_value = (
-            self.langChoice.GetSelection(),
-            self.zoomFactorSlider.GetValue() or 1,
-            True,  # self.enhanceImageCheckbox.IsChecked(),
-            self.force_save or self.saveOptionsCheckbox.IsChecked(),
-        )
-        self.Close()
-
-    def ShowModal(self):
-        super().ShowModal()
-        return self._return_value
-
-
 class OCRMenu(wx.Menu):
     """OCR menu."""
 
     def __init__(self, service, menubar):
         super().__init__()
         self.service = service
+        self.active_ocr_engine = self.service.get_first_available_ocr_engine()
         self.menubar = menubar
         self.view = service.view
         self._ocr_wait_dlg = SnakDialog(
@@ -200,9 +139,7 @@ class OCRMenu(wx.Menu):
         else:
             saved_values = {}
             if pre_saved:
-                saved_values["lang"] = [
-                    l.pylang for l in get_recognition_languages()
-                ].index(pre_saved[0])
+                saved_values["lang"] = pre_saved[0]
                 saved_values["zoom_factor"] = pre_saved[1]
                 saved_values["should_enhance"] = pre_saved[2]
                 saved_values["save_options"] = True
@@ -215,12 +152,12 @@ class OCRMenu(wx.Menu):
         return rv
 
     def _get_ocr_options_from_dlg(self, saved_values=None, **dlg_kw):
-        langs = get_recognition_languages()
+        langs = self.active_ocr_engine.get_sorted_languages()
         if not langs:
             wx.MessageBox(
                 # Translators: content of a message
                 _(
-                    "No language for OCR is present.\nPlease use Windos Regional Settings to download some languages."
+                    "No language for OCR is present.\nPlease check Bookworm documentations to learn how to add new languages."
                 ),
                 # Translators: title for a message
                 _("No OCR Languages"),
@@ -230,15 +167,13 @@ class OCRMenu(wx.Menu):
         dlg = OCROptionsDialog(
             parent=self.view,
             title=_("OCR Options"),
-            choices=[l.description for l in langs],
+            languages=langs,
             saved_values=saved_values or {},
             **dlg_kw,
         )
         ocr_opts = dlg.ShowModal()
         if ocr_opts is not None:
-            res = list(ocr_opts)
-            res[0] = langs[res[0]].pylang
-            return res
+            return list(ocr_opts)
 
     def onScanCurrentPage(self, event):
         self._ocr_cancelled.clear()
@@ -254,24 +189,34 @@ class OCRMenu(wx.Menu):
             reader.current_page, zoom_factor, should_enhance
         )
 
-        def _ocr_callback(page_number, content):
+        def _ocr_callback(ocr_result):
+            page_number = ocr_result.cookie
+            content = ocr_result.recognized_text
             self._scanned_pages[page_number] = content
             if page_number == self.view.reader.current_page:
                 self.view.set_content(content)
-                self.view.set_text_direction(is_rtl(lang))
+                self.view.set_text_direction(lang.is_rtl)
 
         self._run_ocr(
-            lang, image, width, height, _ocr_callback, data=reader.current_page
+            lang, image, width, height, _ocr_callback, cookie=reader.current_page
         )
 
-    def _run_ocr(self, lang, image, width, height, callback, data=None):
+    def _run_ocr(self, lang, image, width, height, callback, cookie=None):
+        ocr_request = OcrRequest(
+            language=lang,
+            imagedata=image,
+            width=width,
+            height=height,
+            cookie=cookie
+        )
         ocr_started.send(sender=self.view)
         # Show a modal dialog
         self._ocr_wait_dlg.Show()
         sounds.ocr_start.play()
         future_callback = functools.partial(self._process_ocr_result, callback)
         threaded_worker.submit(
-            recognize, lang, image, width, height, data
+            self.active_ocr_engine.recognize,
+            ocr_request
         ).add_done_callback(future_callback)
 
     def onAutoScanPages(self, event):
@@ -325,7 +270,7 @@ class OCRMenu(wx.Menu):
         doc = self.service.reader.document
         total = len(doc)
         args = (doc, lang, zoom_factor, should_enhance, output_file)
-        for progress in QueueProcess(target=scan_to_text, args=args):
+        for progress in QueueProcess(target=self.active_ocr_engine.scan_to_text, args=args):
             wx.CallAfter(
                 progress_dlg.Update,
                 progress + 1,
@@ -382,15 +327,16 @@ class OCRMenu(wx.Menu):
                 return
             lang, *__ = options
 
-            def _ocr_callback(data, content):
+            def _ocr_callback(ocr_result):
+                content = ocr_result.recognized_text
                 if self.service.reader.ready:
                     self.view.unloadCurrentEbook()
                 self.view.set_content(content)
-                self.view.set_text_direction(is_rtl(lang))
+                self.view.set_text_direction(lang.is_rtl)
                 self.view.set_status(_("OCR Results"))
 
             self._run_ocr(
-                lang, image.samples, image.w, image.h, _ocr_callback, data=None
+                lang, image.samples, image.w, image.h, _ocr_callback, cookie=None
             )
 
     @gui_thread_safe
@@ -399,13 +345,13 @@ class OCRMenu(wx.Menu):
             ocr_ended.send(sender=self.view, isfaulted=True)
             return
         try:
-            data, content = task.result()
+            ocr_result = task.result()
         except Exception as e:
             self._ocr_wait_dlg.Hide()
             log.exception(f"Error getting OCR recognition results.", exc_info=True)
             ocr_ended.send(sender=self.view, isfaulted=True)
             return
-        callback(data, content)
+        callback(ocr_result)
         sounds.ocr_end.play()
         speech.announce(_("Scan finished."), urgent=True)
         self._ocr_wait_dlg.Hide()

@@ -13,7 +13,11 @@ from bookworm.i18n import setup_i18n, set_wx_locale
 from bookworm.database import init_database
 from bookworm.platform_services.shell import shell_integrate, shell_disintegrate
 from bookworm.signals import app_started, app_shuttingdown
-from bookworm.runtime import IS_RUNNING_PORTABLE
+from bookworm.runtime import (
+    PackagingMode,
+    IS_RUNNING_PORTABLE,
+    CURRENT_PACKAGING_MODE
+)
 from bookworm.service_handler import ServiceHandler
 from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.gui.settings import show_file_association_dialog
@@ -65,13 +69,15 @@ def init_app_and_run_main_loop():
     log.info("Starting Bookworm.")
     log.info(f"Bookworm Version: {appinfo.version}")
     log.info(f"Python version: {sys.version}")
-    log.info(f"Platform: {wx.GetOsDescription()}")
-    log.info(f"Windows version: {platform.platform()}")
+    log.info(f"Platform: {platform.platform()}")
+    log.info(f"Windows version: {wx.GetOsDescription()}")
     log.info(f"Application architecture: {appinfo.arch}")
-    if IS_RUNNING_PORTABLE:
-        log.info(f"Running Bookworm in portable mode.")
-    else:
-        log.info(f"Running an installed copy of Bookworm.")
+    if CURRENT_PACKAGING_MODE is PackagingMode.Portable:
+        log.info("Running a portable copy of Bookworm.")
+    elif CURRENT_PACKAGING_MODE is PackagingMode.Installed:
+        log.info("Running an installed copy of Bookworm.")
+    elif CURRENT_PACKAGING_MODE is PackagingMode.Source:
+        log.info("Running Bookworm from source.")
 
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", nargs="?", default=None)
