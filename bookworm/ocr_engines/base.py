@@ -2,11 +2,14 @@
 
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
+from io import StringIO
 from contextlib import suppress
+from concurrent.futures import ThreadPoolExecutor
 from chemical import it, ChemicalException
+from bookworm import typehints as t
 from bookworm import app
 from bookworm.i18n import LocaleInfo
-from bookworm import typehints as t
+from bookworm.utils import NEWLINE
 from bookworm.logger import logger
 
 
@@ -52,7 +55,6 @@ class BaseOcrEngine(metaclass=ABCMeta):
         """Perform the given ocr request and return the result."""
 
     @classmethod
-    @abstractmethod
     def scan_to_text(
         cls,
         doc: "BaseDocument",
@@ -62,7 +64,31 @@ class BaseOcrEngine(metaclass=ABCMeta):
         output_file: t.PathLike,
         channel: "QPChannel",
     ):
-        """Scan the given document to text at once and update the progress."""
+        cls.check()
+        total = len(doc)
+        out = StringIO()
+
+        def recognize_page(page):
+            image, width, height = page.get_image(zoom_factor, should_enhance)
+            ocr_req = OcrRequest(
+                language=lang,
+                imagedata=image,
+                width=width,
+                height=height,
+                cookie=page.number
+            )
+            return cls.recognize(ocr_req)
+
+        with ThreadPoolExecutor(3) as pool:
+            for (idx, res) in enumerate(pool.map(recognize_page, doc)):
+                out.write(f"Page {res.cookie}{NEWLINE}{res.recognized_text}{NEWLINE}\f{NEWLINE}")
+                channel.push(idx)
+        with open(output_file, "w", encoding="utf8") as file:
+            file.write(out.getvalue())
+        out.close()
+        doc.close()
+        channel.close()
+
 
     @classmethod
     def get_sorted_languages(cls):

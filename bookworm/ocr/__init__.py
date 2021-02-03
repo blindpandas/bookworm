@@ -70,7 +70,7 @@ class OCRService(BookwormService):
 
     def get_first_available_ocr_engine(self):
         """Return the configured ocr engine or the first available one, None otherwise.""" 
-            return (
-                self.get_ocr_engine_by_name(config.conf["ocr"]["engine"])
-                or self._available_ocr_engines[0]
-            )
+        return (
+            self.get_ocr_engine_by_name(config.conf["ocr"]["engine"])
+            or self._available_ocr_engines[0]
+        )

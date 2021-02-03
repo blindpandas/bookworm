@@ -50,37 +50,3 @@ class DocrEngine(BaseOcrEngine):
             recognized_text=recognized_text,
             cookie=ocr_request.cookie,
         )
-
-    @classmethod
-    def scan_to_text(
-        cls,
-        doc: "BaseDocument",
-        lang: LocaleInfo,
-        zoom_factor: float,
-        should_enhance: bool,
-        output_file: t.PathLike,
-        channel: "QPChannel",
-    ):
-        total = len(doc)
-        out = StringIO()
-
-        def recognize_page(page):
-            image, width, height = page.get_image(zoom_factor, should_enhance)
-            ocr_req = OcrRequest(
-                language=lang,
-                imagedata=image,
-                width=width,
-                height=height,
-                cookie=page.number
-            )
-            return cls.recognize(ocr_req)
-
-        with ThreadPoolExecutor(3) as pool:
-            for (idx, res) in enumerate(pool.map(recognize_page, doc)):
-                out.write(f"Page {res.cookie}{NEWLINE}{res.recognized_text}{NEWLINE}\f{NEWLINE}")
-                channel.push(idx)
-        with open(output_file, "w", encoding="utf8") as file:
-            file.write(out.getvalue())
-        out.close()
-        doc.close()
-        channel.close()

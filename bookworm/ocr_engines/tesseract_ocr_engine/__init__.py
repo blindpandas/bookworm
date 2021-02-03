@@ -4,14 +4,11 @@ import sys
 import os
 import ctypes
 from pathlib import Path
-from io import StringIO
-from concurrent.futures import ThreadPoolExecutor
 from PIL import Image
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
 from bookworm.paths import data_path
 from bookworm.ocr_engines import OcrRequest, OcrResult, BaseOcrEngine
-from bookworm.utils import NEWLINE
 from bookworm.logger import logger
 
 
@@ -42,51 +39,24 @@ class TesseractOcrEngine(BaseOcrEngine):
 
     @classmethod
     def get_recognition_languages(cls) -> t.List[LocaleInfo]:
-        return []
+        langs = []
+        for lng in cls._libtesseract.get_available_languages():
+            try:
+                langs.append(LocaleInfo.from_three_letter_code(lng))
+            except ValueError:
+                continue
+        return langs
 
     @classmethod
     def recognize(cls, ocr_request: OcrRequest) -> OcrResult:
-        img = Image.new(
+        img = Image.frombytes(
             "RGBA",
             (ocr_request.width, ocr_request.height),
             ocr_request.imagedata
         )
-        recognized_text = cls._libtesseract.image_to_text(img, "eng")
+        recognized_text = cls._libtesseract.image_to_string(img, ocr_request.language.given_locale_name)
         return OcrResult(
             recognized_text=recognized_text,
             cookie=ocr_request.cookie,
         )
 
-    @classmethod
-    def scan_to_text(
-        cls,
-        doc: "BaseDocument",
-        lang: LocaleInfo,
-        zoom_factor: float,
-        should_enhance: bool,
-        output_file: t.PathLike,
-        channel: "QPChannel",
-    ):
-        total = len(doc)
-        out = StringIO()
-
-        def recognize_page(page):
-            image, width, height = page.get_image(zoom_factor, should_enhance)
-            ocr_req = OcrRequest(
-                language=lang,
-                imagedata=image,
-                width=width,
-                height=height,
-                cookie=page.number
-            )
-            return cls.recognize(ocr_req)
-
-        with ThreadPoolExecutor(3) as pool:
-            for (idx, res) in enumerate(pool.map(recognize_page, doc)):
-                out.write(f"Page {res.cookie}{NEWLINE}{res.recognized_text}{NEWLINE}\f{NEWLINE}")
-                channel.push(idx)
-        with open(output_file, "w", encoding="utf8") as file:
-            file.write(out.getvalue())
-        out.close()
-        doc.close()
-        channel.close()
