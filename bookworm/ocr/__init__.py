@@ -1,8 +1,6 @@
 # coding: utf-8
 
 import wx
-from contextlib import suppress
-from chemical import it, ChemicalException
 from bookworm import config
 from bookworm.resources import sounds
 from bookworm.base_service import BookwormService
@@ -66,13 +64,13 @@ class OCRService(BookwormService):
 
     @classmethod
     def get_ocr_engine_by_name(cls, engine_name):
-        with suppress(ChemicalException):
-            return it(cls._available_ocr_engines).find(lambda e: e.name == engine_name)
+        for ocr_engine in cls._available_ocr_engines:
+            if ocr_engine.name == engine_name:
+                return ocr_engine
 
     def get_first_available_ocr_engine(self):
         """Return the configured ocr engine or the first available one, None otherwise.""" 
-        if self.check():
-                return (
-                    self.get_ocr_engine_by_name(config.conf["ocr"]["engine"])
-                    or self._available_ocr_engines[0]
-                )
+            return (
+                self.get_ocr_engine_by_name(config.conf["ocr"]["engine"])
+                or self._available_ocr_engines[0]
+            )

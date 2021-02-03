@@ -6,6 +6,7 @@ import ctypes
 from pathlib import Path
 from io import StringIO
 from concurrent.futures import ThreadPoolExecutor
+from PIL import Image
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
 from bookworm.paths import data_path
@@ -41,17 +42,16 @@ class TesseractOcrEngine(BaseOcrEngine):
 
     @classmethod
     def get_recognition_languages(cls) -> t.List[LocaleInfo]:
-        breakpoint()
-        return [LocaleInfo(lang) for lang in Win10DocrEngine.get_supported_languages()]
+        return []
 
     @classmethod
     def recognize(cls, ocr_request: OcrRequest) -> OcrResult:
-        docr_eng = Win10DocrEngine(ocr_request.language.ietf_tag)
-        recognized_text = docr_eng.recognize(
-            ocr_request.imagedata,
-            ocr_request.width,
-            ocr_request.height
+        img = Image.new(
+            "RGBA",
+            (ocr_request.width, ocr_request.height),
+            ocr_request.imagedata
         )
+        recognized_text = cls._libtesseract.image_to_text(img, "eng")
         return OcrResult(
             recognized_text=recognized_text,
             cookie=ocr_request.cookie,
