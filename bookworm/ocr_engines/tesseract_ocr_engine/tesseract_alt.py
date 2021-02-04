@@ -2,7 +2,7 @@
 
 import sys
 import os
-import ctypes
+import pytesseract
 from pathlib import Path
 from PIL import Image
 from bookworm import typehints as t
@@ -15,32 +15,25 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-class TesseractOcrEngine(BaseOcrEngine):
-    name = "tesseract_ocr"
-    display_name = _("Tesseract OCR Engine")
-    _libtesseract = None
+class TesseractOcrEngineAlt(BaseOcrEngine):
+    name = "tesseract_ocr_alt"
+    display_name = _("Tesseract OCR Engine (Alternative implementation)")
 
-    @staticmethod
-    def _check_on_windows():
-        tesseract_lib_path = data_path("tesseract_ocr").resolve()
-        if tesseract_lib_path.exists():
-            ctypes.windll.kernel32.AddDllDirectory(str(tesseract_lib_path))
-            os.environ["TESSDATA_PREFIX"] = str(tesseract_lib_path / "tessdata")
-            return True
-        return False
 
     @classmethod
     def check(cls) -> bool:
-        if sys.platform == "win32" and not cls._check_on_windows():
+        if sys.platform == "win32":
+            tesseract_path = data_path("tesseract_ocr", "tesseract.exe").resolve()
+            pytesseract.pytesseract.tesseract_cmd = str(tesseract_path)
+        try:
+            return any(pytesseract.get_languages())
+        except:
             return False
-        from . import pyocr
-        cls._libtesseract = pyocr.libtesseract
-        return cls._libtesseract.is_available()
 
     @classmethod
     def get_recognition_languages(cls) -> t.List[LocaleInfo]:
         langs = []
-        for lng in cls._libtesseract.get_available_languages():
+        for lng in pytesseract.get_languages():
             try:
                 langs.append(LocaleInfo.from_three_letter_code(lng))
             except ValueError:
@@ -54,7 +47,7 @@ class TesseractOcrEngine(BaseOcrEngine):
             (ocr_request.image.width, ocr_request.image.height),
             ocr_request.image.data
         )
-        recognized_text = cls._libtesseract.image_to_string(img, ocr_request.language.given_locale_name)
+        recognized_text = pytesseract.image_to_string(img, ocr_request.language.given_locale_name, nice=1)
         return OcrResult(
             recognized_text=recognized_text,
             cookie=ocr_request.cookie,
@@ -63,5 +56,5 @@ class TesseractOcrEngine(BaseOcrEngine):
     @classmethod
     def scan_to_text(cls, *args, **kwargs):
         os.environ["OMP_THREAD_LIMIT"] = "2"
-        os.environ["TESSEDIT_DO_INVERT"] = "0"
+        #os.environ["TESSEDIT_DO_INVERT"] = "0"
         super().scan_to_text(*args, **kwargs)

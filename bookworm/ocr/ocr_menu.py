@@ -11,7 +11,7 @@ from enum import IntEnum
 from bookworm import app
 from bookworm import config
 from bookworm import speech
-from bookworm.ocr_engines import OcrRequest
+from bookworm.ocr_engines import OcrRequest, ImageBlueprint
 from bookworm.text_to_speech import speech_engine_state_changed
 from bookworm.signals import (
     _signals,
@@ -204,9 +204,7 @@ class OCRMenu(wx.Menu):
     def _run_ocr(self, lang, image, width, height, callback, cookie=None):
         ocr_request = OcrRequest(
             language=lang,
-            imagedata=image,
-            width=width,
-            height=height,
+            image=ImageBlueprint(data=image, width=width, height=height),
             cookie=cookie
         )
         ocr_started.send(sender=self.view)
@@ -215,7 +213,7 @@ class OCRMenu(wx.Menu):
         sounds.ocr_start.play()
         future_callback = functools.partial(self._process_ocr_result, callback)
         threaded_worker.submit(
-            self.active_ocr_engine.recognize,
+            self.active_ocr_engine.preprocess_and_recognize,
             ocr_request
         ).add_done_callback(future_callback)
 

@@ -42,9 +42,9 @@ class DocrEngine(BaseOcrEngine):
     def recognize(cls, ocr_request: OcrRequest) -> OcrResult:
         docr_eng = Win10DocrEngine(ocr_request.language.ietf_tag)
         recognized_text = docr_eng.recognize(
-            ocr_request.imagedata,
-            ocr_request.width,
-            ocr_request.height
+            ocr_request.image.data,
+            ocr_request.image.width,
+            ocr_request.image.height
         )
         return OcrResult(
             recognized_text=recognized_text,

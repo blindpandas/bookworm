@@ -11,24 +11,41 @@ from bookworm import app
 from bookworm.i18n import LocaleInfo
 from bookworm.utils import NEWLINE
 from bookworm.logger import logger
+from .image_processing_pipelines import (
+    ImageProcessingPipeline,
+    DPIProcessingPipeline,
+    ThresholdProcessingPipeline,
+    TwoInOneScanProcessingPipeline,
+)
 
 
 log = logger.getChild(__name__)
+DEFAULT_IMAGE_PROCESSING_PIPELINES = (
+    ThresholdProcessingPipeline,
+    DPIProcessingPipeline,
+    TwoInOneScanProcessingPipeline
+)
 
+
+@dataclass
+class ImageBlueprint:
+    data: bytes
+    width: int
+    height: int
+
+    
 
 @dataclass
 class OcrRequest:
     language: LocaleInfo
-    imagedata: bytes
-    width: int
-    height: int
+    image: ImageBlueprint
     cookie: t.Optional[t.Any] = None
 
 
 @dataclass
 class OcrResult:
     recognized_text: str
-    cookie: t.Optional[t.Any]
+    cookie: t.Optional[t.Any] = None
 
 
 class BaseOcrEngine(metaclass=ABCMeta):
@@ -38,6 +55,8 @@ class BaseOcrEngine(metaclass=ABCMeta):
     """The short name for this engine."""
     display_name = None
     """The user-facing name of this engine."""
+    image_pipelines: t.Tuple[ImageProcessingPipeline] = DEFAULT_IMAGE_PROCESSING_PIPELINES
+
 
     @classmethod
     @abstractmethod
@@ -48,6 +67,31 @@ class BaseOcrEngine(metaclass=ABCMeta):
     @abstractmethod
     def get_recognition_languages(cls) -> t.List[LocaleInfo]:
         """Return a list of all the languages supported by this engine."""
+
+    @classmethod
+    def preprocess_and_recognize(cls, ocr_request: OcrRequest) -> OcrResult:
+        images = cls.preprocess_image(ocr_request.image, ocr_request)
+        text = []
+        for image in images:
+            ocr_req = OcrRequest(
+                image=image,
+                language=ocr_request.language,
+            )
+            recog_result = cls.recognize(ocr_req)
+            text.append(recog_result.recognized_text)
+        return OcrResult(
+            recognized_text="\n".join(text),
+            cookie=ocr_request.cookie
+        )
+
+    @classmethod
+    def preprocess_image(cls, image: ImageBlueprint, ocr_request: OcrRequest) -> t.Iterable[ImageBlueprint]:
+        images = (image,)
+        for pipeline_cls in cls.image_pipelines:
+            pipeline = pipeline_cls(images, ocr_request)
+            if pipeline.should_process():
+                images = pipeline.process()
+        return images
 
     @classmethod
     @abstractmethod
@@ -69,17 +113,20 @@ class BaseOcrEngine(metaclass=ABCMeta):
         out = StringIO()
 
         def recognize_page(page):
-            image, width, height = page.get_image(zoom_factor, should_enhance)
+            imagedata, width, height = page.get_image(zoom_factor, should_enhance)
+            image = ImageBlueprint(
+                data=imagedata,
+                width=width,
+                height=height
+            )
             ocr_req = OcrRequest(
                 language=lang,
-                imagedata=image,
-                width=width,
-                height=height,
+                image=image,
                 cookie=page.number
             )
-            return cls.recognize(ocr_req)
+            return cls.preprocess_and_recognize(ocr_req)
 
-        with ThreadPoolExecutor(3) as pool:
+        with ThreadPoolExecutor(4) as pool:
             for (idx, res) in enumerate(pool.map(recognize_page, doc)):
                 out.write(f"Page {res.cookie}{NEWLINE}{res.recognized_text}{NEWLINE}\f{NEWLINE}")
                 channel.push(idx)

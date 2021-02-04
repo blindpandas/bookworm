@@ -3,7 +3,6 @@
 import wx
 from bookworm import app
 from bookworm import config
-from bookworm.ocr_engines import OcrRequest
 from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.gui.components import SimpleDialog, SnakDialog
 from bookworm.logger import logger
