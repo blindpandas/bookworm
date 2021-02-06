@@ -12,28 +12,20 @@ from bookworm.i18n import LocaleInfo
 from bookworm.utils import NEWLINE
 from bookworm.logger import logger
 from .image_processing_pipelines import (
+    ImageBlueprint,
     ImageProcessingPipeline,
     DPIProcessingPipeline,
     ThresholdProcessingPipeline,
-    TwoInOneScanProcessingPipeline,
+    TwoInOneScanProcessingPipeline
 )
 
 
 log = logger.getChild(__name__)
 DEFAULT_IMAGE_PROCESSING_PIPELINES = (
-    ThresholdProcessingPipeline,
     DPIProcessingPipeline,
+    ThresholdProcessingPipeline,
     TwoInOneScanProcessingPipeline
 )
-
-
-@dataclass
-class ImageBlueprint:
-    data: bytes
-    width: int
-    height: int
-
-    
 
 @dataclass
 class OcrRequest:
@@ -129,7 +121,7 @@ class BaseOcrEngine(metaclass=ABCMeta):
         with ThreadPoolExecutor(4) as pool:
             for (idx, res) in enumerate(pool.map(recognize_page, doc)):
                 out.write(f"Page {res.cookie}{NEWLINE}{res.recognized_text}{NEWLINE}\f{NEWLINE}")
-                channel.push(idx)
+                channel.push(res.cookie)
         with open(output_file, "w", encoding="utf8") as file:
             file.write(out.getvalue())
         out.close()

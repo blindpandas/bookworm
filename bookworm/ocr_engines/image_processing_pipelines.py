@@ -1,7 +1,8 @@
 # coding: utf-8
 
 from abc import ABCMeta, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from io import BytesIO
 from PIL import Image, ImageOps
 from bookworm import typehints as t
 from bookworm.logger import logger
@@ -11,10 +12,24 @@ log = logger.getChild(__name__)
 
 
 @dataclass
+class ImageBlueprint:
+    data: bytes
+    width: int
+    height: int
+
+    @property
+    def size(self):
+        return (self.width, self.height)
+    
+
+
+
+@dataclass
 class ImageProcessingPipeline(metaclass=ABCMeta):
     """Preprocesses images before running OCR."""
-    images: t.Tuple["ImageBlueprint"]
+    images: t.Tuple[ImageBlueprint]
     ocr_request: "OcrRequest"
+    args: dict = field(default_factory=dict)
 
     @abstractmethod
     def should_process(self) -> bool:
@@ -29,13 +44,14 @@ class ImageProcessingPipeline(metaclass=ABCMeta):
 class ThresholdProcessingPipeline(ImageProcessingPipeline):
     """Binarize the given images using PIL."""
 
-    THRESHOLD = 175
+    DEFAULT_THRESHOLD = 220
 
     def should_process(self) -> bool:
         return True
 
     def process(self) -> t.Tuple["ImageBlueprint"]:
-        binarizer = lambda x : 255 if x > self.THRESHOLD else 0
+        threshold = self.args.get("threshold", self.DEFAULT_THRESHOLD)
+        binarizer = lambda x : 255 if x > threshold else 0
         for image in self.images:
             img = Image.frombytes("RGBA", (image.width, image.height), image.data).convert("L")
             img = img.point(binarizer, mode='1').convert("RGBA")
@@ -44,31 +60,31 @@ class ThresholdProcessingPipeline(ImageProcessingPipeline):
 
 
 class DPIProcessingPipeline(ImageProcessingPipeline):
-    """Resize the given images using PIL."""
+    """Change the pixel dencity of the given images using PIL."""
 
-    SCALING_FACTOR = 4
-    MAX_WIDTH = 1024
-    MAX_HEIGHT = 2048
+    DPI_300_SIZE = 2048
 
     def should_process(self) -> bool:
         return True
 
     def _do_resize(self, image):
         img = Image.frombytes("RGBA", (image.width, image.height), image.data)
-        nw, nh = image.width * self.SCALING_FACTOR, image.height * self.SCALING_FACTOR
+        w, h = image.size
+        if 'scaling_factor' in self.args:
+            factor = self.args['scaling_factor']
+        else:
+            factor = min(1, float(self.DPI_300_SIZE / w))
+        nw, nh = int(factor * w), int(factor * h)
         image.data = img.resize(
             (nw, nh),
-            resample=Image.BICUBIC,
+            resample=Image.BICUBIC
         ).tobytes()
         image.width, image.height = nw, nh
         return image
 
     def process(self) -> t.Tuple["ImageBlueprint"]:
         for image in self.images:
-            if image.width > self.MAX_WIDTH or image.height > self.MAX_HEIGHT:
-                yield image
-            else:
-                yield self._do_resize(image)
+            yield self._do_resize(image)
 
 
 class TwoInOneScanProcessingPipeline(ImageProcessingPipeline):
@@ -93,3 +109,34 @@ class TwoInOneScanProcessingPipeline(ImageProcessingPipeline):
                     height=pg.height
                 )
                 yield new_image
+
+
+class InvertColourProcessingPipeline(ImageProcessingPipeline):
+    """Invert the given images."""
+
+    def should_process(self) -> bool:
+        return True
+
+    def process(self) -> t.Tuple["ImageBlueprint"]:
+        for image in self.images:
+            img = Image.frombytes("RGBA", (image.width, image.height), image.data)
+            image.data = ImageOps.invert(img).convert("RGBA").tobytes()
+            yield image
+
+    
+class RotationProcessingPipeline(ImageProcessingPipeline):
+    """Rotates the given image."""
+
+    ROTATION_METHODS = ("VERTICAL", "HORIZONTAL")
+    ROTATION = ROTATION_METHODS[0]
+
+    def should_process(self) -> bool:
+        return self.ROTATION not in self.ROTATION_METHODS
+
+    def process(self) -> t.Tuple["ImageBlueprint"]:
+        for image in self.images:
+            img = Image.frombytes("RGBA", (image.width, image.height), image.data)
+            rotation = self.args.get("rotation", self.ROTATION)
+            rotator = ImageOps.flip if rotation == "VERTICAL" else ImageOps.mirror
+            image.data = rotator(img).convert("RGBA").tobytes()
+            yield image

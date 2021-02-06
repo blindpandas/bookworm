@@ -3,9 +3,12 @@
 import sys
 import os
 import ctypes
+from io import BytesIO, StringIO
 from pathlib import Path
 from PIL import Image
+from more_itertools import chunked
 from bookworm import typehints as t
+from bookworm.utils import NEWLINE
 from bookworm.i18n import LocaleInfo
 from bookworm.paths import data_path
 from bookworm.ocr_engines import OcrRequest, OcrResult, BaseOcrEngine
@@ -60,8 +63,44 @@ class TesseractOcrEngine(BaseOcrEngine):
             cookie=ocr_request.cookie,
         )
 
+
     @classmethod
-    def scan_to_text(cls, *args, **kwargs):
-        os.environ["OMP_THREAD_LIMIT"] = "2"
-        os.environ["TESSEDIT_DO_INVERT"] = "0"
-        super().scan_to_text(*args, **kwargs)
+    def scan_to_text(
+        cls,
+        doc: "BaseDocument",
+        lang: LocaleInfo,
+        zoom_factor: float,
+        should_enhance: bool,
+        output_file: t.PathLike,
+        channel: "QPChannel",
+    ):
+        #os.environ["OMP_THREAD_LIMIT"] = "2"
+        cls.check()
+        total = len(doc)
+        out = StringIO()
+
+        def page_to_pil(page):
+            imagedata, width, height = page.get_image(zoom_factor, should_enhance)
+            return Image.frombytes(
+                "RGBA",
+                (width, height),
+                imagedata
+            )
+
+        for batch in chunked(range(0, total), 10):
+            image_io = BytesIO()
+            first, *rest = (page_to_pil(doc[i]) for i in batch)
+            first.save(image_io, format="tiff", save_all=True, append_images=rest)
+            image_io.seek(0)
+            final_image = Image.open(image_io)
+            final_image.save("Hello.tiff")
+            recognized_text = cls._libtesseract.image_to_string(final_image, lang.given_locale_name)
+            out.write(f"Page {NEWLINE}{recognized_text}{NEWLINE}\f{NEWLINE}")
+            for num in batch:
+                channel.push(num + 1)
+        with open(output_file, "w", encoding="utf8") as file:
+            file.write(out.getvalue())
+        out.close()
+        doc.close()
+        channel.close()
+
