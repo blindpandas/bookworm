@@ -75,7 +75,7 @@ class LocaleInfo:
 
     @property
     def is_rtl(self):
-        return self.locale.text_direction == "RTL"
+        return self.locale.text_direction.lower() == "rtl"
 
     def get_display_info(self):
         return (

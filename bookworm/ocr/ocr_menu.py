@@ -5,8 +5,9 @@ import threading
 import time
 import wx
 import functools
+from PIL import Image
+from copy import copy
 from pathlib import Path
-from lru import LRU
 from enum import IntEnum
 from bookworm import app
 from bookworm import config
@@ -30,7 +31,6 @@ from .ocr_dialogs import OCROptionsDialog
 
 
 log = logger.getChild(__name__)
-PAGE_CACHE_SIZE = 500
 
 # Signals
 ocr_started = _signals.signal("ocr-started")
@@ -56,7 +56,6 @@ class OCRMenu(wx.Menu):
     def __init__(self, service, menubar):
         super().__init__()
         self.service = service
-        self.active_ocr_engine = self.service.get_first_available_ocr_engine()
         self.menubar = menubar
         self.view = service.view
         self._ocr_wait_dlg = SnakDialog(
@@ -65,8 +64,6 @@ class OCRMenu(wx.Menu):
             dismiss_callback=self._on_ocr_cancelled,
         )
         self._ocr_cancelled = threading.Event()
-        self._saved_ocr_options = []
-        self._scanned_pages = LRU(size=PAGE_CACHE_SIZE)
         image2textId = wx.NewIdRef()
 
         # Add menu items
@@ -130,37 +127,30 @@ class OCRMenu(wx.Menu):
         )
 
     def _get_ocr_options(self, from_cache=True, **dlg_kw):
-        pre_saved = list(self._saved_ocr_options)
+        last_stored_opts = self.service.stored_options
         if not from_cache:
-            self._saved_ocr_options.clear()
-            self._scanned_pages.clear()
-        if self._saved_ocr_options:
-            rv = self._saved_ocr_options
+            self.service.stored_options = None
+            self.service.saved_scanned_pages.clear()
+        if self.service.stored_options is not None:
+            return self.service.stored_options
         else:
-            saved_values = {}
-            if pre_saved:
-                saved_values["lang"] = pre_saved[0]
-                saved_values["zoom_factor"] = pre_saved[1]
-                saved_values["should_enhance"] = pre_saved[2]
-                saved_values["save_options"] = True
-            opts = self._get_ocr_options_from_dlg(saved_values=saved_values, **dlg_kw)
-            if opts is None:
-                return
-            *rv, should_save = opts
-            if should_save:
-                self._saved_ocr_options = rv
-        return rv
+            opts = self._get_ocr_options_from_dlg(last_stored_options=last_stored_opts, **dlg_kw)
+            if opts is not None and opts.store_options:
+                self.service.stored_options = opts
+            else:
+                self.service.stored_options= None
+            return opts
 
-    def _get_ocr_options_from_dlg(self, saved_values=None, **dlg_kw):
-        langs = self.active_ocr_engine.get_sorted_languages()
+    def _get_ocr_options_from_dlg(self, last_stored_options=None, **dlg_kw):
+        langs = self.service.current_ocr_engine.get_sorted_languages()
         if not langs:
             wx.MessageBox(
                 # Translators: content of a message
                 _(
-                    "No language for OCR is present.\nPlease check Bookworm documentations to learn how to add new languages."
+                    "No language for OCR is present.\nPlease checkout Bookworm user manual to learn how to add new languages."
                 ),
                 # Translators: title for a message
-                _("No OCR Languages"),
+                _("No Languages for OCR"),
                 style=wx.ICON_ERROR,
             )
             return
@@ -168,58 +158,56 @@ class OCRMenu(wx.Menu):
             parent=self.view,
             title=_("OCR Options"),
             languages=langs,
-            saved_values=saved_values or {},
+            stored_options=last_stored_options,
             **dlg_kw,
         )
-        ocr_opts = dlg.ShowModal()
-        if ocr_opts is not None:
-            return list(ocr_opts)
+        self.service.saved_scanned_pages.clear()
+        return dlg.ShowModal()
 
     def onScanCurrentPage(self, event):
         self._ocr_cancelled.clear()
-        res = self._get_ocr_options()
-        if res is None:
+        ocr_opts = self._get_ocr_options()
+        if ocr_opts is None:
             return speech.announce(_("Cancelled"), True)
-        lang, zoom_factor, should_enhance = res
         reader = self.service.reader
-        if reader.current_page in self._scanned_pages:
-            self.view.set_content(self._scanned_pages[reader.current_page])
+        if reader.current_page in self.service.saved_scanned_pages:
+            self.view.set_content(self.service.saved_scanned_pages[reader.current_page])
             return
-        image, width, height = reader.document.get_page_image(
-            reader.current_page, zoom_factor, should_enhance
+        imagedata, width, height = reader.document.get_page_image(
+            reader.current_page,
+            ocr_opts.zoom_factor,
         )
 
         def _ocr_callback(ocr_result):
             page_number = ocr_result.cookie
             content = ocr_result.recognized_text
-            self._scanned_pages[page_number] = content
+            self.service.saved_scanned_pages[page_number] = content
             if page_number == self.view.reader.current_page:
                 self.view.set_content(content)
-                self.view.set_text_direction(lang.is_rtl)
+                self.view.set_text_direction(ocr_opts.language.is_rtl)
 
-        self._run_ocr(
-            lang, image, width, height, _ocr_callback, cookie=reader.current_page
-        )
-
-    def _run_ocr(self, lang, image, width, height, callback, cookie=None):
         ocr_request = OcrRequest(
-            language=lang,
-            image=ImageBlueprint(data=image, width=width, height=height),
-            cookie=cookie
+            language=ocr_opts.language,
+            image=ImageBlueprint(imagedata, width, height),
+            image_processing_pipelines=ocr_opts.image_processing_pipelines,
+            cookie=reader.current_page
         )
+        self._run_ocr(ocr_request, _ocr_callback)
+
+    def _run_ocr(self, ocr_request, callback):
         ocr_started.send(sender=self.view)
         # Show a modal dialog
         self._ocr_wait_dlg.Show()
         sounds.ocr_start.play()
         future_callback = functools.partial(self._process_ocr_result, callback)
         threaded_worker.submit(
-            self.active_ocr_engine.preprocess_and_recognize,
+            self.service.current_ocr_engine.preprocess_and_recognize,
             ocr_request
         ).add_done_callback(future_callback)
 
     def onAutoScanPages(self, event):
         event.Skip()
-        if not self._saved_ocr_options:
+        if self.service.stored_options is None:
             self._get_ocr_options(force_save=True)
         if self.auto_scan_item.IsChecked():
             speech.announce(_("Automatic OCR is enabled"))
@@ -229,8 +217,8 @@ class OCRMenu(wx.Menu):
             self.onScanCurrentPage(event)
 
     def onScanToTextFile(self, event):
-        res = self._get_ocr_options(from_cache=False, force_save=True)
-        if res is None:
+        ocr_opts = self._get_ocr_options(from_cache=False, force_save=True)
+        if ocr_opts is None:
             return
         # Get output file path
         filename = f"{self.view.reader.current_book.title}.txt"
@@ -260,15 +248,14 @@ class OCRMenu(wx.Menu):
             maximum=len(self.service.reader.document),
             style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
         )
-        self._continue_with_text_extraction(res, output_file, progress_dlg)
+        self._continue_with_text_extraction(ocr_opts, output_file, progress_dlg)
 
     @call_threaded
-    def _continue_with_text_extraction(self, options, output_file, progress_dlg):
-        lang, zoom_factor, should_enhance = options
+    def _continue_with_text_extraction(self, ocr_opts, output_file, progress_dlg):
         doc = self.service.reader.document
         total = len(doc)
-        args = (doc, lang, zoom_factor, should_enhance, output_file)
-        for progress in QueueProcess(target=self.active_ocr_engine.scan_to_text, args=args):
+        args = (doc, output_file, ocr_opts)
+        for progress in QueueProcess(target=self.service.current_ocr_engine.scan_to_text, args=args):
             wx.CallAfter(
                 progress_dlg.Update,
                 progress + 1,
@@ -291,13 +278,12 @@ class OCRMenu(wx.Menu):
         self._get_ocr_options(from_cache=False)
 
     def onScanImageFile(self, event):
-        from fitz import Pixmap
-
         wildcard = []
         all_exts = [
             ("*.png", _("Portable Network Graphics")),
             ("*.jpg", _("JPEG images")),
             ("*.bmp", _("Bitmap images")),
+            ("*.tiff", _("Tiff graphics")),
         ]
         for ext, name in all_exts:
             wildcard.append("{name} ({ext})|{ext}|".format(name=name, ext=ext))
@@ -317,25 +303,43 @@ class OCRMenu(wx.Menu):
             openFileDlg.Destroy()
             if not filename or not os.path.isfile(filename):
                 return
-            image = Pixmap(filename)
-            # Force include the alpha channel
-            image = Pixmap(image, True)
+            # Load the image file
+            image = ImageBlueprint.from_path(filename)
+            if image is None:
+                wx.MessageBox(
+                    # Translators: content of a message box
+                    _(
+                        "Could not load image from\n{filename}.\n"
+                        "Please make sure the file exists and the data contained in is not corrupted."
+                    ).format(filename=filename),
+                    # Translators: title of a message box
+                    _("Could not load image file"),
+                    style=wx.ICON_ERROR
+                )
+                return
             options = self._get_ocr_options_from_dlg(force_save=True)
             if not options:
                 return
-            lang, *__ = options
 
             def _ocr_callback(ocr_result):
                 content = ocr_result.recognized_text
                 if self.service.reader.ready:
                     self.view.unloadCurrentEbook()
                 self.view.set_content(content)
-                self.view.set_text_direction(lang.is_rtl)
+                self.view.set_text_direction(options.language.is_rtl)
                 self.view.set_status(_("OCR Results"))
 
-            self._run_ocr(
-                lang, image.samples, image.w, image.h, _ocr_callback, cookie=None
+            factor = options.zoom_factor
+            resized_image = image.to_pil().resize(
+                (factor * image.width, factor * image.height),
+                resample=Image.LANCZOS
             )
+            ocr_request = OcrRequest(
+                language=options.language,
+                image=ImageBlueprint.from_pil(resized_image),
+                image_processing_pipelines=options.image_processing_pipelines,
+            )
+            self._run_ocr(ocr_request, _ocr_callback)
 
     @gui_thread_safe
     def _process_ocr_result(self, callback, task):
@@ -367,8 +371,8 @@ class OCRMenu(wx.Menu):
             self.Enable(item_id, can_render)
 
     def _on_reader_unloaded(self, sender):
-        self._scanned_pages.clear()
-        self._saved_ocr_options.clear()
+        self.service.stored_options = None
+        self.service.saved_scanned_pages.clear()
         self.auto_scan_item.Check(False)
 
     def _on_reader_page_changed(self, sender, current, prev):

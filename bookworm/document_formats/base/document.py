@@ -170,10 +170,10 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         return content
 
     def get_page_image(
-        self, page_number: int, zoom_factor: float = 1.0, enhance: bool = False
+        self, page_number: int, zoom_factor: float = 1.0
     ) -> bytes:
         """Convenience method: return the image of a page."""
-        return self[page_number].get_image(zoom_factor, enhance)
+        return self[page_number].get_image(zoom_factor)
 
     @property
     def supports_async_read(self):
@@ -218,7 +218,7 @@ class BasePage(metaclass=ABCMeta):
         """Return the text content or raise NotImplementedError."""
 
     @abstractmethod
-    def get_image(self, zoom_factor: float, enhance: bool) -> t.Tuple[bytes, int, int]:
+    def get_image(self, zoom_factor: float) -> t.Tuple[bytes, int, int]:
         """
         Return page image in the form of (image_data, width, height)
         or raise NotImplementedError.
@@ -260,7 +260,7 @@ class FluidPage(BasePage):
     def get_text(self):
         return self.document.get_content()
 
-    def get_image(self, zoom_factor=1.0, enhance=False):
+    def get_image(self, zoom_factor=1.0):
         raise NotImplementedError
 
 

@@ -89,7 +89,7 @@ class HtmlPage(BasePage):
             text = self.document.text_buffer.read(end_pos - start_pos)
         return "\n".join(it(text.split("\n")).filter(lambda line: line.strip()))
 
-    def get_image(self, zoom_factor=1.0, enhance=False):
+    def get_image(self, zoom_factor=1.0):
         raise NotImplementedError
 
 

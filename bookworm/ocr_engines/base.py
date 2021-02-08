@@ -1,8 +1,9 @@
 # coding: utf-8
 
 from abc import ABCMeta, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from io import StringIO
+from operator import attrgetter
 from contextlib import suppress
 from concurrent.futures import ThreadPoolExecutor
 from chemical import it, ChemicalException
@@ -11,26 +12,17 @@ from bookworm import app
 from bookworm.i18n import LocaleInfo
 from bookworm.utils import NEWLINE
 from bookworm.logger import logger
-from .image_processing_pipelines import (
-    ImageBlueprint,
-    ImageProcessingPipeline,
-    DPIProcessingPipeline,
-    ThresholdProcessingPipeline,
-    TwoInOneScanProcessingPipeline
-)
+from .image_processing_pipelines import ImageBlueprint, ImageProcessingPipeline
 
 
 log = logger.getChild(__name__)
-DEFAULT_IMAGE_PROCESSING_PIPELINES = (
-    DPIProcessingPipeline,
-    ThresholdProcessingPipeline,
-    TwoInOneScanProcessingPipeline
-)
+
 
 @dataclass
 class OcrRequest:
     language: LocaleInfo
     image: ImageBlueprint
+    image_processing_pipelines: t.Tuple[ImageProcessingPipeline] = field(default_factory=tuple)
     cookie: t.Optional[t.Any] = None
 
 
@@ -47,7 +39,6 @@ class BaseOcrEngine(metaclass=ABCMeta):
     """The short name for this engine."""
     display_name = None
     """The user-facing name of this engine."""
-    image_pipelines: t.Tuple[ImageProcessingPipeline] = DEFAULT_IMAGE_PROCESSING_PIPELINES
 
 
     @classmethod
@@ -61,8 +52,9 @@ class BaseOcrEngine(metaclass=ABCMeta):
         """Return a list of all the languages supported by this engine."""
 
     @classmethod
-    def preprocess_and_recognize(cls, ocr_request: OcrRequest) -> OcrResult:
-        images = cls.preprocess_image(ocr_request.image, ocr_request)
+    def preprocess_and_recognize(
+        cls,ocr_request: OcrRequest) -> OcrResult:
+        images = cls.preprocess_image(ocr_request)
         text = []
         for image in images:
             ocr_req = OcrRequest(
@@ -77,9 +69,13 @@ class BaseOcrEngine(metaclass=ABCMeta):
         )
 
     @classmethod
-    def preprocess_image(cls, image: ImageBlueprint, ocr_request: OcrRequest) -> t.Iterable[ImageBlueprint]:
-        images = (image,)
-        for pipeline_cls in cls.image_pipelines:
+    def preprocess_image(cls,ocr_request: OcrRequest,) -> t.Iterable[ImageBlueprint]:
+        images = (ocr_request.image,)
+        sorted_ipp = sorted(
+            ocr_request.image_processing_pipelines,
+            key=attrgetter("run_order")
+        )
+        for pipeline_cls in sorted_ipp:
             pipeline = pipeline_cls(images, ocr_request)
             if pipeline.should_process():
                 images = pipeline.process()
@@ -94,10 +90,8 @@ class BaseOcrEngine(metaclass=ABCMeta):
     def scan_to_text(
         cls,
         doc: "BaseDocument",
-        lang: LocaleInfo,
-        zoom_factor: float,
-        should_enhance: bool,
         output_file: t.PathLike,
+        ocr_options: "OcrOptions",
         channel: "QPChannel",
     ):
         cls.check()
@@ -105,14 +99,14 @@ class BaseOcrEngine(metaclass=ABCMeta):
         out = StringIO()
 
         def recognize_page(page):
-            imagedata, width, height = page.get_image(zoom_factor, should_enhance)
+            imagedata, width, height = page.get_image(ocr_options.zoom_factor)
             image = ImageBlueprint(
                 data=imagedata,
                 width=width,
                 height=height
             )
             ocr_req = OcrRequest(
-                language=lang,
+                language=ocr_options.language,
                 image=image,
                 cookie=page.number
             )
@@ -121,7 +115,7 @@ class BaseOcrEngine(metaclass=ABCMeta):
         with ThreadPoolExecutor(4) as pool:
             for (idx, res) in enumerate(pool.map(recognize_page, doc)):
                 out.write(f"Page {res.cookie}{NEWLINE}{res.recognized_text}{NEWLINE}\f{NEWLINE}")
-                channel.push(res.cookie)
+                channel.push(idx)
         with open(output_file, "w", encoding="utf8") as file:
             file.write(out.getvalue())
         out.close()

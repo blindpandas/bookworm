@@ -40,11 +40,11 @@ class FitzPage(BasePage):
     def get_text(self):
         return self._text_from_page(self.document._ebook[self.index])
 
-    def get_image(self, zoom_factor=1.0, enhance=False):
+    def get_image(self, zoom_factor=1.0):
         mat = fitz.Matrix(zoom_factor, zoom_factor)
         pix = self.document._ebook[self.index].getPixmap(matrix=mat, alpha=True)
-        if IS_HIGH_CONTRAST_ACTIVE:
-            pix.invertIRect(pix.irect)
+        # if IS_HIGH_CONTRAST_ACTIVE:
+        #   pix.invertIRect(pix.irect)
         return pix.samples, pix.width, pix.height
 
 

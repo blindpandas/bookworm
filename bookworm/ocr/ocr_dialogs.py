@@ -1,14 +1,38 @@
 # coding: utf-8
 
 import wx
+import wx.lib.sized_controls as sc
+from dataclasses import dataclass
 from bookworm import app
 from bookworm import config
+from bookworm import typehints as t
+from bookworm.i18n import LocaleInfo
 from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
-from bookworm.gui.components import SimpleDialog, SnakDialog
+from bookworm.gui.components import make_sized_static_box, SimpleDialog, SnakDialog
 from bookworm.logger import logger
+from bookworm.ocr_engines.image_processing_pipelines import (
+    ImageProcessingPipeline,
+    DebugProcessingPipeline,
+    DPIProcessingPipeline,
+    ThresholdProcessingPipeline,
+    BlurProcessingPipeline,
+    TwoInOneScanProcessingPipeline,
+    DeskewProcessingPipeline,
+    InvertColourProcessingPipeline,
+)
 
 
 log = logger.getChild(__name__)
+
+
+
+@dataclass
+class OcrOptions:
+    language: LocaleInfo
+    zoom_factor: float
+    _ipp_enabled: int
+    image_processing_pipelines: t.Tuple[ImageProcessingPipeline]
+    store_options: bool
 
 
 
@@ -38,7 +62,7 @@ class OcrPanel(SettingsPanel):
             miscBox,
             -1,
             # Translators: the label of a checkbox
-            _("Enhance images before OCR"),
+            _("Enable default image enhancement filters"),
             name="ocr.enhance_images",
         )
 
@@ -51,7 +75,10 @@ class OcrPanel(SettingsPanel):
             selected_engine = self._engines[self.ocrEngine.GetSelection()]
             if self.config["engine"] != selected_engine.name:
                 self.config["engine"] = selected_engine.name
+                self._service._init_ocr_engine()
         super().reconcile(strategy=strategy)
+        if strategy is ReconciliationStrategies.save:
+            self._service._init_ocr_engine()
 
 
 
@@ -60,12 +87,14 @@ class OCROptionsDialog(SimpleDialog):
     """OCR options."""
 
     def __init__(
-        self, *args, saved_values=None, languages=(), force_save=False, **kwargs
+        self, *args, stored_options=None, languages=(), force_save=False, **kwargs
     ):
-        self.saved_values = saved_values
+        self.stored_options = stored_options
         self.languages = languages
         self.force_save = force_save
         self._return_value = None
+        self.image_processing_pipelines = []
+        self.stored_ipp = () if self.stored_options is None else self.stored_options.image_processing_pipelines
         super().__init__(*args, **kwargs)
 
     def addControls(self, parent):
@@ -75,38 +104,56 @@ class OCROptionsDialog(SimpleDialog):
         self.langChoice.SetSizerProps(expand=True)
         wx.StaticText(parent, -1, _("Supplied Image resolution::"))
         self.zoomFactorSlider = wx.Slider(parent, -1, minValue=0, maxValue=10)
-        # self.enhanceImageCheckbox = wx.CheckBox(
-        # parent,
-        # -1,
-        # # Translators: the label of a checkbox
-        # _("Enhance image before recognition"),
-        # )
+        # Translators: the label of a checkbox
+        self.should_enhance_images = wx.CheckBox(parent, -1, _("Enable image enhancements"))
+        ippPanel = sc.SizedPanel(parent)
+        # Translators: the label of a checkbox
+        imgProcBox = make_sized_static_box(ippPanel, _("Available image pre-processing filters:"))
+        for (ipp_cls, lbl, should_enable) in self.get_image_processing_pipelines_info():
+            chbx = wx.CheckBox(imgProcBox, -1, lbl)
+            if self.stored_options is not None:
+                chbx.SetValue(ipp_cls in self.stored_ipp)
+            else:
+                chbx.SetValue(should_enable)
+            self.image_processing_pipelines.append((chbx, ipp_cls))
         wx.StaticLine(parent)
         if not self.force_save:
-            self.saveOptionsCheckbox = wx.CheckBox(
+            self.storeOptionsCheckbox = wx.CheckBox(
                 parent,
                 -1,
                 # Translators: the label of a checkbox
                 _("&Save these options until I close the current book"),
             )
         self.Bind(wx.EVT_BUTTON, self.onOK, id=wx.ID_OK)
-        if not self.saved_values:
+        if self.stored_options is None:
             self.langChoice.SetSelection(0)
-            self.zoomFactorSlider.SetValue(1)
-            # self.enhanceImageCheckbox.SetValue(True)
+            self.zoomFactorSlider.SetValue(2)
+            self.should_enhance_images.SetValue(config.conf["ocr"]["enhance_images"])
         else:
-            self.langChoice.SetSelection(self.languages.index(self.saved_values["lang"]))
-            self.zoomFactorSlider.SetValue(self.saved_values["zoom_factor"])
-            # self.enhanceImageCheckbox.SetValue(self.saved_values["should_enhance"])
+            self.langChoice.SetSelection(self.languages.index(self.stored_options.language))
+            self.zoomFactorSlider.SetValue(self.stored_options.zoom_factor)
+            self.should_enhance_images.SetValue(self.stored_options._ipp_enabled)
             if not self.force_save:
-                self.saveOptionsCheckbox.SetValue(self.saved_values["save_options"])
+                self.storeOptionsCheckbox.SetValue(self.stored_options.store_options)
+        enable_or_disable_image_pipelines = lambda: ippPanel.Enable(self.should_enhance_images.IsChecked())
+        self.Bind(
+            wx.EVT_CHECKBOX,
+            lambda e: enable_or_disable_image_pipelines(),
+            self.should_enhance_images
+        )
+        enable_or_disable_image_pipelines()
 
     def onOK(self, event):
-        self._return_value = (
-            self.languages[self.langChoice.GetSelection()],
-            self.zoomFactorSlider.GetValue() or 1,
-            True,  # self.enhanceImageCheckbox.IsChecked(),
-            self.force_save or self.saveOptionsCheckbox.IsChecked(),
+        if not self.should_enhance_images.IsChecked():
+            selected_image_pp = []
+        else:
+            selected_image_pp = [ipp_cls for c, ipp_cls in self.image_processing_pipelines if c.IsChecked()]
+        self._return_value = OcrOptions(
+            language=self.languages[self.langChoice.GetSelection()],
+            zoom_factor=self.zoomFactorSlider.GetValue() or 1,
+            _ipp_enabled=self.should_enhance_images.IsChecked(),
+            image_processing_pipelines=selected_image_pp,
+            store_options=self.force_save or self.storeOptionsCheckbox.IsChecked()
         )
         self.Close()
 
@@ -114,3 +161,15 @@ class OCROptionsDialog(SimpleDialog):
         super().ShowModal()
         return self._return_value
 
+    def get_image_processing_pipelines_info(self):
+        ipp =  [
+            (DPIProcessingPipeline, _("Increase image resolution"), True),
+            (ThresholdProcessingPipeline, _("Binarization"), True),
+            (BlurProcessingPipeline, _("Blurring"), True),
+            (DeskewProcessingPipeline, _("Deskewing"), False),
+            (TwoInOneScanProcessingPipeline, _("Split two-in-one scans to individual pages"), False),
+            (InvertColourProcessingPipeline, _("Invert colors"), False),
+        ]
+        if app.debug:
+            ipp.append((DebugProcessingPipeline, _("Debug"), False))
+        return ipp

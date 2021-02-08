@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import wx
+from lru import LRU
 from bookworm import config
 from bookworm.resources import sounds
 from bookworm.base_service import BookwormService
@@ -18,6 +19,7 @@ from .ocr_menu import (
 
 
 log = logger.getChild(__name__)
+PAGE_CACHE_SIZE = 500
 
 
 OCR_CONFIG_SPEC = {
@@ -39,6 +41,9 @@ class OCRService(BookwormService):
     @classmethod
     def check(cls):
         return True #return not cls._available_ocr_engines
+
+    def __post_init__(self):
+        self._init_ocr_engine()
 
     def process_menubar(self, menubar):
         self.menu = OCRMenu(self, menubar)
@@ -74,3 +79,8 @@ class OCRService(BookwormService):
             self.get_ocr_engine_by_name(config.conf["ocr"]["engine"])
             or self._available_ocr_engines[0]
         )
+
+    def _init_ocr_engine(self):
+        self.current_ocr_engine = self.get_first_available_ocr_engine()
+        self.stored_options = None
+        self.saved_scanned_pages = LRU(size=PAGE_CACHE_SIZE)
