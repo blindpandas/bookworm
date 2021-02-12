@@ -1,4 +1,4 @@
-'''
+"""
 tesseract.py is a wrapper for google's Tesseract-OCR
 ( http://code.google.com/p/tesseract-ocr/ ).
 
@@ -13,7 +13,7 @@ PyOCR is released under the GPL v3.
 Copyright (c) Samuel Hoffstaetter, 2009
 Copyright (c) Jerome Flesch, 2011-2016
 https://gitlab.gnome.org/World/OpenPaperwork/pyocr#readme
-'''
+"""
 
 import codecs
 import logging
@@ -29,7 +29,7 @@ from .error import TesseractError  # backward compatibility
 from .util import digits_only
 
 # CHANGE THIS IF TESSERACT IS NOT IN YOUR PATH, OR IS NAMED DIFFERENTLY
-TESSERACT_CMD = 'tesseract.exe' if os.name == 'nt' else 'tesseract'
+TESSERACT_CMD = "tesseract.exe" if os.name == "nt" else "tesseract"
 
 TESSDATA_EXTENSION = ".traineddata"
 
@@ -40,17 +40,17 @@ g_creation_flags = 0
 g_version = None
 
 __all__ = [
-    'CharBoxBuilder',
-    'DigitBuilder',
-    'can_detect_orientation',
-    'detect_orientation',
-    'get_available_builders',
-    'get_available_languages',
-    'get_name',
-    'get_version',
-    'image_to_string',
-    'is_available',
-    'TesseractError',
+    "CharBoxBuilder",
+    "DigitBuilder",
+    "can_detect_orientation",
+    "detect_orientation",
+    "get_available_builders",
+    "get_available_languages",
+    "get_name",
+    "get_version",
+    "image_to_string",
+    "is_available",
+    "TesseractError",
 ]
 
 
@@ -65,8 +65,7 @@ class CharBoxBuilder(builders.BaseBuilder):
         tess_flags = []
         tess_conf = ["batch.nochop", "makebox"]
         cun_args = []
-        super(CharBoxBuilder, self).__init__(file_ext, tess_flags, tess_conf,
-                                             cun_args)
+        super(CharBoxBuilder, self).__init__(file_ext, tess_flags, tess_conf, cun_args)
         self.tesseract_layout = 1
 
     @staticmethod
@@ -85,8 +84,10 @@ class CharBoxBuilder(builders.BaseBuilder):
             elements = line.split(" ")
             if len(elements) < 6:
                 continue
-            position = ((int(elements[1]), int(elements[2])),
-                        (int(elements[3]), int(elements[4])))
+            position = (
+                (int(elements[1]), int(elements[2])),
+                (int(elements[3]), int(elements[4])),
+            )
             box = builders.Box(elements[0], position)
             boxes.append(box)
         return boxes
@@ -117,9 +118,9 @@ def _set_environment():
         g_subprocess_startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         g_creation_flags = 0x08000000  # CREATE_NO_WINDOW
 
-    if getattr(sys, 'frozen', False):  # pragma: no cover
+    if getattr(sys, "frozen", False):  # pragma: no cover
         # Pyinstaller support
-        if 'TESSDATA_PREFIX' in os.environ:
+        if "TESSDATA_PREFIX" in os.environ:
             # already changed
             return
 
@@ -129,15 +130,11 @@ def _set_environment():
 
         if not os.path.exists(tesspath):
             logger.warning(
-                "Running from container, but no tesseract ({}) found !".format(
-                    tesspath
-                )
+                "Running from container, but no tesseract ({}) found !".format(tesspath)
             )
         else:
             logger.info("[{}] added to PATH".format(tesspath))
-            os.environ['PATH'] = (
-                tesspath + os.pathsep + os.environ['PATH']
-            )
+            os.environ["PATH"] = tesspath + os.pathsep + os.environ["PATH"]
 
         if not os.path.exists(os.path.join(tessprefix, "tessdata")):
             logger.warning(
@@ -150,16 +147,13 @@ def _set_environment():
             if version[0] > 3:
                 tessprefix = os.path.join(tessprefix, "tessdata")
             logger.info("TESSDATA_PREFIX set to [{}]".format(tessprefix))
-            os.environ['TESSDATA_PREFIX'] = tessprefix
+            os.environ["TESSDATA_PREFIX"] = tessprefix
 
 
 def can_detect_orientation():
     version = get_version()
     langs = get_available_languages()
-    return (
-        version[0] > 3 or
-        (version[0] == 3 and version[1] >= 3)
-    ) and 'osd' in langs
+    return (version[0] > 3 or (version[0] == 3 and version[1] >= 3)) and "osd" in langs
 
 
 def psm_parameter():
@@ -171,7 +165,7 @@ def psm_parameter():
         logger.warning(
             "psm_parameter(): failed to get Tesseract version. Assuming"
             "Tesseract >= 4 --> using option '--psm'",
-            exc_info=exc
+            exc_info=exc,
         )
         return "--psm"
 
@@ -193,24 +187,28 @@ def detect_orientation(image, lang=None):
     """
     _set_environment()
     with tempfile.TemporaryDirectory() as tmpdir:
-        command = [TESSERACT_CMD, "input.bmp", 'stdout', psm_parameter(), "0"]
+        command = [TESSERACT_CMD, "input.bmp", "stdout", psm_parameter(), "0"]
         version = get_version()
         if lang is not None:
             if version[0] < 4:
-                command += ['-l', lang]
+                command += ["-l", lang]
             else:
-                command += ['-l', 'osd']
+                command += ["-l", "osd"]
 
         if image.mode != "RGB":
             image = image.convert("RGB")
         image.save(os.path.join(tmpdir, "input.bmp"))
 
-        proc = subprocess.Popen(command, stdin=subprocess.PIPE, shell=False,
-                                startupinfo=g_subprocess_startup_info,
-                                creationflags=g_creation_flags,
-                                cwd=tmpdir,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(
+            command,
+            stdin=subprocess.PIPE,
+            shell=False,
+            startupinfo=g_subprocess_startup_info,
+            creationflags=g_creation_flags,
+            cwd=tmpdir,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
         proc.stdin.close()
         original_output = proc.stdout.read()
         proc.wait()
@@ -219,24 +217,26 @@ def detect_orientation(image, lang=None):
         original_output = original_output.strip()
 
         if "Could not initialize tesseract" in original_output:
-            raise TesseractError(-1, "Error initializing tesseract: %s"
-                                 % original_output)
+            raise TesseractError(
+                -1, "Error initializing tesseract: %s" % original_output
+            )
 
         try:
             output = original_output.split("\n")
             output = [line.split(": ", 1) for line in output if (": " in line)]
             output = {x: y for (x, y) in output}
-            angle = int(output.get('Rotate', output['Orientation in degrees']))
+            angle = int(output.get("Rotate", output["Orientation in degrees"]))
             # Tesseract reports the angle in the opposite direction the one we
             # want
             angle = (360 - angle) % 360
             return {
-                'angle': angle,
-                'confidence': float(output['Orientation confidence']),
+                "angle": angle,
+                "confidence": float(output["Orientation confidence"]),
             }
         except Exception as ex:
-            raise TesseractError(-1, "No script found in image (%s - %s)"
-                                 % (str(ex), original_output))
+            raise TesseractError(
+                -1, "No script found in image (%s - %s)" % (str(ex), original_output)
+            )
 
 
 def get_name():
@@ -254,9 +254,10 @@ def get_available_builders():
     ]
 
 
-def run_tesseract(input_filename, output_filename_base, cwd=None, lang=None,
-                  flags=None, configs=None):
-    '''
+def run_tesseract(
+    input_filename, output_filename_base, cwd=None, lang=None, flags=None, configs=None
+):
+    """
     Runs Tesseract:
         `TESSERACT_CMD` \
                 `input_filename` \
@@ -276,13 +277,13 @@ def run_tesseract(input_filename, output_filename_base, cwd=None, lang=None,
 
     Returns:
         Returns (the exit status of Tesseract, Tesseract's output)
-    '''
+    """
     _set_environment()
 
     command = [TESSERACT_CMD, input_filename, output_filename_base]
 
     if lang is not None:
-        command += ['-l', lang]
+        command += ["-l", lang]
 
     if flags is not None:
         command += flags
@@ -290,11 +291,14 @@ def run_tesseract(input_filename, output_filename_base, cwd=None, lang=None,
     if configs is not None:
         command += configs
 
-    proc = subprocess.Popen(command, cwd=cwd,
-                            startupinfo=g_subprocess_startup_info,
-                            creationflags=g_creation_flags,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT)
+    proc = subprocess.Popen(
+        command,
+        cwd=cwd,
+        startupinfo=g_subprocess_startup_info,
+        creationflags=g_creation_flags,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
     # Beware that in some cases, tesseract may print more on stderr than
     # allowed by the buffer of subprocess.Popen.stderr. So we must read stderr
     # asap or Tesseract will remain stuck when trying to write again on stderr.
@@ -305,7 +309,7 @@ def run_tesseract(input_filename, output_filename_base, cwd=None, lang=None,
 
 
 def cleanup(filename):
-    ''' Tries to remove the given filename. Ignores non-existent files '''
+    """ Tries to remove the given filename. Ignores non-existent files """
     try:
         os.remove(filename)
     except OSError:  # pragma: no cover
@@ -318,10 +322,12 @@ class ReOpenableTempfile(object):  # pragma: no cover
     when file is still open.
     It returns `tempfile.NamedTemporaryFile` compatible object.
     """
+
     def __init__(self, suffix):
         self.name = None
-        with tempfile.NamedTemporaryFile(prefix='tess_', suffix=suffix,
-                                         delete=False) as fp:
+        with tempfile.NamedTemporaryFile(
+            prefix="tess_", suffix=suffix, delete=False
+        ) as fp:
             self.name = fp.name
 
     def __enter__(self):
@@ -337,7 +343,7 @@ class ReOpenableTempfile(object):  # pragma: no cover
 
 
 def image_to_string(image, lang=None, builder=None):
-    '''
+    """
     Runs tesseract on the specified image. First, the image is written to disk,
     and then the tesseract command is run on the image. Tesseract's result is
     read, and the temporary files are erased.
@@ -353,7 +359,7 @@ def image_to_string(image, lang=None, builder=None):
     Returns:
         Depends of the specified builder. By default, it will return a simple
         string.
-    '''
+    """
 
     if builder is None:
         builder = builders.TextBuilder()
@@ -361,23 +367,30 @@ def image_to_string(image, lang=None, builder=None):
         if image.mode != "RGB":
             image = image.convert("RGB")
         image.save(os.path.join(tmpdir, "input.bmp"))
-        (status, errors) = run_tesseract("input.bmp", "output", cwd=tmpdir,
-                                         lang=lang,
-                                         flags=builder.tesseract_flags,
-                                         configs=builder.tesseract_configs)
+        (status, errors) = run_tesseract(
+            "input.bmp",
+            "output",
+            cwd=tmpdir,
+            lang=lang,
+            flags=builder.tesseract_flags,
+            configs=builder.tesseract_configs,
+        )
         if status:
             raise TesseractError(status, errors)
 
         tested_files = []
         output_file_name = "ERROR"
         for file_extension in builder.file_extensions:
-            output_file_name = ('%s.%s' % (os.path.join(tmpdir, "output"),
-                                           file_extension))
+            output_file_name = "%s.%s" % (
+                os.path.join(tmpdir, "output"),
+                file_extension,
+            )
 
             tested_files.append(output_file_name)
             try:
-                with codecs.open(output_file_name, 'r', encoding='utf-8',
-                                 errors='replace') as file_desc:
+                with codecs.open(
+                    output_file_name, "r", encoding="utf-8", errors="replace"
+                ) as file_desc:
                     return builder.read_file(file_desc)
             except FileNotFoundError:
                 continue
@@ -403,17 +416,19 @@ def get_available_languages():
         name name returned by this function to 3 letters should do the trick.
     """
     _set_environment()
-    proc = subprocess.Popen([TESSERACT_CMD, "--list-langs"],
-                            startupinfo=g_subprocess_startup_info,
-                            creationflags=g_creation_flags,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT)
-    langs = proc.stdout.read().decode('utf-8').splitlines(False)
+    proc = subprocess.Popen(
+        [TESSERACT_CMD, "--list-langs"],
+        startupinfo=g_subprocess_startup_info,
+        creationflags=g_creation_flags,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    langs = proc.stdout.read().decode("utf-8").splitlines(False)
     ret = proc.wait()
     if ret != 0:
         raise TesseractError(ret, "unable to get languages")
 
-    return [lang for lang in langs if lang and lang[-1] != ':']
+    return [lang for lang in langs if lang and lang[-1] != ":"]
 
 
 def get_version(set_env=True):
@@ -436,12 +451,14 @@ def get_version(set_env=True):
 
     command = [TESSERACT_CMD, "-v"]
 
-    proc = subprocess.Popen(command,
-                            startupinfo=g_subprocess_startup_info,
-                            creationflags=g_creation_flags,
-                            stdout=subprocess.PIPE)
+    proc = subprocess.Popen(
+        command,
+        startupinfo=g_subprocess_startup_info,
+        creationflags=g_creation_flags,
+        stdout=subprocess.PIPE,
+    )
     ver_string = proc.stdout.read()
-    ver_string = ver_string.decode('utf-8')
+    ver_string = ver_string.decode("utf-8")
     ret = proc.wait()
     if ret not in (0, 1):
         raise TesseractError(ret, ver_string)
@@ -459,11 +476,19 @@ def get_version(set_env=True):
         version = (major, minor, upd)
         if version == (0, 0, 0):
             raise TesseractError(
-                ret, ("Unable to parse Tesseract version (not a number): [%s]"
-                      % (ver_string)))
+                ret,
+                (
+                    "Unable to parse Tesseract version (not a number): [%s]"
+                    % (ver_string)
+                ),
+            )
         g_version = version
         return version
     except IndexError:
         raise TesseractError(
-            ret, ("Unable to parse Tesseract version (spliting failed): [%s]"
-                  % (ver_string)))
+            ret,
+            (
+                "Unable to parse Tesseract version (spliting failed): [%s]"
+                % (ver_string)
+            ),
+        )

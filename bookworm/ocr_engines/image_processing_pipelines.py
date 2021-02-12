@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import cv2 
+import cv2
 import numpy as np
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass, field
@@ -22,7 +22,7 @@ class ImageBlueprint:
     mode: str = "RGBA"
 
     def __repr__(self):
-        return f'<ImageBlueprint: width={self.width}, height={self.height}>'
+        return f"<ImageBlueprint: width={self.width}, height={self.height}>"
 
     @property
     def size(self):
@@ -34,7 +34,9 @@ class ImageBlueprint:
             pil_image = Image.open(image_path).convert("RGBA")
             return cls.from_pil(pil_image)
         except Exception as e:
-            log.exception(f"Failed to load image from file '{image_path}'", exc_info=True)
+            log.exception(
+                f"Failed to load image from file '{image_path}'", exc_info=True
+            )
 
     @classmethod
     def from_pil(cls, image: Image.Image) -> "ImageBlueprint":
@@ -42,7 +44,7 @@ class ImageBlueprint:
             data=image.tobytes(),
             width=image.width,
             height=image.height,
-            mode=image.mode
+            mode=image.mode,
         )
 
     @classmethod
@@ -52,26 +54,21 @@ class ImageBlueprint:
         return cls.from_pil(pil_image)
 
     def to_pil(self) -> Image.Image:
-        return Image.frombytes(
-           "RGBA",
-            self.size,
-            self.data
-        )
+        return Image.frombytes("RGBA", self.size, self.data)
 
     def to_cv2(self):
         pil_image = self.to_pil().convert("RGBA")
         return cv2.cvtColor(np.array(pil_image, dtype=np.uint8), cv2.COLOR_RGBA2GRAY)
 
 
-
-
 @dataclass
 class ImageProcessingPipeline(metaclass=ABCMeta):
     """Preprocesses images before running OCR."""
+
     images: t.Tuple[ImageBlueprint]
     ocr_request: "OcrRequest"
     args: dict = field(default_factory=dict)
-    run_order: t.ClassVar[int] = 1000
+    run_order: t.ClassVar[int] = 0
 
     @abstractmethod
     def should_process(self) -> bool:
@@ -85,56 +82,37 @@ class ImageProcessingPipeline(metaclass=ABCMeta):
         yield from (self.process_image(img) for img in self.images)
 
 
-class DebugProcessingPipeline(ImageProcessingPipeline):
-    """A pipeline that allows you to view the resulting image."""
+class TwoInOneScanProcessingPipeline(ImageProcessingPipeline):
+    """Splits the given page into two pages and processes each page separately."""
+
+    run_order = 10
 
     def should_process(self) -> bool:
         return True
 
     def process_image(self, image):
-        image.to_pil().show()
-        return image
+        pass
 
-
-class ThresholdProcessingPipeline(ImageProcessingPipeline):
-    """Binarize the given images using opencv."""
-    run_order = 20
-
-    def should_process(self) -> bool:
-        return True
-
-    def process_image(self, image):
-        img = image.to_cv2().astype(np.uint8)
-        ret, th = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-        return ImageBlueprint.from_cv2(th)
-
-
-class BlurProcessingPipeline(ImageProcessingPipeline):
-    """Blurs the given image to remove noise."""
-
-    run_order: 30
-
-    def should_process(self) -> bool:
-        return True
-
-    def image_smoothening(self, img):
-        ret1, th1 = cv2.threshold(img, 180, 255, cv2.THRESH_BINARY)
-        ret2, th2 = cv2.threshold(th1, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        blur = cv2.GaussianBlur(th2, (1, 1), 0)
-        ret3, th3 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        return th3
-
-    def process_image(self, image):
-        img = image.to_cv2().astype(np.uint8)
-        img = self.image_smoothening(img)
-        return ImageBlueprint.from_cv2(img)
-
+    def process(self) -> t.Tuple[ImageBlueprint]:
+        for image in self.images:
+            img = Image.frombytes("RGBA", (image.width, image.height), image.data)
+            w, h = image.width, image.height
+            pg_left = img.crop((0, 0, w / 2, h))
+            pg_right = img.crop((w / 2, 0, w, h))
+            pages = (pg_left, pg_right)
+            if self.ocr_request.language.is_rtl:
+                pages = (pg_right, pg_left)
+            for pg in pages:
+                new_image = image.__class__(
+                    data=pg.convert("RGBA").tobytes(), width=pg.width, height=pg.height
+                )
+                yield new_image
 
 
 class DPIProcessingPipeline(ImageProcessingPipeline):
     """Change the pixel dencity of the given images using PIL."""
 
-    run_order = 10
+    run_order = 20
     DPI_300_SIZE = 1024
 
     def should_process(self) -> bool:
@@ -151,44 +129,131 @@ class DPIProcessingPipeline(ImageProcessingPipeline):
     def process_image(self, image):
         img = image.to_pil()
         w, h = image.size
-        if 'scaling_factor' in self.args:
-            factor = self.args['scaling_factor']
+        if "scaling_factor" in self.args:
+            factor = self.args["scaling_factor"]
         else:
             factor = max(1, float(self.DPI_300_SIZE / w))
-        nw, nh = int(factor * w), int(factor * h)
-        image.data = img.resize(
-            (nw, nh),
-            resample=Image.LANCZOS
-        ).tobytes()
-        image.width, image.height = nw, nh
-        return image
+        return ImageBlueprint.from_pil(
+            img.resize((int(factor * w), int(factor * h)), resample=Image.LANCZOS)
+        )
 
 
-class TwoInOneScanProcessingPipeline(ImageProcessingPipeline):
-    """Splits the given page into two pages and processes each page separately."""
+class ThresholdProcessingPipeline(ImageProcessingPipeline):
+    """Binarize the given images using opencv."""
+
+    run_order = 30
 
     def should_process(self) -> bool:
         return True
 
     def process_image(self, image):
+        img = image.to_cv2().astype(np.uint8)
+        ret, th = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+        return ImageBlueprint.from_cv2(th)
+
+
+class DeskewProcessingPipeline(ImageProcessingPipeline):
+    """Deskews the given image."""
+
+    run_order = 40
+
+    def should_process(self) -> bool:
+        return True
+
+    def process_image(self, image):
+        img = image.to_cv2().astype(np.uint8)
+        desk_img = cv2_utils.correct_skew(img)
+        return ImageBlueprint.from_cv2(desk_img)
+
+
+class BlurProcessingPipeline(ImageProcessingPipeline):
+    """Blurs the given image to remove noise."""
+
+    run_order = 50
+
+    def should_process(self) -> bool:
+        return True
+
+    def image_smoothening(self, img):
+        blur = cv2.GaussianBlur(img, (1, 1), 0)
+        return blur
+
+    def process_image(self, image):
+        img = image.to_cv2().astype(np.uint8)
+        img = self.image_smoothening(img)
+        return ImageBlueprint.from_cv2(img)
+
+
+class DilationProcessingPipeline(ImageProcessingPipeline):
+    """Dilates the given image."""
+
+    run_order = 60
+
+    def should_process(self) -> bool:
+        return True
+
+    def process_image(self, image):
+        img = image.to_cv2().astype(np.uint8)
+        kernel = np.ones((5, 5), np.uint8)
+        img = cv2.dilate(img, kernel, iterations=1)
+        return ImageBlueprint.from_cv2(img)
+
+
+class ErosionProcessingPipeline(ImageProcessingPipeline):
+    """Applys erosion to the given image."""
+
+    run_order = 70
+
+    def should_process(self) -> bool:
+        return True
+
+    def process_image(self, image):
+        img = image.to_cv2().astype(np.uint8)
+        kernel = np.ones((5, 5), np.uint8)
+        img = cv2.erode(img, kernel, iterations=1)
+        return ImageBlueprint.from_cv2(img)
+
+
+class ConcatImagesProcessingPipeline(ImageProcessingPipeline):
+    """Concats the given images into one image."""
+
+    run_order = 240
+
+    def should_process(self) -> bool:
+        return True  # len({img.size for img in self.images}) == 1
+
+    def process_image(self, image):
         pass
 
-    def process(self) -> t.Tuple[ImageBlueprint]:
-        for image in self.images:
-            img = Image.frombytes("RGBA", (image.width, image.height), image.data)
-            w, h = image.width, image.height
-            pg_left = img.crop((0, 0, w/2, h)) 
-            pg_right = img.crop((w/2, 0, w, h)) 
-            pages = (pg_left, pg_right)
-            if self.ocr_request.language.is_rtl:
-                pages = (pg_right, pg_left)
-            for pg in pages:
-                new_image = image.__class__(
-                    data=pg.convert("RGBA").tobytes(),
-                    width=pg.width,
-                    height=pg.height
-                )
-                yield new_image
+    def process(self) -> t.Iterable[ImageBlueprint]:
+        imagelist = []
+        for img in self.images:
+            imagelist.append(img.to_cv2())
+            imagelist.append(np.zeros((25, img.width), dtype=np.uint8) + 255)
+        w_min = min(im.shape[1] for im in imagelist)
+        im_list_resize = [
+            cv2.resize(
+                im,
+                (w_min, int(im.shape[0] * w_min / im.shape[1])),
+                interpolation=cv2.INTER_CUBIC,
+            )
+            for im in imagelist
+        ]
+        img = cv2.vconcat(im_list_resize)
+        yield ImageBlueprint.from_cv2(img)
+
+
+class DebugProcessingPipeline(ImageProcessingPipeline):
+    """A pipeline that allows you to view the resulting image."""
+
+    run_order = 250
+
+    def should_process(self) -> bool:
+        return True
+
+    def process_image(self, image):
+        image.to_pil().show()
+        return image
 
 
 class InvertColourProcessingPipeline(ImageProcessingPipeline):
@@ -198,11 +263,10 @@ class InvertColourProcessingPipeline(ImageProcessingPipeline):
         return True
 
     def process_image(self, image):
-        img = image.to_pil().convert("L")
-        image.data = ImageOps.invert(img).convert("RGBA").tobytes()
-        return image
+        img = cv2.bitwise_not(image.to_cv2())
+        return ImageBlueprint.from_cv2(img)
 
-    
+
 class RotationProcessingPipeline(ImageProcessingPipeline):
     """Rotates the given image."""
 
@@ -218,17 +282,3 @@ class RotationProcessingPipeline(ImageProcessingPipeline):
         rotator = ImageOps.flip if rotation == "VERTICAL" else ImageOps.mirror
         image.data = rotator(img).convert("RGBA").tobytes()
         return image
-
-
-
-class DeskewProcessingPipeline(ImageProcessingPipeline):
-    """Deskews the given image."""
-
-    def should_process(self) -> bool:
-        return True
-
-    def process_image(self, image):
-        img = image.to_cv2().astype(np.uint8)
-        desk_img = cv2_utils.correct_skew(img)
-        return ImageBlueprint.from_cv2(desk_img)
-

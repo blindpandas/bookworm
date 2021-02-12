@@ -37,6 +37,7 @@ class TesseractOcrEngine(BaseOcrEngine):
         if sys.platform == "win32" and not cls._check_on_windows():
             return False
         from . import pyocr
+
         cls._libtesseract = pyocr.libtesseract
         return cls._libtesseract.is_available()
 
@@ -55,11 +56,12 @@ class TesseractOcrEngine(BaseOcrEngine):
         img = Image.frombytes(
             "RGBA",
             (ocr_request.image.width, ocr_request.image.height),
-            ocr_request.image.data
+            ocr_request.image.data,
         )
-        recognized_text = cls._libtesseract.image_to_string(img, ocr_request.language.given_locale_name)
+        recognized_text = cls._libtesseract.image_to_string(
+            img, ocr_request.language.given_locale_name
+        )
         return OcrResult(
             recognized_text=recognized_text,
             cookie=ocr_request.cookie,
         )
-

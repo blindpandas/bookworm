@@ -134,14 +134,17 @@ class OCRMenu(wx.Menu):
         if self.service.stored_options is not None:
             return self.service.stored_options
         else:
-            opts = self._get_ocr_options_from_dlg(last_stored_options=last_stored_opts, **dlg_kw)
+            opts = self._get_ocr_options_from_dlg(
+                last_stored_options=last_stored_opts, **dlg_kw
+            )
             if opts is not None and opts.store_options:
                 self.service.stored_options = opts
             else:
-                self.service.stored_options= None
+                self.service.stored_options = None
             return opts
 
     def _get_ocr_options_from_dlg(self, last_stored_options=None, **dlg_kw):
+        self.service._init_ocr_engine()
         langs = self.service.current_ocr_engine.get_sorted_languages()
         if not langs:
             wx.MessageBox(
@@ -190,7 +193,7 @@ class OCRMenu(wx.Menu):
             language=ocr_opts.language,
             image=ImageBlueprint(imagedata, width, height),
             image_processing_pipelines=ocr_opts.image_processing_pipelines,
-            cookie=reader.current_page
+            cookie=reader.current_page,
         )
         self._run_ocr(ocr_request, _ocr_callback)
 
@@ -201,8 +204,7 @@ class OCRMenu(wx.Menu):
         sounds.ocr_start.play()
         future_callback = functools.partial(self._process_ocr_result, callback)
         threaded_worker.submit(
-            self.service.current_ocr_engine.preprocess_and_recognize,
-            ocr_request
+            self.service.current_ocr_engine.preprocess_and_recognize, ocr_request
         ).add_done_callback(future_callback)
 
     def onAutoScanPages(self, event):
@@ -255,7 +257,9 @@ class OCRMenu(wx.Menu):
         doc = self.service.reader.document
         total = len(doc)
         args = (doc, output_file, ocr_opts)
-        for progress in QueueProcess(target=self.service.current_ocr_engine.scan_to_text, args=args):
+        for progress in QueueProcess(
+            target=self.service.current_ocr_engine.scan_to_text, args=args
+        ):
             wx.CallAfter(
                 progress_dlg.Update,
                 progress + 1,
@@ -314,7 +318,7 @@ class OCRMenu(wx.Menu):
                     ).format(filename=filename),
                     # Translators: title of a message box
                     _("Could not load image file"),
-                    style=wx.ICON_ERROR
+                    style=wx.ICON_ERROR,
                 )
                 return
             options = self._get_ocr_options_from_dlg(force_save=True)
@@ -331,8 +335,7 @@ class OCRMenu(wx.Menu):
 
             factor = options.zoom_factor
             resized_image = image.to_pil().resize(
-                (factor * image.width, factor * image.height),
-                resample=Image.LANCZOS
+                (factor * image.width, factor * image.height), resample=Image.LANCZOS
             )
             ocr_request = OcrRequest(
                 language=options.language,

@@ -19,11 +19,13 @@ from bookworm.ocr_engines.image_processing_pipelines import (
     TwoInOneScanProcessingPipeline,
     DeskewProcessingPipeline,
     InvertColourProcessingPipeline,
+    ErosionProcessingPipeline,
+    DilationProcessingPipeline,
+    ConcatImagesProcessingPipeline,
 )
 
 
 log = logger.getChild(__name__)
-
 
 
 @dataclass
@@ -33,7 +35,6 @@ class OcrOptions:
     _ipp_enabled: int
     image_processing_pipelines: t.Tuple[ImageProcessingPipeline]
     store_options: bool
-
 
 
 class OcrPanel(SettingsPanel):
@@ -53,7 +54,7 @@ class OcrPanel(SettingsPanel):
             _("Default OCR Engine"),
             majorDimension=1,
             style=wx.RA_SPECIFY_COLS,
-            choices=_engines_display
+            choices=_engines_display,
         )
         # Translators: the label of a group of controls in the reading page
         # of the settings related to image enhancement
@@ -81,8 +82,6 @@ class OcrPanel(SettingsPanel):
             self._service._init_ocr_engine()
 
 
-
-
 class OCROptionsDialog(SimpleDialog):
     """OCR options."""
 
@@ -94,21 +93,31 @@ class OCROptionsDialog(SimpleDialog):
         self.force_save = force_save
         self._return_value = None
         self.image_processing_pipelines = []
-        self.stored_ipp = () if self.stored_options is None else self.stored_options.image_processing_pipelines
+        self.stored_ipp = (
+            ()
+            if self.stored_options is None
+            else self.stored_options.image_processing_pipelines
+        )
         super().__init__(*args, **kwargs)
 
     def addControls(self, parent):
         # Translators: the label of a combobox
         label = wx.StaticText(parent, -1, _("Recognition Language:"))
-        self.langChoice = wx.Choice(parent, -1, choices=[l.description for l in self.languages])
+        self.langChoice = wx.Choice(
+            parent, -1, choices=[l.description for l in self.languages]
+        )
         self.langChoice.SetSizerProps(expand=True)
         wx.StaticText(parent, -1, _("Supplied Image resolution::"))
         self.zoomFactorSlider = wx.Slider(parent, -1, minValue=0, maxValue=10)
         # Translators: the label of a checkbox
-        self.should_enhance_images = wx.CheckBox(parent, -1, _("Enable image enhancements"))
+        self.should_enhance_images = wx.CheckBox(
+            parent, -1, _("Enable image enhancements")
+        )
         ippPanel = sc.SizedPanel(parent)
         # Translators: the label of a checkbox
-        imgProcBox = make_sized_static_box(ippPanel, _("Available image pre-processing filters:"))
+        imgProcBox = make_sized_static_box(
+            ippPanel, _("Available image pre-processing filters:")
+        )
         for (ipp_cls, lbl, should_enable) in self.get_image_processing_pipelines_info():
             chbx = wx.CheckBox(imgProcBox, -1, lbl)
             if self.stored_options is not None:
@@ -130,16 +139,20 @@ class OCROptionsDialog(SimpleDialog):
             self.zoomFactorSlider.SetValue(2)
             self.should_enhance_images.SetValue(config.conf["ocr"]["enhance_images"])
         else:
-            self.langChoice.SetSelection(self.languages.index(self.stored_options.language))
+            self.langChoice.SetSelection(
+                self.languages.index(self.stored_options.language)
+            )
             self.zoomFactorSlider.SetValue(self.stored_options.zoom_factor)
             self.should_enhance_images.SetValue(self.stored_options._ipp_enabled)
             if not self.force_save:
                 self.storeOptionsCheckbox.SetValue(self.stored_options.store_options)
-        enable_or_disable_image_pipelines = lambda: ippPanel.Enable(self.should_enhance_images.IsChecked())
+        enable_or_disable_image_pipelines = lambda: ippPanel.Enable(
+            self.should_enhance_images.IsChecked()
+        )
         self.Bind(
             wx.EVT_CHECKBOX,
             lambda e: enable_or_disable_image_pipelines(),
-            self.should_enhance_images
+            self.should_enhance_images,
         )
         enable_or_disable_image_pipelines()
 
@@ -147,13 +160,17 @@ class OCROptionsDialog(SimpleDialog):
         if not self.should_enhance_images.IsChecked():
             selected_image_pp = []
         else:
-            selected_image_pp = [ipp_cls for c, ipp_cls in self.image_processing_pipelines if c.IsChecked()]
+            selected_image_pp = [
+                ipp_cls
+                for c, ipp_cls in self.image_processing_pipelines
+                if c.IsChecked()
+            ]
         self._return_value = OcrOptions(
             language=self.languages[self.langChoice.GetSelection()],
             zoom_factor=self.zoomFactorSlider.GetValue() or 1,
             _ipp_enabled=self.should_enhance_images.IsChecked(),
             image_processing_pipelines=selected_image_pp,
-            store_options=self.force_save or self.storeOptionsCheckbox.IsChecked()
+            store_options=self.force_save or self.storeOptionsCheckbox.IsChecked(),
         )
         self.Close()
 
@@ -162,12 +179,19 @@ class OCROptionsDialog(SimpleDialog):
         return self._return_value
 
     def get_image_processing_pipelines_info(self):
-        ipp =  [
+        ipp = [
             (DPIProcessingPipeline, _("Increase image resolution"), True),
             (ThresholdProcessingPipeline, _("Binarization"), True),
-            (BlurProcessingPipeline, _("Blurring"), True),
+            (ConcatImagesProcessingPipeline, _("Combine images"), True),
+            (
+                TwoInOneScanProcessingPipeline,
+                _("Split two-in-one scans to individual pages"),
+                False,
+            ),
+            (BlurProcessingPipeline, _("Blurring"), False),
             (DeskewProcessingPipeline, _("Deskewing"), False),
-            (TwoInOneScanProcessingPipeline, _("Split two-in-one scans to individual pages"), False),
+            (ErosionProcessingPipeline, _("Erosion"), False),
+            (DilationProcessingPipeline, _("Dilation"), False),
             (InvertColourProcessingPipeline, _("Invert colors"), False),
         ]
         if app.debug:

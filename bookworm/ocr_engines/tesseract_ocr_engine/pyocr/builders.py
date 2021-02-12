@@ -13,13 +13,13 @@ import xml.dom.minidom
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    'Box',
-    'TextBuilder',
-    'WordBoxBuilder',
-    'LineBox',
-    'LineBoxBuilder',
-    'DigitBuilder',
-    'DigitLineBoxBuilder',
+    "Box",
+    "TextBuilder",
+    "WordBoxBuilder",
+    "LineBox",
+    "LineBoxBuilder",
+    "DigitBuilder",
+    "DigitLineBoxBuilder",
 ]
 
 _XHTML_HEADER = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
@@ -54,10 +54,21 @@ class Box(object):
     def get_xml_tag(self, parent_doc):
         span_tag = parent_doc.createElement("span")
         span_tag.setAttribute("class", "ocrx_word")
-        span_tag.setAttribute("title", ("bbox %d %d %d %d; x_wconf %d" % (
-            (self.position[0][0], self.position[0][1],
-             self.position[1][0], self.position[1][1],
-             self.confidence))))
+        span_tag.setAttribute(
+            "title",
+            (
+                "bbox %d %d %d %d; x_wconf %d"
+                % (
+                    (
+                        self.position[0][0],
+                        self.position[0][1],
+                        self.position[1][0],
+                        self.position[1][1],
+                        self.confidence,
+                    )
+                )
+            ),
+        )
         txt = xml.dom.minidom.Text()
         txt.data = self.content
         span_tag.appendChild(txt)
@@ -78,10 +89,12 @@ class Box(object):
         """
         if other is None or getattr(other, "position", None) is None:
             return -1
-        for (x, y) in ((self.position[0][1], other.position[0][1]),
-                       (self.position[1][1], other.position[1][1]),
-                       (self.position[0][0], other.position[0][0]),
-                       (self.position[1][0], other.position[1][0])):
+        for (x, y) in (
+            (self.position[0][1], other.position[0][1]),
+            (self.position[1][1], other.position[1][1]),
+            (self.position[0][0], other.position[0][0]),
+            (self.position[1][0], other.position[1][0]),
+        ):
             if x < y:
                 return -1
             elif x > y:
@@ -108,11 +121,11 @@ class Box(object):
 
     def __hash__(self):
         position_hash = 0
-        position_hash += ((self.position[0][0] & 0xFF) << 0)
-        position_hash += ((self.position[0][1] & 0xFF) << 8)
-        position_hash += ((self.position[1][0] & 0xFF) << 16)
-        position_hash += ((self.position[1][1] & 0xFF) << 24)
-        return (position_hash ^ hash(self.content) ^ hash(self.content))
+        position_hash += (self.position[0][0] & 0xFF) << 0
+        position_hash += (self.position[0][1] & 0xFF) << 8
+        position_hash += (self.position[1][0] & 0xFF) << 16
+        position_hash += (self.position[1][1] & 0xFF) << 24
+        return position_hash ^ hash(self.content) ^ hash(self.content)
 
 
 class LineBox(object):
@@ -143,9 +156,20 @@ class LineBox(object):
     def get_xml_tag(self, parent_doc):
         span_tag = parent_doc.createElement("span")
         span_tag.setAttribute("class", "ocr_line")
-        span_tag.setAttribute("title", ("bbox %d %d %d %d" % (
-            (self.position[0][0], self.position[0][1],
-             self.position[1][0], self.position[1][1]))))
+        span_tag.setAttribute(
+            "title",
+            (
+                "bbox %d %d %d %d"
+                % (
+                    (
+                        self.position[0][0],
+                        self.position[0][1],
+                        self.position[1][0],
+                        self.position[1][1],
+                    )
+                )
+            ),
+        )
         for box_idx, box in enumerate(self.word_boxes):
             if box_idx:
                 space = xml.dom.minidom.Text()
@@ -179,13 +203,15 @@ class LineBox(object):
         """
         if other is None or getattr(other, "position", None) is None:
             return -1
-        for (x, y) in ((self.position[0][1], other.position[0][1]),
-                       (self.position[1][1], other.position[1][1]),
-                       (self.position[0][0], other.position[0][0]),
-                       (self.position[1][0], other.position[1][0])):
-            if (x < y):
+        for (x, y) in (
+            (self.position[0][1], other.position[0][1]),
+            (self.position[1][1], other.position[1][1]),
+            (self.position[0][0], other.position[0][0]),
+            (self.position[1][0], other.position[1][0]),
+        ):
+            if x < y:
                 return -1
-            elif (x > y):
+            elif x > y:
                 return 1
         return 0
 
@@ -210,11 +236,11 @@ class LineBox(object):
     def __hash__(self):
         content = self.content
         position_hash = 0
-        position_hash += ((self.position[0][0] & 0xFF) << 0)
-        position_hash += ((self.position[0][1] & 0xFF) << 8)
-        position_hash += ((self.position[1][0] & 0xFF) << 16)
-        position_hash += ((self.position[1][1] & 0xFF) << 24)
-        return (position_hash ^ hash(content))
+        position_hash += (self.position[0][0] & 0xFF) << 0
+        position_hash += (self.position[0][1] & 0xFF) << 8
+        position_hash += (self.position[1][0] & 0xFF) << 16
+        position_hash += (self.position[1][1] & 0xFF) << 24
+        return position_hash ^ hash(content)
 
 
 class BaseBuilder(object):
@@ -228,8 +254,9 @@ class BaseBuilder(object):
         cuneiform_args : Arguments passed to the Cuneiform command line.
     """
 
-    def __init__(self, file_extensions, tesseract_flags, tesseract_configs,
-                 cuneiform_args):
+    def __init__(
+        self, file_extensions, tesseract_flags, tesseract_configs, cuneiform_args
+    ):
         self.file_extensions = file_extensions
         self.tesseract_flags = tesseract_flags
         self.tesseract_configs = tesseract_configs
@@ -285,16 +312,24 @@ class TextBuilder(BaseBuilder):
         The returned string is encoded in UTF-8
     """
 
-    def __init__(self, tesseract_layout=3, cuneiform_dotmatrix=False,
-                 cuneiform_fax=False, cuneiform_singlecolumn=False):
+    def __init__(
+        self,
+        tesseract_layout=3,
+        cuneiform_dotmatrix=False,
+        cuneiform_fax=False,
+        cuneiform_singlecolumn=False,
+    ):
         from .tesseract import psm_parameter
+
         tess_flags = [psm_parameter(), str(tesseract_layout)]
         file_ext = ["txt"]
         cun_args = ["-f", "text"]
         # Add custom cuneiform parameters if needed
-        for par, arg in [(cuneiform_dotmatrix, "--dotmatrix"),
-                         (cuneiform_fax, "--fax"),
-                         (cuneiform_singlecolumn, "--singlecolumn")]:
+        for par, arg in [
+            (cuneiform_dotmatrix, "--dotmatrix"),
+            (cuneiform_fax, "--fax"),
+            (cuneiform_singlecolumn, "--singlecolumn"),
+        ]:
             if par:
                 cun_args.append(arg)
         super(TextBuilder, self).__init__(file_ext, tess_flags, [], cun_args)
@@ -393,24 +428,23 @@ class _WordHTMLParser(HTMLParser):
             if not piece.startswith("bbox"):
                 continue
             piece = piece.split(" ")
-            position = ((int(piece[1]), int(piece[2])),
-                        (int(piece[3]), int(piece[4])))
+            position = ((int(piece[1]), int(piece[2])), (int(piece[3]), int(piece[4])))
             return position
         raise Exception("Invalid hocr position: %s" % title)
 
     def handle_starttag(self, tag, attrs):
-        if (tag != "span"):
+        if tag != "span":
             return
         position = None
         tag_type = None
         for attr in attrs:
-            if attr[0] == 'class':
+            if attr[0] == "class":
                 tag_type = attr[1]
-            if attr[0] == 'title':
+            if attr[0] == "title":
                 position = attr[1]
         if position is None or tag_type is None:
             return
-        if tag_type == 'ocr_word' or tag_type == 'ocrx_word':
+        if tag_type == "ocr_word" or tag_type == "ocrx_word":
             try:
                 confidence = self.__parse_confidence(position)
                 position = self.__parse_position(position)
@@ -421,7 +455,7 @@ class _WordHTMLParser(HTMLParser):
                 self.__tag_types.append("ignore")
                 return
             self.__current_box_text = ""
-        elif tag_type == 'ocr_line':
+        elif tag_type == "ocr_line":
             self.__current_line_position = self.__parse_position(position)
             self.__current_line_content = []
         self.__tag_types.append(tag_type)
@@ -432,22 +466,22 @@ class _WordHTMLParser(HTMLParser):
         self.__current_box_text += data
 
     def handle_endtag(self, tag):
-        if tag != 'span':
+        if tag != "span":
             return
         tag_type = self.__tag_types.pop()
-        if tag_type == 'ocr_word' or tag_type == 'ocrx_word':
+        if tag_type == "ocr_word" or tag_type == "ocrx_word":
             if self.__current_box_text is None:
                 return
             box_position = self.__current_box_position
-            box = Box(self.__current_box_text, box_position,
-                      self.__current_box_confidence)
+            box = Box(
+                self.__current_box_text, box_position, self.__current_box_confidence
+            )
             self.boxes.append(box)
             self.__current_line_content.append(box)
             self.__current_box_text = None
             return
-        elif tag_type == 'ocr_line':
-            line = LineBox(self.__current_line_content,
-                           self.__current_line_position)
+        elif tag_type == "ocr_line":
+            line = LineBox(self.__current_line_content, self.__current_line_position)
             self.lines.append(line)
             self.__current_line_content = []
             return
@@ -462,6 +496,7 @@ class _LineHTMLParser(HTMLParser):
     line, the position of all its characters.
     Spaces have "-1 -1 -1 -1" for position".
     """
+
     TAG_TYPE_CONTENT = 0
     TAG_TYPE_POSITIONS = 1
 
@@ -472,14 +507,14 @@ class _LineHTMLParser(HTMLParser):
         self.__char_positions = None
 
     def handle_starttag(self, tag, attrs):
-        if (tag != "span"):
+        if tag != "span":
             return
         tag_type = -1
         for attr in attrs:
-            if attr[0] == 'class':
-                if attr[1] == 'ocr_line':
+            if attr[0] == "class":
+                if attr[1] == "ocr_line":
                     tag_type = self.TAG_TYPE_CONTENT
-                elif attr[1] == 'ocr_cinfo':
+                elif attr[1] == "ocr_cinfo":
                     tag_type = self.TAG_TYPE_POSITIONS
 
         if tag_type == self.TAG_TYPE_CONTENT:
@@ -488,7 +523,7 @@ class _LineHTMLParser(HTMLParser):
             return
         elif tag_type == self.TAG_TYPE_POSITIONS:
             for attr in attrs:
-                if attr[0] == 'title':
+                if attr[0] == "title":
                     self.__char_positions = attr[1].split(" ")
             # strip x_bboxes
             self.__char_positions = self.__char_positions[1:]
@@ -512,17 +547,13 @@ class _LineHTMLParser(HTMLParser):
         for word in words:
             if word == "":
                 continue
-            positions = self.__char_positions[0:4 * len(word)]
-            self.__char_positions = self.__char_positions[4 * len(word):]
+            positions = self.__char_positions[0 : 4 * len(word)]
+            self.__char_positions = self.__char_positions[4 * len(word) :]
 
-            left_pos = min([int(positions[x])
-                            for x in range(0, 4 * len(word), 4)])
-            top_pos = min([int(positions[x])
-                           for x in range(1, 4 * len(word), 4)])
-            right_pos = max([int(positions[x])
-                             for x in range(2, 4 * len(word), 4)])
-            bottom_pos = max([int(positions[x])
-                              for x in range(3, 4 * len(word), 4)])
+            left_pos = min([int(positions[x]) for x in range(0, 4 * len(word), 4)])
+            top_pos = min([int(positions[x]) for x in range(1, 4 * len(word), 4)])
+            right_pos = max([int(positions[x]) for x in range(2, 4 * len(word), 4)])
+            bottom_pos = max([int(positions[x]) for x in range(3, 4 * len(word), 4)])
 
             box_pos = ((left_pos, top_pos), (right_pos, bottom_pos))
             box = Box(word, box_pos)
@@ -541,12 +572,12 @@ class WordBoxBuilder(BaseBuilder):
 
     def __init__(self, tesseract_layout=1):
         from .tesseract import psm_parameter
+
         tess_flags = [psm_parameter(), str(tesseract_layout)]
         file_ext = ["html", "hocr"]
         tess_conf = ["hocr"]
         cun_args = ["-f", "hocr"]
-        super(WordBoxBuilder, self).__init__(file_ext, tess_flags, tess_conf,
-                                             cun_args)
+        super(WordBoxBuilder, self).__init__(file_ext, tess_flags, tess_conf, cun_args)
         self.word_boxes = []
         self.tesseract_layout = tesseract_layout
 
@@ -615,12 +646,12 @@ class LineBoxBuilder(BaseBuilder):
 
     def __init__(self, tesseract_layout=1):
         from .tesseract import psm_parameter
+
         tess_flags = [psm_parameter(), str(tesseract_layout)]
         file_ext = ["html", "hocr"]
         tess_conf = ["hocr"]
         cun_args = ["-f", "hocr"]
-        super(LineBoxBuilder, self).__init__(file_ext, tess_flags, tess_conf,
-                                             cun_args)
+        super(LineBoxBuilder, self).__init__(file_ext, tess_flags, tess_conf, cun_args)
         self.lines = []
         self.tesseract_layout = tesseract_layout
 
@@ -633,8 +664,10 @@ class LineBoxBuilder(BaseBuilder):
         """
         parsers = [
             (_WordHTMLParser(), lambda parser: parser.lines),
-            (_LineHTMLParser(), lambda parser: [LineBox([box], box.position)
-                                                for box in parser.boxes]),
+            (
+                _LineHTMLParser(),
+                lambda parser: [LineBox([box], box.position) for box in parser.boxes],
+            ),
         ]
         html_str = file_descriptor.read()
 

@@ -8,13 +8,13 @@ from bookworm.base_service import BookwormService
 from bookworm.ocr_engines import GENERIC_OCR_ENGINES
 from bookworm.platform_services.ocr_provider import PLATFORM_SPECIFIC_OCR_ENGINES
 from bookworm.logger import logger
-from .ocr_dialogs import     OcrPanel
+from .ocr_dialogs import OcrPanel
 from .ocr_menu import (
     OCRMenuIds,
     OCRMenu,
     OCR_KEYBOARD_SHORTCUTS,
     ocr_started,
-    ocr_ended
+    ocr_ended,
 )
 
 
@@ -23,10 +23,10 @@ PAGE_CACHE_SIZE = 500
 
 
 OCR_CONFIG_SPEC = {
-    "ocr": {
-        "engine": 'string(default="")',
-        "enhance_images": 'boolean(default=True)',
-    }
+    "ocr": dict(
+        engine='string(default="")',
+        enhance_images="boolean(default=True)",
+    )
 }
 
 
@@ -40,10 +40,10 @@ class OCRService(BookwormService):
 
     @classmethod
     def check(cls):
-        return True #return not cls._available_ocr_engines
+        return any(cls._available_ocr_engines)
 
     def __post_init__(self):
-        self._init_ocr_engine()
+        self.init_saved_options()
 
     def process_menubar(self, menubar):
         self.menu = OCRMenu(self, menubar)
@@ -74,7 +74,7 @@ class OCRService(BookwormService):
                 return ocr_engine
 
     def get_first_available_ocr_engine(self):
-        """Return the configured ocr engine or the first available one, None otherwise.""" 
+        """Return the configured ocr engine or the first available one, None otherwise."""
         return (
             self.get_ocr_engine_by_name(config.conf["ocr"]["engine"])
             or self._available_ocr_engines[0]
@@ -82,5 +82,8 @@ class OCRService(BookwormService):
 
     def _init_ocr_engine(self):
         self.current_ocr_engine = self.get_first_available_ocr_engine()
+        self.init_saved_options()
+
+    def init_saved_options(self):
         self.stored_options = None
         self.saved_scanned_pages = LRU(size=PAGE_CACHE_SIZE)

@@ -1,4 +1,4 @@
-'''
+"""
 cuneiform.py is a wrapper for Cuneiform
 
 USAGE:
@@ -12,7 +12,7 @@ PyOCR is released under the GPL v3.
 Copyright (c) Samuel Hoffstaetter, 2009
 Copyright (c) Jerome Flesch, 2011-2016
 https://gitlab.gnome.org/World/OpenPaperwork/pyocr#readme
-'''
+"""
 
 import codecs
 from io import BytesIO
@@ -26,7 +26,7 @@ from .error import CuneiformError
 
 
 # CHANGE THIS IF CUNEIFORM IS NOT IN YOUR PATH, OR IS NAMED DIFFERENTLY
-CUNEIFORM_CMD = 'cuneiform'
+CUNEIFORM_CMD = "cuneiform"
 
 CUNEIFORM_DATA_POSSIBLE_PATHS = [
     "/usr/local/share/cuneiform",
@@ -38,14 +38,14 @@ LANGUAGES_SPLIT_RE = re.compile("[^a-z]")
 VERSION_LINE_RE = re.compile(r"Cuneiform for \w+ (\d+).(\d+).(\d+)")
 
 __all__ = [
-    'can_detect_orientation',
-    'get_available_builders',
-    'get_available_languages',
-    'get_name',
-    'get_version',
-    'image_to_string',
-    'is_available',
-    'CuneiformError',
+    "can_detect_orientation",
+    "get_available_builders",
+    "get_available_languages",
+    "get_name",
+    "get_version",
+    "image_to_string",
+    "is_available",
+    "CuneiformError",
 ]
 
 
@@ -66,8 +66,8 @@ def get_available_builders():
 
 
 def temp_file(suffix):
-    ''' Returns a temporary file '''
-    return tempfile.NamedTemporaryFile(prefix='cuneiform_', suffix=suffix)
+    """ Returns a temporary file """
+    return tempfile.NamedTemporaryFile(prefix="cuneiform_", suffix=suffix)
 
 
 def image_to_string(image, lang=None, builder=None):
@@ -91,18 +91,18 @@ def image_to_string(image, lang=None, builder=None):
         img_data = BytesIO()
         image.save(img_data, format="BMP")
 
-        proc = subprocess.Popen(cmd,
-                                stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(
+            cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
         proc.stdin.write(img_data.getvalue())
         proc.stdin.close()
-        output = proc.stdout.read().decode('utf-8')
+        output = proc.stdout.read().decode("utf-8")
         retcode = proc.wait()
         if retcode:
             raise CuneiformError(retcode, output)
-        with codecs.open(output_file.name, 'r', encoding='utf-8',
-                         errors='replace') as file_desc:
+        with codecs.open(
+            output_file.name, "r", encoding="utf-8", errors="replace"
+        ) as file_desc:
             results = builder.read_file(file_desc)
         return results
 
@@ -112,15 +112,16 @@ def is_available():
 
 
 def get_available_languages():
-    proc = subprocess.Popen([CUNEIFORM_CMD, "-l"], stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT)
-    output = proc.stdout.read().decode('utf-8')
+    proc = subprocess.Popen(
+        [CUNEIFORM_CMD, "-l"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    )
+    output = proc.stdout.read().decode("utf-8")
     proc.wait()
     languages = []
     for line in output.split("\n"):
         if not line.startswith(LANGUAGES_LINE_PREFIX):
             continue
-        line = line[len(LANGUAGES_LINE_PREFIX):]
+        line = line[len(LANGUAGES_LINE_PREFIX) :]
         for language in LANGUAGES_SPLIT_RE.split(line):
             if language == "":
                 continue
@@ -129,9 +130,10 @@ def get_available_languages():
 
 
 def get_version():
-    proc = subprocess.Popen([CUNEIFORM_CMD], stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT)
-    output = proc.stdout.read().decode('utf-8')
+    proc = subprocess.Popen(
+        [CUNEIFORM_CMD], stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    )
+    output = proc.stdout.read().decode("utf-8")
     proc.wait()
     for line in output.split("\n"):
         m = VERSION_LINE_RE.match(line)

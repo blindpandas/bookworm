@@ -10,7 +10,9 @@ class LocaleInfo:
 
     def __init__(self, identifier, *, given_locale_name=None):
         self.identifier = identifier.replace(" ", "_").replace("-", "_")
-        self.given_locale_name = given_locale_name if given_locale_name is not None else identifier
+        self.given_locale_name = (
+            given_locale_name if given_locale_name is not None else identifier
+        )
         try:
             self.locale = Locale.parse(self.identifier)
             self.language = self.locale.language
@@ -24,7 +26,9 @@ class LocaleInfo:
     @classmethod
     def from_three_letter_code(cls, lang_code, *args, **kwargs):
         try:
-            return cls.from_babel_locale(Locale.parse(lang_code), given_locale_name=lang_code)
+            return cls.from_babel_locale(
+                Locale.parse(lang_code), given_locale_name=lang_code
+            )
         except (ValueError, UnknownLocaleError):
             lang = iso_639_alpha2(lang_code)
             if lang is None:
@@ -46,7 +50,9 @@ class LocaleInfo:
 
     def __getstate__(self) -> dict:
         """Support for pickling."""
-        return dict(identifier=self.identifier, given_locale_name=self.given_locale_name)
+        return dict(
+            identifier=self.identifier, given_locale_name=self.given_locale_name
+        )
 
     def __setstate__(self, state):
         """Support for unpickling."""

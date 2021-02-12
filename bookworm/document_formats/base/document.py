@@ -169,9 +169,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         self._page_content_cache[page_number] = content
         return content
 
-    def get_page_image(
-        self, page_number: int, zoom_factor: float = 1.0
-    ) -> bytes:
+    def get_page_image(self, page_number: int, zoom_factor: float = 1.0) -> bytes:
         """Convenience method: return the image of a page."""
         return self[page_number].get_image(zoom_factor)
 

@@ -13,11 +13,7 @@ from bookworm.i18n import setup_i18n, set_wx_locale
 from bookworm.database import init_database
 from bookworm.platform_services.shell import shell_integrate, shell_disintegrate
 from bookworm.signals import app_started, app_shuttingdown
-from bookworm.runtime import (
-    PackagingMode,
-    IS_RUNNING_PORTABLE,
-    CURRENT_PACKAGING_MODE
-)
+from bookworm.runtime import PackagingMode, IS_RUNNING_PORTABLE, CURRENT_PACKAGING_MODE
 from bookworm.service_handler import ServiceHandler
 from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.gui.settings import show_file_association_dialog

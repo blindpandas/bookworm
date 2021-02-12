@@ -1,4 +1,4 @@
-'''
+"""
 libtesseract/ is a wrapper for google's Tesseract-OCR C API
 ( http://code.google.com/p/tesseract-ocr/ ).
 
@@ -12,7 +12,7 @@ COPYRIGHT:
 PyOCR is released under the GPL v3.
 Copyright (c) Jerome Flesch, 2011-2016
 https://gitlab.gnome.org/World/OpenPaperwork/pyocr#readme
-'''
+"""
 from os import devnull
 from .. import builders
 from . import tesseract_raw
@@ -20,25 +20,26 @@ from ..error import TesseractError
 from ..util import digits_only
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
 __all__ = [
-    'can_detect_orientation',
-    'detect_orientation',
-    'get_available_builders',
-    'get_available_languages',
-    'get_name',
-    'get_version',
-    'image_to_string',
-    'is_available',
-    'TesseractError',
+    "can_detect_orientation",
+    "detect_orientation",
+    "get_available_builders",
+    "get_available_languages",
+    "get_name",
+    "get_version",
+    "image_to_string",
+    "is_available",
+    "TesseractError",
 ]
 
 
 def can_detect_orientation():
     langs = get_available_languages()
-    return 'osd' in langs
+    return "osd" in langs
 
 
 def detect_orientation(image, lang=None):
@@ -46,27 +47,20 @@ def detect_orientation(image, lang=None):
     # psm mode with other than osd language
     # lang argument left purely for compatibility reasons
     # tested on 4.0.0-rc2
-    handle = tesseract_raw.init(lang='osd')
+    handle = tesseract_raw.init(lang="osd")
     try:
-        tesseract_raw.set_page_seg_mode(
-            handle, tesseract_raw.PageSegMode.OSD_ONLY
-        )
+        tesseract_raw.set_page_seg_mode(handle, tesseract_raw.PageSegMode.OSD_ONLY)
         tesseract_raw.set_image(handle, image)
         os = tesseract_raw.detect_os(handle)
-        if os['confidence'] <= 0:
-            raise TesseractError(
-                "no script", "no script detected"
-            )
+        if os["confidence"] <= 0:
+            raise TesseractError("no script", "no script detected")
         orientation = {
             tesseract_raw.Orientation.PAGE_UP: 0,
             tesseract_raw.Orientation.PAGE_RIGHT: 90,
             tesseract_raw.Orientation.PAGE_DOWN: 180,
             tesseract_raw.Orientation.PAGE_LEFT: 270,
-        }[os['orientation']]
-        return {
-            'angle': orientation,
-            'confidence': os['confidence']
-        }
+        }[os["orientation"]]
+        return {"angle": orientation, "confidence": os["confidence"]}
     finally:
         tesseract_raw.cleanup(handle)
 
@@ -108,13 +102,10 @@ def image_to_string(image, lang=None, builder=None):
         for lang_item in clang.split("+"):
             if lang_item not in tesseract_raw.get_available_languages(handle):
                 raise TesseractError(
-                    "no lang",
-                    "language {} is not available".format(lang_item)
+                    "no lang", "language {} is not available".format(lang_item)
                 )
 
-        tesseract_raw.set_page_seg_mode(
-            handle, builder.tesseract_layout
-        )
+        tesseract_raw.set_page_seg_mode(handle, builder.tesseract_layout)
         tesseract_raw.set_debug_file(handle, devnull)
 
         tesseract_raw.set_image(handle, image)
@@ -125,32 +116,23 @@ def image_to_string(image, lang=None, builder=None):
         tesseract_raw.recognize(handle)
         res_iterator = tesseract_raw.get_iterator(handle)
         if res_iterator is None:
-            raise TesseractError(
-                "no script", "no script detected"
-            )
-        page_iterator = tesseract_raw.result_iterator_get_page_iterator(
-            res_iterator
-        )
+            raise TesseractError("no script", "no script detected")
+        page_iterator = tesseract_raw.result_iterator_get_page_iterator(res_iterator)
 
         while True:
-            if tesseract_raw.page_iterator_is_at_beginning_of(
-                    page_iterator, lvl_line):
+            if tesseract_raw.page_iterator_is_at_beginning_of(page_iterator, lvl_line):
                 (r, box) = tesseract_raw.page_iterator_bounding_box(
                     page_iterator, lvl_line
                 )
-                assert(r)
+                assert r
                 box = _tess_box_to_pyocr_box(box)
                 builder.start_line(box)
 
-            last_word_in_line = (
-                tesseract_raw.page_iterator_is_at_final_element(
-                    page_iterator, lvl_line, lvl_word
-                )
+            last_word_in_line = tesseract_raw.page_iterator_is_at_final_element(
+                page_iterator, lvl_line, lvl_word
             )
 
-            word = tesseract_raw.result_iterator_get_utf8_text(
-                res_iterator, lvl_word
-            )
+            word = tesseract_raw.result_iterator_get_utf8_text(res_iterator, lvl_word)
 
             confidence = tesseract_raw.result_iterator_get_confidence(
                 res_iterator, lvl_word
@@ -160,7 +142,7 @@ def image_to_string(image, lang=None, builder=None):
                 (r, box) = tesseract_raw.page_iterator_bounding_box(
                     page_iterator, lvl_word
                 )
-                assert(r)
+                assert r
                 box = _tess_box_to_pyocr_box(box)
                 builder.add_word(word, box, confidence)
 
@@ -176,9 +158,8 @@ def image_to_string(image, lang=None, builder=None):
     return builder.get_output()
 
 
-def image_to_pdf(image, output_file, lang=None, input_file="stdin",
-                 textonly=False):
-    '''
+def image_to_pdf(image, output_file, lang=None, input_file="stdin", textonly=False):
+    """
     Creates pdf file with embeded text based on OCR from an image
 
     Args:
@@ -194,19 +175,16 @@ def image_to_pdf(image, output_file, lang=None, input_file="stdin",
             open the file. Defaults to stdin.
         textonly: create pdf with only one invisible text layer. Defaults to
             False.
-    '''
-    LibtesseractPdfBuilder()\
-        .set_lang(lang)\
-        .set_output_file(output_file)\
-        .set_text_only(textonly)\
-        .add_image(image)\
-        .build()
+    """
+    LibtesseractPdfBuilder().set_lang(lang).set_output_file(output_file).set_text_only(
+        textonly
+    ).add_image(image).build()
 
 
 class LibtesseractPdfBuilder(object):
-    '''
+    """
     Creates a pdf file with embeded text based on OCR from one or more images.
-    '''
+    """
 
     def __init__(self):
         self.images = []
@@ -215,12 +193,12 @@ class LibtesseractPdfBuilder(object):
         self.text_only = False
 
     def set_lang(self, lang):
-        '''
+        """
         Language to be used for ocr.
         :param lang: three letter language code. For available languages see
             https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc#languages.
             Defaults to None.
-        '''
+        """
         self.lang = lang
         return self
 
@@ -229,42 +207,38 @@ class LibtesseractPdfBuilder(object):
         return self
 
     def set_text_only(self, text_only):
-        '''
+        """
         :param text_only: create pdf with only one invisible text layer.
         Defaults to False.
-        '''
+        """
         self.text_only = text_only
         return self
 
     def add_image(self, img):
-        '''
+        """
         Add an image to be converted to a page in the pdf
         :param img: image to convert
-        '''
+        """
         self.images.append(img)  # or something else
         return self
 
     def __validate(self):
         if len(self.images) < 1:
-            raise ValueError(
-                "At least one image is required to build the pdf!"
-            )
+            raise ValueError("At least one image is required to build the pdf!")
 
         if self.output_file is None:
             raise ValueError("An output-file is required to build the pdf!")
 
     def build(self):
-        '''
+        """
         Create and write PDF file.
-        '''
+        """
         self.__validate()
 
         handle = tesseract_raw.init(lang=self.lang)
         renderer = None
         try:
-            tesseract_raw.set_page_seg_mode(
-                handle, tesseract_raw.PageSegMode.AUTO_OSD
-            )
+            tesseract_raw.set_page_seg_mode(handle, tesseract_raw.PageSegMode.AUTO_OSD)
 
             renderer = tesseract_raw.init_pdf_renderer(
                 handle, self.output_file, self.text_only
@@ -296,11 +270,8 @@ def is_available():
     # C-API with Tesseract <= 3.02 segfaults sometimes
     # (seen with Debian stable + Paperwork)
     # not tested with 3.03
-    if (version[0] < 3 or
-            (version[0] == 3 and version[1] < 4)):
-        logger.warning("Unsupported version [%s]" % ".".join(
-            [str(r) for r in version]
-        ))
+    if version[0] < 3 or (version[0] == 3 and version[1] < 4):
+        logger.warning("Unsupported version [%s]" % ".".join([str(r) for r in version]))
         return False
     return True
 

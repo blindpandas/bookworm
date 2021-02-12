@@ -42,8 +42,6 @@ def app_path():
     if CURRENT_PACKAGING_MODE in (PackagingMode.Installed, PackagingMode.Portable):
         return Path(path_finder.app_path())
     else:
-        import bookworm
-
         return Path(bookworm.__path__[0])
 
 

@@ -25,7 +25,6 @@ except Exception as e:
     log.error(f"Could not load the OCR functionality: {e}")
 
 
-
 class DocrEngine(BaseOcrEngine):
     name = "docr"
     display_name = _("Windows 10 OCR")
@@ -42,9 +41,7 @@ class DocrEngine(BaseOcrEngine):
     def recognize(cls, ocr_request: OcrRequest) -> OcrResult:
         docr_eng = Win10DocrEngine(ocr_request.language.ietf_tag)
         recognized_text = docr_eng.recognize(
-            ocr_request.image.data,
-            ocr_request.image.width,
-            ocr_request.image.height
+            ocr_request.image.data, ocr_request.image.width, ocr_request.image.height
         )
         return OcrResult(
             recognized_text=recognized_text,

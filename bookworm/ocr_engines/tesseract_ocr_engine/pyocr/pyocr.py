@@ -50,9 +50,9 @@ from . import libtesseract
 from . import tesseract
 
 __all__ = [
-    'get_available_tools',
-    'TOOLS',
-    'VERSION',
+    "get_available_tools",
+    "TOOLS",
+    "VERSION",
 ]
 
 

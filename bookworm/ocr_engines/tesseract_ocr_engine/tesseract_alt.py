@@ -19,7 +19,6 @@ class TesseractOcrEngineAlt(BaseOcrEngine):
     name = "tesseract_ocr_alt"
     display_name = _("Tesseract OCR Engine (Alternative implementation)")
 
-
     @classmethod
     def check(cls) -> bool:
         if sys.platform == "win32":
@@ -45,9 +44,11 @@ class TesseractOcrEngineAlt(BaseOcrEngine):
         img = Image.frombytes(
             "RGBA",
             (ocr_request.image.width, ocr_request.image.height),
-            ocr_request.image.data
+            ocr_request.image.data,
         )
-        recognized_text = pytesseract.image_to_string(img, ocr_request.language.given_locale_name, nice=1)
+        recognized_text = pytesseract.image_to_string(
+            img, ocr_request.language.given_locale_name, nice=1
+        )
         return OcrResult(
             recognized_text=recognized_text,
             cookie=ocr_request.cookie,
@@ -56,5 +57,5 @@ class TesseractOcrEngineAlt(BaseOcrEngine):
     @classmethod
     def scan_to_text(cls, *args, **kwargs):
         os.environ["OMP_THREAD_LIMIT"] = "2"
-        #os.environ["TESSEDIT_DO_INVERT"] = "0"
+        # os.environ["TESSEDIT_DO_INVERT"] = "0"
         super().scan_to_text(*args, **kwargs)
