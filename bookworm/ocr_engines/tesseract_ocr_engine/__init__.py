@@ -24,8 +24,12 @@ class TesseractOcrEngine(BaseOcrEngine):
     _libtesseract = None
 
     @staticmethod
-    def _check_on_windows():
-        tesseract_lib_path = data_path("tesseract_ocr").resolve()
+    def get_tesseract_path():
+        return data_path("tesseract_ocr").resolve()
+
+    @classmethod
+    def _check_on_windows(cls):
+        tesseract_lib_path = cls.get_tesseract_path()
         if tesseract_lib_path.exists():
             ctypes.windll.kernel32.AddDllDirectory(str(tesseract_lib_path))
             os.environ["TESSDATA_PREFIX"] = str(tesseract_lib_path / "tessdata")

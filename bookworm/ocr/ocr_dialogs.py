@@ -3,6 +3,7 @@
 import wx
 import wx.lib.sized_controls as sc
 from dataclasses import dataclass
+from wx.adv import CommandLinkButton
 from bookworm import app
 from bookworm import config
 from bookworm import typehints as t
@@ -10,6 +11,7 @@ from bookworm.i18n import LocaleInfo
 from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.gui.components import make_sized_static_box, SimpleDialog, SnakDialog
 from bookworm.logger import logger
+from bookworm.ocr_engines.tesseract_ocr_engine import TesseractOcrEngine
 from bookworm.ocr_engines.image_processing_pipelines import (
     ImageProcessingPipeline,
     DebugProcessingPipeline,
@@ -56,6 +58,25 @@ class OcrPanel(SettingsPanel):
             style=wx.RA_SPECIFY_COLS,
             choices=_engines_display,
         )
+        # Translators: the label of a group of controls in the OCR page
+        # of the settings related to Tesseract OCR engine
+        tessBox = self.make_static_box(_("Tesseract OCR Engine"))
+        if not TesseractOcrEngine.get_tesseract_path().exists():
+            tessEngineDlBtn = CommandLinkButton(
+                tessBox,
+                -1,
+                _("Download Tesseract OCR Engine"),
+                _("Get a free, high-quality OCR engine that supports over 100 languages.")
+            )
+            self.Bind(wx.EVT_BUTTON, self.onDownloadTesseractEngine, tessEngineDlBtn)
+        else:
+            tessLangDlBtn = CommandLinkButton(
+                tessBox,
+                -1,
+                _("Download Tesseract OCR Languages"),
+                _("Add support for additional languages in Tesseract OCR Engine.")
+            )
+            self.Bind(wx.EVT_BUTTON, self.onDownloadTesseractLanguages, tessLangDlBtn)
         # Translators: the label of a group of controls in the reading page
         # of the settings related to image enhancement
         miscBox = self.make_static_box(_("Image processing"))
@@ -80,6 +101,12 @@ class OcrPanel(SettingsPanel):
         super().reconcile(strategy=strategy)
         if strategy is ReconciliationStrategies.save:
             self._service._init_ocr_engine()
+
+    def onDownloadTesseractEngine(self, event):
+        ...
+
+    def onDownloadTesseractLanguages(self, event):
+        ...
 
 
 class OCROptionsDialog(SimpleDialog):
