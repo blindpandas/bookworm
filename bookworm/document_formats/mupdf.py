@@ -8,6 +8,8 @@ from hashlib import md5
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 from pathlib import Path
+from pyxpdf import Document as XPdfDocument
+from pyxpdf.xpdf import TextOutput as XPdfTextOutput, TextControl as XPdfTextControl
 from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
 from bookworm.paths import home_data_path
 from bookworm.utils import recursively_iterdir
@@ -30,7 +32,7 @@ log = logger.getChild(__name__)
 
 class FitzPage(BasePage):
     """Wrapps fitz.Page."""
-
+        
     def _text_from_page(self, page: fitz.Page) -> str:
         bloks = page.getTextBlocks()
         text = [blk[4].replace("\n", " ") for blk in bloks if blk[-1] == 0]
@@ -48,6 +50,17 @@ class FitzPage(BasePage):
         return pix.samples, pix.width, pix.height
 
 
+class FitzPdfPage(FitzPage):
+    """Represents PDF documents."""
+
+    def __init__(self, *args, xpdf_text_output, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.xpdf_text_output = xpdf_text_output
+
+    def get_text(self):
+        return self.xpdf_text_output.get(self.index)[:-1]
+
+
 class FitzDocument(BaseDocument):
     """The backend of this document type is Fitz (AKA MuPDF) ."""
 
@@ -60,7 +73,16 @@ class FitzDocument(BaseDocument):
     )
 
     def get_page(self, index: int) -> FitzPage:
-        return FitzPage(self, index)
+        return FitzPdfPage(self, index, xpdf_text_output=self.xpdf_text_output)
+
+    @cached_property
+    def xpdf_doc(self):
+        return XPdfDocument(self.filename)
+
+    @cached_property
+    def xpdf_text_output(self):
+        xtext_ctrl = XPdfTextControl(mode="reading")
+        return XPdfTextOutput(self.xpdf_doc, xtext_ctrl)
 
     def __len__(self) -> int:
         return self._ebook.pageCount
