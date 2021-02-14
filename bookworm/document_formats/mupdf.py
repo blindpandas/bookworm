@@ -58,7 +58,8 @@ class FitzPdfPage(FitzPage):
         self.xpdf_text_output = xpdf_text_output
 
     def get_text(self):
-        return self.xpdf_text_output.get(self.index)[:-1]
+        text = self.xpdf_text_output.get(self.index)[:-1]
+        return ftfy.fix_text(text, normalization="NFKC")
 
 
 class FitzDocument(BaseDocument):
