@@ -3,7 +3,7 @@
 
 from .base import ImageBlueprint, OcrRequest, OcrResult, BaseOcrEngine
 from .tesseract_ocr_engine import TesseractOcrEngine
-from .tesseract_ocr_engine.tesseract_alt import TesseractOcrEngineAlt
+#from .tesseract_ocr_engine.tesseract_alt import TesseractOcrEngineAlt
 
 
-GENERIC_OCR_ENGINES = [TesseractOcrEngine, TesseractOcrEngineAlt]
+GENERIC_OCR_ENGINES = [TesseractOcrEngine,]

@@ -33,6 +33,7 @@ class TesseractOcrEngine(BaseOcrEngine):
         if tesseract_lib_path.exists():
             ctypes.windll.kernel32.AddDllDirectory(str(tesseract_lib_path))
             os.environ["TESSDATA_PREFIX"] = str(tesseract_lib_path / "tessdata")
+            os.environ["PATH"] += os.pathsep + str(tesseract_lib_path)
             return True
         return False
 

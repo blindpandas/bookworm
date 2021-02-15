@@ -2,6 +2,6 @@
 
 from .base import SearchRequest, DocumentCapability, DocumentError, PaginationError
 from .pdf_document import FitzPdfDocument
-from .mupdf_base import FitzEPUBDocument, FitzFB2Document
-from .plain_text import PlainTextDocument
+from .mupdf_document import FitzEPUBDocument, FitzFB2Document
+from .plain_text_document import PlainTextDocument
 from .html_document import HtmlDocument

@@ -7,7 +7,7 @@ from pyxpdf_data import generate_xpdfrc
 from bookworm.paths import data_path
 from bookworm.utils import cached_property
 from bookworm.logger import logger
-from .mupdf_base import FitzDocument, FitzPage
+from .mupdf_document import FitzDocument, FitzPage
 
 log = logger.getChild(__name__)
 XPDF_CONFIG = dict(
@@ -67,7 +67,7 @@ class FitzPdfDocument(FitzDocument):
     def decrypt(self, password):
         is_ok =  bool(self._ebook.authenticate(password))
         if is_ok:
-            self.create_xpdf_document()
+            self.create_xpdf_document(password=password)
         return is_ok
 
     @staticmethod
