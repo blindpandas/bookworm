@@ -5,13 +5,18 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 
 # Data files
+PACKAGES_WITH_DATA = [
+    "pyxpdf_data",
+    "trafilatura",
+    "justext",
+]
 BOOKWORM_RESOURCES = collect_data_files('bookworm', excludes=['*.po',])
 DATA_FILES = [
     (src, Path(dst).relative_to("bookworm"),)
     for src, dst in BOOKWORM_RESOURCES
 ]
-DATA_FILES += collect_data_files("justext")
-DATA_FILES += collect_data_files("trafilatura")
+for pkg_name in PACKAGES_WITH_DATA:
+    DATA_FILES += collect_data_files(pkg_name)
 
 # Hidden imports
 HIDDEN_IMPORTS = ["pkg_resources.py2_warn"] + collect_submodules("babel")

@@ -8,7 +8,7 @@ from bookworm import config
 from bookworm import database
 from bookworm.i18n import is_rtl
 from bookworm.document_formats import (
-    FitzDocument,
+    FitzPdfDocument,
     FitzEPUBDocument,
     FitzFB2Document,
     PlainTextDocument,
@@ -58,8 +58,8 @@ class EBookReader:
     # A list of document classes
     # Each class supports a different file format
     document_classes = (
+        FitzPdfDocument,
         FitzEPUBDocument,
-        FitzDocument,
         FitzFB2Document,
         PlainTextDocument,
         HtmlDocument,
