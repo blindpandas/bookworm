@@ -1,14 +1,18 @@
 # coding: utf-8
 
-import cv2
 import numpy as np
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass, field
 from io import BytesIO
+from demandimport import enabled as lazy_import
 from PIL import Image, ImageOps
 from bookworm import typehints as t
 from bookworm.logger import logger
-from . import cv2_utils
+
+
+with lazy_import():
+    import cv2
+    from . import cv2_utils
 
 
 log = logger.getChild(__name__)
