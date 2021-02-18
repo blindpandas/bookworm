@@ -4,8 +4,9 @@ from pathlib import Path
 from io import StringIO
 from chemical import it
 from selectolax.parser import HTMLParser
+from functools import cached_property
 from itertools import chain
-from bookworm.utils import cached_property, NEWLINE
+from bookworm.utils import NEWLINE
 from bookworm.document_formats.base import (
     BasePage,
     FluidDocument,

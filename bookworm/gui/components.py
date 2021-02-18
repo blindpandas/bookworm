@@ -4,14 +4,20 @@ import contextlib
 import wx
 import wx.lib.mixins.listctrl as listmix
 import wx.lib.sized_controls as sc
+from concurrent.futures import Future
 from dataclasses import dataclass
 from itertools import chain
 import bookworm.typehints as t
+from bookworm.concurrency import threaded_worker
 from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
 
+# Some custom types
+ObjectCollection = t.Iterable[t.Any]
+LongRunningTask = t.Callable[[t.Any], t.Any]
+DoneCallback = t.Callable[[Future], None]
 
 def make_sized_static_box(parent, title):
     stbx = sc.SizedStaticBox(parent, -1, title)
@@ -205,6 +211,7 @@ class SnakDialog(SimpleDialog):
     def __init__(self, message, *args, dismiss_callback=None, **kwargs):
         self.message = message
         self.dismiss_callback = dismiss_callback
+        kwargs.setdefault("parent", wx.GetApp().mainFrame)
         super().__init__(*args, title="", style=0, **kwargs)
 
     def addControls(self, parent):
@@ -235,6 +242,22 @@ class SnakDialog(SimpleDialog):
         return
 
 
+class AsyncSnakDialog:
+    """A helper to make the use of SnakDialogs Ergonomic."""
+
+    def __init__(self, task: LongRunningTask, done_callback: DoneCallback, *sdg_args, **sdg_kwargs):
+        self.snak_dg = SnakDialog(*sdg_args, **sdg_kwargs)
+        self.done_callback = done_callback
+        self.future = threaded_worker.submit(task).add_done_callback(self.on_future_completed)
+        self.snak_dg.Show()
+
+    def on_future_completed(self, completed_future):
+        self.snak_dg.Hide()
+        with contextlib.suppress(RuntimeError):
+            self.snak_dg.Destroy()
+        self.done_callback(completed_future)
+
+
 @dataclass
 class ColumnDefn:
     title: str
@@ -256,15 +279,16 @@ class ColumnDefn:
         raise ValueError(f"Unknown alignment directive {self.alignment}")
 
 
-ObjectCollection = t.Iterable[t.Any]
-ColumnSpecs = t.Iterable[ColumnDefn]
-
 
 class ImmutableObjectListView(DialogListCtrl):
     """An immutable  list view that deals with objects rather than strings."""
 
     def __init__(
-        self, *args, columns: ColumnSpecs = (), objects: ObjectCollection = (), **kwargs
+        self,
+        *args,
+        columns: t.Iterable[ColumnDefn]= (),
+        objects: ObjectCollection = (),
+        **kwargs
     ):
         super().__init__(*args, **kwargs)
         self._objects = None

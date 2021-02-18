@@ -4,6 +4,7 @@ import os
 import zipfile
 import fitz
 import ftfy
+from functools import cached_property
 from hashlib import md5
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
@@ -11,7 +12,6 @@ from pathlib import Path
 from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
 from bookworm.paths import home_data_path
 from bookworm.utils import recursively_iterdir
-from bookworm.utils import cached_property
 from bookworm.document_formats.base import (
     BaseDocument,
     BasePage,

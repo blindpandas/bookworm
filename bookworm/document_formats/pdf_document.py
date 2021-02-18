@@ -1,11 +1,11 @@
 # coding: utf-8
 
 import ftfy
+from functools import cached_property
 from pyxpdf import Document as XPdfDocument, Config as XPdfConfig
 from pyxpdf.xpdf import TextOutput as XPdfTextOutput, TextControl as XPdfTextControl
 from pyxpdf_data import generate_xpdfrc
 from bookworm.paths import data_path
-from bookworm.utils import cached_property
 from bookworm.logger import logger
 from .mupdf_document import FitzDocument, FitzPage
 

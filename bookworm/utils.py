@@ -2,14 +2,18 @@
 
 import sys
 import os
+import math
 import glob
 import wx
+import requests
 import hashlib
+from dataclasses import dataclass
 from functools import wraps
 from pathlib import Path
 from xml.sax.saxutils import escape
 from datetime import datetime
 from babel.dates import format_datetime as babel_format_datetime
+from bookworm import typehints as t
 from bookworm import app
 from bookworm.concurrency import call_threaded
 from bookworm.platform_services.runtime import system_start_app
@@ -117,55 +121,6 @@ def search(pattern, text):
 
 def format_datetime(date: datetime) -> str:
     return babel_format_datetime(date, locale=app.current_language)
-
-
-class cached_property(property):
-
-    """A decorator that converts a function into a lazy property.  The
-    function wrapped is called the first time to retrieve the result
-    and then that calculated result is used the next time you access
-    the value::
-
-        class Foo(object):
-
-            @cached_property
-            def foo(self):
-                # calculate something important here
-                return 42
-
-    The class has to have a `__dict__` in order for this property to
-    work.
-
-    Taken as is from werkzeug, a WSGI toolkit for python.
-    :copyright: (c) 2014 by the Werkzeug Team.
-    """
-
-    # implementation detail: A subclass of python's builtin property
-    # decorator, we override __get__ to check for a cached value. If one
-    # choses to invoke __get__ by hand the property will still work as
-    # expected because the lookup logic is replicated in __get__ for
-    # manual invocation.
-
-    def __init__(self, func, name=None, doc=None):
-        self.__name__ = name or func.__name__
-        self.__module__ = func.__module__
-        self.__doc__ = doc or func.__doc__
-        self.func = func
-
-    def __set__(self, obj, value):
-        obj.__dict__[self.__name__] = value
-
-    def __get__(self, obj, type=None):
-        if obj is None:
-            return self
-        value = obj.__dict__.get(self.__name__, _missing)
-        if value is _missing:
-            value = self.func(obj)
-            obj.__dict__[self.__name__] = value
-        return value
-
-    def __delete__(self, obj):
-        obj.__dict__.pop(self.__name__)
 
 
 def escape_html(text):

@@ -20,7 +20,7 @@ from bookworm.concurrency import call_threaded, process_worker
 from bookworm import ocr
 from bookworm import speech
 from bookworm.reader import EBookReader
-from bookworm.utils import restart_application, cached_property, gui_thread_safe
+from bookworm.utils import restart_application, gui_thread_safe
 from bookworm.logger import logger
 from bookworm.gui.contentview_ctrl import EVT_CONTEXTMENU_REQUESTED
 from bookworm.gui.settings import PreferencesDialog

@@ -73,8 +73,8 @@ class OcrPanel(SettingsPanel):
             tessLangDlBtn = CommandLinkButton(
                 tessBox,
                 -1,
-                _("Download Tesseract OCR Languages"),
-                _("Add support for additional languages in Tesseract OCR Engine.")
+                _("Manage Tesseract OCR Languages"),
+                _("Add support for new languages, and /or remove installed languages.")
             )
             self.Bind(wx.EVT_BUTTON, self.onDownloadTesseractLanguages, tessLangDlBtn)
         # Translators: the label of a group of controls in the reading page

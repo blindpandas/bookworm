@@ -2,8 +2,8 @@
 
 import os
 import regex
+from functools import cached_property
 from io import StringIO
-from bookworm.utils import cached_property
 from bookworm.document_formats.base import (
     FluidDocument,
     Section,

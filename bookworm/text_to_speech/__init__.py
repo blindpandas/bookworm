@@ -4,6 +4,7 @@ import wx
 import queue
 import bisect
 import ujson as json
+from functools import cached_property
 from contextlib import suppress
 from base64 import urlsafe_b64encode, urlsafe_b64decode
 from dataclasses import dataclass
@@ -19,7 +20,7 @@ from bookworm.speechdriver.enumerations import (
     EmphSpec,
     PauseSpec,
 )
-from bookworm.utils import cached_property, gui_thread_safe
+from bookworm.utils import gui_thread_safe
 from bookworm.vendor.sentence_splitter import (
     SentenceSplitter,
     SentenceSplitterException,

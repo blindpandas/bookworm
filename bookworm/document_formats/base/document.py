@@ -3,15 +3,15 @@
 import gc
 from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
-from enum import IntFlag, auto
-from functools import wraps
+from functools import cached_property, wraps
 from lru import LRU
 from pycld2 import detect as detect_language, error as CLD2Error
 from bookworm import typehints as t
 from bookworm.concurrency import QueueProcess, call_threaded
-from bookworm.utils import cached_property, generate_sha1hash_async
+from bookworm.utils import generate_sha1hash_async
 from bookworm.logger import logger
 from .elements import *
+from .features import DocumentCapability, ReadingMode
 from . import tools as doctools
 
 
@@ -27,25 +27,6 @@ class PaginationError(DocumentError, IndexError):
     """Raised when the  `next` or `prev` page is not available."""
 
 
-class DocumentCapability(IntFlag):
-    """Represents feature flags for a document."""
-
-    NULL_CAPABILITY = auto()
-    """Placeholder for abstract classes."""
-    ASYNC_READ = auto()
-    """Does this document needs to be opened asynchronously."""
-    TOC_TREE = auto()
-    """Does this document provide a table-of-content?"""
-    METADATA = auto()
-    """Does this document provide metadata about its author and pub date?"""
-    GRAPHICAL_RENDERING = auto()
-    """Does this document provide graphical rendition of its pages?"""
-    FLUID_PAGINATION = auto()
-    """Does this document supports the notion of pages?"""
-    IMAGE_EXTRACTION = auto()
-    """Does this document supports extracting images out of pages?"""
-
-
 class BaseDocument(Sequence, metaclass=ABCMeta):
     """Defines the core interface of a document."""
 
@@ -55,11 +36,13 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     name: str = None
     """The displayable name of this document format."""
 
-    extensions: tuple = None
+    extensions: t.Tuple[str] = None
     """The file extension(s) of this format."""
 
     capabilities: DocumentCapability = DocumentCapability.NULL_CAPABILITY
     """A combination of DocumentCapability flags."""
+
+    supported_reading_modes: t.Tuple[ReadingMode] = (ReadingMode.DEFAULT)
 
     def __init__(self, filename: t.PathLike):
         self.filename = filename

@@ -74,9 +74,9 @@ class ImageProcessingPipeline(metaclass=ABCMeta):
     def should_process(self) -> bool:
         """Should this pipeline be applied given the arguments."""
 
-    @abstractmethod
     def process_image(self, image) -> ImageBlueprint:
-        """Process single image."""
+        """Process a single image."""
+        return image
 
     def process(self) -> t.Tuple[ImageBlueprint]:
         yield from (self.process_image(img) for img in self.images)
@@ -89,9 +89,6 @@ class TwoInOneScanProcessingPipeline(ImageProcessingPipeline):
 
     def should_process(self) -> bool:
         return True
-
-    def process_image(self, image):
-        pass
 
     def process(self) -> t.Tuple[ImageBlueprint]:
         for image in self.images:
@@ -222,9 +219,6 @@ class ConcatImagesProcessingPipeline(ImageProcessingPipeline):
     def should_process(self) -> bool:
         return True  # len({img.size for img in self.images}) == 1
 
-    def process_image(self, image):
-        pass
-
     def process(self) -> t.Iterable[ImageBlueprint]:
         imagelist = []
         for img in self.images:
@@ -282,3 +276,30 @@ class RotationProcessingPipeline(ImageProcessingPipeline):
         rotator = ImageOps.flip if rotation == "VERTICAL" else ImageOps.mirror
         image.data = rotator(img).convert("RGBA").tobytes()
         return image
+
+
+
+class DrainProcessingPipeline(ImageProcessingPipeline):
+    """Discards images that fits a specific criteria."""
+
+    def should_process(self) -> bool:
+        return True
+
+    def should_drop(self, image):
+        """Should we drop this image."""
+        return NotImplemented
+
+    def process(self):
+        for image in self.images:
+            if self.should_drop(image):
+                continue
+            yield image
+
+
+
+class EmptyPageDrainProcessingPipeline(DrainProcessingPipeline):
+    """Drops empty (i.e. white) pages from this pipeline."""
+
+    def should_drop(self, image):
+        low, high = image.to_pil().convert("L").getextrema()
+        return (high - low) <= 5
