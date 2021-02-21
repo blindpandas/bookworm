@@ -8,6 +8,7 @@ from lru import LRU
 from pycld2 import detect as detect_language, error as CLD2Error
 from bookworm import typehints as t
 from bookworm.concurrency import QueueProcess, call_threaded
+from bookworm.image_io import ImageIO
 from bookworm.utils import generate_sha1hash_async
 from bookworm.logger import logger
 from .elements import *
@@ -152,7 +153,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         self._page_content_cache[page_number] = content
         return content
 
-    def get_page_image(self, page_number: int, zoom_factor: float = 1.0) -> bytes:
+    def get_page_image(self, page_number: int, zoom_factor: float = 1.0) -> ImageIO:
         """Convenience method: return the image of a page."""
         return self[page_number].get_image(zoom_factor)
 
@@ -199,9 +200,9 @@ class BasePage(metaclass=ABCMeta):
         """Return the text content or raise NotImplementedError."""
 
     @abstractmethod
-    def get_image(self, zoom_factor: float) -> t.Tuple[bytes, int, int]:
+    def get_image(self, zoom_factor: float) -> ImageIO:
         """
-        Return page image in the form of (image_data, width, height)
+        Return page image as `ImageIO`
         or raise NotImplementedError.
         """
 
@@ -241,7 +242,7 @@ class FluidPage(BasePage):
     def get_text(self):
         return self.document.get_content()
 
-    def get_image(self, zoom_factor=1.0):
+    def get_image(self, zoom_factor=1.0) -> ImageIO:
         raise NotImplementedError
 
 

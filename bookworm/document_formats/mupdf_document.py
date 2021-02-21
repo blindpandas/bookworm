@@ -9,8 +9,8 @@ from hashlib import md5
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 from pathlib import Path
-from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
 from bookworm.paths import home_data_path
+from bookworm.image_io import ImageIO
 from bookworm.utils import recursively_iterdir
 from bookworm.document_formats.base import (
     BaseDocument,
@@ -43,9 +43,11 @@ class FitzPage(BasePage):
     def get_image(self, zoom_factor=1.0):
         mat = fitz.Matrix(zoom_factor, zoom_factor)
         pix = self.document._ebook[self.index].getPixmap(matrix=mat, alpha=True)
-        # if IS_HIGH_CONTRAST_ACTIVE:
-        #   pix.invertIRect(pix.irect)
-        return pix.samples, pix.width, pix.height
+        return ImageIO(
+            data=pix.samples,
+            width=pix.width,
+            height=pix.height
+        )
 
 
 class FitzDocument(BaseDocument):

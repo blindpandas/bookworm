@@ -1,75 +1,25 @@
 # coding: utf-8
 
 import numpy as np
+import cv2
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass, field
 from io import BytesIO
-from demandimport import enabled as lazy_import
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageEnhance
 from bookworm import typehints as t
+from bookworm.image_io import ImageIO
 from bookworm.logger import logger
-
-
-with lazy_import():
-    import cv2
-    from . import cv2_utils
+from . import cv2_utils
 
 
 log = logger.getChild(__name__)
 
 
 @dataclass
-class ImageBlueprint:
-    data: bytes
-    width: int
-    height: int
-    mode: str = "RGBA"
-
-    def __repr__(self):
-        return f"<ImageBlueprint: width={self.width}, height={self.height}>"
-
-    @property
-    def size(self):
-        return (self.width, self.height)
-
-    @classmethod
-    def from_path(cls, image_path: t.PathLike) -> "ImageBlueprint":
-        try:
-            pil_image = Image.open(image_path).convert("RGBA")
-            return cls.from_pil(pil_image)
-        except Exception as e:
-            log.exception(
-                f"Failed to load image from file '{image_path}'", exc_info=True
-            )
-
-    @classmethod
-    def from_pil(cls, image: Image.Image) -> "ImageBlueprint":
-        return cls(
-            data=image.tobytes(),
-            width=image.width,
-            height=image.height,
-            mode=image.mode,
-        )
-
-    @classmethod
-    def from_cv2(cls, cv2_image):
-        rgb_image = cv2.cvtColor(cv2_image, cv2.COLOR_GRAY2RGBA)
-        pil_image = Image.fromarray(np.asarray(rgb_image, dtype=np.uint8), mode="RGBA")
-        return cls.from_pil(pil_image)
-
-    def to_pil(self) -> Image.Image:
-        return Image.frombytes("RGBA", self.size, self.data)
-
-    def to_cv2(self):
-        pil_image = self.to_pil().convert("RGBA")
-        return cv2.cvtColor(np.array(pil_image, dtype=np.uint8), cv2.COLOR_RGBA2GRAY)
-
-
-@dataclass
 class ImageProcessingPipeline(metaclass=ABCMeta):
     """Preprocesses images before running OCR."""
 
-    images: t.Tuple[ImageBlueprint]
+    images: t.Tuple[ImageIO]
     ocr_request: "OcrRequest"
     args: dict = field(default_factory=dict)
     run_order: t.ClassVar[int] = 0
@@ -78,11 +28,11 @@ class ImageProcessingPipeline(metaclass=ABCMeta):
     def should_process(self) -> bool:
         """Should this pipeline be applied given the arguments."""
 
-    def process_image(self, image) -> ImageBlueprint:
+    def process_image(self, image) -> ImageIO:
         """Process a single image."""
         return image
 
-    def process(self) -> t.Tuple[ImageBlueprint]:
+    def process(self) -> t.Tuple[ImageIO]:
         yield from (self.process_image(img) for img in self.images)
 
 
@@ -94,7 +44,7 @@ class TwoInOneScanProcessingPipeline(ImageProcessingPipeline):
     def should_process(self) -> bool:
         return True
 
-    def process(self) -> t.Tuple[ImageBlueprint]:
+    def process(self) -> t.Tuple[ImageIO]:
         for image in self.images:
             img = Image.frombytes("RGBA", (image.width, image.height), image.data)
             w, h = image.width, image.height
@@ -134,7 +84,7 @@ class DPIProcessingPipeline(ImageProcessingPipeline):
             factor = self.args["scaling_factor"]
         else:
             factor = max(1, float(self.DPI_300_SIZE / w))
-        return ImageBlueprint.from_pil(
+        return ImageIO.from_pil(
             img.resize((int(factor * w), int(factor * h)), resample=Image.LANCZOS)
         )
 
@@ -150,7 +100,7 @@ class ThresholdProcessingPipeline(ImageProcessingPipeline):
     def process_image(self, image):
         img = image.to_cv2().astype(np.uint8)
         ret, th = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-        return ImageBlueprint.from_cv2(th)
+        return ImageIO.from_cv2(th)
 
 
 class DeskewProcessingPipeline(ImageProcessingPipeline):
@@ -164,7 +114,7 @@ class DeskewProcessingPipeline(ImageProcessingPipeline):
     def process_image(self, image):
         img = image.to_cv2().astype(np.uint8)
         desk_img = cv2_utils.correct_skew(img)
-        return ImageBlueprint.from_cv2(desk_img)
+        return ImageIO.from_cv2(desk_img)
 
 
 class BlurProcessingPipeline(ImageProcessingPipeline):
@@ -182,7 +132,7 @@ class BlurProcessingPipeline(ImageProcessingPipeline):
     def process_image(self, image):
         img = image.to_cv2().astype(np.uint8)
         img = self.image_smoothening(img)
-        return ImageBlueprint.from_cv2(img)
+        return ImageIO.from_cv2(img)
 
 
 class DilationProcessingPipeline(ImageProcessingPipeline):
@@ -197,7 +147,7 @@ class DilationProcessingPipeline(ImageProcessingPipeline):
         img = image.to_cv2().astype(np.uint8)
         kernel = np.ones((5, 5), np.uint8)
         img = cv2.dilate(img, kernel, iterations=1)
-        return ImageBlueprint.from_cv2(img)
+        return ImageIO.from_cv2(img)
 
 
 class ErosionProcessingPipeline(ImageProcessingPipeline):
@@ -212,7 +162,7 @@ class ErosionProcessingPipeline(ImageProcessingPipeline):
         img = image.to_cv2().astype(np.uint8)
         kernel = np.ones((5, 5), np.uint8)
         img = cv2.erode(img, kernel, iterations=1)
-        return ImageBlueprint.from_cv2(img)
+        return ImageIO.from_cv2(img)
 
 
 class ConcatImagesProcessingPipeline(ImageProcessingPipeline):
@@ -223,7 +173,7 @@ class ConcatImagesProcessingPipeline(ImageProcessingPipeline):
     def should_process(self) -> bool:
         return True  # len({img.size for img in self.images}) == 1
 
-    def process(self) -> t.Iterable[ImageBlueprint]:
+    def process(self) -> t.Iterable[ImageIO]:
         imagelist = []
         for img in self.images:
             imagelist.append(img.to_cv2())
@@ -238,7 +188,7 @@ class ConcatImagesProcessingPipeline(ImageProcessingPipeline):
             for im in imagelist
         ]
         img = cv2.vconcat(im_list_resize)
-        yield ImageBlueprint.from_cv2(img)
+        yield ImageIO.from_cv2(img)
 
 
 class DebugProcessingPipeline(ImageProcessingPipeline):
@@ -262,7 +212,18 @@ class InvertColourProcessingPipeline(ImageProcessingPipeline):
 
     def process_image(self, image):
         img = cv2.bitwise_not(image.to_cv2())
-        return ImageBlueprint.from_cv2(img)
+        return ImageIO.from_cv2(img)
+
+
+class SharpenColourProcessingPipeline(ImageProcessingPipeline):
+    """Sharpens the given images."""
+
+    def should_process(self) -> bool:
+        return True
+
+    def process_image(self, image):
+        img = ImageEnhance.Sharpness(image.to_pil()).enhance(2.0)
+        return ImageIO.from_pil(img)
 
 
 class RotationProcessingPipeline(ImageProcessingPipeline):

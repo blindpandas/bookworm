@@ -2,41 +2,74 @@
 
 import time
 import wx
-import requests
-from requests.exceptions import RequestException
+from pydantic import validator, BaseModel, HttpUrl
+from bookworm import typehints as t
+from bookworm.http_tools import RemoteJsonResource
 from bookworm import app
 from bookworm import config
 from bookworm.base_service import BookwormService
 from bookworm.concurrency import call_threaded
 from bookworm.platform_services import updater
-from bookworm.utils import ignore
 from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
-
 # Update check interval (in seconds)
 UPDATE_CHECK_INTERVAL = 20 * 60 * 60
 
 
-@ignore(KeyError, retval=(None,) * 3)
-def parse_update_info(update_info):
-    current_version = app.get_version_info()
-    update_channel = current_version["pre_type"] or ""
-    upstream_version = update_info[update_channel]
-    dl_url = upstream_version[f"{app.arch}_download"]
-    dl_sha1hash = upstream_version[f"{app.arch}_sha1hash"]
-    return upstream_version["version"], dl_url, dl_sha1hash
+class UpdateChannel(BaseModel):
+    __root__: str
+
+    def __hash__(self):
+        return hash(self.__root__)
+
+    @validator("__root__")
+    def validate_identifer(cls, v):
+        if v not in ["", "b", "a", "dev"]:
+            raise TypeError("Unrecognized release identifier")
+        return v
+
+    @property
+    def is_major(self):
+        return self.__root__  == ""
+
+
+class VersionInfo(BaseModel):
+    version: str
+    x86_download: HttpUrl
+    x64_download: HttpUrl
+    x86_sha1hash: str
+    x64_sha1hash: str
+
+    @property
+    def bundle_download_url(self):
+        return getattr(self, f"{app.arch}_download")
+
+    @property
+    def update_sha1hash(self):
+        return getattr(self, f"{app.arch}_sha1hash")
+
+
+class UpdateInfo(BaseModel):
+    __root__: t.Dict[UpdateChannel, VersionInfo]
+
+    @property
+    def channels(self):
+        return tuple(self.__root__.keys())
+
+    def get_update_info_for_channel(self, channel_identifier):
+        return self.__root__.get(UpdateChannel.construct(__root__=channel_identifier))
+
 
 
 @call_threaded
 def check_for_updates(verbose=False):
     log.info("Checking for updates...")
     try:
-        version_info = response = requests.get(app.update_url)
-        version_info.raise_for_status()
-    except RequestException as e:
-        log.error(f"Failed to check for updates. {e.args}")
+        update_info = RemoteJsonResource(url=app.update_url, model=UpdateInfo).get()
+    except ConnectionError:
+        log.exception(f"Failed to check for updates.", exc_info=True)
         if verbose:
             wx.CallAfter(
                 wx.MessageBox,
@@ -47,10 +80,8 @@ def check_for_updates(verbose=False):
                 style=wx.ICON_WARNING,
             )
         return
-    try:
-        update_info = version_info.json()
-    except ValueError as e:
-        log.error(f"Invalid content recieved. {e.args}")
+    except ValueError:
+        log.exception(f"Invalid content recieved.", exc_info=True)
         if verbose:
             wx.CallAfter(
                 wx.MessageBox,
@@ -63,8 +94,10 @@ def check_for_updates(verbose=False):
                 style=wx.ICON_WARNING,
             )
         return
-    upstream_version, dl_url, dl_sha1hash = parse_update_info(update_info)
-    if not upstream_version or (upstream_version == app.version):
+    # Precede with the update
+    update_channel = app.get_version_info().get("pre_type", "")
+    upstream_version_info = update_info.get_update_info_for_channel(update_channel)
+    if (upstream_version_info is None) or (upstream_version_info == app.version):
         log.info("No new version.")
         config.conf["general"]["last_update_check"] = time.time()
         config.save()
@@ -84,8 +117,8 @@ def check_for_updates(verbose=False):
             )
         return
     # A new version is available
-    log.debug(f"A new version is available. Version {upstream_version}")
-    updater.perform_update(upstream_version, dl_url, dl_sha1hash)
+    log.debug(f"A new version is available. Version {upstream_version_info.version}")
+    updater.perform_update(upstream_version_info)
 
 
 class OTAUService(BookwormService):
@@ -94,7 +127,7 @@ class OTAUService(BookwormService):
 
     @classmethod
     def check(self):
-        return app.is_frozen and not app.command_line_mode
+        return True #app.is_frozen and not app.command_line_mode
 
     def __post_init__(self):
         self.check_for_updates_upon_startup()

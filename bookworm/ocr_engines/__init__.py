@@ -1,7 +1,7 @@
 # coding: utf-8
 
 
-from .base import ImageBlueprint, OcrRequest, OcrResult, BaseOcrEngine
+from .base import OcrRequest, OcrResult, BaseOcrEngine
 from .tesseract_ocr_engine import TesseractOcrEngine
 #from .tesseract_ocr_engine.tesseract_alt import TesseractOcrEngineAlt
 

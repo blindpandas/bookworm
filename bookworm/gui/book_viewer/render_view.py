@@ -2,8 +2,11 @@
 
 import wx
 import wx.lib.scrolledpanel as scrolled
+from PIL import Image, ImageOps
 from bookworm import speech
+from bookworm.image_io import ImageIO
 from bookworm.signals import reader_page_changed
+from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from bookworm.gui.components import Dialog
@@ -44,7 +47,8 @@ class ViewPageAsImageDialog(wx.Dialog):
 
     def __init__(self, parent, title, size=(450, 450), style=wx.DEFAULT_DIALOG_STYLE):
         super().__init__(parent, title=title, style=style)
-        self.SetBackgroundColour(wx.Colour(215, 215, 215))
+        bg_color = (215, 215, 215) if not IS_HIGH_CONTRAST_ACTIVE else (30, 30, 30)
+        self.SetBackgroundColour(wx.Colour(bg_color))
         self.parent = parent
         self.reader = self.parent.reader
         # Zoom support
@@ -120,12 +124,13 @@ class ViewPageAsImageDialog(wx.Dialog):
         self.scroll.SetName(_("Page {}").format(self._currently_rendered_page))
 
     def getPageImage(self):
-        imagedata, width, height = self.reader.document.get_page_image(
+        image = self.reader.document.get_page_image(
             self.reader.current_page, zoom_factor=self._zoom_factor
         )
-        bmp = wx.Bitmap.FromBufferRGBA(width, height, bytearray(imagedata))
-        size = (width, height)
-        return bmp, size
+        if IS_HIGH_CONTRAST_ACTIVE:
+            image = image.invert()
+        bmp = image.to_wx_bitmap()
+        return bmp, image.size
 
     def onKeyUp(self, event):
         event.Skip()

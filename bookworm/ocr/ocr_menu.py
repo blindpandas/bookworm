@@ -12,7 +12,8 @@ from enum import IntEnum
 from bookworm import app
 from bookworm import config
 from bookworm import speech
-from bookworm.ocr_engines import OcrRequest, ImageBlueprint
+from bookworm.image_io import ImageIO
+from bookworm.ocr_engines import OcrRequest
 from bookworm.text_to_speech import speech_engine_state_changed
 from bookworm.signals import (
     _signals,
@@ -176,7 +177,7 @@ class OCRMenu(wx.Menu):
         if reader.current_page in self.service.saved_scanned_pages:
             self.view.set_content(self.service.saved_scanned_pages[reader.current_page])
             return
-        imagedata, width, height = reader.document.get_page_image(
+        image = reader.document.get_page_image(
             reader.current_page,
             ocr_opts.zoom_factor,
         )
@@ -191,7 +192,7 @@ class OCRMenu(wx.Menu):
 
         ocr_request = OcrRequest(
             language=ocr_opts.language,
-            image=ImageBlueprint(imagedata, width, height),
+            image=image,
             image_processing_pipelines=ocr_opts.image_processing_pipelines,
             cookie=reader.current_page,
         )
@@ -308,7 +309,7 @@ class OCRMenu(wx.Menu):
             if not filename or not os.path.isfile(filename):
                 return
             # Load the image file
-            image = ImageBlueprint.from_path(filename)
+            image = ImageIO.from_path(filename)
             if image is None:
                 wx.MessageBox(
                     # Translators: content of a message box
@@ -339,7 +340,7 @@ class OCRMenu(wx.Menu):
             )
             ocr_request = OcrRequest(
                 language=options.language,
-                image=ImageBlueprint.from_pil(resized_image),
+                image=ImageIO.from_pil(resized_image),
                 image_processing_pipelines=options.image_processing_pipelines,
             )
             self._run_ocr(ocr_request, _ocr_callback)

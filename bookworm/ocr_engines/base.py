@@ -10,10 +10,10 @@ from chemical import it, ChemicalException
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.i18n import LocaleInfo
+from bookworm.image_io import ImageIO
 from bookworm.utils import NEWLINE
 from bookworm.logger import logger
 from .image_processing_pipelines import (
-    ImageBlueprint,
     ImageProcessingPipeline,
     ConcatImagesProcessingPipeline,
 )
@@ -25,7 +25,7 @@ log = logger.getChild(__name__)
 @dataclass
 class OcrRequest:
     language: LocaleInfo
-    image: ImageBlueprint
+    image: ImageIO
     image_processing_pipelines: t.Tuple[ImageProcessingPipeline] = field(
         default_factory=tuple
     )
@@ -73,7 +73,7 @@ class BaseOcrEngine(metaclass=ABCMeta):
     def preprocess_image(
         cls,
         ocr_request: OcrRequest,
-    ) -> t.Iterable[ImageBlueprint]:
+    ) -> t.Iterable[ImageIO]:
         images = (ocr_request.image,)
         sorted_ipp = sorted(
             list(ocr_request.image_processing_pipelines)
@@ -106,8 +106,7 @@ class BaseOcrEngine(metaclass=ABCMeta):
         out = StringIO()
 
         def recognize_page(page):
-            imagedata, width, height = page.get_image(ocr_options.zoom_factor)
-            image = ImageBlueprint(data=imagedata, width=width, height=height)
+            image = page.get_image(ocr_options.zoom_factor)
             ocr_req = OcrRequest(
                 language=ocr_options.language, image=image, cookie=page.number
             )

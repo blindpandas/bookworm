@@ -1,17 +1,12 @@
 # coding: utf-8
 
-"""Over the air update (OTAU) functionality."""
-
 import sys
 import os
-import time
 import shutil
 import zipfile
 import tempfile
-import requests
 import wx
 import win32api
-from math import ceil
 from hashlib import sha1
 from pathlib import Path
 from System.Diagnostics import Process
@@ -19,7 +14,8 @@ from requests.exceptions import RequestException
 from bookworm import app
 from bookworm import config
 from bookworm import paths
-from bookworm.utils import ignore, generate_sha1hash
+from bookworm.http_tools import HttpResource
+from bookworm.utils import generate_sha1hash
 from bookworm.logger import logger
 
 
@@ -37,7 +33,6 @@ def kill_other_running_instances():
             proc.Kill()
 
 
-@ignore(OSError)
 def extract_update_bundle(bundle):
     past_update_dir = paths.data_path("update")
     if past_update_dir.exists():
@@ -51,7 +46,7 @@ def extract_update_bundle(bundle):
     return extraction_dir
 
 
-def perform_update(upstream_version, update_url, sha1hash):
+def perform_update(upstream_version_info):
     msg = wx.MessageBox(
         # Translators: the content of a message indicating the availability of an update
         _(
@@ -59,20 +54,37 @@ def perform_update(upstream_version, update_url, sha1hash):
             "Would you like to download and install it?\n"
             "\tInstalled Version: {current}\n"
             "\tNew Version: {new}\n"
-        ).format(current=app.version, new=upstream_version),
+        ).format(current=app.version, new=upstream_version_info.version),
         # Translators: the title of a message indicating the availability of an update
-        _("Update Available"),
+        _("Bookworm Update"),
         style=wx.YES_NO | wx.ICON_INFORMATION,
     )
     if msg != wx.YES:
         log.info("User cancelled the update.")
         return
+    # Download the update package
+    progress_dlg = wx.ProgressDialog(
+        # Translators: the title of a message indicating the progress of downloading an update
+        _("Downloading Update"),
+        # Translators: a message indicating the progress of downloading an update bundle
+        _("Downloading {url}:").format(url=upstream_version_info.bundle_download_url),
+        maximum=100,
+        parent=wx.GetApp().mainFrame,
+        style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
+    )
+    bundle_file = tempfile.TemporaryFile()
     try:
-        log.debug(f"Downloading update from: {update_url}")
-        update_file = requests.get(update_url, stream=True)
-        update_file.raise_for_status()
-    except RequestException as e:
-        log.info(f"Faild to obtain the update file. {e.args}")
+        log.debug(f"Downloading update from: {upstream_version_info.bundle_download_url}")
+        dl_request = HttpResource(upstream_version_info.bundle_download_url).download()
+        callback = lambda prog: wx.CallAfter(
+            progress_dlg.Update,
+            prog.percentage,
+            _("Downloaded {downloaded} MB of {total} MB"
+            ).format(downloaded=prog.downloaded_mb, total=prog.total_mb)
+        )
+        dl_request.download_to_file(bundle_file, callback)
+    except ConnectionError:
+        log.exception("Failed to download update file")
         wx.CallAfter(
             wx.MessageBox,
             # Translators: the content of a message indicating a failure in downloading an update
@@ -86,34 +98,13 @@ def perform_update(upstream_version, update_url, sha1hash):
             style=wx.ICON_ERROR,
         )
         return
-    update_file_size = int(update_file.headers.get("content-length", 20 * 1024 ** 2))
-    dlg = wx.ProgressDialog(
-        # Translators: the title of a message indicating the progress of downloading an update
-        _("Downloading Update"),
-        # Translators: a message indicating the progress of downloading an update bundle
-        _("Downloading {url}:").format(url=update_url),
-        parent=wx.GetApp().mainFrame,
-        maximum=99,
-        style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
-    )
-    bundle = tempfile.SpooledTemporaryFile(max_size=1024 * 30 * 1000)
-    # Monkey patch tempfile.SpooledTemporaryFile to be used with zipfile.ZipFile
-    bundle.seekable = lambda: True
-    # Translators: a message indicating the progress of downloading an update bundle
-    update_progress = lambda c, t=update_file_size: _(
-        "Downloading. {downloaded} MB of {total} MB"
-    ).format(downloaded=round(c / (1024 ** 2)), total=round(t / (1024 ** 2)))
-    csize = ceil(update_file_size / 100)
-    for (progval, chunk) in enumerate(update_file.iter_content(chunk_size=csize)):
-        bundle.write(chunk)
-        downloaded = bundle.tell()
-        wx.CallAfter(dlg.Update, progval, update_progress(downloaded))
-    wx.CallAfter(dlg.Hide)
-    wx.CallAfter(dlg.Destroy)
+    finally:
+        wx.CallAfter(progress_dlg.Hide)
+        wx.CallAfter(progress_dlg.Destroy)
     log.debug("The update bundle has been downloaded successfully.")
-    if generate_sha1hash(bundle) != sha1hash:
+    if generate_sha1hash(bundle_file) != upstream_version_info.update_sha1hash:
         log.debug("Hashes do not match.")
-        bundle.close()
+        bundle_file.close()
         msg = wx.MessageBox(
             # Translators: the content of a message indicating a corrupted file
             _(
@@ -125,7 +116,7 @@ def perform_update(upstream_version, update_url, sha1hash):
             style=wx.YES_NO | wx.ICON_QUESTION,
         )
         if msg == wx.YES:
-            return perform_update(update_url, sha1hash)
+            return perform_update(upstream_version_info)
         else:
             return
     # Go ahead and install the update
@@ -149,9 +140,9 @@ def perform_update(upstream_version, update_url, sha1hash):
         parent=wx.GetApp().mainFrame,
         style=wx.PD_APP_MODAL,
     )
-    bundle.seek(0)
-    extraction_dir = extract_update_bundle(bundle)
-    bundle.close()
+    bundle_file.seek(0)
+    extraction_dir = extract_update_bundle(bundle_file)
+    bundle_file.close()
     wx.CallAfter(ex_dlg.Close)
     wx.CallAfter(ex_dlg.Destroy)
     if extraction_dir is not None:

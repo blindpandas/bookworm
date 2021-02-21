@@ -26,7 +26,8 @@ PROJECT_ROOT = Path.cwd()
 PACKAGE_FOLDER = PROJECT_ROOT / "bookworm"
 RESOURCES_FOLDER = PACKAGE_FOLDER / "resources"
 ICON_SIZE = (256, 256)
-GUIDE_HTML_TEMPLATE = """<!doctype html>
+GUIDE_HTML_TEMPLATE = """
+<!doctype html>
   <html lang="{lang}">
   <head>
   <title>{title}</title>
@@ -35,7 +36,7 @@ GUIDE_HTML_TEMPLATE = """<!doctype html>
   {content}
   </body>
   </html>
-"""
+""".strip()
 
 
 def invert_image(image_path):

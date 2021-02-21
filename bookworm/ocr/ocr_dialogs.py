@@ -24,6 +24,7 @@ from bookworm.ocr_engines.image_processing_pipelines import (
     ErosionProcessingPipeline,
     DilationProcessingPipeline,
     ConcatImagesProcessingPipeline,
+    SharpenColourProcessingPipeline,
 )
 
 
@@ -209,16 +210,17 @@ class OCROptionsDialog(SimpleDialog):
         ipp = [
             (DPIProcessingPipeline, _("Increase image resolution"), True),
             (ThresholdProcessingPipeline, _("Binarization"), True),
-            (ConcatImagesProcessingPipeline, _("Combine images"), True),
             (
                 TwoInOneScanProcessingPipeline,
                 _("Split two-in-one scans to individual pages"),
                 False,
             ),
+            (ConcatImagesProcessingPipeline, _("Combine images"), False),
             (BlurProcessingPipeline, _("Blurring"), False),
             (DeskewProcessingPipeline, _("Deskewing"), False),
             (ErosionProcessingPipeline, _("Erosion"), False),
             (DilationProcessingPipeline, _("Dilation"), False),
+            (SharpenColourProcessingPipeline, _("Sharpen image"), False),
             (InvertColourProcessingPipeline, _("Invert colors"), False),
         ]
         if app.debug:

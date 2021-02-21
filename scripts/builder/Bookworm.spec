@@ -19,7 +19,7 @@ for pkg_name in PACKAGES_WITH_DATA:
     DATA_FILES += collect_data_files(pkg_name)
 
 # Hidden imports
-HIDDEN_IMPORTS = ["pkg_resources.py2_warn"] + collect_submodules("babel")
+HIDDEN_IMPORTS = ["pkg_resources.py2_warn",] + collect_submodules("babel")
 
 block_cipher = None
 
