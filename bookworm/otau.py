@@ -127,7 +127,7 @@ class OTAUService(BookwormService):
 
     @classmethod
     def check(self):
-        return True #app.is_frozen and not app.command_line_mode
+        return app.is_frozen and not app.command_line_mode
 
     def __post_init__(self):
         self.check_for_updates_upon_startup()

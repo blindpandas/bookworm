@@ -391,10 +391,14 @@ def copy_deps(c):
 @task
 @make_env
 def bundle_update(c):
-    """Bundles the frozen app for use in updates.
+    """
+    Bundles the frozen app for use in updates.
     Uses zip and lzma compression.
     """
     print("Preparing update bundle...")
+    if sys.platform != 'win32':
+        print("Update bundles are only supported for Windows. Skipping...")
+        return
     from bookworm.utils import recursively_iterdir
 
     env = os.environ

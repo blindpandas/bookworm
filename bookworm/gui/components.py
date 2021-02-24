@@ -1,9 +1,11 @@
 # coding: utf-8
 
+import time
 import contextlib
 import wx
 import wx.lib.mixins.listctrl as listmix
 import wx.lib.sized_controls as sc
+from functools import reduce
 from concurrent.futures import Future
 from dataclasses import dataclass
 from itertools import chain
@@ -18,6 +20,7 @@ log = logger.getChild(__name__)
 ObjectCollection = t.Iterable[t.Any]
 LongRunningTask = t.Callable[[t.Any], t.Any]
 DoneCallback = t.Callable[[Future], None]
+
 
 def make_sized_static_box(parent, title):
     stbx = sc.SizedStaticBox(parent, -1, title)
@@ -174,7 +177,7 @@ class SimpleDialog(sc.SizedDialog):
         panel = self.GetContentsPane()
         self.addControls(panel)
         buttonsSizer = self.getButtons(panel)
-        if buttonsSizer:
+        if buttonsSizer is not None:
             self.SetButtonSizer(buttonsSizer)
 
         self.Layout()
@@ -222,6 +225,15 @@ class SnakDialog(SimpleDialog):
         self.staticMessage.Bind(wx.EVT_KEY_UP, self.onKeyUp, self.staticMessage)
         self.CenterOnParent()
 
+    @contextlib.contextmanager
+    def ShowBriefly(self):
+        try:
+            wx.CallAfter(self.ShowModal)
+            yield
+        finally:
+            wx.CallAfter(self.Close)
+            wx.CallAfter(self.Destroy)
+
     def onClose(self, event):
         if event.CanVeto():
             if self.dismiss_callback is not None:
@@ -245,10 +257,18 @@ class SnakDialog(SimpleDialog):
 class AsyncSnakDialog:
     """A helper to make the use of SnakDialogs Ergonomic."""
 
-    def __init__(self, task: LongRunningTask, done_callback: DoneCallback, *sdg_args, **sdg_kwargs):
+    def __init__(
+        self,
+        task: LongRunningTask,
+        done_callback: DoneCallback,
+        *sdg_args,
+        **sdg_kwargs,
+    ):
         self.snak_dg = SnakDialog(*sdg_args, **sdg_kwargs)
         self.done_callback = done_callback
-        self.future = threaded_worker.submit(task).add_done_callback(self.on_future_completed)
+        self.future = threaded_worker.submit(task).add_done_callback(
+            self.on_future_completed
+        )
         self.snak_dg.Show()
 
     def on_future_completed(self, completed_future):
@@ -279,16 +299,15 @@ class ColumnDefn:
         raise ValueError(f"Unknown alignment directive {self.alignment}")
 
 
-
 class ImmutableObjectListView(DialogListCtrl):
     """An immutable  list view that deals with objects rather than strings."""
 
     def __init__(
         self,
         *args,
-        columns: t.Iterable[ColumnDefn]= (),
+        columns: t.Iterable[ColumnDefn] = (),
         objects: ObjectCollection = (),
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self._objects = None
@@ -357,3 +376,117 @@ class ImmutableObjectListView(DialogListCtrl):
 
     def onInsertItem(self, event):
         self.prevent_mutations()
+
+
+class RobustProgressDialog:
+    """A progress dialog that works well with threaded tasks."""
+
+    def __init__(
+        self,
+        parent,
+        title,
+        message,
+        maxvalue=100,
+        modal=True,
+        elapsed_time=True,
+        remaining_time=True,
+        estimated_time=False,
+        can_hide=False,
+        can_abort=False,
+        abort_callback=None
+    ):
+        self.parent = parent
+        self.title = title
+        self.message = message
+        self.maxvalue = maxvalue
+        self.abort_callback = abort_callback
+        self.progress_dlg = None
+        pdg_styles = {wx.PD_AUTO_HIDE, wx.PD_SMOOTH}
+        if modal:
+            pdg_styles.add(wx.PD_APP_MODAL)
+        if elapsed_time:
+            pdg_styles.add(wx.PD_ELAPSED_TIME)
+        if remaining_time:
+            pdg_styles.add(wx.PD_REMAINING_TIME)
+        if estimated_time:
+            pdg_styles.add(wx.PD_ESTIMATED_TIME)
+        if can_hide:
+            pdg_styles.add(wx.PD_CAN_SKIP)
+        if can_abort:
+            pdg_styles.add(wx.PD_CAN_ABORT)
+        self.prog_dlg_style = reduce(lambda x, y: x | y, pdg_styles)
+        self._last_update = 0
+        self.is_cancelled = False
+        self.is_hidden = False
+        wx.CallAfter(self._create_progress_dlg)
+
+    def _create_progress_dlg(self):
+        self.progress_dlg = wx.GenericProgressDialog(
+            parent=self.parent,
+            title=self.title,
+            message=self.message,
+            maximum=self.maxvalue,
+            style=self.prog_dlg_style
+        )
+        self.progress_dlg.Bind(wx.EVT_BUTTON, self.onHide, id=32000)
+        self.progress_dlg.Bind(wx.EVT_BUTTON, self.onAbort, id=wx.ID_CANCEL)
+        mainFrame = wx.GetApp().mainFrame
+        mainFrame.Bind(
+            wx.EVT_KILL_FOCUS,
+            lambda e: e.IsShown() and mainFrame.contentTextCtrl.SetFocus(),
+            id=self.progress_dlg.Id
+        )
+
+    def onHide(self, event):
+        wx.CallAfter(self.progress_dlg.Hide)
+        self.is_hidden = True
+
+    def onAbort(self, event):
+        msg = wx.MessageBox(
+            # Translators: content of a message to confirm the closing of a progress dialog
+            _("This will cancel all the operations in progress.\nAre you sure you want to continue?"),
+            # Translators: title of a message box
+            _("Confirm"),
+            style=wx.ICON_WARNING | wx.YES_NO
+        )
+        if msg == wx.NO:
+            wx.CallAfter(self.progress_dlg.SetFocus)
+            return
+        if self.abort_callback is not None:
+            self.abort_callback()
+        self.Dismiss()
+        self.is_cancelled = True
+        event.Skip()
+
+    def set_abort_callback(self, callback):
+        self.abort_callback = callback
+
+    def WasCancelled(self):
+        return self.is_cancelled
+
+    def WasSkipped(self):
+        return self.is_hidden
+
+    def should_update(self):
+        if (self.progress_dlg is None) or ((time.perf_counter() - self._last_update) <= 0.7):
+            return False
+        return True
+
+    def Pulse(self, message):
+        if self.should_update():
+            self._last_update = time.perf_counter()
+            wx.CallAfter(self.progress_dlg, Pulse, message)
+
+    def Update(self, value, message):
+        if self.should_update():
+            self._last_update = time.perf_counter()
+            wx.CallAfter(self.progress_dlg.Update, value, message)
+
+    def Dismiss(self):
+        if self.progress_dlg is None:
+            return
+        wx.CallAfter(self.progress_dlg.Hide)
+        wx.CallAfter(self.progress_dlg.Close)
+        wx.CallAfter(self.progress_dlg.Destroy)
+        self.progress_dlg = None
+

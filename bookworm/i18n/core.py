@@ -6,7 +6,6 @@ from collections import OrderedDict
 from contextlib import suppress
 from pathlib import Path
 from chemical import it
-from babel import UnknownLocaleError, Locale, parse_locale, default_locale
 from bookworm import app
 from bookworm import paths
 from bookworm import config

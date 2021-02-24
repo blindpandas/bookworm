@@ -25,7 +25,7 @@ from bookworm.concurrency import QueueProcess, call_threaded, threaded_worker
 from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.resources import sounds
 from bookworm.speechdriver.enumerations import SynthState
-from bookworm.gui.components import SimpleDialog, SnakDialog
+from bookworm.gui.components import SimpleDialog, SnakDialog, RobustProgressDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from .ocr_dialogs import OCROptionsDialog
@@ -242,14 +242,14 @@ class OCRMenu(wx.Menu):
         if not output_file:
             return
         # Continue with OCR
-        progress_dlg = wx.ProgressDialog(
+        progress_dlg = RobustProgressDialog(
+            self.view,
             # Translators: the title of a progress dialog
             _("Scanning Pages"),
             # Translators: the message of a progress dialog
-            _("Preparing book"),
-            parent=self.view,
-            maximum=len(self.service.reader.document),
-            style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
+            message=_("Preparing book"),
+            maxvalue=len(self.service.reader.document),
+            can_hide=True,
         )
         self._continue_with_text_extraction(ocr_opts, output_file, progress_dlg)
 
@@ -261,14 +261,11 @@ class OCRMenu(wx.Menu):
         for progress in QueueProcess(
             target=self.service.current_ocr_engine.scan_to_text, args=args
         ):
-            wx.CallAfter(
-                progress_dlg.Update,
+            progress_dlg.Update(
                 progress + 1,
                 f"Scanning page {progress} of {total}",
             )
-        wx.CallAfter(progress_dlg.Hide)
-        wx.CallAfter(progress_dlg.Close)
-        wx.CallAfter(progress_dlg.Destroy)
+        progress_dlg.Dismiss()
         wx.CallAfter(
             wx.MessageBox,
             _(

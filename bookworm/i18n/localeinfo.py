@@ -2,6 +2,7 @@
 
 import locale
 from babel import UnknownLocaleError, Locale, parse_locale, default_locale
+from babel.dates import format_datetime as babel_format_datetime
 from languagecodes import iso_639_alpha2
 
 
@@ -97,3 +98,6 @@ class LocaleInfo:
         if info[1] != info[2]:
             desc = f"{info[2]} ({desc})"
         return desc
+
+    def format_datetime(self, datetime_obj) -> str:
+        return babel_format_datetime(datetime_obj, locale=self.locale)

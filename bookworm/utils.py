@@ -5,14 +5,11 @@ import os
 import math
 import glob
 import wx
-import requests
 import hashlib
 from dataclasses import dataclass
 from functools import wraps
 from pathlib import Path
 from xml.sax.saxutils import escape
-from datetime import datetime
-from babel.dates import format_datetime as babel_format_datetime
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.concurrency import call_threaded
@@ -119,8 +116,8 @@ def search(pattern, text):
         yield (start, " ".join(snip))
 
 
-def format_datetime(date: datetime) -> str:
-    return babel_format_datetime(date, locale=app.current_language)
+def format_datetime(date) -> str:
+    return app.current_language.format_datetime(date)
 
 
 def escape_html(text):

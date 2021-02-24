@@ -7,6 +7,7 @@ import zipfile
 import tempfile
 import wx
 import win32api
+from functools import partial
 from hashlib import sha1
 from pathlib import Path
 from System.Diagnostics import Process
@@ -16,6 +17,7 @@ from bookworm import config
 from bookworm import paths
 from bookworm.http_tools import HttpResource
 from bookworm.utils import generate_sha1hash
+from bookworm.gui.components import RobustProgressDialog, SnakDialog
 from bookworm.logger import logger
 
 
@@ -63,28 +65,26 @@ def perform_update(upstream_version_info):
         log.info("User cancelled the update.")
         return
     # Download the update package
-    progress_dlg = wx.ProgressDialog(
+    progress_dlg = RobustProgressDialog(
+        wx.GetApp().mainFrame,
         # Translators: the title of a message indicating the progress of downloading an update
         _("Downloading Update"),
         # Translators: a message indicating the progress of downloading an update bundle
-        _("Downloading {url}:").format(url=upstream_version_info.bundle_download_url),
-        maximum=100,
-        parent=wx.GetApp().mainFrame,
-        style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
+        "{} {}".format(_("Downloading update bundle"), "".ljust(25)),
+        maxvalue=101,
+        can_hide=True,
+        can_abort=True,
     )
     bundle_file = tempfile.TemporaryFile()
     try:
         log.debug(f"Downloading update from: {upstream_version_info.bundle_download_url}")
         dl_request = HttpResource(upstream_version_info.bundle_download_url).download()
-        callback = lambda prog: wx.CallAfter(
-            progress_dlg.Update,
-            prog.percentage,
-            _("Downloaded {downloaded} MB of {total} MB"
-            ).format(downloaded=prog.downloaded_mb, total=prog.total_mb)
-        )
+        callback = partial(file_download_callback, progress_dlg)
+        progress_dlg.set_abort_callback(dl_request.cancel)
         dl_request.download_to_file(bundle_file, callback)
     except ConnectionError:
-        log.exception("Failed to download update file")
+        log.exception("Failed to download update file", exc_info=True)
+        progress_dlg.Dismiss()
         wx.CallAfter(
             wx.MessageBox,
             # Translators: the content of a message indicating a failure in downloading an update
@@ -98,12 +98,13 @@ def perform_update(upstream_version_info):
             style=wx.ICON_ERROR,
         )
         return
-    finally:
-        wx.CallAfter(progress_dlg.Hide)
-        wx.CallAfter(progress_dlg.Destroy)
+    if progress_dlg.WasCancelled():
+        log.debug("User canceled the download of the update.")
+        return
     log.debug("The update bundle has been downloaded successfully.")
     if generate_sha1hash(bundle_file) != upstream_version_info.update_sha1hash:
         log.debug("Hashes do not match.")
+        progress_dlg.Dismiss()
         bundle_file.close()
         msg = wx.MessageBox(
             # Translators: the content of a message indicating a corrupted file
@@ -121,6 +122,20 @@ def perform_update(upstream_version_info):
             return
     # Go ahead and install the update
     log.debug("Installing the update...")
+    progress_dlg.Pulse(_("Extracting update bundle..."))
+    bundle_file.seek(0)
+    try:
+        extraction_dir = extract_update_bundle(bundle_file)
+    except:
+        log.debug("Error extracting update bundle.", exc_info=True)
+        wx.MessageBox(
+            _("A problem has occured when installing the update.\nPlease check the logs for more info."),
+            _("Error installing update"),
+            style=wx.ICON_ERROR,
+        )
+    finally:
+        bundle_file.close()
+        progress_dlg.Dismiss()
     wx.MessageBox(
         # Translators: the content of a message indicating successful download of the update bundle
         _(
@@ -132,21 +147,7 @@ def perform_update(upstream_version_info):
         _("Download Completed"),
         style=wx.ICON_INFORMATION,
     )
-    ex_dlg = wx.ProgressDialog(
-        # Translators: the title of a message shown when extracting an update bundle
-        _("Extracting Update Bundle"),
-        # Translators: a message shown when extracting an update bundle
-        _("Please wait..."),
-        parent=wx.GetApp().mainFrame,
-        style=wx.PD_APP_MODAL,
-    )
-    bundle_file.seek(0)
-    extraction_dir = extract_update_bundle(bundle_file)
-    bundle_file.close()
-    wx.CallAfter(ex_dlg.Close)
-    wx.CallAfter(ex_dlg.Destroy)
-    if extraction_dir is not None:
-        wx.CallAfter(execute_bootstrap, extraction_dir)
+    wx.CallAfter(execute_bootstrap, extraction_dir)
 
 
 def execute_bootstrap(extraction_dir):
@@ -161,3 +162,11 @@ def execute_bootstrap(extraction_dir):
     win32api.ShellExecute(0, "open", str(move_to / "bootstrap.exe"), args, "", 5)
     log.info("Bootstrap has been executed.")
     sys.exit(0)
+
+
+def file_download_callback(progress_dlg, progress_value):
+    progress_dlg.Update(
+        progress_value.percentage,
+        _("Downloaded {downloaded} MB of {total} MB")
+        .format(downloaded=progress_value.downloaded_mb, total=progress_value.total_mb)
+    )
