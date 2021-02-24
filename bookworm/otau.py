@@ -32,7 +32,7 @@ class UpdateChannel(BaseModel):
 
     @property
     def is_major(self):
-        return self.__root__  == ""
+        return self.__root__ == ""
 
 
 class VersionInfo(BaseModel):
@@ -60,7 +60,6 @@ class UpdateInfo(BaseModel):
 
     def get_update_info_for_channel(self, channel_identifier):
         return self.__root__.get(UpdateChannel.construct(__root__=channel_identifier))
-
 
 
 @call_threaded

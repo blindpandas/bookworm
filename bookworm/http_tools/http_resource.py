@@ -40,7 +40,7 @@ class ResourceDownloadRequest:
     DEFAULT_CHUNK_SIZE: t.ClassVar = 1024 ** 2
 
     def __post_init__(self):
-        self.total_size= None
+        self.total_size = None
         if "content-length" in self.request.headers:
             self.total_size = int(self.request.headers["content-length"])
         self.chunk_size = (
@@ -62,7 +62,7 @@ class ResourceDownloadRequest:
                 yield ResourceDownloadProgress(
                     chunk=chunk,
                     total_size=self.total_size if self.total_size is not None else 1,
-                    downloaded=downloaded
+                    downloaded=downloaded,
                 )
         except requests.RequestException as e:
             log.exception("Failed to download resource from the web", exc_info=True)
@@ -71,7 +71,7 @@ class ResourceDownloadRequest:
     def download_to_file(
         self,
         outfile: t.BinaryIO,
-        progress_callback: t.Callable[[ResourceDownloadProgress], None]
+        progress_callback: t.Callable[[ResourceDownloadProgress], None],
     ) -> t.BinaryIO:
         if outfile.seekable():
             outfile.seek(0)

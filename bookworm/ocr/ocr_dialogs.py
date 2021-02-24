@@ -67,7 +67,9 @@ class OcrPanel(SettingsPanel):
                 tessBox,
                 -1,
                 _("Download Tesseract OCR Engine"),
-                _("Get a free, high-quality OCR engine that supports over 100 languages.")
+                _(
+                    "Get a free, high-quality OCR engine that supports over 100 languages."
+                ),
             )
             self.Bind(wx.EVT_BUTTON, self.onDownloadTesseractEngine, tessEngineDlBtn)
         else:
@@ -75,7 +77,7 @@ class OcrPanel(SettingsPanel):
                 tessBox,
                 -1,
                 _("Manage Tesseract OCR Languages"),
-                _("Add support for new languages, and /or remove installed languages.")
+                _("Add support for new languages, and /or remove installed languages."),
             )
             self.Bind(wx.EVT_BUTTON, self.onDownloadTesseractLanguages, tessLangDlBtn)
         # Translators: the label of a group of controls in the reading page

@@ -73,10 +73,7 @@ class ImageIO:
     @classmethod
     def from_fitz_pixmap(cls, pixmap):
         return cls(
-            data=pixmap.samples,
-            width=pixmap.width,
-            height=pixmap.height,
-            mode="RGBA"
+            data=pixmap.samples, width=pixmap.width, height=pixmap.height, mode="RGBA"
         )
 
     def to_pil(self) -> Image.Image:

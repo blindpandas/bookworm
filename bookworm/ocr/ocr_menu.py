@@ -260,8 +260,7 @@ class OCRMenu(wx.Menu):
         total = len(doc)
         args = (doc, output_file, ocr_opts)
         scan2text_process = QueueProcess(
-            target=self.service.current_ocr_engine.scan_to_text,
-            args=args
+            target=self.service.current_ocr_engine.scan_to_text, args=args
         )
         progress_dlg.set_abort_callback(scan2text_process.cancel)
         scan2text_process.add_done_callback(
@@ -271,7 +270,7 @@ class OCRMenu(wx.Menu):
                 "Successfully processed {} pages.\nExtracted text was written to: {}"
             ).format(total, output_file),
             _("OCR Completed"),
-            wx.ICON_INFORMATION
+            wx.ICON_INFORMATION,
         )
         for progress in scan2text_process:
             progress_dlg.Update(

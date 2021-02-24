@@ -77,7 +77,9 @@ def perform_update(upstream_version_info):
     )
     bundle_file = tempfile.TemporaryFile()
     try:
-        log.debug(f"Downloading update from: {upstream_version_info.bundle_download_url}")
+        log.debug(
+            f"Downloading update from: {upstream_version_info.bundle_download_url}"
+        )
         dl_request = HttpResource(upstream_version_info.bundle_download_url).download()
         callback = partial(file_download_callback, progress_dlg)
         progress_dlg.set_abort_callback(dl_request.cancel)
@@ -129,7 +131,9 @@ def perform_update(upstream_version_info):
     except:
         log.debug("Error extracting update bundle.", exc_info=True)
         wx.MessageBox(
-            _("A problem has occured when installing the update.\nPlease check the logs for more info."),
+            _(
+                "A problem has occured when installing the update.\nPlease check the logs for more info."
+            ),
             _("Error installing update"),
             style=wx.ICON_ERROR,
         )
@@ -167,6 +171,7 @@ def execute_bootstrap(extraction_dir):
 def file_download_callback(progress_dlg, progress_value):
     progress_dlg.Update(
         progress_value.percentage,
-        _("Downloaded {downloaded} MB of {total} MB")
-        .format(downloaded=progress_value.downloaded_mb, total=progress_value.total_mb)
+        _("Downloaded {downloaded} MB of {total} MB").format(
+            downloaded=progress_value.downloaded_mb, total=progress_value.total_mb
+        ),
     )

@@ -396,7 +396,7 @@ def bundle_update(c):
     Uses zip and lzma compression.
     """
     print("Preparing update bundle...")
-    if sys.platform != 'win32':
+    if sys.platform != "win32":
         print("Update bundles are only supported for Windows. Skipping...")
         return
     from bookworm.utils import recursively_iterdir

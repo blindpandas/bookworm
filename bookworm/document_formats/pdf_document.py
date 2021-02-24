@@ -10,11 +10,7 @@ from bookworm.logger import logger
 from .mupdf_document import FitzDocument, FitzPage
 
 log = logger.getChild(__name__)
-XPDF_CONFIG = dict(
-    text_keep_tiny=False,
-    text_eol='unix',
-    text_page_breaks=False
-)
+XPDF_CONFIG = dict(text_keep_tiny=False, text_eol="unix", text_page_breaks=False)
 
 
 class FitzPdfPage(FitzPage):
@@ -65,7 +61,7 @@ class FitzPdfDocument(FitzDocument):
         super().close()
 
     def decrypt(self, password):
-        is_ok =  bool(self._ebook.authenticate(password))
+        is_ok = bool(self._ebook.authenticate(password))
         if is_ok:
             self.create_xpdf_document(password=password)
         return is_ok
@@ -77,4 +73,3 @@ class FitzPdfDocument(FitzDocument):
             xpdf_config.parent.mkdir(parents=True, exist_ok=True)
             xpdf_config.write_text(generate_xpdfrc())
         return xpdf_config
-

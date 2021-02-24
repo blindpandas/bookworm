@@ -243,7 +243,6 @@ class RotationProcessingPipeline(ImageProcessingPipeline):
         return image
 
 
-
 class DrainProcessingPipeline(ImageProcessingPipeline):
     """Discards images that fits a specific criteria."""
 
@@ -259,7 +258,6 @@ class DrainProcessingPipeline(ImageProcessingPipeline):
             if self.should_drop(image):
                 continue
             yield image
-
 
 
 class EmptyPageDrainProcessingPipeline(DrainProcessingPipeline):

@@ -43,7 +43,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     capabilities: DocumentCapability = DocumentCapability.NULL_CAPABILITY
     """A combination of DocumentCapability flags."""
 
-    supported_reading_modes: t.Tuple[ReadingMode] = (ReadingMode.DEFAULT)
+    supported_reading_modes: t.Tuple[ReadingMode] = ReadingMode.DEFAULT
 
     def __init__(self, filename: t.PathLike):
         self.filename = filename

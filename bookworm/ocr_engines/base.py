@@ -16,7 +16,6 @@ from bookworm.logger import logger
 from .image_processing_pipelines import ImageProcessingPipeline
 
 
-
 log = logger.getChild(__name__)
 
 

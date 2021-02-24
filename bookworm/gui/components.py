@@ -393,7 +393,7 @@ class RobustProgressDialog:
         estimated_time=False,
         can_hide=False,
         can_abort=False,
-        abort_callback=None
+        abort_callback=None,
     ):
         self.parent = parent
         self.title = title
@@ -426,7 +426,7 @@ class RobustProgressDialog:
             title=self.title,
             message=self.message,
             maximum=self.maxvalue,
-            style=self.prog_dlg_style
+            style=self.prog_dlg_style,
         )
         self.progress_dlg.Bind(wx.EVT_BUTTON, self.onHide, id=32000)
         self.progress_dlg.Bind(wx.EVT_BUTTON, self.onAbort, id=wx.ID_CANCEL)
@@ -434,7 +434,7 @@ class RobustProgressDialog:
         mainFrame.Bind(
             wx.EVT_KILL_FOCUS,
             lambda e: e.IsShown() and mainFrame.contentTextCtrl.SetFocus(),
-            id=self.progress_dlg.Id
+            id=self.progress_dlg.Id,
         )
 
     def onHide(self, event):
@@ -444,10 +444,12 @@ class RobustProgressDialog:
     def onAbort(self, event):
         msg = wx.MessageBox(
             # Translators: content of a message to confirm the closing of a progress dialog
-            _("This will cancel all the operations in progress.\nAre you sure you want to continue?"),
+            _(
+                "This will cancel all the operations in progress.\nAre you sure you want to continue?"
+            ),
             # Translators: title of a message box
             _("Confirm"),
-            style=wx.ICON_WARNING | wx.YES_NO
+            style=wx.ICON_WARNING | wx.YES_NO,
         )
         if msg == wx.NO:
             wx.CallAfter(self.progress_dlg.SetFocus)
@@ -468,7 +470,9 @@ class RobustProgressDialog:
         return self.is_hidden
 
     def should_update(self):
-        if (self.progress_dlg is None) or ((time.perf_counter() - self._last_update) <= 0.7):
+        if (self.progress_dlg is None) or (
+            (time.perf_counter() - self._last_update) <= 0.7
+        ):
             return False
         return True
 
@@ -489,4 +493,3 @@ class RobustProgressDialog:
         wx.CallAfter(self.progress_dlg.Close)
         wx.CallAfter(self.progress_dlg.Destroy)
         self.progress_dlg = None
-

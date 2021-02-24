@@ -6,7 +6,6 @@
 from enum import IntEnum, IntFlag, auto
 
 
-
 class DocumentCapability(IntFlag):
     """Represents feature flags for a document."""
 
@@ -26,7 +25,6 @@ class DocumentCapability(IntFlag):
     """Does this document supports extracting images out of pages?"""
 
 
-
 class ReadingMode(IntEnum):
     DEFAULT = 0
     READING_ORDER = 1
@@ -34,7 +32,7 @@ class ReadingMode(IntEnum):
     PAGINATION_BASED = 3
     CHAPTER_BASED = 4
 
-    
+
 READING_MODE_LABELS = {
     ReadingMode.DEFAULT: _("Default reading mode"),
     ReadingMode.READING_ORDER: _("Reading order"),

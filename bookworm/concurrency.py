@@ -77,7 +77,9 @@ class QPChannel:
         self.queue.put((QPResult.CANCELLED, None))
 
     def __post_init__(self):
-        self.is_cancellation_requested = self.cancellation_token.is_cancellation_requested
+        self.is_cancellation_requested = (
+            self.cancellation_token.is_cancellation_requested
+        )
 
     def get(self):
         return self.queue.get()
@@ -165,4 +167,3 @@ class QueueProcess(mp.Process):
                 raise exc_value
         self.join()
         self.close()
-

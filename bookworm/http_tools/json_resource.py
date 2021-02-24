@@ -26,7 +26,10 @@ class RemoteJsonResource:
         try:
             return self.model.parse_obj(data)
         except ValidationError:
-            log.exception("Failed to validate data against the model. \n{e.errors()}", exc_info=True)
+            log.exception(
+                "Failed to validate data against the model. \n{e.errors()}",
+                exc_info=True,
+            )
             raise ValueError(f"Failed to parse data {data} against model {self.model}.")
 
     def get(self):
