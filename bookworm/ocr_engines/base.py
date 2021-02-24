@@ -13,10 +13,8 @@ from bookworm.i18n import LocaleInfo
 from bookworm.image_io import ImageIO
 from bookworm.utils import NEWLINE
 from bookworm.logger import logger
-from .image_processing_pipelines import (
-    ImageProcessingPipeline,
-    ConcatImagesProcessingPipeline,
-)
+from .image_processing_pipelines import ImageProcessingPipeline
+
 
 
 log = logger.getChild(__name__)
@@ -76,10 +74,7 @@ class BaseOcrEngine(metaclass=ABCMeta):
     ) -> t.Iterable[ImageIO]:
         images = (ocr_request.image,)
         sorted_ipp = sorted(
-            list(ocr_request.image_processing_pipelines)
-            + [
-                ConcatImagesProcessingPipeline,
-            ],
+            list(ocr_request.image_processing_pipelines),
             key=attrgetter("run_order"),
         )
         for pipeline_cls in sorted_ipp:
@@ -114,6 +109,11 @@ class BaseOcrEngine(metaclass=ABCMeta):
 
         with ThreadPoolExecutor(4) as pool:
             for (idx, res) in enumerate(pool.map(recognize_page, doc)):
+                if channel.is_cancellation_requested():
+                    doc.close()
+                    out.close()
+                    channel.cancel()
+                    return
                 out.write(
                     f"Page {res.cookie}{NEWLINE}{res.recognized_text}{NEWLINE}\f{NEWLINE}"
                 )
@@ -122,7 +122,7 @@ class BaseOcrEngine(metaclass=ABCMeta):
             file.write(out.getvalue())
         out.close()
         doc.close()
-        channel.close()
+        channel.done()
 
     @classmethod
     def get_sorted_languages(cls):

@@ -71,9 +71,9 @@ class OCRMenu(wx.Menu):
         self.Append(
             OCRMenuIds.scanCurrentPage,
             # Translators: the label of an item in the application menubar
-            _("S&can Current Page...\tF4"),
+            _("&Scan Current Page...\tF4"),
             # Translators: the help text of an item in the application menubar
-            _("OCR current page"),
+            _("Run OCR on the current page"),
         )
         self.auto_scan_item = self.Append(
             OCRMenuIds.autoScanPages,
@@ -93,7 +93,7 @@ class OCRMenu(wx.Menu):
         self.Append(
             OCRMenuIds.scanToTextFile,
             # Translators: the label of an item in the application menubar
-            _("Scan To Text File..."),
+            _("Scan To &Text File..."),
             # Translators: the help text of an item in the application menubar
             _("Scan pages and save the text to a .txt file."),
         )
@@ -106,7 +106,7 @@ class OCRMenu(wx.Menu):
         )
         # Add the menu to the menubar
         # Translators: the label of the OCR menu in the application menubar
-        self.view.toolsMenu.Append(wx.ID_ANY, _("OCR"), self)
+        self.menubar.Insert(2, self, _("OCR"))
 
         # Event handlers
         self.view.Bind(
@@ -250,6 +250,7 @@ class OCRMenu(wx.Menu):
             message=_("Preparing book"),
             maxvalue=len(self.service.reader.document),
             can_hide=True,
+            can_abort=True,
         )
         self._continue_with_text_extraction(ocr_opts, output_file, progress_dlg)
 
@@ -258,22 +259,26 @@ class OCRMenu(wx.Menu):
         doc = self.service.reader.document
         total = len(doc)
         args = (doc, output_file, ocr_opts)
-        for progress in QueueProcess(
-            target=self.service.current_ocr_engine.scan_to_text, args=args
-        ):
-            progress_dlg.Update(
-                progress + 1,
-                f"Scanning page {progress} of {total}",
-            )
-        progress_dlg.Dismiss()
-        wx.CallAfter(
+        scan2text_process = QueueProcess(
+            target=self.service.current_ocr_engine.scan_to_text,
+            args=args
+        )
+        progress_dlg.set_abort_callback(scan2text_process.cancel)
+        scan2text_process.add_done_callback(
+            wx.CallAfter,
             wx.MessageBox,
             _(
                 "Successfully processed {} pages.\nExtracted text was written to: {}"
             ).format(total, output_file),
             _("OCR Completed"),
-            wx.ICON_INFORMATION,
+            wx.ICON_INFORMATION
         )
+        for progress in scan2text_process:
+            progress_dlg.Update(
+                progress + 1,
+                f"Scanning page {progress} of {total}",
+            )
+        progress_dlg.Dismiss()
         wx.CallAfter(self.view.contentTextCtrl.SetFocus)
 
     def onChangeOCROptions(self, event):

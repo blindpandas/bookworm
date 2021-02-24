@@ -6,8 +6,8 @@ import multiprocessing as mp
 from traceback import format_exception
 from enum import IntEnum
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-from functools import wraps
-from dataclasses import dataclass
+from functools import wraps, partial
+from dataclasses import dataclass, field
 import bookworm.typehints as t
 from bookworm.signals import app_shuttingdown
 from bookworm.logger import logger
@@ -49,7 +49,19 @@ def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., "Future"]:
     return wrapper
 
 
+@dataclass(repr=False)
+class CancellationToken:
+    _cancel_event: mp.Event = field(default_factory=mp.Event)
+
+    def request_cancellation(self):
+        self._cancel_event.set()
+
+    def is_cancellation_requested(self):
+        return self._cancel_event.is_set()
+
+
 class QPResult(IntEnum):
+    CANCELLED = -2
     COMPLETED = -1
     OK = 0
     FAILED = 1
@@ -58,7 +70,17 @@ class QPResult(IntEnum):
 
 @dataclass
 class QPChannel:
-    queue: mp.Queue
+    queue: mp.Queue = field(default_factory=mp.Queue)
+    cancellation_token: CancellationToken = field(default_factory=CancellationToken)
+
+    def cancel(self):
+        self.queue.put((QPResult.CANCELLED, None))
+
+    def __post_init__(self):
+        self.is_cancellation_requested = self.cancellation_token.is_cancellation_requested
+
+    def get(self):
+        return self.queue.get()
 
     def push(self, value: t.Any):
         self.queue.put((QPResult.OK, value))
@@ -70,8 +92,10 @@ class QPChannel:
     def log(self, msg: str):
         self.queue.put((QPResult.DEBUG, f"PID: {os.getpid()}; {msg}"))
 
-    def close(self):
+    def done(self):
         self.queue.put((QPResult.COMPLETED, None))
+
+    def close(self):
         self.queue.close()
 
 
@@ -86,21 +110,34 @@ class QueueProcess(mp.Process):
 
     QPIteratorType = t.Iterator[t.Any]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, cancellable=True, **kwargs):
         kwargs.setdefault("daemon", True)
         super().__init__(*args, **kwargs)
-        self.queue = mp.Queue()
+        self.cancellable = cancellable
+        self.channel = QPChannel()
+        self._is_cancelled = mp.Event()
+        self._done_callback = None
+
+    def cancel(self):
+        if not self.cancellable:
+            raise TypeError("Uncancellable operation")
+        self.channel.cancellation_token.request_cancellation()
+
+    def is_cancelled(self):
+        return self._is_cancelled.is_set()
+
+    def add_done_callback(self, callback, *args, **kwargs):
+        self._done_callback = partial(callback, *args, **kwargs)
 
     def run(self):
-        channel = QPChannel(self.queue)
         try:
-            self._target(*self._args, **self._kwargs, channel=channel)
+            self._target(*self._args, **self._kwargs, channel=self.channel)
         except:
-            channel.exception(*sys.exc_info())
+            self.channel.exception(*sys.exc_info())
 
     def close(self):
+        self.channel.close()
         super().close()
-        self.queue.close()
 
     def __iter__(self) -> QPIteratorType:
         return self.iter_queue()
@@ -110,12 +147,17 @@ class QueueProcess(mp.Process):
             raise RuntimeError("Can only iterate process once.")
         self.start()
         while True:
-            flag, result = self.queue.get()
+            flag, result = self.channel.get()
             if flag is QPResult.OK:
                 yield result
             elif flag is QPResult.DEBUG:
                 log.debug(f"REMOTE PROCESS: {result}")
             elif flag is QPResult.COMPLETED:
+                if self._done_callback is not None:
+                    self._done_callback()
+                break
+            elif flag is QPResult.CANCELLED:
+                self._is_cancelled.set()
                 break
             elif flag is QPResult.FAILED:
                 exc_value, tb_text = result
@@ -123,3 +165,4 @@ class QueueProcess(mp.Process):
                 raise exc_value
         self.join()
         self.close()
+

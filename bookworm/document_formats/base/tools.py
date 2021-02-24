@@ -25,7 +25,7 @@ def export_to_plain_text(doc, target_filename, channel):
         file.write(full_text)
     out.close()
     doc.close()
-    channel.close()
+    channel.done()
 
 
 def search_book(doc, request, channel):
@@ -49,4 +49,4 @@ def search_book(doc, request, channel):
             )
         channel.push(resultset)
     doc.close()
-    channel.close()
+    channel.done()
