@@ -18,6 +18,7 @@ from glob import glob
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile, ZIP_LZMA
+from jinja2 import Environment, FileSystemLoader
 from invoke import task, call
 from invoke.exceptions import UnexpectedExit
 
@@ -83,6 +84,7 @@ def _add_envars(context):
             "IAPP_ARCH": arch,
             "IAPP_NAME": app.name,
             "IAPP_DISPLAY_NAME": app.display_name,
+            "IAPP_DESCRIPTION": app.description,
             "IAPP_VERSION": app.version,
             "IAPP_VERSION_EX": app.version_ex,
             "IAPP_AUTHOR": app.author,
@@ -502,8 +504,29 @@ def install_bookworm(c):
     print("Finished installing packages.")
 
 
+@task
+@make_env
+def make_version_info_file(c):
+    from bookworm import app
+
+    print("Generating version info file...")
+    env = Environment(loader=FileSystemLoader(PROJECT_ROOT / "scripts" / "builder"))
+    vinfo_tpl = env.get_template("version_info.txt.tpl")
+    output = vinfo_tpl.render(
+        app_version_tuple=app.version_ex.replace(".", ", ").strip(),
+        app_author=app.author,
+        app_description=app.description,
+        app_version=app.version,
+        app_copyright=app.copyright,
+        app_name=app.display_name,
+    )
+    outfile = PROJECT_ROOT / "scripts" / "builder" / "assets" / "version_info.txt"
+    outfile.write_text(output)
+    print(f"Version info file was generated at {outfile}")
+
+
 @task(
-    pre=(install_bookworm,),
+    pre=(install_bookworm, make_version_info_file,),
     post=(
         copy_deps,
         copy_uwp_services_lib,

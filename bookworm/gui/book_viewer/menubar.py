@@ -17,6 +17,7 @@ from bookworm.resources import sounds
 from bookworm.document_formats import DocumentCapability as DC
 from bookworm.signals import config_updated, reader_book_loaded, reader_book_unloaded
 from bookworm.concurrency import call_threaded, process_worker
+from bookworm.gui.components import RobustProgressDialog
 from bookworm import ocr
 from bookworm import speech
 from bookworm.reader import EBookReader
@@ -172,17 +173,19 @@ class FileMenu(BaseMenu):
         if not filename.strip():
             return
         total = len(self.reader.document)
-        dlg = wx.ProgressDialog(
+        dlg = RobustProgressDialog(
+            self.view,
             # Translators: the title of a dialog showing
             # the progress of book export process
             _("Exporting Book"),
             # Translators: the message of a dialog showing the progress of book export
             _("Converting your book to plain text."),
-            parent=self.view,
-            maximum=total,
-            style=wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_AUTO_HIDE,
+            maxvalue=total,
+            can_hide=True,
+            can_abort=True
         )
         process = self.reader.document.export_to_text(filename)
+        dlg.set_abort_callback(process.cancel)
         self._continue_with_export_to_text(process, dlg, total)
 
     @call_threaded
@@ -194,8 +197,7 @@ class FileMenu(BaseMenu):
                 progress,
                 _("Exporting Page {} of {}...").format(progress + 1, total),
             )
-        wx.CallAfter(progress_dlg.Close)
-        wx.CallAfter(progress_dlg.Destroy)
+        progress_dlg.Dismiss()
 
     def onRecentFileItem(self, event):
         clicked_id = event.GetId()

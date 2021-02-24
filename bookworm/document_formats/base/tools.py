@@ -15,6 +15,11 @@ def export_to_plain_text(doc, target_filename, channel):
     if out.write(doc.metadata.title or ""):
         out.write(f"{NEWLINE}{'-' * 30}{NEWLINE}")
     for n in range(total):
+        if channel.is_cancellation_requested():
+            out.close()
+            doc.close()
+            channel.cancel()
+            return
         text = doc.get_page_content(n)
         out.write(f"{text}{NEWLINE}\f{NEWLINE}")
         channel.push(n)

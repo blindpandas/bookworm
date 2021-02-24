@@ -57,7 +57,7 @@ CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$%IAPP_DISPLAY_NAME% English User G
 CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall $%IAPP_DISPLAY_NAME%.lnk" "$INSTDIR\Uninstall.exe"
 !insertmacro MUI_STARTMENU_WRITE_END
 WriteUninstaller "$INSTDIR\Uninstall.exe"
-WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "DisplayName" "$%IAPP_DISPLAY_NAME% -  The universally accessible eBook reader"
+WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "DisplayName" "$%IAPP_DISPLAY_NAME% -  $%IAPP_DESCRIPTION%"
 WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
 WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "InstallLocation" $INSTDIR
 WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall" "Publisher" "$%IAPP_AUTHOR%"

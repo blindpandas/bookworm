@@ -8,14 +8,15 @@ import re
 
 name = "bookworm"
 display_name = "Bookworm"
-author = "Blind Pandas Team"
+description = "The Universally accessible eBook reader"
+author = "Blind Pandas"
 author_email = "info@blindpandas.com"
 version = "0.3a0"
-version_ex = "0.2.0.5"
+version_ex = "0.3.0.0"
 url = "https://github.com/blindpandas/bookworm"
 website = "https://blindpandas.com/bookworm/"
 update_url = "https://blindpandas.com/bookworm/current_version.json"
-copyright = f"Copyright (c) 2020 {author} and {display_name} contributors."
+copyright = f"Copyright (c) 2021 {author} and {display_name} contributors."
 is_frozen = getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
 arch = "x86" if struct.calcsize("P") == 4 else "x64"
 debug = False

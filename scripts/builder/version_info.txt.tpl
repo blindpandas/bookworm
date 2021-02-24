@@ -6,8 +6,8 @@ VSVersionInfo(
   ffi=FixedFileInfo(
     # filevers and prodvers should be always a tuple with four items: (1, 2, 3, 4)
     # Set not needed items to zero 0.
-    filevers=(0, 3, 0, 0),
-    prodvers=(0, 3, 0, 0),
+    filevers=({{ app_version_tuple }}),
+    prodvers=({{ app_version_tuple }}),
     # Contains a bitmask that specifies the valid bits 'flags'r
     mask=0x3f,
     # Contains a bitmask that specifies the Boolean attributes of the file.
@@ -29,13 +29,13 @@ VSVersionInfo(
       [
       StringTable(
         u'040904B0',
-        [StringStruct(u'CompanyName', u'Blind Pandas'),
-        StringStruct(u'FileDescription', u'Bookworm. The universally accessible eBook reader'),
-        StringStruct(u'FileVersion', u'0.3a0'),
-        StringStruct(u'LegalCopyright', u'Copyright (C) 2021 Blind Pandas'),
-        StringStruct(u'OriginalFilename', u'Bookworm.exe'),
-        StringStruct(u'ProductName', u'Bookworm'),
-        StringStruct(u'ProductVersion', u'0.3a0')])
+        [StringStruct(u'CompanyName', u'{{ app_author }}'),
+        StringStruct(u'FileDescription', u'{{ app_description }}'),
+        StringStruct(u'FileVersion', u'{{ app_version }}'),
+        StringStruct(u'LegalCopyright', u'{{ app_copyright }}'),
+        StringStruct(u'OriginalFilename', u'{{ app_name }}.exe'),
+        StringStruct(u'ProductName', u'{{ app_name }}'),
+        StringStruct(u'ProductVersion', u'{{ app_version }}')])
       ]), 
     VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
   ]

@@ -174,7 +174,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         return DocumentCapability.GRAPHICAL_RENDERING in self.capabilities
 
     def export_to_text(self, target_filename: t.PathLike):
-        yield from QueueProcess(
+        return QueueProcess(
             target=doctools.export_to_plain_text,
             args=(self, target_filename),
             name="bookworm-exporter",
