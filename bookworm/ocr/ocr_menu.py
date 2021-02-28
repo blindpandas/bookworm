@@ -25,7 +25,7 @@ from bookworm.concurrency import QueueProcess, call_threaded, threaded_worker
 from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.resources import sounds
 from bookworm.speechdriver.enumerations import SynthState
-from bookworm.gui.components import SimpleDialog, SnakDialog, RobustProgressDialog
+from bookworm.gui.components import SimpleDialog, AsyncSnakDialog, RobustProgressDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from .ocr_dialogs import OCROptionsDialog
@@ -59,11 +59,6 @@ class OCRMenu(wx.Menu):
         self.service = service
         self.menubar = menubar
         self.view = service.view
-        self._ocr_wait_dlg = SnakDialog(
-            parent=self.view,
-            message=_("Scanning page. Please wait...."),
-            dismiss_callback=self._on_ocr_cancelled,
-        )
         self._ocr_cancelled = threading.Event()
         image2textId = wx.NewIdRef()
 
@@ -201,12 +196,14 @@ class OCRMenu(wx.Menu):
     def _run_ocr(self, ocr_request, callback):
         ocr_started.send(sender=self.view)
         # Show a modal dialog
-        self._ocr_wait_dlg.Show()
         sounds.ocr_start.play()
         future_callback = functools.partial(self._process_ocr_result, callback)
-        threaded_worker.submit(
-            self.service.current_ocr_engine.preprocess_and_recognize, ocr_request
-        ).add_done_callback(future_callback)
+        self._wait_dlg = AsyncSnakDialog(
+            task=functools.partial(self.service.current_ocr_engine.preprocess_and_recognize, ocr_request),
+            done_callback=future_callback,
+            message=_("Running OCR, please wait..."),
+            dismiss_callback=self._on_ocr_cancelled
+        )
 
     def onAutoScanPages(self, event):
         event.Skip()
@@ -350,24 +347,24 @@ class OCRMenu(wx.Menu):
     def _process_ocr_result(self, callback, task):
         if self._ocr_cancelled.is_set():
             ocr_ended.send(sender=self.view, isfaulted=True)
+            self._ocr_cancelled.clear()
             return
         try:
             ocr_result = task.result()
         except Exception as e:
-            self._ocr_wait_dlg.Hide()
             log.exception(f"Error getting OCR recognition results.", exc_info=True)
             ocr_ended.send(sender=self.view, isfaulted=True)
             return
         callback(ocr_result)
         sounds.ocr_end.play()
         speech.announce(_("Scan finished."), urgent=True)
-        self._ocr_wait_dlg.Hide()
         self.view.contentTextCtrl.SetFocusFromKbd()
         ocr_ended.send(sender=self.view, isfaulted=False)
 
     def _on_ocr_cancelled(self):
         self._ocr_cancelled.set()
         speech.announce(_("OCR cancelled"), True)
+        sounds.ocr_end.play()
         return True
 
     def _on_reader_loaded(self, sender):

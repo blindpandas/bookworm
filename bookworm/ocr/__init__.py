@@ -61,11 +61,8 @@ class OCRService(BookwormService):
         return OCR_KEYBOARD_SHORTCUTS
 
     def shutdown(self):
-        try:
-            self.menu._ocr_wait_dlg.Destroy()
-        except RuntimeError:
-            # already destroyed
-            pass
+        if (dlg := getattr(self.menu, "_wait_dlg", None)) is not None:
+            dlg.Dismiss()
 
     @classmethod
     def get_ocr_engine_by_name(cls, engine_name):
