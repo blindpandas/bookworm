@@ -15,7 +15,8 @@ from bookworm.ocr_engines.tesseract_ocr_engine import TesseractOcrEngine, get_te
 from bookworm.logger import logger
 
 log = logger.getChild(__name__)
-TESSERACT_INFO_URL = "http://localhost:5000/info.json"
+TESSERACT_INFO_URL = "https://bookworm.capeds.net/tesseract_info.json"
+_TESSERACT_INFO_CACHE = None
 
 
 class TesseractLanguageDownloadInfo(BaseModel):
@@ -52,11 +53,15 @@ def get_language_path(language):
 
 
 def get_tesseract_download_info():
+    global _TESSERACT_INFO_CACHE
+    if _TESSERACT_INFO_CACHE is not None:
+        return _TESSERACT_INFO_CACHE
     try:
-        return RemoteJsonResource(
+        _TESSERACT_INFO_CACHE = RemoteJsonResource(
             url=TESSERACT_INFO_URL,
             model=TesseractDownloadInfo,
         ).get()
+        return _TESSERACT_INFO_CACHE
     except ConnectionError:
         log.exception("Failed to get Tesseract download info.", exc_info=True)
         wx.GetApp().mainFrame.notify_user(
@@ -125,6 +130,13 @@ def download_tesseract_engine(parent):
             _("Connection Error"),
             _("Could not download Tesseract OCR Engine.\nPlease check your internet and try again."),
             icon=wx.ICON_ERROR
+        )
+    except:
+        log.exception("An error occurred while installing the Tesseract OCr Engine", exc_info=True)
+        wx.GetApp().mainFrame.notify_user(
+            _("Error"),
+            _("Could not install the Tesseract OCR engine.\nPlease try again."),
+            icon=wx.ICON_WARNING
         )
     finally:
         progress_dlg.Dismiss()

@@ -124,10 +124,10 @@ def perform_update(upstream_version_info):
             return
     # Go ahead and install the update
     log.debug("Installing the update...")
-    progress_dlg.Pulse(_("Extracting update bundle..."))
     bundle_file.seek(0)
     try:
-        extraction_dir = extract_update_bundle(bundle_file)
+        with progress_dlg.PulseContinuously(_("Extracting update bundle...")):
+            extraction_dir = extract_update_bundle(bundle_file)
     except:
         log.debug("Error extracting update bundle.", exc_info=True)
         wx.MessageBox(
@@ -137,6 +137,7 @@ def perform_update(upstream_version_info):
             _("Error installing update"),
             style=wx.ICON_ERROR,
         )
+        return
     finally:
         bundle_file.close()
         progress_dlg.Dismiss()

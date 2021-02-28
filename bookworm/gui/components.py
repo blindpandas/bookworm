@@ -275,9 +275,9 @@ class AsyncSnakDialog:
         self.snak_dg.Show()
 
     def on_future_completed(self, completed_future):
-        self.snak_dg.Hide()
+        wx.CallAfter(self.snak_dg.Hide)
         with contextlib.suppress(RuntimeError):
-            self.snak_dg.Destroy()
+            wx.CallAfter(self.snak_dg.Destroy)
         self.done_callback(completed_future)
 
 
