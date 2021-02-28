@@ -18,18 +18,19 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
+def get_tesseract_path():
+    return data_path("tesseract_ocr").resolve()
+
+
 class TesseractOcrEngine(BaseOcrEngine):
     name = "tesseract_ocr"
     display_name = _("Tesseract OCR Engine")
     _libtesseract = None
 
-    @staticmethod
-    def get_tesseract_path():
-        return data_path("tesseract_ocr").resolve()
 
     @classmethod
-    def _check_on_windows(cls):
-        tesseract_lib_path = cls.get_tesseract_path()
+    def check_on_windows(cls):
+        tesseract_lib_path = get_tesseract_path()
         if tesseract_lib_path.exists():
             ctypes.windll.kernel32.AddDllDirectory(str(tesseract_lib_path))
             os.environ["TESSDATA_PREFIX"] = str(tesseract_lib_path / "tessdata")
@@ -39,7 +40,7 @@ class TesseractOcrEngine(BaseOcrEngine):
 
     @classmethod
     def check(cls) -> bool:
-        if sys.platform == "win32" and not cls._check_on_windows():
+        if sys.platform == "win32" and not cls.check_on_windows():
             return False
         from . import pyocr
 

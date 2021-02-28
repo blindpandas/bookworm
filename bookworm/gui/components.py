@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import time
+import threading
 import contextlib
 import wx
 import wx.lib.mixins.listctrl as listmix
@@ -11,10 +12,12 @@ from dataclasses import dataclass
 from itertools import chain
 import bookworm.typehints as t
 from bookworm.concurrency import threaded_worker
+from bookworm.vendor.repeating_timer import RepeatingTimer
 from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
+ID_SKIP = 32000
 
 # Some custom types
 ObjectCollection = t.Iterable[t.Any]
@@ -378,6 +381,39 @@ class ImmutableObjectListView(DialogListCtrl):
         self.prevent_mutations()
 
 
+class _RPDPulser:
+    """
+    A helper class to implement the continuous pulsing
+    functionality for the progress dialog.
+    """    
+
+    def __init__(self, progress_dlg, message, interval):
+        self.progress_dlg = progress_dlg
+        self.message = message
+        self.interval = interval / 1000
+        self._timer = RepeatingTimer(self.interval, self.progress_dlg.Pulse, self.message)
+        self.progress_dlg.Pulse(self.message)
+        self.pdg_btns = {
+            self.progress_dlg.progress_dlg.FindWindowById(ctrl_id)
+            for ctrl_id in {ID_SKIP, wx.ID_CANCEL}
+        }
+        self.btn_status = {
+            btn: btn.Enabled
+            for btn in self.pdg_btns
+        }
+
+    def __enter__(self):
+        self._timer.start()
+        for btn in self.pdg_btns:
+            btn.Enable(False) 
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._timer.cancel()
+        for btn, status in self.btn_status.items():
+            btn.Enable(status) 
+        return False
+
+
 class RobustProgressDialog:
     """A progress dialog that works well with threaded tasks."""
 
@@ -391,17 +427,20 @@ class RobustProgressDialog:
         elapsed_time=True,
         remaining_time=True,
         estimated_time=False,
+        auto_hide=True,
         can_hide=False,
         can_abort=False,
         abort_callback=None,
     ):
-        self.parent = parent
+        self.parent = parent or wx.GetApp().mainFrame
         self.title = title
         self.message = message
         self.maxvalue = maxvalue
         self.abort_callback = abort_callback
         self.progress_dlg = None
-        pdg_styles = {wx.PD_AUTO_HIDE, wx.PD_SMOOTH}
+        pdg_styles = {wx.PD_SMOOTH,}
+        if auto_hide:
+            pdg_styles.add(wx.PD_AUTO_HIDE)
         if modal:
             pdg_styles.add(wx.PD_APP_MODAL)
         if elapsed_time:
@@ -428,7 +467,7 @@ class RobustProgressDialog:
             maximum=self.maxvalue,
             style=self.prog_dlg_style,
         )
-        self.progress_dlg.Bind(wx.EVT_BUTTON, self.onHide, id=32000)
+        self.progress_dlg.Bind(wx.EVT_BUTTON, self.onHide, id=ID_SKIP)
         self.progress_dlg.Bind(wx.EVT_BUTTON, self.onAbort, id=wx.ID_CANCEL)
         mainFrame = wx.GetApp().mainFrame
         mainFrame.Bind(
@@ -477,9 +516,8 @@ class RobustProgressDialog:
         return True
 
     def Pulse(self, message):
-        if self.should_update():
-            self._last_update = time.perf_counter()
-            wx.CallAfter(self.progress_dlg, Pulse, message)
+        if self.progress_dlg is not None:
+            wx.CallAfter(self.progress_dlg.Pulse, message)
 
     def Update(self, value, message):
         if self.should_update():
@@ -493,3 +531,6 @@ class RobustProgressDialog:
         wx.CallAfter(self.progress_dlg.Close)
         wx.CallAfter(self.progress_dlg.Destroy)
         self.progress_dlg = None
+
+    def PulseContinuously(self, message, interval=1500):
+        return _RPDPulser(self, message, interval)

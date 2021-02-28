@@ -4,6 +4,8 @@ import math
 import threading
 import requests
 from dataclasses import dataclass, field
+from pathlib import Path
+from tempfile import SpooledTemporaryFile
 from bookworm import typehints as t
 from bookworm.logger import logger
 
@@ -32,6 +34,17 @@ class ResourceDownloadProgress:
     def downloaded_mb(self) -> float:
         return round(self.downloaded / (1024 ** 2), 2)
 
+    @property
+    def user_message(self):
+        # Translators: content of a message in a progress dialog
+        return _("Downloaded {downloaded} MB of {total} MB").format(
+            downloaded=self.downloaded_mb,
+            total=self.total_mb
+        )
+
+
+# Define this type here
+ProgressCallback = t.Callable[[ResourceDownloadProgress], None]
 
 @dataclass(repr=False)
 class ResourceDownloadRequest:
@@ -56,7 +69,7 @@ class ResourceDownloadRequest:
         downloaded = 0
         try:
             for chunk in self.request.iter_content(chunk_size=self.chunk_size):
-                if self._cancellation_event.is_set():
+                if self.is_cancelled():
                     return
                 downloaded += len(chunk)
                 yield ResourceDownloadProgress(
@@ -71,17 +84,41 @@ class ResourceDownloadRequest:
     def download_to_file(
         self,
         outfile: t.BinaryIO,
-        progress_callback: t.Callable[[ResourceDownloadProgress], None],
+        progress_callback: ProgressCallback=None,
     ) -> t.BinaryIO:
         if outfile.seekable():
             outfile.seek(0)
         for progress in self.iter_chunks():
             outfile.write(progress.chunk)
-            progress_callback(progress)
+            if progress_callback is not None:
+                progress_callback(progress)
         return outfile
+
+    def download_to_filesystem(
+        self,
+        dstfile: t.PathLike,
+        progress_callback: ProgressCallback=None
+    ):
+        dstfile = Path(dstfile)
+        if dstfile.exists():
+            raise OSError(f"File {dstfile} already exists.")
+        with SpooledTemporaryFile() as src:
+            for progress in self.iter_chunks():
+                src.write(progress.chunk)
+                if progress_callback is not None:
+                    progress_callback(progress)
+            if self.is_cancelled():
+                return
+            src.seek(0)
+            with open(dstfile, "wb") as dst:
+                for chunk in src:
+                    dstfile.write(chunk)
 
     def cancel(self):
         self._cancellation_event.set()
+
+    def is_cancelled(self):
+        return self._cancellation_event.is_set()
 
     @property
     def can_report_progress(self):

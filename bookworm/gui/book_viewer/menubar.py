@@ -191,10 +191,9 @@ class FileMenu(BaseMenu):
     @call_threaded
     def _continue_with_export_to_text(self, process, progress_dlg, total):
         for progress in process:
-            # Translators: a message shown when the book is being exported
-            wx.CallAfter(
-                progress_dlg.Update,
+            progress_dlg.Update(
                 progress,
+                # Translators: a message shown when the book is being exported
                 _("Exporting Page {} of {}...").format(progress + 1, total),
             )
         progress_dlg.Dismiss()

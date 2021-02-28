@@ -8,9 +8,11 @@ from bookworm import app
 from bookworm import config
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
+from bookworm.concurrency import threaded_worker
 from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.gui.components import make_sized_static_box, SimpleDialog, SnakDialog
 from bookworm.logger import logger
+from bookworm.platform_services._win32 import tesseract_download
 from bookworm.ocr_engines.tesseract_ocr_engine import TesseractOcrEngine
 from bookworm.ocr_engines.image_processing_pipelines import (
     ImageProcessingPipeline,
@@ -62,7 +64,7 @@ class OcrPanel(SettingsPanel):
         # Translators: the label of a group of controls in the OCR page
         # of the settings related to Tesseract OCR engine
         tessBox = self.make_static_box(_("Tesseract OCR Engine"))
-        if not TesseractOcrEngine.get_tesseract_path().exists():
+        if not tesseract_download.is_tesseract_available():
             tessEngineDlBtn = CommandLinkButton(
                 tessBox,
                 -1,
@@ -106,7 +108,7 @@ class OcrPanel(SettingsPanel):
             self._service._init_ocr_engine()
 
     def onDownloadTesseractEngine(self, event):
-        ...
+        threaded_worker.submit(tesseract_download.download_tesseract_engine, self)
 
     def onDownloadTesseractLanguages(self, event):
         ...

@@ -1,4 +1,11 @@
+# coding: utf-8
+
 import threading
+from bookworm.logger import logger
+
+
+log = logger.getChild(__name__)
+
 
 
 class RepeatingTimer(threading.Thread):
