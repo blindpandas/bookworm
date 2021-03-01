@@ -182,7 +182,7 @@ class FileMenu(BaseMenu):
             _("Converting your book to plain text."),
             maxvalue=total,
             can_hide=True,
-            can_abort=True
+            can_abort=True,
         )
         process = self.reader.document.export_to_text(filename)
         dlg.set_abort_callback(process.cancel)

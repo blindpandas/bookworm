@@ -526,7 +526,10 @@ def make_version_info_file(c):
 
 
 @task(
-    pre=(install_bookworm, make_version_info_file,),
+    pre=(
+        install_bookworm,
+        make_version_info_file,
+    ),
     post=(
         copy_deps,
         copy_uwp_services_lib,

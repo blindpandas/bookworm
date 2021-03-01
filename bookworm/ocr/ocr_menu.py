@@ -199,10 +199,12 @@ class OCRMenu(wx.Menu):
         sounds.ocr_start.play()
         future_callback = functools.partial(self._process_ocr_result, callback)
         self._wait_dlg = AsyncSnakDialog(
-            task=functools.partial(self.service.current_ocr_engine.preprocess_and_recognize, ocr_request),
+            task=functools.partial(
+                self.service.current_ocr_engine.preprocess_and_recognize, ocr_request
+            ),
             done_callback=future_callback,
             message=_("Running OCR, please wait..."),
-            dismiss_callback=self._on_ocr_cancelled
+            dismiss_callback=self._on_ocr_cancelled,
         )
 
     def onAutoScanPages(self, event):

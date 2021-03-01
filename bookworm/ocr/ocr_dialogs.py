@@ -120,8 +120,7 @@ class OcrPanel(SettingsPanel):
 
     def onDownloadTesseractLanguages(self, event):
         TesseractLanguageManager(
-            title=_("Manage Tesseract OCR Engine Languages"),
-            parent=self
+            title=_("Manage Tesseract OCR Engine Languages"), parent=self
         ).ShowModal()
 
 
@@ -244,7 +243,7 @@ class OCROptionsDialog(SimpleDialog):
 
 
 class TesseractLanguageManager(SimpleDialog):
-    """A dialog to manage the languages of Tesseract OCR Engine."""
+    """A dialog to manage the languages for the managed version of Tesseract OCR Engine on Windows."""
 
     def __init__(self, *args, **kwargs):
         self.online_languages = ()
@@ -255,26 +254,32 @@ class TesseractLanguageManager(SimpleDialog):
     def addControls(self, parent):
         # Translators: label of a list control containing bookmarks
         wx.StaticText(parent, -1, _("Tesseract Languages"))
-        self.tesseractLanguageList = ImmutableObjectListView(parent, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
+        self.tesseractLanguageList = ImmutableObjectListView(
+            parent, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER
+        )
         self.tesseractLanguageList.SetSizerProps(expand=True)
         self.btnPanel = btnPanel = sc.SizedPanel(parent, -1)
         btnPanel.SetSizerType("horizontal")
         btnPanel.SetSizerProps(expand=True)
         # Translators: text of a button to add a language to Tesseract OCR Engine (best quality model)
-        self.addBestButton = wx.Button(btnPanel, wx.ID_ANY, _("Add &Best"))
+        self.addBestButton = wx.Button(btnPanel, wx.ID_ANY, _("Download &Best Model"))
         # Translators: text of a button to add a language to Tesseract OCR Engine (fastest model)
-        self.addFastButton = wx.Button(btnPanel, wx.ID_ANY, _("&Add &Fast"))
+        self.addFastButton = wx.Button(btnPanel, wx.ID_ANY, _("Download &Fast Model"))
         # Translators: text of a button to remove a language from Tesseract OCR Engine
         self.removeButton = wx.Button(btnPanel, wx.ID_REMOVE, _("&Remove"))
         self.Bind(wx.EVT_BUTTON, self.onAdd, self.addFastButton)
         self.Bind(wx.EVT_BUTTON, self.onAdd, self.addBestButton)
         self.Bind(wx.EVT_BUTTON, self.onRemove, id=wx.ID_REMOVE)
-        self.Bind(wx.EVT_LIST_ITEM_FOCUSED, self.onListFocusChanged, self.tesseractLanguageList)
+        self.Bind(
+            wx.EVT_LIST_ITEM_FOCUSED,
+            self.onListFocusChanged,
+            self.tesseractLanguageList,
+        )
         AsyncSnakDialog(
             task=tesseract_download.get_tesseract_download_info,
             done_callback=self._on_tesseract_dl_info,
             message=_("Getting download information, please wait..."),
-            parent=self
+            parent=self,
         )
 
     def getButtons(self, parent):
@@ -301,7 +306,10 @@ class TesseractLanguageManager(SimpleDialog):
             if lang.lower() not in _installed_langs
         )
         languages = [
-            (lang[0], LocaleInfo.from_three_letter_code(lang[1]),)
+            (
+                lang[0],
+                LocaleInfo.from_three_letter_code(lang[1]),
+            )
             for lang in sorted(language_identifiers, key=lambda l: l, reverse=True)
         ]
         column_defn = [
@@ -336,9 +344,11 @@ class TesseractLanguageManager(SimpleDialog):
         variant = "best" if event.GetEventObject() == self.addBestButton else "fast"
         AsyncSnakDialog(
             task=tesseract_download.get_tesseract_download_info,
-            done_callback=partial(self._on_download_language, lang.given_locale_name, variant),
+            done_callback=partial(
+                self._on_download_language, lang.given_locale_name, variant
+            ),
             message=_("Getting download information, please wait..."),
-            parent=self
+            parent=self,
         )
 
     def onRemove(self, event):
@@ -347,10 +357,12 @@ class TesseractLanguageManager(SimpleDialog):
         lang = selected[1]
         msg = wx.MessageBox(
             # Translators: content of a messagebox
-            _("Are you sure you want to remove language:\n{lang}?").format(lang=lang.description),
+            _("Are you sure you want to remove language:\n{lang}?").format(
+                lang=lang.description
+            ),
             # Translators: title of a messagebox
             _("Confirm"),
-            style=wx.YES_NO|wx.ICON_WARNING
+            style=wx.YES_NO | wx.ICON_WARNING,
         )
         if msg == wx.NO:
             return
@@ -375,10 +387,5 @@ class TesseractLanguageManager(SimpleDialog):
             return
         url = info.get_language_download_url(lang_name, variant=variant)
         threaded_worker.submit(
-            tesseract_download.download_language,
-            lang_name,
-            url
-        ).add_done_callback(
-            lambda f: wx.CallAfter(self.populate_list)
-        )
-
+            tesseract_download.download_language, lang_name, url
+        ).add_done_callback(lambda f: wx.CallAfter(self.populate_list))

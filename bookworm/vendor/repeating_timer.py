@@ -7,7 +7,6 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-
 class RepeatingTimer(threading.Thread):
     """
     Call a function after a specified number of seconds, it will then

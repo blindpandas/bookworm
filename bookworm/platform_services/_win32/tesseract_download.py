@@ -12,7 +12,10 @@ from bookworm import typehints as t
 from bookworm import app
 from bookworm.http_tools import RemoteJsonResource, HttpResource
 from bookworm.gui.components import RobustProgressDialog
-from bookworm.ocr_engines.tesseract_ocr_engine import TesseractOcrEngine, get_tesseract_path
+from bookworm.ocr_engines.tesseract_ocr_engine import (
+    TesseractOcrEngine,
+    get_tesseract_path,
+)
 from bookworm.logger import logger
 
 log = logger.getChild(__name__)
@@ -30,18 +33,16 @@ class TesseractDownloadInfo(BaseModel):
     def get_language_download_url(self, language: str, variant: str) -> HttpUrl:
         if language not in self.languages:
             raise ValueError(f"Language {language} is not available for download.")
-        url = self.best_traineddata_base_url if variant == 'best' else self.fast_traineddata_base_url
+        url = (
+            self.best_traineddata_base_url
+            if variant == "best"
+            else self.fast_traineddata_base_url
+        )
         return urljoin(url, f"{language}.traineddata")
 
 
-
 def is_tesseract_available():
-    return (
-        sys.platform == 'win32'
-        and
-        TesseractOcrEngine.check_on_windows()
-    )
-
+    return sys.platform == "win32" and TesseractOcrEngine.check_on_windows()
 
 
 def get_tessdata():
@@ -55,9 +56,10 @@ def get_language_path(language):
 def get_tesseract_download_info():
     global _TESSERACT_INFO_CACHE
     try:
-        return (_TESSERACT_INFO_CACHE :=
-            _TESSERACT_INFO_CACHE if _TESSERACT_INFO_CACHE is not None
-            else  RemoteJsonResource(
+        return (
+            _TESSERACT_INFO_CACHE := _TESSERACT_INFO_CACHE
+            if _TESSERACT_INFO_CACHE is not None
+            else RemoteJsonResource(
                 url=TESSERACT_INFO_URL,
                 model=TesseractDownloadInfo,
             ).get()
@@ -72,7 +74,7 @@ def get_tesseract_download_info():
                 "Could not get Tesseract download information.\n"
                 "Please check your internet connection and try again."
             ),
-            icon=wx.ICON_ERROR
+            icon=wx.ICON_ERROR,
         )
     except ValueError:
         log.exception("Error parsing tesseract download info", exc_info=True)
@@ -81,7 +83,7 @@ def get_tesseract_download_info():
             _("Error"),
             # Translators: content of a message box
             _("Failed to parse Tesseract download information. Please try again."),
-            icon=wx.ICON_ERROR
+            icon=wx.ICON_ERROR,
         )
 
 
@@ -99,12 +101,9 @@ def download_tesseract_engine(parent):
         _("Getting download information..."),
         maxvalue=100,
         can_hide=True,
-        can_abort=True
+        can_abort=True,
     )
-    callback = lambda prog: progress_dlg.Update(
-        prog.percentage,
-        prog.user_message
-    )
+    callback = lambda prog: progress_dlg.Update(prog.percentage, prog.user_message)
     try:
         dl_request = HttpResource(engine_dl_url).download()
         progress_dlg.set_abort_callback(dl_request.cancel)
@@ -121,22 +120,26 @@ def download_tesseract_engine(parent):
             _("Success"),
             # Translators: content of a messagebox
             _("Tesseract engine downloaded successfully"),
-            parent=parent
+            parent=parent,
         )
     except ConnectionError:
         log.debug("Failed to download tesseract orcr engine.", exc_info=True)
         wx.GetApp().mainFrame.notify_user(
             # Translators: title of a messagebox
             _("Connection Error"),
-            _("Could not download Tesseract OCR Engine.\nPlease check your internet and try again."),
-            icon=wx.ICON_ERROR
+            _(
+                "Could not download Tesseract OCR Engine.\nPlease check your internet and try again."
+            ),
+            icon=wx.ICON_ERROR,
         )
     except:
-        log.exception("An error occurred while installing the Tesseract OCr Engine", exc_info=True)
+        log.exception(
+            "An error occurred while installing the Tesseract OCr Engine", exc_info=True
+        )
         wx.GetApp().mainFrame.notify_user(
             _("Error"),
             _("Could not install the Tesseract OCR engine.\nPlease try again."),
-            icon=wx.ICON_WARNING
+            icon=wx.ICON_WARNING,
         )
     finally:
         progress_dlg.Dismiss()
@@ -153,7 +156,7 @@ def download_language(language, url):
             ),
             # Translators: title of a messagebox
             _("Confirm"),
-            style=wx.YES_NO | wx.ICON_WARNING
+            style=wx.YES_NO | wx.ICON_WARNING,
         )
         if msg == wx.NO:
             return
@@ -166,12 +169,9 @@ def download_language(language, url):
         _("Getting download information..."),
         maxvalue=100,
         can_hide=True,
-        can_abort=True
+        can_abort=True,
     )
-    callback = lambda prog: progress_dlg.Update(
-        prog.percentage,
-        prog.user_message
-    )
+    callback = lambda prog: progress_dlg.Update(prog.percentage, prog.user_message)
     try:
         dl_request = HttpResource(url).download()
         progress_dlg.set_abort_callback(dl_request.cancel)
@@ -188,7 +188,7 @@ def download_language(language, url):
             _("Connection Error"),
             # Translators: content of a messagebox
             _("Failed to download language data from {url}").format(url=url),
-            icon=wx.ICON_ERROR
+            icon=wx.ICON_ERROR,
         )
     finally:
         progress_dlg.Dismiss()

@@ -38,13 +38,13 @@ class ResourceDownloadProgress:
     def user_message(self):
         # Translators: content of a message in a progress dialog
         return _("Downloaded {downloaded} MB of {total} MB").format(
-            downloaded=self.downloaded_mb,
-            total=self.total_mb
+            downloaded=self.downloaded_mb, total=self.total_mb
         )
 
 
 # Define this type here
 ProgressCallback = t.Callable[[ResourceDownloadProgress], None]
+
 
 @dataclass(repr=False)
 class ResourceDownloadRequest:
@@ -84,7 +84,7 @@ class ResourceDownloadRequest:
     def download_to_file(
         self,
         outfile: t.BinaryIO,
-        progress_callback: ProgressCallback=None,
+        progress_callback: ProgressCallback = None,
     ) -> t.BinaryIO:
         if outfile.seekable():
             outfile.seek(0)
@@ -95,9 +95,7 @@ class ResourceDownloadRequest:
         return outfile
 
     def download_to_filesystem(
-        self,
-        dstfile: t.PathLike,
-        progress_callback: ProgressCallback=None
+        self, dstfile: t.PathLike, progress_callback: ProgressCallback = None
     ):
         dstfile = Path(dstfile)
         if dstfile.exists():

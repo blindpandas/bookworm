@@ -27,7 +27,6 @@ class TesseractOcrEngine(BaseOcrEngine):
     display_name = _("Tesseract OCR Engine")
     _libtesseract = None
 
-
     @classmethod
     def check_on_windows(cls):
         tesseract_lib_path = get_tesseract_path()
