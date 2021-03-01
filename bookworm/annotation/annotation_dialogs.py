@@ -123,7 +123,7 @@ class ViewAndEditAnnotationDialog(SimpleDialog):
 
 
 class BookmarksViewer(SimpleDialog):
-    """A ddialog to view the bookmarks of the current book."""
+    """A dialog to view the bookmarks of the current book."""
 
     def __init__(self, reader, annotator, *args, **kwargs):
         self.view = reader.view

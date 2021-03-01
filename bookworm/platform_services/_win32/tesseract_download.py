@@ -3,6 +3,7 @@
 import sys
 import time
 import wx
+from pathlib import Path
 from urllib.parse import urljoin, urlsplit
 from tempfile import TemporaryFile
 from zipfile import ZipFile
@@ -15,24 +16,23 @@ from bookworm.ocr_engines.tesseract_ocr_engine import TesseractOcrEngine, get_te
 from bookworm.logger import logger
 
 log = logger.getChild(__name__)
-TESSERACT_INFO_URL = "https://bookworm.capeds.net/tesseract_info.json"
+TESSERACT_INFO_URL = "http://localhost:5000/info.json"
 _TESSERACT_INFO_CACHE = None
-
-
-class TesseractLanguageDownloadInfo(BaseModel):
-    base_url: HttpUrl
-    languages: t.List[str]
-
-    def get_language_download_url(self, language: str) -> HttpUrl:
-        if language not in self.languages:
-            raise ValueError(f"Language {language} is not available for download.")
-        return urljoin(self.base_url, f"{language}.traineddata")
 
 
 class TesseractDownloadInfo(BaseModel):
     engine_x86: HttpUrl
     engine_x64: HttpUrl
-    traineddata: t.Dict[str, TesseractLanguageDownloadInfo]
+    languages: t.List[str]
+    best_traineddata_base_url: HttpUrl
+    fast_traineddata_base_url: HttpUrl
+
+    def get_language_download_url(self, language: str, variant: str) -> HttpUrl:
+        if language not in self.languages:
+            raise ValueError(f"Language {language} is not available for download.")
+        url = self.best_traineddata_base_url if variant == 'best' else self.fast_traineddata_base_url
+        return urljoin(url, f"{language}.traineddata")
+
 
 
 def is_tesseract_available():
@@ -54,14 +54,14 @@ def get_language_path(language):
 
 def get_tesseract_download_info():
     global _TESSERACT_INFO_CACHE
-    if _TESSERACT_INFO_CACHE is not None:
-        return _TESSERACT_INFO_CACHE
     try:
-        _TESSERACT_INFO_CACHE = RemoteJsonResource(
-            url=TESSERACT_INFO_URL,
-            model=TesseractDownloadInfo,
-        ).get()
-        return _TESSERACT_INFO_CACHE
+        return (_TESSERACT_INFO_CACHE :=
+            _TESSERACT_INFO_CACHE if _TESSERACT_INFO_CACHE is not None
+            else  RemoteJsonResource(
+                url=TESSERACT_INFO_URL,
+                model=TesseractDownloadInfo,
+            ).get()
+        )
     except ConnectionError:
         log.exception("Failed to get Tesseract download info.", exc_info=True)
         wx.GetApp().mainFrame.notify_user(
@@ -159,6 +159,7 @@ def download_language(language, url):
             return
     target_file.unlink(missing_ok=True)
     progress_dlg = RobustProgressDialog(
+        wx.GetApp().mainFrame,
         # Translators: title of a progress dialog
         _("Downloading Language"),
         # Translators: content of a progress dialog

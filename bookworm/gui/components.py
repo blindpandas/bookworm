@@ -272,11 +272,11 @@ class AsyncSnakDialog:
         self.future = threaded_worker.submit(task).add_done_callback(
             self.on_future_completed
         )
-        self.snak_dg.Show()
+        self.snak_dg.ShowModal()
 
     def on_future_completed(self, completed_future):
         self.Dismiss()
-        self.done_callback(completed_future)
+        wx.CallAfter(self.done_callback, completed_future)
 
     def Dismiss(self):
         if self.snak_dg:

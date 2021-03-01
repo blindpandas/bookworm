@@ -112,7 +112,7 @@ class ResourceDownloadRequest:
             src.seek(0)
             with open(dstfile, "wb") as dst:
                 for chunk in src:
-                    dstfile.write(chunk)
+                    dst.write(chunk)
 
     def cancel(self):
         self._cancellation_event.set()
