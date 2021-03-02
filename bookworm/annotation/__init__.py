@@ -96,7 +96,7 @@ class AnnotationService(BookwormService):
             (34, "", "", None),
         ]
 
-    def get_keyboard_shourtcuts(self):
+    def get_keyboard_shortcuts(self):
         return ANNOTATIONS_KEYBOARD_SHORTCUTS
 
     def get_settings_panels(self):

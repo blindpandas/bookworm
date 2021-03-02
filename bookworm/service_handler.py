@@ -108,8 +108,8 @@ class ServiceHandler:
             rv.update(service.stateful_menu_ids or ())
         return rv
 
-    def get_keyboard_shourtcuts(self):
+    def get_keyboard_shortcuts(self):
         rv = {}
         for service in self._get_services_with_gui():
-            rv.update(service.get_keyboard_shourtcuts())
+            rv.update(service.get_keyboard_shortcuts())
         return rv

@@ -49,6 +49,6 @@ class BookwormService:
         """Return items to add to the application toolbar."""
         return ()
 
-    def get_keyboard_shourtcuts(self) -> t.Dict[int, str]:
+    def get_keyboard_shortcuts(self) -> t.Dict[int, str]:
         """Return a dictionary mapping control id's to keyboard shortcuts."""
         return {}

@@ -219,14 +219,17 @@ class SnakDialog(SimpleDialog):
         self.dismiss_callback = dismiss_callback
         kwargs.setdefault("parent", wx.GetApp().mainFrame)
         super().__init__(*args, title="", style=0, **kwargs)
+        self.CenterOnParent()
 
     def addControls(self, parent):
+        ai = wx.ActivityIndicator(parent)
+        ai.SetSizerProp("halign", "center")
         self.staticMessage = wx.StaticText(parent, -1, self.message)
         self.staticMessage.SetCanFocus(True)
         self.staticMessage.SetFocusFromKbd()
         self.Bind(wx.EVT_CLOSE, self.onClose, self)
         self.staticMessage.Bind(wx.EVT_KEY_UP, self.onKeyUp, self.staticMessage)
-        self.CenterOnParent()
+        ai.Start()
 
     @contextlib.contextmanager
     def ShowBriefly(self):

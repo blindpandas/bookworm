@@ -19,7 +19,7 @@ from bookworm.ocr_engines.tesseract_ocr_engine import (
 from bookworm.logger import logger
 
 log = logger.getChild(__name__)
-TESSERACT_INFO_URL = "http://localhost:5000/info.json"
+TESSERACT_INFO_URL = "https://bookworm.capeds.net/tesseract_info.json"
 _TESSERACT_INFO_CACHE = None
 
 

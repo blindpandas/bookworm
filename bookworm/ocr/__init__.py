@@ -57,7 +57,7 @@ class OCRService(BookwormService):
     def get_toolbar_items(self):
         return [(42, "ocr", _("OCR"), None)]
 
-    def get_keyboard_shourtcuts(self):
+    def get_keyboard_shortcuts(self):
         return OCR_KEYBOARD_SHORTCUTS
 
     def shutdown(self):

@@ -577,9 +577,9 @@ class MenubarProvider:
 
     def _set_menu_accelerators(self):
         entries = []
-        k_shourtcuts = KEYBOARD_SHORTCUTS.copy()
-        k_shourtcuts.update(wx.GetApp().service_handler.get_keyboard_shourtcuts())
-        for menu_id, shortcut in k_shourtcuts.items():
+        k_shortcuts = KEYBOARD_SHORTCUTS.copy()
+        k_shortcuts.update(wx.GetApp().service_handler.get_keyboard_shortcuts())
+        for menu_id, shortcut in k_shortcuts.items():
             accel = wx.AcceleratorEntry(cmd=menu_id)
             accel.FromString(shortcut)
             entries.append(accel)

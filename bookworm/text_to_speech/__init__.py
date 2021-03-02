@@ -167,7 +167,7 @@ class TextToSpeechService(BookwormService):
             (56, "", "", None),
         ]
 
-    def get_keyboard_shourtcuts(self):
+    def get_keyboard_shortcuts(self):
         return SPEECH_KEYBOARD_SHORTCUTS
 
     def on_reader_unload(self, sender):
