@@ -167,10 +167,11 @@ class SettingsPanel(sc.SizedPanel):
 
     config_section = None
 
-    def __init__(self, parent, config_object=None):
+    def __init__(self, parent, settings_dialog, config_object=None):
         super().__init__(parent, -1)
         config_object = config_object or config.conf.config
         self.config = config_object[self.config_section]
+        self.settings_dialog = settings_dialog
         self.addControls()
 
     def addControls(self):
@@ -326,7 +327,7 @@ class PreferencesDialog(SimpleDialog):
             bmp = getattr(images, image).GetBitmap()
             image_list.Add(bmp)
             # Create settings page
-            page = panel_cls(self.tabs)
+            page = panel_cls(self.tabs, self)
             # Add tabs
             self.tabs.AddPage(page, label, select=(idx == 0), imageId=idx)
 

@@ -285,6 +285,7 @@ class AsyncSnakDialog:
         if self.snak_dg:
             wx.CallAfter(self.snak_dg.Hide)
             wx.CallAfter(self.snak_dg.Destroy)
+            wx.CallAfter(self.snak_dg.Parent.Enable)
 
 
 @dataclass
@@ -398,19 +399,20 @@ class _RPDPulser:
         self.message = message
         self.interval = interval / 1000
         self._timer = RepeatingTimer(
-            self.interval, self.progress_dlg.Pulse, self.message
+            self.interval, lambda: self.progress_dlg.Pulse(self.message)
         )
         self.progress_dlg.Pulse(self.message)
         self.pdg_btns = {
             self.progress_dlg.progress_dlg.FindWindowById(ctrl_id)
             for ctrl_id in {ID_SKIP, wx.ID_CANCEL}
         }
-        self.btn_status = {btn: btn.Enabled for btn in self.pdg_btns}
+        self.btn_status = {btn: btn.Enabled for btn in self.pdg_btns if btn}
 
     def __enter__(self):
         self._timer.start()
         for btn in self.pdg_btns:
-            btn.Enable(False)
+            if btn:
+                btn.Enable(False)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._timer.cancel()
@@ -456,7 +458,10 @@ class RobustProgressDialog:
             pdg_styles.add(wx.PD_REMAINING_TIME)
         if estimated_time:
             pdg_styles.add(wx.PD_ESTIMATED_TIME)
-        if can_hide:
+        # XXX: stop enabling the hide button for now
+        # until we use proper presedures to ensure that
+        # the user could not do the same thing twice
+        if False: #can_hide
             pdg_styles.add(wx.PD_CAN_SKIP)
         if can_abort:
             pdg_styles.add(wx.PD_CAN_ABORT)
@@ -537,6 +542,10 @@ class RobustProgressDialog:
         wx.CallAfter(self.progress_dlg.Hide)
         wx.CallAfter(self.progress_dlg.Close)
         wx.CallAfter(self.progress_dlg.Destroy)
+        tlp = wx.GetTopLevelParent(self.progress_dlg)
+        if tlp:
+            wx.CallAfter(tlp.Enable)
+            wx.CallAfter(tlp.SetFocus)
         self.progress_dlg = None
 
     def PulseContinuously(self, message, interval=1500):

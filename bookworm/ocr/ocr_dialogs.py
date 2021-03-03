@@ -14,11 +14,13 @@ from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.gui.components import (
     make_sized_static_box,
     SimpleDialog,
+    RobustProgressDialog,
     SnakDialog,
     AsyncSnakDialog,
     ImmutableObjectListView,
     ColumnDefn,
 )
+from bookworm.utils import restart_application
 from bookworm.logger import logger
 from bookworm.platform_services._win32 import tesseract_download
 from bookworm.ocr_engines.tesseract_ocr_engine import TesseractOcrEngine
@@ -116,12 +118,47 @@ class OcrPanel(SettingsPanel):
             self._service._init_ocr_engine()
 
     def onDownloadTesseractEngine(self, event):
-        threaded_worker.submit(tesseract_download.download_tesseract_engine, self)
+        AsyncSnakDialog(
+            task=tesseract_download.get_tesseract_download_info,
+            done_callback=self._on_tesseract_download_info,
+            message=_("Retreiving download info, please wait..."),
+            parent=self
+        )
 
     def onDownloadTesseractLanguages(self, event):
         TesseractLanguageManager(
             title=_("Manage Tesseract OCR Engine Languages"), parent=self
         ).ShowModal()
+
+    def _on_tesseract_download_info(self, future):
+        if (info := tesseract_download.get_tesseract_download_info_from_future(future, self)) is None:
+            return
+        dl_url = info.get_engine_download_url()
+        progress_dlg = RobustProgressDialog(
+            self,
+            # Translators: title of a progress dialog
+            _("Downloading Tesseract OCR Engine"),
+            # Translators: message of a progress dialog
+            _("Getting download information..."),
+            maxvalue=100,
+            can_abort=True,
+        )
+        threaded_worker.submit(
+            tesseract_download.download_tesseract_engine,
+            dl_url,
+            progress_dlg
+        ).add_done_callback(
+            partial(self._after_tesseract_install, progress_dlg)
+        )
+
+    def _after_tesseract_install(self, progress_dlg, future):
+        progress_dlg.Dismiss()
+        if future.result() is True:
+            wx.GetApp().mainFrame.notify_user(
+                _("Restart Required"),
+                _("Bookworm will now restart to complete the installation of the Tesseract OCR Engine.")
+            )
+            wx.CallAfter(restart_application)
 
 
 class OCROptionsDialog(SimpleDialog):
@@ -243,7 +280,10 @@ class OCROptionsDialog(SimpleDialog):
 
 
 class TesseractLanguageManager(SimpleDialog):
-    """A dialog to manage the languages for the managed version of Tesseract OCR Engine on Windows."""
+    """
+    A dialog to manage the languages for the managed 
+    version of Tesseract OCR Engine on Windows.
+    """
 
     def __init__(self, *args, **kwargs):
         self.online_languages = ()
@@ -254,10 +294,12 @@ class TesseractLanguageManager(SimpleDialog):
     def addControls(self, parent):
         # Translators: label of a list control containing bookmarks
         wx.StaticText(parent, -1, _("Tesseract Languages"))
+        listPanel = sc.SizedPanel(parent)
+        listPanel.SetSizerType("horizontal")
+        listPanel.SetSizerProps(expand=True, align="center")
         self.tesseractLanguageList = ImmutableObjectListView(
-            parent, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER
+            listPanel, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER, size=(500, -1)
         )
-        self.tesseractLanguageList.SetSizerProps(expand=True)
         self.btnPanel = btnPanel = sc.SizedPanel(parent, -1)
         btnPanel.SetSizerType("horizontal")
         btnPanel.SetSizerProps(expand=True)
@@ -290,8 +332,9 @@ class TesseractLanguageManager(SimpleDialog):
         return btnsizer
 
     def _on_tesseract_dl_info(self, future):
-        if (info := future.result()) is not None:
-            self.online_languages = info.languages
+        if (info := tesseract_download.get_tesseract_download_info_from_future(future, self)) is None:
+            return
+        self.online_languages = info.languages
         self.populate_list()
 
     def populate_list(self):
@@ -329,13 +372,13 @@ class TesseractLanguageManager(SimpleDialog):
             ),
         ]
         self.tesseractLanguageList.set_columns(column_defn)
-        self.tesseractLanguageList.set_objects(languages)
+        self.tesseractLanguageList.set_objects(languages, focus_item=0)
         # Maintain the state of the list
-        should_enable = any(languages)
-        self.addBestButton.Enable(should_enable)
-        self.addFastButton.Enable(should_enable)
-        self.removeButton.Enable(should_enable)
-        self.btnPanel.Enable(should_enable)
+        if not any(languages):
+            self.addBestButton.Enable(False)
+            self.addFastButton.Enable(False)
+            self.removeButton.Enable(False)
+            self.btnPanel.Enable(False)
 
     def onAdd(self, event):
         if (selected := self.tesseractLanguageList.get_selected()) is None:
@@ -380,12 +423,72 @@ class TesseractLanguageManager(SimpleDialog):
             self.removeButton.Enable(is_installed)
 
     def _on_download_language(self, lang_name, variant, future):
-        if (info := future.result()) is None:
+        if (info := tesseract_download.get_tesseract_download_info_from_future(future, self)) is None:
             return
         if lang_name not in info.languages:
             log.debug(f"Could not find download info for language {lang_name}")
             return
+        target_file = tesseract_download.get_language_path(lang_name)
+        if target_file.exists():
+            msg = wx.MessageBox(
+                # Translators: content of a messagebox
+                _(
+                    "A version of the selected language model already exists.\n"
+                    "Are you sure you want to replace it."
+                ),
+                # Translators: title of a messagebox
+                _("Confirm"),
+                style=wx.YES_NO | wx.ICON_WARNING,
+                parent=self
+            )
+            if msg == wx.NO:
+                return
+        try:
+            target_file.unlink(missing_ok=True)
+        except:
+            return
+        progress_dlg = RobustProgressDialog(
+            wx.GetApp().mainFrame,
+            # Translators: title of a progress dialog
+            _("Downloading Language"),
+            # Translators: content of a progress dialog
+            _("Getting download information..."),
+            maxvalue=100,
+            can_hide=True,
+            can_abort=True,
+        )
         url = info.get_language_download_url(lang_name, variant=variant)
         threaded_worker.submit(
-            tesseract_download.download_language, lang_name, url
-        ).add_done_callback(lambda f: wx.CallAfter(self.populate_list))
+            tesseract_download.download_language, url, target_file, progress_dlg
+        ).add_done_callback(lambda future: wx.CallAfter(self._after_download_language, progress_dlg, future))
+
+    def _after_download_language(self, progress_dlg, future):
+        progress_dlg.Dismiss()
+        try:
+            if future.result():
+                wx.GetApp().mainFrame.notify_user(
+                    # Translators: title of a messagebox
+                    _("Language Added"),
+                    _("The Language Model was downloaded succesfully."),
+                    parent=self
+                )
+                self.populate_list()
+        except ConnectionError:
+            log.exception("Faild to download language data from {url}", exc_info=True)
+            wx.GetApp().mainFrame.notify_user(
+                # Translators: title of a messagebox
+                _("Connection Error"),
+                # Translators: content of a messagebox
+                _("Failed to download language data.\nPlease check your internet connection."),
+                icon=wx.ICON_ERROR,
+            )
+        except:
+            log.exception("Faild to install language data from {url}", exc_info=True)
+            wx.GetApp().mainFrame.notify_user(
+                # Translators: title of a messagebox
+                _("Error"),
+                # Translators: content of a messagebox
+                _("Failed to install language data.\nPlease try again later."),
+                icon=wx.ICON_ERROR,
+                parent=self
+            )

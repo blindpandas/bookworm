@@ -468,7 +468,7 @@ def install_local_packages(c):
     with c.cd(str(PROJECT_ROOT / "packages")):
         for package in packages:
             print(f"Installing package {package}")
-            c.run(f"pip install --upgrade {package}", hide="stdout")
+            c.run(f"pip install {package} --force-reinstall", hide="stdout")
 
 
 @task(pre=(install_local_packages,))

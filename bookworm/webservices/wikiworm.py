@@ -38,29 +38,36 @@ class WikipediaService(BookwormService):
 
     def onDefineFromWikipedia(self, event):
         if selected_text := self.view.contentTextCtrl.GetStringSelection().strip():
-            AsyncSnakDialog(
-                task=partial(self.define_term_using_wikipedia, selected_text),
-                done_callback=self.view_wikipedia_definition,
-                dismiss_callback=lambda: self._cancel_query.set() or True,
-                message=_("Connecting to Wikipedia, please wait..."),
-                parent=self.view
-            )
+            self.init_wikipedia_search(selected_text)
 
-    def define_term_using_wikipedia(self, term: str) -> str:
+    def init_wikipedia_search(self, term, sure_exists=False):
+        AsyncSnakDialog(
+            task=partial(self.define_term_using_wikipedia, term, sure_exists=sure_exists),
+            done_callback=self.view_wikipedia_definition,
+            dismiss_callback=lambda: self._cancel_query.set() or True,
+            message=_("Retrieving info from Wikipedia, please wait..."),
+            parent=self.view
+        )
+
+    def define_term_using_wikipedia(self, term: str, sure_exists=False) -> str:
         language = self.view.reader.document.language
         wikipedia.set_lang(language)
-        if (suggested := wikipedia.suggest(term)) is not None:
-            return wikipedia.page(suggest)
+        page = None
+        if sure_exists:
+            page = wikipedia.page(term)
+        elif (suggested := wikipedia.suggest(term)) is not None:
+            page = wikipedia.page(suggested)
+        if page is not None:
+            return (page.title, page.summary.strip(), page.url)
         else:
-            search_results = wikipedia.search(term)
-            return wikipedia.page(search_results[0])
+            return wikipedia.search(term)
 
     def view_wikipedia_definition(self, future):
         if self._cancel_query.is_set():
             self._cancel_query.clear()
             return
         try:
-            page = future.result()
+            result = future.result()
         except ConnectionError:
             log.debug("Failed to connect to wikipedia", exc_info=True)
             self.view.notify_user(
@@ -77,8 +84,23 @@ class WikipediaService(BookwormService):
                 icon=wx.ICON_ERROR
             )
             return
+        if type(result) is list:
+            dlg = wx.SingleChoiceDialog(
+                self.view,
+                _("Matches"),
+                _("Multiple Matches Found"),
+                result,
+                wx.CHOICEDLG_STYLE
+            )
+            if dlg.ShowModal() == wx.ID_OK:
+                term = dlg.GetStringSelection()
+                return self.init_wikipedia_search(term, sure_exists=True)
+            else:
+                wx.Bell()
+                return
         sounds.navigation.play()
-        ViewWikipediaDefinition(page.title, page.summary.strip(), page.url).ShowModal()
+        title, summary, url = result
+        ViewWikipediaDefinition(title, summary, url).ShowModal()
 
 class ViewWikipediaDefinition(SimpleDialog):
     """A helper class to view the Wikipedia results."""
@@ -103,7 +125,8 @@ class ViewWikipediaDefinition(SimpleDialog):
         )
         contentText.SetSizerProps(expand=True)
         contentText.SetValue(self.definition)
-        wx.Button(parent, wx.ID_OPEN, _("Open in Browser"))
+        openBtn = wx.Button(parent, wx.ID_OPEN, _("Open in Browser"))
+        openBtn.SetSizerProps(halign="center")
         self.Bind(wx.EVT_BUTTON, lambda e: webbrowser.open(self.page_url), id=wx.ID_OPEN)
 
     def getButtons(self, parent):
