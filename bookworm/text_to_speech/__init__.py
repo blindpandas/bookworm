@@ -378,6 +378,21 @@ class TextToSpeechService(BookwormService):
             self.speak_current_page()
 
     def _try_set_tts_language(self):
+        msg = wx.MessageBox(
+            # Translators: a message telling the user that the TTS voice has been changed
+            _(
+            "Bookworm has noticed that the currently configured Text-to-speech voice "
+            "speaks a language different from that of this book.\n"
+            "Do you want to temporary switch to another voice that "
+            "speaks a language similar to the language  of the currently opened book?"
+            ),
+            # Translators: the title of a message telling the user that the TTS voice has been changed
+            _("Incompatible TTS Voice Detected"),
+            parent=self.view,
+            style=wx.YES_NO | wx.ICON_INFORMATION
+        )
+        if msg == wx.NO:
+            return
         lang = self.reader.document.language
         if (self.engine.voice is not None) and (
             not self.engine.voice.speaks_language(lang)
@@ -385,17 +400,6 @@ class TextToSpeechService(BookwormService):
             voice_for_lang = self.engine.get_voices_by_language(lang)
             if voice_for_lang:
                 self.engine.voice = voice_for_lang[0]
-                self.view.notify_user(
-                    # Translators: the title of a message telling the user that the TTS voice has been changed
-                    _("Incompatible TTS Voice Detected"),
-                    # Translators: a message telling the user that the TTS voice has been changed
-                    _(
-                        "Bookworm has noticed that the currently configured Text-to-speech voice "
-                        "speaks a language different from that of this book. "
-                        "Because of this, Bookworm has temporary switched to "
-                        "another voice that speaks a language similar to the language  of this book."
-                    ),
-                )
 
     def close(self):
         if self.engine is not None:

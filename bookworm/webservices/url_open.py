@@ -84,6 +84,8 @@ class UrlOpenService(BookwormService):
                 icon=wx.ICON_ERROR
             )
             return
+        if self.reader.ready:
+            self.view.unloadCurrentEbook()
         html = trafilatura.utils.load_html(result)
         title = trafilatura.metadata.extract_title(html)
         self.view.set_title(title)

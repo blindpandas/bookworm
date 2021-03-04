@@ -145,9 +145,9 @@ class FitzDocument(BaseDocument):
     @cached_property
     def metadata(self):
         meta = self._ebook.metadata
-        to_str = lambda value: value or ""
+        to_str = lambda value: "" if value is None else ftfy.fix_text_encoding(value).strip()
         return BookMetadata(
-            title=meta["title"] or os.path.split(self.filename)[-1][:-4],
+            title=to_str(meta['title']) or Path(self.filename).stem,
             author=to_str(meta["author"]),
             publication_year=to_str(meta["creationDate"]),
         )
