@@ -5,6 +5,8 @@ clone_depth: 1
 branches:
   only:
     - master
+    - develop
+    - next
     - /dev.*/
     - /release-.*/
 
