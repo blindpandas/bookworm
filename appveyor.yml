@@ -4,6 +4,8 @@ os: Visual Studio 2019
 branches:
   only:
     - master
+    - next
+    - develop
     - /dev.*/
     - /release-.*/
 
