@@ -24,6 +24,8 @@ class FitzPdfPage(FitzPage):
         text = self.xpdf_text_output.get(self.index)[:-1]
         return ftfy.fix_text(text, normalization="NFKC")
 
+    def get_label(self) -> str:
+        return self._fitz_page.get_label().strip()
 
 class FitzPdfDocument(FitzDocument):
     """Support for Pdf documents."""

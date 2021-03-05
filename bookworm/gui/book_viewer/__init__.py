@@ -302,18 +302,22 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.set_status(_("Document content"))
         else:
             # Translators: the label of the page content text area
-            cmsg = _("Page {page} of {total} — {chapter}").format(
-                page=page.number,
+            label_msg = _("Page {page} of {total} — {chapter}")
+            page_number = page.number
+            if config.conf["general"]["include_page_label"]:
+                if page_label := page.get_label():
+                    page_number = f"{page_number} ({page_label})"
+            self.set_status(label_msg.format(
+                page=page_number,
                 total=len(self.reader.document),
                 chapter=page.section.title,
-            )
-            # Translators: a message that is announced after navigating to a page
-            smsg = _("Page {page} of {total}").format(
-                page=page.number, total=len(self.reader.document)
-            )
-            self.set_status(cmsg)
+            ))
             if config.conf["general"]["speak_page_number"]:
-                speech.announce(smsg)
+                # Translators: a message that is announced after navigating to a page
+                spoken_msg = _("Page {page} of {total}").format(
+                    page=page.number, total=len(self.reader.document)
+                )
+                speech.announce(spoken_msg)
 
     def set_state_on_section_change(self, current):
         self.tocTreeSetSelection(current)

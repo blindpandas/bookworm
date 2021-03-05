@@ -244,6 +244,13 @@ class GeneralPanel(SettingsPanel):
             UIBox,
             -1,
             # Translators: the label of a checkbox
+            _("Include page label in page title"),
+            name="general.include_page_label",
+        )
+        wx.CheckBox(
+            UIBox,
+            -1,
+            # Translators: the label of a checkbox
             _("Use file name instead of book title"),
             name="general.show_file_name_as_title",
         )

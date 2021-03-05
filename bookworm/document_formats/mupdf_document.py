@@ -31,6 +31,10 @@ log = logger.getChild(__name__)
 class FitzPage(BasePage):
     """Wrapps fitz.Page."""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._fitz_page = self.document._ebook[self.index]
+
     def _text_from_page(self, page: fitz.Page) -> str:
         bloks = page.getTextBlocks()
         text = [blk[4].replace("\n", " ") for blk in bloks if blk[-1] == 0]
@@ -38,11 +42,11 @@ class FitzPage(BasePage):
         return ftfy.fix_text(text, normalization="NFKC")
 
     def get_text(self):
-        return self._text_from_page(self.document._ebook[self.index])
+        return self._text_from_page(self._fitz_page)
 
     def get_image(self, zoom_factor=1.0):
         mat = fitz.Matrix(zoom_factor, zoom_factor)
-        pix = self.document._ebook[self.index].getPixmap(matrix=mat, alpha=True)
+        pix = self._fitz_page.getPixmap(matrix=mat, alpha=True)
         return ImageIO(data=pix.samples, width=pix.width, height=pix.height)
 
 

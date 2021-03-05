@@ -206,6 +206,10 @@ class BasePage(metaclass=ABCMeta):
         or raise NotImplementedError.
         """
 
+    def get_label(self) -> str:
+        """Return the page label string (commonly found on PDFs)."""
+        return ""
+
     @property
     def number(self) -> int:
         """The user facing page number."""

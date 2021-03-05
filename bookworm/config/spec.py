@@ -15,6 +15,7 @@ config_spec = StringIO(
     play_pagination_sound = boolean(default=True)
     speak_page_number = boolean(default=True)
     speak_section_title = boolean(default=True)
+    include_page_label = boolean(default=False)
 [history]
     recently_opened = list(default=list())
     recent_terms = list(default=list())
