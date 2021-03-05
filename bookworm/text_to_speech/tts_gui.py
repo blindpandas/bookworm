@@ -110,6 +110,13 @@ class ReadingPanel(SettingsPanel):
             miscBox,
             -1,
             # Translators: the label of a checkbox
+            _("Ask to switch to a voice that speaks the language of the current book"),
+            name="reading.ask_to_switch_voice_to_current_book_language",
+        )
+        wx.CheckBox(
+            miscBox,
+            -1,
+            # Translators: the label of a checkbox
             _("Highlight spoken text"),
             name="reading.highlight_spoken_text",
         )

@@ -378,6 +378,8 @@ class TextToSpeechService(BookwormService):
             self.speak_current_page()
 
     def _try_set_tts_language(self):
+        if not config.conf["reading"]["ask_to_switch_voice_to_current_book_language"]:
+            return
         msg = wx.MessageBox(
             # Translators: a message telling the user that the TTS voice has been changed
             _(
