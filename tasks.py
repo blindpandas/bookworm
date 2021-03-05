@@ -18,7 +18,6 @@ from glob import glob
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile, ZIP_LZMA
-from jinja2 import Environment, FileSystemLoader
 from invoke import task, call
 from invoke.exceptions import UnexpectedExit
 
@@ -507,6 +506,7 @@ def install_bookworm(c):
 @task
 @make_env
 def make_version_info_file(c):
+    from jinja2 import Environment, FileSystemLoader
     from bookworm import app
 
     print("Generating version info file...")

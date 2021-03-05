@@ -5,6 +5,7 @@ import wx
 import webbrowser
 import wikipedia
 from functools import partial
+from bookworm import app
 from bookworm.gui.components import AsyncSnakDialog, SimpleDialog
 from bookworm.base_service import BookwormService
 from bookworm.resources import sounds
@@ -20,25 +21,47 @@ class WikipediaService(BookwormService):
 
     def __post_init__(self):
         self._cancel_query = threading.Event()
+        self.wiki_quick_search_id = wx.NewIdRef()
 
     def process_menubar(self, menubar):
-        self.defineOnWikiId = wx.NewIdRef()
-        self.view.Bind(wx.EVT_MENU, self.onDefineFromWikipedia, id=self.defineOnWikiId)
+        webservices_menu = (
+            wx.GetApp().service_handler.get_service("webservices").web_sservices_menu
+        )
+        webservices_menu.Append(
+            self.wiki_quick_search_id,
+            _("&Wikipedia quick search"),
+            _("Get a quick definition from Wikipedia")
+        )
+        self.view.Bind(wx.EVT_MENU, self.onQuickWikiSearch, id=self.wiki_quick_search_id)
 
     def get_contextmenu_items(self):
+        rv = ()
         if selected_text := self.view.contentTextCtrl.GetStringSelection().strip():
-            return [
+            rv =  [
                 (
                     2,
                     _("Define using Wikipedia"),
                     _("Define the selected text using Wikipedia"),
-                    self.defineOnWikiId
+                    self.wiki_quick_search_id
                 )
             ]
+        return rv
 
-    def onDefineFromWikipedia(self, event):
+    def get_keyboard_shortcuts(self):
+        return {
+            self.wiki_quick_search_id: "Ctrl+Shift+W"
+        }
+
+    def onQuickWikiSearch(self, event):
         if selected_text := self.view.contentTextCtrl.GetStringSelection().strip():
             self.init_wikipedia_search(selected_text)
+        else:
+            entered_term = self.view.get_text_from_user(
+                title=_("Wikipedia Quick Search"),
+                label=_("Enter term"),
+            )
+            if entered_term is not None:
+                self.init_wikipedia_search(entered_term)
 
     def init_wikipedia_search(self, term, sure_exists=False):
         AsyncSnakDialog(
@@ -50,7 +73,10 @@ class WikipediaService(BookwormService):
         )
 
     def define_term_using_wikipedia(self, term: str, sure_exists=False) -> str:
-        language = self.view.reader.document.language
+        if self.view.reader.ready:
+            language = self.view.reader.document.language
+        else:
+            language = app.current_language.language
         wikipedia.set_lang(language)
         page = None
         if sure_exists:
@@ -60,7 +86,7 @@ class WikipediaService(BookwormService):
         if page is not None:
             return (page.title, page.summary.strip(), page.url)
         else:
-            return wikipedia.search(term)
+            return list(wikipedia.search(term))
 
     def view_wikipedia_definition(self, future):
         if self._cancel_query.is_set():

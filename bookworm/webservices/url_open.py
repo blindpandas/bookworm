@@ -29,7 +29,7 @@ class UrlOpenService(BookwormService):
             wx.GetApp().service_handler.get_service("webservices").web_sservices_menu
         )
         open_url = webservices_menu.Insert(0, -1, _("&Open URL\tCtrl+U"))
-        self.open_url_from_clipboard = webservices_menu.Append(-1, _("&Open URL From Clipboard\tCtrl+Shift+V"))
+        self.open_url_from_clipboard = webservices_menu.Insert(1, -1, _("&Open URL From Clipboard\tCtrl+Shift+V"))
         self.view.Bind(wx.EVT_MENU, self.onOpenUrl, open_url)
         self.view.Bind(wx.EVT_MENU, self.onOpenUrlFromClipboard, self.open_url_from_clipboard)
 
