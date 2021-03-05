@@ -23,6 +23,8 @@ class DocumentCapability(IntFlag):
     """Does this document supports the notion of pages?"""
     IMAGE_EXTRACTION = auto()
     """Does this document supports extracting images out of pages?"""
+    PAGE_LABELS = auto()
+    """Does this document supports the notion of page labels?"""
 
 
 class ReadingMode(IntEnum):

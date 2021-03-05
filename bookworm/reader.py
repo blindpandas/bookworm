@@ -192,6 +192,14 @@ class EBookReader:
         self.current_page = page_number
         self.view.set_insertion_point(pos)
 
+    def go_to_page_by_label(self, page_label):
+        try:
+            page = self.document.get_page_number_from_page_label(page_label)
+            self.go_to_page(page.index)
+            return True
+        except LookupError:
+            return False
+
     def navigate(self, to: str, unit: str) -> bool:
         """
         Navigate to `to` by unit `unit`.

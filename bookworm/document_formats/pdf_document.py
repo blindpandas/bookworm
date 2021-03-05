@@ -6,6 +6,7 @@ from pyxpdf import Document as XPdfDocument, Config as XPdfConfig
 from pyxpdf.xpdf import TextOutput as XPdfTextOutput, TextControl as XPdfTextControl
 from pyxpdf_data import generate_xpdfrc
 from bookworm.paths import data_path
+from bookworm.document_formats.base import DocumentCapability as DC
 from bookworm.logger import logger
 from .mupdf_document import FitzDocument, FitzPage
 
@@ -34,6 +35,7 @@ class FitzPdfDocument(FitzDocument):
     # Translators: the name of a document file format
     name = _("Portable Document (PDF)")
     extensions = ("*.pdf",)
+    capabilities = FitzDocument.capabilities | DC.PAGE_LABELS
 
     def get_page(self, index: int) -> FitzPage:
         return FitzPdfPage(self, index, xpdf_text_output=self.xpdf_text_output)

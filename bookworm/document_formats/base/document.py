@@ -105,6 +105,15 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def get_page(self, index: int) -> "BasePage":
         """Return the page object at index."""
 
+    def get_page_number_from_page_label(self, page_label):
+        if DocumentCapability.PAGE_LABELS not in self.capabilities:
+            raise NotImplementedError("This feature is not enabled for this class of documents")
+        for page in self:
+            page_label = page_label.lower()
+            if page.get_label().lower() == page_label:
+                return page
+        raise LookupError(f"Failed to find a page with the label {page_label}.")
+
     def is_encrypted(self) -> bool:
         """Does this document need password."""
         return False

@@ -14,6 +14,7 @@ class BookRelatedMenuIds(enum.IntEnum):
     closeCurrentFile = 211
     # Tools
     goToPage = 221
+    goToPageByLabel = 575
     searchBook = wx.ID_FIND
     findNext = 222
     findPrev = 223

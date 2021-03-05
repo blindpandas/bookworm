@@ -300,8 +300,16 @@ class SearchMenu(BaseMenu):
             # Translators: the help text of an item in the application menubar
             _("Go to page"),
         )
+        self.Append(
+            BookRelatedMenuIds.goToPageByLabel,
+            # Translators: the label of an item in the application menubar
+            _("&Go To Page By Label...\tCtrl-Shift-G"),
+            # Translators: the help text of an item in the application menubar
+            _("Go to a page using its label"),
+        )
         # Bind events
         self.view.Bind(wx.EVT_MENU, self.onGoToPage, id=BookRelatedMenuIds.goToPage)
+        self.view.Bind(wx.EVT_MENU, self.onGoToPageByLabel, id=BookRelatedMenuIds.goToPageByLabel)
         self.view.Bind(wx.EVT_MENU, self.onFind, id=wx.ID_FIND)
         self.view.Bind(wx.EVT_MENU, self.onFindNext, id=BookRelatedMenuIds.findNext)
         self.view.Bind(wx.EVT_MENU, self.onFindPrev, id=BookRelatedMenuIds.findPrev)
@@ -319,6 +327,16 @@ class SearchMenu(BaseMenu):
             if dlg.ShowModal() == wx.ID_OK:
                 retval = dlg.GetValue()
                 self.reader.go_to_page(retval)
+
+    def onGoToPageByLabel(self, event):
+        page_label = self.view.get_text_from_user(
+            _("Go To Page By Label"),
+            _("Page Label")
+        )
+        if page_label is not None:
+            if (navigated := self.reader.go_to_page_by_label(page_label)) is False:
+                wx.Bell()
+            
 
     def onFind(self, event):
         # Translators: the title of the search dialog
@@ -406,6 +424,7 @@ class SearchMenu(BaseMenu):
 
     @gui_thread_safe
     def maintain_state(self, enable):
+        self.Enable(BookRelatedMenuIds.goToPageByLabel, DC.PAGE_LABELS in self.reader.document.capabilities)
         for item_id in {BookRelatedMenuIds.findNext, BookRelatedMenuIds.findPrev}:
             self.Enable(item_id, enable)
 
