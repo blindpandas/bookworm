@@ -2,6 +2,7 @@
 
 import threading
 import wx
+import wx.lib.sized_controls as sc
 import webbrowser
 import wikipedia
 from functools import partial
@@ -136,14 +137,14 @@ class ViewWikipediaDefinition(SimpleDialog):
         self.definition = definition
         self.page_url = page_url
         super().__init__(
-            title=_("{term} - Wikipedia").format(term=term),
+            title=_("{term} — Wikipedia").format(term=term),
             parent=wx.GetApp().mainFrame,
         )
 
     def addControls(self, parent):
         # Translators: label of an edit control in the dialog
         # of viewing or editing a comment/highlight
-        wx.StaticText(parent, -1, _("Definition"))
+        wx.StaticText(parent, -1, _("Summary"))
         contentText = wx.TextCtrl(
             parent,
             size=(500, 200),
@@ -151,9 +152,13 @@ class ViewWikipediaDefinition(SimpleDialog):
         )
         contentText.SetSizerProps(expand=True)
         contentText.SetValue(self.definition)
-        openBtn = wx.Button(parent, wx.ID_OPEN, _("Open in Browser"))
-        openBtn.SetSizerProps(halign="center")
-        self.Bind(wx.EVT_BUTTON, lambda e: webbrowser.open(self.page_url), id=wx.ID_OPEN)
+        btnPanel = sc.SizedPanel(parent)
+        btnPanel.SetSizerType("horizontal")
+        btnPanel.SetSizerProps(halign="center", expand=True)
+        openInBookwormBtn = wx.Button(btnPanel, -1, _("Open in &Bookworm"))
+        openInBrowserBtn = wx.Button(btnPanel, wx.ID_OPEN, _("&Open in Browser"))
+        self.Bind(wx.EVT_BUTTON, lambda e: webbrowser.open(self.page_url), openInBrowserBtn)
+        self.Bind(wx.EVT_BUTTON, self.onOpenInBookworm, openInBookwormBtn)
 
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
@@ -161,3 +166,7 @@ class ViewWikipediaDefinition(SimpleDialog):
         btnsizer.AddButton(wx.Button(self, wx.ID_CANCEL, _("&Close")))
         btnsizer.Realize()
         return btnsizer
+
+    def onOpenInBookworm(self, event):
+        self.Close()
+        wx.GetApp().service_handler.get_service("url_open").open_url_in_bookworm(self.page_url)

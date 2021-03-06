@@ -6,6 +6,7 @@ import trafilatura
 from functools import partial
 from url_normalize import url_normalize
 from platform_utils.clipboard import get_text as get_clipboard_text
+from bookworm import app
 from bookworm.concurrency import threaded_worker
 from bookworm.gui.components import AsyncSnakDialog
 from bookworm.utils import gui_thread_safe
@@ -87,7 +88,9 @@ class UrlOpenService(BookwormService):
         if self.reader.ready:
             self.view.unloadCurrentEbook()
         html = trafilatura.utils.load_html(result)
-        title = trafilatura.metadata.extract_title(html)
+        page_title = trafilatura.metadata.extract_title(html)
+        # Translators: title of Bookworm's Window when openning a web page
+        title = _("{page_title} — {app_name}").format(page_title=page_title, app_name=app.display_name)
         self.view.set_title(title)
         self.view.set_status(title)
         self.view.set_content(trafilatura.process_record(result))
