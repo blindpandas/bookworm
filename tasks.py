@@ -458,7 +458,7 @@ def install_local_packages(c):
     packages = pkg_names["pure_python"] or []
     if sys.platform in pkg_names:
         platform_packages = pkg_names[sys.platform]
-        pure_python = platform_packages["pure_python"]
+        pure_python = platform_packages.get("pure_python", [])
         binary_packages = platform_packages[arch]
         if pure_python:
             packages += [Path(sys.platform) / pkg for pkg in pure_python]
@@ -467,7 +467,7 @@ def install_local_packages(c):
     with c.cd(str(PROJECT_ROOT / "packages")):
         for package in packages:
             print(f"Installing package {package}")
-            c.run(f"pip install {package}", hide="stdout")
+            c.run(f"pip install {package}")
 
 
 @task(pre=(install_local_packages,))
@@ -496,7 +496,7 @@ def install_bookworm(c):
             c.run("pip install -e .")
         else:
             print("Building Bookworm wheel.")
-            c.run("py setup.py bdist_wheel", hide="stdout")
+            c.run("py setup.py bdist_wheel")
             wheel_path = next(Path(PROJECT_ROOT / "dist").glob("*.whl"))
             print("Installing Bookworm wheel")
             c.run(f"pip install {wheel_path}", hide="stdout")
