@@ -84,12 +84,6 @@ class ServiceHandler:
         for service in self._get_services_with_gui():
             service.process_menubar(menubar)
 
-    def get_contextmenu_items(self):
-        rv = set()
-        for service in self._get_services_with_gui():
-            rv.update(service.get_contextmenu())
-        return rv
-
     def get_toolbar_items(self):
         rv = set()
         for service in self._get_services_with_gui():

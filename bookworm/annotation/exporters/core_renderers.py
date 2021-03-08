@@ -2,7 +2,7 @@
 
 import os
 from bookworm.utils import escape_html
-from .base_renderer import BaseRenderer, TextRenderer
+from .base_renderer import TextRenderer
 
 
 class PlainTextRenderer(TextRenderer):

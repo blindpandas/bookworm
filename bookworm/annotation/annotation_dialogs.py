@@ -3,26 +3,21 @@
 import wx
 import wx.lib.sized_controls as sc
 from dataclasses import dataclass
-from pathlib import Path
 from platform_utils.clipboard import (
     copy as copy_to_clipboard,
     get_text as get_clipboard_text,
 )
-from slugify import slugify
 from bookworm.utils import format_datetime
 from bookworm.resources import sounds
 from bookworm.logger import logger
 from bookworm.gui.components import (
-    Dialog,
     SimpleDialog,
     ImmutableObjectListView,
     ColumnDefn,
     make_sized_static_box,
 )
 from .annotator import (
-    Bookmarker,
     NoteTaker,
-    Quoter,
     AnnotationFilterCriteria,
     AnnotationSortCriteria,
 )

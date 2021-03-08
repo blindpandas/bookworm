@@ -6,6 +6,7 @@ from collections.abc import Sequence
 from functools import cached_property, wraps
 from lru import LRU
 from pycld2 import detect as detect_language, error as CLD2Error
+from pathlib import Path
 from bookworm import typehints as t
 from bookworm.concurrency import QueueProcess, call_threaded
 from bookworm.image_io import ImageIO
@@ -22,6 +23,10 @@ PAGE_CACHE_CAPACITY = 300
 
 class DocumentError(Exception):
     """The base class of all document related exceptions."""
+
+
+class DocumentIOError(DocumentError, IOError):
+    """Raised when the document could not be loaded."""
 
 
 class PaginationError(DocumentError, IndexError):
@@ -45,8 +50,8 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
     supported_reading_modes: t.Tuple[ReadingMode] = ReadingMode.DEFAULT
 
-    def __init__(self, filename: t.PathLike):
-        self.filename = filename
+    def __init__(self, uri):
+        self.uri = uri
 
     def __contains__(self, value: int):
         return -1 < value < len(self)
@@ -62,7 +67,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
     def __getstate__(self) -> dict:
         """Support for pickling."""
-        return dict(filename=self.filename)
+        return dict(path=self.path, openner_args=self.openner_args)
 
     def __setstate__(self, state):
         """Support for unpickling."""
@@ -70,27 +75,22 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         self.read()
 
     @cached_property
+    @abstractmethod
     def identifier(self) -> str:
         """Return a unique identifier for this document.
-        By default it returns a `sha1` digest based on
+        For example, it may return a `sha1` digest based on
         the document content.
         """
-        if type(self._sha1hash) is not str:
-            self._sha1hash = self._sha1hash.result()
-        return self._sha1hash
+        raise NotImplementedError
 
     @abstractmethod
     def read(self):
-        """Perform the actual IO operations for loading the ebook.
-        The base class implementation also start a background thread
-        to generate a `sha1` hash based on the content of the file.
+        """
+        Perform the actual IO operations for loading the ebook.
         Subclasses should call super to ensure the standard behavior.
         """
         self._page_cache = LRU(PAGE_CACHE_CAPACITY)
         self._page_content_cache = LRU(PAGE_CACHE_CAPACITY)
-        self._sha1hash = generate_sha1hash_async(self.filename)
-        # XXX Is this a pre-mature optimization?
-        call_threaded(lambda: self.language)
 
     @abstractmethod
     def close(self):
@@ -120,7 +120,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
     def decrypt(self, password):
         """Decrypt this document using the provided password."""
-        pass
+        raise NotImplementedError
 
     @property
     @abstractmethod
@@ -130,23 +130,9 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """
 
     @cached_property
+    @abstractmethod
     def language(self) -> str:
-        """Return the language of this document.
-        By default we use a heuristic based on Google's CLD2.
-        """
-        num_pages = len(self)
-        num_samples = num_pages if num_pages <= 20 else 20
-        text = "".join(self[i].get_text() for i in range(num_samples)).encode("utf8")
-        try:
-            (success, _, ((_, lang, _, _), *_)) = detect_language(
-                utf8Bytes=text, isPlainText=True, hintLanguage=None
-            )
-        except CLD2Error as e:
-            log.error(f"Failed to recognize document language: {e.args}")
-            success = False
-        if success:
-            return lang
-        return "en"
+        """Return the language of this document."""
 
     @property
     @abstractmethod
@@ -193,6 +179,51 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         yield from QueueProcess(
             target=doctools.search_book, args=(self, request), name="bookworm-search"
         )
+
+
+class FileSystemBaseDocument(BaseDocument):
+    """Represent a document that could be loaded from the file system."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.filename = self.uri.path
+        if not Path(self.filename).is_file():
+            raise DocumentIOError
+
+    @cached_property
+    def identifier(self) -> str:
+        """Return a unique identifier for this document.
+        By default it returns a `sha1` digest based on
+        the document content.
+        """
+        if type(self._sha1hash) is not str:
+            self._sha1hash = self._sha1hash.result()
+        return self._sha1hash
+
+    def read(self):
+        super().read()
+        self._sha1hash = generate_sha1hash_async(self.filename)
+        # XXX Is this a pre-mature optimization?
+        call_threaded(lambda: self.language)
+
+    @cached_property
+    def language(self) -> str:
+        """Return the language of this document.
+        By default we use a heuristic based on Google's CLD2.
+        """
+        num_pages = len(self)
+        num_samples = num_pages if num_pages <= 20 else 20
+        text = "".join(self[i].get_text() for i in range(num_samples)).encode("utf8")
+        try:
+            (success, _, ((_, lang, _, _), *_)) = detect_language(
+                utf8Bytes=text, isPlainText=True, hintLanguage=None
+            )
+        except CLD2Error as e:
+            log.error(f"Failed to recognize document language: {e.args}")
+            success = False
+        if success:
+            return lang
+        return "en"
 
 
 class BasePage(metaclass=ABCMeta):
@@ -271,3 +302,7 @@ class FluidDocument(BaseDocument):
     @abstractmethod
     def get_content(self) -> str:
         """Get the content of this document."""
+
+
+class FluidFileSystemDocument(FileSystemBaseDocument):
+    """Represents a fluid document that could be loaded from the file system."""

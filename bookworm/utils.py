@@ -1,12 +1,8 @@
 # coding: utf-8
 
 import sys
-import os
-import math
-import glob
 import wx
 import hashlib
-from dataclasses import dataclass
 from functools import wraps
 from pathlib import Path
 from xml.sax.saxutils import escape

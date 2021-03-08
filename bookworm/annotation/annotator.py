@@ -1,14 +1,11 @@
 # coding: utf-8
 
 from enum import IntEnum, auto
-from dataclasses import dataclass, field, astuple
-from typing import Tuple
+from dataclasses import dataclass, astuple
 import sqlalchemy as sa
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext import baked
 from bookworm import config
 from bookworm.logger import logger
-from bookworm.database import Book, db
 from bookworm.database.models import Book
 from .annotation_models import Bookmark, Note, Quote
 

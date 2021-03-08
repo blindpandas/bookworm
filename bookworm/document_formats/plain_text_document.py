@@ -5,7 +5,7 @@ import regex
 from functools import cached_property
 from io import StringIO
 from bookworm.document_formats.base import (
-    FluidDocument,
+    FluidFileSystemDocument,
     Section,
     Pager,
     BookMetadata,
@@ -19,7 +19,7 @@ log = logger.getChild(__name__)
 MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
 
 
-class PlainTextDocument(FluidDocument):
+class PlainTextDocument(FluidFileSystemDocument):
     """For plain text files"""
 
     format = "txt"

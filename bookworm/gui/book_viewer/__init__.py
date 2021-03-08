@@ -3,6 +3,7 @@
 import os
 import wx
 from contextlib import contextmanager
+from pathlib import Path
 from bookworm import typehints as t
 from bookworm import app
 from bookworm import config
@@ -15,6 +16,7 @@ from bookworm.reader import (
     ReaderError,
     ResourceDoesNotExist,
     UnsupportedDocumentError,
+    DocumentUri,
 )
 from bookworm.signals import reader_book_loaded, reader_book_unloaded
 from bookworm.gui.contentview_ctrl import ContentViewCtrl, SelectionRange
@@ -33,15 +35,20 @@ class ResourceLoader:
 
     def __init__(self, view, filename, callback=None):
         self.view = view
-        self.filename = filename
+        self.filename = Path(filename)
         self.callback = callback
 
     def load(self):
+        fs_uri = DocumentUri(
+            format=self.filename.suffix.lstrip("."),
+            path=self.filename,
+            openner_args={},
+        )
         with reader_book_loaded.connected_to(
             self.book_loaded_handler, sender=self.view.reader
         ):
             with self.handle_reader_exceptions():
-                self.view.reader.load(self.filename)
+                self.view.reader.load(fs_uri)
 
     @gui_thread_safe
     def book_loaded_handler(self, sender):

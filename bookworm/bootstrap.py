@@ -127,6 +127,6 @@ def run():
     try:
         init_app_and_run_main_loop()
         log.info("The application has exited gracefully.")
-    except BaseException as e:
-        log.critical(f"An unhandled error has occured.", exc_info=True)
+    except BaseException:
+        log.critical("An unhandled error has occured.", exc_info=True)
         raise

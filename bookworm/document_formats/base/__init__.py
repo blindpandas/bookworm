@@ -2,10 +2,13 @@
 
 from .document import (
     BaseDocument,
+    FileSystemBaseDocument,
     BasePage,
     FluidDocument,
+    FluidFileSystemDocument,
     FluidPage,
     DocumentError,
+    DocumentIOError,
     PaginationError,
 )
 from .elements import (

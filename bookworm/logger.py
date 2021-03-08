@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import sys
 import logging
 from logging.handlers import RotatingFileHandler
 from bookworm import paths

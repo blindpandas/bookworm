@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import os
 import zipfile
 import fitz
 import ftfy
@@ -13,14 +12,13 @@ from bookworm.paths import home_data_path
 from bookworm.image_io import ImageIO
 from bookworm.utils import recursively_iterdir
 from bookworm.document_formats.base import (
-    BaseDocument,
+    FileSystemBaseDocument,
     BasePage,
     Section,
     BookMetadata,
     Pager,
     DocumentCapability as DC,
     DocumentError,
-    TreeStackBuilder,
 )
 from bookworm.logger import logger
 
@@ -50,7 +48,7 @@ class FitzPage(BasePage):
         return ImageIO(data=pix.samples, width=pix.width, height=pix.height)
 
 
-class FitzDocument(BaseDocument):
+class FitzDocument(FileSystemBaseDocument):
     """The backend of this document type is Fitz (AKA MuPDF)."""
 
     format = None

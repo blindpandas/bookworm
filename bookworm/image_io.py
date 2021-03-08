@@ -5,8 +5,8 @@ import wx
 import numpy as np
 import cv2
 import fitz
-from dataclasses import dataclass, field
-from PIL import Image, ImageOps
+from dataclasses import dataclass
+from PIL import Image
 from bookworm import typehints as t
 from bookworm.logger import logger
 
@@ -46,7 +46,7 @@ class ImageIO:
         try:
             pil_image = Image.open(image_path).convert("RGBA")
             return cls.from_pil(pil_image)
-        except Exception as e:
+        except Exception:
             log.exception(
                 f"Failed to load image from file '{image_path}'", exc_info=True
             )
@@ -89,5 +89,5 @@ class ImageIO:
 
     def to_fitz_pixmap(self):
         buf = io.BytesIO()
-        img = self.to_pil().save(buf, format="png")
+        self.to_pil().save(buf, format="png")
         return fitz.Pixmap(buf)

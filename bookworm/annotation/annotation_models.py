@@ -6,7 +6,6 @@ Database models for Annotations.
 
 import sqlalchemy as sa
 from sqlalchemy.orm import synonym, relationship, deferred
-from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from datetime import datetime

@@ -68,7 +68,7 @@ def check_for_updates(verbose=False):
     try:
         update_info = RemoteJsonResource(url=app.update_url, model=UpdateInfo).get()
     except ConnectionError:
-        log.exception(f"Failed to check for updates.", exc_info=True)
+        log.exception("Failed to check for updates.", exc_info=True)
         if verbose:
             wx.CallAfter(
                 wx.MessageBox,
@@ -80,7 +80,7 @@ def check_for_updates(verbose=False):
             )
         return
     except ValueError:
-        log.exception(f"Invalid content recieved.", exc_info=True)
+        log.exception("Invalid content recieved.", exc_info=True)
         if verbose:
             wx.CallAfter(
                 wx.MessageBox,

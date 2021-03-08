@@ -2,9 +2,7 @@
 
 import wx
 from enum import IntEnum
-from bookworm import config
 from bookworm import speech
-from bookworm.utils import gui_thread_safe
 from bookworm.gui.settings import SettingsPanel
 from bookworm.gui.contentview_ctrl import SelectionRange
 from bookworm.logger import logger
@@ -13,7 +11,6 @@ from .annotation_dialogs import (
     BookmarksViewer,
     CommentsDialog,
     QuotesDialog,
-    ExportNotesDialog,
     GenericAnnotationWithContentDialog,
 )
 

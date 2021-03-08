@@ -18,7 +18,7 @@ def main():
         from bookworm import bootstrap
 
         bootstrap.run()
-    except Exception as e:
+    except Exception:
         import logging
         import wx
         from pathlib import Path

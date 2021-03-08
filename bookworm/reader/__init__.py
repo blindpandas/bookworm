@@ -13,8 +13,8 @@ from bookworm.document_formats import (
     FitzFB2Document,
     PlainTextDocument,
     HtmlDocument,
-    DocumentCapability,
     DocumentError,
+    DocumentIOError,
     PaginationError,
 )
 from bookworm.document_formats.base import Section, BasePage
@@ -25,6 +25,8 @@ from bookworm.signals import (
     reader_section_changed,
 )
 from bookworm.logger import logger
+from .document_uri import DocumentUri
+
 
 
 log = logger.getChild(__name__)
@@ -48,7 +50,6 @@ class EBookReader:
     """
 
     __slots__ = [
-        "supported_ebook_formats",
         "document",
         "view",
         "__state",
@@ -64,11 +65,12 @@ class EBookReader:
         PlainTextDocument,
         HtmlDocument,
     )
+    # Maps formats to their respective document type
+    supported_ebook_formats = {
+        cls.format: cls for cls in document_classes
+    }
 
     def __init__(self, view):
-        self.supported_ebook_formats = {
-            cls.format: cls for cls in self.document_classes
-        }
         self.view = view
         self.reset()
 
@@ -76,23 +78,23 @@ class EBookReader:
         self.document = None
         self.__state = {}
 
-    def load(self, ebook_path: t.PathLike) -> bool:
-        ebook_format = self._detect_ebook_format(ebook_path)
-        if ebook_format not in self.supported_ebook_formats:
+    def load(self, document_uri: DocumentUri) -> bool:
+        if (doc_format := document_uri.format) not in self.supported_ebook_formats:
             raise UnsupportedDocumentError(
-                f"The file type {ebook_format} is not supported"
+                f"Could not open document from uri {document_uri=}. The format is not supported."
             )
-        if not os.path.isfile(ebook_path):
-            raise ResourceDoesNotExist(f"Could not open file: {ebook_path}")
-        document_cls = self.supported_ebook_formats[ebook_format]
+        document_cls = self.supported_ebook_formats[doc_format]
         try:
-            self.document = document_cls(filename=ebook_path)
+            self.document = document_cls(uri=document_uri)
             self.document.read()
             result = self.view.try_decrypt_document(self.document)
             if not result:
                 with suppress(Exception):
                     self.unload()
                 return
+        except DocumentIOError as e:
+            self.reset()
+            raise ResourceDoesNotExist("Failed to load document", e)
         except DocumentError as e:
             self.reset()
             raise ReaderError("Failed to open document", e)
@@ -135,13 +137,9 @@ class EBookReader:
                 reader_book_unloaded.send(self)
 
     def save_current_position(self):
-        filename = self.document.filename
-        # Some times we may need to shadow the original document with another
-        #  one, for example when we decrypt it, or when we make it a11y friendly
-        if getattr(self.document, "_original_file_name", None):
-            filename = self.document._original_file_name
+        uri = self.document.uri
         database.save_last_position(
-            filename.lower(),
+            uri.to_uri_string(),
             self.current_page,
             self.view.get_insertion_point(),
         )
@@ -267,6 +265,3 @@ class EBookReader:
                     title=view_title, author=author
                 )
         return view_title + f" - {app.display_name}"
-
-    def _detect_ebook_format(self, ebook_path):
-        return os.path.splitext(ebook_path)[-1].lstrip(".").lower()
