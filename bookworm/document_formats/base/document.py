@@ -91,6 +91,8 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """
         self._page_cache = LRU(PAGE_CACHE_CAPACITY)
         self._page_content_cache = LRU(PAGE_CACHE_CAPACITY)
+        # XXX Is this a pre-mature optimization?
+        call_threaded(lambda: self.language)
 
     @abstractmethod
     def close(self):
@@ -130,9 +132,23 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """
 
     @cached_property
-    @abstractmethod
     def language(self) -> str:
-        """Return the language of this document."""
+        """Return the language of this document.
+        By default we use a heuristic based on Google's CLD2.
+        """
+        num_pages = len(self)
+        num_samples = num_pages if num_pages <= 20 else 20
+        text = "".join(self[i].get_text() for i in range(num_samples)).encode("utf8")
+        try:
+            (success, _, ((_, lang, _, _), *_)) = detect_language(
+                utf8Bytes=text, isPlainText=True, hintLanguage=None
+            )
+        except CLD2Error as e:
+            log.error(f"Failed to recognize document language", exc_info=True)
+            success = False
+        if success:
+            return lang
+        return "en"
 
     @property
     @abstractmethod
@@ -152,9 +168,9 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """Convenience method: return the image of a page."""
         return self[page_number].get_image(zoom_factor)
 
-    @property
-    def supports_async_read(self):
-        return DocumentCapability.ASYNC_READ in self.capabilities
+    @classmethod
+    def should_read_async(cls):
+        return DocumentCapability.ASYNC_READ in cls.capabilities
 
     @property
     def is_fluid(self):
@@ -203,27 +219,6 @@ class FileSystemBaseDocument(BaseDocument):
     def read(self):
         super().read()
         self._sha1hash = generate_sha1hash_async(self.filename)
-        # XXX Is this a pre-mature optimization?
-        call_threaded(lambda: self.language)
-
-    @cached_property
-    def language(self) -> str:
-        """Return the language of this document.
-        By default we use a heuristic based on Google's CLD2.
-        """
-        num_pages = len(self)
-        num_samples = num_pages if num_pages <= 20 else 20
-        text = "".join(self[i].get_text() for i in range(num_samples)).encode("utf8")
-        try:
-            (success, _, ((_, lang, _, _), *_)) = detect_language(
-                utf8Bytes=text, isPlainText=True, hintLanguage=None
-            )
-        except CLD2Error as e:
-            log.error(f"Failed to recognize document language: {e.args}")
-            success = False
-        if success:
-            return lang
-        return "en"
 
 
 class BasePage(metaclass=ABCMeta):

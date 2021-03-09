@@ -20,7 +20,7 @@ from bookworm.concurrency import call_threaded, process_worker
 from bookworm.gui.components import RobustProgressDialog
 from bookworm import ocr
 from bookworm import speech
-from bookworm.reader import EBookReader
+from bookworm.reader import EBookReader,     DocumentUri
 from bookworm.utils import restart_application, gui_thread_safe
 from bookworm.logger import logger
 from bookworm.gui.contentview_ctrl import EVT_CONTEXTMENU_REQUESTED
@@ -68,6 +68,7 @@ class FileMenu(BaseMenu):
     """The file menu for the book viewer."""
 
     def __init__(self, *args, **kwargs):
+        self._recents = {}
         super().__init__(*args, **kwargs)
         reader_book_loaded.connect(self.after_loading_book)
         reader_book_unloaded.connect(
@@ -130,11 +131,9 @@ class FileMenu(BaseMenu):
         self.view.Bind(wx.EVT_MENU, lambda e: self.view.onClose(e), id=wx.ID_EXIT)
         self.view.Bind(wx.EVT_CLOSE, lambda e: self.view.onClose(e), self.view)
         # Populate the recent files submenu
-        self._recent_files_data = []
         self.populate_recent_file_list()
 
     def after_loading_book(self, sender):
-        self.add_file_to_recent_files_history(sender.document.filename)
         self.populate_recent_file_list()
 
     def onOpenEBook(self, event):
@@ -154,9 +153,10 @@ class FileMenu(BaseMenu):
             filename = openFileDlg.GetPath().strip()
             openFileDlg.Destroy()
             if filename:
-                self.view.open_file(filename)
                 config.conf["history"]["last_folder"] = os.path.split(filename)[0]
                 config.save()
+                self.view.open_uri(
+                    DocumentUri.from_filename(filename))
 
     def onExportAsPlainText(self, event):
         book_title = slugify(self.reader.current_book.title)
@@ -199,16 +199,14 @@ class FileMenu(BaseMenu):
         progress_dlg.Dismiss()
 
     def onRecentFileItem(self, event):
-        clicked_id = event.GetId()
-        info = [item for item in self._recent_files_data if item[1] == clicked_id][-1]
-        filename = info[2]
-        if self.reader.ready and (filename == self.reader.document.filename):
+        item_id = event.GetId()
+        item_uri = self._recents[item_id]
+        if self.reader.ready and (item_uri == self.reader.document.uri.to_uri_string()):
             return
-        self.view.open_file(filename)
+        self.view.open_uri(item_uri)
 
     def onClearRecentFileList(self, event):
-        config.conf["history"]["recently_opened"] = []
-        config.save()
+        self.reader.clear_recents()
         self.populate_recent_file_list()
 
     def onPreferences(self, event):
@@ -223,22 +221,14 @@ class FileMenu(BaseMenu):
     def onCloseCurrentFile(self, event):
         self.view.unloadCurrentEbook()
 
-    def add_file_to_recent_files_history(self, filename):
-        recent_files = config.conf["history"]["recently_opened"]
-        if filename in recent_files:
-            recent_files.remove(filename)
-        recent_files.insert(0, filename)
-        newfiles = recent_files if len(recent_files) < 10 else recent_files[:10]
-        config.conf["history"]["recently_opened"] = newfiles
-        config.save()
-
     def populate_recent_file_list(self):
         clear_item = self.recentFilesMenu.FindItemById(wx.ID_CLEAR)
-        for item, _nop, filename in self._recent_files_data:
-            self.recentFilesMenu.Delete(item)
-        self._recent_files_data.clear()
-        recent_files = config.conf["history"]["recently_opened"]
-        if len(recent_files) == 0:
+        self._recents.clear()
+        for mitem in self.recentFilesMenu.GetMenuItems():
+            if mitem != clear_item:
+                self.recentFilesMenu.Delete(mitem)
+        recents = self.reader.get_recents()
+        if len(recents) == 0:
             _no_files = self.recentFilesMenu.Append(
                 wx.ID_ANY,
                 # Translators: the label of an item in the application menubar
@@ -246,20 +236,18 @@ class FileMenu(BaseMenu):
                 _("No recent books"),
             )
             _no_files.Enable(False)
-            self._recent_files_data.append((_no_files, -1, ""))
             clear_item.Enable(False)
         else:
-            recent_files = (file for file in recent_files if os.path.exists(file))
-            clear_item.Enable(bool(recent_files))
-            for idx, filename in enumerate(recent_files):
-                fname = os.path.split(filename)[-1]
-                item = self.recentFilesMenu.Append(wx.ID_ANY, f"{idx + 1}. {fname}")
+            clear_item.Enable(True)
+            recent_uris = {}
+            for idx, recent_item in enumerate(recents):
+                item = self.recentFilesMenu.Append(wx.ID_ANY, f"{idx + 1}. {recent_item.title}")
                 self.view.Bind(wx.EVT_MENU, self.onRecentFileItem, item)
-                self._recent_files_data.append((item, item.GetId(), filename))
-                if self.reader.ready:
-                    for (it, id, fn) in self._recent_files_data:
-                        if fn == self.reader.document.filename:
-                            it.Enable(False)
+                self._recents[item.Id] = recent_item.uri
+                recent_uris[recent_item.uri] = item.Id
+            if self.reader.ready and (current_uri := self.reader.document.uri.to_uri_string()) in recent_uris:
+                item_id = recent_uris[current_uri]
+                self.recentFilesMenu.Enable(item_id, False)
 
 
 class SearchMenu(BaseMenu):

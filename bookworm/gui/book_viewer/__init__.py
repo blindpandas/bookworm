@@ -16,7 +16,6 @@ from bookworm.reader import (
     ReaderError,
     ResourceDoesNotExist,
     UnsupportedDocumentError,
-    DocumentUri,
 )
 from bookworm.signals import reader_book_loaded, reader_book_unloaded
 from bookworm.gui.contentview_ctrl import ContentViewCtrl, SelectionRange
@@ -33,22 +32,17 @@ log = logger.getChild(__name__)
 class ResourceLoader:
     """Loads an ebook into the view."""
 
-    def __init__(self, view, filename, callback=None):
+    def __init__(self, view, uri, callback=None):
         self.view = view
-        self.filename = Path(filename)
+        self.uri = uri
         self.callback = callback
 
     def load(self):
-        fs_uri = DocumentUri(
-            format=self.filename.suffix.lstrip("."),
-            path=self.filename,
-            openner_args={},
-        )
         with reader_book_loaded.connected_to(
             self.book_loaded_handler, sender=self.view.reader
         ):
             with self.handle_reader_exceptions():
-                self.view.reader.load(fs_uri)
+                self.view.reader.load(self.uri)
 
     @gui_thread_safe
     def book_loaded_handler(self, sender):
@@ -64,11 +58,9 @@ class ResourceLoader:
         except ResourceDoesNotExist:
             self.view.notify_user(
                 # Translators: the title of an error message
-                _("File not found"),
+                _("Document not found"),
                 # Translators: the content of an error message
-                _("Could not open file: {file}\nThe file does not exist.").format(
-                    file=self.filename
-                ),
+                _("Could not open Document.\nThe document does not exist."),
                 style=wx.ICON_ERROR,
             )
             log.exception("Failed to open file. File does not exist", exc_info=True)
@@ -91,10 +83,10 @@ class ResourceLoader:
                 _("Error Openning Document"),
                 # Translators: the content of an error message
                 _(
-                    "Could not open file {file}\n."
+                    "Could not open file\n."
                     "Either the file  has been damaged during download, "
                     "or it has been corrupted in some other way."
-                ).format(file=self.filename),
+                ),
                 icon=wx.ICON_ERROR,
             )
             log.exception("Error opening document", exc_info=True)
@@ -105,9 +97,9 @@ class ResourceLoader:
                 _("Error Openning Document"),
                 # Translators: the content of an error message
                 _(
-                    "Could not open file {file}\n."
+                    "Could not open document\n."
                     "An unknown error occured while loading the file."
-                ).format(file=self.filename),
+                ),
                 icon=wx.ICON_ERROR,
             )
             log.exception("Error loading file", exc_info=True)
@@ -268,10 +260,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if self.contentTextCtrl.HasFocus():
             self.tocTreeCtrl.SetFocus()
 
-    def open_file(self, filename: t.PathLike, callback=None):
+    def open_uri(self, uri, callback=None):
         self.unloadCurrentEbook()
         ResourceLoader(
-            self, filename, callback=callback or self.default_book_loaded_callback
+            self, uri, callback=callback or self.default_book_loaded_callback
         ).load()
 
     def set_content(self, content):

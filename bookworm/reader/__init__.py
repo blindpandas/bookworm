@@ -2,10 +2,11 @@
 
 import os
 from contextlib import suppress
+from dataclasses import dataclass
 from bookworm import typehints as t
 from bookworm import app
 from bookworm import config
-from bookworm import database
+from bookworm.database import RecentDocument, DocumentPositionInfo
 from bookworm.i18n import is_rtl
 from bookworm.document_formats import (
     FitzPdfDocument,
@@ -30,6 +31,22 @@ from .document_uri import DocumentUri
 
 
 log = logger.getChild(__name__)
+# A list of document classes
+# Each class supports a different file format
+DOCUMENT_CLASSES = (
+    FitzPdfDocument,
+    FitzEPUBDocument,
+    FitzFB2Document,
+    PlainTextDocument,
+    HtmlDocument,
+)
+# Maps formats to their respective document type
+SUPPORTED_DOCUMENT_FORMATS = {
+    cls.format: cls
+    for cls in DOCUMENT_CLASSES
+}
+
+
 
 
 class ReaderError(Exception):
@@ -44,31 +61,55 @@ class UnsupportedDocumentError(ReaderError):
     """File type/format is not supported."""
 
 
+class UriResolver:
+    """Retrieves a document given a uri."""
+
+    def __init__(self, uri):
+        if isinstance(uri, str):
+            try:
+                self.uri = DocumentUri.from_uri_string(uri)
+            except ValueError as e:
+                raise ReaderError(f"Failed to parse document uri {self.uri}")  from e
+        else:
+            self.uri = uri
+        if (doc_format := self.uri.format) not in SUPPORTED_DOCUMENT_FORMATS:
+            raise UnsupportedDocumentError(
+                f"Could not open document from uri {self.uri}. The format is not supported."
+            )
+        self.document_cls = SUPPORTED_DOCUMENT_FORMATS[doc_format]
+
+    def __repr__(self):
+        return f"UriResolver(uri={self.uri})"
+
+    def should_read_async(self):
+        return self.document_cls.should_read_async
+
+    def read_document(self):
+        document = self.document_cls(self.uri)
+        try:
+            document.read()
+        except DocumentIOError as e:
+            raise ResourceDoesNotExist("Failed to load document") from e
+        except DocumentError as e:
+            raise ReaderError("Failed to open document") from e
+        return document
+
+
 class EBookReader:
     """The controller that glues together the
-    document model and the view model .
+    document model and the view model.
     """
 
     __slots__ = [
         "document",
+        "stored_document_info",
         "view",
         "__state",
         "current_book",
     ]
 
-    # A list of document classes
-    # Each class supports a different file format
-    document_classes = (
-        FitzPdfDocument,
-        FitzEPUBDocument,
-        FitzFB2Document,
-        PlainTextDocument,
-        HtmlDocument,
-    )
-    # Maps formats to their respective document type
-    supported_ebook_formats = {
-        cls.format: cls for cls in document_classes
-    }
+    document_classes = DOCUMENT_CLASSES
+    supported_ebook_formats = SUPPORTED_DOCUMENT_FORMATS
 
     def __init__(self, view):
         self.view = view
@@ -76,48 +117,47 @@ class EBookReader:
 
     def reset(self):
         self.document = None
+        self.stored_document_info = None
         self.__state = {}
 
-    def load(self, document_uri: DocumentUri) -> bool:
-        if (doc_format := document_uri.format) not in self.supported_ebook_formats:
-            raise UnsupportedDocumentError(
-                f"Could not open document from uri {document_uri=}. The format is not supported."
-            )
-        document_cls = self.supported_ebook_formats[doc_format]
-        try:
-            self.document = document_cls(uri=document_uri)
-            self.document.read()
-            result = self.view.try_decrypt_document(self.document)
-            if not result:
-                with suppress(Exception):
-                    self.unload()
-                return
-        except DocumentIOError as e:
-            self.reset()
-            raise ResourceDoesNotExist("Failed to load document", e)
-        except DocumentError as e:
-            self.reset()
-            raise ReaderError("Failed to open document", e)
+    def set_document(self, document):
+        if not         self.decrypt_document(document):
+            return
+        self.document = document
         self.current_book = self.document.metadata
-        # Set the view parameters
+        self.stored_document_info = DocumentPositionInfo.get_or_create(
+            title=self.current_book.title,
+            uri=self.document.uri.to_uri_string()
+        )
+        self.add_to_recents(self.document)
+        self.set_view_parameters()
+        reader_book_loaded.send(self)
+
+    def set_view_parameters(self):
         self.view.set_title(self.get_view_title(include_author=True))
         self.view.set_text_direction(is_rtl(self.document.language))
         self.view.add_toc_tree(self.document.toc_tree)
         self.__state.setdefault("current_page_index", -1)
         self.current_page = 0
+        self.add_to_recents(self.document)
         if config.conf["general"]["open_with_last_position"]:
             try:
                 log.debug("Retreving last saved reading position from the database")
-                pos_info = database.get_last_position(ebook_path.lower())
-                if pos_info is not None:
-                    page_number, pos = pos_info
-                    log.debug("Navigating to the last saved position.")
-                    self.go_to_page(page_number, pos)
+                log.debug("Navigating to the last saved position.")
+                page_number, pos = self.stored_document_info.get_last_position()
+                self.go_to_page(page_number, pos)
             except:
                 log.exception(
                     "Failed to restore last saved reading position", exc_info=True
                 )
-        reader_book_loaded.send(self)
+
+    def decrypt_document(self, document):
+        return bool(self.view.try_decrypt_document(document))
+
+    def load(self, uri: DocumentUri):
+        document = UriResolver(uri).read_document()
+        self.set_document(document)
+
 
     def unload(self):
         if self.ready:
@@ -137,9 +177,9 @@ class EBookReader:
                 reader_book_unloaded.send(self)
 
     def save_current_position(self):
-        uri = self.document.uri
-        database.save_last_position(
-            uri.to_uri_string(),
+        if self.stored_document_info is None:
+            return
+        self.stored_document_info.save_position(
             self.current_page,
             self.view.get_insertion_point(),
         )
@@ -265,3 +305,16 @@ class EBookReader:
                     title=view_title, author=author
                 )
         return view_title + f" - {app.display_name}"
+
+    def add_to_recents(self, document):
+        doc_info = RecentDocument.get_or_create(
+            title=document.metadata.title,
+            uri=document.uri.to_uri_string()
+        )
+        doc_info.record_open()
+
+    def get_recents(self):
+        return RecentDocument.get_recents(limit=10)
+
+    def clear_recents(self):
+        RecentDocument.clear_all()

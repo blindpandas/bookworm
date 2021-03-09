@@ -17,7 +17,6 @@ config_spec = StringIO(
     speak_section_title = boolean(default=True)
     include_page_label = boolean(default=False)
 [history]
-    recently_opened = list(default=list())
     recent_terms = list(default=list())
     last_folder = string(default="")
     set_file_assoc = integer(default=0)

@@ -83,7 +83,7 @@ class Annotator:
             book = Book(
                 title=self.reader.current_book.title,
                 identifier=ident,
-                file_path=self.reader.document.filename,
+                uri=self.reader.document.uri,
             )
             self.session.add(book)
             self.session.commit()

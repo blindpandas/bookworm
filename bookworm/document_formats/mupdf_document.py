@@ -74,7 +74,8 @@ class FitzDocument(FileSystemBaseDocument):
             self._ebook = fitz.open(self.filename, filetype=filetype)
             super().read()
         except RuntimeError as e:
-            raise DocumentError(*e.args)
+            log.exception("Failed to open document", exc_info=True)
+            raise DocumentError("Could not open document") from e
 
     def close(self):
         if self._ebook is None:
