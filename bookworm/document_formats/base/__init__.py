@@ -9,6 +9,7 @@ from .document import (
     FluidPage,
     DocumentError,
     DocumentIOError,
+    DocumentEncryptedError,
     PaginationError,
 )
 from .elements import (

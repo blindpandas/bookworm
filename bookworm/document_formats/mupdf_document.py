@@ -19,6 +19,7 @@ from bookworm.document_formats.base import (
     Pager,
     DocumentCapability as DC,
     DocumentError,
+    DocumentEncryptedError
 )
 from bookworm.logger import logger
 
@@ -75,6 +76,8 @@ class FitzDocument(FileSystemBaseDocument):
             super().read()
         except RuntimeError as e:
             log.exception("Failed to open document", exc_info=True)
+            if "drm" in e.args[0].lower():
+                raise DocumentEncryptedError("Document is encrypted with DRM") from e
             raise DocumentError("Could not open document") from e
 
     def close(self):
@@ -166,14 +169,15 @@ class FitzEPUBDocument(FitzDocument):
     def read(self):
         try:
             super().read()
+            self._book_package = zipfile.ZipFile(self.filename)
+        except DocumentEncryptedError:
+            log.debug("Got an encrypted file, will try to decrypt it...")
+            self._original_file_name = self.filename
+            self.filename = self.make_unrestricted_file(self.filename)
+            super().read(filetype="epub")
+            self._book_package = zipfile.ZipFile(self.filename)
         except DocumentError as e:
-            if "drm" in e.args[0].lower():
-                log.debug("Got an encrypted file, will try to decrypt it...")
-                self._original_file_name = self.filename
-                self.filename = self.make_unrestricted_file(self.filename)
-                return super().read(filetype="epub")
             raise e
-        self._book_package = zipfile.ZipFile(self.filename)
 
     def close(self):
         self._book_package.close()

@@ -28,6 +28,10 @@ class DocumentIOError(DocumentError, IOError):
     """Raised when the document could not be loaded."""
 
 
+class DocumentEncryptedError(DocumentError):
+    """Raised when the document is encrypted with DRM."""
+
+
 class PaginationError(DocumentError, IndexError):
     """Raised when the  `next` or `prev` page is not available."""
 
