@@ -6,13 +6,17 @@ from pyxpdf import Document as XPdfDocument, Config as XPdfConfig
 from pyxpdf.xpdf import TextOutput as XPdfTextOutput, TextControl as XPdfTextControl
 from pyxpdf_data import generate_xpdfrc
 from bookworm.paths import data_path
-from bookworm.document_formats.base import DocumentCapability as DC
+from bookworm.document_formats.base import ReadingMode, DocumentCapability as DC
 from bookworm.logger import logger
 from .mupdf_document import FitzDocument, FitzPage
 
 log = logger.getChild(__name__)
 XPDF_CONFIG = dict(text_keep_tiny=False, text_eol="unix", text_page_breaks=False)
-
+XPDF_READING_MODE_TO_BOOKWORM_READING_MODE = {
+    ReadingMode.DEFAULT:  "reading",
+    ReadingMode.READING_ORDER:  "simple",
+    ReadingMode.PHYSICAL:  "physical",
+}
 
 class FitzPdfPage(FitzPage):
     """Represents a page of a pdf document."""
@@ -36,14 +40,20 @@ class FitzPdfDocument(FitzDocument):
     name = _("Portable Document (PDF)")
     extensions = ("*.pdf",)
     capabilities = FitzDocument.capabilities | DC.PAGE_LABELS
+    supported_reading_modes = (
+        ReadingMode.DEFAULT,
+        ReadingMode.READING_ORDER,
+        ReadingMode.PHYSICAL,
+    )
 
     def get_page(self, index: int) -> FitzPage:
         return FitzPdfPage(self, index, xpdf_text_output=self.xpdf_text_output)
 
     @cached_property
     def xpdf_text_output(self):
+        reading_mode = XPDF_READING_MODE_TO_BOOKWORM_READING_MODE[self.reading_options.reading_mode]
         xtext_ctrl = XPdfTextControl(
-            mode="reading",
+            mode=reading_mode,
             enable_html=True,
             discard_diagonal=True,
         )

@@ -223,3 +223,8 @@ class TreeStackBuilder(list):
             parent = self.top if self.top.is_root else self.top.parent
             parent.append(node)
             self.top = node
+
+
+@dataclass
+class ReadingOptions:
+    reading_mode: str

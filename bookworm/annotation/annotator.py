@@ -70,19 +70,18 @@ class Annotator:
         self.reader = reader
         self.session = self.model.session()
 
-    def get_book_by_identifier(self, ident):
-        return Book.query.filter(Book.identifier == ident).one_or_none()
+    def get_book_by_uri(self, uri):
+        return Book.query.filter(Book.uri == uri).one_or_none()
 
     @property
     def current_book(self):
         if not self.reader.ready:
             return
-        ident = self.reader.document.identifier
-        book = self.get_book_by_identifier(ident)
+        current_uri = self.reader.document.uri
+        book = self.get_book_by_uri(current_uri)
         if book is None:
             book = Book(
                 title=self.reader.current_book.title,
-                identifier=ident,
                 uri=self.reader.document.uri,
             )
             self.session.add(book)

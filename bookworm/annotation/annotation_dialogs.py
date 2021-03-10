@@ -572,7 +572,7 @@ class GenericAnnotationWithContentDialog(AnnotationWithContentDialog):
             else:
                 self.service.view.select_text(item.start_pos, item.end_pos)
 
-        self.service.view.open_file(item.book.file_path, callback=book_load_callback)
+        self.service.view.open_uri(item.book.uri, callback=book_load_callback)
 
 
 class CommentsDialog(AnnotationWithContentDialog):

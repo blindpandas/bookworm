@@ -19,6 +19,7 @@ class BookRelatedMenuIds(enum.IntEnum):
     findNext = 222
     findPrev = 223
     viewRenderedAsImage = 224
+    changeReadingMode = 230
 
 
 class ViewerMenuIds(enum.IntEnum):
@@ -43,6 +44,7 @@ KEYBOARD_SHORTCUTS = {
     BookRelatedMenuIds.findNext: "F3",
     BookRelatedMenuIds.findPrev: "Shift-F3",
     BookRelatedMenuIds.viewRenderedAsImage: "Ctrl-R",
+    BookRelatedMenuIds.changeReadingMode: "Ctrl-M",
     wx.ID_PREFERENCES: "Ctrl-Shift-P",
     ViewerMenuIds.documentation: "F1",
 }

@@ -10,7 +10,6 @@ from pathlib import Path
 from bookworm import typehints as t
 from bookworm.concurrency import QueueProcess, call_threaded
 from bookworm.image_io import ImageIO
-from bookworm.utils import generate_sha1hash_async
 from bookworm.logger import logger
 from .elements import *
 from .features import DocumentCapability, ReadingMode
@@ -48,7 +47,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     capabilities: DocumentCapability = DocumentCapability.NULL_CAPABILITY
     """A combination of DocumentCapability flags."""
 
-    supported_reading_modes: t.Tuple[ReadingMode] = ReadingMode.DEFAULT
+    supported_reading_modes: t.Tuple[ReadingMode] = (ReadingMode.DEFAULT,)
 
     def __init__(self, uri):
         self.uri = uri
@@ -75,13 +74,16 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         self.read()
 
     @cached_property
-    @abstractmethod
+    def reading_options(self):
+        reading_mode = int(self.uri.openner_args.get('reading_mode', ReadingMode.DEFAULT))
+        return ReadingOptions(
+            reading_mode=ReadingMode(reading_mode),
+        )
+
+    @cached_property
     def identifier(self) -> str:
-        """Return a unique identifier for this document.
-        For example, it may return a `sha1` digest based on
-        the document content.
-        """
-        raise NotImplementedError
+        """Return a unique identifier for this document."""
+        return self.uri.to_uri_string()
 
     @abstractmethod
     def read(self):
@@ -205,20 +207,6 @@ class FileSystemBaseDocument(BaseDocument):
         self.filename = self.uri.path
         if not Path(self.filename).is_file():
             raise DocumentIOError
-
-    @cached_property
-    def identifier(self) -> str:
-        """Return a unique identifier for this document.
-        By default it returns a `sha1` digest based on
-        the document content.
-        """
-        if type(self._sha1hash) is not str:
-            self._sha1hash = self._sha1hash.result()
-        return self._sha1hash
-
-    def read(self):
-        super().read()
-        self._sha1hash = generate_sha1hash_async(self.filename)
 
 
 class BasePage(metaclass=ABCMeta):

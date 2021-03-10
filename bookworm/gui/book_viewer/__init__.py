@@ -24,6 +24,7 @@ from bookworm.logger import logger
 from .menubar import MenubarProvider, BookRelatedMenuIds
 from .state import StateProvider
 from .navigation import NavigationProvider
+from . import recents_manager
 
 
 log = logger.getChild(__name__)
@@ -46,6 +47,7 @@ class ResourceLoader:
 
     @gui_thread_safe
     def book_loaded_handler(self, sender):
+        recents_manager.add_to_recents(sender.document)
         self.view.invoke_load_handlers()
         if self.callback is not None:
             self.callback()

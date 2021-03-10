@@ -29,7 +29,7 @@ class DocumentUri:
         return cls(
             format=parsed.authority,
             path=uritools.uridecode(parsed.path).lstrip("/"),
-            openner_args=parsed.getquerydict(),
+            openner_args=cls._unwrap_args(parsed.getquerydict())
         )
 
     @classmethod
@@ -40,6 +40,7 @@ class DocumentUri:
             path=str(filepath),
             openner_args={}
         )
+
     def to_uri_string(self):
         return uritools.uricompose(
             scheme=BOOKWORM_URI_SCHEME,
@@ -48,12 +49,23 @@ class DocumentUri:
             query=self.openner_args
         )
 
+    @classmethod
+    def try_parse(cls, uri_string):
+        try:
+            return cls.from_uri_string(uri_string)
+        except ValueError:
+            log.exception(f"Failed to parse document uri: {uri_string=}", exc_info=True)
+            return
+
     def to_bare_uri_string(self):
         return uritools.uricompose(
             scheme=BOOKWORM_URI_SCHEME,
             authority=self.format,
             path=f"/{str(self.path)}",
         )
+
+    def is_equal_without_openner_args(self, other):
+        return self.to_bare_uri_string() == other.to_bare_uri_string()
 
     def __hash__(self):
         return hash(self.to_uri_string())
@@ -67,7 +79,11 @@ class DocumentUri:
     def __eq__(self, other):
         if not isinstance(other, DocumentUri):
             return NotImplemented
-        return all(
-            self.format == other.format,
-            self.path == other.path
-        )
+        return self.to_uri_string() == other.to_uri_string()
+
+    @classmethod
+    def _unwrap_args(cls, query_dict):
+        retval = {}
+        for name, valuelist in query_dict.items():
+            retval[name] = valuelist[0]
+        return retval

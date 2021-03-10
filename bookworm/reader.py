@@ -6,8 +6,9 @@ from dataclasses import dataclass
 from bookworm import typehints as t
 from bookworm import app
 from bookworm import config
-from bookworm.database import RecentDocument, DocumentPositionInfo
+from bookworm.database import DocumentPositionInfo
 from bookworm.i18n import is_rtl
+from bookworm.document_uri import DocumentUri
 from bookworm.document_formats import (
     FitzPdfDocument,
     FitzEPUBDocument,
@@ -26,7 +27,6 @@ from bookworm.signals import (
     reader_section_changed,
 )
 from bookworm.logger import logger
-from .document_uri import DocumentUri
 
 
 
@@ -127,9 +127,8 @@ class EBookReader:
         self.current_book = self.document.metadata
         self.stored_document_info = DocumentPositionInfo.get_or_create(
             title=self.current_book.title,
-            uri=self.document.uri.to_uri_string()
+            uri=self.document.uri
         )
-        self.add_to_recents(self.document)
         self.set_view_parameters()
         reader_book_loaded.send(self)
 
@@ -139,7 +138,6 @@ class EBookReader:
         self.view.add_toc_tree(self.document.toc_tree)
         self.__state.setdefault("current_page_index", -1)
         self.current_page = 0
-        self.add_to_recents(self.document)
         if config.conf["general"]["open_with_last_position"]:
             try:
                 log.debug("Retreving last saved reading position from the database")
@@ -305,16 +303,3 @@ class EBookReader:
                     title=view_title, author=author
                 )
         return view_title + f" - {app.display_name}"
-
-    def add_to_recents(self, document):
-        doc_info = RecentDocument.get_or_create(
-            title=document.metadata.title,
-            uri=document.uri.to_uri_string()
-        )
-        doc_info.record_open()
-
-    def get_recents(self):
-        return RecentDocument.get_recents(limit=10)
-
-    def clear_recents(self):
-        RecentDocument.clear_all()

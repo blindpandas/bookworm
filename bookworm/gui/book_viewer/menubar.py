@@ -15,6 +15,7 @@ from bookworm import app
 from bookworm.i18n import is_rtl
 from bookworm.resources import sounds
 from bookworm.document_formats import DocumentCapability as DC
+from bookworm.document_formats.base import READING_MODE_LABELS
 from bookworm.signals import config_updated, reader_book_loaded, reader_book_unloaded
 from bookworm.concurrency import call_threaded, process_worker
 from bookworm.gui.components import RobustProgressDialog
@@ -32,6 +33,7 @@ from bookworm.gui.book_viewer.core_dialogs import (
 )
 from .render_view import ViewPageAsImageDialog
 from .menu_constants import *
+from . import recents_manager
 
 
 log = logger.getChild(__name__)
@@ -96,7 +98,7 @@ class FileMenu(BaseMenu):
         self.AppendSubMenu(
             self.recentFilesMenu,
             # Translators: the label of an item in the application menubar
-            _("&Recent Books"),
+            _("&Recently Opened"),
             # Translators: the help text of an item in the application menubar
             _("Opens a list of recently opened books."),
         )
@@ -201,12 +203,12 @@ class FileMenu(BaseMenu):
     def onRecentFileItem(self, event):
         item_id = event.GetId()
         item_uri = self._recents[item_id]
-        if self.reader.ready and (item_uri == self.reader.document.uri.to_uri_string()):
+        if self.reader.ready and (item_uri == self.reader.document.uri):
             return
         self.view.open_uri(item_uri)
 
     def onClearRecentFileList(self, event):
-        self.reader.clear_recents()
+        recents_manager.clear_recents()
         self.populate_recent_file_list()
 
     def onPreferences(self, event):
@@ -227,7 +229,7 @@ class FileMenu(BaseMenu):
         for mitem in self.recentFilesMenu.GetMenuItems():
             if mitem != clear_item:
                 self.recentFilesMenu.Delete(mitem)
-        recents = self.reader.get_recents()
+        recents = recents_manager.get_recents()
         if len(recents) == 0:
             _no_files = self.recentFilesMenu.Append(
                 wx.ID_ANY,
@@ -245,7 +247,7 @@ class FileMenu(BaseMenu):
                 self.view.Bind(wx.EVT_MENU, self.onRecentFileItem, item)
                 self._recents[item.Id] = recent_item.uri
                 recent_uris[recent_item.uri] = item.Id
-            if self.reader.ready and (current_uri := self.reader.document.uri.to_uri_string()) in recent_uris:
+            if self.reader.ready and (current_uri := self.reader.document.uri) in recent_uris:
                 item_id = recent_uris[current_uri]
                 self.recentFilesMenu.Enable(item_id, False)
 
@@ -439,11 +441,23 @@ class ToolsMenu(BaseMenu):
             # Translators: the help text of an item in the application menubar
             _("View a fully rendered version of this page."),
         )
+        self.Append(
+            BookRelatedMenuIds.changeReadingMode,
+            # Translators: the label of an item in the application menubar
+            _("Change Reading &Mode...\tCtrl-M"),
+            # Translators: the help text of an item in the application menubar
+            _("Change the current reading mode."),
+        )
         # Bind event handlers
         self.view.Bind(
             wx.EVT_MENU,
             self.onViewRenderedAsImage,
             id=BookRelatedMenuIds.viewRenderedAsImage,
+        )
+        self.view.Bind(
+            wx.EVT_MENU,
+            self.onChangeReadingMode,
+            id=BookRelatedMenuIds.changeReadingMode,
         )
 
     def after_loading_book(self, sender):
@@ -461,6 +475,33 @@ class ToolsMenu(BaseMenu):
         ) as dlg:
             dlg.Maximize()
             dlg.ShowModal()
+
+    def onChangeReadingMode(self, event):
+        current_reading_mode = self.reader.document.reading_options.reading_mode
+        supported_reading_modes = self.reader.document.supported_reading_modes
+        supported_reading_modes_display = [
+            _(READING_MODE_LABELS[redmo])
+            for redmo in supported_reading_modes
+        ]
+        dlg = wx.SingleChoiceDialog(
+            self.view,
+            _("Available reading modes"),
+            _("Select Reading Mode "),
+            supported_reading_modes_display,
+            wx.CHOICEDLG_STYLE
+        )
+        dlg.SetSelection(supported_reading_modes.index(current_reading_mode))
+        if dlg.ShowModal() == wx.ID_OK:
+            uri = self.reader.document.uri
+            new_reading_mode = supported_reading_modes[dlg.GetSelection()]
+            if current_reading_mode != new_reading_mode:
+                uri.openner_args['reading_mode'] = int(new_reading_mode)
+                most_recent_page = self.reader.current_page
+                self.view.open_uri(uri)
+                self.reader.go_to_page(most_recent_page)
+        dlg.Destroy()
+
+
 
 
 class HelpMenu(BaseMenu):
