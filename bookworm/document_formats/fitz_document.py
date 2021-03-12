@@ -18,6 +18,7 @@ from bookworm.document_formats.base import (
     BookMetadata,
     Pager,
     DocumentCapability as DC,
+    ChangeDocument,
     DocumentError,
     DocumentEncryptedError
 )
@@ -158,62 +159,3 @@ class FitzDocument(FileSystemBaseDocument):
             publication_year=to_str(meta["creationDate"]),
         )
 
-
-class FitzEPUBDocument(FitzDocument):
-
-    format = "epub"
-    # Translators: the name of a document file format
-    name = _("Electronic Publication (EPUB)")
-    extensions = ("*.epub",)
-
-    def read(self):
-        try:
-            super().read()
-            self._book_package = zipfile.ZipFile(self.filename)
-        except DocumentEncryptedError:
-            log.debug("Got an encrypted file, will try to decrypt it...")
-            self._original_file_name = self.filename
-            self.filename = self.make_unrestricted_file(self.filename)
-            super().read(filetype="epub")
-            self._book_package = zipfile.ZipFile(self.filename)
-        except DocumentError as e:
-            raise e
-
-    def close(self):
-        self._book_package.close()
-        super().close()
-
-    def _get_section_text(self, section):
-        html_file = section.data["html_file"]
-        if html_file is None:
-            return ""
-        html_file, content_id = html_file.split("#")
-        parents = PosixPath(html_file).parts[:-1]
-        html_doc = html.document_fromstring(self._book_zip.read(html_file))
-        if content_id is not None:
-            html_doc = html_doc.get_element_by_id(content_id)
-
-    @staticmethod
-    def make_unrestricted_file(filename):
-        """Try to remove digital restrictions from the EPUB document."""
-        hashed_filename = md5(filename.lower().encode("utf8")).hexdigest()
-        processed_book = home_data_path(hashed_filename)
-        if processed_book.exists():
-            return str(processed_book)
-        _temp = TemporaryDirectory()
-        temp_path = Path(_temp.name)
-        ZipFile(filename).extractall(temp_path)
-        (temp_path / "META-INF\\encryption.xml").unlink()
-        with ZipFile(processed_book, "w") as book:
-            for file in recursively_iterdir(temp_path):
-                book.write(file, file.relative_to(temp_path))
-        _temp.cleanup()
-        return str(processed_book)
-
-
-class FitzFB2Document(FitzDocument):
-
-    format = "fb2"
-    # Translators: the name of a document file format
-    name = _("Fiction Book (FB2)")
-    extensions = ("*.fb2",)

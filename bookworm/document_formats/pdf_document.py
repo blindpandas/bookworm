@@ -8,7 +8,7 @@ from pyxpdf_data import generate_xpdfrc
 from bookworm.paths import data_path
 from bookworm.document_formats.base import ReadingMode, DocumentCapability as DC
 from bookworm.logger import logger
-from .mupdf_document import FitzDocument, FitzPage
+from .fitz_document import FitzDocument, FitzPage
 
 log = logger.getChild(__name__)
 XPDF_CONFIG = dict(text_keep_tiny=False, text_eol="unix", text_page_breaks=False)

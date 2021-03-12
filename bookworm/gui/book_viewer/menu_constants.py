@@ -44,7 +44,7 @@ KEYBOARD_SHORTCUTS = {
     BookRelatedMenuIds.findNext: "F3",
     BookRelatedMenuIds.findPrev: "Shift-F3",
     BookRelatedMenuIds.viewRenderedAsImage: "Ctrl-R",
-    BookRelatedMenuIds.changeReadingMode: "Ctrl-M",
+    BookRelatedMenuIds.changeReadingMode: "Ctrl-Shift-M",
     wx.ID_PREFERENCES: "Ctrl-Shift-P",
     ViewerMenuIds.documentation: "F1",
 }

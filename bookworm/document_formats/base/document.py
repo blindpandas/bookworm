@@ -11,6 +11,7 @@ from bookworm import typehints as t
 from bookworm.concurrency import QueueProcess, call_threaded
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
+from .exceptions import DocumentIOError, PaginationError
 from .elements import *
 from .features import DocumentCapability, ReadingMode
 from . import tools as doctools
@@ -20,24 +21,11 @@ log = logger.getChild(__name__)
 PAGE_CACHE_CAPACITY = 300
 
 
-class DocumentError(Exception):
-    """The base class of all document related exceptions."""
-
-
-class DocumentIOError(DocumentError, IOError):
-    """Raised when the document could not be loaded."""
-
-
-class DocumentEncryptedError(DocumentError):
-    """Raised when the document is encrypted with DRM."""
-
-
-class PaginationError(DocumentError, IndexError):
-    """Raised when the  `next` or `prev` page is not available."""
-
-
 class BaseDocument(Sequence, metaclass=ABCMeta):
     """Defines the core interface of a document."""
+
+    __internal__ = False
+    """A flag to indicate whether this type of document is visible to the user."""
 
     format: str = None
     """The developer oriented format of this document."""
@@ -52,6 +40,13 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     """A combination of DocumentCapability flags."""
 
     supported_reading_modes: t.Tuple[ReadingMode] = (ReadingMode.DEFAULT,)
+
+    document_classes: list = []
+
+    def __init_subclass__(cls, *args, **kwargs):
+        super().__init_subclass__(*args, **kwargs)
+        if cls.format is not None:
+            cls.document_classes.append(cls)
 
     def __init__(self, uri):
         self.uri = uri
@@ -210,7 +205,7 @@ class FileSystemBaseDocument(BaseDocument):
         super().__init__(*args, **kwargs)
         self.filename = self.uri.path
         if not Path(self.filename).is_file():
-            raise DocumentIOError
+            raise DocumentIOError(f"File {filename} does not exist.")
 
 
 class BasePage(metaclass=ABCMeta):

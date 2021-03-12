@@ -64,6 +64,13 @@ class DocumentUri:
             path=f"/{str(self.path)}",
         )
 
+    def create_copy(self, format=None, path=None, openner_args=None):
+        return DocumentUri(
+            format=format or self.format,
+            path=path or self.path,
+            openner_args=self.openner_args | (openner_args or {})
+        )
+
     def is_equal_without_openner_args(self, other):
         return self.to_bare_uri_string() == other.to_bare_uri_string()
 

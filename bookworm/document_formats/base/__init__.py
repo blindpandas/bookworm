@@ -7,10 +7,6 @@ from .document import (
     FluidDocument,
     FluidFileSystemDocument,
     FluidPage,
-    DocumentError,
-    DocumentIOError,
-    DocumentEncryptedError,
-    PaginationError,
 )
 from .elements import (
     Section,
@@ -24,4 +20,11 @@ from .features import (
     DocumentCapability,
     ReadingMode,
     READING_MODE_LABELS,
+)
+from .exceptions import (
+    DocumentError,
+    ChangeDocument,
+    DocumentIOError,
+    DocumentEncryptedError,
+    PaginationError,
 )

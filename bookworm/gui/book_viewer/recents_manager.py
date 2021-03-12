@@ -10,6 +10,8 @@ log = logger.getChild(__name__)
 
 def add_to_recents(document):
     current_uri = document.uri
+    if not current_uri.openner_args.get('add_to_recents', True):
+        return
     doc_info = None
     for doc in RecentDocument.query:
         if current_uri.is_equal_without_openner_args(doc.uri):

@@ -180,7 +180,7 @@ class AnnotationMenu(wx.Menu):
             _("Add Named Bookmark"),
             # Translators: label of a text entry
             _("Bookmark name:"),
-        ).strip()
+        )
         if bookmark_name:
             self._add_bookmark(bookmark_name)
 

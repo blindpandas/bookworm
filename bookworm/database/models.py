@@ -43,7 +43,7 @@ class GetOrCreateMixin:
 class DocumentBase(db.Model, GetOrCreateMixin):
     __abstract__ = True
     title = db.string(512, nullable=False)
-    uri = sa.Column(DocumentUriDBType(1024), nullable=False, unique=True)
+    uri = sa.Column(DocumentUriDBType(1024), nullable=False, unique=True, index=True)
 
     @classmethod
     def get_or_create(cls, *args, **kwargs):

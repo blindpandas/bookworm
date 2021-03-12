@@ -2,7 +2,8 @@
 
 import os
 import wx
-from contextlib import contextmanager
+from concurrent.futures import Future
+from functools import partial
 from pathlib import Path
 from bookworm import typehints as t
 from bookworm import app
@@ -13,18 +14,19 @@ from bookworm.resources import sounds, images
 from bookworm.paths import app_path
 from bookworm.reader import (
     EBookReader,
+    UriResolver,
     ReaderError,
     ResourceDoesNotExist,
     UnsupportedDocumentError,
 )
 from bookworm.signals import reader_book_loaded, reader_book_unloaded
 from bookworm.gui.contentview_ctrl import ContentViewCtrl, SelectionRange
+from bookworm.gui.components import AsyncSnakDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from .menubar import MenubarProvider, BookRelatedMenuIds
 from .state import StateProvider
 from .navigation import NavigationProvider
-from . import recents_manager
 
 
 log = logger.getChild(__name__)
@@ -35,28 +37,35 @@ class ResourceLoader:
 
     def __init__(self, view, uri, callback=None):
         self.view = view
-        self.uri = uri
         self.callback = callback
+        self.init_resolver(uri)
 
-    def load(self):
-        with reader_book_loaded.connected_to(
-            self.book_loaded_handler, sender=self.view.reader
-        ):
-            with self.handle_reader_exceptions():
-                self.view.reader.load(self.uri)
+    def init_resolver(self, uri):
+        try:
+            resolver = UriResolver(uri)
+        except ReaderError as e:
+            log.exception(f"Failed to resolve document uri: {uri}", exc_info=True)
+            self.view.notify_user(
+                _("Failed to open document"),
+                _("The document you are trying to open could not be opened in Bookworm."),
+                icon=wx.ICON_ERROR
+            )
+            return
+        if not resolver.should_read_async():
+            doc = self.resolve_document(resolver)
+            if doc is not None:
+                self.load(doc)
+        else:
+            AsyncSnakDialog(
+                task=partial(self.resolve_document, resolver),
+                done_callback=self.load,
+                message=_("Opening document, please wait...")
+            )
 
-    @gui_thread_safe
-    def book_loaded_handler(self, sender):
-        recents_manager.add_to_recents(sender.document)
-        self.view.invoke_load_handlers()
-        if self.callback is not None:
-            self.callback()
-
-    @contextmanager
-    def handle_reader_exceptions(self):
+    def resolve_document(self, resolver):
         has_exception = False
         try:
-            yield
+            return resolver.read_document()
         except ResourceDoesNotExist:
             self.view.notify_user(
                 # Translators: the title of an error message
@@ -112,6 +121,21 @@ class ResourceLoader:
                 if app.debug:
                     raise
 
+    def load(self, document):
+        with reader_book_loaded.connected_to(
+            self.book_loaded_handler, sender=self.view.reader
+        ):
+            if isinstance(document, Future):
+                document = document.result()
+            if document is not None:
+                self.view.reader.set_document(document)
+
+    @gui_thread_safe
+    def book_loaded_handler(self, sender):
+        self.view.invoke_load_handlers()
+        if self.callback is not None:
+            self.callback()
+
 
 class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     """The book viewer window."""
@@ -151,7 +175,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         # Set statusbar text
         # Translators: the text of the status bar when no book is currently open.
         # It is being used also as a label for the page content text area when no book is opened.
-        self._no_open_book_status = _("Press (Ctrl + O) to open an ebook")
+        self._no_open_book_status = _("Press (Ctrl + O) to open a document")
         self._has_text_zoom = False
         self.set_status(self._no_open_book_status)
         StateProvider.__init__(self)
@@ -231,7 +255,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             (20, "goto", _("Go"), BookRelatedMenuIds.goToPage),
             # Translators: the label of a button in the application toolbar
             (30, "view_image", _("View"), BookRelatedMenuIds.viewRenderedAsImage),
-            (31, "", "", None),
+            (31, "reading_mode", _("Mode"), BookRelatedMenuIds.changeReadingMode),
+            (32, "", "", None),
             # Translators: the label of a button in the application toolbar
             (60, "zoom_out", _("Big"), wx.ID_PREVIEW_ZOOM_OUT),
             # Translators: the label of a button in the application toolbar
@@ -266,7 +291,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.unloadCurrentEbook()
         ResourceLoader(
             self, uri, callback=callback or self.default_book_loaded_callback
-        ).load()
+        )
+
+    def open_document(self, document):
+        self.unloadCurrentEbook()
+        self.view.reader.set_document(document)
 
     def set_content(self, content):
         self.contentTextCtrl.Clear()

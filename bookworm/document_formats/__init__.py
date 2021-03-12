@@ -1,7 +1,16 @@
 # coding: utf-8
 
-from .base import SearchRequest, DocumentCapability, DocumentError, DocumentIOError, PaginationError
+from .base import (
+    BaseDocument,
+    SearchRequest,
+    DocumentCapability,
+    DocumentError,
+    ChangeDocument,
+    DocumentIOError,
+    PaginationError
+)
 from .pdf_document import FitzPdfDocument
-from .mupdf_document import FitzEPUBDocument, FitzFB2Document
+from .epub_document import FitzEPUBDocument, _DrmFitzEpubDocument, FitzFB2Document
 from .plain_text_document import PlainTextDocument
 from .html_document import HtmlDocument
+from .web_html_document import WebHtmlDocument

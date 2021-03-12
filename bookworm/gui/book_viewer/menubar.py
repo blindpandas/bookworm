@@ -136,6 +136,7 @@ class FileMenu(BaseMenu):
         self.populate_recent_file_list()
 
     def after_loading_book(self, sender):
+        recents_manager.add_to_recents(sender.document)
         self.populate_recent_file_list()
 
     def onOpenEBook(self, event):
@@ -444,7 +445,7 @@ class ToolsMenu(BaseMenu):
         self.Append(
             BookRelatedMenuIds.changeReadingMode,
             # Translators: the label of an item in the application menubar
-            _("Change Reading &Mode...\tCtrl-M"),
+            _("Change Reading &Mode...\tCtrl-Shift-M"),
             # Translators: the help text of an item in the application menubar
             _("Change the current reading mode."),
         )
@@ -461,12 +462,13 @@ class ToolsMenu(BaseMenu):
         )
 
     def after_loading_book(self, sender):
-        ctrl_id, enable = (
-            BookRelatedMenuIds.viewRenderedAsImage,
-            self.reader.document.can_render_pages,
+        ctrl_enable_info = (
+            (BookRelatedMenuIds.viewRenderedAsImage, self.reader.document.can_render_pages),
+            (BookRelatedMenuIds.changeReadingMode, len(self.reader.document.supported_reading_modes) > 1)
         )
-        self.Enable(ctrl_id, enable)
-        self.view.toolbar.EnableTool(ctrl_id, enable)
+        for ctrl_id, enable in ctrl_enable_info:
+            self.Enable(ctrl_id, enable)
+            self.view.toolbar.EnableTool(ctrl_id, enable)
 
     def onViewRenderedAsImage(self, event):
         # Translators: the title of the render page dialog
@@ -685,7 +687,12 @@ class MenubarProvider:
     def _get_ebooks_wildcards(self):
         rv = []
         all_exts = []
-        for cls in EBookReader.document_classes:
+        visible_doc_cls = [
+            doc_cls
+            for doc_cls in EBookReader.get_document_format_info().values()
+            if not doc_cls.__internal__
+        ]
+        for cls in visible_doc_cls:
             for ext in cls.extensions:
                 rv.append("{name} ({ext})|{ext}|".format(name=_(cls.name), ext=ext))
                 all_exts.append(ext)

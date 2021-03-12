@@ -572,7 +572,10 @@ class GenericAnnotationWithContentDialog(AnnotationWithContentDialog):
             else:
                 self.service.view.select_text(item.start_pos, item.end_pos)
 
-        self.service.view.open_uri(item.book.uri, callback=book_load_callback)
+        new_uri = item.book.uri.create_copy(
+            openner_args={'add_to_recents': False}
+        )
+        self.service.view.open_uri(new_uri, callback=book_load_callback)
 
 
 class CommentsDialog(AnnotationWithContentDialog):

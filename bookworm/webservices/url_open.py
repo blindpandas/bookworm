@@ -8,6 +8,7 @@ from url_normalize import url_normalize
 from platform_utils.clipboard import get_text as get_clipboard_text
 from bookworm import app
 from bookworm.concurrency import threaded_worker
+from bookworm.document_uri import DocumentUri
 from bookworm.gui.components import AsyncSnakDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.base_service import BookwormService
@@ -60,38 +61,9 @@ class UrlOpenService(BookwormService):
             wx.Bell()
             return
         canonical_url = url_normalize(url)
-        AsyncSnakDialog(
-            task=partial(trafilatura.fetch_url, canonical_url),
-            done_callback=self._on_url_fetched,
-            dismiss_callback=lambda: self._cancel_query.set() or True,
-            message=_("Getting web page, please wait..."),
-            parent=self.view
+        uri = DocumentUri(
+            format='webpage',
+            path=canonical_url,
+            openner_args={}
         )
-
-    def _on_url_fetched(self, future):
-        if self._cancel_query.is_set():
-            self._cancel_query.clear()
-            return
-        if not (result := future.result()):
-            self.view.notify_user(
-                # Translators: title of a messagebox
-                _("Error"),
-                # Translators: content of a messagebox
-                _(
-                    "Failed to open web page.\n"
-                    "Please make sure that you entered a correct URL, "
-                    "and that your computer is connected to the internet"
-                ),
-                icon=wx.ICON_ERROR
-            )
-            return
-        if self.reader.ready:
-            self.view.unloadCurrentEbook()
-        html = trafilatura.utils.load_html(result)
-        page_title = trafilatura.metadata.extract_title(html)
-        # Translators: title of Bookworm's Window when openning a web page
-        title = _("{page_title} — {app_name}").format(page_title=page_title, app_name=app.display_name)
-        self.view.set_title(title)
-        self.view.set_status(title)
-        self.view.set_content(trafilatura.process_record(result))
-        sounds.navigation.play()
+        self.view.open_uri(uri)

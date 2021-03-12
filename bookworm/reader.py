@@ -10,11 +10,8 @@ from bookworm.database import DocumentPositionInfo
 from bookworm.i18n import is_rtl
 from bookworm.document_uri import DocumentUri
 from bookworm.document_formats import (
-    FitzPdfDocument,
-    FitzEPUBDocument,
-    FitzFB2Document,
-    PlainTextDocument,
-    HtmlDocument,
+    BaseDocument,
+    ChangeDocument,
     DocumentError,
     DocumentIOError,
     PaginationError,
@@ -31,22 +28,14 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
-# A list of document classes
-# Each class supports a different file format
-DOCUMENT_CLASSES = (
-    FitzPdfDocument,
-    FitzEPUBDocument,
-    FitzFB2Document,
-    PlainTextDocument,
-    HtmlDocument,
-)
-# Maps formats to their respective document type
-SUPPORTED_DOCUMENT_FORMATS = {
-    cls.format: cls
-    for cls in DOCUMENT_CLASSES
-}
 
 
+
+def get_document_format_info():
+    return {
+        cls.format: cls
+        for cls in BaseDocument.document_classes
+    }
 
 
 class ReaderError(Exception):
@@ -72,17 +61,18 @@ class UriResolver:
                 raise ReaderError(f"Failed to parse document uri {self.uri}")  from e
         else:
             self.uri = uri
-        if (doc_format := self.uri.format) not in SUPPORTED_DOCUMENT_FORMATS:
+        doc_format_info = get_document_format_info()
+        if (doc_format := self.uri.format) not in doc_format_info:
             raise UnsupportedDocumentError(
                 f"Could not open document from uri {self.uri}. The format is not supported."
             )
-        self.document_cls = SUPPORTED_DOCUMENT_FORMATS[doc_format]
+        self.document_cls = doc_format_info[doc_format]
 
     def __repr__(self):
         return f"UriResolver(uri={self.uri})"
 
     def should_read_async(self):
-        return self.document_cls.should_read_async
+        return self.document_cls.should_read_async()
 
     def read_document(self):
         document = self.document_cls(self.uri)
@@ -90,7 +80,10 @@ class UriResolver:
             document.read()
         except DocumentIOError as e:
             raise ResourceDoesNotExist("Failed to load document") from e
-        except DocumentError as e:
+        except ChangeDocument as e:
+            log.debug(f"Changing document from {e.old_uri} to {e.new_uri}. Reason {e.reason}")
+            return UriResolver(uri=e.new_uri).read_document()
+        except Exception  as e:
             raise ReaderError("Failed to open document") from e
         return document
 
@@ -108,8 +101,8 @@ class EBookReader:
         "current_book",
     ]
 
-    document_classes = DOCUMENT_CLASSES
-    supported_ebook_formats = SUPPORTED_DOCUMENT_FORMATS
+    # Convenience method: make this available for importers as a staticmethod
+    get_document_format_info = staticmethod(get_document_format_info)
 
     def __init__(self, view):
         self.view = view
@@ -155,7 +148,6 @@ class EBookReader:
     def load(self, uri: DocumentUri):
         document = UriResolver(uri).read_document()
         self.set_document(document)
-
 
     def unload(self):
         if self.ready:
