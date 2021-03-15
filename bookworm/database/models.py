@@ -83,7 +83,7 @@ class RecentDocument(DocumentBase):
 
     @classmethod
     def get_recents(cls, limit=10):
-        return cls.query.order_by(cls.last_opened_on.desc()).limit(10).all()
+        return cls.query.order_by(cls.last_opened_on.desc()).limit(limit).all()
 
     @classmethod
     def clear_all(cls):
@@ -91,3 +91,37 @@ class RecentDocument(DocumentBase):
         for item in cls.query.all():
             session.delete(item)
         session.commit()
+
+
+
+class PinnedDocument(DocumentBase):
+    last_opened_on = db.date_time(default=datetime.now, onupdate=datetime.now)
+    is_pinned = db.boolean(default=False)
+    pinning_order = db.integer(default=0)
+
+    @classmethod
+    def get_pinned(cls, limit=50):
+        return cls.query.filter(cls.is_pinned == True
+        ).order_by(cls.last_opened_on.desc()
+        ).order_by(cls.pinning_order.desc()
+        ).limit(limit).all()
+
+    def pin(self):
+        if self.is_pinned:
+            return
+        self.is_pinned = True
+        self.session.commit()
+
+    def unpin(self):
+        if not self.is_pinned:
+            return
+        self.is_pinned = False
+        self.session.commit()
+
+    @classmethod
+    def clear_all(cls):
+        session = cls.session
+        for item in cls.query.all():
+            session.delete(item)
+        session.commit()
+

@@ -49,6 +49,8 @@ class EnhancedSpinCtrl(wx.SpinCtrl):
 
 
 class PageRangeControl(sc.SizedPanel):
+    """A helper that allows the user to get a range of pages."""
+
     def __init__(self, parent, document):
         parent = parent
         self.doc = document

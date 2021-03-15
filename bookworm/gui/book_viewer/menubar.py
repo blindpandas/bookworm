@@ -6,6 +6,7 @@ import threading
 import wx
 import webbrowser
 from operator import ge, le
+from functools import partial
 from pathlib import Path
 from chemical import it
 from slugify import slugify
@@ -71,19 +72,22 @@ class FileMenu(BaseMenu):
 
     def __init__(self, *args, **kwargs):
         self._recents = {}
+        self._pinned = {}
         super().__init__(*args, **kwargs)
         reader_book_loaded.connect(self.after_loading_book)
-        reader_book_unloaded.connect(
-            lambda s: self.populate_recent_file_list(), weak=False, sender=self.reader
-        )
+        reader_book_unloaded.connect(self.after_unloading_book, sender=self.reader)
 
     def create(self):
-        # A submenu for recent files
+        # A submenu for pinned documents
+        self.pinnedDocumentsMenu = wx.Menu()
+        # A submenu for recent documents
         self.recentFilesMenu = wx.Menu()
         # File menu
         # Translators: the label of an item in the application menubar
         self.Append(wx.ID_OPEN, _("Open...\tCtrl-O"))
         self.AppendSeparator()
+        # Translators: the label of an item in the application menubar
+        self.Append(BookRelatedMenuIds.pin_document, _("&Pin"), kind=wx.ITEM_CHECK)
         # Translators: the label of an item in the application menubar
         self.Append(BookRelatedMenuIds.export, _("&Save As Plain Text..."))
         self.AppendSeparator()
@@ -95,6 +99,21 @@ class FileMenu(BaseMenu):
             _("Close the currently open e-book"),
         )
         self.AppendSeparator()
+        self.AppendSubMenu(
+            self.pinnedDocumentsMenu,
+            # Translators: the label of an item in the application menubar
+            _("Pi&nned Documents"),
+            # Translators: the help text of an item in the application menubar
+            _("Opens a list of documents you pinned."),
+        )
+        self.clearPinnedDocumentsID = wx.NewIdRef()
+        self.pinnedDocumentsMenu.Append(
+            self.clearPinnedDocumentsID,
+            # Translators: the label of an item in the application menubar
+            _("Clear list"),
+            # Translators: the help text of an item in the application menubar
+            _("Clear the pinned documents list")
+        )
         self.AppendSubMenu(
             self.recentFilesMenu,
             # Translators: the label of an item in the application menubar
@@ -123,6 +142,12 @@ class FileMenu(BaseMenu):
         # Bind event handlers
         self.view.Bind(wx.EVT_MENU, self.onOpenEBook, id=wx.ID_OPEN)
         self.view.Bind(
+            wx.EVT_MENU, self.onClearPinDocuments, id=self.clearPinnedDocumentsID
+        )
+        self.view.Bind(
+            wx.EVT_MENU, self.onPinDocument, id=BookRelatedMenuIds.pin_document
+        )
+        self.view.Bind(
             wx.EVT_MENU, self.onExportAsPlainText, id=BookRelatedMenuIds.export
         )
         self.view.Bind(
@@ -132,11 +157,21 @@ class FileMenu(BaseMenu):
         self.view.Bind(wx.EVT_MENU, self.onPreferences, id=wx.ID_PREFERENCES)
         self.view.Bind(wx.EVT_MENU, lambda e: self.view.onClose(e), id=wx.ID_EXIT)
         self.view.Bind(wx.EVT_CLOSE, lambda e: self.view.onClose(e), self.view)
-        # Populate the recent files submenu
+        # Populate the submenues
+        self.populate_pinned_documents_list()
         self.populate_recent_file_list()
 
     def after_loading_book(self, sender):
+        self.Check(
+            BookRelatedMenuIds.pin_document,
+            recents_manager.is_pinned(sender.document)
+        )
+        self.populate_pinned_documents_list()
         recents_manager.add_to_recents(sender.document)
+        self.populate_recent_file_list()
+
+    def after_unloading_book(self, sender):
+        self.populate_pinned_documents_list()
         self.populate_recent_file_list()
 
     def onOpenEBook(self, event):
@@ -160,6 +195,23 @@ class FileMenu(BaseMenu):
                 config.save()
                 self.view.open_uri(
                     DocumentUri.from_filename(filename))
+
+    def onClearPinDocuments(self, event):
+        recents_manager.clear_pinned()
+        self.populate_pinned_documents_list()
+        self.Check(
+            BookRelatedMenuIds.pin_document,
+            False
+        )
+
+    def onPinDocument(self, event):
+        if self.IsChecked(event.GetId()):
+            recents_manager.pin(self.reader.document)
+            speech.announce("Pinned")
+        else:
+            recents_manager.unpin(self.reader.document)
+            speech.announce("Unpinned")
+        self.populate_pinned_documents_list()
 
     def onExportAsPlainText(self, event):
         book_title = slugify(self.reader.current_book.title)
@@ -201,9 +253,9 @@ class FileMenu(BaseMenu):
             )
         progress_dlg.Dismiss()
 
-    def onRecentFileItem(self, event):
+    def onDocumentReferenceClicked(self, item_to_doc_map, event):
         item_id = event.GetId()
-        item_uri = self._recents[item_id]
+        item_uri = item_to_doc_map[item_id]
         if self.reader.ready and (item_uri == self.reader.document.uri):
             return
         self.view.open_uri(item_uri)
@@ -223,6 +275,31 @@ class FileMenu(BaseMenu):
 
     def onCloseCurrentFile(self, event):
         self.view.unloadCurrentEbook()
+
+    def populate_pinned_documents_list(self):
+        clear_item = self.pinnedDocumentsMenu.FindItemById(self.clearPinnedDocumentsID)
+        for mitem in (i for i in self.pinnedDocumentsMenu.GetMenuItems() if i != clear_item):
+            self.pinnedDocumentsMenu.Delete(mitem)
+        self._pinned.clear()
+        pinned = recents_manager.get_pinned()
+        if not len(pinned):
+            clear_item.Enable(False)
+            return
+        else:
+            clear_item.Enable(True)
+        for idx, pinned_item in enumerate(pinned):
+                item = self.pinnedDocumentsMenu.Append(wx.ID_ANY, f"{idx + 1}. {pinned_item.title}")
+                self.view.Bind(
+                    wx.EVT_MENU,
+                    partial(self.onDocumentReferenceClicked, self._pinned),
+                    item
+                )
+                self._pinned[item.Id] = pinned_item.uri
+        if self.reader.ready:
+            current_document = self.reader.document
+            for (item_id, uri) in self._pinned.items():
+                if uri == current_document.uri:
+                    self.pinnedDocumentsMenu.Enable(item_id, False)
 
     def populate_recent_file_list(self):
         clear_item = self.recentFilesMenu.FindItemById(wx.ID_CLEAR)
@@ -245,7 +322,7 @@ class FileMenu(BaseMenu):
             recent_uris = {}
             for idx, recent_item in enumerate(recents):
                 item = self.recentFilesMenu.Append(wx.ID_ANY, f"{idx + 1}. {recent_item.title}")
-                self.view.Bind(wx.EVT_MENU, self.onRecentFileItem, item)
+                self.view.Bind(wx.EVT_MENU, partial(self.onDocumentReferenceClicked, self._recents), item)
                 self._recents[item.Id] = recent_item.uri
                 recent_uris[recent_item.uri] = item.Id
             if self.reader.ready and (current_uri := self.reader.document.uri) in recent_uris:

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from bookworm.database import RecentDocument
+from bookworm.database import RecentDocument, PinnedDocument
 from bookworm.logger import logger
 
 
@@ -8,26 +8,46 @@ log = logger.getChild(__name__)
 
 
 
+def get_document_unique(model, document):
+    uri = document.uri
+    for doc in model.query:
+        if uri.is_equal_without_openner_args(doc.uri):
+            doc.uri = uri
+            model.session.commit()
+            return doc
+    return model.get_or_create(
+        title=document.metadata.title,
+        uri=uri
+    )
+
+
 def add_to_recents(document):
-    current_uri = document.uri
-    if not current_uri.openner_args.get('add_to_recents', True):
+    if not document.uri.view_args.get('add_to_recents', True):
         return
-    doc_info = None
-    for doc in RecentDocument.query:
-        if current_uri.is_equal_without_openner_args(doc.uri):
-            doc.uri = current_uri
-            RecentDocument.session.commit()
-            doc_info = doc
-            break
-    if doc_info is None:
-        doc_info = RecentDocument.get_or_create(
-            title=document.metadata.title,
-            uri=current_uri
-        )
+    doc_info = get_document_unique(RecentDocument, document)
     doc_info.record_open()
+
+def pin(document):
+    get_document_unique(PinnedDocument, document).pin()
+
+
+def unpin(document):
+    get_document_unique(PinnedDocument, document).unpin()
+
+def is_pinned(document):
+    return get_document_unique(PinnedDocument, document).is_pinned
+
 
 def get_recents():
     return RecentDocument.get_recents(limit=10)
 
-def clear_recents(self):
+def clear_recents():
     RecentDocument.clear_all()
+
+
+def get_pinned():
+    return PinnedDocument.get_pinned(limit=10)
+
+
+def clear_pinned():
+    PinnedDocument.clear_all()

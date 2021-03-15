@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import os
 import wx
 from concurrent.futures import Future
 from functools import partial
@@ -9,7 +8,7 @@ from bookworm import typehints as t
 from bookworm import app
 from bookworm import config
 from bookworm import speech
-from bookworm.concurrency import threaded_worker
+from bookworm.concurrency import threaded_worker, CancellationToken
 from bookworm.resources import sounds, images
 from bookworm.paths import app_path
 from bookworm.reader import (
@@ -33,11 +32,12 @@ log = logger.getChild(__name__)
 
 
 class ResourceLoader:
-    """Loads an ebook into the view."""
+    """Loads a document into the view."""
 
     def __init__(self, view, uri, callback=None):
         self.view = view
         self.callback = callback
+        self._cancellation_token = CancellationToken()
         self.init_resolver(uri)
 
     def init_resolver(self, uri):
@@ -59,25 +59,30 @@ class ResourceLoader:
             AsyncSnakDialog(
                 task=partial(self.resolve_document, resolver),
                 done_callback=self.load,
+                dismiss_callback=lambda: self._cancellation_token.request_cancellation() or True,
                 message=_("Opening document, please wait...")
             )
 
     def resolve_document(self, resolver):
-        has_exception = False
+        _last_exception = None
         try:
             return resolver.read_document()
-        except ResourceDoesNotExist:
-            self.view.notify_user(
+        except ResourceDoesNotExist as e:
+            _last_exception = e
+            log.exception("Failed to open file. File does not exist", exc_info=True)
+            wx.CallAfter(
+                self.view.notify_user,
                 # Translators: the title of an error message
                 _("Document not found"),
                 # Translators: the content of an error message
                 _("Could not open Document.\nThe document does not exist."),
                 style=wx.ICON_ERROR,
             )
-            log.exception("Failed to open file. File does not exist", exc_info=True)
-            has_exception = True
-        except UnsupportedDocumentError:
-            self.view.notify_user(
+        except UnsupportedDocumentError as e:
+            _last_exception
+            log.exception("Unsupported file format", exc_info=True)
+            wx.CallAfter(
+                self.view.notify_user,
                 # Translators: the title of a message shown
                 # when the format of the e-book is not supported
                 _("Unsupported Document Format"),
@@ -86,10 +91,11 @@ class ResourceLoader:
                 _("The format of the given document is not supported by Bookworm."),
                 icon=wx.ICON_WARNING,
             )
-            log.exception("Unsupported file format", exc_info=True)
-            has_exception = True
         except ReaderError as e:
-            self.view.notify_user(
+            _last_exception
+            log.exception("Unsupported file format", exc_info=True)
+            wx.CallAfter(
+                self.view.notify_user,
                 # Translators: the title of an error message
                 _("Error Openning Document"),
                 # Translators: the content of an error message
@@ -100,10 +106,11 @@ class ResourceLoader:
                 ),
                 icon=wx.ICON_ERROR,
             )
-            log.exception("Error opening document", exc_info=True)
-            has_exception = True
-        except:
-            self.view.notify_user(
+        except Exception as e:
+            _last_exception
+            log.exception("Unsupported file format", exc_info=True)
+            wx.CallAfter(
+                self.view.notify_user,
                 # Translators: the title of an error message
                 _("Error Openning Document"),
                 # Translators: the content of an error message
@@ -113,13 +120,11 @@ class ResourceLoader:
                 ),
                 icon=wx.ICON_ERROR,
             )
-            log.exception("Error loading file", exc_info=True)
-            has_exception = True
         finally:
-            if has_exception:
-                self.view.unloadCurrentEbook()
+            if _last_exception is not None:
+                wx.CallAfter(self.view.unloadCurrentEbook)
                 if app.debug:
-                    raise
+                    raise _last_exception
 
     def load(self, document):
         with reader_book_loaded.connected_to(
@@ -127,7 +132,7 @@ class ResourceLoader:
         ):
             if isinstance(document, Future):
                 document = document.result()
-            if document is not None:
+            if (document is not None) and (not self._cancellation_token.is_cancellation_requested()):
                 self.view.reader.set_document(document)
 
     @gui_thread_safe

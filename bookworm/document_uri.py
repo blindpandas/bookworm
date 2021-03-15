@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 import uritools
 from bookworm import typehints as t
@@ -16,6 +16,7 @@ class DocumentUri:
     format: str
     path: str
     openner_args: dict[str, t.Union[str, int]]
+    view_args: dict[t.Any, t.Any] = field(default_factory=dict)
 
     @classmethod
     def from_uri_string(cls, uri_string):
@@ -64,11 +65,12 @@ class DocumentUri:
             path=f"/{str(self.path)}",
         )
 
-    def create_copy(self, format=None, path=None, openner_args=None):
+    def create_copy(self, format=None, path=None, openner_args=None, view_args=None):
         return DocumentUri(
             format=format or self.format,
             path=path or self.path,
-            openner_args=self.openner_args | (openner_args or {})
+            openner_args=self.openner_args | (openner_args or {}),
+           view_args=self.view_args | (view_args or {})
         )
 
     def is_equal_without_openner_args(self, other):

@@ -11,6 +11,7 @@ class BookRelatedMenuIds(enum.IntEnum):
 
     # File
     export = wx.ID_SAVEAS
+    pin_document = 205
     closeCurrentFile = 211
     # Tools
     goToPage = 221

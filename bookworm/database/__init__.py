@@ -13,6 +13,7 @@ from .models import (
     GetOrCreateMixin,
     Book,
     RecentDocument,
+    PinnedDocument,
     DocumentPositionInfo,
 )
 from .schema import upgrade_database_schema
