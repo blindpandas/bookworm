@@ -5,7 +5,7 @@ import regex
 from functools import cached_property
 from io import StringIO
 from bookworm.document_formats.base import (
-    FluidFileSystemDocument,
+    BaseDocument,
     Section,
     Pager,
     BookMetadata,
@@ -19,7 +19,7 @@ log = logger.getChild(__name__)
 MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
 
 
-class PlainTextDocument(FluidFileSystemDocument):
+class PlainTextDocument(BaseDocument):
     """For plain text files"""
 
     format = "txt"
@@ -29,6 +29,7 @@ class PlainTextDocument(FluidFileSystemDocument):
     capabilities = DC.FLUID_PAGINATION
 
     def read(self):
+        self.filename = self.get_file_system_path()
         self.text_buffer = StringIO()
         with open(self.filename, "r", encoding="utf8") as file:
             self.text_buffer.write(file.read())

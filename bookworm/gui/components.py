@@ -6,6 +6,7 @@ import contextlib
 import wx
 import wx.lib.mixins.listctrl as listmix
 import wx.lib.sized_controls as sc
+from wx.lib.combotreebox import ComboTreeBox
 from functools import reduce
 from concurrent.futures import Future
 from dataclasses import dataclass
@@ -30,6 +31,43 @@ def make_sized_static_box(parent, title):
     stbx.SetSizerProp("expand", True)
     stbx.Sizer.AddSpacer(25)
     return stbx
+
+
+class TocTreeManager:
+    """Manages document sections in a wx.TreeCtrl."""
+
+    def __init__(self, tree_ctrl):
+        self.tree_ctrl = tree_ctrl
+
+    def build_tree(self, toc_tree):
+        self.clear_tree()
+        root = self.tree_ctrl.AddRoot(toc_tree.title, data=toc_tree)
+        self._populate_tree(toc_tree.children, root=root)
+        toc_tree.data["tree_id"] = root
+        if self.tree_ctrl.IsShownOnScreen():
+            self.tree_ctrl.Expand(self.tree_ctrl.GetRootItem())
+
+    def get_selected_item_data(self):
+        if (selected_item_id := self.tree_ctrl.GetFocusedItem()):
+            return self.tree_ctrl.GetItemData(selected_item_id)
+
+    def set_selection(self, item):
+        tree_id = item.data["tree_id"]
+        self.tree_ctrl.EnsureVisible(tree_id)
+        self.tree_ctrl.ScrollTo(tree_id)
+        self.tree_ctrl.SelectItem(tree_id)
+        self.tree_ctrl.SetFocusedItem(tree_id)
+
+    def _populate_tree(self, toc, root):
+        for item in toc:
+            entry = self.tree_ctrl.AppendItem(root, item.title, data=item)
+            item.data["tree_id"] = entry
+            if item.children:
+                self._populate_tree(item.children, entry)
+
+    def clear_tree(self):
+        self.tree_ctrl.DeleteAllItems()
+
 
 
 class EnhancedSpinCtrl(wx.SpinCtrl):
@@ -80,8 +118,8 @@ class PageRangeControl(sc.SizedPanel):
         # Translators: the label of a combobox in the search dialog
         # to choose the section to which the search will be confined
         sec_label = wx.StaticText(rangeBox, -1, _("Select section:"))
-        self.sectionChoice = wx.Choice(
-            rangeBox, -1, choices=[sect.title for sect in self.doc.toc_tree]
+        self.sectionChoice = ComboTreeBox(
+            rangeBox, -1, style=wx.CB_READONLY
         )
         self.page_controls = (fpage_label, tpage_label, self.fromPage, self.toPage)
         self.sect_controls = (sec_label, self.sectionChoice)
@@ -90,6 +128,8 @@ class PageRangeControl(sc.SizedPanel):
         for radio in (self.hasPage, self.hasSection):
             radio.SetValue(0)
             parent.Bind(wx.EVT_RADIOBUTTON, self.onRangeTypeChange, radio)
+        self.toc_tree_manager = TocTreeManager(self.sectionChoice._tree)
+        self.toc_tree_manager.build_tree(self.doc.toc_tree)
 
     def onRangeTypeChange(self, event):
         radio = event.GetEventObject()
@@ -100,13 +140,20 @@ class PageRangeControl(sc.SizedPanel):
         for ctrl in chain(self.page_controls, self.sect_controls):
             ctrl.Enable(ctrl in controls)
 
+    def ShouldCloseParentDialog(self):
+        """XXX: Hack to not close the dialog when the tree is shown."""
+        return not self.sectionChoice._tree.HasFocus()
+
     def get_range(self):
         if self.hasSection.GetValue():
-            selected_section = self.sectionChoice.GetSelection()
-            if selected_section != wx.NOT_FOUND:
-                pager = self.doc.toc_tree[selected_section].pager
+            if (selected_item := self.sectionChoice.GetSelection()):
+                selected_section = self.sectionChoice.GetClientData(selected_item)
+                pager = selected_section.pager
                 from_page = pager.first
                 to_page = pager.last
+            else:
+                from_page = 0
+                to_page = len(self.doc)
         else:
             from_page = self.fromPage.GetValue() - 1
             to_page = self.toPage.GetValue() - 1

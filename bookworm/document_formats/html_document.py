@@ -7,8 +7,8 @@ from selectolax.parser import HTMLParser
 from functools import cached_property
 from bookworm.utils import NEWLINE
 from bookworm.document_formats.base import (
+    BaseDocument,
     BasePage,
-    FluidFileSystemDocument,
     Section,
     Pager,
     BookMetadata,
@@ -93,7 +93,7 @@ class HtmlPage(BasePage):
         raise NotImplementedError
 
 
-class HtmlDocument(FluidFileSystemDocument):
+class HtmlDocument(BaseDocument):
     """For html documents."""
 
     format = "html"
@@ -114,6 +114,7 @@ class HtmlDocument(FluidFileSystemDocument):
 
     def read(self):
         super().read()
+        self.filename = self.get_file_system_path()
         self.text_buffer = StringIO()
         self._outline = None
         self._metainfo = None

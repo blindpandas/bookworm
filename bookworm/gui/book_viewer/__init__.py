@@ -20,7 +20,7 @@ from bookworm.reader import (
 )
 from bookworm.signals import reader_book_loaded, reader_book_unloaded
 from bookworm.gui.contentview_ctrl import ContentViewCtrl, SelectionRange
-from bookworm.gui.components import AsyncSnakDialog
+from bookworm.gui.components import TocTreeManager, AsyncSnakDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from .menubar import MenubarProvider, BookRelatedMenuIds
@@ -177,6 +177,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(1), id=wx.ID_PREVIEW_ZOOM_IN
         )
 
+        self.toc_tree_manager = TocTreeManager(self.tocTreeCtrl)
         # Set statusbar text
         # Translators: the text of the status bar when no book is currently open.
         # It is being used also as a label for the page content text area when no book is opened.
@@ -198,8 +199,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             panel,
             size=(280, 160),
             style=wx.TR_TWIST_BUTTONS
-            | wx.TR_NO_LINES
+            | wx.TR_LINES_AT_ROOT
             | wx.TR_FULL_ROW_HIGHLIGHT
+            | wx.TR_SINGLE
             | wx.TR_ROW_LINES,
             name="toc_tree",
         )
@@ -327,6 +329,15 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.set_content("")
         self.set_status(self._no_open_book_status)
 
+    def add_toc_tree(self, tree):
+        self.toc_tree_manager.build_tree(tree)
+
+    def tocTreeSetSelection(self, item):
+        self.toc_tree_manager.set_selection(item)
+
+    def clear_toc_tree(self):
+        self.toc_tree_manager.clear_tree()
+
     def set_state_on_page_change(self, page):
         self.set_content(page.get_text())
         if config.conf["general"]["play_pagination_sound"]:
@@ -370,23 +381,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.reader.active_section = self.tocTreeCtrl.GetItemData(selectedItem)
         self.reader.go_to_first_of_section()
 
-    def add_toc_tree(self, tree):
-        self.tocTreeCtrl.DeleteAllItems()
-        root = self.tocTreeCtrl.AddRoot(tree.title, data=tree)
-        self._populate_tree(tree.children, root=root)
-        tree.data["tree_id"] = root
-        self.tocTreeCtrl.Expand(self.tocTreeCtrl.GetRootItem())
-
-    def tocTreeSetSelection(self, item):
-        tree_id = item.data["tree_id"]
-        self.tocTreeCtrl.EnsureVisible(tree_id)
-        self.tocTreeCtrl.ScrollTo(tree_id)
-        self.tocTreeCtrl.SelectItem(tree_id)
-        self.tocTreeCtrl.SetFocusedItem(tree_id)
-
-    def clear_toc_tree(self):
-        self.tocTreeCtrl.DeleteAllItems()
-
     def onTextCtrlZoom(self, direction):
         self._has_text_zoom = True
         font = self.contentTextCtrl.GetFont()
@@ -409,13 +403,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             msg = _("The font size has been reset")
             self._has_text_zoom = False
         speech.announce(msg)
-
-    def _populate_tree(self, toc, root):
-        for item in toc:
-            entry = self.tocTreeCtrl.AppendItem(root, item.title, data=item)
-            item.data["tree_id"] = entry
-            if item.children:
-                self._populate_tree(item.children, entry)
 
     def setFrameIcon(self):
         icon_file = app_path(f"{app.name}.ico")

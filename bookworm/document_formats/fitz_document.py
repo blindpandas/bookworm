@@ -12,7 +12,7 @@ from bookworm.paths import home_data_path
 from bookworm.image_io import ImageIO
 from bookworm.utils import recursively_iterdir
 from bookworm.document_formats.base import (
-    FileSystemBaseDocument,
+    BaseDocument,
     BasePage,
     Section,
     BookMetadata,
@@ -50,7 +50,7 @@ class FitzPage(BasePage):
         return ImageIO(data=pix.samples, width=pix.width, height=pix.height)
 
 
-class FitzDocument(FileSystemBaseDocument):
+class FitzDocument(BaseDocument):
     """The backend of this document type is Fitz (AKA MuPDF)."""
 
     format = None
@@ -67,11 +67,8 @@ class FitzDocument(FileSystemBaseDocument):
     def __len__(self) -> int:
         return self._ebook.pageCount
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._ebook: fitz.Document = None
-
     def read(self, filetype=None):
+        self.filename = self.get_file_system_path()
         try:
             self._ebook = fitz.open(self.filename, filetype=filetype)
             super().read()

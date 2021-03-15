@@ -2,10 +2,8 @@
 
 from .document import (
     BaseDocument,
-    FileSystemBaseDocument,
     BasePage,
     FluidDocument,
-    FluidFileSystemDocument,
     FluidPage,
 )
 from .elements import (

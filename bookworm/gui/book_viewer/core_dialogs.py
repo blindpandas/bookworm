@@ -138,6 +138,7 @@ class SearchBookDialog(SimpleDialog):
         self.isRegex = wx.CheckBox(parent, -1, _("Regular expression"))
         self.pageRange = PageRangeControl(parent, self.reader.document)
         self.Bind(wx.EVT_CHECKBOX, self.onIsRegex, self.isRegex)
+        self.Bind(wx.EVT_BUTTON, self.onCloseDialog, id=wx.ID_CANCEL)
 
     def GetValue(self):
         from_page, to_page = self.pageRange.get_range()
@@ -165,6 +166,10 @@ class SearchBookDialog(SimpleDialog):
             controls = self.sect_controls
         for ctrl in chain(self.page_controls, self.sect_controls):
             ctrl.Enable(ctrl in controls)
+
+    def onCloseDialog(self, event):
+        if self.pageRange.ShouldCloseParentDialog():
+            event.Skip()
 
 
 class GoToPageDialog(SimpleDialog):

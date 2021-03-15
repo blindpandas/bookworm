@@ -65,7 +65,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
     def __getstate__(self) -> dict:
         """Support for pickling."""
-        return dict(path=self.path, openner_args=self.openner_args)
+        return dict(uri=self.uri)
 
     def __setstate__(self, state):
         """Support for unpickling."""
@@ -169,6 +169,12 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """Convenience method: return the image of a page."""
         return self[page_number].get_image(zoom_factor)
 
+    def get_file_system_path(self):
+        """Only valid for documents that have true filesystem path."""
+        if (filepath := Path(self.uri.path)).exists():
+            return filepath
+        raise DocumentIOError(f"File {filename} does not exist.")
+
     @classmethod
     def should_read_async(cls):
         return DocumentCapability.ASYNC_READ in cls.capabilities
@@ -196,16 +202,6 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         yield from QueueProcess(
             target=doctools.search_book, args=(self, request), name="bookworm-search"
         )
-
-
-class FileSystemBaseDocument(BaseDocument):
-    """Represent a document that could be loaded from the file system."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.filename = self.uri.path
-        if not Path(self.filename).is_file():
-            raise DocumentIOError(f"File {filename} does not exist.")
 
 
 class BasePage(metaclass=ABCMeta):
@@ -285,6 +281,3 @@ class FluidDocument(BaseDocument):
     def get_content(self) -> str:
         """Get the content of this document."""
 
-
-class FluidFileSystemDocument(FileSystemBaseDocument):
-    """Represents a fluid document that could be loaded from the file system."""
