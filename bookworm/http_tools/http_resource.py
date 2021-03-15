@@ -53,6 +53,7 @@ class ResourceDownloadRequest:
     DEFAULT_CHUNK_SIZE: t.ClassVar = 1024 ** 2
 
     def __post_init__(self):
+        self.headers = self.request.headers
         self.total_size = None
         if "content-length" in self.request.headers:
             self.total_size = int(self.request.headers["content-length"])
@@ -61,6 +62,20 @@ class ResourceDownloadRequest:
             if self.total_size is None
             else math.ceil(self.total_size / 100)
         )
+
+    @property
+    def etag(self):
+        return self.headers.get("ETag")
+
+    @property
+    def content_type(self):
+        return self.request.headers.get('Content-Type', "")
+
+    def get_text(self):
+        return self.request.text
+
+    def get_bytes(self):
+        return self.request.content
 
     def __iter__(self) -> t.Iterable[ResourceDownloadProgress]:
         yield from self.iter_chunks()
