@@ -467,14 +467,14 @@ def install_local_packages(c):
     with c.cd(str(PROJECT_ROOT / "packages")):
         for package in packages:
             print(f"Installing package {package}")
-            c.run(f"pip install {package}")
+            c.run(f"python -m pip install {package}")
 
 
 @task(pre=(install_local_packages,))
 def pip_install(c):
     with c.cd(PROJECT_ROOT):
         print("Installing application dependencies using pip...")
-        c.run("pip install -r requirements-dev.txt")
+        c.run("python -m pip install -r requirements-dev.txt")
 
 
 @task(
@@ -491,15 +491,15 @@ def pip_install(c):
 )
 def install_bookworm(c):
     with c.cd(str(PROJECT_ROOT)):
-        c.run("pip uninstall bookworm -y -q")
+        c.run("python -m pip uninstall bookworm -y -q")
         if "BK_DEVELOPMENT" in c:
-            c.run("pip install -e .")
+            c.run("python -m pip install -e .")
         else:
             print("Building Bookworm wheel.")
-            c.run("py setup.py bdist_wheel")
+            c.run("python setup.py bdist_wheel")
             wheel_path = next(Path(PROJECT_ROOT / "dist").glob("*.whl"))
             print("Installing Bookworm wheel")
-            c.run(f"pip install {wheel_path}", hide="stdout")
+            c.run(f"python -m pip install {wheel_path}", hide="stdout")
     print("Finished installing packages.")
 
 
