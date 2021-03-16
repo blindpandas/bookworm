@@ -383,15 +383,15 @@ class TextToSpeechService(BookwormService):
         msg = wx.MessageBox(
             # Translators: a message telling the user that the TTS voice has been changed
             _(
-            "Bookworm has noticed that the currently configured Text-to-speech voice "
-            "speaks a language different from that of this book.\n"
-            "Do you want to temporary switch to another voice that "
-            "speaks a language similar to the language  of the currently opened book?"
+                "Bookworm has noticed that the currently configured Text-to-speech voice "
+                "speaks a language different from that of this book.\n"
+                "Do you want to temporary switch to another voice that "
+                "speaks a language similar to the language  of the currently opened book?"
             ),
             # Translators: the title of a message telling the user that the TTS voice has been changed
             _("Incompatible TTS Voice Detected"),
             parent=self.view,
-            style=wx.YES_NO | wx.ICON_INFORMATION
+            style=wx.YES_NO | wx.ICON_INFORMATION,
         )
         if msg == wx.NO:
             return

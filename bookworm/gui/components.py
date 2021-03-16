@@ -48,7 +48,7 @@ class TocTreeManager:
             self.tree_ctrl.Expand(self.tree_ctrl.GetRootItem())
 
     def get_selected_item_data(self):
-        if (selected_item_id := self.tree_ctrl.GetFocusedItem()):
+        if (selected_item_id := self.tree_ctrl.GetFocusedItem()) :
             return self.tree_ctrl.GetItemData(selected_item_id)
 
     def set_selection(self, item):
@@ -67,7 +67,6 @@ class TocTreeManager:
 
     def clear_tree(self):
         self.tree_ctrl.DeleteAllItems()
-
 
 
 class EnhancedSpinCtrl(wx.SpinCtrl):
@@ -118,9 +117,7 @@ class PageRangeControl(sc.SizedPanel):
         # Translators: the label of a combobox in the search dialog
         # to choose the section to which the search will be confined
         sec_label = wx.StaticText(rangeBox, -1, _("Select section:"))
-        self.sectionChoice = ComboTreeBox(
-            rangeBox, -1, style=wx.CB_READONLY
-        )
+        self.sectionChoice = ComboTreeBox(rangeBox, -1, style=wx.CB_READONLY)
         self.page_controls = (fpage_label, tpage_label, self.fromPage, self.toPage)
         self.sect_controls = (sec_label, self.sectionChoice)
         for ctrl in chain(self.page_controls, self.sect_controls):
@@ -146,7 +143,7 @@ class PageRangeControl(sc.SizedPanel):
 
     def get_range(self):
         if self.hasSection.GetValue():
-            if (selected_item := self.sectionChoice.GetSelection()):
+            if (selected_item := self.sectionChoice.GetSelection()) :
                 selected_section = self.sectionChoice.GetClientData(selected_item)
                 pager = selected_section.pager
                 from_page = pager.first
@@ -510,7 +507,7 @@ class RobustProgressDialog:
         # XXX: stop enabling the hide button for now
         # until we use proper presedures to ensure that
         # the user could not do the same thing twice
-        if False: #can_hide
+        if False:  # can_hide
             pdg_styles.add(wx.PD_CAN_SKIP)
         if can_abort:
             pdg_styles.add(wx.PD_CAN_ABORT)

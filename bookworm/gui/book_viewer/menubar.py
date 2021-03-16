@@ -22,7 +22,7 @@ from bookworm.concurrency import call_threaded, process_worker
 from bookworm.gui.components import RobustProgressDialog
 from bookworm import ocr
 from bookworm import speech
-from bookworm.reader import EBookReader,     DocumentUri
+from bookworm.reader import EBookReader, DocumentUri
 from bookworm.utils import restart_application, gui_thread_safe
 from bookworm.logger import logger
 from bookworm.gui.contentview_ctrl import EVT_CONTEXTMENU_REQUESTED
@@ -87,7 +87,9 @@ class FileMenu(BaseMenu):
         self.Append(wx.ID_OPEN, _("Open...\tCtrl-O"))
         self.AppendSeparator()
         # Translators: the label of an item in the application menubar
-        self.Append(BookRelatedMenuIds.pin_document, _("&Pin\tCtrl-P"), kind=wx.ITEM_CHECK)
+        self.Append(
+            BookRelatedMenuIds.pin_document, _("&Pin\tCtrl-P"), kind=wx.ITEM_CHECK
+        )
         # Translators: the label of an item in the application menubar
         self.Append(BookRelatedMenuIds.export, _("&Save As Plain Text..."))
         self.AppendSeparator()
@@ -112,7 +114,7 @@ class FileMenu(BaseMenu):
             # Translators: the label of an item in the application menubar
             _("Clear list"),
             # Translators: the help text of an item in the application menubar
-            _("Clear the pinned documents list")
+            _("Clear the pinned documents list"),
         )
         self.AppendSubMenu(
             self.recentFilesMenu,
@@ -163,8 +165,7 @@ class FileMenu(BaseMenu):
 
     def after_loading_book(self, sender):
         self.Check(
-            BookRelatedMenuIds.pin_document,
-            recents_manager.is_pinned(sender.document)
+            BookRelatedMenuIds.pin_document, recents_manager.is_pinned(sender.document)
         )
         self.populate_pinned_documents_list()
         recents_manager.add_to_recents(sender.document)
@@ -193,16 +194,12 @@ class FileMenu(BaseMenu):
             if filename:
                 config.conf["history"]["last_folder"] = os.path.split(filename)[0]
                 config.save()
-                self.view.open_uri(
-                    DocumentUri.from_filename(filename))
+                self.view.open_uri(DocumentUri.from_filename(filename))
 
     def onClearPinDocuments(self, event):
         recents_manager.clear_pinned()
         self.populate_pinned_documents_list()
-        self.Check(
-            BookRelatedMenuIds.pin_document,
-            False
-        )
+        self.Check(BookRelatedMenuIds.pin_document, False)
 
     def onPinDocument(self, event):
         if self.IsChecked(event.GetId()):
@@ -278,7 +275,9 @@ class FileMenu(BaseMenu):
 
     def populate_pinned_documents_list(self):
         clear_item = self.pinnedDocumentsMenu.FindItemById(self.clearPinnedDocumentsID)
-        for mitem in (i for i in self.pinnedDocumentsMenu.GetMenuItems() if i != clear_item):
+        for mitem in (
+            i for i in self.pinnedDocumentsMenu.GetMenuItems() if i != clear_item
+        ):
             self.pinnedDocumentsMenu.Delete(mitem)
         self._pinned.clear()
         pinned = recents_manager.get_pinned()
@@ -288,13 +287,15 @@ class FileMenu(BaseMenu):
         else:
             clear_item.Enable(True)
         for idx, pinned_item in enumerate(pinned):
-                item = self.pinnedDocumentsMenu.Append(wx.ID_ANY, f"{idx + 1}. {pinned_item.title}")
-                self.view.Bind(
-                    wx.EVT_MENU,
-                    partial(self.onDocumentReferenceClicked, self._pinned),
-                    item
-                )
-                self._pinned[item.Id] = pinned_item.uri
+            item = self.pinnedDocumentsMenu.Append(
+                wx.ID_ANY, f"{idx + 1}. {pinned_item.title}"
+            )
+            self.view.Bind(
+                wx.EVT_MENU,
+                partial(self.onDocumentReferenceClicked, self._pinned),
+                item,
+            )
+            self._pinned[item.Id] = pinned_item.uri
         if self.reader.ready:
             current_document = self.reader.document
             for (item_id, uri) in self._pinned.items():
@@ -321,11 +322,20 @@ class FileMenu(BaseMenu):
             clear_item.Enable(True)
             recent_uris = {}
             for idx, recent_item in enumerate(recents):
-                item = self.recentFilesMenu.Append(wx.ID_ANY, f"{idx + 1}. {recent_item.title}")
-                self.view.Bind(wx.EVT_MENU, partial(self.onDocumentReferenceClicked, self._recents), item)
+                item = self.recentFilesMenu.Append(
+                    wx.ID_ANY, f"{idx + 1}. {recent_item.title}"
+                )
+                self.view.Bind(
+                    wx.EVT_MENU,
+                    partial(self.onDocumentReferenceClicked, self._recents),
+                    item,
+                )
                 self._recents[item.Id] = recent_item.uri
                 recent_uris[recent_item.uri] = item.Id
-            if self.reader.ready and (current_uri := self.reader.document.uri) in recent_uris:
+            if (
+                self.reader.ready
+                and (current_uri := self.reader.document.uri) in recent_uris
+            ):
                 item_id = recent_uris[current_uri]
                 self.recentFilesMenu.Enable(item_id, False)
 
@@ -377,7 +387,9 @@ class SearchMenu(BaseMenu):
         )
         # Bind events
         self.view.Bind(wx.EVT_MENU, self.onGoToPage, id=BookRelatedMenuIds.goToPage)
-        self.view.Bind(wx.EVT_MENU, self.onGoToPageByLabel, id=BookRelatedMenuIds.goToPageByLabel)
+        self.view.Bind(
+            wx.EVT_MENU, self.onGoToPageByLabel, id=BookRelatedMenuIds.goToPageByLabel
+        )
         self.view.Bind(wx.EVT_MENU, self.onFind, id=wx.ID_FIND)
         self.view.Bind(wx.EVT_MENU, self.onFindNext, id=BookRelatedMenuIds.findNext)
         self.view.Bind(wx.EVT_MENU, self.onFindPrev, id=BookRelatedMenuIds.findPrev)
@@ -398,13 +410,11 @@ class SearchMenu(BaseMenu):
 
     def onGoToPageByLabel(self, event):
         page_label = self.view.get_text_from_user(
-            _("Go To Page By Label"),
-            _("Page Label")
+            _("Go To Page By Label"), _("Page Label")
         )
         if page_label is not None:
             if (navigated := self.reader.go_to_page_by_label(page_label)) is False:
                 wx.Bell()
-            
 
     def onFind(self, event):
         # Translators: the title of the search dialog
@@ -492,7 +502,10 @@ class SearchMenu(BaseMenu):
 
     @gui_thread_safe
     def maintain_state(self, enable):
-        self.Enable(BookRelatedMenuIds.goToPageByLabel, DC.PAGE_LABELS in self.reader.document.capabilities)
+        self.Enable(
+            BookRelatedMenuIds.goToPageByLabel,
+            DC.PAGE_LABELS in self.reader.document.capabilities,
+        )
         for item_id in {BookRelatedMenuIds.findNext, BookRelatedMenuIds.findPrev}:
             self.Enable(item_id, enable)
 
@@ -540,8 +553,14 @@ class ToolsMenu(BaseMenu):
 
     def after_loading_book(self, sender):
         ctrl_enable_info = (
-            (BookRelatedMenuIds.viewRenderedAsImage, self.reader.document.can_render_pages),
-            (BookRelatedMenuIds.changeReadingMode, len(self.reader.document.supported_reading_modes) > 1)
+            (
+                BookRelatedMenuIds.viewRenderedAsImage,
+                self.reader.document.can_render_pages,
+            ),
+            (
+                BookRelatedMenuIds.changeReadingMode,
+                len(self.reader.document.supported_reading_modes) > 1,
+            ),
         )
         for ctrl_id, enable in ctrl_enable_info:
             self.Enable(ctrl_id, enable)
@@ -559,28 +578,25 @@ class ToolsMenu(BaseMenu):
         current_reading_mode = self.reader.document.reading_options.reading_mode
         supported_reading_modes = self.reader.document.supported_reading_modes
         supported_reading_modes_display = [
-            _(READING_MODE_LABELS[redmo])
-            for redmo in supported_reading_modes
+            _(READING_MODE_LABELS[redmo]) for redmo in supported_reading_modes
         ]
         dlg = wx.SingleChoiceDialog(
             self.view,
             _("Available reading modes"),
             _("Select Reading Mode "),
             supported_reading_modes_display,
-            wx.CHOICEDLG_STYLE
+            wx.CHOICEDLG_STYLE,
         )
         dlg.SetSelection(supported_reading_modes.index(current_reading_mode))
         if dlg.ShowModal() == wx.ID_OK:
             uri = self.reader.document.uri
             new_reading_mode = supported_reading_modes[dlg.GetSelection()]
             if current_reading_mode != new_reading_mode:
-                uri.openner_args['reading_mode'] = int(new_reading_mode)
+                uri.openner_args["reading_mode"] = int(new_reading_mode)
                 most_recent_page = self.reader.current_page
                 self.view.open_uri(uri)
                 self.reader.go_to_page(most_recent_page)
         dlg.Destroy()
-
-
 
 
 class HelpMenu(BaseMenu):

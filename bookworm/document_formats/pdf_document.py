@@ -13,10 +13,11 @@ from .fitz_document import FitzDocument, FitzPage
 log = logger.getChild(__name__)
 XPDF_CONFIG = dict(text_keep_tiny=False, text_eol="unix", text_page_breaks=False)
 XPDF_READING_MODE_TO_BOOKWORM_READING_MODE = {
-    ReadingMode.DEFAULT:  "reading",
-    ReadingMode.READING_ORDER:  "simple",
-    ReadingMode.PHYSICAL:  "physical",
+    ReadingMode.DEFAULT: "reading",
+    ReadingMode.READING_ORDER: "simple",
+    ReadingMode.PHYSICAL: "physical",
 }
+
 
 class FitzPdfPage(FitzPage):
     """Represents a page of a pdf document."""
@@ -31,6 +32,7 @@ class FitzPdfPage(FitzPage):
 
     def get_label(self) -> str:
         return self._fitz_page.get_label().strip()
+
 
 class FitzPdfDocument(FitzDocument):
     """Support for Pdf documents."""
@@ -51,7 +53,9 @@ class FitzPdfDocument(FitzDocument):
 
     @cached_property
     def xpdf_text_output(self):
-        reading_mode = XPDF_READING_MODE_TO_BOOKWORM_READING_MODE[self.reading_options.reading_mode]
+        reading_mode = XPDF_READING_MODE_TO_BOOKWORM_READING_MODE[
+            self.reading_options.reading_mode
+        ]
         xtext_ctrl = XPdfTextControl(
             mode=reading_mode,
             enable_html=True,

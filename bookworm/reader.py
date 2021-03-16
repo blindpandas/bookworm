@@ -26,16 +26,11 @@ from bookworm.signals import (
 from bookworm.logger import logger
 
 
-
 log = logger.getChild(__name__)
 
 
-
 def get_document_format_info():
-    return {
-        cls.format: cls
-        for cls in BaseDocument.document_classes
-    }
+    return {cls.format: cls for cls in BaseDocument.document_classes}
 
 
 class ReaderError(Exception):
@@ -58,7 +53,7 @@ class UriResolver:
             try:
                 self.uri = DocumentUri.from_uri_string(uri)
             except ValueError as e:
-                raise ReaderError(f"Failed to parse document uri {self.uri}")  from e
+                raise ReaderError(f"Failed to parse document uri {self.uri}") from e
         else:
             self.uri = uri
         doc_format_info = get_document_format_info()
@@ -81,9 +76,11 @@ class UriResolver:
         except DocumentIOError as e:
             raise ResourceDoesNotExist("Failed to load document") from e
         except ChangeDocument as e:
-            log.debug(f"Changing document from {e.old_uri} to {e.new_uri}. Reason {e.reason}")
+            log.debug(
+                f"Changing document from {e.old_uri} to {e.new_uri}. Reason {e.reason}"
+            )
             return UriResolver(uri=e.new_uri).read_document()
-        except Exception  as e:
+        except Exception as e:
             raise ReaderError("Failed to open document") from e
         return document
 
@@ -114,13 +111,12 @@ class EBookReader:
         self.__state = {}
 
     def set_document(self, document):
-        if not         self.decrypt_document(document):
+        if not self.decrypt_document(document):
             return
         self.document = document
         self.current_book = self.document.metadata
         self.stored_document_info = DocumentPositionInfo.get_or_create(
-            title=self.current_book.title,
-            uri=self.document.uri
+            title=self.current_book.title, uri=self.document.uri
         )
         self.set_view_parameters()
         reader_book_loaded.send(self)

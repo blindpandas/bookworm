@@ -7,10 +7,8 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-
 class DocumentError(Exception):
     """The base class of all document related exceptions."""
-
 
 
 class ChangeDocument(Exception):
@@ -32,4 +30,3 @@ class DocumentEncryptedError(DocumentError):
 
 class PaginationError(DocumentError, IndexError):
     """Raised when the  `next` or `prev` page is not available."""
-

@@ -20,7 +20,7 @@ from bookworm.document_formats.base import (
     DocumentCapability as DC,
     ChangeDocument,
     DocumentError,
-    DocumentEncryptedError
+    DocumentEncryptedError,
 )
 from bookworm.logger import logger
 from .fitz_document import FitzPage, FitzDocument
@@ -43,8 +43,8 @@ class FitzEPUBDocument(FitzDocument):
             log.debug("Got an encrypted file, will try to decrypt it...")
             raise ChangeDocument(
                 old_uri=self.uri,
-                new_uri=self.uri.create_copy(format='drm_epub'),
-                reason='Document is encrypted with DRM'
+                new_uri=self.uri.create_copy(format="drm_epub"),
+                reason="Document is encrypted with DRM",
             )
 
 
@@ -52,7 +52,7 @@ class _DrmFitzEpubDocument(FitzEPUBDocument):
     """Fixes DRM encrypted epub documents."""
 
     __internal__ = True
-    format = 'drm_epub'
+    format = "drm_epub"
     capabilities = FitzDocument.capabilities | DC.ASYNC_READ
 
     def read(self, filetype=None):
@@ -89,7 +89,6 @@ class _DrmFitzEpubDocument(FitzEPUBDocument):
                 book.write(file, file.relative_to(temp_path))
         _temp.cleanup()
         return str(processed_book)
-
 
 
 class FitzFB2Document(FitzDocument):

@@ -110,7 +110,7 @@ class BaseHtmlDocument(FluidDocument):
     supported_reading_modes = (
         ReadingMode.DEFAULT,
         ReadingMode.CLEAN_VIEW,
-        ReadingMode.FULL_TEXT_VIEW
+        ReadingMode.FULL_TEXT_VIEW,
     )
 
     def __len__(self):
@@ -146,7 +146,7 @@ class BaseHtmlDocument(FluidDocument):
 
     def close(self):
         super().close()
-        if (text_buffer := getattr(self, 'text_buffer', None)) is not None:
+        if (text_buffer := getattr(self, "text_buffer", None)) is not None:
             text_buffer.close()
 
     @cached_property
@@ -218,23 +218,23 @@ class BaseHtmlDocument(FluidDocument):
     def parse_to_clean_text(self, html_string):
         html = trafilatura.utils.load_html(html_string)
         meta_info = trafilatura.metadata.extract_metadata(html) or {}
-        doc_title = meta_info.get('title', "")
+        doc_title = meta_info.get("title", "")
         if not doc_title:
             doc_title = html.xpath("head/title").text
         self._metainfo = BookMetadata(
             title=doc_title,
-            author=meta_info.get('author', ""),
-            publisher=meta_info.get('sitename', ""),
-            publication_year=meta_info.get('date', ""),
+            author=meta_info.get("author", ""),
+            publisher=meta_info.get("sitename", ""),
+            publication_year=meta_info.get("date", ""),
         )
-        extracted = trafilatura.extract(html, output_format='xml')
+        extracted = trafilatura.extract(html, output_format="xml")
         xml_content = etree.fromstring(extracted)
         main_content = xml_content.xpath("main")[0]
         root = Section(document=self, pager=None, title=doc_title, level=1, position=0)
         stack = TreeStackBuilder(root)
         for node in main_content.iterchildren():
             text = NEWLINE + (node.text or "") + NEWLINE
-            if node.tag == 'head':
+            if node.tag == "head":
                 section = Section(
                     document=self,
                     pager=None,
@@ -253,11 +253,9 @@ class BaseHtmlDocument(FluidDocument):
             sect.pager = Pager(first=i, last=i)
 
 
-
-
 class FileSystemHtmlDocument(BaseHtmlDocument):
 
-    format = 'html'
+    format = "html"
     # Translators: the name of a document file format
     name = _("HTML Document")
     extensions = ("*.html", "*.htm", "*.xhtml")
@@ -284,19 +282,21 @@ class WebHtmlDocument(BaseHtmlDocument):
         return str(home_data_path("_web_cache"))
 
     def get_html(self):
-        if (html_string := getattr(self, 'html_string', None)) is not None:
+        if (html_string := getattr(self, "html_string", None)) is not None:
             return html_string
         url = self.uri.path
-        _cache = Cache(self._get_cache_directory(), eviction_policy='least-frequently-used')
+        _cache = Cache(
+            self._get_cache_directory(), eviction_policy="least-frequently-used"
+        )
         try:
             req = HttpResource(url).download()
-            if 'html' not in req.content_type.lower():
+            if "html" not in req.content_type.lower():
                 raise DocumentError("Not HTML content ")
         except ConnectionError as e:
             log.exception(f"Failed to obtain resource from url: {url}", exc_info=True)
             req = None
         stored_content, tag = _cache.get(url, tag=True)
-        if (stored_content is not None):
+        if stored_content is not None:
             if (req is None) or (tag == req.etag):
                 return stored_content
         html_string = req.get_text()

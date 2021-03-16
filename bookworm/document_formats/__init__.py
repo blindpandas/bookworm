@@ -7,7 +7,7 @@ from .base import (
     DocumentError,
     ChangeDocument,
     DocumentIOError,
-    PaginationError
+    PaginationError,
 )
 from .pdf_document import FitzPdfDocument
 from .epub_document import FitzEPUBDocument, _DrmFitzEpubDocument, FitzFB2Document

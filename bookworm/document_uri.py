@@ -30,16 +30,14 @@ class DocumentUri:
         return cls(
             format=parsed.authority,
             path=uritools.uridecode(parsed.path).lstrip("/"),
-            openner_args=cls._unwrap_args(parsed.getquerydict())
+            openner_args=cls._unwrap_args(parsed.getquerydict()),
         )
 
     @classmethod
     def from_filename(cls, filename):
         filepath = Path(filename)
         return cls(
-            format=filepath.suffix.lstrip("."),
-            path=str(filepath),
-            openner_args={}
+            format=filepath.suffix.lstrip("."), path=str(filepath), openner_args={}
         )
 
     def to_uri_string(self):
@@ -47,7 +45,7 @@ class DocumentUri:
             scheme=BOOKWORM_URI_SCHEME,
             authority=self.format,
             path=f"/{str(self.path)}",
-            query=self.openner_args
+            query=self.openner_args,
         )
 
     @classmethod
@@ -70,7 +68,7 @@ class DocumentUri:
             format=format or self.format,
             path=path or self.path,
             openner_args=self.openner_args | (openner_args or {}),
-           view_args=self.view_args | (view_args or {})
+            view_args=self.view_args | (view_args or {}),
         )
 
     def is_equal_without_openner_args(self, other):

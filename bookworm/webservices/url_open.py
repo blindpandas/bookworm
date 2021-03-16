@@ -31,14 +31,16 @@ class UrlOpenService(BookwormService):
             wx.GetApp().service_handler.get_service("webservices").web_sservices_menu
         )
         open_url = webservices_menu.Insert(0, -1, _("&Open URL\tCtrl+U"))
-        self.open_url_from_clipboard = webservices_menu.Insert(1, -1, _("&Open URL From Clipboard\tCtrl+Shift+V"))
+        self.open_url_from_clipboard = webservices_menu.Insert(
+            1, -1, _("&Open URL From Clipboard\tCtrl+Shift+V")
+        )
         self.view.Bind(wx.EVT_MENU, self.onOpenUrl, open_url)
-        self.view.Bind(wx.EVT_MENU, self.onOpenUrlFromClipboard, self.open_url_from_clipboard)
+        self.view.Bind(
+            wx.EVT_MENU, self.onOpenUrlFromClipboard, self.open_url_from_clipboard
+        )
 
     def get_keyboard_shortcuts(self):
-        return {
-            self.open_url_from_clipboard.GetId(): "Ctrl+Shift+V"
-        }
+        return {self.open_url_from_clipboard.GetId(): "Ctrl+Shift+V"}
 
     def onOpenUrl(self, event):
         url = self.view.get_text_from_user(
@@ -61,9 +63,5 @@ class UrlOpenService(BookwormService):
             wx.Bell()
             return
         canonical_url = url_normalize(url)
-        uri = DocumentUri(
-            format='webpage',
-            path=canonical_url,
-            openner_args={}
-        )
+        uri = DocumentUri(format="webpage", path=canonical_url, openner_args={})
         self.view.open_uri(uri)

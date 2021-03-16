@@ -47,8 +47,10 @@ class ResourceLoader:
             log.exception(f"Failed to resolve document uri: {uri}", exc_info=True)
             self.view.notify_user(
                 _("Failed to open document"),
-                _("The document you are trying to open could not be opened in Bookworm."),
-                icon=wx.ICON_ERROR
+                _(
+                    "The document you are trying to open could not be opened in Bookworm."
+                ),
+                icon=wx.ICON_ERROR,
             )
             return
         if not resolver.should_read_async():
@@ -59,8 +61,9 @@ class ResourceLoader:
             AsyncSnakDialog(
                 task=partial(self.resolve_document, resolver),
                 done_callback=self.load,
-                dismiss_callback=lambda: self._cancellation_token.request_cancellation() or True,
-                message=_("Opening document, please wait...")
+                dismiss_callback=lambda: self._cancellation_token.request_cancellation()
+                or True,
+                message=_("Opening document, please wait..."),
             )
 
     def resolve_document(self, resolver):
@@ -132,7 +135,9 @@ class ResourceLoader:
         ):
             if isinstance(document, Future):
                 document = document.result()
-            if (document is not None) and (not self._cancellation_token.is_cancellation_requested()):
+            if (document is not None) and (
+                not self._cancellation_token.is_cancellation_requested()
+            ):
                 self.view.reader.set_document(document)
 
     @gui_thread_safe
@@ -353,11 +358,13 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             if config.conf["general"]["include_page_label"]:
                 if page_label := page.get_label():
                     page_number = f"{page_number} ({page_label})"
-            self.set_status(label_msg.format(
-                page=page_number,
-                total=len(self.reader.document),
-                chapter=page.section.title,
-            ))
+            self.set_status(
+                label_msg.format(
+                    page=page_number,
+                    total=len(self.reader.document),
+                    chapter=page.section.title,
+                )
+            )
             if config.conf["general"]["speak_page_number"]:
                 # Translators: a message that is announced after navigating to a page
                 spoken_msg = _("Page {page} of {total}").format(

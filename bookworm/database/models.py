@@ -16,7 +16,6 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-
 class DocumentUriDBType(types.TypeDecorator):
     """Provides sqlalchemy custom type for the DocumentUri."""
 
@@ -55,7 +54,6 @@ class DocumentBase(db.Model, GetOrCreateMixin):
 
 
 class Book(DocumentBase):
-
     @property
     def identifier(self):
         return self.uri.to_uri_string()
@@ -93,7 +91,6 @@ class RecentDocument(DocumentBase):
         session.commit()
 
 
-
 class PinnedDocument(DocumentBase):
     last_opened_on = db.date_time(default=datetime.now, onupdate=datetime.now)
     is_pinned = db.boolean(default=False)
@@ -101,10 +98,13 @@ class PinnedDocument(DocumentBase):
 
     @classmethod
     def get_pinned(cls, limit=50):
-        return cls.query.filter(cls.is_pinned == True
-        ).order_by(cls.last_opened_on.desc()
-        ).order_by(cls.pinning_order.desc()
-        ).limit(limit).all()
+        return (
+            cls.query.filter(cls.is_pinned == True)
+            .order_by(cls.last_opened_on.desc())
+            .order_by(cls.pinning_order.desc())
+            .limit(limit)
+            .all()
+        )
 
     def pin(self):
         if self.is_pinned:
@@ -124,4 +124,3 @@ class PinnedDocument(DocumentBase):
         for item in cls.query.all():
             session.delete(item)
         session.commit()
-

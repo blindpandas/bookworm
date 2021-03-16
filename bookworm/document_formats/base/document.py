@@ -74,7 +74,9 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
     @cached_property
     def reading_options(self):
-        reading_mode = int(self.uri.openner_args.get('reading_mode', ReadingMode.DEFAULT))
+        reading_mode = int(
+            self.uri.openner_args.get("reading_mode", ReadingMode.DEFAULT)
+        )
         return ReadingOptions(
             reading_mode=ReadingMode(reading_mode),
         )
@@ -110,7 +112,9 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
     def get_page_number_from_page_label(self, page_label):
         if DocumentCapability.PAGE_LABELS not in self.capabilities:
-            raise NotImplementedError("This feature is not enabled for this class of documents")
+            raise NotImplementedError(
+                "This feature is not enabled for this class of documents"
+            )
         for page in self:
             page_label = page_label.lower()
             if page.get_label().lower() == page_label:
@@ -280,4 +284,3 @@ class FluidDocument(BaseDocument):
     @abstractmethod
     def get_content(self) -> str:
         """Get the content of this document."""
-

@@ -131,14 +131,13 @@ class Annotator:
     def get_for_page(self, page_number=None, asc=False):
         return self.model.query.filter_by(
             book_id=self.current_book.id,
-            page_number=page_number or self.reader.current_page
+            page_number=page_number or self.reader.current_page,
         )
 
     def get_for_section(self, section_ident=None, asc=False):
         section_ident = section_ident or self.reader.active_section.unique_identifier
         return self.model.query.filter_by(
-            book_id=self.current_book.id,
-            section_identifier=section_ident
+            book_id=self.current_book.id, section_identifier=section_ident
         )
 
     def get(self, item_id):

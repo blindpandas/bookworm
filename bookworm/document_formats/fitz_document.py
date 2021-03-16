@@ -20,7 +20,7 @@ from bookworm.document_formats.base import (
     DocumentCapability as DC,
     ChangeDocument,
     DocumentError,
-    DocumentEncryptedError
+    DocumentEncryptedError,
 )
 from bookworm.logger import logger
 
@@ -149,10 +149,11 @@ class FitzDocument(BaseDocument):
     @cached_property
     def metadata(self):
         meta = self._ebook.metadata
-        to_str = lambda value: "" if value is None else ftfy.fix_text_encoding(value).strip()
+        to_str = (
+            lambda value: "" if value is None else ftfy.fix_text_encoding(value).strip()
+        )
         return BookMetadata(
-            title=to_str(meta['title']) or Path(self.filename).stem,
+            title=to_str(meta["title"]) or Path(self.filename).stem,
             author=to_str(meta["author"]),
             publication_year=to_str(meta["creationDate"]),
         )
-

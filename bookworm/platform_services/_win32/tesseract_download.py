@@ -80,7 +80,7 @@ def get_tesseract_download_info_from_future(future, parent):
                 "Please check your internet connection and try again."
             ),
             icon=wx.ICON_ERROR,
-            parent=parent
+            parent=parent,
         )
     except:
         log.exception("Error getting tesseract download info", exc_info=True)
@@ -90,7 +90,7 @@ def get_tesseract_download_info_from_future(future, parent):
             # Translators: content of a message box
             _("Failed to parse Tesseract download information. Please try again."),
             icon=wx.ICON_ERROR,
-            parent=parent
+            parent=parent,
         )
 
 

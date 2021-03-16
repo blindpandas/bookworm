@@ -69,7 +69,7 @@ class ResourceDownloadRequest:
 
     @property
     def content_type(self):
-        return self.request.headers.get('Content-Type', "")
+        return self.request.headers.get("Content-Type", "")
 
     def get_text(self):
         return self.request.text

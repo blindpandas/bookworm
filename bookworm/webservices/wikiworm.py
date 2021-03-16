@@ -31,27 +31,27 @@ class WikipediaService(BookwormService):
         webservices_menu.Append(
             self.wiki_quick_search_id,
             _("&Wikipedia quick search"),
-            _("Get a quick definition from Wikipedia")
+            _("Get a quick definition from Wikipedia"),
         )
-        self.view.Bind(wx.EVT_MENU, self.onQuickWikiSearch, id=self.wiki_quick_search_id)
+        self.view.Bind(
+            wx.EVT_MENU, self.onQuickWikiSearch, id=self.wiki_quick_search_id
+        )
 
     def get_contextmenu_items(self):
         rv = ()
         if selected_text := self.view.contentTextCtrl.GetStringSelection().strip():
-            rv =  [
+            rv = [
                 (
                     2,
                     _("Define using Wikipedia"),
                     _("Define the selected text using Wikipedia"),
-                    self.wiki_quick_search_id
+                    self.wiki_quick_search_id,
                 )
             ]
         return rv
 
     def get_keyboard_shortcuts(self):
-        return {
-            self.wiki_quick_search_id: "Ctrl+Shift+W"
-        }
+        return {self.wiki_quick_search_id: "Ctrl+Shift+W"}
 
     def onQuickWikiSearch(self, event):
         if selected_text := self.view.contentTextCtrl.GetStringSelection().strip():
@@ -66,11 +66,13 @@ class WikipediaService(BookwormService):
 
     def init_wikipedia_search(self, term, sure_exists=False):
         AsyncSnakDialog(
-            task=partial(self.define_term_using_wikipedia, term, sure_exists=sure_exists),
+            task=partial(
+                self.define_term_using_wikipedia, term, sure_exists=sure_exists
+            ),
             done_callback=self.view_wikipedia_definition,
             dismiss_callback=lambda: self._cancel_query.set() or True,
             message=_("Retrieving info from Wikipedia, please wait..."),
-            parent=self.view
+            parent=self.view,
         )
 
     def define_term_using_wikipedia(self, term: str, sure_exists=False) -> str:
@@ -99,8 +101,10 @@ class WikipediaService(BookwormService):
             log.debug("Failed to connect to wikipedia", exc_info=True)
             self.view.notify_user(
                 _("Connection Error"),
-                _("Could not connect to Wikipedia at the moment.\Please make sure that you're connected to the internet or try again later."),
-                icon=wx.ICON_ERROR
+                _(
+                    "Could not connect to Wikipedia at the moment.\Please make sure that you're connected to the internet or try again later."
+                ),
+                icon=wx.ICON_ERROR,
             )
             return
         except:
@@ -108,7 +112,7 @@ class WikipediaService(BookwormService):
             self.view.notify_user(
                 _("Error"),
                 _("Could not get the definition from Wikipedia."),
-                icon=wx.ICON_ERROR
+                icon=wx.ICON_ERROR,
             )
             return
         if type(result) is list:
@@ -117,7 +121,7 @@ class WikipediaService(BookwormService):
                 _("Matches"),
                 _("Multiple Matches Found"),
                 result,
-                wx.CHOICEDLG_STYLE
+                wx.CHOICEDLG_STYLE,
             )
             if dlg.ShowModal() == wx.ID_OK:
                 term = dlg.GetStringSelection()
@@ -128,6 +132,7 @@ class WikipediaService(BookwormService):
         sounds.navigation.play()
         title, summary, url = result
         ViewWikipediaDefinition(title, summary, url).ShowModal()
+
 
 class ViewWikipediaDefinition(SimpleDialog):
     """A helper class to view the Wikipedia results."""
@@ -157,7 +162,9 @@ class ViewWikipediaDefinition(SimpleDialog):
         btnPanel.SetSizerProps(halign="center", expand=True)
         openInBookwormBtn = wx.Button(btnPanel, -1, _("Open in &Bookworm"))
         openInBrowserBtn = wx.Button(btnPanel, wx.ID_OPEN, _("&Open in Browser"))
-        self.Bind(wx.EVT_BUTTON, lambda e: webbrowser.open(self.page_url), openInBrowserBtn)
+        self.Bind(
+            wx.EVT_BUTTON, lambda e: webbrowser.open(self.page_url), openInBrowserBtn
+        )
         self.Bind(wx.EVT_BUTTON, self.onOpenInBookworm, openInBookwormBtn)
 
     def getButtons(self, parent):
@@ -169,4 +176,6 @@ class ViewWikipediaDefinition(SimpleDialog):
 
     def onOpenInBookworm(self, event):
         self.Close()
-        wx.GetApp().service_handler.get_service("url_open").open_url_in_bookworm(self.page_url)
+        wx.GetApp().service_handler.get_service("url_open").open_url_in_bookworm(
+            self.page_url
+        )
