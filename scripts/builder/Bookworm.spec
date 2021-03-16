@@ -9,6 +9,7 @@ PACKAGES_WITH_DATA = [
     "pyxpdf_data",
     "trafilatura",
     "justext",
+    "tld",
 ]
 BOOKWORM_RESOURCES = collect_data_files('bookworm', excludes=['*.po',])
 DATA_FILES = [
