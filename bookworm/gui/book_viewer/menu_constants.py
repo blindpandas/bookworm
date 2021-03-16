@@ -39,6 +39,7 @@ class ViewerMenuIds(enum.IntEnum):
 
 KEYBOARD_SHORTCUTS = {
     wx.ID_OPEN: "Ctrl-O",
+    BookRelatedMenuIds.pin_document: "Ctrl-P",
     BookRelatedMenuIds.closeCurrentFile: "Ctrl-W",
     BookRelatedMenuIds.goToPage: "Ctrl-G",
     wx.ID_FIND: "Ctrl-F",

@@ -33,6 +33,8 @@ class ReadingMode(IntEnum):
     PHYSICAL = 2
     PAGINATION_BASED = 3
     CHAPTER_BASED = 4
+    CLEAN_VIEW = 5
+    FULL_TEXT_VIEW = 6
 
 
 READING_MODE_LABELS = {
@@ -41,4 +43,6 @@ READING_MODE_LABELS = {
     ReadingMode.PHYSICAL: _("Physical layout"),
     ReadingMode.PAGINATION_BASED: _("Paginated"),
     ReadingMode.CHAPTER_BASED: _("Chapter by chapter"),
+    ReadingMode.CLEAN_VIEW: _("Clean view"),
+    ReadingMode.FULL_TEXT_VIEW: _("Full text"),
 }

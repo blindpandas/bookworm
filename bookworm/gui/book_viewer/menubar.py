@@ -87,7 +87,7 @@ class FileMenu(BaseMenu):
         self.Append(wx.ID_OPEN, _("Open...\tCtrl-O"))
         self.AppendSeparator()
         # Translators: the label of an item in the application menubar
-        self.Append(BookRelatedMenuIds.pin_document, _("&Pin"), kind=wx.ITEM_CHECK)
+        self.Append(BookRelatedMenuIds.pin_document, _("&Pin\tCtrl-P"), kind=wx.ITEM_CHECK)
         # Translators: the label of an item in the application menubar
         self.Append(BookRelatedMenuIds.export, _("&Save As Plain Text..."))
         self.AppendSeparator()

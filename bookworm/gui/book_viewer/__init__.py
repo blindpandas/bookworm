@@ -76,7 +76,7 @@ class ResourceLoader:
                 _("Document not found"),
                 # Translators: the content of an error message
                 _("Could not open Document.\nThe document does not exist."),
-                style=wx.ICON_ERROR,
+                icon=wx.ICON_ERROR,
             )
         except UnsupportedDocumentError as e:
             _last_exception
