@@ -159,6 +159,8 @@ def make_icons(c):
         "bookworm.ico": ICON_SIZE,
         "bookworm.bmp": (48, 48),
     }
+    if not inst_dst.exists():
+        inst_dst.mkdir(parents=True, exist_ok=True)
     make_installer_image(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").save(
         inst_dst / "bookworm-logo.bmp"
     )
@@ -521,6 +523,8 @@ def make_version_info_file(c):
         app_name=app.display_name,
     )
     outfile = PROJECT_ROOT / "scripts" / "builder" / "assets" / "version_info.txt"
+    if not (parent := outfile.parent).exists():
+        parent.mkdir(parents=True, exist_ok=True)
     outfile.write_text(output)
     print(f"Version info file was generated at {outfile}")
 
