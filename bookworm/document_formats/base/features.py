@@ -43,6 +43,6 @@ READING_MODE_LABELS = {
     ReadingMode.PHYSICAL: _("Physical layout"),
     ReadingMode.PAGINATION_BASED: _("Paginated"),
     ReadingMode.CHAPTER_BASED: _("Chapter by chapter"),
-    ReadingMode.CLEAN_VIEW: _("Clean view"),
+    ReadingMode.CLEAN_VIEW: _("Clean text"),
     ReadingMode.FULL_TEXT_VIEW: _("Full text"),
 }
