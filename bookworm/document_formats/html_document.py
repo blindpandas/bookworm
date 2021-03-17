@@ -181,7 +181,9 @@ class BaseHtmlDocument(FluidDocument):
 
     @contextmanager
     def _create_toc_stack(self):
-        root = Section(document=self, pager=None, title=self._metainfo.title, level=1, position=0)
+        root = Section(
+            document=self, pager=None, title=self._metainfo.title, level=1, position=0
+        )
         stack = TreeStackBuilder(root)
         yield stack
         self._sections = list(root.iter_children()) or [

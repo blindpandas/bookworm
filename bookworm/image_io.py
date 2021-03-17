@@ -93,7 +93,9 @@ class ImageIO:
 
     def to_wx_bitmap(self):
         img = self.as_rgb()
-        return wx.ImageFromBuffer(img.width, img.height, bytearray(img.data)).ConvertToBitmap()
+        return wx.ImageFromBuffer(
+            img.width, img.height, bytearray(img.data)
+        ).ConvertToBitmap()
 
     def to_fitz_pixmap(self):
         buf = io.BytesIO()
