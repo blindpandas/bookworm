@@ -11,16 +11,21 @@ log = logger.getChild(__name__)
 
 
 def set_wx_locale(locale):
-    locale_name = locale.pylang
+    wx.GetApp().AppLocale = None
     log.debug(f"Setting wx locale to {locale}.")
-    wx_locale = wx.Locale()
     if app.is_frozen:
-        wx_locale.AddCatalogLookupPathPrefix(str(paths.locale_path()))
-    wx_lang = None
-    for loc in (locale, locale.parent, LocaleInfo("en")):
-        wx_lang = wx_locale.FindLanguageInfo(locale.pylang)
-        if wx_lang:
-            try:
-                wx_locale.Init(wx_lang.Language)
-            except Exception as e:
-                log.exception(f"Cannot set wx locale to {locale}.", exc_info=True)
+        wx.Locale.AddCatalogLookupPathPrefix(str(paths.locale_path()))
+    candidates = (
+        wx.Locale.FindLanguageInfo(l.pylang)
+        for l in (locale, locale.parent, LocaleInfo("en"))
+    )
+    for lang in filter(None, candidates):
+        if wx.GetApp().AppLocale:
+            del wx.GetApp().AppLocale
+        try:
+            wx.GetApp().AppLocale = wx.Locale(lang.GetLocaleName())
+            if wx.GetApp().AppLocale.IsOk():
+                wx.GetApp().AppLocale.AddCatalog("bookworm")
+                break
+        except:
+            log.exception("Failed to set wx Locale", exc_info=True)

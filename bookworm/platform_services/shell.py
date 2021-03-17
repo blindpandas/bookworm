@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.paths import app_path
-from bookworm.reader import EBookReader
+from bookworm.reader import get_document_format_info
 from . import PLATFORM
 
 
@@ -35,7 +35,7 @@ class SupportedFileFormat:
 
 def get_ext_info(supported="*"):
     doctypes = {}
-    for cls in EBookReader.document_classes:
+    for cls in get_document_format_info().values():
         for ext in cls.extensions:
             cext = ext.replace("*", "")
             if (supported == "*") or (cext in supported):
