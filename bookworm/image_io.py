@@ -2,13 +2,15 @@
 
 import io
 import wx
-import numpy as np
-import cv2
 import fitz
 from dataclasses import dataclass
 from PIL import Image
+from lazy_import import lazy_module
 from bookworm import typehints as t
 from bookworm.logger import logger
+
+np = lazy_module("numpy")
+cv2 = lazy_module("cv2")
 
 
 log = logger.getChild(__name__)

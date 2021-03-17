@@ -575,6 +575,10 @@ class ToolsMenu(BaseMenu):
             dlg.Maximize()
             dlg.ShowModal()
 
+    def _after_reading_mode_changed(self, most_recent_page):
+        with suppress(PaginationError):
+            self.reader.go_to_page(most_recent_page)
+
     def onChangeReadingMode(self, event):
         current_reading_mode = self.reader.document.reading_options.reading_mode
         supported_reading_modes = self.reader.document.supported_reading_modes
@@ -590,14 +594,12 @@ class ToolsMenu(BaseMenu):
         )
         dlg.SetSelection(supported_reading_modes.index(current_reading_mode))
         if dlg.ShowModal() == wx.ID_OK:
-            uri = self.reader.document.uri
+            uri = self.reader.document.uri.create_copy()
             new_reading_mode = supported_reading_modes[dlg.GetSelection()]
             if current_reading_mode != new_reading_mode:
                 uri.openner_args["reading_mode"] = int(new_reading_mode)
                 most_recent_page = self.reader.current_page
-                self.view.open_uri(uri)
-                with suppress(PaginationError):
-                    self.reader.go_to_page(most_recent_page)
+                self.view.open_uri(uri, callback=partial(self._after_reading_mode_changed, most_recent_page))
         dlg.Destroy()
 
 

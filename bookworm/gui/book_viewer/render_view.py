@@ -2,7 +2,6 @@
 
 import wx
 import wx.lib.scrolledpanel as scrolled
-from PIL import Image, ImageOps
 from bookworm import speech
 from bookworm.image_io import ImageIO
 from bookworm.signals import reader_page_changed

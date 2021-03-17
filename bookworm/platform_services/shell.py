@@ -19,7 +19,7 @@ class SupportedFileFormat:
     def icon(self):
         ficos_path = app_path("resources", "icons")
         icon = ficos_path.joinpath(self.format + ".ico")
-        return icon if icon.exists() else None
+        return icon if icon.exists() else ficos_path.joinpath("file.ico")
 
     @property
     def ext_prog_id(self):
@@ -35,7 +35,12 @@ class SupportedFileFormat:
 
 def get_ext_info(supported="*"):
     doctypes = {}
-    for cls in get_document_format_info().values():
+    shell_integratable_docs = [
+        doc_cls
+        for doc_cls in get_document_format_info().values()
+        if (doc_cls.format is not None) and (doc_cls.extensions is not None)
+    ]
+    for cls in shell_integratable_docs:
         for ext in cls.extensions:
             cext = ext.replace("*", "")
             if (supported == "*") or (cext in supported):

@@ -31,51 +31,6 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
-EXPIRE_TIMEOUT = 60 * 60 * 24 * 2
-HEADING_TAGS = {f"h{level}" for level in range(1, 7)}
-BLOCK_TAGS = {
-    "p",
-    "br",
-    "hr",
-    "section",
-    "code",
-    "nav",
-    "main",
-    "aside",
-    "footer",
-    "article",
-    "table",
-    "ol",
-    "ul",
-    "thead",
-    "tbody",
-    "dl",
-}
-DECORATIVE_TAGS = [
-    "span",
-    "a",
-    "div",
-    "strong",
-    "b",
-    "i",
-    "pre",
-    "em",
-    "dd",
-    "dt",
-    "cite",
-    "col",
-    "colgroup",
-]
-IGNORED_TAGS = [
-    "script",
-    "style",
-    "img",
-    "_comment",
-    "iframe",
-    "button",
-    "input",
-    "form",
-]
 
 
 class HtmlPage(BasePage):
