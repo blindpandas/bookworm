@@ -31,6 +31,8 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
+# Default cache timeout
+EXPIRE_TIMEOUT  = 7 * 24 * 60 * 60
 
 
 class HtmlPage(BasePage):

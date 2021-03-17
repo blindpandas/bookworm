@@ -119,9 +119,6 @@ def init_app_and_run_main_loop():
         log.info(f"The application was invoked with a file: {arg_file}")
         uri = DocumentUri.from_filename(arg_file)
         mainFrame.open_uri(uri)
-    elif (uri := DocumentUri.try_parse(arg_file)) is not None:
-        log.info(f"The application was invoked with a uri: {uri}")
-        mainFrame.open_uri(uri)
 
     app.MainLoop()
     log.info("Shutting down the application.")

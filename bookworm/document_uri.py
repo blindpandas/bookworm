@@ -52,7 +52,7 @@ class DocumentUri:
     def try_parse(cls, uri_string):
         try:
             return cls.from_uri_string(uri_string)
-        except ValueError:
+        except:
             log.exception(f"Failed to parse document uri: {uri_string=}", exc_info=True)
             return
 
