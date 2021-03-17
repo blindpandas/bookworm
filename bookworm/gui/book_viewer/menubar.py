@@ -6,6 +6,7 @@ import threading
 import wx
 import webbrowser
 from operator import ge, le
+from contextlib import suppress
 from functools import partial
 from pathlib import Path
 from chemical import it
@@ -15,7 +16,7 @@ from bookworm import paths
 from bookworm import app
 from bookworm.i18n import is_rtl
 from bookworm.resources import sounds
-from bookworm.document_formats import DocumentCapability as DC
+from bookworm.document_formats import PaginationError, DocumentCapability as DC
 from bookworm.document_formats.base import READING_MODE_LABELS
 from bookworm.signals import config_updated, reader_book_loaded, reader_book_unloaded
 from bookworm.concurrency import call_threaded, process_worker
@@ -595,7 +596,8 @@ class ToolsMenu(BaseMenu):
                 uri.openner_args["reading_mode"] = int(new_reading_mode)
                 most_recent_page = self.reader.current_page
                 self.view.open_uri(uri)
-                self.reader.go_to_page(most_recent_page)
+                with suppress(PaginationError):
+                    self.reader.go_to_page(most_recent_page)
         dlg.Destroy()
 
 

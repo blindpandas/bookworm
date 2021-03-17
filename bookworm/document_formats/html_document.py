@@ -4,12 +4,13 @@ import trafilatura
 import requests
 from io import StringIO
 from pathlib import Path
+from contextlib import contextmanager
 from functools import cached_property
 from chemical import it
 from pycld2 import detect as detect_language, error as CLD2Error
 from diskcache import Cache
 from lxml import etree
-from selectolax.parser import HTMLParser
+from trafilatura.external import custom_justext, JT_STOPLIST
 from bookworm.paths import home_data_path
 from bookworm.http_tools import HttpResource
 from bookworm.document_formats.base import (
@@ -133,13 +134,15 @@ class BaseHtmlDocument(FluidDocument):
         except Exception as e:
             log.exception("Failed to retrieve html content.", exc_info=True)
             raise DocumentIOError("Failed to get html") from e
+        html = trafilatura.utils.load_html(self.html_string)
+        self.parse_metadata(html)
         reading_mode = self.reading_options.reading_mode
         if reading_mode == reading_mode.CLEAN_VIEW:
-            self.parse_to_clean_text(self.html_string)
+            self.parse_to_clean_text(html)
         elif reading_mode == ReadingMode.FULL_TEXT_VIEW:
-            self.parse_to_full_text(self.html_string)
+            self.parse_to_full_text(html)
         else:
-            self.parse_html(self.html_string)
+            self.parse_html(html)
 
     def get_content(self):
         return self.text_buffer.getvalue().strip()
@@ -173,40 +176,14 @@ class BaseHtmlDocument(FluidDocument):
     def metadata(self):
         return self._metainfo
 
-    def parse_to_full_text(self, html_string):
-        html = HTMLParser(html_string)
-        head = html.css_first("head")
-        title = Path(self.uri.path).stem
-        if head is not None:
-            title = head.css_first("title").text()
-            el_author = head.css_first('meta[name="author"]')
-            self._metainfo = BookMetadata(
-                title=title,
-                author=el_author.attrs.get("content", "")
-                if el_author is not None
-                else "",
-            )
-        html.body.strip_tags(IGNORED_TAGS)
-        html.body.unwrap_tags(DECORATIVE_TAGS)
-        root = Section(document=self, pager=None, title=title, level=1, position=0)
+    def _get_heading_level(self, parag):
+        return int(parag.dom_path[-1])
+
+    @contextmanager
+    def _create_toc_stack(self):
+        root = Section(document=self, pager=None, title=self._metainfo.title, level=1, position=0)
         stack = TreeStackBuilder(root)
-        for node in html.body.iter():
-            node_text = node.text(deep=True)
-            if node.tag in HEADING_TAGS:
-                section = Section(
-                    document=self,
-                    pager=None,
-                    title=node.text().strip("\n"),
-                    level=int(node.tag[1]),
-                    position=self.text_buffer.tell(),
-                )
-                stack.push(section)
-                text = NEWLINE + node_text + NEWLINE
-            elif node.tag in BLOCK_TAGS:
-                text = node_text + NEWLINE
-            else:
-                text = node_text + " "
-            self.text_buffer.write(text)
+        yield stack
         self._sections = list(root.iter_children()) or [
             root,
         ]
@@ -215,8 +192,7 @@ class BaseHtmlDocument(FluidDocument):
         for i, sect in enumerate(self._sections):
             sect.pager = Pager(first=i, last=i)
 
-    def parse_to_clean_text(self, html_string):
-        html = trafilatura.utils.load_html(html_string)
+    def parse_metadata(self, html):
         meta_info = trafilatura.metadata.extract_metadata(html) or {}
         doc_title = meta_info.get("title", "")
         if not doc_title:
@@ -227,30 +203,40 @@ class BaseHtmlDocument(FluidDocument):
             publisher=meta_info.get("sitename", ""),
             publication_year=meta_info.get("date", ""),
         )
+
+    def parse_to_full_text(self, html):
+        paragraphs = custom_justext(html, JT_STOPLIST)
+        with self._create_toc_stack() as stack:
+            for parag in paragraphs:
+                if parag.is_heading:
+                    level = self._get_heading_level(parag)
+                    section = Section(
+                        document=self,
+                        pager=None,
+                        title=parag.text,
+                        level=level,
+                        position=self.text_buffer.tell(),
+                    )
+                    stack.push(section)
+                self.text_buffer.write(f"{parag.text}{NEWLINE}")
+
+    def parse_to_clean_text(self, html):
         extracted = trafilatura.extract(html, output_format="xml")
         xml_content = etree.fromstring(extracted)
         main_content = xml_content.xpath("main")[0]
-        root = Section(document=self, pager=None, title=doc_title, level=1, position=0)
-        stack = TreeStackBuilder(root)
-        for node in main_content.iterchildren():
-            text = NEWLINE + (node.text or "") + NEWLINE
-            if node.tag == "head":
-                section = Section(
-                    document=self,
-                    pager=None,
-                    title=node.text.strip("\n"),
-                    level=2,
-                    position=self.text_buffer.tell(),
-                )
-                stack.push(section)
-            self.text_buffer.write(text)
-        self._sections = list(root.iter_children()) or [
-            root,
-        ]
-        self._outline = root
-        root.pager = Pager(first=0, last=len(self._sections))
-        for i, sect in enumerate(self._sections):
-            sect.pager = Pager(first=i, last=i)
+        with self._create_toc_stack() as stack:
+            for node in main_content.iterchildren():
+                text = NEWLINE + (node.text or "") + NEWLINE
+                if node.tag == "head":
+                    section = Section(
+                        document=self,
+                        pager=None,
+                        title=node.text.strip("\n"),
+                        level=2,
+                        position=self.text_buffer.tell(),
+                    )
+                    stack.push(section)
+                self.text_buffer.write(text)
 
 
 class FileSystemHtmlDocument(BaseHtmlDocument):
