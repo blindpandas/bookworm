@@ -46,7 +46,7 @@ class FitzPage(BasePage):
 
     def get_image(self, zoom_factor=1.0):
         mat = fitz.Matrix(zoom_factor, zoom_factor)
-        pix = self._fitz_page.getPixmap(matrix=mat, alpha=True)
+        pix = self._fitz_page.getPixmap(matrix=mat, alpha=False)
         return ImageIO(data=pix.samples, width=pix.width, height=pix.height)
 
 

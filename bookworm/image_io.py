@@ -24,27 +24,35 @@ class ImageIO:
     data: bytes
     width: int
     height: int
-    mode: str = "RGBA"
+    mode: str = "RGB"
 
     def __repr__(self):
-        return f"<ImageBlueprint: width={self.width}, height={self.height}>"
+        return f"<ImageBlueprint: width={self.width}, height={self.height}, mode={self.mode}>"
+
+    def __array__(self):
+        return self.to_cv2()
 
     @property
     def size(self):
         return (self.width, self.height)
 
     def as_rgba(self):
-        if self.mode != "RGBA":
-            return self.from_pil(self.to_pil().convert("RGBA"))
-        return self
+        if self.mode == "RGBA":
+            return self
+        return self.from_pil(self.to_pil().convert("RGBA"))
+
+    def as_rgb(self):
+        if self.mode == "RGB":
+            return self
+        return self.from_pil(self.to_pil().convert("RGB"))
 
     def invert(self):
-        return self
+        return self.from_cv2(cv2.bitwise_not(self.to_cv2()))
 
     @classmethod
     def from_path(cls, image_path: t.PathLike) -> "ImageBlueprint":
         try:
-            pil_image = Image.open(image_path).convert("RGBA")
+            pil_image = Image.open(image_path).convert("RGB")
             return cls.from_pil(pil_image)
         except Exception:
             log.exception(
@@ -62,8 +70,8 @@ class ImageIO:
 
     @classmethod
     def from_cv2(cls, cv2_image):
-        rgb_image = cv2.cvtColor(cv2_image, cv2.COLOR_GRAY2RGBA)
-        pil_image = Image.fromarray(np.asarray(rgb_image, dtype=np.uint8), mode="RGBA")
+        rgb_image = cv2.cvtColor(cv2_image, cv2.COLOR_GRAY2RGB)
+        pil_image = Image.fromarray(np.asarray(rgb_image, dtype=np.uint8), mode="RGB")
         return cls.from_pil(pil_image)
 
     @classmethod
@@ -73,19 +81,19 @@ class ImageIO:
     @classmethod
     def from_fitz_pixmap(cls, pixmap):
         return cls(
-            data=pixmap.samples, width=pixmap.width, height=pixmap.height, mode="RGBA"
+            data=pixmap.samples, width=pixmap.width, height=pixmap.height, mode="RGB"
         )
 
     def to_pil(self) -> Image.Image:
-        return Image.frombytes("RGBA", self.size, self.data)
+        return Image.frombytes("RGB", self.size, self.data)
 
     def to_cv2(self):
-        pil_image = self.to_pil().convert("RGBA")
-        return cv2.cvtColor(np.array(pil_image, dtype=np.uint8), cv2.COLOR_RGBA2GRAY)
+        pil_image = self.to_pil().convert("RGB")
+        return cv2.cvtColor(np.array(pil_image, dtype=np.uint8), cv2.COLOR_RGB2GRAY)
 
     def to_wx_bitmap(self):
-        img = self.as_rgba()
-        return wx.Bitmap.FromBufferRGBA(img.width, img.height, bytearray(img.data))
+        img = self.as_rgb()
+        return wx.ImageFromBuffer(img.width, img.height, bytearray(img.data)).ConvertToBitmap()
 
     def to_fitz_pixmap(self):
         buf = io.BytesIO()

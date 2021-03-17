@@ -46,7 +46,7 @@ class TwoInOneScanProcessingPipeline(ImageProcessingPipeline):
 
     def process(self) -> t.Tuple[ImageIO]:
         for image in self.images:
-            img = Image.frombytes("RGBA", (image.width, image.height), image.data)
+            img = Image.frombytes("RGB", (image.width, image.height), image.data)
             w, h = image.width, image.height
             pg_left = img.crop((0, 0, w / 2, h))
             pg_right = img.crop((w / 2, 0, w, h))
@@ -55,7 +55,7 @@ class TwoInOneScanProcessingPipeline(ImageProcessingPipeline):
                 pages = (pg_right, pg_left)
             for pg in pages:
                 new_image = image.__class__(
-                    data=pg.convert("RGBA").tobytes(), width=pg.width, height=pg.height
+                    data=pg.convert("RGB").tobytes(), width=pg.width, height=pg.height
                 )
                 yield new_image
 
@@ -236,10 +236,10 @@ class RotationProcessingPipeline(ImageProcessingPipeline):
         return self.ROTATION not in self.ROTATION_METHODS
 
     def process_image(self, image):
-        img = Image.frombytes("RGBA", (image.width, image.height), image.data)
+        img = Image.frombytes("RGB", (image.width, image.height), image.data)
         rotation = self.args.get("rotation", self.ROTATION)
         rotator = ImageOps.flip if rotation == "VERTICAL" else ImageOps.mirror
-        image.data = rotator(img).convert("RGBA").tobytes()
+        image.data = rotator(img).convert("RGB").tobytes()
         return image
 
 

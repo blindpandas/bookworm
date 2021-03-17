@@ -59,7 +59,7 @@ class TesseractOcrEngine(BaseOcrEngine):
     @classmethod
     def recognize(cls, ocr_request: OcrRequest) -> OcrResult:
         img = Image.frombytes(
-            "RGBA",
+            "RGB",
             (ocr_request.image.width, ocr_request.image.height),
             ocr_request.image.data,
         )
