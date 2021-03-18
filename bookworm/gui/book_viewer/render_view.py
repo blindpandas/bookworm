@@ -55,6 +55,7 @@ class ViewPageAsImageDialog(wx.Dialog):
         self._zoom_factor = 1
         # Translators: the label of the image of a page in a dialog to render the current page
         panel = self.scroll = scrolled.ScrolledPanel(self, -1, name=_("Page"), style=0)
+        panel.SetTransparent(0)
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         self.imageCtrl = ImageView(panel, -1)

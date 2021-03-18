@@ -316,8 +316,8 @@ class TextToSpeechService(BookwormService):
         index = bisect.bisect_right(markers, caret_pos)
         if index != len(markers):
             pos = markers[index]
-        self.textCtrl.SetInsertionPoint(pos)
         self.engine.stop()
+        self.textCtrl.SetInsertionPoint(pos)
         self.speak_current_page(from_caret=True)
 
     def rewind(self):
@@ -327,10 +327,9 @@ class TextToSpeechService(BookwormService):
         caret_pos = self.textCtrl.InsertionPoint
         index = bisect.bisect_left(markers, caret_pos)
         if index:
-            index -= 1
-        pos = markers[index]
-        self.textCtrl.SetInsertionPoint(pos)
+            pos = markers[index - 1]
         self.engine.stop()
+        self.textCtrl.SetInsertionPoint(pos)
         self.speak_current_page(from_caret=True)
 
     def initialize_engine(self):
