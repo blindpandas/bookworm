@@ -20,7 +20,17 @@ log = logger.getChild(__name__)
 _missing = object()
 
 # New line character
-NEWLINE = "\n"
+UNIX_NEWLINE = '\n'
+WINDOWS_NEWLINE = '\r\n'
+MAC_NEWLINE = '\r'
+NEWLINE = UNIX_NEWLINE
+
+
+def normalize_line_breaks(text, line_break=UNIX_NEWLINE):
+    text = text.replace(WINDOWS_NEWLINE, UNIX_NEWLINE).replace(MAC_NEWLINE, UNIX_NEWLINE)
+    if line_break != UNIX_NEWLINE:
+        text = text.replace(UNIX_NEWLINE, line_break)
+    return text
 
 
 def ignore(*exceptions, retval=None):

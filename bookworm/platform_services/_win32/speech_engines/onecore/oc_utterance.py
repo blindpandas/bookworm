@@ -54,7 +54,7 @@ class OcSpeechUtterance(SapiSpeechUtterance):
         with voice_utterance.set_style(SpeechStyle(**options)):
             voice_utterance.append_utterance(self)
         voice_utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(
-            voice.language
+            voice.language.ietf_tag
         )
         ssml = voice_utterance.prompt.ToXml()
         if not self.prompt.IsEmpty:

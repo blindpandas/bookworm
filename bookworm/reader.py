@@ -123,7 +123,7 @@ class EBookReader:
 
     def set_view_parameters(self):
         self.view.set_title(self.get_view_title(include_author=True))
-        self.view.set_text_direction(is_rtl(self.document.language))
+        self.view.set_text_direction(self.document.language.is_rtl)
         self.view.add_toc_tree(self.document.toc_tree)
         self.__state.setdefault("current_page_index", -1)
         self.current_page = 0

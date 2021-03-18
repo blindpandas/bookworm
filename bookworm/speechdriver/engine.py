@@ -3,6 +3,7 @@
 from abc import ABCMeta, abstractmethod
 from dataclasses import field, dataclass
 from contextlib import suppress
+from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 from .utterance import SpeechUtterance
 
@@ -15,7 +16,7 @@ class VoiceInfo:
     id: str = field(compare=False)
     name: str = field(compare=False)
     desc: str = field(compare=False)
-    language: str = field(compare=False)
+    language: LocaleInfo = field(compare=False)
     sort_key: int = 0
     gender: int = field(default=None, compare=False)
     age: int = field(default=None, compare=False)
@@ -25,16 +26,8 @@ class VoiceInfo:
     def display_name(self):
         return self.desc or self.name
 
-    def speaks_language(self, language):
-        language = language.lower()
-        locale, _h, country_code = self.language.lower().partition("-")
-        if self.language.lower() == language:
-            self.sort_key = 0
-            return True
-        elif language == locale:
-            self.sort_key = 1
-            return True
-        return False
+    def speaks_language(self, language: LocaleInfo, strict=False):
+        return self.language.should_be_considered_equal_to(language, strict=strict)
 
 
 class BaseSpeechEngine(metaclass=ABCMeta):
@@ -88,7 +81,7 @@ class BaseSpeechEngine(metaclass=ABCMeta):
     def get_voices(self):
         """Return a list of VoiceInfo objects."""
 
-    def get_voices_by_language(self, language):
+    def get_voices_by_language(self, language: LocaleInfo):
         return sorted(
             voice for voice in self.get_voices() if voice.speaks_language(language)
         )
@@ -163,7 +156,7 @@ class BaseSpeechEngine(metaclass=ABCMeta):
         raise ValueError(f"Invalid voice {voice_ident}")
 
     @classmethod
-    def get_first_available_voice(cls, language=None):
+    def get_first_available_voice(cls, language: LocaleInfo=None):
         _test_engine = cls()
         voices = (
             _test_engine.get_voices_by_language(language=language)

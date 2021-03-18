@@ -7,7 +7,6 @@ from pathlib import Path
 from contextlib import contextmanager
 from functools import cached_property
 from chemical import it
-from pycld2 import detect as detect_language, error as CLD2Error
 from diskcache import Cache
 from lxml import etree
 from trafilatura.external import custom_justext, JT_STOPLIST
@@ -55,7 +54,8 @@ class HtmlPage(BasePage):
             text = self.document.text_buffer.read()
         else:
             text = self.document.text_buffer.read(end_pos - start_pos)
-        return "\n".join(it(text.split("\n")).filter(lambda line: line.strip()))
+        text = "\n".join(it(text.split("\n")).filter(lambda line: line.strip()))
+        return self.normalize_text(text)
 
     def get_image(self, zoom_factor=1.0):
         raise NotImplementedError
@@ -111,16 +111,7 @@ class BaseHtmlDocument(FluidDocument):
 
     @cached_property
     def language(self):
-        try:
-            (success, _, ((_, lang, _, _), *_)) = detect_language(
-                utf8Bytes=self.html_string, isPlainText=False, hintLanguage=None
-            )
-        except CLD2Error as e:
-            log.error(f"Failed to recognize document language", exc_info=True)
-            success = False
-        if success:
-            return lang
-        return "en"
+        return self.get_language(self.html_string, is_html=True)
 
     @cached_property
     def toc_tree(self):

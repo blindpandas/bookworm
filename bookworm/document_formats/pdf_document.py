@@ -28,7 +28,11 @@ class FitzPdfPage(FitzPage):
 
     def get_text(self):
         text = self.xpdf_text_output.get(self.index)[:-1]
-        return ftfy.fix_text(text, normalization="NFKC")
+        return self.normalize_text(text)
+
+    def normalize_text(self, text):
+        text = ftfy.fix_text(text, normalization="NFKC")
+        return super().normalize_text(text)
 
     def get_label(self) -> str:
         return self._fitz_page.get_label().strip()

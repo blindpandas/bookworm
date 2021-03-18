@@ -6,6 +6,7 @@ import System
 from weakref import ref
 from pathlib import Path
 from bookworm import app
+from bookworm.i18n import LocaleInfo
 from bookworm.speechdriver.enumerations import EngineEvent, SynthState, RateSpec
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.logger import logger
@@ -64,7 +65,7 @@ class OcSpeechEngine(BaseSpeechEngine):
                     id=voice.Id,
                     name=voice.Name,
                     desc=voice.Description,
-                    language=voice.Language,
+                    language=LocaleInfo(voice.Language),
                     data={"voice_obj": voice},
                 )
             )

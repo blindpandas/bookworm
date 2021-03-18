@@ -32,7 +32,7 @@ class UrlOpenService(BookwormService):
         )
         open_url = webservices_menu.Insert(0, -1, _("&Open URL\tCtrl+U"))
         self.open_url_from_clipboard = webservices_menu.Insert(
-            1, -1, _("&Open URL From Clipboard\tCtrl+Shift+V")
+            1, -1, _("&Open URL From Clipboard\tCtrl+Shift+U")
         )
         self.view.Bind(wx.EVT_MENU, self.onOpenUrl, open_url)
         self.view.Bind(
@@ -40,7 +40,7 @@ class UrlOpenService(BookwormService):
         )
 
     def get_keyboard_shortcuts(self):
-        return {self.open_url_from_clipboard.GetId(): "Ctrl+Shift+V"}
+        return {self.open_url_from_clipboard.GetId(): "Ctrl-Shift-U"}
 
     def onOpenUrl(self, event):
         url = self.view.get_text_from_user(

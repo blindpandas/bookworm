@@ -12,6 +12,7 @@ from bookworm.document_formats.base import (
     DocumentCapability as DC,
     DocumentError,
 )
+from bookworm.utils import normalize_line_breaks
 from bookworm.logger import logger
 
 
@@ -36,7 +37,8 @@ class PlainTextDocument(BaseDocument):
         super().read()
 
     def get_content(self):
-        return MORE_THAN_ONE_LINE.sub("\n", self.text_buffer.getvalue())
+        text = MORE_THAN_ONE_LINE.sub("\n", self.text_buffer.getvalue())
+        return normalize_line_breaks(text)
 
     def close(self):
         super().close()

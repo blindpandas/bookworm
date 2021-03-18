@@ -42,7 +42,7 @@ class LocaleInfo:
         return f'LocaleInfo(identifier="{self.identifier}");language={self.language}'
 
     def __eq__(self, other):
-        if not getattr(other, "locale"):
+        if not getattr(other, "locale", None):
             return NotImplemented
         return self.locale == other.locale
 
@@ -59,12 +59,16 @@ class LocaleInfo:
         """Support for unpickling."""
         self.__init__(**state)
 
-    def should_be_considered_equal_to(self, other):
+    def should_be_considered_equal_to(self, other, strict=False):
         if not isinstance(other, self.__class__):
             raise TypeError(f"{other} is not a LocaleInfo object.")
-        if self.language.lower() == other.language.lower():
-            return True
-        return False
+        if strict:
+            return self == other
+        return self.two_letter_language_code == other.two_letter_language_code
+
+    @property
+    def two_letter_language_code(self):
+        return self.locale.language
 
     @property
     def parent(self):

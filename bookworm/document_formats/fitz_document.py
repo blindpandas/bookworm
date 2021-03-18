@@ -26,7 +26,7 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
-
+fitz.Tools().mupdf_display_errors(False)
 
 class FitzPage(BasePage):
     """Wrapps fitz.Page."""
@@ -42,7 +42,7 @@ class FitzPage(BasePage):
         return ftfy.fix_text(text, normalization="NFKC")
 
     def get_text(self):
-        return self._text_from_page(self._fitz_page)
+        return self.normalize_text(self._text_from_page(self._fitz_page))
 
     def get_image(self, zoom_factor=1.0):
         mat = fitz.Matrix(zoom_factor, zoom_factor)

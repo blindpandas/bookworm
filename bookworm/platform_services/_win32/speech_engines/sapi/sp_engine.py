@@ -3,6 +3,7 @@
 import System
 from System.Globalization import CultureInfo
 from contextlib import suppress
+from bookworm.i18n import LocaleInfo
 from bookworm.platform_services._win32.runtime import reference_gac_assembly
 from bookworm.speechdriver.enumerations import EngineEvent, SynthState
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
@@ -60,7 +61,7 @@ class SapiSpeechEngine(BaseSpeechEngine):
                     id=info.Id,
                     name=info.Name,
                     desc=info.Description,
-                    language=info.Culture.IetfLanguageTag,
+                    language=LocaleInfo(info.Culture.IetfLanguageTag),
                     gender=info.Gender,
                     age=info.Age,
                 )
@@ -110,7 +111,7 @@ class SapiSpeechEngine(BaseSpeechEngine):
         # function does not honor  the engine voice.
         voice_utterance = SapiSpeechUtterance()
         voice_utterance.prompt.Culture = CultureInfo.GetCultureInfoByIetfLanguageTag(
-            self.voice.language
+            self.voice.language.ietf_tag
         )
         with voice_utterance.set_style(SpeechStyle(voice=self.voice)):
             voice_utterance.append_utterance(utterance)

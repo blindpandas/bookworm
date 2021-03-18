@@ -62,7 +62,7 @@ class TextInfo:
     lang: str = "en"
     """The natural language of the text. Used in splitting the text into sentences."""
 
-    eol: str = None
+    eol: str = "\n"
     """The recognizable end-of-line sequence. Used to split the text into paragraphs."""
 
     def __post_init__(self):
@@ -95,10 +95,7 @@ class TextInfo:
     @cached_property
     def paragraphs(self):
         rv = []
-        if self.eol is None:
-            paragraphs = self.text.splitlines()
-        else:
-            paragraphs = self.text.split(self.eol)
+        paragraphs = self.text.split(self.eol)
         for parag in paragraphs:
             if parag.strip():
                 pos = self.text.index(parag)
@@ -108,7 +105,7 @@ class TextInfo:
     def _record_markers(self, segments):
         rv = []
         for _nope, pos in segments:
-            rv.append(pos + self.start_pos)
+            rv.append(self.start_pos + pos)
         return rv
 
     @property
@@ -196,7 +193,7 @@ class TextToSpeechService(BookwormService):
 
     def make_text_info(self, *args, **kwargs):
         """Add the language of the current document."""
-        kwargs.setdefault("lang", self.reader.document.language)
+        kwargs.setdefault("lang", self.reader.document.language.two_letter_language_code)
         return TextInfo(*args, **kwargs)
 
     def encode_bookmark(self, data):
@@ -379,6 +376,8 @@ class TextToSpeechService(BookwormService):
 
     def _try_set_tts_language(self):
         if not config.conf["reading"]["ask_to_switch_voice_to_current_book_language"]:
+            return
+        if self.engine.voice.speaks_language(self.reader.document.language, strict=False):
             return
         msg = wx.MessageBox(
             # Translators: a message telling the user that the TTS voice has been changed

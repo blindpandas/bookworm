@@ -167,7 +167,7 @@ class SettingsPanel(sc.SizedPanel):
 
     config_section = None
 
-    def __init__(self, parent, settings_dialog, config_object=None):
+    def __init__(self, parent, settings_dialog=None, config_object=None):
         super().__init__(parent, -1)
         config_object = config_object or config.conf.config
         self.config = config_object[self.config_section]

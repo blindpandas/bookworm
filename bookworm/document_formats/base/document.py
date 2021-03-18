@@ -8,8 +8,10 @@ from lru import LRU
 from pycld2 import detect as detect_language, error as CLD2Error
 from pathlib import Path
 from bookworm import typehints as t
+from bookworm.i18n import LocaleInfo
 from bookworm.concurrency import QueueProcess, call_threaded
 from bookworm.image_io import ImageIO
+from bookworm.utils import normalize_line_breaks
 from bookworm.logger import logger
 from .exceptions import DocumentIOError, PaginationError
 from .elements import *
@@ -138,22 +140,10 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
     @cached_property
     def language(self) -> str:
-        """Return the language of this document.
-        By default we use a heuristic based on Google's CLD2.
-        """
         num_pages = len(self)
         num_samples = num_pages if num_pages <= 20 else 20
         text = "".join(self[i].get_text() for i in range(num_samples)).encode("utf8")
-        try:
-            (success, _, ((_, lang, _, _), *_)) = detect_language(
-                utf8Bytes=text, isPlainText=True, hintLanguage=None
-            )
-        except CLD2Error as e:
-            log.error(f"Failed to recognize document language", exc_info=True)
-            success = False
-        if success:
-            return lang
-        return "en"
+        return self.get_language(samples=text, is_html=False)
 
     @property
     @abstractmethod
@@ -195,6 +185,22 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def can_render_pages(self):
         return DocumentCapability.GRAPHICAL_RENDERING in self.capabilities
 
+    @staticmethod
+    def get_language(samples, is_html=False, hint_language: str=None) -> LocaleInfo:
+        """Return the language of this document.
+        By default we use a heuristic based on Google's CLD2.
+        """
+        try:
+            (success, _, ((_, lang, _, _), *_)) = detect_language(
+                utf8Bytes=samples, isPlainText=not is_html, hintLanguage=hint_language
+            )
+        except CLD2Error as e:
+            log.error(f"Failed to recognize document language", exc_info=True)
+            success = False
+        if success:
+            return LocaleInfo(lang)
+        return LocaleInfo("en")
+
     def export_to_text(self, target_filename: t.PathLike):
         return QueueProcess(
             target=doctools.export_to_plain_text,
@@ -231,6 +237,9 @@ class BasePage(metaclass=ABCMeta):
     def get_label(self) -> str:
         """Return the page label string (commonly found on PDFs)."""
         return ""
+
+    def normalize_text(self, text):
+        return normalize_line_breaks(text)
 
     @property
     def number(self) -> int:
