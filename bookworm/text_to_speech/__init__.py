@@ -251,6 +251,11 @@ class TextToSpeechService(BookwormService):
     def end_page_utterance(self, utterance, page):
         if config.conf["reading"]["reading_mode"] == 2:
             return
+        if page.section.is_root:
+            utterance.add_audio(sounds.section_end.path)
+            # Translators: a message to speak at the end of the document
+            utterance.add_text(_("End of document."))
+            return
         if page.is_last_of_section and not page.section.has_children:
             if config.conf["reading"]["notify_on_section_end"]:
                 utterance.add_audio(sounds.section_end.path)
