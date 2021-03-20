@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import sys
+import regex
 import wx
 import hashlib
 from functools import wraps
@@ -24,6 +25,7 @@ UNIX_NEWLINE = '\n'
 WINDOWS_NEWLINE = '\r\n'
 MAC_NEWLINE = '\r'
 NEWLINE = UNIX_NEWLINE
+MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
 
 
 def normalize_line_breaks(text, line_break=UNIX_NEWLINE):
@@ -31,6 +33,10 @@ def normalize_line_breaks(text, line_break=UNIX_NEWLINE):
     if line_break != UNIX_NEWLINE:
         text = text.replace(UNIX_NEWLINE, line_break)
     return text
+
+
+def remove_excess_blank_lines(text):
+    return MORE_THAN_ONE_LINE.sub("\n", normalize_line_breaks(text))
 
 
 def ignore(*exceptions, retval=None):

@@ -5,22 +5,21 @@ import regex
 from functools import cached_property
 from io import StringIO
 from bookworm.document_formats.base import (
-    BaseDocument,
+    FluidDocument,
     Section,
     Pager,
     BookMetadata,
     DocumentCapability as DC,
     DocumentError,
 )
-from bookworm.utils import normalize_line_breaks
+from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
 from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
-MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
 
 
-class PlainTextDocument(BaseDocument):
+class PlainTextDocument(FluidDocument):
     """For plain text files"""
 
     format = "txt"
@@ -37,7 +36,7 @@ class PlainTextDocument(BaseDocument):
         super().read()
 
     def get_content(self):
-        text = MORE_THAN_ONE_LINE.sub("\n", self.text_buffer.getvalue())
+        text = remove_excess_blank_lines(self.text_buffer.getvalue())
         return normalize_line_breaks(text)
 
     def close(self):

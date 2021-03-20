@@ -11,7 +11,7 @@ from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
 from bookworm.concurrency import QueueProcess, call_threaded
 from bookworm.image_io import ImageIO
-from bookworm.utils import normalize_line_breaks
+from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
 from bookworm.logger import logger
 from .exceptions import DocumentIOError, PaginationError
 from .elements import *
@@ -239,7 +239,7 @@ class BasePage(metaclass=ABCMeta):
         return ""
 
     def normalize_text(self, text):
-        return normalize_line_breaks(text)
+        return remove_excess_blank_lines(text)
 
     @property
     def number(self) -> int:
