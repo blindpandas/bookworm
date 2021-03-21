@@ -73,10 +73,10 @@ class DocumentPositionInfo(DocumentBase):
 
 
 class RecentDocument(DocumentBase):
-    last_opened_on = db.date_time(default=datetime.now, onupdate=datetime.now)
+    last_opened_on = db.date_time(default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def record_open(self):
-        self.last_opened_on = datetime.now()
+        self.last_opened_on = datetime.utcnow()
         self.session.commit()
 
     @classmethod
@@ -92,7 +92,7 @@ class RecentDocument(DocumentBase):
 
 
 class PinnedDocument(DocumentBase):
-    last_opened_on = db.date_time(default=datetime.now, onupdate=datetime.now)
+    last_opened_on = db.date_time(default=datetime.utcnow, onupdate=datetime.utcnow)
     is_pinned = db.boolean(default=False)
     pinning_order = db.integer(default=0)
 

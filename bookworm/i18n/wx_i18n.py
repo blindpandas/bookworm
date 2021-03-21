@@ -10,22 +10,16 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-def set_wx_locale(locale):
-    wx.GetApp().AppLocale = None
-    log.debug(f"Setting wx locale to {locale}.")
-    if app.is_frozen:
-        wx.Locale.AddCatalogLookupPathPrefix(str(paths.locale_path()))
-    candidates = (
-        wx.Locale.FindLanguageInfo(l.pylang)
-        for l in (locale, locale.parent, LocaleInfo("en"))
-    )
-    for lang in filter(None, candidates):
-        if wx.GetApp().AppLocale:
-            del wx.GetApp().AppLocale
-        try:
-            wx.GetApp().AppLocale = wx.Locale(lang.GetLocaleName())
-            if wx.GetApp().AppLocale.IsOk():
-                wx.GetApp().AppLocale.AddCatalog("bookworm")
-                break
-        except:
-            log.exception("Failed to set wx Locale", exc_info=True)
+def set_wx_locale(current_locale):
+    log.debug(f"Setting wx locale to {current_locale}.")
+    if hasattr(wx.GetApp(), "AppLocale"):
+        del wx.GetApp().AppLocale
+    current_language = current_locale.pylang
+    wx_language = wx.Locale.FindLanguageInfo(current_language)
+    if wx_language is None:
+        log.exception(f"Failed to find corresponding WX language information for locale {current_locale}.")
+        return
+    wx.GetApp().AppLocale = wx.Locale()
+    wx.GetApp().AppLocale.AddCatalogLookupPathPrefix(str(paths.locale_path()))
+    wx.GetApp().AppLocale.AddCatalog(wx_language.LocaleName)
+    wx.GetApp().AppLocale.Init(wx_language.Language)

@@ -70,8 +70,8 @@ class AnnotationBase(db.Model):
     position = db.integer(nullable=False, default=0)
     section_title = db.string(1024, nullable=False)
     section_identifier = db.string(1024, nullable=False)
-    date_created = sa.Column(sa.DateTime, default=datetime.now)
-    date_updated = sa.Column(sa.DateTime, onupdate=datetime.now)
+    date_created = sa.Column(sa.DateTime, default=datetime.utcnow)
+    date_updated = sa.Column(sa.DateTime, onupdate=datetime.utcnow)
 
     @declared_attr
     def text_column(cls):

@@ -94,7 +94,10 @@ def init_app_and_run_main_loop():
 
     wxlogfilename = logs_path("wx.log") if not appinfo.debug else None
     app = BookwormApp(redirect=True, useBestVisual=True, filename=wxlogfilename)
-    set_wx_locale(appinfo.current_language)
+    try:
+        set_wx_locale(appinfo.current_language)
+    except:
+        log.exception("Faild to set wxLocale to the current app locale", exc_info=True)
     mainFrame = app.mainFrame = BookViewerWindow(None, appinfo.display_name)
     app.service_handler = ServiceHandler(mainFrame)
     app.service_handler.register_builtin_services()

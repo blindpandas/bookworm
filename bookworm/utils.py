@@ -128,8 +128,8 @@ def search(pattern, text):
         yield (start, " ".join(snip))
 
 
-def format_datetime(date) -> str:
-    return app.current_language.format_datetime(date)
+def format_datetime(date, format="medium", localized=True) -> str:
+    return app.current_language.format_datetime(date, format=format, localized=localized)
 
 
 def escape_html(text):
