@@ -28,6 +28,19 @@ NEWLINE = UNIX_NEWLINE
 MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
 
 
+
+class HideStdout:
+    """Hide unneeded stdout."""
+
+    def __enter__(self):
+        self._original_stdout = sys.stdout
+        sys.stdout = None
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.stdout = self._original_stdout
+
+
+
 def normalize_line_breaks(text, line_break=UNIX_NEWLINE):
     text = text.replace(WINDOWS_NEWLINE, UNIX_NEWLINE).replace(MAC_NEWLINE, UNIX_NEWLINE)
     if line_break != UNIX_NEWLINE:
