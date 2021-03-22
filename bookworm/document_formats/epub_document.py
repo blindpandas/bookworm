@@ -31,10 +31,8 @@ log = logger.getChild(__name__)
 
 class FitzEPUBDocument(FitzDocument):
 
+    __internal__ = True
     format = "epub"
-    # Translators: the name of a document file format
-    name = _("Electronic Publication (EPUB)")
-    extensions = ("*.epub",)
 
     def read(self, filetype=None):
         try:

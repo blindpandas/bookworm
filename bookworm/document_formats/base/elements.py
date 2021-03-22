@@ -14,6 +14,7 @@ class BookMetadata:
     author: str
     publisher: str = ""
     publication_year: str = ""
+    isbn: str = ""
     additional_info: dict = field(default_factory=dict)
 
 
