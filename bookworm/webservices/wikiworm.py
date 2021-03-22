@@ -79,8 +79,8 @@ class WikipediaService(BookwormService):
         if self.view.reader.ready:
             language = self.view.reader.document.language
         else:
-            language = app.current_language.language
-        wikipedia.set_lang(language)
+            language = app.current_language
+        wikipedia.set_lang(language.two_letter_language_code)
         page = None
         if sure_exists:
             page = wikipedia.page(term)
