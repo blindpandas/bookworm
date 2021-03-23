@@ -3,9 +3,10 @@
 from functools import cached_property
 from hashlib import md5
 from tempfile import TemporaryDirectory
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from ebooklib.epub import read_epub
 from inscriptis import get_text
+from selectolax.parser import HTMLParser
 from bookworm.document_formats.base import (
     BaseDocument,
     BasePage,
@@ -28,15 +29,43 @@ log = logger.getChild(__name__)
 class EpubPage(BasePage):
 
     def get_text(self):
-        href = self.section.data['href']
-        html_item = self.document.epub.get_item_with_href(href)
-        if html_item is None:
-            return self.section.title
-        html = html_item.get_body_content().decode("utf8")
+        html = self._get_html_with_href(
+            self.section.data['href'],
+            self.document.epub
+        )
         return self.normalize_text(get_text(html)).strip()
 
     def get_image(self, zoom_factor):
         raise NotImplementedError
+
+    def _get_valid_href(self, href):
+        href = PurePosixPath(href)
+        parts = href.parts
+        for i in range(len(parts)):
+            yield str(PurePosixPath(*parts[i + 1:]))
+
+    def _get_item_with_href(self, href, epub):
+        html_item = epub.get_item_with_href(href)
+        if html_item is None:            
+            pfixes = self._get_valid_href(href)
+            for pfix in pfixes:
+                if (html_item := epub.get_item_with_href(pfix)):
+                    return html_item
+        return html_item
+
+    def _get_html_with_href(self, href, epub):
+        html_item = self._get_item_with_href(href, epub)
+        if html_item is None:
+            filename, html_id = href.split("#")
+            item = self._get_item_with_href(filename, epub)
+            parsed = HTMLParser(item.get_content().decode("utf8"))
+            target = parsed.body.css_first(f"#{html_id}")
+            if target:
+                return target.html
+            else:
+                return href
+        else:
+            return html_item.get_body_content().decode("utf8")
 
 
 
