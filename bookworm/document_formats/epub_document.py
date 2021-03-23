@@ -53,12 +53,15 @@ class _DrmFitzEpubDocument(FitzEPUBDocument):
 
     __internal__ = True
     format = "drm_epub"
-    capabilities = FitzDocument.capabilities | DC.ASYNC_READ
+    capabilities = FitzDocument.capabilities
 
     def read(self, filetype=None):
+        self._original_filename = self.get_file_system_path()
         try:
-            self._original_file_name = self.filename
-            self.filename = self.make_unrestricted_file(self.filename)
+            self.filename = self.make_unrestricted_file(self._original_filename)
+            self.uri = self.uri.create_copy(
+                path=self.filename,
+            )
             super().read(filetype="epub")
         except Exception as e:
             raise DocumentError("Could not open DRM encrypted epub document") from e
@@ -76,16 +79,18 @@ class _DrmFitzEpubDocument(FitzEPUBDocument):
     @staticmethod
     def make_unrestricted_file(filename):
         """Try to remove digital restrictions from the EPUB document."""
-        hashed_filename = md5(filename.lower().encode("utf8")).hexdigest()
-        processed_book = home_data_path(hashed_filename)
+        filepath = Path(filename)
+        content_hash = md5(filepath.read_bytes()).hexdigest()
+        processed_book = home_data_path(content_hash)
         if processed_book.exists():
             return str(processed_book)
         _temp = TemporaryDirectory()
         temp_path = Path(_temp.name)
         ZipFile(filename).extractall(temp_path)
-        (temp_path / "META-INF\\encryption.xml").unlink()
         with ZipFile(processed_book, "w") as book:
             for file in recursively_iterdir(temp_path):
+                if "encryption.xml" in file.name.lower():
+                    continue
                 book.write(file, file.relative_to(temp_path))
         _temp.cleanup()
         return str(processed_book)
