@@ -5,6 +5,7 @@ import wx
 import wx.lib.sized_controls as sc
 import webbrowser
 import wikipedia
+from wikipedia.exceptions import DisambiguationError
 from functools import partial
 from bookworm import app
 from bookworm.gui.components import AsyncSnakDialog, SimpleDialog
@@ -71,7 +72,7 @@ class WikipediaService(BookwormService):
             ),
             done_callback=self.view_wikipedia_definition,
             dismiss_callback=lambda: self._cancel_query.set() or True,
-            message=_("Retrieving info from Wikipedia, please wait..."),
+            message=_("Retrieving information, please wait..."),
             parent=self.view,
         )
 
@@ -82,14 +83,17 @@ class WikipediaService(BookwormService):
             language = app.current_language
         wikipedia.set_lang(language.two_letter_language_code)
         page = None
-        if sure_exists:
-            page = wikipedia.page(term)
-        elif (suggested := wikipedia.suggest(term)) is not None:
-            page = wikipedia.page(suggested)
-        if page is not None:
-            return (page.title, page.summary.strip(), page.url)
-        else:
-            return list(wikipedia.search(term))
+        try:
+            if sure_exists:
+                page = wikipedia.page(term)
+            elif (suggested := wikipedia.suggest(term)) is not None:
+                page = wikipedia.page(suggested)
+            if page is not None:
+                return (page.title, page.summary.strip(), page.url)
+            else:
+                return list(wikipedia.search(term))
+        except DisambiguationError as e:
+            return list(e.options)
 
     def view_wikipedia_definition(self, future):
         if self._cancel_query.is_set():
