@@ -10,7 +10,6 @@ from .base import (
     PaginationError,
 )
 from .pdf_document import FitzPdfDocument
-#from .epub_document import FitzEPUBDocument, _DrmFitzEpubDocument, FitzFB2Document
-from .epub_document_alt import EpubDocument
+from .epub_document import EpubDocument
 from .plain_text_document import PlainTextDocument
 from .html_document import FileSystemHtmlDocument, WebHtmlDocument

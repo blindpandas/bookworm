@@ -157,3 +157,11 @@ class FitzDocument(BaseDocument):
             author=to_str(meta["author"]),
             publication_year=to_str(meta["creationDate"]),
         )
+
+
+class FitzFB2Document(FitzDocument):
+
+    format = "fb2"
+    # Translators: the name of a document file format
+    name = _("Fiction Book (FB2)")
+    extensions = ("*.fb2",)
