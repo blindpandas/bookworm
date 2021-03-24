@@ -171,20 +171,20 @@ class FitzEPUBDocument(FitzDocument):
             )
 
 
-class _DrmFitzEpubDocument(FitzEPUBDocument):
+class _DrmFitzEpubDocument(EpubDocument):
     """Fixes DRM encrypted epub documents."""
 
     __internal__ = True
     format = "drm_epub"
 
-    def read(self, filetype=None):
+    def read(self):
         self._original_filename = self.get_file_system_path()
         try:
             self.filename = self.make_unrestricted_file(self._original_filename)
             self.uri = self.uri.create_copy(
                 path=self.filename,
             )
-            super().read(filetype="epub")
+            super().read()
         except Exception as e:
             raise DocumentError("Could not open DRM encrypted epub document") from e
 
@@ -200,8 +200,13 @@ class _DrmFitzEpubDocument(FitzEPUBDocument):
         the eBook using leditimate means, and the user intents to use the
         content in a manor that does not violate the law.
         """
-        hashed_filename = md5(filename.lower().encode("utf8")).hexdigest()
-        processed_book = home_data_path(hashed_filename)
+        filepath = Path(filename)
+        content_hash = md5()
+        with open(filepath, 'rb') as ebook_file:
+            for chunk in ebook_file:
+                content_hash.update(chunk)
+        identifier  = content_hash.hexdigest()
+        processed_book = home_data_path(f"{identifier}.epub")
         if processed_book.exists():
             return str(processed_book)
         _temp = TemporaryDirectory()
