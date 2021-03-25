@@ -5,7 +5,6 @@ from hashlib import md5
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
 from pathlib import Path, PurePosixPath
-from ebooklib.epub import read_epub
 from inscriptis import get_text
 from bs4 import BeautifulSoup
 from selectolax.parser import HTMLParser
@@ -34,7 +33,6 @@ class EpubPage(BasePage):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.epub = self.document.epub
         self.ziparchive = self.document.ziparchive
 
     def get_text(self):
@@ -44,17 +42,16 @@ class EpubPage(BasePage):
     def get_image(self, zoom_factor):
         raise NotImplementedError
 
-    def _get_item(self, href):
-        if (html_element := self.epub.get_item_with_href(href)):
-            return html_element
-        href = PurePosixPath(href)
-        parts = href.parts
-        for i in range(len(parts)):
-            possible_href = str(PurePosixPath(*parts[i - 1:]))
-            if (html_item := self.epub.get_item_with_href(possible_href)):
-                return html_item
+    def _get_proper_filename(self, href):
+        members = self.document._filelist
+        if href in members:
+            return href
+        for filename in members:
+            if filename.endswith(href):
+                return filename
 
-    def parse_split_chapter(self, filename):
+    def parse_split_chapter(self, href):
+        filename = self._get_proper_filename(href.split("#")[0])
         split_anchors = self.document._split_section_anchor_ids[filename]
         self.document._split_section_content [filename] = {}
         chapter_content = self.ziparchive.read(filename).decode("utf-8")
@@ -73,22 +70,30 @@ class EpubPage(BasePage):
         # Remaining markup is assigned here
         self.document._split_section_content[filename][""] = str(soup)
 
-    def _get_split_section_text(self, filename, html_id):
+    def _get_split_section_text(self, href):
+        splitdata = href.split("#")
+        if len(splitdata) == 2:
+            filename, html_id = splitdata
+        else:
+            filename = splitdata[0]
+            html_id = ""
         if (anchor_info := self.document._split_section_content.get(filename, None)):
-            return anchor_info[html_id]
-        self.parse_split_chapter(filename)
-        return self._get_split_section_text(filename, html_id)
+            try:
+                return anchor_info[html_id]
+            except KeyError:
+                log.warning(f"Could not get content for {html_id=} from parsed {filename=} with {href=}")
+                return ""
+        self.parse_split_chapter(href)
+        return self._get_split_section_text(href)
 
     def _get_html_with_href(self, href):
-        if (html_item := self._get_item(href)):
+        if (filename := self._get_proper_filename(href)):
             if href not in self.document._split_section_anchor_ids:
-                return html_item.get_content().decode("utf-8")
+                return self.ziparchive.read(filename).decode("utf-8")
             else:
-                return self._get_split_section_text(html_item.file_name, "")
-        elif (html_item is None) and ("#" in href):
-            file_part, fragment_part = href.split("#")
-            if (html_element := self._get_item(file_part)):
-                return self._get_split_section_text(html_element.file_name, fragment_part)
+                return self._get_split_section_text(href)
+        elif (filename is None) and ("#" in href):
+            return self._get_split_section_text(href)
         raise RuntimeError(f"Could not extract text from section with href: {href} and filename: {filename}")
 
 
@@ -110,9 +115,9 @@ class EpubDocument(BaseDocument):
     def read(self):
         self.fitz_doc = FitzEPUBDocument(self.uri)
         self.fitz_doc.read()
-        self.filename = self.get_file_system_path()
-        self.epub = read_epub(self.filename)
+        self.filename = self.fitz_doc.filename
         self.ziparchive  = ZipFile(self.filename, "r")
+        self._filelist = set(self.ziparchive.namelist())
         self._split_section_anchor_ids = {}
         self._split_section_content = {}
         super().read()
@@ -120,6 +125,7 @@ class EpubDocument(BaseDocument):
     def close(self):
         super().close()
         self.fitz_doc.close()
+        self.ziparchive.close()
 
     @cached_property
     def language(self):
@@ -159,9 +165,9 @@ class FitzEPUBDocument(FitzDocument):
 
     __internal__ = True
 
-    def read(self, filetype=None):
+    def read(self):
         try:
-            super().read(filetype)
+            super().read()
         except DocumentEncryptedError:
             log.debug("Got an encrypted file, will try to decrypt it...")
             raise ChangeDocument(
