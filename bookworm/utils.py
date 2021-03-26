@@ -4,6 +4,7 @@ import sys
 import regex
 import wx
 import hashlib
+from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -28,17 +29,18 @@ NEWLINE = UNIX_NEWLINE
 MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
 
 
+@contextmanager
+def switch_stdout(out):
+    original_stdout = sys.stdout
+    try:
+        sys.stdout = out
+        yield
+    finally:
+        sys.stdout = original_stdout
 
-class HideStdout:
-    """Hide unneeded stdout."""
 
-    def __enter__(self):
-        self._original_stdout = sys.stdout
-        sys.stdout = None
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        sys.stdout = self._original_stdout
-
+def mute_stdout():
+    return switch_stdout(None)
 
 
 def normalize_line_breaks(text, line_break=UNIX_NEWLINE):

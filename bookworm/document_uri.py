@@ -37,7 +37,9 @@ class DocumentUri:
     def from_filename(cls, filename):
         filepath = Path(filename)
         return cls(
-            format=filepath.suffix.lstrip("."), path=str(filepath), openner_args={}
+            format=cls.get_format_by_filename(filepath),
+            path=str(filepath),
+            openner_args={}
         )
 
     def to_uri_string(self):
@@ -70,6 +72,26 @@ class DocumentUri:
             openner_args=self.openner_args | (openner_args or {}),
             view_args=self.view_args | (view_args or {}),
         )
+
+    @classmethod
+    def get_format_by_filename(cls, filename):
+        """Get the document format using its filename."""
+        fileext = Path(filename).suffix.strip(".")
+        if (file_format := cls._get_format_given_extension(f"*.{fileext}")):
+            return file_format
+        possible_exts = tuple(str(filename).split("."))
+        for idx in range(len(possible_exts) - 1):
+            fileext = ".".join(possible_exts[idx:])
+            if (file_format := cls._get_format_given_extension(f"*.{fileext}")):
+                return file_format
+
+    @classmethod
+    def _get_format_given_extension(cls, ext):
+        from bookworm.reader import get_document_format_info
+
+        for (doc_format, doc_cls) in get_document_format_info().items():
+            if (doc_cls.extensions is not None) and (ext in doc_cls.extensions):
+                return doc_format
 
     def is_equal_without_openner_args(self, other):
         return self.to_bare_uri_string() == other.to_bare_uri_string()
