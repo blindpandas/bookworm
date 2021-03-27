@@ -5,6 +5,8 @@ from hashlib import md5
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
 from pathlib import Path, PurePosixPath
+from chemical import it
+from ebooklib.epub import read_epub
 from inscriptis import get_text
 from bs4 import BeautifulSoup
 from selectolax.parser import HTMLParser
@@ -116,6 +118,7 @@ class EpubDocument(BaseDocument):
         self.fitz_doc = FitzEPUBDocument(self.uri)
         self.fitz_doc.read()
         self.filename = self.fitz_doc.filename
+        self.epub  = read_epub(self.filename)
         self.ziparchive  = ZipFile(self.filename, "r")
         self._filelist = set(self.ziparchive.namelist())
         self._split_section_anchor_ids = {}
@@ -154,6 +157,16 @@ class EpubDocument(BaseDocument):
             if "#" in href:
                 filename, html_id = href.split("#")
                 self._split_section_anchor_ids.setdefault(filename, []).append(html_id)
+        if sect_count == 0:
+            href = it(self.epub.items).find(lambda item: 'html' in item.media_type).file_name
+            stack.push(Section(
+                document=self,
+                title=_("Book contents"),
+                pager=Pager(first=0, last=0),
+                level=2,
+                data=dict(href=href)
+            ))
+            object.__setattr__(root.pager, 'last', 0)
         return root
 
     @cached_property

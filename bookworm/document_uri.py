@@ -36,8 +36,10 @@ class DocumentUri:
     @classmethod
     def from_filename(cls, filename):
         filepath = Path(filename)
+        if (doc_format := cls.get_format_by_filename(filepath)) is None:
+            raise ValueError(f"Unsupported document format for file {filename}")
         return cls(
-            format=cls.get_format_by_filename(filepath),
+            format=doc_format,
             path=str(filepath),
             openner_args={}
         )
