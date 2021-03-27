@@ -15,7 +15,6 @@ from bookworm.document_formats.base import (
     DocumentError,
     DocumentEncryptedError
 )
-from bookworm.vendor.KindleUnpack import kindleunpack as KindleUnpack
 from bookworm.logger import logger
 from.epub_document import EpubDocument
 
