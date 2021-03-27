@@ -38,7 +38,7 @@ class MobiDocument(EpubDocument):
 
     format = "mobi"
     # Translators: the name of a document file format
-    name = _("Mobi Book")
+    name = _("MobiPocket Book")
     extensions = ("*.mobi", "*.azw3",)
 
     def read(self):
@@ -62,7 +62,10 @@ class MobiDocument(EpubDocument):
         tempdir, extracted_file = mobi.extract(str(filename))
         filetype = Path(extracted_file).suffix.strip(".")
         if filetype == 'html':
-            return self.create_epub_from_epub_like_structure(tempdir, storage_area.joinpath(f"{filemd5}.epub") 
+            return self.create_valid_epub_from_epub_like_structure(
+                tempdir,
+                storage_area.joinpath(f"{filemd5}.epub") 
+            )
         dst_filename = storage_area.joinpath(f"{filemd5}.{filetype}")
         shutil.copy(extracted_file, dst_filename)
         return dst_filename
@@ -75,5 +78,24 @@ class MobiDocument(EpubDocument):
         return storage_area
 
     @classmethod
-    def create_epub_from_epub_like_structure(cls, src_folder, dst_file):
-        
+    def create_valid_epub_from_epub_like_structure(cls, src_folder, dst_file):
+        inner_mobi_folder = tuple(filter(
+            lambda fd: fd.lower().startswith("mobi"),
+            os.listdir(src_folder)
+        ))
+        if not inner_mobi_folder:
+            raise RuntimeError("Unrecognized EPUB like structure")
+        src_epub_folder = Path(src_folder, inner_mobi_folder[0])
+        files_to_write = [
+            (fname, content)
+            for fname, content in EPUB_STRUCTURE_FILES.items()
+            if not Path(src_epub_folder, fname).exists()
+        ]
+        for fname, content in files_to_write:
+            file = Path(src_epub_folder, fname)
+            file.parent.mkdir(parents=True, exist_ok=True)
+            file.write_text(content)
+        ziparchive_filename = Path(shutil.make_archive(dst_file, 'zip', src_epub_folder))
+        created_epub_filename = ziparchive_filename.with_suffix("")
+        ziparchive_filename.rename(created_epub_filename)
+        return created_epub_filename
