@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import mobi
 from hashlib import md5
 from tempfile import TemporaryDirectory
 from pathlib import Path
@@ -31,6 +32,7 @@ CONTAINER_XML = """
 EPUB_STRUCTURE_FILES = {
     'mimetype': 'application/epub+zip',
     'META-INF/container.xml': CONTAINER_XML,
+
 }
 
 class MobiDocument(EpubDocument):
@@ -38,37 +40,41 @@ class MobiDocument(EpubDocument):
     format = "mobi"
     # Translators: the name of a document file format
     name = _("Mobi Book")
-    extensions = ("*.mobi", "*.azw3", "*.azw4")
+    extensions = ("*.mobi", "*.azw3",)
 
     def read(self):
         mobi_file_path = self.get_file_system_path()
-        epub_file_path = self.unpack_mobi_and_get_epub(mobi_file_path)
+        unpacked_file_path = self.unpack_mobi(mobi_file_path)
         raise ChangeDocument(
             old_uri=self.uri,
-            new_uri=DocumentUri.from_filename(epub_file_path),
+            new_uri=DocumentUri.from_filename(unpacked_file_path),
             reason="Unpacked the mobi file to epub",
         )
 
-    def unpack_mobi_and_get_epub(self, filename):
+    def unpack_mobi(self, filename):
+        storage_area = self.get_mobi_storage_area()
         hasher = md5()
         for chunk in open(filename, "rb"):
             hasher.update(chunk)
         filemd5 = hasher.hexdigest()
-        epub_filename = home_data_path(f"{filemd5}.epub")
-        if epub_filename.is_file():
-            return epub_filename
-        with TemporaryDirectory() as tempdir:
-            extraction_dir = os.path.join(tempdir, filemd5)
-            with mute_stdout():
-                KindleUnpack.unpackBook(str(filename), extraction_dir)
-            zip_dir = os.path.join(extraction_dir, 'mobi7')
-            if not os.path.isdir(zip_dir):
-                zip_dir = os.path.join(extraction_dir, 'mobi8')
-            for fname, content in EPUB_STRUCTURE_FILES.items():
-                file = Path(zip_dir, fname)
-                file.parent.mkdir(parents=True, exist_ok=True)
-                file.write_text(content)
-            ziparchive_filename = Path(shutil.make_archive(epub_filename, 'zip', zip_dir))
-            created_epub_filename = ziparchive_filename.with_suffix("")
-            ziparchive_filename.rename(created_epub_filename)
-            return created_epub_filename
+        for fname in storage_area.iterdir():
+            if fname.is_file() and (fname.stem == filemd5):
+                return str(fname)
+        tempdir, extracted_file = mobi.extract(str(filename))
+        filetype = Path(extracted_file).suffix.strip(".")
+        if filetype == 'html':
+            return self.create_epub_from_epub_like_structure(tempdir, storage_area.joinpath(f"{filemd5}.epub") 
+        dst_filename = storage_area.joinpath(f"{filemd5}.{filetype}")
+        shutil.copy(extracted_file, dst_filename)
+        return dst_filename
+
+    @classmethod
+    def get_mobi_storage_area(cls):
+        storage_area = home_data_path("unpacked_mobi")
+        if not storage_area.exists():
+            storage_area.mkdir(parents=True, exist_ok=True)
+        return storage_area
+
+    @classmethod
+    def create_epub_from_epub_like_structure(cls, src_folder, dst_file):
+        
