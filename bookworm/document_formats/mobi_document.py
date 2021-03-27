@@ -16,7 +16,6 @@ from bookworm.document_formats.base import (
     DocumentEncryptedError
 )
 from bookworm.logger import logger
-from.epub_document import EpubDocument
 
 
 log = logger.getChild(__name__)
@@ -34,12 +33,18 @@ EPUB_STRUCTURE_FILES = {
 
 }
 
-class MobiDocument(EpubDocument):
+class MobiDocument(BaseDocument):
 
     format = "mobi"
     # Translators: the name of a document file format
-    name = _("MobiPocket Book")
+    name = _("Kindle eBook")
     extensions = ("*.mobi", "*.azw3",)
+
+    def __len__(self):
+        raise NotImplementedError
+
+    def get_page(self, index):
+        raise NotImplementedError
 
     def read(self):
         mobi_file_path = self.get_file_system_path()
@@ -50,6 +55,9 @@ class MobiDocument(EpubDocument):
             reason="Unpacked the mobi file to epub",
         )
 
+    def close(self):
+        super().close()
+
     def unpack_mobi(self, filename):
         storage_area = self.get_mobi_storage_area()
         hasher = md5()
@@ -59,7 +67,8 @@ class MobiDocument(EpubDocument):
         for fname in storage_area.iterdir():
             if fname.is_file() and (fname.stem == filemd5):
                 return str(fname)
-        tempdir, extracted_file = mobi.extract(str(filename))
+        with mute_stdout():
+            tempdir, extracted_file = mobi.extract(str(filename))
         filetype = Path(extracted_file).suffix.strip(".")
         if filetype == 'html':
             return self.create_valid_epub_from_epub_like_structure(
@@ -68,6 +77,7 @@ class MobiDocument(EpubDocument):
             )
         dst_filename = storage_area.joinpath(f"{filemd5}.{filetype}")
         shutil.copy(extracted_file, dst_filename)
+        TemporaryDirectory._rmtree(tempdir)
         return dst_filename
 
     @classmethod
@@ -99,3 +109,11 @@ class MobiDocument(EpubDocument):
         created_epub_filename = ziparchive_filename.with_suffix("")
         ziparchive_filename.rename(created_epub_filename)
         return created_epub_filename
+
+    @property
+    def toc_tree(self):
+        raise NotImplementedError
+
+    @property
+    def metadata(self):
+        raise NotImplementedError
