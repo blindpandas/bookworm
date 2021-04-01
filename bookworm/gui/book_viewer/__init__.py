@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import wx
+from math import ceil
 from concurrent.futures import Future
 from functools import partial
 from pathlib import Path
@@ -11,6 +12,7 @@ from bookworm import speech
 from bookworm.concurrency import threaded_worker, CancellationToken
 from bookworm.resources import sounds, images
 from bookworm.paths import app_path
+from bookworm.structured_text import Style
 from bookworm.reader import (
     EBookReader,
     UriResolver,
@@ -30,6 +32,21 @@ from .navigation import NavigationProvider
 
 log = logger.getChild(__name__)
 
+# Style to wx TextCtrl Styles
+STYLE_TO_WX_TEXT_ATTR_STYLES = {
+    Style.BOLD: (wx.TextAttr.SetFontWeight, (wx.FONTWEIGHT_BOLD,)),
+    Style.ITALIC: (wx.TextAttr.SetFontStyle, (wx.FONTSTYLE_ITALIC,)),
+    Style.UNDERLINED: (wx.TextAttr.SetFontUnderlined, (True,)),
+    Style.STRIKETHROUGH: (wx.TextAttr.SetTextEffects, (wx.TEXT_ATTR_EFFECT_STRIKETHROUGH,)),
+    Style.SUPERSCRIPT: (wx.TextAttr.SetTextEffects, (wx.TEXT_ATTR_EFFECT_SUPERSCRIPT,)),
+    Style.SUBSCRIPT: (wx.TextAttr.SetTextEffects, (wx.TEXT_ATTR_EFFECT_SUBSCRIPT,)),
+    Style.MONOSPACED: (wx.TextAttr.SetBackgroundColour, (wx.BLACK,)),
+    Style.HIGHLIGHTED: (wx.TextAttr.SetBackgroundColour, (wx.YELLOW,)),
+    Style.DISPLAY_1: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 2.5)),
+    Style.DISPLAY_2: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.9)),
+    Style.DISPLAY_3: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.5)),
+    Style.DISPLAY_4: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.2)),
+}
 
 class ResourceLoader:
     """Loads a document into the view."""
@@ -244,6 +261,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.CenterOnScreen(wx.BOTH)
 
     def finalize_gui_creation(self):
+        self.set_content_view_font()
         self.add_tools()
         self.toolbar.Realize()
         # Process services menubar
@@ -253,6 +271,15 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self._set_menu_accelerators()
         # XXX sent explicitly to disable items upon startup
         reader_book_unloaded.send(self.reader)
+
+    def set_content_view_font(self):
+        finfo = wx.FontInfo(
+        ).FaceName(
+            config.conf["appearance"]["font_facename"]
+        )
+        configured_font = wx.Font(finfo)
+        configured_font.SetPointSize(config.conf["appearance"]["font_point_size"])
+        self.contentTextCtrl.SetFont(configured_font)
 
     def add_tools(self):
         tsize = (16, 16)
@@ -498,6 +525,18 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def set_insertion_point(self, to):
         self.contentTextCtrl.SetFocusFromKbd()
         self.contentTextCtrl.SetInsertionPoint(to)
+
+    def apply_text_styles(self, style_info):
+        default_style = self.contentTextCtrl.GetDefaultStyle()
+        available_styles = set(STYLE_TO_WX_TEXT_ATTR_STYLES).intersection(style_info)
+        for style_type in available_styles:
+            style = wx.TextAttr()
+            attr_func, args = STYLE_TO_WX_TEXT_ATTR_STYLES[style_type]
+            if callable(args):
+                args = (args(default_style),)
+            attr_func(style, *args)
+            for start, stop in style_info[style_type]:
+                self.contentTextCtrl.SetStyle(start, stop, style)
 
     def get_insertion_point(self):
         return self.contentTextCtrl.GetInsertionPoint()

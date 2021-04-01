@@ -318,13 +318,72 @@ class GeneralPanel(SettingsPanel):
             dlg.ShowModal()
 
 
+class AppearancePanel(SettingsPanel):
+    config_section = "appearance"
+
+    def __init__(self, *args, **kwargs):
+        self.font_enumerator = wx.FontEnumerator()
+        super().__init__(*args, **kwargs)
+
+    def addControls(self):
+        # Translators: the title of a group of controls in the
+        # appearance settings page related to the UI
+        UIBox = self.make_static_box(_("Text Styling"))
+        wx.CheckBox(
+            UIBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Apply text styling (when available)"),
+            name="appearance.apply_text_styles",
+        )
+        # Translators: the title of a group of controls in the
+        # appearance settings page related to the UI
+        fontBox = self.make_static_box(_("Font"))
+        # Translators: label of a combobox
+        wx.StaticText(fontBox, -1, _("Font Face"))
+        self.fontChoice = wx.Choice(
+            fontBox,
+            -1,
+            choices=self.get_available_fonts(),
+        )
+        # Translators: label of an edit box
+        wx.StaticText(fontBox, -1, _("Font Size"))
+        EnhancedSpinCtrl(
+            fontBox,
+            -1,
+            min=10,
+            max=96,
+            name="appearance.font_point_size"
+        )
+
+    def reconcile(self, strategy=ReconciliationStrategies.load):
+        if strategy is ReconciliationStrategies.load:
+            if (configured_fontface := self.config["font_facename"]) and self.font_enumerator.IsValidFacename(configured_fontface):
+                self.fontChoice.SetStringSelection(configured_fontface)
+            else:
+                self.fontChoice.SetSelection(0)
+        elif strategy is ReconciliationStrategies.save:
+            self.config["font_facename"] = self.fontChoice.GetStringSelection()
+        super().reconcile(strategy=strategy)
+        if strategy is ReconciliationStrategies.save:
+            wx.GetApp().mainFrame.set_content_view_font()
+
+    def get_available_fonts(self):
+        self.font_enumerator.EnumerateFacenames()
+        return tuple(filter(
+            lambda face: not face.startswith("@") and not face[0].isdigit(),
+            sorted(self.font_enumerator.GetFacenames())
+        ))
+
 class PreferencesDialog(SimpleDialog):
     """Preferences dialog."""
 
     def addPanels(self):
         page_info = [
             # Translators: the label of a page in the settings dialog
-            (0, "general", GeneralPanel, _("General"))
+            (0, "general", GeneralPanel, _("General")),
+            # Translators: the label of a page in the settings dialog
+            (1, "appearance", AppearancePanel, _("Appearance")),
         ]
         page_info.extend(wx.GetApp().service_handler.get_settings_panels())
         page_info.sort()

@@ -12,6 +12,7 @@ from bookworm.document_uri import DocumentUri
 from bookworm.document_formats import (
     BaseDocument,
     ChangeDocument,
+    DocumentCapability as DC,
     DocumentError,
     DocumentIOError,
     PaginationError,
@@ -206,6 +207,8 @@ class EBookReader:
         page = self.document[value]
         self.active_section = page.section
         self.view.set_state_on_page_change(page)
+        if config.conf["appearance"]["apply_text_styles"] and DC.TEXT_STYLE in self.document.capabilities:
+            self.view.apply_text_styles(page.get_style_info())
         reader_page_changed.send(self, current=page, prev=None)
 
     def get_current_page_object(self) -> BasePage:

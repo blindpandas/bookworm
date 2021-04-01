@@ -17,6 +17,10 @@ class DocumentCapability(IntFlag):
     """Does this document provide a table-of-content?"""
     METADATA = auto()
     """Does this document provide metadata about its author and pub date?"""
+    STRUCTURED_NAVIGATION = auto()
+    """Does this document provide symantic information about its content?"""
+    TEXT_STYLE = auto()
+    """Does this document provide style information about its content?"""
     GRAPHICAL_RENDERING = auto()
     """Does this document provide graphical rendition of its pages?"""
     FLUID_PAGINATION = auto()

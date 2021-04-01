@@ -238,6 +238,10 @@ class BasePage(metaclass=ABCMeta):
         """Return the page label string (commonly found on PDFs)."""
         return ""
 
+    def get_style_info(self):
+        """Return style information."""
+        raise NotImplementedError 
+
     def normalize_text(self, text):
         return remove_excess_blank_lines(text)
 

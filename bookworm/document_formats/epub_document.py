@@ -7,10 +7,10 @@ from tempfile import TemporaryDirectory
 from pathlib import Path, PurePosixPath
 from chemical import it
 from ebooklib.epub import read_epub
-from inscriptis import get_text
 from bs4 import BeautifulSoup
 from selectolax.parser import HTMLParser
 from bookworm.paths import home_data_path
+from bookworm.structured_text import TextStructureMetadata, StructuredInscriptis
 from bookworm.utils import recursively_iterdir
 from bookworm.document_formats.base import (
     BaseDocument,
@@ -33,13 +33,16 @@ log = logger.getChild(__name__)
 
 class EpubPage(BasePage):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.ziparchive = self.document.ziparchive
+    @cached_property
+    def structured_text_extractor(self):
+        html = self._get_html_with_href(self.section.data['href'])
+        return StructuredInscriptis.from_string(html)
 
     def get_text(self):
-        html = self._get_html_with_href(self.section.data['href'])
-        return self.normalize_text(get_text(html)).strip()
+        return self.structured_text_extractor.get_text()
+
+    def get_style_info(self) -> dict:
+        return self.structured_text_extractor.styled_elements
 
     def get_image(self, zoom_factor):
         raise NotImplementedError
@@ -56,7 +59,7 @@ class EpubPage(BasePage):
         filename = self._get_proper_filename(href.split("#")[0])
         split_anchors = self.document._split_section_anchor_ids[filename]
         self.document._split_section_content [filename] = {}
-        chapter_content = self.ziparchive.read(filename).decode("utf-8")
+        chapter_content = self.document.ziparchive.read(filename).decode("utf-8")
         soup = BeautifulSoup(chapter_content, 'lxml')
         for this_anchor in reversed(split_anchors):
             this_tag = soup.find(
@@ -91,7 +94,7 @@ class EpubPage(BasePage):
     def _get_html_with_href(self, href):
         if (filename := self._get_proper_filename(href)):
             if href not in self.document._split_section_anchor_ids:
-                return self.ziparchive.read(filename).decode("utf-8")
+                return self.document.ziparchive.read(filename).decode("utf-8")
             else:
                 return self._get_split_section_text(href)
         elif (filename is None) and ("#" in href):
@@ -106,7 +109,7 @@ class EpubDocument(BaseDocument):
     # Translators: the name of a document file format
     name = _("Electronic Publication (EPUB)")
     extensions = ("*.epub",)
-    capabilities = DC.TOC_TREE | DC.METADATA
+    capabilities = DC.TOC_TREE | DC.METADATA | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE
 
     def __len__(self):
         return self.toc_tree.pager.last + 1
