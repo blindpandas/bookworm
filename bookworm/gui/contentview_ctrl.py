@@ -6,12 +6,14 @@ from collections.abc import Container
 from dataclasses import dataclass
 from itertools import chain
 import bookworm.typehints as t
+from bookworm.structured_text import SemanticElementType
 from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
 ContextMenuEvent, EVT_CONTEXTMENU_REQUESTED = wx.lib.newevent.NewCommandEvent()
 ContentNavigationEvent, EVT_CONTENT_NAVIGATION = wx.lib.newevent.NewEvent()
+StructuredNavigationEvent, EVT_STRUCTURED_NAVIGATION = wx.lib.newevent.NewEvent()
 NAV_FOREWORD_KEYS = {
     wx.WXK_SPACE,
     wx.WXK_RETURN,
@@ -21,7 +23,16 @@ NAV_BACKWORD_KEYS = {
     wx.WXK_BACK,
 }
 NAVIGATION_KEYS = NAV_FOREWORD_KEYS.union(NAV_BACKWORD_KEYS)
-
+SEMANTIC_MAP = {
+    "H": SemanticElementType.HEADING,
+    "K": SemanticElementType.LINK,
+    "L": SemanticElementType.LIST,
+    "T": SemanticElementType.TABLE,
+    "C": SemanticElementType.CODE_BLOCK,
+    "Q": SemanticElementType.QUOTE,
+}
+SEMANTIC_KEY_MAP = {ord(k): v for k, v in SEMANTIC_MAP.items()}
+    
 
 @dataclass
 class SelectionRange(Container):
@@ -80,5 +91,15 @@ class ContentViewCtrl(wx.TextCtrl):
         ):
             if evtType == wx.EVT_CHAR_HOOK.typeId:
                 wx.QueueEvent(self, ContentNavigationEvent(KeyCode=event.GetKeyCode()))
+            return True
+        elif (
+            evtType == wx.EVT_CHAR_HOOK.typeId
+            and (keycode := event.GetKeyCode()) in SEMANTIC_KEY_MAP
+            and not event.ControlDown()
+        ):
+            wx.QueueEvent(self, StructuredNavigationEvent(
+                SemanticElementType=SEMANTIC_KEY_MAP[keycode],
+                Forward=not event.ShiftDown()
+            ))
             return True
         return super().TryBefore(event)

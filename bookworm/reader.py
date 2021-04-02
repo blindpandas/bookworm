@@ -24,6 +24,7 @@ from bookworm.signals import (
     reader_page_changed,
     reader_section_changed,
 )
+from bookworm.structured_text import TextStructureMetadata
 from bookworm.logger import logger
 
 
@@ -213,7 +214,7 @@ class EBookReader:
 
     def get_current_page_object(self) -> BasePage:
         """Return the current page."""
-        return self.document[self.current_page]
+        return self.document.get_page(self.current_page)
 
     def go_to_page(self, page_number: int, pos: int = 0) -> bool:
         self.current_page = page_number
@@ -280,6 +281,44 @@ class EBookReader:
     def go_to_last_of_section(self, section: Section = None):
         section = section or self.active_section
         self.current_page = section.pager.last
+
+    @staticmethod
+    def _get_semantic_element_from_page(page, element_type, forward, anchor):
+        semantics = TextStructureMetadata(page.get_semantic_structure())
+        pos_getter = semantics.get_next_element_pos if forward else semantics.get_prev_element_pos
+        return pos_getter(element_type, anchor=anchor)
+
+    def get_semantic_element(self, element_type, forward):
+        if DC.STRUCTURED_NAVIGATION not in self.document.capabilities:
+            return
+        pos = self._get_semantic_element_from_page(
+            self.get_current_page_object(),
+            element_type,
+            forward,
+            self.view.get_insertion_point()
+        )
+        if pos is not None:
+            return pos
+        else:
+            return
+        # XXX: This is disabled for now
+        if forward:
+            page_range = range(self.current_page + 1, len(self.document))
+        else:
+            prev = (self.current_page - 1) if (self.current_page != 0) else 0
+            page_range = range(prev, -1, -1)
+        for page_index in page_range:
+            page = self.document.get_page(page_index)
+            if element_type in page.get_semantic_structure():
+                initial_insertion_point = 0 if forward else len(page.get_text())
+                with self.view.mute_page_and_section_speech():
+                    self.go_to_page(page_index, initial_insertion_point)
+                return self._get_semantic_element_from_page(
+                    page,
+                    element_type,
+                    forward,
+                    anchor=initial_insertion_point
+                )
 
     def get_view_title(self, include_author=False):
         if config.conf["general"]["show_file_name_as_title"]:

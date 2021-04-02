@@ -7,6 +7,7 @@ from bookworm.document_formats import PaginationError
 from bookworm.signals import reader_page_changed
 from bookworm.gui.contentview_ctrl import (
     EVT_CONTENT_NAVIGATION,
+    EVT_STRUCTURED_NAVIGATION,
     NAVIGATION_KEYS,
     NAV_FOREWORD_KEYS,
     NAV_BACKWORD_KEYS,
@@ -22,17 +23,19 @@ DKEY_TIMEOUT = 0.75
 class NavigationProvider:
     """Implements keyboard navigation for viewer controls."""
 
-    def __init__(self, ctrl, reader, callback_func=None, zoom_callback=None):
+    def __init__(self, ctrl, reader, callback_func=None, zoom_callback=None, view=None):
         self._nav_ctrl = ctrl
         self.reader = reader
         self.callback_func = callback_func
         self.zoom_callback = zoom_callback
+        self.view = view
         self._key_press_record = {}
         if self.zoom_callback:
             self.zoom_keymap = {ord("0"): 0, ord("="): 1, ord("-"): -1}
         ctrl.Bind(wx.EVT_KEY_UP, self.onKeyUp, ctrl)
         if isinstance(ctrl, wx.TextCtrl):
             ctrl.Bind(EVT_CONTENT_NAVIGATION, self.onTextCtrlNavigate)
+            ctrl.Bind(EVT_STRUCTURED_NAVIGATION, self.onStructuredNavigation)
         reader_page_changed.connect(self._reset_up_arrow_pressed_time, weak=False)
 
     def callback(self):
@@ -118,6 +121,12 @@ class NavigationProvider:
             if (last_press is not None) and (now - last_press) <= DKEY_TIMEOUT:
                 self.reader.go_to_next()
             self._key_press_record[key_code] = now
+
+    def onStructuredNavigation(self, event):
+        self.view.navigate_to_structural_element(
+            element_type=event.SemanticElementType,
+            forward=event.Forward
+        )
 
     def _reset_up_arrow_pressed_time(self, sender, current, prev):
         self._key_press_record.clear()

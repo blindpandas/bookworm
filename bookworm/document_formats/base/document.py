@@ -3,8 +3,7 @@
 import gc
 from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
-from functools import cached_property, wraps
-from lru import LRU
+from functools import lru_cache, cached_property, wraps
 from pycld2 import detect as detect_language, error as CLD2Error
 from pathlib import Path
 from bookworm import typehints as t
@@ -56,14 +55,9 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def __contains__(self, value: int):
         return -1 < value < len(self)
 
+    @lru_cache(maxsize=1000)
     def __getitem__(self, index: int) -> "BasePage":
-        if index not in self:
-            raise PaginationError(f"Page {index} is out of range.")
-        if index in self._page_cache:
-            return self._page_cache[index]
-        page = self.get_page(index)
-        self._page_cache[index] = page
-        return page
+        return self.get_page(index)
 
     def __getstate__(self) -> dict:
         """Support for pickling."""
@@ -94,18 +88,12 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         Perform the actual IO operations for loading the ebook.
         Subclasses should call super to ensure the standard behavior.
         """
-        self._page_cache = LRU(PAGE_CACHE_CAPACITY)
-        self._page_content_cache = LRU(PAGE_CACHE_CAPACITY)
-        # XXX Is this a pre-mature optimization?
-        call_threaded(lambda: self.language)
 
     @abstractmethod
     def close(self):
         """Perform the actual IO operations for unloading the ebook.
         Subclasses should call super to ensure the standard behavior.
         """
-        self._page_cache.clear()
-        self._page_content_cache.clear()
         gc.collect()
 
     @abstractmethod
@@ -150,14 +138,10 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def metadata(self) -> BookMetadata:
         """Return a `BookMetadata` object holding info about this book."""
 
+    @lru_cache(maxsize=1000)
     def get_page_content(self, page_number: int) -> str:
         """Convenience method: return the text content of a page."""
-        _cached = self._page_content_cache.get(page_number)
-        if _cached is not None:
-            return _cached
-        content = self[page_number].get_text()
-        self._page_content_cache[page_number] = content
-        return content
+        return self[page_number].get_text()
 
     def get_page_image(self, page_number: int, zoom_factor: float = 1.0) -> ImageIO:
         """Convenience method: return the image of a page."""

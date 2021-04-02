@@ -28,16 +28,26 @@ class Style(IntEnum):
     DISPLAY_4 = auto()
 
 
-class SymanticElementType(IntEnum):
-    PARAGRAPH = auto()
+class SemanticElementType(IntEnum):
     HEADING = auto()
+    LINK = auto()
     LIST = auto()
-    LIST_ITEM = auto()
     CODE_BLOCK = auto()
     QUOTE = auto()
     TABLE = auto()
     FIGURE = auto()
 
+
+# Maps semantic element types to (label, should_speak_whole_text)
+SEMANTIC_ELEMENT_OUTPUT_OPTIONS = {
+    SemanticElementType.HEADING: (_("Heading"), True),
+    SemanticElementType.LINK: (_("Link"), True),
+    SemanticElementType.LIST: (_("LIST"), False),
+    SemanticElementType.CODE_BLOCK: (_("Code Block"), False),
+    SemanticElementType.QUOTE: (_("Quote"), False),
+    SemanticElementType.TABLE: (_("Table"), False),
+    SemanticElementType.FIGURE: (_("Image"), False),
+}
 
 @dataclass
 class TextStructureMetadata:
@@ -49,16 +59,16 @@ class TextStructureMetadata:
             yield rngs
 
     def get_next_element_pos(self, element_type, anchor=0):
-        element_ranges = self.element_map.get(element_type, ())
-        try:
-            return it(element_ranges).find(lambda r: r[0] > anchor)
-        except ChemicalException:
+        if not (element_ranges := self.element_map.get(element_type, ())):
             return
+        for start, stop in element_ranges:
+            if start > anchor:
+                return start, stop
 
     def get_prev_element_pos(self, element_type, anchor=0):
-        element_ranges = self.element_map.get(element_type, ())
-        try:
-            return it(element_ranges).map(lambda r: range(*r)).find(lambda r: (anchor not in r) and (r.start < anchor))
-        except ChemicalException:
+        if not (element_ranges := self.element_map.get(element_type, ())):
             return
-
+        element_ranges.reverse()
+        for start, stop in element_ranges:
+            if (start < anchor) and not (start <= anchor <= stop):
+                return start, stop

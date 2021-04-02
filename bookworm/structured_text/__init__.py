@@ -1,8 +1,9 @@
 # coding: utf-8
 
-from .symantic_element import (
+from .structure import (
     Style,
-    SymanticElementType,
+    SemanticElementType,
     TextStructureMetadata,
+    SEMANTIC_ELEMENT_OUTPUT_OPTIONS,
 )
 from .hyper_text_markup import StructuredInscriptis

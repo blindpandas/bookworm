@@ -2,6 +2,7 @@
 
 import wx
 from math import ceil
+from contextlib import contextmanager
 from concurrent.futures import Future
 from functools import partial
 from pathlib import Path
@@ -12,7 +13,7 @@ from bookworm import speech
 from bookworm.concurrency import threaded_worker, CancellationToken
 from bookworm.resources import sounds, images
 from bookworm.paths import app_path
-from bookworm.structured_text import Style
+from bookworm.structured_text import Style, SEMANTIC_ELEMENT_OUTPUT_OPTIONS
 from bookworm.reader import (
     EBookReader,
     UriResolver,
@@ -36,15 +37,15 @@ log = logger.getChild(__name__)
 STYLE_TO_WX_TEXT_ATTR_STYLES = {
     Style.BOLD: (wx.TextAttr.SetFontWeight, (wx.FONTWEIGHT_BOLD,)),
     Style.ITALIC: (wx.TextAttr.SetFontStyle, (wx.FONTSTYLE_ITALIC,)),
+    Style.MONOSPACED: (wx.TextAttr.SetFontStyle, (wx.FONTSTYLE_ITALIC,)),
     Style.UNDERLINED: (wx.TextAttr.SetFontUnderlined, (True,)),
     Style.STRIKETHROUGH: (wx.TextAttr.SetTextEffects, (wx.TEXT_ATTR_EFFECT_STRIKETHROUGH,)),
     Style.SUPERSCRIPT: (wx.TextAttr.SetTextEffects, (wx.TEXT_ATTR_EFFECT_SUPERSCRIPT,)),
     Style.SUBSCRIPT: (wx.TextAttr.SetTextEffects, (wx.TEXT_ATTR_EFFECT_SUBSCRIPT,)),
-    Style.MONOSPACED: (wx.TextAttr.SetBackgroundColour, (wx.BLACK,)),
     Style.HIGHLIGHTED: (wx.TextAttr.SetBackgroundColour, (wx.YELLOW,)),
-    Style.DISPLAY_1: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 2.5)),
-    Style.DISPLAY_2: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.9)),
-    Style.DISPLAY_3: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.5)),
+    Style.DISPLAY_1: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.7)),
+    Style.DISPLAY_2: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.5)),
+    Style.DISPLAY_3: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.3)),
     Style.DISPLAY_4: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.2)),
 }
 
@@ -184,6 +185,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             ctrl=self.contentTextCtrl,
             reader=self.reader,
             zoom_callback=self.onTextCtrlZoom,
+            view=self,
         )
 
         # A timer to save the current position to the database
@@ -261,7 +263,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.CenterOnScreen(wx.BOTH)
 
     def finalize_gui_creation(self):
-        self.set_content_view_font()
+        #self.set_content_view_font()
         self.add_tools()
         self.toolbar.Realize()
         # Process services menubar
@@ -279,7 +281,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         )
         configured_font = wx.Font(finfo)
         configured_font.SetPointSize(config.conf["appearance"]["font_point_size"])
-        self.contentTextCtrl.SetFont(configured_font)
+        default_style = wx.TextAttr()
+        default_style.SetFont(configured_font)
+        self.contentTextCtrl.SetDefaultStyle(default_style)
 
     def add_tools(self):
         tsize = (16, 16)
@@ -398,6 +402,38 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                     page=page.number, total=len(self.reader.document)
                 )
                 speech.announce(spoken_msg)
+
+    @contextmanager
+    def mute_page_and_section_speech(self):
+        opsc = config.conf["general"]["speak_page_number"]
+        ossc = config.conf["general"]["speak_section_title"]
+        config.conf["general"]["speak_page_number"] = False
+        config.conf["general"]["speak_section_title"] = False
+        try:
+            yield
+        finally:
+            config.conf["general"]["speak_page_number"] = opsc
+            config.conf["general"]["speak_section_title"] = ossc
+
+    def navigate_to_structural_element(self, element_type, forward):
+        element_label, should_speak_whole_text = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[element_type]
+        pos = self.reader.get_semantic_element(element_type, forward)
+        if pos is not None:
+            start, stop = pos
+            line_start, line_stop = self.get_containing_line(start + 1)
+            tstart, tstop = (start, stop) if should_speak_whole_text else (line_start, line_stop)
+            text = self.contentTextCtrl.GetRange(tstart, tstop)
+            msg = _("{item}: {text}").format(text=text, item=_(element_label))
+            target_position = self.get_containing_line(tstart + 1)[0]
+            self.set_insertion_point(target_position)
+            sounds.structured_navigation.play()
+            speech.announce(msg)
+        else:
+            if forward:
+                msg = _("No next {item}")
+            else:
+                msg = _("No previous {item}")
+            speech.announce(msg.format(item=element_label))
 
     def set_state_on_section_change(self, current):
         self.tocTreeSetSelection(current)
