@@ -171,7 +171,8 @@ class AnnotationService(BookwormService):
             return
         start, end = view.get_containing_line(position)
         if config.conf["annotation"]["use_visuals"]:
-            attr = wx.TextAttr(view.contentTextCtrl.GetDefaultStyle())
+            attr = wx.TextAttr()
+            view.contentTextCtrl.GetStyle(start, attr)
             attr.SetFontUnderlined(enable)
             view.contentTextCtrl.SetStyle(start, end, attr)
 

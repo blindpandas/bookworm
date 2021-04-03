@@ -3,8 +3,8 @@
 from .document import (
     BaseDocument,
     BasePage,
-    FluidDocument,
-    FluidPage,
+    SinglePageDocument,
+    SinglePage,
 )
 from .elements import (
     Section,

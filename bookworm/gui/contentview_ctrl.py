@@ -23,14 +23,23 @@ NAV_BACKWORD_KEYS = {
     wx.WXK_BACK,
 }
 NAVIGATION_KEYS = NAV_FOREWORD_KEYS.union(NAV_BACKWORD_KEYS)
+HEADING_LEVEL_KEY_MAP = {
+    "1": SemanticElementType.HEADING_1,
+    "2": SemanticElementType.HEADING_2,
+    "3": SemanticElementType.HEADING_3,
+    "4": SemanticElementType.HEADING_4,
+    "5": SemanticElementType.HEADING_5,
+    "6": SemanticElementType.HEADING_6,
+}
 SEMANTIC_MAP = {
     "H": SemanticElementType.HEADING,
-    "K": SemanticElementType.LINK,
+    #"K": SemanticElementType.LINK,
     "L": SemanticElementType.LIST,
     "T": SemanticElementType.TABLE,
-    "C": SemanticElementType.CODE_BLOCK,
+    # "C": SemanticElementType.CODE_BLOCK,
     "Q": SemanticElementType.QUOTE,
 }
+SEMANTIC_MAP |= HEADING_LEVEL_KEY_MAP
 SEMANTIC_KEY_MAP = {ord(k): v for k, v in SEMANTIC_MAP.items()}
     
 

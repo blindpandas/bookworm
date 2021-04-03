@@ -9,6 +9,7 @@ from pathlib import Path
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
 from bookworm.concurrency import QueueProcess, call_threaded
+from bookworm.structured_text import SemanticElementType, Style
 from bookworm.image_io import ImageIO
 from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
 from bookworm.logger import logger
@@ -157,15 +158,15 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def should_read_async(cls):
         return DocumentCapability.ASYNC_READ in cls.capabilities
 
-    @property
-    def is_fluid(self):
-        return DocumentCapability.FLUID_PAGINATION in self.capabilities
+    @classmethod
+    def is_single_page_document(self):
+        return DocumentCapability.SINGLE_PAGE in self.capabilities
 
-    @property
+    @classmethod
     def has_toc_tree(self):
         return DocumentCapability.TOC_TREE in self.capabilities
 
-    @property
+    @classmethod
     def can_render_pages(self):
         return DocumentCapability.GRAPHICAL_RENDERING in self.capabilities
 
@@ -211,19 +212,23 @@ class BasePage(metaclass=ABCMeta):
     def get_text(self) -> str:
         """Return the text content or raise NotImplementedError."""
 
-    @abstractmethod
     def get_image(self, zoom_factor: float) -> ImageIO:
         """
         Return page image as `ImageIO`
         or raise NotImplementedError.
         """
+        raise NotImplementedError 
 
     def get_label(self) -> str:
         """Return the page label string (commonly found on PDFs)."""
         return ""
 
-    def get_style_info(self):
-        """Return style information."""
+    def get_semantic_structure(self) -> dict[SemanticElementType, list[tuple[int, int]]]:
+        """Return information about the position of semantic elements."""
+        raise NotImplementedError 
+
+    def get_style_info(self) -> dict[SemanticElementType, list[tuple[int, int]]]:
+        """Return information about the position of styled elements."""
         raise NotImplementedError 
 
     def normalize_text(self, text):
@@ -259,25 +264,34 @@ class BasePage(metaclass=ABCMeta):
         return NotImplemented
 
 
-class FluidPage(BasePage):
-    """Emulates a page for a fluid document."""
+class SinglePage(BasePage):
+    """Emulates a page for a single page document."""
 
     def get_text(self):
         return self.document.get_content()
 
-    def get_image(self, zoom_factor=1.0) -> ImageIO:
-        raise NotImplementedError
+    def get_semantic_structure(self):
+        return self.document.get_document_semantic_structure()
+
+    def get_style_info(self):
+        return self.document.get_document_style_info()
 
 
-class FluidDocument(BaseDocument):
-    """Provides sain defaults for fluid documents."""
+class SinglePageDocument(BaseDocument):
+    """Provides sain defaults for single page documents."""
 
     def __len__(self):
         return 1
 
-    def get_page(self, index: int) -> FluidPage:
-        return FluidPage(self, index)
+    def get_page(self, index: int) -> SinglePage:
+        return SinglePage(self, index)
 
     @abstractmethod
     def get_content(self) -> str:
         """Get the content of this document."""
+
+    def get_document_semantic_structure(self):
+        raise NotImplementedError
+
+    def get_document_style_info(self):
+        raise NotImplementedError

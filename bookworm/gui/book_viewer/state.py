@@ -20,7 +20,7 @@ class StateProvider:
 
     def on_reader_load_unload(self, sender):
         enable = sender.ready
-        enable_tree = enable and sender.document.has_toc_tree
+        enable_tree = enable and sender.document.has_toc_tree()
         self.tocTreeCtrl.Enable(enable_tree)
         focus_ctrl = self.tocTreeCtrl if enable_tree else self.contentTextCtrl
         focus_ctrl.SetFocus()

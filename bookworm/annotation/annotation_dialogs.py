@@ -171,7 +171,7 @@ class BookmarksViewer(SimpleDialog):
                 lambda bk: bk.page_number + 1,
             ),
         ]
-        if self.reader.document.has_toc_tree:
+        if self.reader.document.has_toc_tree():
             # Translators: the title of a column in the bookmarks list
             column_defn.append(ColumnDefn(_("Section"), "left", 250, "section_title"))
         self.annotationsListCtrl.set_columns(column_defn)

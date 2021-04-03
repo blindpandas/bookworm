@@ -5,7 +5,7 @@ import regex
 from functools import cached_property
 from io import StringIO
 from bookworm.document_formats.base import (
-    FluidDocument,
+    SinglePageDocument,
     Section,
     Pager,
     BookMetadata,
@@ -19,14 +19,14 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-class PlainTextDocument(FluidDocument):
+class PlainTextDocument(SinglePageDocument):
     """For plain text files"""
 
     format = "txt"
     # Translators: the name of a document file format
     name = _("Plain Text File")
     extensions = ("*.txt",)
-    capabilities = DC.FLUID_PAGINATION
+    capabilities = DC.SINGLE_PAGE
 
     def read(self):
         self.filename = self.get_file_system_path()

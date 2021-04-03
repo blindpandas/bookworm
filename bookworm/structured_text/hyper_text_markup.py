@@ -21,20 +21,26 @@ InscriptisConfig = ParserConfig(
 )
 
 SEMANTIC_HTML_ELEMENTS = {
-    SemanticElementType.HEADING: {f"h{l}" for l in range(1, 7)},
+    #SemanticElementType.HEADING: {f"h{l}" for l in range(1, 7)},
+    SemanticElementType.HEADING_1: {"h1",},
+    SemanticElementType.HEADING_2: {"h2",},
+    SemanticElementType.HEADING_3: {"h3",},
+    SemanticElementType.HEADING_4: {"h4",},
+    SemanticElementType.HEADING_5: {"h5",},
+    SemanticElementType.HEADING_6: {"h6",},
     SemanticElementType.LIST: {"ol", "ul",},
     # SemanticElementType.LINK: {"a",},
     SemanticElementType.QUOTE: {"blockquote", "q",},
-    SemanticElementType.CODE_BLOCK: {"code",},
+    #SemanticElementType.CODE_BLOCK: {"code",},
     SemanticElementType.TABLE: {"table",},
 }
 
 STYLE_HTML_ELEMENTS = {
-    Style.BOLD: {"b", "strong", "emph",},
-    Style.ITALIC: {"i", "small",},
-    Style.UNDERLINED: {"u",},
-    Style.STRIKETHROUGH: {"del", "strike", "s"},
-    Style.HIGHLIGHTED: {"mark",},
+    # Style.BOLD: {"b", "strong", "emph",},
+    # Style.ITALIC: {"i", "small",},
+    # Style.UNDERLINED: {"u",},
+    # Style.STRIKETHROUGH: {"del", "strike", "s"},
+    # Style.HIGHLIGHTED: {"mark",},
     #Style.MONOSPACED: {"output", "samp", "kbd", "var"},
     # Style.SUPERSCRIPT: {"sup",},
     # Style.SUBSCRIPT: {"sub",},

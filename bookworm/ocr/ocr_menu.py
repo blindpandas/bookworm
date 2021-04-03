@@ -370,7 +370,7 @@ class OCRMenu(wx.Menu):
         return True
 
     def _on_reader_loaded(self, sender):
-        can_render = sender.document.can_render_pages
+        can_render = sender.document.can_render_pages()
         for item_id in OCRMenuIds:
             self.Enable(item_id, can_render)
 

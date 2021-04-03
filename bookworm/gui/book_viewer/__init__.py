@@ -374,13 +374,29 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def clear_toc_tree(self):
         self.toc_tree_manager.clear_tree()
 
+    def set_state_on_section_change(self, current):
+        self.tocTreeSetSelection(current)
+        if config.conf["general"]["speak_section_title"]:
+            speech.announce(current.title)
+
+    def onUserPositionTimerTick(self, event):
+        try:
+            threaded_worker.submit(self.reader.save_current_position)
+        except:
+            log.exception("Failed to save current position", exc_info=True)
+
+    def onTOCItemClick(self, event):
+        selectedItem = event.GetItem()
+        self.reader.active_section = self.tocTreeCtrl.GetItemData(selectedItem)
+        self.reader.go_to_first_of_section()
+
     def set_state_on_page_change(self, page):
         self.set_content(page.get_text())
         if config.conf["general"]["play_pagination_sound"]:
             sounds.pagination.play()
-        if self.reader.document.is_fluid:
+        if self.reader.document.is_single_page_document():
             # Translators: label of content text control when the currently opened
-            # document is fluid (does not support paging)
+            # document is a single page document
             self.set_status(_("Document content"))
         else:
             # Translators: the label of the page content text area
@@ -416,10 +432,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             config.conf["general"]["speak_section_title"] = ossc
 
     def navigate_to_structural_element(self, element_type, forward):
-        element_label, should_speak_whole_text = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[element_type]
         pos = self.reader.get_semantic_element(element_type, forward)
         if pos is not None:
-            start, stop = pos
+            ((start, stop), actual_element_type) = pos
+            element_label, should_speak_whole_text = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[actual_element_type]
             line_start, line_stop = self.get_containing_line(start + 1)
             tstart, tstop = (start, stop) if should_speak_whole_text else (line_start, line_stop)
             text = self.contentTextCtrl.GetRange(tstart, tstop)
@@ -429,27 +445,12 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             sounds.structured_navigation.play()
             speech.announce(msg)
         else:
+            element_label = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[element_type][0]
             if forward:
                 msg = _("No next {item}")
             else:
                 msg = _("No previous {item}")
             speech.announce(msg.format(item=element_label))
-
-    def set_state_on_section_change(self, current):
-        self.tocTreeSetSelection(current)
-        if config.conf["general"]["speak_section_title"]:
-            speech.announce(current.title)
-
-    def onUserPositionTimerTick(self, event):
-        try:
-            threaded_worker.submit(self.reader.save_current_position)
-        except:
-            log.exception("Failed to save current position", exc_info=True)
-
-    def onTOCItemClick(self, event):
-        selectedItem = event.GetItem()
-        self.reader.active_section = self.tocTreeCtrl.GetItemData(selectedItem)
-        self.reader.go_to_first_of_section()
 
     def onTextCtrlZoom(self, direction):
         self._has_text_zoom = True
@@ -481,7 +482,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def _get_text_view_margins(self):
         # XXX need to do some work here to obtain appropriate margins
-        return wx.Point(100, 100)
+        return wx.Point(75, 75)
 
     def try_decrypt_document(self, document):
         if not document.is_encrypted():
@@ -497,7 +498,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             # Translators: the title of a dialog asking the user to enter a password to decrypt the e-book
             _("Enter Password"),
             parent=self,
-        ).strip()
+        )
         if not password:
             return False
         result = document.decrypt(password)
@@ -520,15 +521,23 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def highlight_range(
         self, start, end, foreground=wx.NullColour, background=wx.NullColour
     ):
-        self.contentTextCtrl.SetStyle(start, end, wx.TextAttr(foreground, background))
+        line_start = self.get_containing_line(start)[0]
+        attr = wx.TextAttr()
+        self.contentTextCtrl.GetStyle(line_start, attr)
+        attr.SetBackgroundColour(wx.YELLOW)
+        self.contentTextCtrl.SetStyle(start, end, attr)
 
     def clear_highlight(self, start=0, end=-1):
         textCtrl = self.contentTextCtrl
-        end = textCtrl.LastPosition if end < 0 else end
+        end = end if end >= 0 else textCtrl.LastPosition 
+        attr = wx.TextAttr()
+        textCtrl.GetStyle(self.get_containing_line(start)[0], attr)
+        attr.SetBackgroundColour(textCtrl.BackgroundColour)
+        attr.SetTextColour(textCtrl.ForegroundColour)
         textCtrl.SetStyle(
             start,
             end,
-            wx.TextAttr(textCtrl.ForegroundColour, textCtrl.BackgroundColour),
+            attr,
         )
 
     def get_selection_range(self):

@@ -49,7 +49,7 @@ class SearchResultsDialog(Dialog):
             format=wx.LIST_FORMAT_CENTER,
             width=50,
         )
-        if self.reader.document.has_toc_tree:
+        if self.reader.document.has_toc_tree():
             self.searchResultsListCtrl.AppendColumn(
                 # Translators: the title of a column in the search results list
                 # showing the title of the chapter in which this occurrence was found
@@ -84,7 +84,7 @@ class SearchResultsDialog(Dialog):
         if idx != wx.NOT_FOUND:
             page = (
                 self.searchResultsListCtrl.GetItemText(idx)
-                if not self.reader.document.is_fluid
+                if not self.reader.document.is_single_page_document()
                 else 1
             )
             pos = self.searchResultsListCtrl.GetItemData(idx)
@@ -107,11 +107,11 @@ class SearchResultsDialog(Dialog):
     def addResultToList(self, result):
         count = self.searchResultsListCtrl.ItemCount
         page_display_text = (
-            str(result.page + 1) if not self.reader.document.is_fluid else ""
+            str(result.page + 1) if not self.reader.document.is_single_page_document() else ""
         )
         index = self.searchResultsListCtrl.InsertItem(count, page_display_text)
         self.searchResultsListCtrl.SetItem(index, 1, result.excerpt)
-        if self.reader.document.has_toc_tree:
+        if self.reader.document.has_toc_tree():
             self.searchResultsListCtrl.SetItem(index, 2, result.section)
         self.searchResultsListCtrl.SetItemData(index, result.position)
 

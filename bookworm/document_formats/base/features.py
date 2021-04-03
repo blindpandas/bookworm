@@ -23,8 +23,8 @@ class DocumentCapability(IntFlag):
     """Does this document provide style information about its content?"""
     GRAPHICAL_RENDERING = auto()
     """Does this document provide graphical rendition of its pages?"""
-    FLUID_PAGINATION = auto()
-    """Does this document supports the notion of pages?"""
+    SINGLE_PAGE = auto()
+    """Is this a single page document."""
     IMAGE_EXTRACTION = auto()
     """Does this document supports extracting images out of pages?"""
     PAGE_LABELS = auto()

@@ -187,7 +187,7 @@ class EBookReader:
         ):
             return
         self.__state["active_section"] = value
-        if self.document.has_toc_tree:
+        if self.document.has_toc_tree():
             self.view.set_state_on_section_change(value)
         reader_section_changed.send(self, active=value)
 

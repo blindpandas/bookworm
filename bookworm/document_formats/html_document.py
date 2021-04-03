@@ -13,8 +13,7 @@ from trafilatura.external import custom_justext, JT_STOPLIST
 from bookworm.paths import home_data_path
 from bookworm.http_tools import HttpResource
 from bookworm.document_formats.base import (
-    BasePage,
-    FluidDocument,
+    SinglePageDocument,
     Section,
     Pager,
     BookMetadata,
@@ -26,6 +25,12 @@ from bookworm.document_formats.base import (
     TreeStackBuilder,
 )
 from bookworm.utils import NEWLINE
+from bookworm.structured_text import (
+    StructuredInscriptis,
+    SemanticElementType,
+    Style,
+    HEADING_LEVELS
+)
 from bookworm.logger import logger
 
 
@@ -34,37 +39,11 @@ log = logger.getChild(__name__)
 EXPIRE_TIMEOUT  = 7 * 24 * 60 * 60
 
 
-class HtmlPage(BasePage):
-    """Emulates a page for a fluid document."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.sections = self.document._sections
-
-    def get_text(self):
-        section = self.sections[self.index]
-        start_pos = section.position
-        end_pos = (
-            self.sections[self.index + 1].position
-            if (self.index + 1) < len(self.sections)
-            else -1
-        )
-        self.document.text_buffer.seek(start_pos)
-        if end_pos == -1:
-            text = self.document.text_buffer.read()
-        else:
-            text = self.document.text_buffer.read(end_pos - start_pos)
-        text = "\n".join(it(text.split("\n")).filter(lambda line: line.strip()))
-        return self.normalize_text(text)
-
-    def get_image(self, zoom_factor=1.0):
-        raise NotImplementedError
-
-
-class BaseHtmlDocument(FluidDocument):
+class BaseHtmlDocument(SinglePageDocument):
     """For html documents."""
 
-    capabilities = DC.TOC_TREE | DC.METADATA
+    capabilities = DC.TOC_TREE | DC.METADATA | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE
+
     supported_reading_modes = (
         ReadingMode.DEFAULT,
         ReadingMode.CLEAN_VIEW,
@@ -78,14 +57,14 @@ class BaseHtmlDocument(FluidDocument):
         """Support for pickling."""
         return super().__getstate__() | dict(html_string=self.html_string)
 
-    def get_page(self, index: int) -> HtmlPage:
-        return HtmlPage(self, index)
-
     def read(self):
         super().read()
         self.text_buffer = StringIO()
+        self._text = None
         self._outline = None
         self._metainfo = None
+        self._semantic_structure = {}
+        self._style_info = {}
         try:
             self.html_string = self.get_html()
         except Exception as e:
@@ -102,7 +81,13 @@ class BaseHtmlDocument(FluidDocument):
             self.parse_html(html)
 
     def get_content(self):
-        return self.text_buffer.getvalue().strip()
+        return self._text
+
+    def get_document_semantic_structure(self):
+        return self._semantic_structure
+
+    def get_document_style_info(self):
+        return self._style_info
 
     def close(self):
         super().close()
@@ -155,20 +140,30 @@ class BaseHtmlDocument(FluidDocument):
         )
 
     def parse_to_full_text(self, html):
-        paragraphs = custom_justext(html, JT_STOPLIST)
+        extracted_text_and_info = StructuredInscriptis(html)
+        self._semantic_structure = extracted_text_and_info.semantic_elements
+        self._style_info = extracted_text_and_info.styled_elements
+        self._text = text = extracted_text_and_info.get_text()
+        start_poses = sorted((
+                (rng, h)
+                for h, rngs in extracted_text_and_info.semantic_elements.items()
+                for rng in rngs
+                if h in HEADING_LEVELS
+            ),
+            key=lambda x: x[0]
+        )
         with self._create_toc_stack() as stack:
-            for parag in paragraphs:
-                if parag.is_heading:
-                    level = self._get_heading_level(parag)
-                    section = Section(
-                        document=self,
-                        pager=None,
-                        title=parag.text,
-                        level=level,
-                        position=self.text_buffer.tell(),
-                    )
-                    stack.push(section)
-                self.text_buffer.write(f"{parag.text}{NEWLINE}")
+            for ((start_pos, stop_pos), h_element) in start_poses:
+                h_text = text[start_pos:stop_pos].strip()
+                h_level = int(h_element.name[-1])
+                section = Section(
+                    document=self,
+                    pager=None,
+                    title=h_text,
+                    level=h_level,
+                    position=start_pos,
+                )
+                stack.push(section)
 
     def parse_to_clean_text(self, html):
         extracted = trafilatura.extract(html, output_format="xml")
