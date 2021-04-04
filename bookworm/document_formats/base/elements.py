@@ -227,5 +227,20 @@ class TreeStackBuilder(list):
 
 
 @dataclass
+class TextRange(Container):
+    """Represents a text range in an edit control."""
+    __slots__ = ['start', 'stop']
+
+    start: int
+    stop: int
+
+    def __contains__(self, x):
+        return self.start <= x <= self.stop
+
+    def __iter__(self):
+        return iter(range(self.start, self.stop))
+
+
+@dataclass
 class ReadingOptions:
     reading_mode: str

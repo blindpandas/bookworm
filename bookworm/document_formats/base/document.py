@@ -90,7 +90,6 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         Subclasses should call super to ensure the standard behavior.
         """
 
-    @abstractmethod
     def close(self):
         """Perform the actual IO operations for unloading the ebook.
         Subclasses should call super to ensure the standard behavior.
@@ -290,6 +289,9 @@ class SinglePageDocument(BaseDocument):
     def get_content(self) -> str:
         """Get the content of this document."""
 
+    def get_section_at_text_position(self, position):
+        """Return the section at the given position."""
+        
     def get_document_semantic_structure(self):
         raise NotImplementedError
 

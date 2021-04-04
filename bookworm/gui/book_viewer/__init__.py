@@ -22,7 +22,7 @@ from bookworm.reader import (
     UnsupportedDocumentError,
 )
 from bookworm.signals import reader_book_loaded, reader_book_unloaded
-from bookworm.gui.contentview_ctrl import ContentViewCtrl, SelectionRange
+from bookworm.gui.contentview_ctrl import ContentViewCtrl, TextRange
 from bookworm.gui.components import TocTreeManager, AsyncSnakDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
@@ -43,10 +43,10 @@ STYLE_TO_WX_TEXT_ATTR_STYLES = {
     Style.SUPERSCRIPT: (wx.TextAttr.SetTextEffects, (wx.TEXT_ATTR_EFFECT_SUPERSCRIPT,)),
     Style.SUBSCRIPT: (wx.TextAttr.SetTextEffects, (wx.TEXT_ATTR_EFFECT_SUBSCRIPT,)),
     Style.HIGHLIGHTED: (wx.TextAttr.SetBackgroundColour, (wx.YELLOW,)),
-    Style.DISPLAY_1: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.7)),
-    Style.DISPLAY_2: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.5)),
-    Style.DISPLAY_3: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.3)),
-    Style.DISPLAY_4: (wx.TextAttr.SetFontPointSize, lambda d: ceil(d.GetFontSize() * 1.2)),
+    Style.DISPLAY_1: (wx.TextAttr.SetFontWeight, (800,)),
+    Style.DISPLAY_2: (wx.TextAttr.SetFontWeight, (600,)),
+    Style.DISPLAY_3: (wx.TextAttr.SetFontWeight, (400,)),
+    Style.DISPLAY_4: (wx.TextAttr.SetFontWeight, (200,)),
 }
 
 class ResourceLoader:
@@ -207,6 +207,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         # It is being used also as a label for the page content text area when no book is opened.
         self._no_open_book_status = _("Press (Ctrl + O) to open a document")
         self._has_text_zoom = False
+        self.__latest_structured_navigation_position = None
         self.set_status(self._no_open_book_status)
         StateProvider.__init__(self)
         MenubarProvider.__init__(self)
@@ -432,14 +433,23 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             config.conf["general"]["speak_section_title"] = ossc
 
     def navigate_to_structural_element(self, element_type, forward):
-        pos = self.reader.get_semantic_element(element_type, forward)
+        pos = self.reader.get_semantic_element(
+            element_type,
+            forward,
+            self.get_insertion_point()
+        )
         if pos is not None:
             ((start, stop), actual_element_type) = pos
+            pos_info = (self.get_insertion_point(), pos)
+            if self.__latest_structured_navigation_position == pos_info:
+                self.set_insertion_point(stop)
+                return self.navigate_to_structural_element(element_type, forward)
+            self.__latest_structured_navigation_position = pos_info
             element_label, should_speak_whole_text = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[actual_element_type]
             line_start, line_stop = self.get_containing_line(start + 1)
             tstart, tstop = (start, stop) if should_speak_whole_text else (line_start, line_stop)
             text = self.contentTextCtrl.GetRange(tstart, tstop)
-            msg = _("{item}: {text}").format(text=text, item=_(element_label))
+            msg = _("{text}: {item_type}").format(text=text, item_type=_(element_label))
             target_position = self.get_containing_line(tstart + 1)[0]
             self.set_insertion_point(target_position)
             sounds.structured_navigation.play()
@@ -541,7 +551,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         )
 
     def get_selection_range(self):
-        return SelectionRange(*self.contentTextCtrl.GetSelection())
+        return TextRange(*self.contentTextCtrl.GetSelection())
 
     def get_containing_line(self, pos):
         """

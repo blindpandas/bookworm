@@ -24,7 +24,7 @@ from bookworm.document_formats.base import (
     ChangeDocument,
     TreeStackBuilder,
 )
-from bookworm.utils import NEWLINE
+from bookworm.utils import remove_excess_blank_lines, NEWLINE
 from bookworm.structured_text import (
     StructuredInscriptis,
     SemanticElementType,
@@ -50,16 +50,12 @@ class BaseHtmlDocument(SinglePageDocument):
         ReadingMode.FULL_TEXT_VIEW,
     )
 
-    def __len__(self):
-        return len(self._sections)
-
     def __getstate__(self) -> dict:
         """Support for pickling."""
         return super().__getstate__() | dict(html_string=self.html_string)
 
     def read(self):
         super().read()
-        self.text_buffer = StringIO()
         self._text = None
         self._outline = None
         self._metainfo = None
@@ -89,11 +85,6 @@ class BaseHtmlDocument(SinglePageDocument):
     def get_document_style_info(self):
         return self._style_info
 
-    def close(self):
-        super().close()
-        if (text_buffer := getattr(self, "text_buffer", None)) is not None:
-            text_buffer.close()
-
     @cached_property
     def language(self):
         return self.get_language(self.html_string, is_html=True)
@@ -119,13 +110,8 @@ class BaseHtmlDocument(SinglePageDocument):
         )
         stack = TreeStackBuilder(root)
         yield stack
-        self._sections = list(root.iter_children()) or [
-            root,
-        ]
         self._outline = root
-        root.pager = Pager(first=0, last=len(self._sections))
-        for i, sect in enumerate(self._sections):
-            sect.pager = Pager(first=i, last=i)
+        root.pager = Pager(first=0, last=1)
 
     def parse_metadata(self, html):
         meta_info = trafilatura.metadata.extract_metadata(html) or {}
@@ -169,19 +155,34 @@ class BaseHtmlDocument(SinglePageDocument):
         extracted = trafilatura.extract(html, output_format="xml")
         xml_content = etree.fromstring(extracted)
         main_content = xml_content.xpath("main")[0]
+        text_buffer = StringIO()
         with self._create_toc_stack() as stack:
-            for node in main_content.iterchildren():
-                text = NEWLINE + (node.text or "") + NEWLINE
+            for idx, node in enumerate(main_content.iterchildren()):
+                text = (node.text or "")
+                if (idx == 0) and (text.strip() != self.metadata.title.strip()):
+                    headline = self.metadata.title + NEWLINE
+                    hstart_pos = 0
+                    text_buffer.write(headline)
+                    hstop_pos = text_buffer.tell()
+                    self._semantic_structure.setdefault(SemanticElementType.HEADING_1, []).append((hstart_pos, hstop_pos))
+                    self._style_info.setdefault(Style.DISPLAY_1, []).append((hstart_pos, hstop_pos))
+                if not text.endswith(NEWLINE):
+                    text += NEWLINE
+                start_pos = text_buffer.tell()
+                text_buffer.write(remove_excess_blank_lines(text))
+                stop_pos = text_buffer.tell()
                 if node.tag == "head":
+                    self._semantic_structure.setdefault(SemanticElementType.HEADING, []).append((start_pos, stop_pos))
+                    self._style_info.setdefault(Style.DISPLAY_2, []).append((start_pos, stop_pos))
                     section = Section(
                         document=self,
-                        pager=None,
+                        pager=Pager(0, 0),
                         title=node.text.strip("\n"),
                         level=2,
-                        position=self.text_buffer.tell(),
+                        position=(start_pos, stop_pos)
                     )
                     stack.push(section)
-                self.text_buffer.write(text)
+        self._text = text_buffer.getvalue()
 
 
 class FileSystemHtmlDocument(BaseHtmlDocument):

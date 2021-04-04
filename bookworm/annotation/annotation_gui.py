@@ -4,7 +4,7 @@ import wx
 from enum import IntEnum
 from bookworm import speech
 from bookworm.gui.settings import SettingsPanel
-from bookworm.gui.contentview_ctrl import SelectionRange
+from bookworm.gui.contentview_ctrl import TextRange
 from bookworm.logger import logger
 from .annotator import Bookmarker, NoteTaker, Quoter
 from .annotation_dialogs import (
@@ -221,8 +221,8 @@ class AnnotationMenu(wx.Menu):
             return speech.announce(_("No selection"))
         x, y = self.view.get_selection_range()
         for q in quoter.get_for_page():
-            q_range = SelectionRange(q.start_pos, q.end_pos)
-            if (q_range.start == x) and (q_range.end == y):
+            q_range = TextRange(q.start_pos, q.end_pos)
+            if (q_range.start == x) and (q_range.stop == y):
                 quoter.delete(q.id)
                 self.service.style_highlight(self.view, x, y, enable=False)
                 # Translators: spoken message
@@ -235,7 +235,7 @@ class AnnotationMenu(wx.Menu):
                 if x not in q_range:
                     q.start_pos = x
                     q.session.commit()
-                    self.service.style_highlight(self.view, x, q_range.end)
+                    self.service.style_highlight(self.view, x, q_range.stop)
                     return speech.announce(_("Highlight extended"))
                 elif y not in q_range:
                     q.end_pos = y

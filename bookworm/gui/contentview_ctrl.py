@@ -2,8 +2,6 @@
 
 import wx
 import wx.lib.newevent
-from collections.abc import Container
-from dataclasses import dataclass
 from itertools import chain
 import bookworm.typehints as t
 from bookworm.structured_text import SemanticElementType
@@ -36,25 +34,12 @@ SEMANTIC_MAP = {
     #"K": SemanticElementType.LINK,
     "L": SemanticElementType.LIST,
     "T": SemanticElementType.TABLE,
-    # "C": SemanticElementType.CODE_BLOCK,
+    "C": SemanticElementType.CODE_BLOCK,
     "Q": SemanticElementType.QUOTE,
 }
 SEMANTIC_MAP |= HEADING_LEVEL_KEY_MAP
 SEMANTIC_KEY_MAP = {ord(k): v for k, v in SEMANTIC_MAP.items()}
     
-
-@dataclass
-class SelectionRange(Container):
-    """Represents a text range in an edit control."""
-
-    start: int
-    end: int
-
-    def __contains__(self, x):
-        return self.start <= x <= self.end
-
-    def __iter__(self):
-        return iter((self.start, self.end))
 
 
 class ContentViewCtrl(wx.TextCtrl):

@@ -55,9 +55,6 @@ class MobiDocument(BaseDocument):
             reason="Unpacked the mobi file to epub",
         )
 
-    def close(self):
-        super().close()
-
     def unpack_mobi(self, filename):
         storage_area = self.get_mobi_storage_area()
         hasher = md5()

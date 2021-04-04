@@ -31,7 +31,7 @@ SEMANTIC_HTML_ELEMENTS = {
     SemanticElementType.LIST: {"ol", "ul",},
     # SemanticElementType.LINK: {"a",},
     SemanticElementType.QUOTE: {"blockquote", "q",},
-    #SemanticElementType.CODE_BLOCK: {"code",},
+    SemanticElementType.CODE_BLOCK: {"code",},
     SemanticElementType.TABLE: {"table",},
 }
 

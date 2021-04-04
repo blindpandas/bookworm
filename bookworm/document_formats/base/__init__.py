@@ -9,6 +9,7 @@ from .document import (
 from .elements import (
     Section,
     Pager,
+    TextRange,
     BookMetadata,
     SearchRequest,
     SearchResult,

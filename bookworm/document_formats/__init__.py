@@ -14,3 +14,4 @@ from .epub_document import EpubDocument
 from .mobi_document import MobiDocument
 from .plain_text_document import PlainTextDocument
 from .html_document import FileSystemHtmlDocument, WebHtmlDocument
+from .markdown_document import MarkdownDocument
