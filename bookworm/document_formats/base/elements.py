@@ -6,6 +6,7 @@ from dataclasses import field, dataclass
 from collections.abc import Container, Iterable, Sequence, Sized
 from weakref import ref
 from bookworm import typehints as t
+from bookworm.structured_text import TextRange
 
 
 @dataclass
@@ -79,7 +80,7 @@ class Section:
         "parent",
         "children",
         "pager",
-        "position",
+        "text_range",
         "level",
         "data",
     ]
@@ -91,7 +92,7 @@ class Section:
         parent: t.Optional["Section"] = None,
         children: t.Optional[t.List["Section"]] = None,
         pager: t.Optional[Pager] = None,
-        position: int = 0,
+        text_range: t.Optional[TextRange]=None,
         level: t.Optional[int] = None,
         data: t.Optional[t.Dict[t.Hashable, t.Any]] = None,
     ):
@@ -100,7 +101,7 @@ class Section:
         self.parent = parent
         self.children = children or []
         self.pager = pager
-        self.position = position
+        self.text_range = text_range
         self.level = level
         self.data = data or {}
         for child in self.children:
@@ -227,20 +228,8 @@ class TreeStackBuilder(list):
 
 
 @dataclass
-class TextRange(Container):
-    """Represents a text range in an edit control."""
-    __slots__ = ['start', 'stop']
-
-    start: int
-    stop: int
-
-    def __contains__(self, x):
-        return self.start <= x <= self.stop
-
-    def __iter__(self):
-        return iter(range(self.start, self.stop))
-
-
-@dataclass
 class ReadingOptions:
     reading_mode: str
+
+
+SINGLE_PAGE_DOCUMENT_PAGER = Pager(first=0, last=0)

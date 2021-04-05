@@ -10,7 +10,7 @@ from ebooklib.epub import read_epub
 from bs4 import BeautifulSoup
 from selectolax.parser import HTMLParser
 from bookworm.paths import home_data_path
-from bookworm.structured_text import StructuredInscriptis
+from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 from bookworm.utils import recursively_iterdir
 from bookworm.document_formats.base import (
     BaseDocument,
@@ -36,7 +36,7 @@ class EpubPage(BasePage):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         html = self._get_html_with_href(self.section.data['href'])
-        structure_extractor = StructuredInscriptis.from_string(html)
+        structure_extractor = StructuredHtmlParser.from_string(html)
         self.extracted_text = structure_extractor.get_text()
         self.semantic_elements = structure_extractor.semantic_elements
         self.style_info = structure_extractor.styled_elements

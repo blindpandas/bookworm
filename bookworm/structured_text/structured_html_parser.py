@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import re
+from functools import cached_property
 from itertools import chain
 from lxml import html as html_parser
 from inscriptis import Inscriptis
@@ -8,7 +9,7 @@ from inscriptis.model.config import ParserConfig
 from bookworm import typehints as t
 from bookworm.utils import remove_excess_blank_lines
 from bookworm.logger import logger
-from .structure import (
+from bookworm.structured_text import (
     Style,
     SemanticElementType,
 )
@@ -21,7 +22,6 @@ InscriptisConfig = ParserConfig(
 )
 
 SEMANTIC_HTML_ELEMENTS = {
-    #SemanticElementType.HEADING: {f"h{l}" for l in range(1, 7)},
     SemanticElementType.HEADING_1: {"h1",},
     SemanticElementType.HEADING_2: {"h2",},
     SemanticElementType.HEADING_3: {"h3",},
@@ -49,20 +49,24 @@ STYLE_HTML_ELEMENTS = {
     Style.DISPLAY_3: {"h4", "h5",},
     Style.DISPLAY_4: {"h6", },
 }
-SEMANTIC_TAG_MAP = {t: k for k, v in SEMANTIC_HTML_ELEMENTS.items() for t in v}
-STYLE_TAG_MAP = {t: k for k, v in STYLE_HTML_ELEMENTS.items() for t in v}
 
 
 
-class StructuredInscriptis(Inscriptis):
+class StructuredHtmlParser(Inscriptis):
     """Subclass of ```inscriptis.Inscriptis``` to record the position of structural elements."""
-    TAGS_OF_INTEREST = set(SEMANTIC_TAG_MAP).union(STYLE_TAG_MAP)
+
+    SEMANTIC_TAG_MAP = {t: k for k, v in SEMANTIC_HTML_ELEMENTS.items() for t in v}
+    STYLE_TAG_MAP = {t: k for k, v in STYLE_HTML_ELEMENTS.items() for t in v}
 
     def __init__(self, *args, **kwargs):
         self.semantic_elements = {}
         self.styled_elements = {}
         kwargs.setdefault("config", InscriptisConfig)
         super().__init__(*args, **kwargs)
+
+    @cached_property
+    def tags_of_interest(self):
+        return set(self.SEMANTIC_TAG_MAP).union(self.STYLE_TAG_MAP)
 
     @classmethod
     def from_string(cls, html_string):
@@ -75,7 +79,7 @@ class StructuredInscriptis(Inscriptis):
         return cls(html_parser.fromstring(html_content))
 
     def _parse_html_tree(self, tree):
-        if (tag := tree.tag) not in self.TAGS_OF_INTEREST:
+        if (tag := tree.tag) not in self.tags_of_interest:
             return super()._parse_html_tree(tree)
         text_start_pos = len(self.get_text())
         super()._parse_html_tree(tree)
@@ -92,7 +96,7 @@ class StructuredInscriptis(Inscriptis):
         return remove_excess_blank_lines(text)
 
     def record_tag_info(self, tag, start_pos, end_pos):
-        if tag in SEMANTIC_TAG_MAP:
-            self.semantic_elements.setdefault(SEMANTIC_TAG_MAP[tag], []).append((start_pos, end_pos))
-        if tag in STYLE_TAG_MAP:
-            self.styled_elements.setdefault(STYLE_TAG_MAP[tag], []).append((start_pos, end_pos))
+        if tag in self.SEMANTIC_TAG_MAP:
+            self.semantic_elements.setdefault(self.SEMANTIC_TAG_MAP[tag], []).append((start_pos, end_pos))
+        if tag in self.STYLE_TAG_MAP:
+            self.styled_elements.setdefault(self.STYLE_TAG_MAP[tag], []).append((start_pos, end_pos))

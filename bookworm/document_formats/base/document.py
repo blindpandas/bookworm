@@ -289,9 +289,16 @@ class SinglePageDocument(BaseDocument):
     def get_content(self) -> str:
         """Get the content of this document."""
 
-    def get_section_at_text_position(self, position):
+    def get_section_at_position(self, pos):
         """Return the section at the given position."""
-        
+        rv = self.toc_tree
+        for sect in rv.iter_children():
+            if pos in sect.text_range:
+                rv = sect
+                if sect.text_range.start > pos:
+                    break
+        return rv
+
     def get_document_semantic_structure(self):
         raise NotImplementedError
 

@@ -4,7 +4,7 @@ import wx
 from enum import IntEnum
 from bookworm import speech
 from bookworm.gui.settings import SettingsPanel
-from bookworm.gui.contentview_ctrl import TextRange
+from bookworm.structured_text import TextRange
 from bookworm.logger import logger
 from .annotator import Bookmarker, NoteTaker, Quoter
 from .annotation_dialogs import (

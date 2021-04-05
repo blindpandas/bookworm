@@ -9,11 +9,11 @@ from .document import (
 from .elements import (
     Section,
     Pager,
-    TextRange,
     BookMetadata,
     SearchRequest,
     SearchResult,
     TreeStackBuilder,
+    SINGLE_PAGE_DOCUMENT_PAGER,
 )
 from .features import (
     DocumentCapability,

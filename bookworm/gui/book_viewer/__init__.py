@@ -22,7 +22,8 @@ from bookworm.reader import (
     UnsupportedDocumentError,
 )
 from bookworm.signals import reader_book_loaded, reader_book_unloaded
-from bookworm.gui.contentview_ctrl import ContentViewCtrl, TextRange
+from bookworm.structured_text import TextRange
+from bookworm.gui.contentview_ctrl import ContentViewCtrl
 from bookworm.gui.components import TocTreeManager, AsyncSnakDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
@@ -193,6 +194,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
         # Bind Events
         self.Bind(wx.EVT_TIMER, self.onUserPositionTimerTick, self.userPositionTimer)
+        self.tocTreeCtrl.Bind(wx.EVT_SET_FOCUS, self.onTocTreeFocus, self.tocTreeCtrl)
         self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.onTOCItemClick, self.tocTreeCtrl)
         self.Bind(
             wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(-1), id=wx.ID_PREVIEW_ZOOM_OUT
@@ -377,6 +379,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def set_state_on_section_change(self, current):
         self.tocTreeSetSelection(current)
+        if self.reader.document.is_single_page_document():
+            target_pos = self.get_containing_line(current.text_range.start + 1)[0]
+            self.set_insertion_point(target_pos)
         if config.conf["general"]["speak_section_title"]:
             speech.announce(current.title)
 
@@ -385,6 +390,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             threaded_worker.submit(self.reader.save_current_position)
         except:
             log.exception("Failed to save current position", exc_info=True)
+
+    def onTocTreeFocus(self, event):
+        if self.reader.ready and self.reader.document.is_single_page_document():
+            with self.mute_page_and_section_speech():
+                self.reader.active_section = self.reader.document.get_section_at_position(self.get_insertion_point())
 
     def onTOCItemClick(self, event):
         selectedItem = event.GetItem()
@@ -433,14 +443,15 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             config.conf["general"]["speak_section_title"] = ossc
 
     def navigate_to_structural_element(self, element_type, forward):
+        current_insertion_point = self.get_insertion_point()
         pos = self.reader.get_semantic_element(
             element_type,
             forward,
-            self.get_insertion_point()
+            current_insertion_point,
         )
         if pos is not None:
             ((start, stop), actual_element_type) = pos
-            pos_info = (self.get_insertion_point(), pos)
+            pos_info = (current_insertion_point, pos)
             if self.__latest_structured_navigation_position == pos_info:
                 self.set_insertion_point(stop)
                 return self.navigate_to_structural_element(element_type, forward)
@@ -450,7 +461,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             tstart, tstop = (start, stop) if should_speak_whole_text else (line_start, line_stop)
             text = self.contentTextCtrl.GetRange(tstart, tstop)
             msg = _("{text}: {item_type}").format(text=text, item_type=_(element_label))
-            target_position = self.get_containing_line(tstart + 1)[0]
+            target_position = self.get_containing_line(tstop - 1)[0]
             self.set_insertion_point(target_position)
             sounds.structured_navigation.play()
             speech.announce(msg)

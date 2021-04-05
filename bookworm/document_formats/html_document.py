@@ -6,16 +6,25 @@ from io import StringIO
 from pathlib import Path
 from contextlib import contextmanager
 from functools import cached_property
+from more_itertools import zip_offset
 from chemical import it
 from diskcache import Cache
 from lxml import etree
+from lxml.html import etree as HtmlEtree
 from trafilatura.external import custom_justext, JT_STOPLIST
 from bookworm.paths import home_data_path
 from bookworm.http_tools import HttpResource
+from bookworm.structured_text import (
+    TextRange,
+    SemanticElementType,
+    Style,
+    HEADING_LEVELS
+)
+from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 from bookworm.document_formats.base import (
     SinglePageDocument,
     Section,
-    Pager,
+    SINGLE_PAGE_DOCUMENT_PAGER,
     BookMetadata,
     DocumentCapability as DC,
     ReadingMode,
@@ -25,12 +34,6 @@ from bookworm.document_formats.base import (
     TreeStackBuilder,
 )
 from bookworm.utils import remove_excess_blank_lines, NEWLINE
-from bookworm.structured_text import (
-    StructuredInscriptis,
-    SemanticElementType,
-    Style,
-    HEADING_LEVELS
-)
 from bookworm.logger import logger
 
 
@@ -42,7 +45,7 @@ EXPIRE_TIMEOUT  = 7 * 24 * 60 * 60
 class BaseHtmlDocument(SinglePageDocument):
     """For html documents."""
 
-    capabilities = DC.TOC_TREE | DC.METADATA | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE
+    capabilities = DC.TOC_TREE | DC.METADATA | DC.SINGLE_PAGE | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE
 
     supported_reading_modes = (
         ReadingMode.DEFAULT,
@@ -106,12 +109,11 @@ class BaseHtmlDocument(SinglePageDocument):
     @contextmanager
     def _create_toc_stack(self):
         root = Section(
-            document=self, pager=None, title=self._metainfo.title, level=1, position=0
+            document=self, pager=SINGLE_PAGE_DOCUMENT_PAGER, text_range=TextRange(0, -1), title=self._metainfo.title, level=1
         )
         stack = TreeStackBuilder(root)
-        yield stack
+        yield stack, root
         self._outline = root
-        root.pager = Pager(first=0, last=1)
 
     def parse_metadata(self, html):
         meta_info = trafilatura.metadata.extract_metadata(html) or {}
@@ -125,12 +127,12 @@ class BaseHtmlDocument(SinglePageDocument):
             publication_year=meta_info.get("date", ""),
         )
 
-    def parse_to_full_text(self, html):
-        extracted_text_and_info = StructuredInscriptis(html)
+    def parse_text_and_structure(self, html):
+        extracted_text_and_info = StructuredHtmlParser(html)
         self._semantic_structure = extracted_text_and_info.semantic_elements
         self._style_info = extracted_text_and_info.styled_elements
         self._text = text = extracted_text_and_info.get_text()
-        start_poses = sorted((
+        heading_poses = sorted((
                 (rng, h)
                 for h, rngs in extracted_text_and_info.semantic_elements.items()
                 for rng in rngs
@@ -138,51 +140,43 @@ class BaseHtmlDocument(SinglePageDocument):
             ),
             key=lambda x: x[0]
         )
-        with self._create_toc_stack() as stack:
-            for ((start_pos, stop_pos), h_element) in start_poses:
+        with self._create_toc_stack() as (stack, root):
+            for ((start_pos, stop_pos), h_element) in heading_poses:
                 h_text = text[start_pos:stop_pos].strip()
                 h_level = int(h_element.name[-1])
                 section = Section(
                     document=self,
-                    pager=None,
+                    pager=SINGLE_PAGE_DOCUMENT_PAGER,
                     title=h_text,
                     level=h_level,
-                    position=start_pos,
+                    text_range=TextRange(start_pos, stop_pos),
                 )
                 stack.push(section)
+            all_sections = tuple(root.iter_children())
+            for (this_sect, next_sect) in zip_offset(all_sections, all_sections, offsets=(0, 1)):
+                this_sect.text_range.stop = next_sect.text_range.start - 1
+            last_pos = len(text)
+            if all_sections:
+                all_sections[-1].text_range.stop = last_pos
+            root.text_range = TextRange(0, last_pos)
+
+    def parse_to_full_text(self, html):
+        return self.parse_text_and_structure(html)
 
     def parse_to_clean_text(self, html):
         extracted = trafilatura.extract(html, output_format="xml")
         xml_content = etree.fromstring(extracted)
         main_content = xml_content.xpath("main")[0]
-        text_buffer = StringIO()
-        with self._create_toc_stack() as stack:
-            for idx, node in enumerate(main_content.iterchildren()):
-                text = (node.text or "")
-                if (idx == 0) and (text.strip() != self.metadata.title.strip()):
-                    headline = self.metadata.title + NEWLINE
-                    hstart_pos = 0
-                    text_buffer.write(headline)
-                    hstop_pos = text_buffer.tell()
-                    self._semantic_structure.setdefault(SemanticElementType.HEADING_1, []).append((hstart_pos, hstop_pos))
-                    self._style_info.setdefault(Style.DISPLAY_1, []).append((hstart_pos, hstop_pos))
-                if not text.endswith(NEWLINE):
-                    text += NEWLINE
-                start_pos = text_buffer.tell()
-                text_buffer.write(remove_excess_blank_lines(text))
-                stop_pos = text_buffer.tell()
-                if node.tag == "head":
-                    self._semantic_structure.setdefault(SemanticElementType.HEADING, []).append((start_pos, stop_pos))
-                    self._style_info.setdefault(Style.DISPLAY_2, []).append((start_pos, stop_pos))
-                    section = Section(
-                        document=self,
-                        pager=Pager(0, 0),
-                        title=node.text.strip("\n"),
-                        level=2,
-                        position=(start_pos, stop_pos)
-                    )
-                    stack.push(section)
-        self._text = text_buffer.getvalue()
+        for node in main_content.cssselect("head"):
+            node.tag = "h1"
+        html_string = (
+            "<html><body>"
+            + HtmlEtree.tostring(main_content, encoding='unicode', pretty_print=False, method='html', )
+            + "</body></html>"
+        )
+        return self.parse_text_and_structure(HtmlEtree.fromstring(html_string))
+
+
 
 
 class FileSystemHtmlDocument(BaseHtmlDocument):
