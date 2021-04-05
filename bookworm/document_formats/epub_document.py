@@ -8,7 +8,6 @@ from pathlib import Path, PurePosixPath
 from chemical import it
 from ebooklib.epub import read_epub
 from bs4 import BeautifulSoup
-from selectolax.parser import HTMLParser
 from bookworm.paths import home_data_path
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 from bookworm.utils import recursively_iterdir

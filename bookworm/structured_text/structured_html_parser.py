@@ -66,7 +66,8 @@ class StructuredHtmlParser(Inscriptis):
 
     @cached_property
     def tags_of_interest(self):
-        return set(self.SEMANTIC_TAG_MAP).union(self.STYLE_TAG_MAP)
+        return set(self.SEMANTIC_TAG_MAP)
+        # .union(self.STYLE_TAG_MAP)
 
     @classmethod
     def from_string(cls, html_string):

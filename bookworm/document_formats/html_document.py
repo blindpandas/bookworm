@@ -45,7 +45,7 @@ EXPIRE_TIMEOUT  = 7 * 24 * 60 * 60
 class BaseHtmlDocument(SinglePageDocument):
     """For html documents."""
 
-    capabilities = DC.TOC_TREE | DC.METADATA | DC.SINGLE_PAGE | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE
+    capabilities = DC.TOC_TREE | DC.METADATA | DC.SINGLE_PAGE | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE | DC.ASYNC_READ
 
     supported_reading_modes = (
         ReadingMode.DEFAULT,
