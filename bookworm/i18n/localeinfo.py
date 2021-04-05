@@ -4,7 +4,7 @@ import locale
 from babel import UnknownLocaleError, Locale, parse_locale, default_locale
 from babel.dates import format_datetime as babel_format_datetime
 from languagecodes import iso_639_alpha2
-from tzlocal import get_localzone 
+from tzlocal import get_localzone
 
 
 class LocaleInfo:
@@ -117,4 +117,6 @@ class LocaleInfo:
             tzinfo = get_localzone()
         else:
             tzinfo = None
-        return babel_format_datetime(datetime_obj, format=format, tzinfo=tzinfo, locale=self.locale)
+        return babel_format_datetime(
+            datetime_obj, format=format, tzinfo=tzinfo, locale=self.locale
+        )

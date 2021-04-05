@@ -193,7 +193,9 @@ class TextToSpeechService(BookwormService):
 
     def make_text_info(self, *args, **kwargs):
         """Add the language of the current document."""
-        kwargs.setdefault("lang", self.reader.document.language.two_letter_language_code)
+        kwargs.setdefault(
+            "lang", self.reader.document.language.two_letter_language_code
+        )
         return TextInfo(*args, **kwargs)
 
     def encode_bookmark(self, data):
@@ -381,7 +383,9 @@ class TextToSpeechService(BookwormService):
     def _try_set_tts_language(self):
         if not config.conf["reading"]["ask_to_switch_voice_to_current_book_language"]:
             return
-        if self.engine.voice.speaks_language(self.reader.document.language, strict=False):
+        if self.engine.voice.speaks_language(
+            self.reader.document.language, strict=False
+        ):
             return
         msg = wx.MessageBox(
             # Translators: a message telling the user that the TTS voice has been changed

@@ -107,7 +107,9 @@ class SearchResultsDialog(Dialog):
     def addResultToList(self, result):
         count = self.searchResultsListCtrl.ItemCount
         page_display_text = (
-            str(result.page + 1) if not self.reader.document.is_single_page_document() else ""
+            str(result.page + 1)
+            if not self.reader.document.is_single_page_document()
+            else ""
         )
         index = self.searchResultsListCtrl.InsertItem(count, page_display_text)
         self.searchResultsListCtrl.SetItem(index, 1, result.excerpt)

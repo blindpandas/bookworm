@@ -40,7 +40,10 @@ STYLE_TO_WX_TEXT_ATTR_STYLES = {
     Style.ITALIC: (wx.TextAttr.SetFontStyle, (wx.FONTSTYLE_ITALIC,)),
     Style.MONOSPACED: (wx.TextAttr.SetFontStyle, (wx.FONTSTYLE_ITALIC,)),
     Style.UNDERLINED: (wx.TextAttr.SetFontUnderlined, (True,)),
-    Style.STRIKETHROUGH: (wx.TextAttr.SetTextEffects, (wx.TEXT_ATTR_EFFECT_STRIKETHROUGH,)),
+    Style.STRIKETHROUGH: (
+        wx.TextAttr.SetTextEffects,
+        (wx.TEXT_ATTR_EFFECT_STRIKETHROUGH,),
+    ),
     Style.SUPERSCRIPT: (wx.TextAttr.SetTextEffects, (wx.TEXT_ATTR_EFFECT_SUPERSCRIPT,)),
     Style.SUBSCRIPT: (wx.TextAttr.SetTextEffects, (wx.TEXT_ATTR_EFFECT_SUBSCRIPT,)),
     Style.HIGHLIGHTED: (wx.TextAttr.SetBackgroundColour, (wx.YELLOW,)),
@@ -49,6 +52,7 @@ STYLE_TO_WX_TEXT_ATTR_STYLES = {
     Style.DISPLAY_3: (wx.TextAttr.SetFontWeight, (400,)),
     Style.DISPLAY_4: (wx.TextAttr.SetFontWeight, (200,)),
 }
+
 
 class ResourceLoader:
     """Loads a document into the view."""
@@ -266,7 +270,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.CenterOnScreen(wx.BOTH)
 
     def finalize_gui_creation(self):
-        #self.set_content_view_font()
+        self.set_content_view_font()
         self.add_tools()
         self.toolbar.Realize()
         # Process services menubar
@@ -278,10 +282,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         reader_book_unloaded.send(self.reader)
 
     def set_content_view_font(self):
-        finfo = wx.FontInfo(
-        ).FaceName(
-            config.conf["appearance"]["font_facename"]
-        )
+        finfo = wx.FontInfo().FaceName(config.conf["appearance"]["font_facename"])
         configured_font = wx.Font(finfo)
         configured_font.SetPointSize(config.conf["appearance"]["font_point_size"])
         default_style = wx.TextAttr()
@@ -400,7 +401,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if condition:
             event.Skip(True)
             with self.mute_page_and_section_speech():
-                self.reader.active_section = self.reader.document.get_section_at_position(self.get_insertion_point())
+                self.reader.active_section = (
+                    self.reader.document.get_section_at_position(
+                        self.get_insertion_point()
+                    )
+                )
                 event.GetEventObject().SetFocus()
 
     def onTOCItemClick(self, event):
@@ -463,9 +468,13 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 self.set_insertion_point(stop)
                 return self.navigate_to_structural_element(element_type, forward)
             self.__latest_structured_navigation_position = pos_info
-            element_label, should_speak_whole_text = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[actual_element_type]
+            element_label, should_speak_whole_text = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[
+                actual_element_type
+            ]
             line_start, line_stop = self.get_containing_line(start + 1)
-            tstart, tstop = (start, stop) if should_speak_whole_text else (line_start, line_stop)
+            tstart, tstop = (
+                (start, stop) if should_speak_whole_text else (line_start, line_stop)
+            )
             text = self.contentTextCtrl.GetRange(tstart, tstop)
             msg = _("{text}: {item_type}").format(text=text, item_type=_(element_label))
             target_position = self.get_containing_line(tstop - 1)[0]
@@ -557,7 +566,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def clear_highlight(self, start=0, end=-1):
         textCtrl = self.contentTextCtrl
-        end = end if end >= 0 else textCtrl.LastPosition 
+        end = end if end >= 0 else textCtrl.LastPosition
         attr = wx.TextAttr()
         textCtrl.GetStyle(self.get_containing_line(start)[0], attr)
         attr.SetBackgroundColour(textCtrl.BackgroundColour)

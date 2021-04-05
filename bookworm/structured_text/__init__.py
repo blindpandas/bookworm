@@ -15,7 +15,8 @@ from bookworm.utils import normalize_line_breaks
 @dataclass
 class TextRange(Container):
     """Represents a text range refering to a substring."""
-    __slots__ = ['start', 'stop']
+
+    __slots__ = ["start", "stop"]
 
     start: int
     stop: int
@@ -68,11 +69,13 @@ class SemanticElementType(IntEnum):
     FIGURE = auto()
 
 
-
 HEADING_LEVELS = {
-    SemanticElementType.HEADING_1, SemanticElementType.HEADING_2,
-    SemanticElementType.HEADING_3, SemanticElementType.HEADING_4,
-    SemanticElementType.HEADING_5, SemanticElementType.HEADING_6,
+    SemanticElementType.HEADING_1,
+    SemanticElementType.HEADING_2,
+    SemanticElementType.HEADING_3,
+    SemanticElementType.HEADING_4,
+    SemanticElementType.HEADING_5,
+    SemanticElementType.HEADING_6,
 }
 # Maps semantic element types to (label, should_speak_whole_text)
 SEMANTIC_ELEMENT_OUTPUT_OPTIONS = {
@@ -95,6 +98,7 @@ SEMANTIC_ELEMENT_OUTPUT_OPTIONS = {
 @dataclass
 class TextStructureMetadata:
     """Provides metadata about a blob of text based on ranges."""
+
     element_map: dict
 
     def iter_ranges(self, element_type):
@@ -106,35 +110,36 @@ class TextStructureMetadata:
         if not forward:
             element_ranges.reverse()
         for start, stop in element_ranges:
-            condition = start > anchor if forward else (start < anchor) and not (start <= anchor <= stop)
+            condition = (
+                start > anchor
+                if forward
+                else (start < anchor) and not (start <= anchor <= stop)
+            )
             if condition:
                 return start, stop
 
     def get_element(self, element_type, forward, anchor):
         if element_type is SemanticElementType.HEADING:
             heading_map = {
-                h: self.element_map[h]
-                for h in HEADING_LEVELS
-                if h in self.element_map
+                h: self.element_map[h] for h in HEADING_LEVELS if h in self.element_map
             }
             ranges = (
                 (h, self.get_range(rng, forward, anchor))
                 for h, rng in heading_map.items()
             )
-            filtered_ranges = filter(
-                lambda r: r[1] is not None,
-                ranges
+            filtered_ranges = filter(lambda r: r[1] is not None, ranges)
+            sorted_ranges = tuple(
+                sorted(
+                    filtered_ranges,
+                    key=lambda x: x[1][0],
+                    reverse=not forward,
+                )
             )
-            sorted_ranges = tuple(sorted(
-                filtered_ranges,
-                key=lambda x: x[1][0],
-                reverse= not forward,
-            ))
             if sorted_ranges:
                 element_type, pos = sorted_ranges[0]
                 return pos, element_type
-        if (element_ranges := self.element_map.get(element_type, ())):
-            if (pos := self.get_range(element_ranges, forward, anchor)):
+        if (element_ranges := self.element_map.get(element_type, ())) :
+            if (pos := self.get_range(element_ranges, forward, anchor)) :
                 return pos, element_type
 
     def get_next_element_pos(self, element_type, anchor):

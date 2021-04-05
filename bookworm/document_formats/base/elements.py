@@ -92,7 +92,7 @@ class Section:
         parent: t.Optional["Section"] = None,
         children: t.Optional[t.List["Section"]] = None,
         pager: t.Optional[Pager] = None,
-        text_range: t.Optional[TextRange]=None,
+        text_range: t.Optional[TextRange] = None,
         level: t.Optional[int] = None,
         data: t.Optional[t.Dict[t.Hashable, t.Any]] = None,
     ):

@@ -18,7 +18,7 @@ from bookworm.structured_text import (
     TextRange,
     SemanticElementType,
     Style,
-    HEADING_LEVELS
+    HEADING_LEVELS,
 )
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 from bookworm.document_formats.base import (
@@ -39,13 +39,20 @@ from bookworm.logger import logger
 
 log = logger.getChild(__name__)
 # Default cache timeout
-EXPIRE_TIMEOUT  = 7 * 24 * 60 * 60
+EXPIRE_TIMEOUT = 7 * 24 * 60 * 60
 
 
 class BaseHtmlDocument(SinglePageDocument):
     """For html documents."""
 
-    capabilities = DC.TOC_TREE | DC.METADATA | DC.SINGLE_PAGE | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE | DC.ASYNC_READ
+    capabilities = (
+        DC.TOC_TREE
+        | DC.METADATA
+        | DC.SINGLE_PAGE
+        | DC.STRUCTURED_NAVIGATION
+        | DC.TEXT_STYLE
+        | DC.ASYNC_READ
+    )
 
     supported_reading_modes = (
         ReadingMode.DEFAULT,
@@ -109,7 +116,11 @@ class BaseHtmlDocument(SinglePageDocument):
     @contextmanager
     def _create_toc_stack(self):
         root = Section(
-            document=self, pager=SINGLE_PAGE_DOCUMENT_PAGER, text_range=TextRange(0, -1), title=self._metainfo.title, level=1
+            document=self,
+            pager=SINGLE_PAGE_DOCUMENT_PAGER,
+            text_range=TextRange(0, -1),
+            title=self._metainfo.title,
+            level=1,
         )
         stack = TreeStackBuilder(root)
         yield stack, root
@@ -132,13 +143,14 @@ class BaseHtmlDocument(SinglePageDocument):
         self._semantic_structure = extracted_text_and_info.semantic_elements
         self._style_info = extracted_text_and_info.styled_elements
         self._text = text = extracted_text_and_info.get_text()
-        heading_poses = sorted((
+        heading_poses = sorted(
+            (
                 (rng, h)
                 for h, rngs in extracted_text_and_info.semantic_elements.items()
                 for rng in rngs
                 if h in HEADING_LEVELS
             ),
-            key=lambda x: x[0]
+            key=lambda x: x[0],
         )
         with self._create_toc_stack() as (stack, root):
             for ((start_pos, stop_pos), h_element) in heading_poses:
@@ -153,7 +165,9 @@ class BaseHtmlDocument(SinglePageDocument):
                 )
                 stack.push(section)
             all_sections = tuple(root.iter_children())
-            for (this_sect, next_sect) in zip_offset(all_sections, all_sections, offsets=(0, 1)):
+            for (this_sect, next_sect) in zip_offset(
+                all_sections, all_sections, offsets=(0, 1)
+            ):
                 this_sect.text_range.stop = next_sect.text_range.start - 1
             last_pos = len(text)
             if all_sections:
@@ -171,12 +185,15 @@ class BaseHtmlDocument(SinglePageDocument):
             node.tag = "h1"
         html_string = (
             "<html><body>"
-            + HtmlEtree.tostring(main_content, encoding='unicode', pretty_print=False, method='html', )
+            + HtmlEtree.tostring(
+                main_content,
+                encoding="unicode",
+                pretty_print=False,
+                method="html",
+            )
             + "</body></html>"
         )
         return self.parse_text_and_structure(HtmlEtree.fromstring(html_string))
-
-
 
 
 class FileSystemHtmlDocument(BaseHtmlDocument):

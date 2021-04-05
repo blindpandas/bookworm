@@ -209,7 +209,7 @@ class EBookReader:
         self.active_section = page.section
         self.view.set_state_on_page_change(page)
         # if config.conf["appearance"]["apply_text_styles"] and DC.TEXT_STYLE in self.document.capabilities:
-            # self.view.apply_text_styles(page.get_style_info())
+        # self.view.apply_text_styles(page.get_style_info())
         reader_page_changed.send(self, current=page, prev=None)
 
     def get_current_page_object(self) -> BasePage:
@@ -285,17 +285,18 @@ class EBookReader:
     @staticmethod
     def _get_semantic_element_from_page(page, element_type, forward, anchor):
         semantics = TextStructureMetadata(page.get_semantic_structure())
-        pos_getter = semantics.get_next_element_pos if forward else semantics.get_prev_element_pos
+        pos_getter = (
+            semantics.get_next_element_pos
+            if forward
+            else semantics.get_prev_element_pos
+        )
         return pos_getter(element_type, anchor=anchor)
 
     def get_semantic_element(self, element_type, forward, anchor):
         if DC.STRUCTURED_NAVIGATION not in self.document.capabilities:
             return
         pos = self._get_semantic_element_from_page(
-            self.get_current_page_object(),
-            element_type,
-            forward,
-            anchor
+            self.get_current_page_object(), element_type, forward, anchor
         )
         if pos is not None:
             return pos
@@ -314,10 +315,7 @@ class EBookReader:
                 with self.view.mute_page_and_section_speech():
                     self.go_to_page(page_index, initial_insertion_point)
                 return self._get_semantic_element_from_page(
-                    page,
-                    element_type,
-                    forward,
-                    anchor=initial_insertion_point
+                    page, element_type, forward, anchor=initial_insertion_point
                 )
 
     def get_view_title(self, include_author=False):

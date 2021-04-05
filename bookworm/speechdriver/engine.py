@@ -156,7 +156,7 @@ class BaseSpeechEngine(metaclass=ABCMeta):
         raise ValueError(f"Invalid voice {voice_ident}")
 
     @classmethod
-    def get_first_available_voice(cls, language: LocaleInfo=None):
+    def get_first_available_voice(cls, language: LocaleInfo = None):
         _test_engine = cls()
         voices = (
             _test_engine.get_voices_by_language(language=language)

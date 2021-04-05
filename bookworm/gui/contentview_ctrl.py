@@ -31,7 +31,7 @@ HEADING_LEVEL_KEY_MAP = {
 }
 SEMANTIC_MAP = {
     "H": SemanticElementType.HEADING,
-    #"K": SemanticElementType.LINK,
+    # "K": SemanticElementType.LINK,
     "L": SemanticElementType.LIST,
     "T": SemanticElementType.TABLE,
     "C": SemanticElementType.CODE_BLOCK,
@@ -39,7 +39,6 @@ SEMANTIC_MAP = {
 }
 SEMANTIC_MAP |= HEADING_LEVEL_KEY_MAP
 SEMANTIC_KEY_MAP = {ord(k): v for k, v in SEMANTIC_MAP.items()}
-    
 
 
 class ContentViewCtrl(wx.TextCtrl):
@@ -56,7 +55,7 @@ class ContentViewCtrl(wx.TextCtrl):
             | wx.TE_RICH2
             | wx.TE_AUTO_URL
             | wx.TE_NOHIDESEL,
-            **kwargs
+            **kwargs,
         )
 
     def GetContainingLine(self, position):
@@ -91,9 +90,12 @@ class ContentViewCtrl(wx.TextCtrl):
             and (keycode := event.GetKeyCode()) in SEMANTIC_KEY_MAP
             and not event.ControlDown()
         ):
-            wx.QueueEvent(self, StructuredNavigationEvent(
-                SemanticElementType=SEMANTIC_KEY_MAP[keycode],
-                Forward=not event.ShiftDown()
-            ))
+            wx.QueueEvent(
+                self,
+                StructuredNavigationEvent(
+                    SemanticElementType=SEMANTIC_KEY_MAP[keycode],
+                    Forward=not event.ShiftDown(),
+                ),
+            )
             return True
         return super().TryBefore(event)

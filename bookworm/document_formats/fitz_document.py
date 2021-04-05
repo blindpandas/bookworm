@@ -28,6 +28,7 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 fitz.Tools().mupdf_display_errors(False)
 
+
 class FitzPage(BasePage):
     """Wrapps fitz.Page."""
 
@@ -172,15 +173,14 @@ class FitzFB2Document(FitzDocument):
             return super().read()
         fb2_data = self.get_fb2_file_data()
         try:
-            self._ebook = fitz.open(stream=fb2_data, filetype='fb2')
+            self._ebook = fitz.open(stream=fb2_data, filetype="fb2")
             BaseDocument.read(self)
         except Exception as e:
             raise DocumentError from e
         raise DocumentError("Invalid FB2 file")
 
-
     def get_fb2_file_data(self):
-        with zipfile.ZipFile(self.filename, 'r') as ziparchive:
+        with zipfile.ZipFile(self.filename, "r") as ziparchive:
             for fname in ziparchive.namelist():
                 if fname.endswith("fb2"):
                     return ziparchive.read(fname)

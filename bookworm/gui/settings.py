@@ -348,17 +348,13 @@ class AppearancePanel(SettingsPanel):
         )
         # Translators: label of an edit box
         wx.StaticText(fontBox, -1, _("Font Size"))
-        EnhancedSpinCtrl(
-            fontBox,
-            -1,
-            min=10,
-            max=96,
-            name="appearance.font_point_size"
-        )
+        EnhancedSpinCtrl(fontBox, -1, min=10, max=96, name="appearance.font_point_size")
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
         if strategy is ReconciliationStrategies.load:
-            if (configured_fontface := self.config["font_facename"]) and self.font_enumerator.IsValidFacename(configured_fontface):
+            if (
+                configured_fontface := self.config["font_facename"]
+            ) and self.font_enumerator.IsValidFacename(configured_fontface):
                 self.fontChoice.SetStringSelection(configured_fontface)
             else:
                 self.fontChoice.SetSelection(0)
@@ -370,10 +366,13 @@ class AppearancePanel(SettingsPanel):
 
     def get_available_fonts(self):
         self.font_enumerator.EnumerateFacenames()
-        return tuple(filter(
-            lambda face: not face.startswith("@") and not face[0].isdigit(),
-            sorted(self.font_enumerator.GetFacenames())
-        ))
+        return tuple(
+            filter(
+                lambda face: not face.startswith("@") and not face[0].isdigit(),
+                sorted(self.font_enumerator.GetFacenames()),
+            )
+        )
+
 
 class PreferencesDialog(SimpleDialog):
     """Preferences dialog."""

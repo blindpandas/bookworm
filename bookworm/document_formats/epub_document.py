@@ -31,10 +31,9 @@ log = logger.getChild(__name__)
 
 
 class EpubPage(BasePage):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        html = self._get_html_with_href(self.section.data['href'])
+        html = self._get_html_with_href(self.section.data["href"])
         structure_extractor = StructuredHtmlParser.from_string(html)
         self.extracted_text = structure_extractor.get_text()
         self.semantic_elements = structure_extractor.semantic_elements
@@ -63,20 +62,22 @@ class EpubPage(BasePage):
     def parse_split_chapter(self, href):
         filename = self._get_proper_filename(href.split("#")[0])
         split_anchors = self.document._split_section_anchor_ids[filename]
-        self.document._split_section_content [filename] = {}
+        self.document._split_section_content[filename] = {}
         chapter_content = self.document.ziparchive.read(filename).decode("utf-8")
-        soup = BeautifulSoup(chapter_content, 'lxml')
+        soup = BeautifulSoup(chapter_content, "lxml")
         for this_anchor in reversed(split_anchors):
-            this_tag = soup.find(
-                attrs={"id":lambda x: x == this_anchor})
+            this_tag = soup.find(attrs={"id": lambda x: x == this_anchor})
             markup_split = str(soup).split(str(this_tag))
-            soup = BeautifulSoup(markup_split[0], 'lxml')
+            soup = BeautifulSoup(markup_split[0], "lxml")
             # If the tag is None, it probably means the content is overlapping
             # Skipping the insert is the way forward
             if this_tag:
                 this_markup = BeautifulSoup(
-                    str(this_tag).strip() + markup_split[1], 'lxml')
-                self.document._split_section_content[filename][this_anchor] = str(this_markup)
+                    str(this_tag).strip() + markup_split[1], "lxml"
+                )
+                self.document._split_section_content[filename][this_anchor] = str(
+                    this_markup
+                )
         # Remaining markup is assigned here
         self.document._split_section_content[filename][""] = str(soup)
 
@@ -87,25 +88,28 @@ class EpubPage(BasePage):
         else:
             filename = splitdata[0]
             html_id = ""
-        if (anchor_info := self.document._split_section_content.get(filename, None)):
+        if (anchor_info := self.document._split_section_content.get(filename, None)) :
             try:
                 return anchor_info[html_id]
             except KeyError:
-                log.warning(f"Could not get content for {html_id=} from parsed {filename=} with {href=}")
+                log.warning(
+                    f"Could not get content for {html_id=} from parsed {filename=} with {href=}"
+                )
                 return ""
         self.parse_split_chapter(href)
         return self._get_split_section_text(href)
 
     def _get_html_with_href(self, href):
-        if (filename := self._get_proper_filename(href)):
+        if (filename := self._get_proper_filename(href)) :
             if href not in self.document._split_section_anchor_ids:
                 return self.document.ziparchive.read(filename).decode("utf-8")
             else:
                 return self._get_split_section_text(href)
         elif (filename is None) and ("#" in href):
             return self._get_split_section_text(href)
-        raise RuntimeError(f"Could not extract text from section with href: {href} and filename: {filename}")
-
+        raise RuntimeError(
+            f"Could not extract text from section with href: {href} and filename: {filename}"
+        )
 
 
 class EpubDocument(BaseDocument):
@@ -126,8 +130,8 @@ class EpubDocument(BaseDocument):
         self.fitz_doc = FitzEPUBDocument(self.uri)
         self.fitz_doc.read()
         self.filename = self.fitz_doc.filename
-        self.epub  = read_epub(self.filename)
-        self.ziparchive  = ZipFile(self.filename, "r")
+        self.epub = read_epub(self.filename)
+        self.ziparchive = ZipFile(self.filename, "r")
         self._filelist = set(self.ziparchive.namelist())
         self._split_section_anchor_ids = {}
         self._split_section_content = {}
@@ -154,27 +158,35 @@ class EpubDocument(BaseDocument):
         )
         stack = TreeStackBuilder(root)
         for (idx, (level, title, __, data)) in enumerate(toc):
-            href = data['name']
-            stack.push(Section(
-                document=self,
-                title=title,
-                pager=Pager(first=idx, last=idx),
-                level=level + 1,
-                data=dict(href=href)
-            ))
+            href = data["name"]
+            stack.push(
+                Section(
+                    document=self,
+                    title=title,
+                    pager=Pager(first=idx, last=idx),
+                    level=level + 1,
+                    data=dict(href=href),
+                )
+            )
             if "#" in href:
                 filename, html_id = href.split("#")
                 self._split_section_anchor_ids.setdefault(filename, []).append(html_id)
         if sect_count == 0:
-            href = it(self.epub.items).find(lambda item: 'html' in item.media_type).file_name
-            stack.push(Section(
-                document=self,
-                title=_("Book contents"),
-                pager=Pager(first=0, last=0),
-                level=2,
-                data=dict(href=href)
-            ))
-            object.__setattr__(root.pager, 'last', 0)
+            href = (
+                it(self.epub.items)
+                .find(lambda item: "html" in item.media_type)
+                .file_name
+            )
+            stack.push(
+                Section(
+                    document=self,
+                    title=_("Book contents"),
+                    pager=Pager(first=0, last=0),
+                    level=2,
+                    data=dict(href=href),
+                )
+            )
+            object.__setattr__(root.pager, "last", 0)
         return root
 
     @cached_property
@@ -220,7 +232,7 @@ class _DrmFitzEpubDocument(EpubDocument):
         """
         Try to remove Digital Rights Management (DRM) type
         encryption from the EPUB document.
-        
+
         Legal note:
         The removal of the encryption from the file does not involve any
         violation of any laws whatsoever, as long as the user has obtained
@@ -229,10 +241,10 @@ class _DrmFitzEpubDocument(EpubDocument):
         """
         filepath = Path(filename)
         content_hash = md5()
-        with open(filepath, 'rb') as ebook_file:
+        with open(filepath, "rb") as ebook_file:
             for chunk in ebook_file:
                 content_hash.update(chunk)
-        identifier  = content_hash.hexdigest()
+        identifier = content_hash.hexdigest()
         processed_book = home_data_path(f"{identifier}.epub")
         if processed_book.exists():
             return str(processed_book)
@@ -246,5 +258,3 @@ class _DrmFitzEpubDocument(EpubDocument):
                 book.write(file, file.relative_to(temp_path))
         _temp.cleanup()
         return str(processed_book)
-
-

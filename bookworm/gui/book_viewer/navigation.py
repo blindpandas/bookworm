@@ -124,8 +124,7 @@ class NavigationProvider:
 
     def onStructuredNavigation(self, event):
         self.view.navigate_to_structural_element(
-            element_type=event.SemanticElementType,
-            forward=event.Forward
+            element_type=event.SemanticElementType, forward=event.Forward
         )
 
     def _reset_up_arrow_pressed_time(self, sender, current, prev):

@@ -601,7 +601,12 @@ class ToolsMenu(BaseMenu):
             if current_reading_mode != new_reading_mode:
                 uri.openner_args["reading_mode"] = int(new_reading_mode)
                 most_recent_page = self.reader.current_page
-                self.view.open_uri(uri, callback=partial(self._after_reading_mode_changed, most_recent_page))
+                self.view.open_uri(
+                    uri,
+                    callback=partial(
+                        self._after_reading_mode_changed, most_recent_page
+                    ),
+                )
         dlg.Destroy()
 
 

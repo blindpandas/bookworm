@@ -38,11 +38,7 @@ class DocumentUri:
         filepath = Path(filename)
         if (doc_format := cls.get_format_by_filename(filepath)) is None:
             raise ValueError(f"Unsupported document format for file {filename}")
-        return cls(
-            format=doc_format,
-            path=str(filepath),
-            openner_args={}
-        )
+        return cls(format=doc_format, path=str(filepath), openner_args={})
 
     def to_uri_string(self):
         return uritools.uricompose(
@@ -79,12 +75,12 @@ class DocumentUri:
     def get_format_by_filename(cls, filename):
         """Get the document format using its filename."""
         fileext = Path(filename).suffix.strip(".")
-        if (file_format := cls._get_format_given_extension(f"*.{fileext}")):
+        if (file_format := cls._get_format_given_extension(f"*.{fileext}")) :
             return file_format
         possible_exts = tuple(str(filename).split("."))
         for idx in range(len(possible_exts) - 1):
             fileext = ".".join(possible_exts[idx:])
-            if (file_format := cls._get_format_given_extension(f"*.{fileext}")):
+            if (file_format := cls._get_format_given_extension(f"*.{fileext}")) :
                 return file_format
 
     @classmethod

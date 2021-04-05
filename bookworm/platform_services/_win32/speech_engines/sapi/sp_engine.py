@@ -59,7 +59,9 @@ class SapiSpeechEngine(BaseSpeechEngine):
             if (voice_culture := info.Culture) is not None:
                 voice_language = LocaleInfo(voice_culture.IetfLanguageTag)
             else:
-                log.exception(f"Failed to obtain culture information for voice {info.Name}")
+                log.exception(
+                    f"Failed to obtain culture information for voice {info.Name}"
+                )
                 continue
             rv.append(
                 VoiceInfo(

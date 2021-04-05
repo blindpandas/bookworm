@@ -22,9 +22,9 @@ log = logger.getChild(__name__)
 _missing = object()
 
 # New line character
-UNIX_NEWLINE = '\n'
-WINDOWS_NEWLINE = '\r\n'
-MAC_NEWLINE = '\r'
+UNIX_NEWLINE = "\n"
+WINDOWS_NEWLINE = "\r\n"
+MAC_NEWLINE = "\r"
 NEWLINE = UNIX_NEWLINE
 MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
 
@@ -44,7 +44,9 @@ def mute_stdout():
 
 
 def normalize_line_breaks(text, line_break=UNIX_NEWLINE):
-    text = text.replace(WINDOWS_NEWLINE, UNIX_NEWLINE).replace(MAC_NEWLINE, UNIX_NEWLINE)
+    text = text.replace(WINDOWS_NEWLINE, UNIX_NEWLINE).replace(
+        MAC_NEWLINE, UNIX_NEWLINE
+    )
     if line_break != UNIX_NEWLINE:
         text = text.replace(UNIX_NEWLINE, line_break)
     return text
@@ -144,7 +146,9 @@ def search(pattern, text):
 
 
 def format_datetime(date, format="medium", localized=True) -> str:
-    return app.current_language.format_datetime(date, format=format, localized=localized)
+    return app.current_language.format_datetime(
+        date, format=format, localized=localized
+    )
 
 
 def escape_html(text):

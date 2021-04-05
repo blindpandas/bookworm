@@ -170,7 +170,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         return DocumentCapability.GRAPHICAL_RENDERING in self.capabilities
 
     @staticmethod
-    def get_language(samples, is_html=False, hint_language: str=None) -> LocaleInfo:
+    def get_language(samples, is_html=False, hint_language: str = None) -> LocaleInfo:
         """Return the language of this document.
         By default we use a heuristic based on Google's CLD2.
         """
@@ -216,19 +216,21 @@ class BasePage(metaclass=ABCMeta):
         Return page image as `ImageIO`
         or raise NotImplementedError.
         """
-        raise NotImplementedError 
+        raise NotImplementedError
 
     def get_label(self) -> str:
         """Return the page label string (commonly found on PDFs)."""
         return ""
 
-    def get_semantic_structure(self) -> dict[SemanticElementType, list[tuple[int, int]]]:
+    def get_semantic_structure(
+        self,
+    ) -> dict[SemanticElementType, list[tuple[int, int]]]:
         """Return information about the position of semantic elements."""
-        raise NotImplementedError 
+        raise NotImplementedError
 
     def get_style_info(self) -> dict[SemanticElementType, list[tuple[int, int]]]:
         """Return information about the position of styled elements."""
-        raise NotImplementedError 
+        raise NotImplementedError
 
     def normalize_text(self, text):
         return remove_excess_blank_lines(text)
