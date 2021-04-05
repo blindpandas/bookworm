@@ -33,7 +33,7 @@ from bookworm.document_formats.base import (
     ChangeDocument,
     TreeStackBuilder,
 )
-from bookworm.utils import remove_excess_blank_lines, NEWLINE
+from bookworm.utils import remove_excess_blank_lines, escape_html, NEWLINE
 from bookworm.logger import logger
 
 
@@ -182,9 +182,10 @@ class BaseHtmlDocument(SinglePageDocument):
         xml_content = etree.fromstring(extracted)
         main_content = xml_content.xpath("main")[0]
         for node in main_content.cssselect("head"):
-            node.tag = "h1"
+            node.tag = "h2"
         html_string = (
             "<html><body>"
+            + f"<h1>{escape_html(self.metadata.title)}</h1>"
             + HtmlEtree.tostring(
                 main_content,
                 encoding="unicode",

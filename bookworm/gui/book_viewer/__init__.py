@@ -380,10 +380,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def set_state_on_section_change(self, current):
         self.tocTreeSetSelection(current)
-        if self.reader.document.is_single_page_document():
+        is_single_page_doc = self.reader.document.is_single_page_document()
+        if is_single_page_doc:
             target_pos = self.get_containing_line(current.text_range.start + 1)[0]
             self.set_insertion_point(target_pos)
-        if config.conf["general"]["speak_section_title"]:
+        if not is_single_page_doc and config.conf["general"]["speak_section_title"]:
             speech.announce(current.title)
 
     def onUserPositionTimerTick(self, event):
