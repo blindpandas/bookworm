@@ -110,6 +110,12 @@ def gui_thread_safe(func):
     return wrapper
 
 
+def generate_file_md5(filepath):
+    hasher = hashlib.md5()
+    for chunk in open(filepath, "rb"):
+        hasher.update(chunk)
+    return hasher.hexdigest()
+
 def generate_sha1hash(content):
     hasher = hashlib.sha1()
     is_file_like = hasattr(content, "seek")

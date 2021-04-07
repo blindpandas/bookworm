@@ -151,7 +151,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """Only valid for documents that have true filesystem path."""
         if (filepath := Path(self.uri.path)).exists():
             return filepath
-        raise DocumentIOError(f"File {filename} does not exist.")
+        raise DocumentIOError(f"File {filepath} does not exist.")
 
     @classmethod
     def should_read_async(cls):
@@ -305,4 +305,22 @@ class SinglePageDocument(BaseDocument):
         raise NotImplementedError
 
     def get_document_style_info(self):
+        raise NotImplementedError
+
+
+class DummyDocument(BaseDocument):
+    """Implements core document methods for a dummy document."""
+
+    def __len__(self):
+        raise NotImplementedError
+
+    def get_page(self, index):
+        raise NotImplementedError
+
+    @property
+    def toc_tree(self):
+        raise NotImplementedError
+
+    @property
+    def metadata(self):
         raise NotImplementedError

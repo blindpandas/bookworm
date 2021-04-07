@@ -5,6 +5,7 @@ from .document import (
     BasePage,
     SinglePageDocument,
     SinglePage,
+    DummyDocument,
 )
 from .elements import (
     Section,

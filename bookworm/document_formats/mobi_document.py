@@ -3,15 +3,15 @@
 import os
 import shutil
 import mobi
-from hashlib import md5
 from tempfile import TemporaryDirectory
 from pathlib import Path
 from bookworm.paths import home_data_path
 from bookworm.document_uri import DocumentUri
-from bookworm.utils import mute_stdout
+from bookworm.utils import generate_file_md5, mute_stdout
 from bookworm.document_formats.base import (
-    BaseDocument,
+    DummyDocument,
     ChangeDocument,
+    DocumentCapability as DC,
     DocumentError,
     DocumentEncryptedError,
 )
@@ -33,7 +33,7 @@ EPUB_STRUCTURE_FILES = {
 }
 
 
-class MobiDocument(BaseDocument):
+class MobiDocument(DummyDocument):
 
     format = "mobi"
     # Translators: the name of a document file format
@@ -60,10 +60,7 @@ class MobiDocument(BaseDocument):
 
     def unpack_mobi(self, filename):
         storage_area = self.get_mobi_storage_area()
-        hasher = md5()
-        for chunk in open(filename, "rb"):
-            hasher.update(chunk)
-        filemd5 = hasher.hexdigest()
+        filemd5 = generate_file_md5(filename)
         for fname in storage_area.iterdir():
             if fname.is_file() and (fname.stem == filemd5):
                 return str(fname)
@@ -109,11 +106,3 @@ class MobiDocument(BaseDocument):
         created_epub_filename = ziparchive_filename.with_suffix("")
         ziparchive_filename.rename(created_epub_filename)
         return created_epub_filename
-
-    @property
-    def toc_tree(self):
-        raise NotImplementedError
-
-    @property
-    def metadata(self):
-        raise NotImplementedError
