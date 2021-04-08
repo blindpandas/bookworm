@@ -105,7 +105,7 @@ class ResourceLoader:
                 icon=wx.ICON_ERROR,
             )
         except UnsupportedDocumentError as e:
-            _last_exception
+            _last_exception = e
             log.exception("Unsupported file format", exc_info=True)
             wx.CallAfter(
                 self.view.notify_user,
@@ -118,7 +118,7 @@ class ResourceLoader:
                 icon=wx.ICON_WARNING,
             )
         except ReaderError as e:
-            _last_exception
+            _last_exception  = e
             log.exception("Unsupported file format", exc_info=True)
             wx.CallAfter(
                 self.view.notify_user,
@@ -133,7 +133,7 @@ class ResourceLoader:
                 icon=wx.ICON_ERROR,
             )
         except Exception as e:
-            _last_exception
+            _last_exception = e
             log.exception("Unsupported file format", exc_info=True)
             wx.CallAfter(
                 self.view.notify_user,
@@ -364,9 +364,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.userPositionTimer.Stop()
         self.reader.unload()
         self.clear_toc_tree()
-        self.clear_highlight()
         self.set_title(app.display_name)
         self.set_content("")
+        self.clear_highlight()
         self.set_status(self._no_open_book_status)
 
     def add_toc_tree(self, tree):

@@ -11,6 +11,7 @@ PACKAGES_WITH_DATA = [
     "justext",
     "tld",
     "lazy_import",
+    "docx",
 ]
 BOOKWORM_RESOURCES = collect_data_files('bookworm', excludes=['*.po',])
 DATA_FILES = [
