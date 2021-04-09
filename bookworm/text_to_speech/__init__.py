@@ -1,16 +1,18 @@
 # coding: utf-8
 
+import bisect
 import wx
 import queue
-import bisect
 import ujson as json
 from functools import cached_property
 from contextlib import suppress
 from base64 import urlsafe_b64encode, urlsafe_b64decode
 from dataclasses import dataclass
+from more_itertools import first_true
 from bookworm import config
 from bookworm.platform_services.speech_engines import TTS_ENGINES
 from bookworm.resources import sounds
+from bookworm.structured_text import TextInfo
 from bookworm.resources import images
 from bookworm.speechdriver import DummySpeechEngine, speech_engine_state_changed
 from bookworm.speechdriver.utterance import SpeechUtterance, SpeechStyle
@@ -21,11 +23,6 @@ from bookworm.speechdriver.enumerations import (
     PauseSpec,
 )
 from bookworm.utils import gui_thread_safe
-from bookworm.vendor.sentence_splitter import (
-    SentenceSplitter,
-    SentenceSplitterException,
-    supported_languages as splitter_supported_languages,
-)
 from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,
@@ -47,72 +44,6 @@ from .tts_gui import (
 log = logger.getChild(__name__)
 
 
-@dataclass
-class TextInfo:
-    """Provides basic structural information  about a blob of text
-    Most of the properties have their values cached.
-    """
-
-    text: str
-    """The text blob to process."""
-
-    start_pos: int = 0
-    """Starting position of the text, i.e. in a text control or a stream."""
-
-    lang: str = "en"
-    """The natural language of the text. Used in splitting the text into sentences."""
-
-    eol: str = "\n"
-    """The recognizable end-of-line sequence. Used to split the text into paragraphs."""
-
-    def __post_init__(self):
-        lang = self.lang
-        if lang not in splitter_supported_languages():
-            lang = "en"
-        self._sent_tokenizer = SentenceSplitter(lang)
-
-    @cached_property
-    def sentence_markers(self):
-        return self._record_markers(self.sentences)
-
-    @cached_property
-    def paragraph_markers(self):
-        return self._record_markers(self.paragraphs)
-
-    def split_sentences(self, textblock):
-        return self._sent_tokenizer.split(textblock)
-
-    @cached_property
-    def sentences(self):
-        rv = []
-        for sent in self.split_sentences(self.text):
-            if sent.strip():
-                # XXX FixME: Find a way to get the starting position of this sentence
-                pos = self.text.find(sent)
-                rv.append((sent, pos + self.start_pos))
-        return rv
-
-    @cached_property
-    def paragraphs(self):
-        rv = []
-        paragraphs = self.text.split(self.eol)
-        for parag in paragraphs:
-            if parag.strip():
-                pos = self.text.index(parag)
-                rv.append((parag, pos + self.start_pos))
-        return rv
-
-    def _record_markers(self, segments):
-        rv = []
-        for _nope, pos in segments:
-            rv.append(self.start_pos + pos)
-        return rv
-
-    @property
-    def configured_markers(self):
-        return self.paragraph_markers
-
-
 class TextToSpeechService(BookwormService):
     name = "text_to_speech"
     config_spec = tts_config_spec
@@ -129,6 +60,7 @@ class TextToSpeechService(BookwormService):
         self.config_manager = TTSConfigManager()
         self.textCtrl = self.view.contentTextCtrl
         self._current_textinfo = None
+        self._highlighted_ranges = set()
         self.queue = queue.PriorityQueue()
         self.engine = None
         reader_book_unloaded.connect(self.on_reader_unload, sender=self.reader)
@@ -219,12 +151,12 @@ class TextToSpeechService(BookwormService):
         return self.make_text_info(text, start_pos=current_pos)
 
     def add_text_segments_to_utterance(self, utterance, textinfo):
-        for text, pos in textinfo.paragraphs:
+        for text, text_range in textinfo.paragraphs:
             with utterance.new_paragraph():
                 bookmark_data = {
                     "type": "start_segment",
-                    "pos": pos,
-                    "end": pos + len(text),
+                    "pos": text_range.start,
+                    "end": text_range.stop,
                 }
                 utterance.add_bookmark(self.encode_bookmark(bookmark_data))
                 sent_pause = config.conf["speech"]["sentence_pause"]
@@ -303,10 +235,12 @@ class TextToSpeechService(BookwormService):
             if self.textCtrl.GetInsertionPoint() != pos:
                 self.textCtrl.SetInsertionPoint(pos)
             if config.conf["reading"]["highlight_spoken_text"]:
-                self.view.clear_highlight(0, pos)
+                self.clear_highlighted_ranges()
+                start_pos, stop_pos = pos, data["end"]
                 self.view.highlight_range(
-                    pos, data["end"], foreground=wx.BLACK, background=wx.LIGHT_GREY
+                    start_pos, stop_pos, foreground=wx.BLACK, background=wx.LIGHT_GREY
                 )
+                self._highlighted_ranges.add((start_pos, stop_pos))
             if config.conf["reading"]["select_spoken_text"]:
                 self.textCtrl.SetSelection(pos, data["end"])
         elif data["type"] == "end_page":
@@ -317,12 +251,17 @@ class TextToSpeechService(BookwormService):
     def fastforward(self):
         if not self._current_textinfo or (self.engine.state is not SynthState.busy):
             return wx.Bell()
-        markers = self._current_textinfo.configured_markers
+        markers = [trng.start for trng in self._current_textinfo.configured_markers]
+        markers.sort()
         caret_pos = self.textCtrl.InsertionPoint
-        pos = markers[-1]
         index = bisect.bisect_right(markers, caret_pos)
-        if index != len(markers):
+        if index:
             pos = markers[index]
+        elif markers:
+            pos = markers[-1]
+        else:
+            pos = self.view.get_containing_line(caret_pos)[0]
+        self.engine.pause()
         self.engine.stop()
         self.textCtrl.SetInsertionPoint(pos)
         self.speak_current_page(from_caret=True)
@@ -330,11 +269,15 @@ class TextToSpeechService(BookwormService):
     def rewind(self):
         if not self._current_textinfo or (self.engine.state is not SynthState.busy):
             return wx.Bell()
-        markers = self._current_textinfo.configured_markers
+        markers = [trng.start for trng in self._current_textinfo.configured_markers]
+        markers.sort()
         caret_pos = self.textCtrl.InsertionPoint
         index = bisect.bisect_left(markers, caret_pos)
         if index:
             pos = markers[index - 1]
+        else:
+            pos = 0
+        self.engine.pause()
         self.engine.stop()
         self.textCtrl.SetInsertionPoint(pos)
         self.speak_current_page(from_caret=True)
@@ -448,7 +391,7 @@ class TextToSpeechService(BookwormService):
     @gui_thread_safe
     def on_engine_state_changed(self, state):
         if state is SynthState.ready:
-            self.view.clear_highlight()
+            self.clear_highlighted_ranges()
         if state is SynthState.busy:
             image = images.pause
         else:
@@ -470,6 +413,11 @@ class TextToSpeechService(BookwormService):
         for ctrl_id, enable in gui_state:
             menu.Enable(ctrl_id, enable)
             toolbar.EnableTool(ctrl_id, enable)
+
+    def clear_highlighted_ranges(self):
+        for start_pos, stop_pos in self._highlighted_ranges:
+            self.view.clear_highlight(start_pos, stop_pos)
+        self._highlighted_ranges.clear()
 
     @classmethod
     def get_engine(cls, engine_name, first_available=True):
