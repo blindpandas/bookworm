@@ -148,7 +148,9 @@ class TextToSpeechService(BookwormService):
             else:
                 current_pos = 0
         text = self.textCtrl.GetRange(current_pos, self.textCtrl.GetLastPosition())
-        return self.make_text_info(text, start_pos=current_pos)
+        text_info = self.make_text_info(text, start_pos=current_pos)
+        end_pos = text_info.get_paragraph_to_the_right_of(current_pos)
+        return self.make_text_info(text[current_pos: end_pos], start_pos=current_pos)
 
     def add_text_segments_to_utterance(self, utterance, textinfo):
         for text, text_range in textinfo.paragraphs:
@@ -208,7 +210,7 @@ class TextToSpeechService(BookwormService):
         utterance.add_bookmark(page_bookmark)
 
     def speak_current_page(self, utterance=None, from_caret=True):
-        start_pos = self.textCtrl.GetInsertionPoint() if from_caret else 0
+        start_pos = 0 if not from_caret else self.textCtrl.GetInsertionPoint()
         textinfo = self.content_tokenized(start_pos=start_pos)
         if self._current_textinfo is None:
             self._current_textinfo = textinfo
@@ -251,17 +253,10 @@ class TextToSpeechService(BookwormService):
     def fastforward(self):
         if not self._current_textinfo or (self.engine.state is not SynthState.busy):
             return wx.Bell()
-        markers = [trng.start for trng in self._current_textinfo.configured_markers]
-        markers.sort()
-        caret_pos = self.textCtrl.InsertionPoint
-        index = bisect.bisect_right(markers, caret_pos)
-        if index:
-            pos = markers[index]
-        elif markers:
-            pos = markers[-1]
-        else:
-            pos = self.view.get_containing_line(caret_pos)[0]
-        self.engine.pause()
+        info = TextInfo(
+            text=self.textCtrl.GetRange(0, self.textCtrl.GetLastPosition())
+        )
+        pos = info.get_paragraph_to_the_right_of(self.view.get_insertion_point())
         self.engine.stop()
         self.textCtrl.SetInsertionPoint(pos)
         self.speak_current_page(from_caret=True)
@@ -269,14 +264,10 @@ class TextToSpeechService(BookwormService):
     def rewind(self):
         if not self._current_textinfo or (self.engine.state is not SynthState.busy):
             return wx.Bell()
-        markers = [trng.start for trng in self._current_textinfo.configured_markers]
-        markers.sort()
-        caret_pos = self.textCtrl.InsertionPoint
-        index = bisect.bisect_left(markers, caret_pos)
-        if index:
-            pos = markers[index - 1]
-        else:
-            pos = 0
+        info = TextInfo(
+            text=self.textCtrl.GetRange(0, self.textCtrl.GetLastPosition())
+        )
+        pos = info.get_paragraph_to_the_left_of(self.view.get_insertion_point())
         self.engine.pause()
         self.engine.stop()
         self.textCtrl.SetInsertionPoint(pos)

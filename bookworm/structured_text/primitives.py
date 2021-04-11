@@ -2,6 +2,7 @@
 
 """Provides primitives for structuring a blob of text."""
 
+import bisect
 from collections.abc import Container
 from functools import cached_property
 from dataclasses import dataclass, field
@@ -115,7 +116,26 @@ class TextInfo:
             rv.append(pos)
         return rv
 
-    @property
+    @cached_property
     def configured_markers(self):
         return self.paragraph_markers
 
+    def get_paragraph_to_the_right_of(self, pos):
+        markers = [trng.start for trng in self.configured_markers]
+        markers.sort()
+        index = bisect.bisect_right(markers, pos)
+        if index < len(markers):
+            return markers[index]
+        elif index >= len(markers) and markers:
+            return markers[-1]
+        else:
+            return pos
+
+    def get_paragraph_to_the_left_of(self, pos):
+        markers = [trng.start for trng in self.configured_markers]
+        markers.sort()
+        index = bisect.bisect_left(markers, pos)
+        if index:
+            return markers[index - 1]
+        else:
+            return 0
