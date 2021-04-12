@@ -51,7 +51,7 @@ class NavigationProvider:
             wx.WXK_UP,
             wx.WXK_DOWN,
         }:
-            self._auto_navigate(key_code)
+            self._auto_navigate(event, key_code)
         elif key_code in NAVIGATION_KEYS:
             if key_code in NAV_FOREWORD_KEYS:
                 self.reader.go_to_next()
@@ -95,7 +95,9 @@ class NavigationProvider:
         else:
             raise ValueError(f"KeyCode: {keycode} is not a content navigation key")
 
-    def _auto_navigate(self, key_code):
+    def _auto_navigate(self, event, key_code):
+        if event.ControlDown() or event.ShiftDown():
+            return
         now = time.time()
         last_press = self._key_press_record.get(key_code)
         num_lines = self._nav_ctrl.NumberOfLines - 1

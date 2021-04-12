@@ -42,6 +42,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     """A combination of DocumentCapability flags."""
 
     supported_reading_modes: t.Tuple[ReadingMode] = (ReadingMode.DEFAULT,)
+    default_reading_mode: ReadingMode = ReadingMode.DEFAULT
 
     document_classes: list = []
 
@@ -156,6 +157,10 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     @classmethod
     def should_read_async(cls):
         return DocumentCapability.ASYNC_READ in cls.capabilities
+
+    @classmethod
+    def uses_chapter_by_chapter_navigation_model(self):
+        return self.default_reading_mode is ReadingMode.CHAPTER_BASED
 
     @classmethod
     def is_single_page_document(self):

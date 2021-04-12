@@ -12,6 +12,7 @@ PACKAGES_WITH_DATA = [
     "tld",
     "lazy_import",
     "docx",
+    "pptx",
 ]
 BOOKWORM_RESOURCES = collect_data_files('bookworm', excludes=['*.po',])
 DATA_FILES = [

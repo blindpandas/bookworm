@@ -16,6 +16,7 @@ from bookworm.signals import (
 
 # Timer Interval
 TIMER_INTERVAL = 50
+MODIFIER_KEYS = {wx.WXK_SHIFT, wx.WXK_CONTROL, wx.WXK_ALT}
 
 
 class ContReadingService(BookwormService):
@@ -39,6 +40,9 @@ class ContReadingService(BookwormService):
     @call_threaded
     def onTimerTick(self, event):
         with self._lock:
+            if wx.GetKeyState(wx.WXK_CONTROL):
+                self._start_timer()
+                return
             wx.WakeUpIdle()
             end_pos = self.textCtrl.GetLastPosition()
             if not end_pos:

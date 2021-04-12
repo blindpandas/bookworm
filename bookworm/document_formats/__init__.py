@@ -16,3 +16,4 @@ from .plain_text_document import PlainTextDocument
 from .html_document import FileSystemHtmlDocument, WebHtmlDocument
 from .markdown_document import MarkdownDocument
 from .word_document import WordDocument
+from .powerpoint_presentation import PowerpointPresentation

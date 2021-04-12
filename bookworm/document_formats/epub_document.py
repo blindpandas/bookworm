@@ -18,6 +18,7 @@ from bookworm.document_formats.base import (
     BookMetadata,
     Pager,
     DocumentCapability as DC,
+    ReadingMode,
     TreeStackBuilder,
     ChangeDocument,
     DocumentError,
@@ -119,6 +120,7 @@ class EpubDocument(BaseDocument):
     name = _("Electronic Publication (EPUB)")
     extensions = ("*.epub",)
     capabilities = DC.TOC_TREE | DC.METADATA | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE
+    default_reading_mode = ReadingMode.CHAPTER_BASED
 
     def __len__(self):
         return self.toc_tree.pager.last + 1

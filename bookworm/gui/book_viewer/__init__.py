@@ -413,6 +413,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         selectedItem = event.GetItem()
         self.reader.active_section = self.tocTreeCtrl.GetItemData(selectedItem)
         self.reader.go_to_first_of_section()
+        self.contentTextCtrl.SetFocus()
 
     def set_state_on_page_change(self, page):
         self.set_content(page.get_text())
@@ -423,11 +424,14 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             # document is a single page document
             self.set_status(_("Document content"))
         else:
-            # Translators: the label of the page content text area
-            label_msg = _("Page {page} of {total} — {chapter}")
             page_number = page.number
-            if config.conf["general"]["include_page_label"]:
-                if page_label := page.get_label():
+            if self.reader.document.uses_chapter_by_chapter_navigation_model():
+                # Translators: the label of the page content text area
+                label_msg = _("{chapter}")
+            else:
+                # Translators: the label of the page content text area
+                label_msg = _("Page {page} of {total} — {chapter}")
+                if config.conf["general"]["include_page_label"] and (page_label := page.get_label()):
                     page_number = f"{page_number} ({page_label})"
             self.set_status(
                 label_msg.format(
