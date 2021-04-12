@@ -118,7 +118,7 @@ class ResourceLoader:
                 icon=wx.ICON_WARNING,
             )
         except ReaderError as e:
-            _last_exception  = e
+            _last_exception = e
             log.exception("Unsupported file format", exc_info=True)
             wx.CallAfter(
                 self.view.notify_user,
@@ -431,7 +431,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             else:
                 # Translators: the label of the page content text area
                 label_msg = _("Page {page} of {total} — {chapter}")
-                if config.conf["general"]["include_page_label"] and (page_label := page.get_label()):
+                if config.conf["general"]["include_page_label"] and (
+                    page_label := page.get_label()
+                ):
                     page_number = f"{page_number} ({page_label})"
             self.set_status(
                 label_msg.format(

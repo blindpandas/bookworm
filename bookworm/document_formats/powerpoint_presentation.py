@@ -31,17 +31,17 @@ PP_HEADING_TYPES = {
     PP_PLACEHOLDER.SUBTITLE,
     PP_PLACEHOLDER.VERTICAL_TITLE,
 }
-PP_PLACEHOLDER_SEMANTIC_ELEMENTS = {h: SemanticElementType.HEADING_1 for h in PP_HEADING_TYPES}
-PP_PLACEHOLDER_SEMANTIC_ELEMENTS |= {
-    PP_PLACEHOLDER.TABLE: SemanticElementType.TABLE
+PP_PLACEHOLDER_SEMANTIC_ELEMENTS = {
+    h: SemanticElementType.HEADING_1 for h in PP_HEADING_TYPES
 }
+PP_PLACEHOLDER_SEMANTIC_ELEMENTS |= {PP_PLACEHOLDER.TABLE: SemanticElementType.TABLE}
 PP_SHAPE_SEMANTIC_ELEMENTS = {
     MSO_SHAPE_TYPE.TABLE: SemanticElementType.TABLE,
 }
 
 
 class PowerpointSlide(BasePage):
-    """Represents a slide in a PowerPoint presentation.""" 
+    """Represents a slide in a PowerPoint presentation."""
 
     def __init__(self, slide, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -60,20 +60,35 @@ class PowerpointSlide(BasePage):
             self.text_buffer.write(text)
             stop_pos = self.text_buffer.tell()
             if is_list:
-                self.semantic_elements.setdefault(SemanticElementType.LIST, []).append((start_pos, stop_pos))
-            if shape.is_placeholder and (selm := PP_PLACEHOLDER_SEMANTIC_ELEMENTS.get(shape.placeholder_format.type)):
-                self.semantic_elements.setdefault(selm, []).append((start_pos, stop_pos))
-            elif (selm := PP_SHAPE_SEMANTIC_ELEMENTS.get(shape.shape_type)):
-                self.semantic_elements.setdefault(selm, []).append((start_pos, stop_pos))
+                self.semantic_elements.setdefault(SemanticElementType.LIST, []).append(
+                    (start_pos, stop_pos)
+                )
+            if shape.is_placeholder and (
+                selm := PP_PLACEHOLDER_SEMANTIC_ELEMENTS.get(
+                    shape.placeholder_format.type
+                )
+            ):
+                self.semantic_elements.setdefault(selm, []).append(
+                    (start_pos, stop_pos)
+                )
+            elif (selm := PP_SHAPE_SEMANTIC_ELEMENTS.get(shape.shape_type)) :
+                self.semantic_elements.setdefault(selm, []).append(
+                    (start_pos, stop_pos)
+                )
 
     def extract_notes_slide(self, slide):
-        if not slide.has_notes_slide or not slide.notes_slide.notes_text_frame.text.strip():
+        if (
+            not slide.has_notes_slide
+            or not slide.notes_slide.notes_text_frame.text.strip()
+        ):
             return
         self.text_buffer.write(NEWLINE + "-" * 10 + NEWLINE)
         nh_start_pos = self.text_buffer.tell()
         self.text_buffer.write(_("Slide Notes") + NEWLINE)
         nh_stop_pos = self.text_buffer.tell()
-        self.semantic_elements.setdefault(SemanticElementType.HEADING_1, []).append((nh_start_pos, nh_stop_pos))
+        self.semantic_elements.setdefault(SemanticElementType.HEADING_1, []).append(
+            (nh_start_pos, nh_stop_pos)
+        )
         self.extract_slide_text_and_semantic(slide.notes_slide)
 
     def get_text(self):
@@ -89,9 +104,10 @@ class PowerpointSlide(BasePage):
         text = shape.text_frame.text.replace("\v", "\n")
         paragraphs = shape.text_frame.paragraphs
         parag_levels = [p.level for p in paragraphs if p.level > 0]
-        is_list = (len(paragraphs) == len(parag_levels)) and all_equal(l for l in parag_levels)
+        is_list = (len(paragraphs) == len(parag_levels)) and all_equal(
+            l for l in parag_levels
+        )
         return text.strip(), is_list
-
 
 
 class PowerpointPresentation(BaseDocument):
@@ -119,7 +135,7 @@ class PowerpointPresentation(BaseDocument):
 
     @cached_property
     def language(self):
-        if (lang := self.presentation.core_properties.language):
+        if (lang := self.presentation.core_properties.language) :
             try:
                 return LocaleInfo(lang)
             except ValueError:
@@ -136,15 +152,17 @@ class PowerpointPresentation(BaseDocument):
         )
         stack = TreeStackBuilder(root)
         for (idx, slide) in enumerate(self.slides):
-            section_title = _("Slide {number}").format(number=idx+1)
-            if (slide_title := self._get_slide_title(slide)):
+            section_title = _("Slide {number}").format(number=idx + 1)
+            if (slide_title := self._get_slide_title(slide)) :
                 section_title = f"{section_title}: {slide_title}"
-            stack.push(Section(
-                document=self,
-                title=section_title,
-                pager=Pager(first=idx, last=idx),
-                level=2
-            ))
+            stack.push(
+                Section(
+                    document=self,
+                    title=section_title,
+                    pager=Pager(first=idx, last=idx),
+                    level=2,
+                )
+            )
         return root
 
     @cached_property
@@ -154,13 +172,16 @@ class PowerpointPresentation(BaseDocument):
         return BookMetadata(
             title=presentation_title,
             author=props.author or "",
-            publication_year=props.created or ""
+            publication_year=props.created or "",
         )
 
     def _get_slide_title(self, slide):
         try:
             first_shape = slide.shapes[0]
-            if first_shape.is_placeholder and first_shape.placeholder_format.type in PP_HEADING_TYPES:
+            if (
+                first_shape.is_placeholder
+                and first_shape.placeholder_format.type in PP_HEADING_TYPES
+            ):
                 return first_shape.text
         except IndexError:
             return

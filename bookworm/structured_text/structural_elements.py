@@ -12,7 +12,6 @@ from bookworm.utils import normalize_line_breaks
 from .primitives import TextRange
 
 
-
 class Style(IntEnum):
     NORMAL = auto()
     BOLD = auto()

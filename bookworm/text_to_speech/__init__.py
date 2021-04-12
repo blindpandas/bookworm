@@ -150,7 +150,7 @@ class TextToSpeechService(BookwormService):
         text = self.textCtrl.GetRange(current_pos, self.textCtrl.GetLastPosition())
         text_info = self.make_text_info(text, start_pos=current_pos)
         end_pos = text_info.get_paragraph_to_the_right_of(current_pos)
-        return self.make_text_info(text[current_pos: end_pos], start_pos=current_pos)
+        return self.make_text_info(text[current_pos:end_pos], start_pos=current_pos)
 
     def add_text_segments_to_utterance(self, utterance, textinfo):
         for text, text_range in textinfo.paragraphs:
@@ -253,9 +253,7 @@ class TextToSpeechService(BookwormService):
     def fastforward(self):
         if not self._current_textinfo or (self.engine.state is not SynthState.busy):
             return wx.Bell()
-        info = TextInfo(
-            text=self.textCtrl.GetRange(0, self.textCtrl.GetLastPosition())
-        )
+        info = TextInfo(text=self.textCtrl.GetRange(0, self.textCtrl.GetLastPosition()))
         pos = info.get_paragraph_to_the_right_of(self.view.get_insertion_point())
         self.engine.stop()
         self.textCtrl.SetInsertionPoint(pos)
@@ -264,9 +262,7 @@ class TextToSpeechService(BookwormService):
     def rewind(self):
         if not self._current_textinfo or (self.engine.state is not SynthState.busy):
             return wx.Bell()
-        info = TextInfo(
-            text=self.textCtrl.GetRange(0, self.textCtrl.GetLastPosition())
-        )
+        info = TextInfo(text=self.textCtrl.GetRange(0, self.textCtrl.GetLastPosition()))
         pos = info.get_paragraph_to_the_left_of(self.view.get_insertion_point())
         self.engine.pause()
         self.engine.stop()

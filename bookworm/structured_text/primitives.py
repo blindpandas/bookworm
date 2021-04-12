@@ -39,6 +39,7 @@ class TextRange(Container):
     def as_slice(self):
         return slice(self.start, self.stop)
 
+
 @dataclass
 class TextInfo:
     """Provides basic structural information  about a blob of text
@@ -82,10 +83,7 @@ class TextInfo:
             all_sents.add(len(sent))
             if sent.strip():
                 sent_start_pos = self.start_pos + sum(all_sents) + 1
-                sent_range = TextRange(
-                    sent_start_pos,
-                    sent_start_pos + len(sent)
-                )
+                sent_range = TextRange(sent_start_pos, sent_start_pos + len(sent))
                 rv.append((sent, sent_range))
         return rv
 
@@ -95,19 +93,26 @@ class TextInfo:
         paragraphs = self.text.splitlines(keepends=True)
         newline = "\n"
         p_locations = list(locate(self.text, lambda c: c == newline))
-        start_positions = [p + 1 for p in [-1,] + p_locations]
+        start_positions = [
+            p + 1
+            for p in [
+                -1,
+            ]
+            + p_locations
+        ]
         end_positions = p_locations
         if p_locations and (p_locations[-1] != len(self.text)):
-            end_positions += [len(self.text) - 1,] 
-        for (start_pos, stop_pos, parag) in zip(start_positions, end_positions, paragraphs):
+            end_positions += [
+                len(self.text) - 1,
+            ]
+        for (start_pos, stop_pos, parag) in zip(
+            start_positions, end_positions, paragraphs
+        ):
             if not parag.strip():
                 continue
             p_start_pos = self.start_pos + start_pos
-            p_range = TextRange(
-                start=p_start_pos,
-                stop=stop_pos
-            )
-            rv.append((parag,  p_range))
+            p_range = TextRange(start=p_start_pos, stop=stop_pos)
+            rv.append((parag, p_range))
         return rv
 
     def _record_markers(self, segments):

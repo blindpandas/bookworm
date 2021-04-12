@@ -116,6 +116,7 @@ def generate_file_md5(filepath):
         hasher.update(chunk)
     return hasher.hexdigest()
 
+
 def generate_sha1hash(content):
     hasher = hashlib.sha1()
     is_file_like = hasattr(content, "seek")

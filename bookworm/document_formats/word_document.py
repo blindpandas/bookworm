@@ -26,12 +26,13 @@ class WordDocument(DummyDocument):
     # Translators: the name of a document file format
     name = _("Word Document")
     extensions = ("*.docx",)
-    capabilities = DC.ASYNC_READ 
-
+    capabilities = DC.ASYNC_READ
 
     def read(self):
         docx_file_path = self.get_file_system_path()
-        converted_file = process_worker.submit(self.get_converted_filename, docx_file_path).result()
+        converted_file = process_worker.submit(
+            self.get_converted_filename, docx_file_path
+        ).result()
         raise ChangeDocument(
             old_uri=self.uri,
             new_uri=DocumentUri.from_filename(converted_file),
@@ -53,18 +54,20 @@ class WordDocument(DummyDocument):
     @classmethod
     def make_proper_html(cls, html_string, docx_file_path):
         docx = DocxDocumentReader(docx_file_path)
-        props =  docx.core_properties
+        props = docx.core_properties
         doc_title = props.title.strip()
-        if not doc_title or doc_title.lower() == 'word document':
+        if not doc_title or doc_title.lower() == "word document":
             doc_title = docx_file_path.stem.strip()
         doc_author = escape_html(props.author or "")
-        return NEWLINE.join([
-            '<!doctype html>',
-            '<html><head>',
-            '<meta charset="utf-8" />',
-            f'<meta name="author" content="{doc_author}">',
-            f'<title>{escape_html(doc_title)}<title>',
-            '</head><body>',
-            html_string,
-            '</body></html>',
-        ])
+        return NEWLINE.join(
+            [
+                "<!doctype html>",
+                "<html><head>",
+                '<meta charset="utf-8" />',
+                f'<meta name="author" content="{doc_author}">',
+                f"<title>{escape_html(doc_title)}<title>",
+                "</head><body>",
+                html_string,
+                "</body></html>",
+            ]
+        )
