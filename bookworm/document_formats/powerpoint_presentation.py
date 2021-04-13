@@ -101,13 +101,10 @@ class PowerpointSlide(BasePage):
         return self.semantic_elements
 
     def _get_shape_text(self, shape):
-        text = shape.text_frame.text.replace("\v", "\n")
+        text = shape.text_frame.text.replace("\v", "\n").strip()
         paragraphs = shape.text_frame.paragraphs
         parag_levels = [p.level for p in paragraphs if p.level > 0]
-        is_list = (len(paragraphs) == len(parag_levels)) and all_equal(
-            l for l in parag_levels
-        )
-        return text.strip(), is_list
+        return (text + NEWLINE), (len(paragraphs) == len(parag_levels))
 
 
 class PowerpointPresentation(BaseDocument):

@@ -394,13 +394,14 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             log.exception("Failed to save current position", exc_info=True)
 
     def onTocTreeFocus(self, event):
+        event.Skip(True)
+        if not self.reader.document.is_single_page_document():
+            return
         condition = (
             self.reader.ready
-            and self.reader.document.is_single_page_document()
             and self.get_insertion_point() not in self.reader.active_section.text_range
         )
         if condition:
-            event.Skip(True)
             with self.mute_page_and_section_speech():
                 self.reader.active_section = (
                     self.reader.document.get_section_at_position(
@@ -410,10 +411,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 event.GetEventObject().SetFocus()
 
     def onTOCItemClick(self, event):
-        selectedItem = event.GetItem()
-        self.reader.active_section = self.tocTreeCtrl.GetItemData(selectedItem)
-        self.reader.go_to_first_of_section()
-        self.contentTextCtrl.SetFocus()
+        with self.mute_page_and_section_speech():
+            selectedItem = event.GetItem()
+            self.reader.active_section = self.tocTreeCtrl.GetItemData(selectedItem)
+            self.reader.go_to_first_of_section()
+            self.contentTextCtrl.SetFocus()
 
     def set_state_on_page_change(self, page):
         self.set_content(page.get_text())
