@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import bisect
 import wx
 import queue
 import ujson as json
@@ -139,6 +140,18 @@ class TextToSpeechService(BookwormService):
         data = urlsafe_b64decode(string.encode("ascii"))
         return json.loads(data)
 
+    def content_tokenized(self, start_pos=None):
+        current_pos = start_pos
+        if start_pos is None:
+            if not config.conf["reading"]["start_reading_from_"]:
+                current_pos = self.textCtrl.GetInsertionPoint()
+            else:
+                current_pos = 0
+        text = self.textCtrl.GetRange(current_pos, self.textCtrl.GetLastPosition())
+        text_info = self.make_text_info(text, start_pos=current_pos)
+        end_pos = text_info.get_paragraph_to_the_right_of(current_pos)
+        return self.make_text_info(text[current_pos:end_pos], start_pos=current_pos)
+
     def add_text_segments_to_utterance(self, utterance, textinfo):
         for text, text_range in textinfo.paragraphs:
             with utterance.new_paragraph():
@@ -196,6 +209,22 @@ class TextToSpeechService(BookwormService):
         )
         utterance.add_bookmark(page_bookmark)
 
+    def speak_current_page(self, utterance=None, from_caret=True):
+        start_pos = 0 if not from_caret else self.textCtrl.GetInsertionPoint()
+        textinfo = self.content_tokenized(start_pos=start_pos)
+        if self._current_textinfo is None:
+            self._current_textinfo = textinfo
+        utterance = utterance or SpeechUtterance()
+        page = self.reader.get_current_page_object()
+        if start_pos == 0:
+            self.start_page_utterance(utterance, page)
+        self.add_text_segments_to_utterance(utterance, textinfo)
+        self.end_page_utterance(utterance, page)
+        self.enqueue(utterance)
+        self.process_next_queued_element()
+
+    def add_end_of_utterance_bookmark(self, utterance):
+        utterance.add_bookmark(self.encode_bookmark({"type": "utterance_end"}))
 
     @gui_thread_safe
     def process_bookmark(self, bookmark):

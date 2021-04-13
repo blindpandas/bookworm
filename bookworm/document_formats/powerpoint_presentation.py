@@ -86,7 +86,7 @@ class PowerpointSlide(BasePage):
         nh_start_pos = self.text_buffer.tell()
         self.text_buffer.write(_("Slide Notes") + NEWLINE)
         nh_stop_pos = self.text_buffer.tell()
-        self.semantic_elements.setdefault(SemanticElementType.HEADING_1, []).append(
+        self.semantic_elements.setdefault(SemanticElementType.HEADING_2, []).append(
             (nh_start_pos, nh_stop_pos)
         )
         self.extract_slide_text_and_semantic(slide.notes_slide)
