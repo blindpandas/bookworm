@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import wx
-import ujson as json
+import msgpack
 from collections import deque
 from functools import cached_property
 from contextlib import contextmanager, suppress
@@ -43,14 +43,14 @@ from .tts_gui import (
 log = logger.getChild(__name__)
 
 # Utterance types
-UT_BEGIN = "utter_begin"
-UT_END = "utter_end"
-UT_PARAGRAPH_BEGIN = "paragraph_begin"
-UT_PARAGRAPH_END = "paragraph_end"
-UT_PAGE_BEGIN = "page_begin"
-UT_PAGE_END = "page_end"
-UT_SECTION_BEGIN = "section_begin"
-UT_SECTION_END= "section_end"
+UT_BEGIN = "ub"
+UT_END = "ue"
+UT_PARAGRAPH_BEGIN = "pb"
+UT_PARAGRAPH_END = "pe"
+UT_PAGE_BEGIN = "gb"
+UT_PAGE_END = "ge"
+UT_SECTION_BEGIN = "sb"
+UT_SECTION_END= "se"
 
 
 
@@ -116,25 +116,23 @@ class TextToSpeechService(BookwormService):
         return SPEECH_KEYBOARD_SHORTCUTS
 
     def encode_bookmark(self, data):
-        dump = json.dumps(data, encode_html_chars=True, ensure_ascii=True).encode(
-            "ascii"
-        )
-        return urlsafe_b64encode(dump).decode("ascii")
+        dump = msgpack.dumps(data)
+        return dump.hex()
 
     def decode_bookmark(self, string):
-        data = urlsafe_b64decode(string.encode("ascii"))
-        return json.loads(data)
+        data = bytes.fromhex(string)
+        return msgpack.loads(data)
 
     @contextmanager
     def queue_speech_utterance(self):
         utterance = SpeechUtterance()
         utterance.add_bookmark(self.encode_bookmark({
-            'type': UT_BEGIN
+            't': UT_BEGIN
         }))
         yield utterance
-        utterance.add_text(".")
+        utterance.add_text("\n.")
         utterance.add_bookmark(self.encode_bookmark({
-            'type': UT_END
+            't': UT_END
         }))
         self.utterance_queue.appendleft(utterance)
 
@@ -164,8 +162,8 @@ class TextToSpeechService(BookwormService):
     def configure_start_page_utterance(self, utterance, page):
         page_is_the_first_of_its_section = page.is_first_of_section and (page.section.parent is not None) and (page.section.parent.is_root)
         utterance.add_bookmark(self.encode_bookmark({
-            'type': UT_PAGE_BEGIN,
-            "is_first_of_section": page_is_the_first_of_its_section,
+            't': UT_PAGE_BEGIN,
+            "isf": page_is_the_first_of_its_section,
         }))
         if page_is_the_first_of_its_section:
             if config.conf["reading"]["notify_on_section_start"]:
@@ -173,7 +171,7 @@ class TextToSpeechService(BookwormService):
                 utterance.add_text("Starting sub section")
                 utterance.add_pause(900)
             utterance.add_bookmark(self.encode_bookmark({
-                'type': UT_SECTION_BEGIN
+                't': UT_SECTION_BEGIN
             }))
 
     def configure_end_page_utterance(self, utterance, page):
@@ -195,12 +193,12 @@ class TextToSpeechService(BookwormService):
             utterance.add_pause(self.config_manager["end_of_page_pause"])
         utterance.add_text(".")
         utterance.add_bookmark(self.encode_bookmark({
-            'type': UT_PAGE_END,
-            "is_last_of_section": page_is_the_last_of_its_section,
+            't': UT_PAGE_END,
+            "isl": page_is_the_last_of_its_section,
         }))
         utterance.add_text(".")
         utterance.add_bookmark(self.encode_bookmark({
-            'type': UT_SECTION_END
+            't': UT_SECTION_END
         }))
 
     def speak_page(self, start_pos=None):
@@ -226,21 +224,21 @@ class TextToSpeechService(BookwormService):
         for (paragraph, text_range) in text_info.paragraphs:
             with self.queue_speech_utterance() as utterance:
                 utterance.add_bookmark(self.encode_bookmark({
-                    'type': UT_PARAGRAPH_BEGIN,
-                    "text_range": text_range.as_tuple(),
+                    't': UT_PARAGRAPH_BEGIN,
+                    "txr": text_range.as_tuple(),
                 }))
                 for sent in text_info.split_sentences(paragraph):
                     utterance.add_sentence(sent + " ")
                     utterance.add_pause(sent_pause)
                 utterance.add_pause(parag_pause)
                 utterance.add_bookmark(self.encode_bookmark({
-                    'type': UT_PARAGRAPH_END,
-                    "text_range": text_range.as_tuple(),
+                    't': UT_PARAGRAPH_END,
+                    "txr": text_range.as_tuple(),
                 }))
 
     @gui_thread_safe
     def process_bookmark(self, bookmark):
-        bookmark_type = bookmark["type"]
+        bookmark_type = bookmark["t"]
         if bookmark_type == UT_END:
             try:
                 next_utterance = self.utterance_queue.pop()
@@ -248,7 +246,7 @@ class TextToSpeechService(BookwormService):
             except IndexError:
                 return
         elif bookmark_type == UT_PARAGRAPH_BEGIN:
-            p_start, p_end = bookmark["text_range"]
+            p_start, p_end = bookmark["txr"]
             self.view.set_insertion_point(p_start)
             if config.conf["reading"]["highlight_spoken_text"]:
                 self.view.highlight_range(p_start, p_end)
@@ -257,11 +255,11 @@ class TextToSpeechService(BookwormService):
             self._highlighted_ranges.add((p_start, p_end))
         elif bookmark_type == UT_PARAGRAPH_END:
             if config.conf["reading"]["highlight_spoken_text"]:
-                self.view.clear_highlight(*bookmark["text_range"])
+                self.view.clear_highlight(*bookmark["txr"])
             if config.conf["reading"]["select_spoken_text"]:
                 self.textCtrl.SelectNone()
         elif bookmark_type == UT_PAGE_END:
-            is_last_of_section = bookmark["is_last_of_section"]
+            is_last_of_section = bookmark["isl"]
             tts_reading_mode = config.conf["reading"]["reading_mode"]
             if tts_reading_mode < 2:
                 if (tts_reading_mode == 1) and is_last_of_section:
