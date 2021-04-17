@@ -660,6 +660,9 @@ class SpeechMenu(wx.Menu):
         self.menubar.FindItemById(
             StatelessSpeechMenuIds.deactivateActiveVoiceProfile
         ).Enable(False)
+        self.service.stop_speech()
+        self.service.initialize_engine()
+        self.service.speak_page(start_pos=self.view.get_insertion_point())
 
     def onKeyUp(self, event):
         event.Skip(True)
