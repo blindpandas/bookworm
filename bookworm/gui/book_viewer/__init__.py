@@ -464,6 +464,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             config.conf["general"]["speak_section_title"] = ossc
 
     def navigate_to_structural_element(self, element_type, forward):
+        if not self.reader.ready:
+            wx.Bell()
+            return
         current_insertion_point = self.get_insertion_point()
         pos = self.reader.get_semantic_element(
             element_type,
@@ -615,6 +618,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def set_insertion_point(self, to):
         self.contentTextCtrl.SetFocusFromKbd()
+        self.contentTextCtrl.ShowPosition(to)
         self.contentTextCtrl.SetInsertionPoint(to)
 
     def apply_text_styles(self, style_info):

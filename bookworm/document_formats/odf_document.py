@@ -126,10 +126,9 @@ class OdfPresentation(BaseDocument):
     DC.ASYNC_READ
     | DC.TOC_TREE
     | DC.METADATA
-        | DC.STRUCTURED_NAVIGATION
-        | DC.TEXT_STYLE
+    | DC.STRUCTURED_NAVIGATION
+    | DC.TEXT_STYLE
     )
-
 
     def __len__(self):
         return self.num_slides

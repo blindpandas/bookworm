@@ -3,6 +3,7 @@
 """Provides primitives for structuring a blob of text."""
 
 import bisect
+import operator
 from collections.abc import Container
 from functools import cached_property
 from dataclasses import dataclass, field
@@ -15,14 +16,37 @@ from bookworm.vendor.sentence_splitter import (
 )
 
 
-@dataclass(eq=True, order=True)
 class TextRange(Container):
     """Represents a text range refering to a substring."""
 
     __slots__ = ["start", "stop"]
 
-    start: int
-    stop: int
+    def __init__(self, start, stop):
+        self.start = start
+        self.stop = stop
+
+    def __repr__(self):
+        return f"TextRange(start={self.start}, stop={self.stop})"
+
+    def operator_imp(self, other, operator_func):
+        if isinstance(other, self.__class__):
+            return operator_func(self.start, other.start)
+        elif type(other) is int:
+            return operator_func(self.start, other)
+        else:
+            return NotImplemented
+
+    def __gt__(self, other):
+        return self.operator_imp(other, operator.gt)
+
+    def __gte__(self, other):
+        return self.operator_imp(other, operator.gte)
+
+    def __lt__(self, other):
+        return self.operator_imp(other, operator.lt)
+
+    def __lte__(self, other):
+        return self.operator_imp(other, operator.lte)
 
     def __contains__(self, pos):
         return self.start <= pos <= self.stop
@@ -72,8 +96,8 @@ class TextInfo:
     def paragraph_markers(self):
         return self._record_markers(self.paragraphs)
 
-    def split_sentences(self, textblock):
-        return self._sent_tokenizer.split(textblock)
+    def split_sentences(self, paragraph):
+        return self._sent_tokenizer.split(paragraph)
 
     @cached_property
     def sentences(self):
@@ -93,25 +117,15 @@ class TextInfo:
         paragraphs = self.text.splitlines(keepends=True)
         newline = "\n"
         p_locations = list(locate(self.text, lambda c: c == newline))
-        start_positions = [
-            p + 1
-            for p in [
-                -1,
-            ]
-            + p_locations
-        ]
-        end_positions = p_locations
-        if p_locations and (p_locations[-1] != len(self.text)):
-            end_positions += [
-                len(self.text) - 1,
-            ]
-        for (start_pos, stop_pos, parag) in zip(
-            start_positions, end_positions, paragraphs
+        start_locations = [0] + [l +1 for l in p_locations[:-1]]
+        for (start_pos, stop_pos), parag in zip(
+            zip(start_locations, p_locations), paragraphs
         ):
             if not parag.strip():
                 continue
             p_start_pos = self.start_pos + start_pos
-            p_range = TextRange(start=p_start_pos, stop=stop_pos)
+            p_stop_pos = self.start_pos + stop_pos
+            p_range = TextRange(start=p_start_pos, stop=p_stop_pos)
             rv.append((parag, p_range))
         return rv
 
@@ -126,7 +140,7 @@ class TextInfo:
         return self.paragraph_markers
 
     def get_paragraph_to_the_right_of(self, pos):
-        markers = [trng.start for trng in self.configured_markers]
+        markers = list(self.configured_markers)
         markers.sort()
         index = bisect.bisect_right(markers, pos)
         if index < len(markers):
@@ -134,13 +148,17 @@ class TextInfo:
         elif index >= len(markers) and markers:
             return markers[-1]
         else:
-            return pos
+            raise LookupError(f"Could not find a paragraph located at the right of position {pos}")
 
     def get_paragraph_to_the_left_of(self, pos):
-        markers = [trng.start for trng in self.configured_markers]
+        markers = list(self.configured_markers)
         markers.sort()
+        if not markers:
+            raise LookupError(f"Could not find a paragraph located at the left of position {pos}")
         index = bisect.bisect_left(markers, pos)
-        if index:
-            return markers[index - 1]
+        if index == 0:
+            return markers[0]
+        elif index > 0:
+            return markers[index -1]
         else:
-            return 0
+            raise LookupError(f"Could not find a paragraph located at the left of position {pos}")
