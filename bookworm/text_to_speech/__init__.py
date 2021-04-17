@@ -23,9 +23,13 @@ from bookworm.speechdriver.enumerations import (
 )
 from bookworm.utils import gui_thread_safe
 from bookworm.signals import (
+    _signals,
     reader_book_loaded,
     reader_book_unloaded,
     reader_page_changed,
+    navigated_to_search_result,
+    navigated_to_structural_element,
+    navigated_to_bookmark,
 )
 from bookworm.base_service import BookwormService
 from bookworm.logger import logger
@@ -41,6 +45,10 @@ from .tts_gui import (
 )
 
 log = logger.getChild(__name__)
+
+# Custom signals
+should_allow_speech = _signals.signal("tts/should-allow-speech")
+restart_speech = _signals.signal("tts/restart-speech")
 
 # Utterance types
 UT_BEGIN = "ub"
@@ -72,11 +80,24 @@ class TextToSpeechService(BookwormService):
         self.engine = None
         self._whole_page_text_info = None
         self._highlighted_ranges  = set()
+        restart_speech.connect(self.on_restart_speech, sender=self.view)
         reader_book_unloaded.connect(self.on_reader_unload, sender=self.reader)
         reader_page_changed.connect(self._change_page_for_tts, sender=self.reader)
         # maintain state upon book load
         self.view.add_load_handler(
             lambda s: self.on_engine_state_changed(state=SynthState.ready)
+        )
+        navigated_to_search_result.connect(
+            self.on_navigated_to_search_result,
+            sender=self.view
+        )
+        navigated_to_structural_element.connect(
+            self.on_navigated_to_structural_element,
+            sender=self.view
+        )
+        navigated_to_bookmark.connect(
+            self.on_navigated_to_bookmark,
+            sender=self.view
         )
         self.initialize_state()
 
@@ -87,7 +108,8 @@ class TextToSpeechService(BookwormService):
         self.clear_highlighted_ranges()
 
     def shutdown(self):
-        self.close()
+        with suppress(RuntimeError):
+            self.close()
 
     def process_menubar(self, menubar):
         self.menu = SpeechMenu(self, menubar)
@@ -115,6 +137,12 @@ class TextToSpeechService(BookwormService):
     def get_keyboard_shortcuts(self):
         return SPEECH_KEYBOARD_SHORTCUTS
 
+    def stop_speech(self, user_requested=False):
+        self.initialize_state()
+        self.engine.stop()
+        if user_requested:
+            setattr(self, "_requested_play", False)
+
     def encode_bookmark(self, data):
         dump = msgpack.dumps(data)
         return dump.hex()
@@ -135,6 +163,16 @@ class TextToSpeechService(BookwormService):
             't': UT_END
         }))
         self.utterance_queue.appendleft(utterance)
+
+    def on_restart_speech(self, sender, start_speech_from, speech_prefix=None):
+        if (not self.is_engine_ready) or (self.engine.state is not SynthState.busy):
+            return
+        self.stop_speech()
+        if speech_prefix:
+            with self.queue_speech_utterance() as utterance:
+                utterance.add_text(speech_prefix)
+                utterance.add_pause(PauseSpec.extra_small)
+        self.speak_page(start_pos=start_speech_from, init_state=False)
 
     def on_reader_unload(self, sender):
         self.close()
@@ -157,7 +195,7 @@ class TextToSpeechService(BookwormService):
                         )
                     )
                     utterance.add_pause(PauseSpec.medium)
-            self.speak_page()
+            self.speak_page(init_state=False)
 
     def configure_start_page_utterance(self, utterance, page):
         page_is_the_first_of_its_section = page.is_first_of_section and (page.section.parent is not None) and (page.section.parent.is_root)
@@ -201,7 +239,9 @@ class TextToSpeechService(BookwormService):
             't': UT_SECTION_END
         }))
 
-    def speak_page(self, start_pos=None):
+    def speak_page(self, start_pos=None, init_state=True):
+        if init_state:
+            self.initialize_state()
         page = self.reader.get_current_page_object()
         if start_pos is None:
             start_pos = 0 if config.conf["reading"]["start_reading_from"] else self.textCtrl.GetInsertionPoint()
@@ -216,6 +256,7 @@ class TextToSpeechService(BookwormService):
         self.add_text_utterances(text_info)
         with self.queue_speech_utterance() as utterance:
             self.configure_end_page_utterance(utterance, page)
+        self.view.set_insertion_point(start_pos)
         self.engine.speak(self.utterance_queue.pop())
 
     def add_text_utterances(self, text_info):
@@ -391,6 +432,18 @@ class TextToSpeechService(BookwormService):
     @property
     def is_engine_ready(self):
         return self.engine is not None
+
+    def on_navigated_to_search_result(self, sender, position):
+        restart_speech.send(sender, start_speech_from=position, speech_prefix=_("Search Result."))
+
+    def on_navigated_to_bookmark(self, sender, position, name):
+        speech_prefix = _("Bookmark.")
+        if name:
+            speech_prefix = _("Bookmark: {bookmark_name}").format(bookmark_name=name)
+        restart_speech.send(sender, start_speech_from=position, speech_prefix=speech_prefix)
+
+    def on_navigated_to_structural_element(self, sender, position, element_type, element_label):
+        restart_speech.send(sender, start_speech_from=position, speech_prefix=element_label)
 
     def on_state_changed(self, sender, state):
         speech_engine_state_changed.send(self.view, service=self, state=state)

@@ -3,6 +3,7 @@
 import wx
 from bookworm import config
 from bookworm.signals import (
+    navigated_to_bookmark,
     reader_page_changed,
     reader_book_loaded,
     reader_book_unloaded,
@@ -125,6 +126,7 @@ class AnnotationService(BookwormService):
         if bookmark is not None:
             self.reader.go_to_page(bookmark.page_number, bookmark.position)
             self.view.select_text(*self.view.get_containing_line(bookmark.position))
+            navigated_to_bookmark.send(self.view, position=bookmark.position, name=bookmark.title or None)
         else:
             sounds.navigation.play()
 

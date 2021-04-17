@@ -18,7 +18,7 @@ from bookworm.i18n import is_rtl
 from bookworm.resources import sounds
 from bookworm.document_formats import PaginationError, DocumentCapability as DC
 from bookworm.document_formats.base import READING_MODE_LABELS
-from bookworm.signals import config_updated, reader_book_loaded, reader_book_unloaded
+from bookworm.signals import navigated_to_search_result, config_updated, reader_book_loaded, reader_book_unloaded
 from bookworm.concurrency import call_threaded, process_worker
 from bookworm.gui.components import RobustProgressDialog
 from bookworm import ocr
@@ -490,6 +490,7 @@ class SearchMenu(BaseMenu):
             sounds.navigation.play()
             return
         self.highlight_search_result(result.page, result.position)
+        navigated_to_search_result.send(self.view, position=result.position)
 
     def onFindNext(self, event):
         self.go_to_search_result(foreword=True)

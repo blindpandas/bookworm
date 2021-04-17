@@ -609,7 +609,6 @@ class SpeechMenu(wx.Menu):
         ).Enable(False)
 
     def onPlay(self, event):
-        self.service.initialize_state()
         if not self.service.is_engine_ready:
             self.service.initialize_engine()
         elif self.service.engine.state is SynthState.busy:
@@ -644,9 +643,7 @@ class SpeechMenu(wx.Menu):
             self.service.is_engine_ready
             and self.service.engine.state is not SynthState.ready
         ):
-            self.service.initialize_state()
-            self.service.engine.stop()
-            setattr(self.service, "_requested_play", False)
+            self.service.stop_speech(user_requested=True)
             # Translators: a message that is announced when the speech is stopped
             return speech.announce(_("Stopped"))
         wx.Bell()

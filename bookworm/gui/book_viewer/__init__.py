@@ -21,7 +21,7 @@ from bookworm.reader import (
     ResourceDoesNotExist,
     UnsupportedDocumentError,
 )
-from bookworm.signals import reader_book_loaded, reader_book_unloaded
+from bookworm.signals import reader_book_loaded, reader_book_unloaded, navigated_to_structural_element
 from bookworm.structured_text import TextRange
 from bookworm.gui.contentview_ctrl import ContentViewCtrl
 from bookworm.gui.components import TocTreeManager, AsyncSnakDialog
@@ -493,6 +493,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.set_insertion_point(target_position)
             sounds.structured_navigation.play()
             speech.announce(msg)
+            navigated_to_structural_element.send(self, position=start, element_type=actual_element_type, element_label=element_label)
         else:
             element_label = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[element_type][0]
             if forward:
