@@ -53,14 +53,14 @@ class PowerpointSlide(BasePage):
         self.extract_notes_slide(slide)
 
     def extract_slide_text_and_semantic(self, slide):
-        shapes = (shape for shape in slide.shapes if shape.has_text_frame)
+        shapes = (shape for shape in slide.shapes if shape.has_text_frame or shape.has_table)
         for shape in shapes:
-            text, is_list = self._get_shape_text(shape)
+            text = self._get_shape_text(shape)
             start_pos = self.text_buffer.tell()
             self.text_buffer.write(text)
             stop_pos = self.text_buffer.tell()
-            if is_list:
-                self.semantic_elements.setdefault(SemanticElementType.LIST, []).append(
+            if shape.has_table:
+                self.semantic_elements.setdefault(SemanticElementType.TABLE, []).append(
                     (start_pos, stop_pos)
                 )
             if shape.is_placeholder and (
@@ -101,10 +101,15 @@ class PowerpointSlide(BasePage):
         return self.semantic_elements
 
     def _get_shape_text(self, shape):
-        text = shape.text_frame.text.replace("\v", "\n").strip()
-        paragraphs = shape.text_frame.paragraphs
-        parag_levels = [p.level for p in paragraphs if p.level > 0]
-        return (text + NEWLINE), (len(paragraphs) == len(parag_levels))
+        if shape.has_text_frame:
+            text = shape.text_frame.text.replace("\v", "\n").strip()
+        elif shape.has_table:
+            text_by_row = [
+                "\t".join(c.text for c in row.cells)
+                for row in shape.table.rows
+            ]
+            text = "\n".join(text_by_row).strip()
+        return text + NEWLINE
 
 
 class PowerpointPresentation(BaseDocument):
