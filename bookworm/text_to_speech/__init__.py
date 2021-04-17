@@ -5,9 +5,6 @@ import msgpack
 from collections import deque
 from functools import cached_property
 from contextlib import contextmanager, suppress
-from base64 import urlsafe_b64encode, urlsafe_b64decode
-from dataclasses import dataclass
-from more_itertools import first_true
 from bookworm import config
 from bookworm.platform_services.speech_engines import TTS_ENGINES
 from bookworm.resources import sounds
@@ -47,7 +44,7 @@ from .tts_gui import (
 log = logger.getChild(__name__)
 
 # Custom signals
-should_allow_speech = _signals.signal("tts/should-allow-speech")
+should_auto_navigate_to_next_page  = _signals.signal("tts/should-auto-navigate-to-next-page")
 restart_speech = _signals.signal("tts/restart-speech")
 
 # Utterance types
@@ -147,8 +144,8 @@ class TextToSpeechService(BookwormService):
         dump = msgpack.dumps(data)
         return dump.hex()
 
-    def decode_bookmark(self, string):
-        data = bytes.fromhex(string)
+    def decode_bookmark(self, hexbytes):
+        data = bytes.fromhex(hexbytes)
         return msgpack.loads(data)
 
     @contextmanager
@@ -261,7 +258,7 @@ class TextToSpeechService(BookwormService):
 
     def add_text_utterances(self, text_info):
         parag_pause = self.config_manager["paragraph_pause"]
-        sent_pause = config.conf["speech"]["sentence_pause"]
+        sent_pause = self.config_manager["sentence_pause"]
         for (paragraph, text_range) in text_info.paragraphs:
             with self.queue_speech_utterance() as utterance:
                 utterance.add_bookmark(self.encode_bookmark({
@@ -300,6 +297,9 @@ class TextToSpeechService(BookwormService):
             if config.conf["reading"]["select_spoken_text"]:
                 self.textCtrl.SelectNone()
         elif bookmark_type == UT_PAGE_END:
+            should_navigate = all(retval for func, retval in should_auto_navigate_to_next_page.send(self.view))
+            if not should_navigate:
+                return
             is_last_of_section = bookmark["isl"]
             tts_reading_mode = config.conf["reading"]["reading_mode"]
             if tts_reading_mode < 2:
@@ -390,7 +390,7 @@ class TextToSpeechService(BookwormService):
                 )
                 return
         if self.reader.ready and last_known_state is SynthState.busy:
-            self.speak_current_page()
+            self.speak_page()
 
     def _try_set_tts_language(self):
         if not config.conf["reading"]["ask_to_switch_voice_to_current_book_language"]:

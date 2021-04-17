@@ -14,7 +14,6 @@ from bookworm import config
 from bookworm import speech
 from bookworm.image_io import ImageIO
 from bookworm.ocr_engines import OcrRequest
-from bookworm.text_to_speech import speech_engine_state_changed
 from bookworm.signals import (
     _signals,
     reader_book_loaded,
@@ -24,11 +23,15 @@ from bookworm.signals import (
 from bookworm.concurrency import QueueProcess, call_threaded, threaded_worker
 from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.resources import sounds
-from bookworm.speechdriver.enumerations import SynthState
 from bookworm.gui.components import SimpleDialog, AsyncSnakDialog, RobustProgressDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from .ocr_dialogs import OCROptionsDialog
+
+try:
+    from bookworm.text_to_speech import should_auto_navigate_to_next_page
+except ImportError:
+    should_auto_navigate_to_next_page = None
 
 
 log = logger.getChild(__name__)
@@ -118,9 +121,8 @@ class OCRMenu(wx.Menu):
         reader_page_changed.connect(
             self._on_reader_page_changed, sender=self.service.reader
         )
-        speech_engine_state_changed.connect(
-            self._on_speech_engine_state_change, sender=self.view
-        )
+        if should_auto_navigate_to_next_page:
+            should_auto_navigate_to_next_page.connect(self.on_should_auto_navigate_to_next_page, sender=self.view)
 
     def _get_ocr_options(self, from_cache=True, **dlg_kw):
         last_stored_opts = self.service.stored_options
@@ -383,5 +385,5 @@ class OCRMenu(wx.Menu):
         if self.auto_scan_item.IsChecked():
             self.onScanCurrentPage(None)
 
-    def _on_speech_engine_state_change(self, sender, service, state):
-        ...
+    def on_should_auto_navigate_to_next_page(self, sender):
+        return not self.auto_scan_item.IsChecked()
