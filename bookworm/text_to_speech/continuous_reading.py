@@ -40,10 +40,10 @@ class ContReadingService(BookwormService):
     @call_threaded
     def onTimerTick(self, event):
         with self._lock:
+            wx.WakeUpIdle()
             if wx.GetKeyState(wx.WXK_CONTROL):
                 self._start_timer()
                 return
-            wx.WakeUpIdle()
             end_pos = self.textCtrl.GetLastPosition()
             if not end_pos:
                 return

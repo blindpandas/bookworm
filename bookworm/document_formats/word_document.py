@@ -46,7 +46,7 @@ class WordDocument(DummyDocument):
         target_file = storage_area / f"{generate_file_md5(filename)}.html"
         if not target_file.exists():
             with open(filename, "rb") as docx:
-                result = mammoth.convert_to_html(docx)
+                result = mammoth.convert_to_html(docx, include_embedded_style_map=False)
                 html_string = cls.make_proper_html(result.value, filename)
                 target_file.write_text(html_string, encoding="utf-8")
         return target_file
