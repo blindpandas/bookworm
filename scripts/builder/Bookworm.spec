@@ -23,7 +23,14 @@ for pkg_name in PACKAGES_WITH_DATA:
     DATA_FILES += collect_data_files(pkg_name)
 
 # Hidden imports
-HIDDEN_IMPORTS = ["numpy", "cv2", "pkg_resources.py2_warn",] + collect_submodules("babel")
+HIDDEN_SUBMODULES = ["babel", "odf",]
+HIDDEN_IMPORTS = [
+    "numpy",
+    "cv2",
+    "pkg_resources.py2_warn",
+]
+for package_with_submodules in HIDDEN_SUBMODULES:
+    HIDDEN_IMPORTS += collect_submodules(package_with_submodules)
 
 block_cipher = None
 

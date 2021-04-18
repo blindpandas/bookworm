@@ -1,5 +1,12 @@
 # coding: utf-8
 
+import sys
+from odf import opendocument
+# Hack to fix some pyinstaller issues
+sys.modules["opendocument"] = opendocument
+
+
+
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
