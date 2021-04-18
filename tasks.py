@@ -77,6 +77,7 @@ def _add_envars(context):
 
     arch = app.arch
     build_folder = PROJECT_ROOT / "scripts" / "builder" / "dist" / arch / "Bookworm"
+    context["offline_run"] = os.environ.get("BK_OFFLINE_RUN", "")
     context["build_folder"] = build_folder
     os.environ.update(
         {
@@ -453,7 +454,11 @@ def copy_uwp_services_lib(c):
 @make_env
 def install_local_packages(c):
     print("Upgrading pip...")
-    c.run("python -m pip install --upgrade pip")
+    try:
+        c.run("python -m pip install --upgrade pip")
+    except UnexpectedExit as e:
+        if not c["offline_run"]:
+            raise e
     print("Installing local packages")
     arch = os.environ["IAPP_ARCH"]
     pkg_names = c["packages_to_install"]
@@ -476,7 +481,11 @@ def install_local_packages(c):
 def pip_install(c):
     with c.cd(PROJECT_ROOT):
         print("Installing application dependencies using pip...")
-        c.run("python -m pip install -r requirements-dev.txt")
+        try:
+            c.run("python -m pip install -r requirements-dev.txt")
+        except UnexpectedExit as e:
+            if not c["offline_run"]:
+                raise e
 
 
 @task(
