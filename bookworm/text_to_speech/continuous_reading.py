@@ -16,7 +16,6 @@ from bookworm.signals import (
 
 # Timer Interval
 TIMER_INTERVAL = 50
-MODIFIER_KEYS = {wx.WXK_SHIFT, wx.WXK_CONTROL, wx.WXK_ALT}
 
 
 class ContReadingService(BookwormService):
@@ -46,6 +45,7 @@ class ContReadingService(BookwormService):
                 return
             end_pos = self.textCtrl.GetLastPosition()
             if not end_pos:
+                self._start_timer()
                 return
             if self.textCtrl.GetInsertionPoint() == end_pos:
                 self.reader.go_to_next()
