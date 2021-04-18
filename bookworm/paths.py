@@ -97,3 +97,8 @@ def home_data_path():
         log.debug("%s path does not exist, creating..." % (path,))
         path.mkdir(parents=True, exist_ok=True)
     return path
+
+
+@merge_paths
+def fonts_path():
+    return app_path("resources", "fonts")

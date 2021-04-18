@@ -22,6 +22,7 @@ config_spec = StringIO(
     set_file_assoc = integer(default=0)
 [appearance]
     apply_text_styles = boolean(default=True)
+    use_opendyslexic_font = boolean(default=False)
     font_facename = string(default="")
     font_family = string(default="")
     font_point_size = integer(default=12)
