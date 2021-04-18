@@ -346,9 +346,25 @@ class AppearancePanel(SettingsPanel):
             -1,
             choices=self.get_available_fonts(),
         )
+        self.useOpendyslexicFontCheckBox = wx.CheckBox(
+            fontBox,
+            -1,
+            # Translators: label of a checkbox
+            _("Use Open-&dyslexic font"),
+            name="appearance.use_opendyslexic_font"
+        )
         # Translators: label of an edit box
         wx.StaticText(fontBox, -1, _("Font Size"))
         EnhancedSpinCtrl(fontBox, -1, min=10, max=96, name="appearance.font_point_size")
+        self.Bind(wx.EVT_CHECKBOX, self.onUseOpendyslexicFontCheckBox, self.useOpendyslexicFontCheckBox)
+
+    def onUseOpendyslexicFontCheckBox(self, event):
+        if event.IsChecked():
+            self.fontChoice.SetStringSelection("OpenDyslexic")
+            self.fontChoice.Enable(False)
+        else:
+            self.fontChoice.SetStringSelection(self.config["font_facename"])
+            self.fontChoice.Enable(True)
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
         if strategy is ReconciliationStrategies.load:
@@ -363,6 +379,9 @@ class AppearancePanel(SettingsPanel):
         super().reconcile(strategy=strategy)
         if strategy is ReconciliationStrategies.save:
             wx.GetApp().mainFrame.set_content_view_font()
+        else:
+            if self.useOpendyslexicFontCheckBox.IsChecked():
+                self.fontChoice.Enable(False)
 
     def get_available_fonts(self):
         self.font_enumerator.EnumerateFacenames()

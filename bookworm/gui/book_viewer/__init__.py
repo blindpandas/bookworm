@@ -12,7 +12,7 @@ from bookworm import config
 from bookworm import speech
 from bookworm.concurrency import threaded_worker, CancellationToken
 from bookworm.resources import sounds, images
-from bookworm.paths import app_path
+from bookworm.paths import app_path, fonts_path
 from bookworm.structured_text import Style, SEMANTIC_ELEMENT_OUTPUT_OPTIONS
 from bookworm.reader import (
     EBookReader,
@@ -282,10 +282,12 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         reader_book_unloaded.send(self.reader)
 
     def set_content_view_font(self):
+        opendyslexic_font_filename = fonts_path("opendyslexic", "OpenDyslexic-Regular.ttf")
+        wx.Font.AddPrivateFont(str(opendyslexic_font_filename))
         finfo = wx.FontInfo().FaceName(config.conf["appearance"]["font_facename"])
         configured_font = wx.Font(finfo)
         configured_font.SetPointSize(config.conf["appearance"]["font_point_size"])
-        default_style = wx.TextAttr()
+        default_style = self.contentTextCtrl.GetDefaultStyle()
         default_style.SetFont(configured_font)
         self.contentTextCtrl.SetDefaultStyle(default_style)
 
