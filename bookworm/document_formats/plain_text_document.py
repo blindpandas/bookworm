@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import os
-import regex
 from functools import cached_property
 from io import StringIO
 from bookworm.document_formats.base import (

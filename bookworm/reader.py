@@ -293,8 +293,6 @@ class EBookReader:
         return pos_getter(element_type, anchor=anchor)
 
     def get_semantic_element(self, element_type, forward, anchor):
-        if DC.STRUCTURED_NAVIGATION not in self.document.capabilities:
-            return
         pos = self._get_semantic_element_from_page(
             self.get_current_page_object(), element_type, forward, anchor
         )

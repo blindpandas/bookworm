@@ -123,6 +123,9 @@ class NavigationProvider:
             self._key_press_record[key_code] = now
 
     def onStructuredNavigation(self, event):
+        if (not self.reader.ready) or (not self.reader.document.supports_structural_navigation()):
+            wx.Bell()
+            return
         self.view.navigate_to_structural_element(
             element_type=event.SemanticElementType, forward=event.Forward
         )

@@ -163,6 +163,10 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         return self.default_reading_mode is ReadingMode.CHAPTER_BASED
 
     @classmethod
+    def supports_structural_navigation(cls):
+        return DocumentCapability.STRUCTURED_NAVIGATION in cls.capabilities
+
+    @classmethod
     def is_single_page_document(self):
         return DocumentCapability.SINGLE_PAGE in self.capabilities
 

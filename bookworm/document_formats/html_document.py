@@ -2,7 +2,6 @@
 
 import trafilatura
 import requests
-from io import StringIO
 from pathlib import Path
 from contextlib import contextmanager
 from functools import cached_property

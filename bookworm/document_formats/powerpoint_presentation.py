@@ -3,13 +3,10 @@
 import pptx
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.enum.shapes import PP_PLACEHOLDER
-from io import StringIO
-from itertools import chain
 from functools import cached_property
-from more_itertools import all_equal
 from bookworm.i18n import LocaleInfo
 from bookworm.utils import NEWLINE
-from bookworm.structured_text import SemanticElementType
+from bookworm.structured_text import StringBuilder, SemanticElementType
 from bookworm.document_formats.base import (
     BaseDocument,
     BasePage,
@@ -46,7 +43,7 @@ class PowerpointSlide(BasePage):
     def __init__(self, slide, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.slide = slide
-        self.text_buffer = StringIO(newline=NEWLINE)
+        self.text_buffer = StringBuilder()
         self.semantic_elements = {}
         self.style_elements = {}
         self.extract_slide_text_and_semantic(slide)
@@ -56,9 +53,12 @@ class PowerpointSlide(BasePage):
         shapes = (shape for shape in slide.shapes if shape.has_text_frame or shape.has_table)
         for shape in shapes:
             text = self._get_shape_text(shape)
-            start_pos = self.text_buffer.tell()
-            self.text_buffer.write(text)
-            stop_pos = self.text_buffer.tell()
+            start_pos = self.text_buffer.get_last_position()
+            if (text := text.strip()):
+                self.text_buffer.writeline(text)
+            else:
+                continue
+            stop_pos = self.text_buffer.get_last_position()
             if shape.has_table:
                 self.semantic_elements.setdefault(SemanticElementType.TABLE, []).append(
                     (start_pos, stop_pos)
@@ -78,14 +78,16 @@ class PowerpointSlide(BasePage):
 
     def extract_notes_slide(self, slide):
         if (
-            not slide.has_notes_slide
-            or not slide.notes_slide.notes_text_frame.text.strip()
+            (not slide.has_notes_slide)
+            or (not slide.notes_slide.notes_text_frame.text.strip())
         ):
             return
-        self.text_buffer.write(NEWLINE + "-" * 10 + NEWLINE)
-        nh_start_pos = self.text_buffer.tell()
-        self.text_buffer.write(_("Slide Notes") + NEWLINE)
-        nh_stop_pos = self.text_buffer.tell()
+        self.text_buffer.ensure_newline()
+        self.text_buffer.write("-" * 10)
+        self.text_buffer.ensure_newline()
+        nh_start_pos = self.text_buffer.get_last_position()
+        self.text_buffer.writeline(_("Slide Notes"))
+        nh_stop_pos = self.text_buffer.get_last_position()
         self.semantic_elements.setdefault(SemanticElementType.HEADING_2, []).append(
             (nh_start_pos, nh_stop_pos)
         )
