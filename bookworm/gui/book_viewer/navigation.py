@@ -3,6 +3,7 @@
 import time
 import wx
 from bookworm import config
+from bookworm import speech
 from bookworm.document_formats import PaginationError
 from bookworm.signals import reader_page_changed
 from bookworm.gui.contentview_ctrl import (
@@ -123,8 +124,13 @@ class NavigationProvider:
             self._key_press_record[key_code] = now
 
     def onStructuredNavigation(self, event):
-        if (not self.reader.ready) or (not self.reader.document.supports_structural_navigation()):
+        if not self.reader.ready:
             wx.Bell()
+            return
+        elif not self.reader.document.supports_structural_navigation():
+            # Translators: spoken message when the current document does not
+            # support structural navigation
+            speech.announce("Not supported in this document.")
             return
         self.view.navigate_to_structural_element(
             element_type=event.SemanticElementType, forward=event.Forward
