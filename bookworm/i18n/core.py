@@ -43,8 +43,8 @@ def get_available_locales(force_update=False):
     elif parent_locale.pylang in locale_folders:
         locale_folders.remove(parent_locale.pylang)
         locale_folders.insert(0, parent_locale.pylang)
-    elif not it(locale_folders).any(lambda l: l.startswith("en")):
-        locale_folders.insert(0, "en")
+    if not any(l.startswith("en") for l in locale_folders):
+        locale_folders.append("en")
     locales = []
     for entry in locale_folders:
         try:
