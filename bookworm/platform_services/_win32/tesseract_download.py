@@ -45,7 +45,11 @@ class TesseractDownloadInfo(BaseModel):
 
 
 def is_tesseract_available():
-    return sys.platform == "win32" and TesseractOcrEngine.check_on_windows()
+    return (
+        sys.platform == "win32"
+        and TesseractOcrEngine.check_on_windows()
+        and TesseractOcrEngine.check()
+    )
 
 
 def get_tessdata():

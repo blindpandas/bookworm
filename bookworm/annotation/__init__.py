@@ -2,6 +2,7 @@
 
 import wx
 from bookworm import config
+from bookworm import speech
 from bookworm.signals import (
     navigated_to_bookmark,
     reader_page_changed,
@@ -29,6 +30,8 @@ ANNOTATION_CONFIG_SPEC = {
         use_visuals="boolean(default=True)",
         play_sound_for_comments="boolean(default=True)",
         exclude_named_bookmarks_when_jumping="boolean(default=False)",
+        select_bookmarked_line_on_jumping="boolean(default=True)",
+        speak_bookmarks_on_jumping="boolean(default=True)",
     )
 }
 
@@ -125,7 +128,14 @@ class AnnotationService(BookwormService):
             bookmark = self.bookmarker.get_first_before(page_number, start)
         if bookmark is not None:
             self.reader.go_to_page(bookmark.page_number, bookmark.position)
-            self.view.select_text(*self.view.get_containing_line(bookmark.position))
+            if config.conf["annotation"]["select_bookmarked_line_on_jumping"]:
+                self.view.select_text(*self.view.get_containing_line(bookmark.position))
+            if config.conf["annotation"]["speak_bookmarks_on_jumping"]:
+                # Translators: spoken message when jumping to a bookmark
+                msg = _("Bookmark")
+                if bookmark.title:
+                    msg += f": {bookmark.title}"
+                speech.announce(msg, True)
             navigated_to_bookmark.send(self.view, position=bookmark.position, name=bookmark.title or None)
         else:
             sounds.navigation.play()

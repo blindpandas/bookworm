@@ -7,6 +7,7 @@ from io import BytesIO, StringIO
 from pathlib import Path
 from PIL import Image
 from more_itertools import chunked
+from bookworm import app
 from bookworm import typehints as t
 from bookworm.utils import NEWLINE
 from bookworm.i18n import LocaleInfo
@@ -19,7 +20,7 @@ log = logger.getChild(__name__)
 
 
 def get_tesseract_path():
-    return data_path("tesseract_ocr").resolve()
+    return data_path(f"tesseract_ocr_{app.arch}").resolve()
 
 
 class TesseractOcrEngine(BaseOcrEngine):

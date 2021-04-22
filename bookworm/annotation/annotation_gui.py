@@ -35,6 +35,20 @@ class AnnotationSettingsPanel(SettingsPanel):
             UIBox,
             -1,
             # Translators: the label of a checkbox
+            _("Speak the bookmark when jumping"),
+            name="annotation.speak_bookmarks_on_jumping",
+        )
+        wx.CheckBox(
+            UIBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Select the bookmarked line when jumping"),
+            name="annotation.select_bookmarked_line_on_jumping",
+        )
+        wx.CheckBox(
+            UIBox,
+            -1,
+            # Translators: the label of a checkbox
             _("Use visual styles to indicate annotations"),
             name="annotation.use_visuals",
         )
