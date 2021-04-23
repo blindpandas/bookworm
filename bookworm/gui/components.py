@@ -92,6 +92,7 @@ class PageRangeControl(sc.SizedPanel):
         parent = parent
         self.doc = document
         num_pages = len(self.doc)
+        self.is_single_page_document = document.is_single_page_document()
 
         # Translators: the title of a group of controls in the search dialog
         rangeBox = make_sized_static_box(parent, _("Search Range"))
@@ -127,6 +128,12 @@ class PageRangeControl(sc.SizedPanel):
             parent.Bind(wx.EVT_RADIOBUTTON, self.onRangeTypeChange, radio)
         self.toc_tree_manager = TocTreeManager(self.sectionChoice._tree)
         self.toc_tree_manager.build_tree(self.doc.toc_tree)
+        if self.is_single_page_document:
+            self.hasPage.SetValue(False)
+            self.hasPage.Enable(False)
+            self.hasSection.SetValue(True)
+            for ctrl in self.sect_controls:
+                ctrl.Enable(True)
 
     def onRangeTypeChange(self, event):
         radio = event.GetEventObject()
@@ -141,8 +148,10 @@ class PageRangeControl(sc.SizedPanel):
         """XXX: Hack to not close the dialog when the tree is shown."""
         return not self.sectionChoice._tree.HasFocus()
 
-    def get_range(self):
-        if self.hasSection.GetValue():
+    def get_page_range(self):
+        if self.is_single_page_document:
+            from_page, to_page =  0, 0
+        elif self.hasSection.GetValue():
             if (selected_item := self.sectionChoice.GetSelection()) :
                 selected_section = self.sectionChoice.GetClientData(selected_item)
                 pager = selected_section.pager
@@ -155,6 +164,14 @@ class PageRangeControl(sc.SizedPanel):
             from_page = self.fromPage.GetValue() - 1
             to_page = self.toPage.GetValue() - 1
         return from_page, to_page
+
+    def get_text_range(self):
+        if not self.is_single_page_document:
+            raise TypeError("Text ranges are not supported in single page documents")
+        if (selected_item := self.sectionChoice.GetSelection()) :
+            return self.sectionChoice.GetClientData(selected_item).text_range
+        else:
+            return self.doc.toc_tree.text_range
 
 
 class DialogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):

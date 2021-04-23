@@ -123,6 +123,7 @@ class SearchBookDialog(SimpleDialog):
 
     def addControls(self, parent):
         self.reader = self.parent.reader
+        self.is_single_page_document = self.reader.document.is_single_page_document()
         num_pages = len(self.parent.reader.document)
         recent_terms = config.conf["history"]["recent_terms"]
 
@@ -143,14 +144,21 @@ class SearchBookDialog(SimpleDialog):
         self.Bind(wx.EVT_BUTTON, self.onCloseDialog, id=wx.ID_CANCEL)
 
     def GetValue(self):
-        from_page, to_page = self.pageRange.get_range()
+        from_page, to_page = self.pageRange.get_page_range()
+        kwargs = {
+            'from_page': from_page,
+            'to_page': to_page,
+        }
+        if self.is_single_page_document:
+            kwargs.update({
+                'text_range': self.pageRange.get_text_range()
+            })
         return SearchRequest(
             term=self.searchTermTextCtrl.GetValue().strip(),
             is_regex=self.isRegex.IsChecked(),
             case_sensitive=self.isCaseSensitive.IsChecked(),
             whole_word=self.isWholeWord.IsChecked(),
-            from_page=from_page,
-            to_page=to_page,
+            **kwargs
         )
 
     def onIsRegex(self, event):

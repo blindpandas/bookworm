@@ -445,11 +445,12 @@ class SearchMenu(BaseMenu):
         self._recent_search_term = term
         with self.search_lock:
             self._last_search_request = request
+        num_pages = (request.to_page - request.from_page) or 1
         # Translators: the initial title of the search results dialog
         # shown when the search process is not done yet
         dlg = SearchResultsDialog(
             self.highlight_search_result,
-            (request.to_page - request.from_page) or 1,
+            num_pages,
             self.view,
             title=_("Searching For '{term}'").format(term=term),
         )
@@ -479,7 +480,7 @@ class SearchMenu(BaseMenu):
 
     def go_to_search_result(self, foreword=True):
         result = None
-        page, (sol, eol) = self.reader.current_page, self.view.get_selection_range()
+        page, (sol, eol) = self.reader.current_page, self.view.get_containing_line(self.view.get_insertion_point())
         if foreword:
             filter_func = lambda sr: (
                 ((sr.page == page) and (sr.position > eol)) or (sr.page > page)

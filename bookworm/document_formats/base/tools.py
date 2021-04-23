@@ -45,12 +45,24 @@ def search_book(doc, request, channel):
         if request.whole_word:
             term = fr"\b{term}\b"
     pattern = re.compile(term, I | re.M)
-    for n in range(request.from_page, request.to_page + 1):
+    if not doc.is_single_page_document():
+        for n in range(request.from_page, request.to_page + 1):
+            resultset = []
+            sect = doc[n].section.title
+            for pos, snip in search(pattern, doc.get_page_content(n)):
+                resultset.append(
+                    SearchResult(excerpt=snip, page=n, position=pos, section=sect)
+                )
+            channel.push(resultset)
+    else:
+        start_pos, stop_pos = request.text_range
+        text = doc.get_content()[start_pos:stop_pos]
         resultset = []
-        sect = doc[n].section.title
-        for pos, snip in search(pattern, doc.get_page_content(n)):
+        for pos, snip in search(pattern, text):
+            actual_text_pos = pos + start_pos
+            sect = doc.get_section_at_position(actual_text_pos).title
             resultset.append(
-                SearchResult(excerpt=snip, page=n, position=pos, section=sect)
+                SearchResult(excerpt=snip, page=0, position=actual_text_pos, section=sect)
             )
         channel.push(resultset)
     doc.close()

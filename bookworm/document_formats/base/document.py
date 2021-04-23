@@ -167,8 +167,8 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         return DocumentCapability.STRUCTURED_NAVIGATION in cls.capabilities
 
     @classmethod
-    def is_single_page_document(self):
-        return DocumentCapability.SINGLE_PAGE in self.capabilities
+    def is_single_page_document(cls):
+        return DocumentCapability.SINGLE_PAGE in cls.capabilities
 
     @classmethod
     def has_toc_tree(self):

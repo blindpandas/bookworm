@@ -29,8 +29,9 @@ class SearchRequest:
     is_regex: bool
     case_sensitive: bool
     whole_word: bool
-    from_page: int
-    to_page: int
+    from_page: int = None
+    to_page: int = None
+    text_range: TextRange = None
 
 
 @dataclass
