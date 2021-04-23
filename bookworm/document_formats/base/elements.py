@@ -32,7 +32,7 @@ class SearchRequest:
     from_page: int = None
     to_page: int = None
     text_range: TextRange = None
-
+    text: str = None
 
 @dataclass
 class SearchResult:

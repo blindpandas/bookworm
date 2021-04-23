@@ -316,6 +316,13 @@ class SinglePageDocument(BaseDocument):
     def get_document_style_info(self):
         raise NotImplementedError
 
+    def search(self, request: SearchRequest):
+        text = self.get_content()[request.text_range.as_slice()]
+        section_title = self.get_section_at_position(request.text_range.start).title
+        yield from QueueProcess(
+            target=doctools.search_single_page_document, args=(text, request, section_title,), name="bookworm-search"
+        )
+
 
 class DummyDocument(BaseDocument):
     """Implements core document methods for a dummy document."""

@@ -33,8 +33,34 @@ def export_to_plain_text(doc, target_filename, channel):
     channel.done()
 
 
+
 def search_book(doc, request, channel):
     """This function also runs in a separate process."""
+    pattern = _make_search_re_pattern(request)
+    for n in range(request.from_page, request.to_page + 1):
+        resultset = []
+        sect = doc[n].section.title
+        for pos, snip in search(pattern, doc.get_page_content(n)):
+            resultset.append(
+                SearchResult(excerpt=snip, page=n, position=pos, section=sect)
+            )
+        channel.push(resultset)
+    doc.close()
+    channel.done()
+
+
+def search_single_page_document(text, request, section_title, channel):
+    pattern = _make_search_re_pattern(request)
+    start_pos, stop_pos = request.text_range
+    for pos, snip in search(pattern, text):
+        actual_text_pos = pos + start_pos
+        channel.push([
+            SearchResult(excerpt=snip, page=0, position=actual_text_pos, section=section_title),
+        ])
+    channel.done()
+
+
+def _make_search_re_pattern(request):
     I = re.I if not request.case_sensitive else 0
     if request.is_regex:
         term = request.term
@@ -44,26 +70,4 @@ def search_book(doc, request, channel):
         term = fr"({term})"
         if request.whole_word:
             term = fr"\b{term}\b"
-    pattern = re.compile(term, I | re.M)
-    if not doc.is_single_page_document():
-        for n in range(request.from_page, request.to_page + 1):
-            resultset = []
-            sect = doc[n].section.title
-            for pos, snip in search(pattern, doc.get_page_content(n)):
-                resultset.append(
-                    SearchResult(excerpt=snip, page=n, position=pos, section=sect)
-                )
-            channel.push(resultset)
-    else:
-        start_pos, stop_pos = request.text_range
-        text = doc.get_content()[start_pos:stop_pos]
-        resultset = []
-        for pos, snip in search(pattern, text):
-            actual_text_pos = pos + start_pos
-            sect = doc.get_section_at_position(actual_text_pos).title
-            resultset.append(
-                SearchResult(excerpt=snip, page=0, position=actual_text_pos, section=sect)
-            )
-        channel.push(resultset)
-    doc.close()
-    channel.done()
+    return re.compile(term, I | re.M)
