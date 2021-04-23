@@ -542,7 +542,7 @@ class RobustProgressDialog:
         msg = wx.MessageBox(
             # Translators: content of a message to confirm the closing of a progress dialog
             _(
-                "This will cancel all the operations in progress.\nAre you sure you want to continue?"
+                "This will cancel all the operations in progress.\nAre you sure you want to abort?"
             ),
             # Translators: title of a message box
             _("Confirm"),
