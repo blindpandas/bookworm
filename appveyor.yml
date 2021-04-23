@@ -47,6 +47,7 @@ build_script:
   - invoke create-portable
   # Update the release info file
   - invoke update-version-info
+  - invoke gen-pot
 
 
 artifacts:
@@ -54,6 +55,7 @@ artifacts:
   - path: scripts\Bookworm*update.bundle
   - path: scripts\Bookworm*portable.zip
   - path: scripts\release-info.json
+  - path: scripts\bookworm.pot
 
 
 on_success:
@@ -69,7 +71,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
-  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /Bookworm-.*-portable\.zip/, /release-info\.json/
+  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /Bookworm-.*-portable\.zip/, /release-info\.json/, /bookworm\.pot/
   draft: true
   prerelease: true
   on:

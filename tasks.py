@@ -261,18 +261,22 @@ def copy_wx_catalogs(c):
         )
 
 
-@task
+@task(name="gen-pot")
 @make_env
-def extract_msgs(c):
+def generate_pot(c):
     print("Generating translation catalog template..")
     name = os.environ["IAPP_NAME"]
+    display_name = os.environ["IAPP_DISPLAY_NAME"]
     author = os.environ["IAPP_AUTHOR"]
+    version = os.environ["IAPP_VERSION"]
     args = " ".join(
         (
             f'-o "{str(PROJECT_ROOT / "scripts" / name)}.pot"',
             '-c "Translators:"',
             '--msgid-bugs-address "ibnomer2011@hotmail.com"',
             f'--copyright-holder="{author}"',
+            f'--project "{display_name}"',
+            f'--version "{version}"',
         )
     )
     c.run(f"pybabel extract {args} bookworm")
@@ -294,7 +298,7 @@ def compile_msgs(c):
         print("No message catalogs found.")
 
 
-@task(pre=(extract_msgs,))
+@task(pre=(generate_pot,))
 @make_env
 def update_msgs(c):
     print("Updating .po message catalogs with latest messages.")
@@ -311,7 +315,7 @@ def update_msgs(c):
         print("No message catalogs found.")
 
 
-@task(pre=(extract_msgs,))
+@task(pre=(generate_pot,))
 def init_lang(c, lang):
     from bookworm import app
 
