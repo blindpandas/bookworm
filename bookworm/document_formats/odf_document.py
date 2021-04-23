@@ -2,9 +2,9 @@
 
 import sys
 from odf import opendocument
+
 # Hack to fix some pyinstaller issues
 sys.modules["opendocument"] = opendocument
-
 
 
 from dataclasses import dataclass
@@ -65,7 +65,7 @@ class OdfParser:
             return self.make_proper_html(converter.xhtml())
 
     def make_proper_html(self, html_string):
-        html_body = SerializeHtml(ParseHtml(html_string).body, encoding='unicode')
+        html_body = SerializeHtml(ParseHtml(html_string).body, encoding="unicode")
         return NEWLINE.join(
             [
                 "<!doctype html>",
@@ -79,7 +79,6 @@ class OdfParser:
         )
 
 
-
 class OdfTextDocument(DummyDocument):
 
     format = "odt"
@@ -91,7 +90,7 @@ class OdfTextDocument(DummyDocument):
     def read(self):
         odf_file_path = self.get_file_system_path()
         parser = OdfParser(odf_file_path)
-        converted_file =  parser.get_converted_filename()
+        converted_file = parser.get_converted_filename()
         raise ChangeDocument(
             old_uri=self.uri,
             new_uri=DocumentUri.from_filename(converted_file),
@@ -99,14 +98,17 @@ class OdfTextDocument(DummyDocument):
         )
 
 
-
 class OdpSlide(BasePage):
     """Represents a slide in an open document presentation."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        html_string = self.section.data['html_content']
-        self.text, self.semantic_elements, self.style_info = self.extract_info_and_structure(html_string)
+        html_string = self.section.data["html_content"]
+        (
+            self.text,
+            self.semantic_elements,
+            self.style_info,
+        ) = self.extract_info_and_structure(html_string)
 
     def extract_info_and_structure(self, html_string):
         parsed = StructuredHtmlParser.from_string(html_string)
@@ -130,11 +132,11 @@ class OdfPresentation(BaseDocument):
     name = _("Open Document Presentation")
     extensions = ("*.odp",)
     capabilities = (
-    DC.ASYNC_READ
-    | DC.TOC_TREE
-    | DC.METADATA
-    | DC.STRUCTURED_NAVIGATION
-    | DC.TEXT_STYLE
+        DC.ASYNC_READ
+        | DC.TOC_TREE
+        | DC.METADATA
+        | DC.STRUCTURED_NAVIGATION
+        | DC.TEXT_STYLE
     )
 
     def __len__(self):
@@ -170,7 +172,7 @@ class OdfPresentation(BaseDocument):
                     title=slide_title,
                     pager=Pager(first=idx, last=idx),
                     level=2,
-                    data={'html_content': slide_html}
+                    data={"html_content": slide_html},
                 )
             )
         return root
@@ -190,7 +192,9 @@ class OdfPresentation(BaseDocument):
                 legend.tag = "h1"
                 slide_title = legend.text
                 if slide_title.startswith("page"):
-                    slide_title = _("Slide {number}").format(number=idx+1)
+                    slide_title = _("Slide {number}").format(number=idx + 1)
                     legend.text = slide_title
-            retval[slide_title] = BeautifulSoup(SerializeHtml(fieldset), 'lxml').decode_contents()
+            retval[slide_title] = BeautifulSoup(
+                SerializeHtml(fieldset), "lxml"
+            ).decode_contents()
         return retval

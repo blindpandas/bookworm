@@ -21,7 +21,11 @@ from bookworm.reader import (
     ResourceDoesNotExist,
     UnsupportedDocumentError,
 )
-from bookworm.signals import reader_book_loaded, reader_book_unloaded, navigated_to_structural_element
+from bookworm.signals import (
+    reader_book_loaded,
+    reader_book_unloaded,
+    navigated_to_structural_element,
+)
 from bookworm.structured_text import TextRange
 from bookworm.gui.contentview_ctrl import ContentViewCtrl
 from bookworm.gui.components import TocTreeManager, AsyncSnakDialog
@@ -282,7 +286,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         reader_book_unloaded.send(self.reader)
 
     def set_content_view_font(self):
-        opendyslexic_font_filename = fonts_path("opendyslexic", "OpenDyslexic-Regular.ttf")
+        opendyslexic_font_filename = fonts_path(
+            "opendyslexic", "OpenDyslexic-Regular.ttf"
+        )
         wx.Font.AddPrivateFont(str(opendyslexic_font_filename))
         finfo = wx.FontInfo().FaceName(config.conf["appearance"]["font_facename"])
         configured_font = wx.Font(finfo)
@@ -494,15 +500,20 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             target_position = self.get_containing_line(tstop - 1)[0]
             self.set_insertion_point(target_position)
             sounds.structured_navigation.play()
-            speech.announce(msg)
-            navigated_to_structural_element.send(self, position=start, element_type=actual_element_type, element_label=element_label)
+            speech.announce(msg, True)
+            navigated_to_structural_element.send(
+                self,
+                position=start,
+                element_type=actual_element_type,
+                element_label=element_label,
+            )
         else:
             element_label = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[element_type][0]
             if forward:
                 msg = _("No next {item}")
             else:
                 msg = _("No previous {item}")
-            speech.announce(msg.format(item=element_label))
+            speech.announce(msg.format(item=element_label), True)
 
     def onTextCtrlZoom(self, direction):
         self._has_text_zoom = True

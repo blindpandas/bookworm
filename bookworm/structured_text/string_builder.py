@@ -6,7 +6,7 @@ from bookworm.utils import NEWLINE
 
 
 @dataclass
-class StringBuilder :
+class StringBuilder:
     lines: list[str] = field(default_factory=list, init=False)
     data: t.Optional[str] = ""
     newline: str = NEWLINE
@@ -34,10 +34,7 @@ class StringBuilder :
 
     @property
     def is_starting_newline(self):
-        if (
-            (not self.lines)
-            or self.lines[-1].endswith(self.newline)
-        ):
+        if (not self.lines) or self.lines[-1].endswith(self.newline):
             return True
         return False
 

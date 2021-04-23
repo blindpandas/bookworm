@@ -18,7 +18,12 @@ from bookworm.i18n import is_rtl
 from bookworm.resources import sounds
 from bookworm.document_formats import PaginationError, DocumentCapability as DC
 from bookworm.document_formats.base import READING_MODE_LABELS
-from bookworm.signals import navigated_to_search_result, config_updated, reader_book_loaded, reader_book_unloaded
+from bookworm.signals import (
+    navigated_to_search_result,
+    config_updated,
+    reader_book_loaded,
+    reader_book_unloaded,
+)
 from bookworm.concurrency import call_threaded, process_worker
 from bookworm.gui.components import RobustProgressDialog
 from bookworm import ocr
@@ -44,8 +49,8 @@ ABOUT_APPLICATION = _(
     "{display_name}\n"
     "Version: {version}\n"
     "Website: {website}\n\n"
-    "{display_name} is an accessible e-book reader that enables blind and visually impaired individuals "
-    "to read e-books in an easy, accessible, and hassle-free manor. "
+    "{display_name} is an accessible document reader that enables blind and visually impaired individuals "
+    "to read documents in an easy, accessible, and hassle-free manor. "
     "It is being developed by {author} with some contributions from the community.\n\n"
     "{copyright}\n"
     "This software is offered to you under the terms of The MIT license.\n"
@@ -99,7 +104,7 @@ class FileMenu(BaseMenu):
             # Translators: the label of an item in the application menubar
             _("&Close Current Book\tCtrl-W"),
             # Translators: the help text of an item in the application menubar
-            _("Close the currently open e-book"),
+            _("Close the currently open document"),
         )
         self.AppendSeparator()
         self.AppendSubMenu(
@@ -183,7 +188,7 @@ class FileMenu(BaseMenu):
         openFileDlg = wx.FileDialog(
             self.view,
             # Translators: the title of a file dialog to browse to an e-book
-            message=_("Choose an e-book"),
+            message=_("Select a document"),
             defaultDir=last_folder,
             wildcard=self.view._get_ebooks_wildcards(),
             style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST,
@@ -806,7 +811,7 @@ class MenubarProvider:
         allfiles_display = " ".join(e for e in all_exts)
         rv.insert(
             0,
-            _("Supported E-Book Formats ({display})|{ext}|").format(
+            _("Supported document formats ({display})|{ext}|").format(
                 display=allfiles_display, ext=allfiles
             ),
         )

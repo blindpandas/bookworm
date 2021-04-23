@@ -122,7 +122,9 @@ class OCRMenu(wx.Menu):
             self._on_reader_page_changed, sender=self.service.reader
         )
         if should_auto_navigate_to_next_page:
-            should_auto_navigate_to_next_page.connect(self.on_should_auto_navigate_to_next_page, sender=self.view)
+            should_auto_navigate_to_next_page.connect(
+                self.on_should_auto_navigate_to_next_page, sender=self.view
+            )
 
     def _get_ocr_options(self, from_cache=True, **dlg_kw):
         last_stored_opts = self.service.stored_options

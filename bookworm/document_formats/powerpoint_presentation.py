@@ -50,11 +50,13 @@ class PowerpointSlide(BasePage):
         self.extract_notes_slide(slide)
 
     def extract_slide_text_and_semantic(self, slide):
-        shapes = (shape for shape in slide.shapes if shape.has_text_frame or shape.has_table)
+        shapes = (
+            shape for shape in slide.shapes if shape.has_text_frame or shape.has_table
+        )
         for shape in shapes:
             text = self._get_shape_text(shape)
             start_pos = self.text_buffer.get_last_position()
-            if (text := text.strip()):
+            if (text := text.strip()) :
                 self.text_buffer.writeline(text)
             else:
                 continue
@@ -77,9 +79,8 @@ class PowerpointSlide(BasePage):
                 )
 
     def extract_notes_slide(self, slide):
-        if (
-            (not slide.has_notes_slide)
-            or (not slide.notes_slide.notes_text_frame.text.strip())
+        if (not slide.has_notes_slide) or (
+            not slide.notes_slide.notes_text_frame.text.strip()
         ):
             return
         self.text_buffer.ensure_newline()
@@ -107,8 +108,7 @@ class PowerpointSlide(BasePage):
             text = shape.text_frame.text.replace("\v", "\n").strip()
         elif shape.has_table:
             text_by_row = [
-                "\t".join(c.text for c in row.cells)
-                for row in shape.table.rows
+                "\t".join(c.text for c in row.cells) for row in shape.table.rows
             ]
             text = "\n".join(text_by_row).strip()
         return text + NEWLINE

@@ -117,7 +117,7 @@ class TextInfo:
         paragraphs = self.text.splitlines(keepends=True)
         newline = "\n"
         p_locations = list(locate(self.text, lambda c: c == newline))
-        start_locations = [0] + [l +1 for l in p_locations[:-1]]
+        start_locations = [0] + [l + 1 for l in p_locations[:-1]]
         for (start_pos, stop_pos), parag in zip(
             zip(start_locations, p_locations), paragraphs
         ):
@@ -148,17 +148,23 @@ class TextInfo:
         elif index >= len(markers) and markers:
             return markers[-1]
         else:
-            raise LookupError(f"Could not find a paragraph located at the right of position {pos}")
+            raise LookupError(
+                f"Could not find a paragraph located at the right of position {pos}"
+            )
 
     def get_paragraph_to_the_left_of(self, pos):
         markers = list(self.configured_markers)
         markers.sort()
         if not markers:
-            raise LookupError(f"Could not find a paragraph located at the left of position {pos}")
+            raise LookupError(
+                f"Could not find a paragraph located at the left of position {pos}"
+            )
         index = bisect.bisect_left(markers, pos)
         if index == 0:
             return markers[0]
         elif index > 0:
-            return markers[index -1]
+            return markers[index - 1]
         else:
-            raise LookupError(f"Could not find a paragraph located at the left of position {pos}")
+            raise LookupError(
+                f"Could not find a paragraph located at the left of position {pos}"
+            )

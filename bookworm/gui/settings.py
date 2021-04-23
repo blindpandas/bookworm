@@ -63,7 +63,7 @@ class FileAssociationDialog(SimpleDialog):
             # Translators: the main label of a button
             _("Associate all"),
             # Translators: the note of a button
-            _("Use Bookworm to open all supported ebook formats"),
+            _("Use Bookworm to open all supported document formats"),
         )
         half = len(self.ext_info) / 2
         buttonPanel = panel1
@@ -351,12 +351,16 @@ class AppearancePanel(SettingsPanel):
             -1,
             # Translators: label of a checkbox
             _("Use Open-&dyslexic font"),
-            name="appearance.use_opendyslexic_font"
+            name="appearance.use_opendyslexic_font",
         )
         # Translators: label of an edit box
         wx.StaticText(fontBox, -1, _("Font Size"))
         EnhancedSpinCtrl(fontBox, -1, min=10, max=96, name="appearance.font_point_size")
-        self.Bind(wx.EVT_CHECKBOX, self.onUseOpendyslexicFontCheckBox, self.useOpendyslexicFontCheckBox)
+        self.Bind(
+            wx.EVT_CHECKBOX,
+            self.onUseOpendyslexicFontCheckBox,
+            self.useOpendyslexicFontCheckBox,
+        )
 
     def onUseOpendyslexicFontCheckBox(self, event):
         if event.IsChecked():

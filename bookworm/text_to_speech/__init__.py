@@ -2,7 +2,7 @@
 
 import wx
 import msgpack
-from base64 import a85encode, a85decode
+from base64 import b85encode, b85decode
 from collections import deque
 from functools import cached_property
 from contextlib import contextmanager, suppress
@@ -45,7 +45,9 @@ from .tts_gui import (
 log = logger.getChild(__name__)
 
 # Custom signals
-should_auto_navigate_to_next_page  = _signals.signal("tts/should-auto-navigate-to-next-page")
+should_auto_navigate_to_next_page = _signals.signal(
+    "tts/should-auto-navigate-to-next-page"
+)
 restart_speech = _signals.signal("tts/restart-speech")
 
 # Utterance types
@@ -56,8 +58,7 @@ UT_PARAGRAPH_END = "pe"
 UT_PAGE_BEGIN = "gb"
 UT_PAGE_END = "ge"
 UT_SECTION_BEGIN = "sb"
-UT_SECTION_END= "se"
-
+UT_SECTION_END = "se"
 
 
 class TextToSpeechService(BookwormService):
@@ -77,7 +78,7 @@ class TextToSpeechService(BookwormService):
         self.textCtrl = self.view.contentTextCtrl
         self.engine = None
         self._whole_page_text_info = None
-        self._highlighted_ranges  = set()
+        self._highlighted_ranges = set()
         restart_speech.connect(self.on_restart_speech, sender=self.view)
         reader_book_unloaded.connect(self.on_reader_unload, sender=self.reader)
         reader_page_changed.connect(self._change_page_for_tts, sender=self.reader)
@@ -86,17 +87,12 @@ class TextToSpeechService(BookwormService):
             lambda s: self.on_engine_state_changed(state=SynthState.ready)
         )
         navigated_to_search_result.connect(
-            self.on_navigated_to_search_result,
-            sender=self.view
+            self.on_navigated_to_search_result, sender=self.view
         )
         navigated_to_structural_element.connect(
-            self.on_navigated_to_structural_element,
-            sender=self.view
+            self.on_navigated_to_structural_element, sender=self.view
         )
-        navigated_to_bookmark.connect(
-            self.on_navigated_to_bookmark,
-            sender=self.view
-        )
+        navigated_to_bookmark.connect(self.on_navigated_to_bookmark, sender=self.view)
         self.initialize_state()
 
     def initialize_state(self):
@@ -143,23 +139,19 @@ class TextToSpeechService(BookwormService):
 
     def encode_bookmark(self, data):
         payload = msgpack.dumps(data)
-        return a85encode(payload).decode("ascii")
+        return b85encode(payload).decode("ascii")
 
     def decode_bookmark(self, payload):
-        data = a85decode(payload.encode("ascii"))
+        data = b85decode(payload.encode("ascii"))
         return msgpack.loads(data)
 
     @contextmanager
     def queue_speech_utterance(self):
         utterance = SpeechUtterance()
-        utterance.add_bookmark(self.encode_bookmark({
-            't': UT_BEGIN
-        }))
+        utterance.add_bookmark(self.encode_bookmark({"t": UT_BEGIN}))
         yield utterance
         utterance.add_text("\n.")
-        utterance.add_bookmark(self.encode_bookmark({
-            't': UT_END
-        }))
+        utterance.add_bookmark(self.encode_bookmark({"t": UT_END}))
         self.utterance_queue.appendleft(utterance)
 
     def on_restart_speech(self, sender, start_speech_from, speech_prefix=None):
@@ -196,22 +188,30 @@ class TextToSpeechService(BookwormService):
             self.speak_page(init_state=False)
 
     def configure_start_page_utterance(self, utterance, page):
-        page_is_the_first_of_its_section = page.is_first_of_section and (page.section.parent is not None) and (page.section.parent.is_root)
-        utterance.add_bookmark(self.encode_bookmark({
-            't': UT_PAGE_BEGIN,
-            "isf": page_is_the_first_of_its_section,
-        }))
+        page_is_the_first_of_its_section = (
+            page.is_first_of_section
+            and (page.section.parent is not None)
+            and (page.section.parent.is_root)
+        )
+        utterance.add_bookmark(
+            self.encode_bookmark(
+                {
+                    "t": UT_PAGE_BEGIN,
+                    "isf": page_is_the_first_of_its_section,
+                }
+            )
+        )
         if page_is_the_first_of_its_section:
             if config.conf["reading"]["notify_on_section_start"]:
                 utterance.add_audio(sounds.section_start.path)
                 utterance.add_text("Starting sub section")
                 utterance.add_pause(900)
-            utterance.add_bookmark(self.encode_bookmark({
-                't': UT_SECTION_BEGIN
-            }))
+            utterance.add_bookmark(self.encode_bookmark({"t": UT_SECTION_BEGIN}))
 
     def configure_end_page_utterance(self, utterance, page):
-        page_is_the_last_of_its_section = page.is_last_of_section and not page.section.has_children
+        page_is_the_last_of_its_section = (
+            page.is_last_of_section and not page.section.has_children
+        )
         if page.section.is_root:
             utterance.add_audio(sounds.section_end.path)
             # Translators: a message to speak at the end of the document
@@ -228,25 +228,31 @@ class TextToSpeechService(BookwormService):
             utterance.add_text(".")
             utterance.add_pause(self.config_manager["end_of_page_pause"])
         utterance.add_text(".")
-        utterance.add_bookmark(self.encode_bookmark({
-            't': UT_PAGE_END,
-            "isl": page_is_the_last_of_its_section,
-        }))
+        utterance.add_bookmark(
+            self.encode_bookmark(
+                {
+                    "t": UT_PAGE_END,
+                    "isl": page_is_the_last_of_its_section,
+                }
+            )
+        )
         utterance.add_text(".")
-        utterance.add_bookmark(self.encode_bookmark({
-            't': UT_SECTION_END
-        }))
+        utterance.add_bookmark(self.encode_bookmark({"t": UT_SECTION_END}))
 
     def speak_page(self, start_pos=None, init_state=True):
         if init_state:
             self.initialize_state()
         page = self.reader.get_current_page_object()
         if start_pos is None:
-            start_pos = 0 if config.conf["reading"]["start_reading_from"] else self.textCtrl.GetInsertionPoint()
+            start_pos = (
+                0
+                if config.conf["reading"]["start_reading_from"]
+                else self.textCtrl.GetInsertionPoint()
+            )
         self.text_info = text_info = TextInfo(
             text=self.textCtrl.GetRange(start_pos, self.textCtrl.GetLastPosition()),
             lang=self.reader.document.language.two_letter_language_code,
-            start_pos=start_pos
+            start_pos=start_pos,
         )
         if start_pos == 0:
             with self.queue_speech_utterance() as utterance:
@@ -262,18 +268,26 @@ class TextToSpeechService(BookwormService):
         sent_pause = self.config_manager["sentence_pause"]
         for (paragraph, text_range) in text_info.paragraphs:
             with self.queue_speech_utterance() as utterance:
-                utterance.add_bookmark(self.encode_bookmark({
-                    't': UT_PARAGRAPH_BEGIN,
-                    "txr": text_range.as_tuple(),
-                }))
+                utterance.add_bookmark(
+                    self.encode_bookmark(
+                        {
+                            "t": UT_PARAGRAPH_BEGIN,
+                            "txr": text_range.as_tuple(),
+                        }
+                    )
+                )
                 for sent in text_info.split_sentences(paragraph):
                     utterance.add_sentence(sent + " ")
                     utterance.add_pause(sent_pause)
                 utterance.add_pause(parag_pause)
-                utterance.add_bookmark(self.encode_bookmark({
-                    't': UT_PARAGRAPH_END,
-                    "txr": text_range.as_tuple(),
-                }))
+                utterance.add_bookmark(
+                    self.encode_bookmark(
+                        {
+                            "t": UT_PARAGRAPH_END,
+                            "txr": text_range.as_tuple(),
+                        }
+                    )
+                )
 
     @gui_thread_safe
     def process_bookmark(self, bookmark):
@@ -298,7 +312,10 @@ class TextToSpeechService(BookwormService):
             if config.conf["reading"]["select_spoken_text"]:
                 self.textCtrl.SelectNone()
         elif bookmark_type == UT_PAGE_END:
-            should_navigate = all(retval for func, retval in should_auto_navigate_to_next_page.send(self.view))
+            should_navigate = all(
+                retval
+                for func, retval in should_auto_navigate_to_next_page.send(self.view)
+            )
             if not should_navigate:
                 return
             is_last_of_section = bookmark["isl"]
@@ -331,20 +348,20 @@ class TextToSpeechService(BookwormService):
 
     def rewind(self):
         ignore_command_conditions = (
-            self.engine is None
-            or self.engine.state is not SynthState.busy
+            self.engine is None or self.engine.state is not SynthState.busy
         )
         if ignore_command_conditions:
             wx.Bell()
             return
         if self._whole_page_text_info is None:
-            self._whole_page_text_info = TextInfo(self.textCtrl.GetRange(
-                0,
-                self.textCtrl.GetLastPosition()
-            ))
+            self._whole_page_text_info = TextInfo(
+                self.textCtrl.GetRange(0, self.textCtrl.GetLastPosition())
+            )
         insertion_point = self.textCtrl.GetInsertionPoint()
         try:
-            p_range = self._whole_page_text_info.get_paragraph_to_the_left_of(insertion_point)
+            p_range = self._whole_page_text_info.get_paragraph_to_the_left_of(
+                insertion_point
+            )
             self.engine.stop()
             self.view.set_insertion_point(p_range.start)
             self.initialize_state()
@@ -406,7 +423,7 @@ class TextToSpeechService(BookwormService):
                 "Bookworm has noticed that the currently configured Text-to-speech voice "
                 "speaks a language different from that of this book.\n"
                 "Do you want to temporary switch to another voice that "
-                "speaks a language similar to the language  of the currently opened book?"
+                "speaks a language similar to the language  of the currently opened document?"
             ),
             # Translators: the title of a message telling the user that the TTS voice has been changed
             _("Incompatible TTS Voice Detected"),
@@ -435,16 +452,24 @@ class TextToSpeechService(BookwormService):
         return self.engine is not None
 
     def on_navigated_to_search_result(self, sender, position):
-        restart_speech.send(sender, start_speech_from=position, speech_prefix=_("Search Result."))
+        restart_speech.send(
+            sender, start_speech_from=position, speech_prefix=_("Search Result.")
+        )
 
     def on_navigated_to_bookmark(self, sender, position, name):
         speech_prefix = _("Bookmark.")
         if name:
             speech_prefix = _("Bookmark: {bookmark_name}").format(bookmark_name=name)
-        restart_speech.send(sender, start_speech_from=position, speech_prefix=speech_prefix)
+        restart_speech.send(
+            sender, start_speech_from=position, speech_prefix=speech_prefix
+        )
 
-    def on_navigated_to_structural_element(self, sender, position, element_type, element_label):
-        restart_speech.send(sender, start_speech_from=position, speech_prefix=element_label)
+    def on_navigated_to_structural_element(
+        self, sender, position, element_type, element_label
+    ):
+        restart_speech.send(
+            sender, start_speech_from=position, speech_prefix=element_label
+        )
 
     def on_state_changed(self, sender, state):
         speech_engine_state_changed.send(self.view, service=self, state=state)

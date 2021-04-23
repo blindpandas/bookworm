@@ -114,10 +114,7 @@ class AnnotationService(BookwormService):
         if not self.reader.ready:
             return
         if event.GetKeyCode() == wx.WXK_F2:
-            if event.GetModifiers() == wx.MOD_SHIFT:
-                self.go_to_bookmark(foreword=False)
-            else:
-                self.go_to_bookmark(foreword=True)
+            self.go_to_bookmark(foreword=event.GetModifiers() != wx.MOD_SHIFT)
 
     def go_to_bookmark(self, *, foreword):
         page_number = self.reader.current_page
@@ -136,7 +133,9 @@ class AnnotationService(BookwormService):
                 if bookmark.title:
                     msg += f": {bookmark.title}"
                 speech.announce(msg, True)
-            navigated_to_bookmark.send(self.view, position=bookmark.position, name=bookmark.title or None)
+            navigated_to_bookmark.send(
+                self.view, position=bookmark.position, name=bookmark.title or None
+            )
         else:
             sounds.navigation.play()
 
