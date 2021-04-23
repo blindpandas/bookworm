@@ -2,6 +2,7 @@
 
 import wx
 import msgpack
+from base64 import a85encode, a85decode
 from collections import deque
 from functools import cached_property
 from contextlib import contextmanager, suppress
@@ -141,11 +142,11 @@ class TextToSpeechService(BookwormService):
             setattr(self, "_requested_play", False)
 
     def encode_bookmark(self, data):
-        dump = msgpack.dumps(data)
-        return dump.hex()
+        payload = msgpack.dumps(data)
+        return a85encode(payload).decode("ascii")
 
-    def decode_bookmark(self, hexbytes):
-        data = bytes.fromhex(hexbytes)
+    def decode_bookmark(self, payload):
+        data = a85decode(payload.encode("ascii"))
         return msgpack.loads(data)
 
     @contextmanager
