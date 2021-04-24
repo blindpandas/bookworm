@@ -4,6 +4,6 @@ black==20.8b1
 distro==1.5.0;sys_platform=="linux"
 invoke==1.5.0
 jinja2==2.11.3
-PyInstaller==4.2
+PyInstaller==4.3
 pytest==6.1.0
 wheel==0.35.1
