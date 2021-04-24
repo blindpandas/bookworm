@@ -32,9 +32,9 @@ HEADING_LEVEL_KEY_MAP = {
 SEMANTIC_MAP = {
     "H": SemanticElementType.HEADING,
     # "K": SemanticElementType.LINK,
+    # "A": SemanticElementType.ANCHOR,
     "L": SemanticElementType.LIST,
     "T": SemanticElementType.TABLE,
-    "C": SemanticElementType.CODE_BLOCK,
     "Q": SemanticElementType.QUOTE,
 }
 SEMANTIC_MAP |= HEADING_LEVEL_KEY_MAP

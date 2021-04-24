@@ -36,9 +36,9 @@ class SemanticElementType(IntEnum):
     HEADING_4 = auto()
     HEADING_5 = auto()
     HEADING_6 = auto()
+    ANCHOR = auto()
     LINK = auto()
     LIST = auto()
-    CODE_BLOCK = auto()
     QUOTE = auto()
     TABLE = auto()
     FIGURE = auto()
@@ -59,12 +59,12 @@ SEMANTIC_ELEMENT_OUTPUT_OPTIONS = {
     SemanticElementType.HEADING_2: (_("Heading level 2"), True),
     SemanticElementType.HEADING_3: (_("Heading level 3"), True),
     SemanticElementType.HEADING_4: (_("Heading level 4"), True),
-    SemanticElementType.HEADING_6: (_("Heading level 6"), True),
     SemanticElementType.HEADING_5: (_("Heading level 5"), True),
+    SemanticElementType.HEADING_6: (_("Heading level 6"), True),
+    SemanticElementType.ANCHOR: (_("Anchor"), True),
     SemanticElementType.LINK: (_("Link"), True),
     SemanticElementType.LIST: (_("LIST"), False),
-    SemanticElementType.CODE_BLOCK: (_("Code Block"), False),
-    SemanticElementType.QUOTE: (_("Quote"), False),
+    SemanticElementType.QUOTE: (_("Quote"), True),
     SemanticElementType.TABLE: (_("Table"), False),
     SemanticElementType.FIGURE: (_("Image"), False),
 }

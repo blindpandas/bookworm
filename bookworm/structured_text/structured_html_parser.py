@@ -3,6 +3,7 @@
 import re
 from functools import cached_property
 from itertools import chain
+from uritools import isuri
 from lxml import html as html_parser
 from inscriptis import Inscriptis
 from inscriptis.model.config import ParserConfig
@@ -18,6 +19,7 @@ from bookworm.structured_text import (
 log = logger.getChild(__name__)
 RE_STRIP_XML_DECLARATION = re.compile(r"^<\?xml [^>]+?\?>")
 InscriptisConfig = ParserConfig(
+    display_links=True,
     display_images=True,
 )
 
@@ -44,43 +46,15 @@ SEMANTIC_HTML_ELEMENTS = {
         "ol",
         "ul",
     },
-    # SemanticElementType.LINK: {"a",},
     SemanticElementType.QUOTE: {
         "blockquote",
         "q",
-    },
-    SemanticElementType.CODE_BLOCK: {
-        "code",
     },
     SemanticElementType.TABLE: {
         "table",
     },
 }
-
-STYLE_HTML_ELEMENTS = {
-    # Style.BOLD: {"b", "strong", "emph",},
-    # Style.ITALIC: {"i", "small",},
-    # Style.UNDERLINED: {"u",},
-    # Style.STRIKETHROUGH: {"del", "strike", "s"},
-    # Style.HIGHLIGHTED: {"mark",},
-    # Style.MONOSPACED: {"output", "samp", "kbd", "var"},
-    # Style.SUPERSCRIPT: {"sup",},
-    # Style.SUBSCRIPT: {"sub",},
-    Style.DISPLAY_1: {
-        "h1",
-    },
-    Style.DISPLAY_2: {
-        "h2",
-        "h3",
-    },
-    Style.DISPLAY_3: {
-        "h4",
-        "h5",
-    },
-    Style.DISPLAY_4: {
-        "h6",
-    },
-}
+STYLE_HTML_ELEMENTS = {}
 
 
 class StructuredHtmlParser(Inscriptis):
@@ -92,13 +66,13 @@ class StructuredHtmlParser(Inscriptis):
     def __init__(self, *args, **kwargs):
         self.semantic_elements = {}
         self.styled_elements = {}
+        self.__link_info = []
         kwargs.setdefault("config", InscriptisConfig)
         super().__init__(*args, **kwargs)
 
     @cached_property
     def tags_of_interest(self):
-        return set(self.SEMANTIC_TAG_MAP)
-        # .union(self.STYLE_TAG_MAP)
+        return set(self.SEMANTIC_TAG_MAP).union(self.STYLE_TAG_MAP)
 
     @classmethod
     def from_string(cls, html_string):
@@ -116,8 +90,7 @@ class StructuredHtmlParser(Inscriptis):
         text_start_pos = len(self.get_text())
         super()._parse_html_tree(tree)
         text_end_pos = len(self.get_text())
-        if text_start_pos != text_end_pos:
-            self.record_tag_info(tag, text_start_pos, text_end_pos)
+        self.record_tag_info(tag, text_start_pos, text_end_pos)
 
     def get_text(self):
         text = super().get_text()
@@ -132,3 +105,4 @@ class StructuredHtmlParser(Inscriptis):
             self.styled_elements.setdefault(self.STYLE_TAG_MAP[tag], []).append(
                 (start_pos, end_pos)
             )
+
