@@ -35,10 +35,18 @@ class EpubPage(BasePage):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         html = self._get_html_with_href(self.section.data["href"])
-        structure_extractor = StructuredHtmlParser.from_string(html)
-        self.extracted_text = structure_extractor.get_text()
-        self.semantic_elements = structure_extractor.semantic_elements
-        self.style_info = structure_extractor.styled_elements
+        try:
+            structure_extractor = StructuredHtmlParser.from_string(html)
+            self.extracted_text = structure_extractor.get_text()
+            self.semantic_elements = structure_extractor.semantic_elements
+            self.style_info = structure_extractor.styled_elements
+        except ValueError:
+            log.exception("Failed to parse text from html", exc_info=True)
+            ref = self.section.data["href"]
+            log.debug(f"HTML: {html}\nRef: {ref}")
+            self.extracted_text = ""
+            self.semantic_elements = {}
+            self.style_info = {}
 
     def get_text(self):
         return self.extracted_text

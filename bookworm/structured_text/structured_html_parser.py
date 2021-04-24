@@ -77,7 +77,7 @@ class StructuredHtmlParser(Inscriptis):
     def from_string(cls, html_string):
         html_content = html_string.strip()
         if not html_content:
-            return ""
+            raise ValueError("Invalid html content")
         # strip XML declaration, if necessary
         if html_content.startswith("<?xml "):
             html_content = RE_STRIP_XML_DECLARATION.sub("", html_content, count=1)
