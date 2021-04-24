@@ -432,6 +432,8 @@ class PreferencesDialog(SimpleDialog):
         # Initialize values
         self.reconcile_all(ReconciliationStrategies.load)
         self.tabs.GetListView().SetFocus()
+        # Translators: label of the settings categories list box
+        self.tabs.GetListView().SetLabel(_("Categories"))
 
     def getButtons(self, parent):
         return
