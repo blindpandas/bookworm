@@ -19,7 +19,6 @@ from bookworm.structured_text import (
 log = logger.getChild(__name__)
 RE_STRIP_XML_DECLARATION = re.compile(r"^<\?xml [^>]+?\?>")
 InscriptisConfig = ParserConfig(
-    display_links=True,
     display_images=True,
 )
 
