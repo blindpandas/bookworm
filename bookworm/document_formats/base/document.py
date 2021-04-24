@@ -318,9 +318,8 @@ class SinglePageDocument(BaseDocument):
 
     def search(self, request: SearchRequest):
         text = self.get_content()[request.text_range.as_slice()]
-        section_title = self.get_section_at_position(request.text_range.start).title
         yield from QueueProcess(
-            target=doctools.search_single_page_document, args=(text, request, section_title,), name="bookworm-search"
+            target=doctools.search_single_page_document, args=(text, request,), name="bookworm-search"
         )
 
 

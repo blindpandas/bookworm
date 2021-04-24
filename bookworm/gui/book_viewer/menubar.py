@@ -405,6 +405,9 @@ class SearchMenu(BaseMenu):
 
     def after_loading_book(self, sender):
         self.maintain_state(False)
+        is_single_page_doc = self.reader.document.is_single_page_document()
+        self.Enable(BookRelatedMenuIds.goToPage, not is_single_page_doc)
+        self.view.toolbar.EnableTool(BookRelatedMenuIds.goToPage, not is_single_page_doc)
 
     def after_unloading_book(self, sender):
         self._reset_search_history()

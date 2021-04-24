@@ -49,13 +49,13 @@ def search_book(doc, request, channel):
     channel.done()
 
 
-def search_single_page_document(text, request, section_title, channel):
+def search_single_page_document(text, request, channel):
     pattern = _make_search_re_pattern(request)
     start_pos, stop_pos = request.text_range
     for pos, snip in search(pattern, text):
-        actual_text_pos = pos + start_pos
+        actual_text_pos = start_pos + pos
         channel.push([
-            SearchResult(excerpt=snip, page=0, position=actual_text_pos, section=section_title),
+            SearchResult(excerpt=snip, page=0, position=actual_text_pos, section=""),
         ])
     channel.done()
 

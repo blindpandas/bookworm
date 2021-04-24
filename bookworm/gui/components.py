@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from itertools import chain
 import bookworm.typehints as t
 from bookworm.concurrency import threaded_worker
+from bookworm.structured_text import TextRange
 from bookworm.vendor.repeating_timer import RepeatingTimer
 from bookworm.logger import logger
 
@@ -169,7 +170,11 @@ class PageRangeControl(sc.SizedPanel):
         if not self.is_single_page_document:
             raise TypeError("Text ranges are not supported in single page documents")
         if (selected_item := self.sectionChoice.GetSelection()) :
-            return self.sectionChoice.GetClientData(selected_item).text_range
+            section = self.sectionChoice.GetClientData(selected_item)
+            start_pos, stop_pos = section.text_range
+            if section.has_children:
+                stop_pos = section.last_child.text_range.stop
+            return TextRange(start_pos, stop_pos)
         else:
             return self.doc.toc_tree.text_range
 

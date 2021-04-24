@@ -33,6 +33,7 @@ class SearchResultsDialog(Dialog):
 
     def addControls(self, sizer, parent):
         self.reader = self.parent.reader
+        self.is_single_page_document = self.reader.document.is_single_page_document()
         # Translators: the label of a list of search results
         label = wx.StaticText(parent, -1, _("Search Results"))
         self.searchResultsListCtrl = DialogListCtrl(parent, -1)
@@ -67,7 +68,8 @@ class SearchResultsDialog(Dialog):
         sizer.Add(self.searchResultsListCtrl, 1, wx.EXPAND | wx.ALL, 10)
         sizer.Add(pbarlabel, 0, wx.TOP | wx.LEFT | wx.RIGHT, 10)
         sizer.Add(self.progressbar, 0, wx.EXPAND | wx.ALL, 10)
-        self.progressbar.SetRange(self.num_pages)
+        if not self.is_single_page_document:
+            self.progressbar.SetRange(self.num_pages)
         self.Bind(
             wx.EVT_LIST_ITEM_ACTIVATED, self.onItemClick, self.searchResultsListCtrl
         )
@@ -96,25 +98,32 @@ class SearchResultsDialog(Dialog):
     def addResultSet(self, resultset):
         for result in resultset:
             self.addResult(result)
-        wx.CallAfter(self.progressbar.SetValue, self.progressbar.GetValue() + 1)
+        if not self.is_single_page_document:
+            wx.CallAfter(self.progressbar.SetValue, self.progressbar.GetValue() + 1)
 
     def addResult(self, result):
         if not self.IsShown():
             return
         with self.list_lock:
             self.addResultToList(result)
+        if self.is_single_page_document:
+            wx.CallAfter(self.progressbar.Pulse)
 
     def addResultToList(self, result):
         count = self.searchResultsListCtrl.ItemCount
         page_display_text = (
             str(result.page + 1)
-            if not self.reader.document.is_single_page_document()
+            if not self.is_single_page_document
             else ""
         )
         index = self.searchResultsListCtrl.InsertItem(count, page_display_text)
         self.searchResultsListCtrl.SetItem(index, 1, result.excerpt)
         if self.reader.document.has_toc_tree():
-            self.searchResultsListCtrl.SetItem(index, 2, result.section)
+            section_title = (
+                result.section if not self.is_single_page_document
+                else self.reader.document.get_section_at_position(result.position).title
+            )
+            self.searchResultsListCtrl.SetItem(index, 2, section_title)
         self.searchResultsListCtrl.SetItemData(index, result.position)
 
 
