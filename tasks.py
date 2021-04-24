@@ -269,9 +269,10 @@ def generate_pot(c):
     display_name = os.environ["IAPP_DISPLAY_NAME"]
     author = os.environ["IAPP_AUTHOR"]
     version = os.environ["IAPP_VERSION"]
+    output_filename = PROJECT_ROOT / "scripts" / f"{name}-{version}.pot"
     args = " ".join(
         (
-            f'-o "{str(PROJECT_ROOT / "scripts" / name)}.pot"',
+            f'-o "{output_filename}"',
             '-c "Translators:"',
             '--msgid-bugs-address "ibnomer2011@hotmail.com"',
             f'--copyright-holder="{author}"',
