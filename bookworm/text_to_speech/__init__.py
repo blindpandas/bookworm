@@ -210,7 +210,9 @@ class TextToSpeechService(BookwormService):
 
     def configure_end_page_utterance(self, utterance, page):
         page_is_the_last_of_its_section = (
-            page.is_last_of_section and not page.section.has_children
+            page.is_last_of_section
+            and not page.section.has_children
+            and not self.reader.document.is_single_page_document()
         )
         if page.section.is_root:
             utterance.add_audio(sounds.section_end.path)
@@ -250,7 +252,7 @@ class TextToSpeechService(BookwormService):
                 else self.textCtrl.GetInsertionPoint()
             )
         self.text_info = text_info = TextInfo(
-            text=self.textCtrl.GetRange(start_pos, self.textCtrl.GetLastPosition()),
+            text="".join([self.textCtrl.GetRange(start_pos, self.textCtrl.GetLastPosition()), "\n"]),
             lang=self.reader.document.language.two_letter_language_code,
             start_pos=start_pos,
         )
@@ -260,6 +262,11 @@ class TextToSpeechService(BookwormService):
         self.add_text_utterances(text_info)
         with self.queue_speech_utterance() as utterance:
             self.configure_end_page_utterance(utterance, page)
+        utterance.add_pause(PauseSpec.extra_small)
+        utterance.add_audio(sounds.section_end.path)
+        if self.reader.document.is_single_page_document():
+            # Translators: spoken message at the end of the document
+            utterance.add_text(_("End of document"))
         self.view.set_insertion_point(start_pos)
         self.engine.speak(self.utterance_queue.pop())
 
