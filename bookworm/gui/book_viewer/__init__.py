@@ -374,6 +374,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.clear_toc_tree()
         self.set_title(app.display_name)
         self.set_content("")
+        if self._has_text_zoom:
+            self.onTextCtrlZoom(0, announce=False)
         self.clear_highlight()
         self.set_status(self._no_open_book_status)
 
@@ -515,28 +517,34 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 msg = _("No previous {item}")
             speech.announce(msg.format(item=element_label), True)
 
-    def onTextCtrlZoom(self, direction):
+    def onTextCtrlZoom(self, direction, announce=True):
         self._has_text_zoom = True
-        font = self.contentTextCtrl.GetFont()
+        last_pos = self.contentTextCtrl.GetLastPosition()
+        existing_style = wx.TextAttr()
+        self.contentTextCtrl.GetStyle(0, existing_style)
+        new_style = wx.TextAttr(existing_style)
+        font = new_style.Font
         size = font.GetPointSize()
         if direction == 1:
-            if size >= 64:
+            if size > 64:
                 return wx.Bell()
-            self.contentTextCtrl.SetFont(font.MakeLarger())
+            new_style.Font = font.MakeLarger()
             # Translators: a message telling the user that the font size has been increased
             msg = _("The font size has been Increased")
         elif direction == -1:
-            if size <= 6:
+            if size < 8:
                 return wx.Bell()
-            self.contentTextCtrl.SetFont(font.MakeSmaller())
+            new_style.Font = font.MakeSmaller()
             # Translators: a message telling the user that the font size has been decreased
             msg = _("The font size has been decreased")
         else:
-            self.contentTextCtrl.SetFont(wx.NullFont)
+            new_style = self.contentTextCtrl.GetDefaultStyle()
             # Translators: a message telling the user that the font size has been reset
             msg = _("The font size has been reset")
             self._has_text_zoom = False
-        speech.announce(msg)
+        self.contentTextCtrl.SetStyle(0, last_pos, new_style)
+        if announce:
+            speech.announce(msg)
 
     def setFrameIcon(self):
         icon_file = app_path(f"{app.name}.ico")
