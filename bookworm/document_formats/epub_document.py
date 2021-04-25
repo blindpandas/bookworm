@@ -116,9 +116,8 @@ class EpubPage(BasePage):
                 return self._get_split_section_text(href)
         elif (filename is None) and ("#" in href):
             return self._get_split_section_text(href)
-        raise RuntimeError(
-            f"Could not extract text from section with href: {href} and filename: {filename}"
-        )
+        log.warning(f"Could not extract text from section with href: {href} and filename: {filename}")
+        return ""
 
 
 class EpubDocument(BaseDocument):
