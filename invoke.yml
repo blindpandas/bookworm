@@ -27,6 +27,7 @@ folders_to_clean:
         - scripts/bookworm.pot
         - scripts/Bookworm*update.bundle
         - scripts/Bookworm*portable.zip
+        - scripts/Bookworm-*.pot
         - scripts/release-info.json
         - scripts/builder/assets/version_info.txt
         - scripts/builder/assets/bookworm.bmp
