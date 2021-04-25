@@ -197,7 +197,9 @@ class Annotator:
         if not self.reader.document.is_single_page_document():
             section_title = self.reader.active_section.title
         else:
-            section_title = self.reader.document.get_section_at_position(self.reader.view.get_insertion_point()).title
+            section_title = self.reader.document.get_section_at_position(
+                self.reader.view.get_insertion_point()
+            ).title
         kwargs.update(
             dict(
                 book_id=self.current_book.id,

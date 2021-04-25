@@ -103,7 +103,6 @@ tts_config_spec = {
         speak_page_number="boolean(default=False)",
         highlight_spoken_text="boolean(default=True)",
         select_spoken_text="boolean(default=False)",
-        notify_on_section_start="boolean(default=False)",
         notify_on_section_end="boolean(default=True)",
         ask_to_switch_voice_to_current_book_language="boolean(default=True)",
     ),

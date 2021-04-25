@@ -151,7 +151,7 @@ class PageRangeControl(sc.SizedPanel):
 
     def get_page_range(self):
         if self.is_single_page_document:
-            from_page, to_page =  0, 0
+            from_page, to_page = 0, 0
         elif self.hasSection.GetValue():
             if (selected_item := self.sectionChoice.GetSelection()) :
                 selected_section = self.sectionChoice.GetClientData(selected_item)

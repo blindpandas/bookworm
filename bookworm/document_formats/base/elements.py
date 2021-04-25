@@ -34,6 +34,7 @@ class SearchRequest:
     text_range: TextRange = None
     text: str = None
 
+
 @dataclass
 class SearchResult:
     """Holds information about a single search result."""

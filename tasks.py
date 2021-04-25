@@ -79,7 +79,9 @@ def _add_envars(context):
     build_folder = PROJECT_ROOT / "scripts" / "builder" / "dist" / arch / "Bookworm"
     context["offline_run"] = os.environ.get("BOOKWORM_BUILD_OFFLINE", "")
     context["build_folder"] = build_folder
-    context["pip_timeout"], context["pip_retries"] = (1, 1) if context["offline_run"] else (15, 5)
+    context["pip_timeout"], context["pip_retries"] = (
+        (1, 1) if context["offline_run"] else (15, 5)
+    )
     os.environ.update(
         {
             "IAPP_ARCH": arch,
@@ -496,7 +498,11 @@ def pip_install(c):
     with c.cd(PROJECT_ROOT):
         print("Installing application dependencies using pip...")
         try:
-            c.run(_add_pip_install_args("python -m pip install -r requirements-dev.txt", c))
+            c.run(
+                _add_pip_install_args(
+                    "python -m pip install -r requirements-dev.txt", c
+                )
+            )
         except UnexpectedExit as e:
             if not c["offline_run"]:
                 raise e

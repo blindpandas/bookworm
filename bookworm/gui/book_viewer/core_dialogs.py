@@ -112,15 +112,14 @@ class SearchResultsDialog(Dialog):
     def addResultToList(self, result):
         count = self.searchResultsListCtrl.ItemCount
         page_display_text = (
-            str(result.page + 1)
-            if not self.is_single_page_document
-            else ""
+            str(result.page + 1) if not self.is_single_page_document else ""
         )
         index = self.searchResultsListCtrl.InsertItem(count, page_display_text)
         self.searchResultsListCtrl.SetItem(index, 1, result.excerpt)
         if self.reader.document.has_toc_tree():
             section_title = (
-                result.section if not self.is_single_page_document
+                result.section
+                if not self.is_single_page_document
                 else self.reader.document.get_section_at_position(result.position).title
             )
             self.searchResultsListCtrl.SetItem(index, 2, section_title)
@@ -155,13 +154,11 @@ class SearchBookDialog(SimpleDialog):
     def GetValue(self):
         from_page, to_page = self.pageRange.get_page_range()
         kwargs = {
-            'from_page': from_page,
-            'to_page': to_page,
+            "from_page": from_page,
+            "to_page": to_page,
         }
         if self.is_single_page_document:
-            kwargs.update({
-                'text_range': self.pageRange.get_text_range()
-            })
+            kwargs.update({"text_range": self.pageRange.get_text_range()})
         return SearchRequest(
             term=self.searchTermTextCtrl.GetValue().strip(),
             is_regex=self.isRegex.IsChecked(),

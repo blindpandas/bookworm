@@ -202,10 +202,6 @@ class TextToSpeechService(BookwormService):
             )
         )
         if page_is_the_first_of_its_section:
-            if config.conf["reading"]["notify_on_section_start"]:
-                utterance.add_audio(sounds.section_start.path)
-                utterance.add_text("Starting sub section")
-                utterance.add_pause(900)
             utterance.add_bookmark(self.encode_bookmark({"t": UT_SECTION_BEGIN}))
 
     def configure_end_page_utterance(self, utterance, page):
@@ -217,15 +213,10 @@ class TextToSpeechService(BookwormService):
         if page.section.is_root:
             utterance.add_audio(sounds.section_end.path)
             # Translators: a message to speak at the end of the document
+            utterance.add_audio(sounds.section_end.path)
             utterance.add_text(_("End of document."))
         if page_is_the_last_of_its_section:
-            if config.conf["reading"]["notify_on_section_end"]:
-                utterance.add_audio(sounds.section_end.path)
-                # Translators: a message to speak at the end of the chapter
-                utterance.add_text(
-                    _("End of section: {chapter}.").format(chapter=page.section.title)
-                )
-            utterance.add_pause(self.config_manager["end_of_section_pause"])
+            self.configure_end_of_section_utterance(utterance, page.section)
         else:
             utterance.add_text(".")
             utterance.add_pause(self.config_manager["end_of_page_pause"])
@@ -241,6 +232,15 @@ class TextToSpeechService(BookwormService):
         utterance.add_text(".")
         utterance.add_bookmark(self.encode_bookmark({"t": UT_SECTION_END}))
 
+    def configure_end_of_section_utterance(self, utterance, section):
+        if config.conf["reading"]["notify_on_section_end"]:
+            utterance.add_audio(sounds.section_end.path)
+            # Translators: a message to speak at the end of the chapter
+            utterance.add_text(
+                _("End of section: {chapter}.").format(chapter=section.title)
+            )
+        utterance.add_pause(self.config_manager["end_of_section_pause"])
+
     def speak_page(self, start_pos=None, init_state=True):
         if init_state:
             self.initialize_state()
@@ -252,7 +252,12 @@ class TextToSpeechService(BookwormService):
                 else self.textCtrl.GetInsertionPoint()
             )
         self.text_info = text_info = TextInfo(
-            text="".join([self.textCtrl.GetRange(start_pos, self.textCtrl.GetLastPosition()), "\n"]),
+            text="".join(
+                [
+                    self.textCtrl.GetRange(start_pos, self.textCtrl.GetLastPosition()),
+                    "\n",
+                ]
+            ),
             lang=self.reader.document.language.two_letter_language_code,
             start_pos=start_pos,
         )
@@ -263,7 +268,6 @@ class TextToSpeechService(BookwormService):
         with self.queue_speech_utterance() as utterance:
             self.configure_end_page_utterance(utterance, page)
         utterance.add_pause(PauseSpec.extra_small)
-        utterance.add_audio(sounds.section_end.path)
         if self.reader.document.is_single_page_document():
             # Translators: spoken message at the end of the document
             utterance.add_text(_("End of document"))
@@ -271,10 +275,21 @@ class TextToSpeechService(BookwormService):
         self.engine.speak(self.utterance_queue.pop())
 
     def add_text_utterances(self, text_info):
+        is_single_page_document = self.reader.document.is_single_page_document()
+        _last_known_section = None
         parag_pause = self.config_manager["paragraph_pause"]
         sent_pause = self.config_manager["sentence_pause"]
         for (paragraph, text_range) in text_info.paragraphs:
             with self.queue_speech_utterance() as utterance:
+                if is_single_page_document:
+                    text_pos = sum(text_range.as_tuple()) / 2
+                    sect = self.reader.document.get_section_at_position(text_pos)
+                    if _last_known_section != sect:
+                        if _last_known_section is not None:
+                            self.configure_end_of_section_utterance(
+                                utterance, sect.simple_prev
+                            )
+                        _last_known_section = sect
                 utterance.add_bookmark(
                     self.encode_bookmark(
                         {

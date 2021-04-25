@@ -407,7 +407,9 @@ class SearchMenu(BaseMenu):
         self.maintain_state(False)
         is_single_page_doc = self.reader.document.is_single_page_document()
         self.Enable(BookRelatedMenuIds.goToPage, not is_single_page_doc)
-        self.view.toolbar.EnableTool(BookRelatedMenuIds.goToPage, not is_single_page_doc)
+        self.view.toolbar.EnableTool(
+            BookRelatedMenuIds.goToPage, not is_single_page_doc
+        )
 
     def after_unloading_book(self, sender):
         self._reset_search_history()
@@ -483,7 +485,9 @@ class SearchMenu(BaseMenu):
 
     def go_to_search_result(self, foreword=True):
         result = None
-        page, (sol, eol) = self.reader.current_page, self.view.get_containing_line(self.view.get_insertion_point())
+        page, (sol, eol) = self.reader.current_page, self.view.get_containing_line(
+            self.view.get_insertion_point()
+        )
         if foreword:
             filter_func = lambda sr: (
                 ((sr.page == page) and (sr.position > eol)) or (sr.page > page)

@@ -33,7 +33,6 @@ def export_to_plain_text(doc, target_filename, channel):
     channel.done()
 
 
-
 def search_book(doc, request, channel):
     """This function also runs in a separate process."""
     pattern = _make_search_re_pattern(request)
@@ -54,9 +53,13 @@ def search_single_page_document(text, request, channel):
     start_pos, stop_pos = request.text_range
     for pos, snip in search(pattern, text):
         actual_text_pos = start_pos + pos
-        channel.push([
-            SearchResult(excerpt=snip, page=0, position=actual_text_pos, section=""),
-        ])
+        channel.push(
+            [
+                SearchResult(
+                    excerpt=snip, page=0, position=actual_text_pos, section=""
+                ),
+            ]
+        )
     channel.done()
 
 

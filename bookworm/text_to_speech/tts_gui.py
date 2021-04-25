@@ -96,13 +96,6 @@ class ReadingPanel(SettingsPanel):
             miscBox,
             -1,
             # Translators: the label of a checkbox
-            _("Announce the start of sections (Experimental)"),
-            name="reading.notify_on_section_start",
-        )
-        wx.CheckBox(
-            miscBox,
-            -1,
-            # Translators: the label of a checkbox
             _("Announce the end of sections"),
             name="reading.notify_on_section_end",
         )

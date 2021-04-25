@@ -14,16 +14,27 @@ PACKAGES_WITH_DATA = [
     "docx",
     "pptx",
 ]
-BOOKWORM_RESOURCES = collect_data_files('bookworm', excludes=['*.po',])
+BOOKWORM_RESOURCES = collect_data_files(
+    "bookworm",
+    excludes=[
+        "*.po",
+    ],
+)
 DATA_FILES = [
-    (src, Path(dst).relative_to("bookworm"),)
+    (
+        src,
+        Path(dst).relative_to("bookworm"),
+    )
     for src, dst in BOOKWORM_RESOURCES
 ]
 for pkg_name in PACKAGES_WITH_DATA:
     DATA_FILES += collect_data_files(pkg_name)
 
 # Hidden imports
-HIDDEN_SUBMODULES = ["babel", "odf",]
+HIDDEN_SUBMODULES = [
+    "babel",
+    "odf",
+]
 HIDDEN_IMPORTS = [
     "numpy",
     "cv2",
@@ -43,7 +54,9 @@ a = Analysis(
     hiddenimports=HIDDEN_IMPORTS,
     hookspath=[],
     runtime_hooks=[],
-    excludes=["tkinter",],
+    excludes=[
+        "tkinter",
+    ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
