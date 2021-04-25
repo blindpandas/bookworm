@@ -24,8 +24,6 @@ def export_to_plain_text(doc, target_filename, channel):
         out.write(f"{text}{NEWLINE}\f{NEWLINE}")
         channel.push(n)
     full_text = out.getvalue()
-    if doc.is_single_page_document():
-        full_text = full_text.strip()
     with open(target_filename, "w", encoding="utf8") as file:
         file.write(full_text)
     out.close()
