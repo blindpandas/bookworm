@@ -206,9 +206,9 @@ class TextToSpeechService(BookwormService):
 
     def configure_end_page_utterance(self, utterance, page):
         page_is_the_last_of_its_section = (
-            page.is_last_of_section
+            not self.reader.document.is_single_page_document()
+            and page.is_last_of_section
             and not page.section.has_children
-            and not self.reader.document.is_single_page_document()
         )
         if page.section.is_root:
             utterance.add_audio(sounds.section_end.path)
