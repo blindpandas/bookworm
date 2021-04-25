@@ -89,7 +89,8 @@ class StructuredHtmlParser(Inscriptis):
         text_start_pos = len(self.get_text())
         super()._parse_html_tree(tree)
         text_end_pos = len(self.get_text())
-        self.record_tag_info(tag, text_start_pos, text_end_pos)
+        if text_start_pos != text_end_pos:
+            self.record_tag_info(tag, text_start_pos, text_end_pos)
 
     def get_text(self):
         text = super().get_text()
