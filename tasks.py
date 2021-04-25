@@ -323,7 +323,8 @@ def init_lang(c, lang):
     from bookworm import app
 
     print(f"Creating a language catalog for language '{lang}'...")
-    potfile = PROJECT_ROOT / "scripts" / f"{app.name}.pot"
+    name, version = [os.environ[k] for k in ["IAPP_NAME", "IAPP_VERSION"]]
+    potfile = PROJECT_ROOT / "scripts" / f"{name}-{version}.pot"
     locale_dir = PACKAGE_FOLDER / "resources" / "locale"
     c.run(
         f'pybabel init -D {app.name} -i "{potfile}" '
