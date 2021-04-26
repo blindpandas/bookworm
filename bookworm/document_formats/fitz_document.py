@@ -3,7 +3,7 @@
 import zipfile
 import fitz
 import ftfy
-from functools import cached_property
+from functools import cached_property, lru_cache
 from hashlib import md5
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
@@ -62,6 +62,7 @@ class FitzDocument(BaseDocument):
         DC.TOC_TREE | DC.METADATA | DC.GRAPHICAL_RENDERING | DC.IMAGE_EXTRACTION
     )
 
+    @lru_cache(maxsize=1000)
     def get_page(self, index: int) -> FitzPage:
         return FitzPage(self, index)
 

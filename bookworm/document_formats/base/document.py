@@ -57,7 +57,6 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def __contains__(self, value: int):
         return -1 < value < len(self)
 
-    @lru_cache(maxsize=1000)
     def __getitem__(self, index: int) -> "BasePage":
         return self.get_page(index)
 

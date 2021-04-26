@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import sys
+from functools import lru_cache
 from odf import opendocument
 
 # Hack to fix some pyinstaller issues
@@ -142,6 +143,7 @@ class OdfPresentation(BaseDocument):
     def __len__(self):
         return self.num_slides
 
+    @lru_cache(maxsize=1000)
     def get_page(self, index):
         return OdpSlide(self, index)
 

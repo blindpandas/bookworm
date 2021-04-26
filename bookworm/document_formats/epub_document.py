@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from functools import cached_property
+from functools import cached_property, lru_cache
 from hashlib import md5
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
@@ -134,6 +134,7 @@ class EpubDocument(BaseDocument):
     def __len__(self):
         return self.toc_tree.pager.last + 1
 
+    @lru_cache(maxsize=1000)
     def get_page(self, index):
         return EpubPage(self, index)
 

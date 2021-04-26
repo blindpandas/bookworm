@@ -293,28 +293,9 @@ class EBookReader:
         return pos_getter(element_type, anchor=anchor)
 
     def get_semantic_element(self, element_type, forward, anchor):
-        pos = self._get_semantic_element_from_page(
+        return self._get_semantic_element_from_page(
             self.get_current_page_object(), element_type, forward, anchor
         )
-        if pos is not None:
-            return pos
-        else:
-            return
-        # XXX: This is disabled for now
-        if forward:
-            page_range = range(self.current_page + 1, len(self.document))
-        else:
-            prev = (self.current_page - 1) if (self.current_page != 0) else 0
-            page_range = range(prev, -1, -1)
-        for page_index in page_range:
-            page = self.document.get_page(page_index)
-            if element_type in page.get_semantic_structure():
-                initial_insertion_point = 0 if forward else len(page.get_text())
-                with self.view.mute_page_and_section_speech():
-                    self.go_to_page(page_index, initial_insertion_point)
-                return self._get_semantic_element_from_page(
-                    page, element_type, forward, anchor=initial_insertion_point
-                )
 
     def get_view_title(self, include_author=False):
         if config.conf["general"]["show_file_name_as_title"]:

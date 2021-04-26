@@ -94,15 +94,15 @@ class StructuredHtmlParser(Inscriptis):
             self.record_tag_info(tag, text_start_pos, text_end_pos)
 
     def get_text(self):
-        text = super().get_text()
-        return fix_text(remove_excess_blank_lines(text), normalization="NFKC")
+        text = fix_text(super().get_text(), normalization="NFKC")
+        return remove_excess_blank_lines(text)
 
     def record_tag_info(self, tag, start_pos, end_pos):
-        if tag in self.SEMANTIC_TAG_MAP:
-            self.semantic_elements.setdefault(self.SEMANTIC_TAG_MAP[tag], []).append(
+        if (element_type := self.SEMANTIC_TAG_MAP.get(tag)) :
+            self.semantic_elements.setdefault(element_type, []).append(
                 (start_pos, end_pos)
             )
-        if tag in self.STYLE_TAG_MAP:
-            self.styled_elements.setdefault(self.STYLE_TAG_MAP[tag], []).append(
+        if (element_type := self.STYLE_TAG_MAP.get(tag)) :
+            self.styled_elements.setdefault(element_type, []).append(
                 (start_pos, end_pos)
             )

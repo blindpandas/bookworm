@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import ftfy
-from functools import cached_property
+from functools import cached_property, lru_cache
 from pyxpdf import Document as XPdfDocument, Config as XPdfConfig
 from pyxpdf.xpdf import TextOutput as XPdfTextOutput, TextControl as XPdfTextControl
 from pyxpdf_data import generate_xpdfrc
@@ -52,6 +52,7 @@ class FitzPdfDocument(FitzDocument):
         ReadingMode.PHYSICAL,
     )
 
+    @lru_cache(maxsize=1000)
     def get_page(self, index: int) -> FitzPage:
         return FitzPdfPage(self, index, xpdf_text_output=self.xpdf_text_output)
 

@@ -3,7 +3,7 @@
 import pptx
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.enum.shapes import PP_PLACEHOLDER
-from functools import cached_property
+from functools import cached_property, lru_cache
 from bookworm.i18n import LocaleInfo
 from bookworm.utils import NEWLINE
 from bookworm.structured_text import StringBuilder, SemanticElementType
@@ -125,6 +125,7 @@ class PowerpointPresentation(BaseDocument):
     def __len__(self):
         return self.num_slides
 
+    @lru_cache(maxsize=1000)
     def get_page(self, index):
         return PowerpointSlide(self.slides[index], self, index)
 
