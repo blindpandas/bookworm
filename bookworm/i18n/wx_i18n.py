@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import wx
+from more_itertools import first_true
 from bookworm import app
 from bookworm import paths
 from bookworm.i18n import LocaleInfo
@@ -14,8 +15,18 @@ def set_wx_locale(current_locale):
     log.debug(f"Setting wx locale to {current_locale}.")
     if hasattr(wx.GetApp(), "AppLocale"):
         del wx.GetApp().AppLocale
-    current_language = current_locale.pylang
-    wx_language = wx.Locale.FindLanguageInfo(current_language)
+    possible_locales = [
+        wx.Locale.FindLanguageInfo(lang)
+        for lang in (
+            current_locale.pylang,
+            current_locale.two_letter_language_code,
+        )
+    ]
+    wx_language = first_true(
+        possible_locales,
+        pred=lambda lc: lc is not None and wx.Locale.IsAvailable(lc.Language),
+        default=None
+    )
     if wx_language is None:
         log.exception(
             f"Failed to find corresponding WX language information for locale {current_locale}."

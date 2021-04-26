@@ -29,7 +29,7 @@ def main():
         extern_file = logging.FileHandler(filename=logfile, mode="w")
         extern_file.setFormatter(logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT))
         logging.getLogger("").addHandler(extern_file)
-        logging.debug("An error was occured while starting the application.")
+        logging.debug("An error was occurred while starting the application.")
         logging.critical("Error details:", exc_info=True)
         wx.SafeShowMessage(
             "Application Error",

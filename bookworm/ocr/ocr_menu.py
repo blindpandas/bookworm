@@ -171,7 +171,7 @@ class OCRMenu(wx.Menu):
         self._ocr_cancelled.clear()
         ocr_opts = self._get_ocr_options()
         if ocr_opts is None:
-            return speech.announce(_("Cancelled"), True)
+            return speech.announce(_("Canceled"), True)
         reader = self.service.reader
         if reader.current_page in self.service.saved_scanned_pages:
             self.view.set_content(self.service.saved_scanned_pages[reader.current_page])
@@ -235,7 +235,7 @@ class OCRMenu(wx.Menu):
             defaultDir=wx.GetUserHome(),
             defaultFile=filename,
             # Translators: file type in a save as dialog
-            wildcard=_("Plain Text (*.txt)|.txt"),
+            wildcard=_("Plain Text") + "(*.txt)|.txt",
             style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
         )
         if saveExportedFD.ShowModal() != wx.ID_OK:
@@ -270,8 +270,8 @@ class OCRMenu(wx.Menu):
             wx.CallAfter,
             wx.MessageBox,
             _(
-                "Successfully processed {} pages.\nExtracted text was written to: {}"
-            ).format(total, output_file),
+                "Successfully processed {total} pages.\nExtracted text was written to: {file}"
+            ).format(total=total, file=output_file),
             _("OCR Completed"),
             wx.ICON_INFORMATION,
         )
@@ -298,7 +298,7 @@ class OCRMenu(wx.Menu):
             wildcard.append("{name} ({ext})|{ext}|".format(name=name, ext=ext))
         wildcard[-1] = wildcard[-1].rstrip("|")
         allfiles = ";".join(ext[0] for ext in all_exts)
-        wildcard.insert(0, _("All supported image formats|{ext}|").format(ext=allfiles))
+        wildcard.insert(0, _("All supported image formats") + f"|{allfiles}|")
         openFileDlg = wx.FileDialog(
             self.view,
             # Translators: the title of a file dialog to browse to an image
@@ -369,7 +369,7 @@ class OCRMenu(wx.Menu):
 
     def _on_ocr_cancelled(self):
         self._ocr_cancelled.set()
-        speech.announce(_("OCR cancelled"), True)
+        speech.announce(_("OCR canceled"), True)
         sounds.ocr_end.play()
         return True
 

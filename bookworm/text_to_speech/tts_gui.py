@@ -418,7 +418,7 @@ class VoiceProfileDialog(SimpleDialog):
         except ValueError:
             wx.MessageBox(
                 # Translators: the content of a message notifying the user
-                # user of the existance of a voice profile with the same name
+                # user of the existence of a voice profile with the same name
                 _(
                     "A voice profile with the same name already exists. Please select another name."
                 ),

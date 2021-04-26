@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import locale as pylocale
 import gettext
 from collections import OrderedDict
 from contextlib import suppress
@@ -35,16 +36,6 @@ def get_available_locales(force_update=False):
         for entry in folders
         if entry.joinpath(f"LC_MESSAGES/{app.name}.mo").is_file()
     ]
-    user_locale = get_user_locale()
-    parent_locale = user_locale.parent
-    if user_locale.pylang in locale_folders:
-        locale_folders.remove(user_locale.pylang)
-        locale_folders.insert(0, user_locale.pylang)
-    elif parent_locale.pylang in locale_folders:
-        locale_folders.remove(parent_locale.pylang)
-        locale_folders.insert(0, parent_locale.pylang)
-    if not any(l.startswith("en") for l in locale_folders):
-        locale_folders.append("en")
     locales = []
     for entry in locale_folders:
         try:
@@ -52,8 +43,16 @@ def get_available_locales(force_update=False):
             locales.append(localeinfo)
         except ValueError:
             continue
+    if not any(l.two_letter_language_code == "en"  for l in locales):
+        locales.append(LocaleInfo("en"))
     _AVAILABLE_LOCALES = {loc.pylang: loc for loc in locales}
-    _AVAILABLE_LOCALES["default"] = locales[0]
+    user_locale = get_user_locale()
+    if user_locale in locales:
+        _AVAILABLE_LOCALES["default"] = user_locale
+    elif (parent_locale := user_locale.parent) in locales:
+        _AVAILABLE_LOCALES["default"] = parent_locale
+    else:
+        _AVAILABLE_LOCALES["default"] = LocaleInfo("en")
     return _AVAILABLE_LOCALES
 
 
@@ -73,6 +72,10 @@ def set_locale(locale_identifier):
         )
         translation.install(names=["ngettext"])
         os.environ["LANG"] = localeinfo.pylang
+        pylocale.setlocale(
+            pylocale.LC_ALL,
+            (localeinfo.two_letter_language_code, "utf-8")
+        )
         _set_app_locale(localeinfo)
         app.current_language = localeinfo
     except Exception as e:
@@ -81,6 +84,10 @@ def set_locale(locale_identifier):
                 f"An error was occured while initializing i18n system.", exc_info=True
             )
         os.environ["LANG"] = "en"
+        pylocale.setlocale(
+            pylocale.LC_ALL,
+            ("en", "utf-8")
+        )
         _set_app_locale(LocaleInfo("en"))
         app.current_language = get_available_locales()["en"]
 

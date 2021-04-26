@@ -11,7 +11,7 @@ from .annotation_models import Bookmark, Note, Quote
 
 
 log = logger.getChild(__name__)
-# The bakery caches querie objects to avoid recompiling them into strings in every call
+# The bakery caches query objects to avoid recompiling them into strings in every call
 BAKERY = baked.bakery()
 
 

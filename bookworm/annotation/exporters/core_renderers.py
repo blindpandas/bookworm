@@ -21,11 +21,11 @@ class PlainTextRenderer(TextRenderer):
             self.output.write(self.book)
             self.add_newline()
         if self.section:
-            self.output.write(_("Section: {}").format(self.section))
+            self.output.write(_("Section: {section_title}").format(section_title=self.section))
             self.add_newline()
         if self.tag:
             # Translators: written to output document when exporting files
-            self.output.write(_("Tagged: {}").format(self.tag))
+            self.output.write(_("Tagged: {tag}").format(tag=self.tag))
             self.add_newline()
         self.output.write("=" * 30)
         self.add_newline()
@@ -45,7 +45,7 @@ class PlainTextRenderer(TextRenderer):
         if self.options.include_page_number:
             if has_prev:
                 self.output.write(" — ")
-            self.output.write(_("Page {}").format(item.page_number))
+            self.output.write(_("Page {number}").format(number=item.page_number))
             has_prev = True
         if self.options.include_section_title:
             if has_prev:
@@ -82,10 +82,10 @@ class MarkdownRenderer(TextRenderer):
             self.output.write(f"# {self.book}")
             self.add_newline()
         if self.section:
-            self.output.write("## " + _("Section: {}").format(self.section))
+            self.output.write("## " + _("Section: {section_title}").format(section_title=self.section))
             self.add_newline()
         if self.tag:
-            self.output.write("## " + _("Tagged: {}").format(self.tag))
+            self.output.write("## " + _("Tagged: {tags}").format(tags=self.tag))
             self.add_newline()
         self.output.write("=" * 30)
         self.add_newline()
@@ -104,7 +104,7 @@ class MarkdownRenderer(TextRenderer):
         if self.options.include_page_number:
             if has_prev:
                 self.output.write(" — ")
-            self.output.write(_("Page {}").format(item.page_number))
+            self.output.write(_("Page {number}").format(number=item.page_number))
             has_prev = True
         if self.options.include_section_title:
             if has_prev:

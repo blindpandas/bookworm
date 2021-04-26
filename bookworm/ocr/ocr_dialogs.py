@@ -121,7 +121,7 @@ class OcrPanel(SettingsPanel):
         AsyncSnakDialog(
             task=tesseract_download.get_tesseract_download_info,
             done_callback=self._on_tesseract_download_info,
-            message=_("Retreiving download info, please wait..."),
+            message=_("Retrieving download info, please wait..."),
             parent=self,
         )
 
@@ -483,12 +483,12 @@ class TesseractLanguageManager(SimpleDialog):
                 wx.GetApp().mainFrame.notify_user(
                     # Translators: title of a messagebox
                     _("Language Added"),
-                    _("The Language Model was downloaded succesfully."),
+                    _("The Language Model was downloaded successfully."),
                     parent=self,
                 )
                 self.populate_list()
         except ConnectionError:
-            log.exception("Faild to download language data from {url}", exc_info=True)
+            log.exception("Failed to download language data from {url}", exc_info=True)
             wx.GetApp().mainFrame.notify_user(
                 # Translators: title of a messagebox
                 _("Connection Error"),
@@ -499,7 +499,7 @@ class TesseractLanguageManager(SimpleDialog):
                 icon=wx.ICON_ERROR,
             )
         except:
-            log.exception("Faild to install language data from {url}", exc_info=True)
+            log.exception("Failed to install language data from {url}", exc_info=True)
             wx.GetApp().mainFrame.notify_user(
                 # Translators: title of a messagebox
                 _("Error"),

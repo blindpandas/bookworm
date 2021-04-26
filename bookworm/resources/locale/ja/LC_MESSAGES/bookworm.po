@@ -1,18 +1,19 @@
-# Japanese translations for Bookworm.
-# Copyright (C) 2021 Blind Pandas
+# japanese translations for Bookworm.
+# Copyright (C) 2019 Musharraf Omer
 # This file is distributed under the same license as the Bookworm project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+# Musharraf Omer <ibnomer2011@hotmail.com>, 2019.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Bookworm 0.4b1\n"
+"Project-Id-Version:  0.1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2021-04-26 00:51+0200\n"
-"PO-Revision-Date: 2021-04-26 00:51+0200\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2021-04-26 13:49+0200\n"
+"PO-Revision-Date: 2021-03-30 21:28+0900\n"
+"Last-Translator: Musharraf Omer <ibnomer2011@hotmail.com>\n"
 "Language: ja\n"
-"Language-Team: ja <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Team: ar <ibnomer2011@hotmail.com>\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : "
+"n%100>=3 && n%100<=10 ? 3 : n%100>=0 && n%100<=2 ? 4 : 5)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,12 +22,12 @@ msgstr ""
 #. Translators: the content of a message indicating a connection error
 #: bookworm/otau.py:76
 msgid "We couldn't access the internet right now. Please try again later."
-msgstr ""
+msgstr "ネットが接続されていません。接続してから再度お試しください。."
 
 #. Translators: the title of a message indicating a connection error
 #: bookworm/otau.py:78
 msgid "Network Error"
-msgstr ""
+msgstr "接続エラー"
 
 #. Translators: the content of a message indicating an error while updating the
 #. app
@@ -34,13 +35,13 @@ msgstr ""
 msgid ""
 "We have faced a technical problem while checking for updates. Please try "
 "again later."
-msgstr ""
+msgstr "アップデート時に問題が発生しました。再度お試しください。"
 
 #. Translators: the title of a message indicating an error while updating the
 #. app
 #: bookworm/otau.py:92
 msgid "Error Checking For Updates"
-msgstr ""
+msgstr "アップデート確認エラー"
 
 #. Translators: the content of a message indicating that there is no new
 #. version
@@ -51,65 +52,68 @@ msgid ""
 "of Bookworm is on its way, so wait for it. Rest assured, we will notify "
 "you when it is released."
 msgstr ""
+"アップデートが正常に完了しました。電子書籍を簡単に読める、Bookwormソフトをお楽しみください。\n"
+"このソフトは定期的にアップデートしていますので、必ずご確認ください。"
 
 #. Translators: the title of a message indicating that there is no new version
 #: bookworm/otau.py:114
 msgid "No Update"
-msgstr ""
+msgstr "最新バージョンです。"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/otau.py:139
 msgid "&Check for updates"
-msgstr ""
+msgstr "アップデート確認"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/otau.py:141
 msgid "Update the application"
-msgstr ""
+msgstr "プログラムのアップデート"
 
 #. Translators: the title of the window when an e-book is open
 #: bookworm/reader.py:328
 msgid "{title} — by {author}"
-msgstr ""
+msgstr "{title} — 作者名、{author}"
 
 #: bookworm/annotation/__init__.py:64
 msgid "&Bookmark...\tCtrl-B"
-msgstr ""
+msgstr "しおり...\tCtrl-B"
 
 #: bookworm/annotation/__init__.py:65 bookworm/annotation/__init__.py:71
 msgid "Bookmark the current location"
-msgstr ""
+msgstr "現在のしおりです。"
 
 #: bookworm/annotation/__init__.py:70
+#, fuzzy
 msgid "&Named Bookmark...\tCtrl-Shift-B"
-msgstr ""
+msgstr "しおり名を追加...\tCtrl-Shift-B"
 
 #: bookworm/annotation/__init__.py:76
 msgid "Co&mment...\tCtrl-m"
-msgstr ""
+msgstr "コメント...\tCtrl-m"
 
 #: bookworm/annotation/__init__.py:77
 msgid "Add a comment at the current location"
-msgstr ""
+msgstr "しおりを追加する"
 
 #: bookworm/annotation/__init__.py:87
 msgid "Highlight Selection\tCtrl-Shift-H"
-msgstr ""
+msgstr "選択テキストをハイライトする\tCtrl-Shift-H"
 
 #: bookworm/annotation/__init__.py:88
 msgid "Highlight and save selected text."
-msgstr ""
+msgstr "ハイライトして選択テキスト保存"
 
 #. Translators: the label of a button in the application toolbar
 #. Translators: spoken message when jumping to a bookmark
 #: bookworm/annotation/__init__.py:97 bookworm/annotation/__init__.py:132
 msgid "Bookmark"
-msgstr ""
+msgstr "しおり"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/annotation/__init__.py:99
 msgid "Comment"
-msgstr ""
+msgstr "コメント"
 
 #. Translators: the label of a page in the settings dialog
 #. Translators: the title of a group of controls in the
@@ -118,7 +122,7 @@ msgstr ""
 #: bookworm/annotation/__init__.py:109 bookworm/annotation/annotation_gui.py:26
 #: bookworm/annotation/exporters/core_renderers.py:165
 msgid "Annotation"
-msgstr ""
+msgstr "注釈"
 
 #. Translators: label of an edit control in the dialog
 #. of viewing or editing a comment/highlight
@@ -129,15 +133,15 @@ msgstr ""
 #: bookworm/annotation/annotation_dialogs.py:270
 #: bookworm/gui/book_viewer/__init__.py:245
 msgid "Content"
-msgstr ""
+msgstr "コンテンツ"
 
 #. Translators: header of a group of controls in a dialog to view/edit
 #. comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:67
 msgid "Metadata"
-msgstr ""
+msgstr "metaデータ"
 
-#. Translators: lable of an edit control in a dialog to view/edit
+#. Translators: label of an edit control in a dialog to view/edit
 #. comments/highlights
 #. Translators: label of an edit control that allows the user to edit the tag
 #. set of a comment/highlight
@@ -146,19 +150,19 @@ msgstr ""
 #: bookworm/annotation/annotation_dialogs.py:526
 #: bookworm/annotation/exporters/core_renderers.py:195
 msgid "Tags"
-msgstr ""
+msgstr "タグ"
 
 #. Translators: label of an edit control in a dialog to view/edit
 #. comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:75
 msgid "Date Created"
-msgstr ""
+msgstr "作成日"
 
 #. Translators: label of an edit control in a dialog to view/edit
 #. comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:81
 msgid "Last updated"
-msgstr ""
+msgstr "更新日"
 
 #. Translators: the label of a button to close a dialog
 #. Translators: the label of a button to close the dialog
@@ -167,18 +171,19 @@ msgstr ""
 #: bookworm/ocr/ocr_dialogs.py:332 bookworm/text_to_speech/tts_gui.py:328
 #: bookworm/webservices/wikiworm.py:177
 msgid "&Close"
-msgstr ""
+msgstr "&終了する"
 
 #. Translators: label for unnamed bookmarks shown
 #. when editing a single bookmark which has no name
 #: bookworm/annotation/annotation_dialogs.py:129
+#, fuzzy
 msgid "[Unnamed Bookmark]"
-msgstr ""
+msgstr "しおりの保存"
 
 #. Translators: label of a list control containing bookmarks
 #: bookworm/annotation/annotation_dialogs.py:134
 msgid "Saved Bookmarks"
-msgstr ""
+msgstr "しおりの保存"
 
 #. Translators: text of a button to remove bookmarks
 #. Translators: text of a button to remove a language from Tesseract OCR Engine
@@ -186,12 +191,13 @@ msgstr ""
 #: bookworm/annotation/annotation_dialogs.py:137
 #: bookworm/ocr/ocr_dialogs.py:313 bookworm/text_to_speech/tts_gui.py:322
 msgid "&Remove"
-msgstr ""
+msgstr "&削除"
 
 #. Translators: the title of a column in the bookmarks list
 #: bookworm/annotation/annotation_dialogs.py:161
+#, fuzzy
 msgid "Name"
-msgstr ""
+msgstr "（題名なし）"
 
 #. Translators: the title of a column in the bookmarks list
 #. Translators: text of a toggle button to sort comments/highlights list
@@ -204,7 +210,7 @@ msgstr ""
 #: bookworm/gui/book_viewer/core_dialogs.py:42
 #: bookworm/gui/book_viewer/render_view.py:57
 msgid "Page"
-msgstr ""
+msgstr "ページ"
 
 #. Translators: the title of a column in the bookmarks list
 #. Translators: label of an editable combobox to filter annotations by section
@@ -215,7 +221,7 @@ msgstr ""
 #: bookworm/annotation/exporters/core_renderers.py:139
 #: bookworm/gui/book_viewer/core_dialogs.py:57
 msgid "Section"
-msgstr ""
+msgstr "セクション"
 
 #. Translators: content of a message asking the user if they want to delete a
 #. bookmark
@@ -223,13 +229,13 @@ msgstr ""
 msgid ""
 "This action can not be reverted.\r\n"
 "Are you sure you want to remove this bookmark?"
-msgstr ""
+msgstr "注意、削除するともとに戻せませんので、本当に削除しますか？"
 
 #. Translators: title of a message asking the user if they want to delete a
 #. bookmark
 #: bookworm/annotation/annotation_dialogs.py:227
 msgid "Remove Bookmark?"
-msgstr ""
+msgstr "しおりを削除"
 
 #. Translators: label of an editable combobox to filter annotations by book
 #. Translators: text of a toggle button to sort comments/highlights list
@@ -238,75 +244,76 @@ msgstr ""
 #: bookworm/annotation/annotation_dialogs.py:559
 #: bookworm/annotation/exporters/core_renderers.py:137
 msgid "Book"
-msgstr ""
+msgstr "本"
 
 #. Translators: label of an editable combobox to filter annotations by tag
 #: bookworm/annotation/annotation_dialogs.py:259
 #: bookworm/annotation/exporters/core_renderers.py:141
 msgid "Tag"
-msgstr ""
+msgstr "タグ"
 
 #. Translators: text of a button to apply chosen filters in a dialog to view
 #. user's comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:275
 msgid "&Apply"
-msgstr ""
+msgstr "適用"
 
 #. Translators: the title of a column in the comments/highlights list
 #. Translators: header of a group of controls in a dialog to view user's
 #. comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:342
 msgid "Filter By"
-msgstr ""
+msgstr "でフィルタリング"
 
 #. Translators: header of a group of controls in a dialog to view user's
 #. comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:351
 msgid "Sort By"
-msgstr ""
+msgstr "並び替え"
 
 #. Translators: text of a toggle button to sort comments/highlights list
 #: bookworm/annotation/annotation_dialogs.py:357
 msgid "Date"
-msgstr ""
+msgstr "日付"
 
 #. Translators: text of a toggle button to sort comments/highlights list
 #: bookworm/annotation/annotation_dialogs.py:369
 msgid "Ascending"
-msgstr ""
+msgstr "昇順"
 
 #. Translators: text of a button in a dialog to view comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:378
 msgid "&View..."
-msgstr ""
+msgstr "表示"
 
 #. Translators: text of a button in a dialog to view comments/highlights
 #. Translators: the label of a button to edit a voice profile
 #: bookworm/annotation/annotation_dialogs.py:381
 #: bookworm/text_to_speech/tts_gui.py:320
 msgid "&Edit..."
-msgstr ""
+msgstr "&編集..."
 
 #. Translators: text of a button in a dialog to view comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:384
 msgid "&Delete..."
-msgstr ""
+msgstr "削除..."
 
 #. Translators: text of a button in a dialog to view comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:386
 msgid "E&xport..."
-msgstr ""
+msgstr "書き出す"
 
 #. Translators: title of a dialog to view or edit a single comment/highlight
 #: bookworm/annotation/annotation_dialogs.py:458
+#, fuzzy
 msgid "Editing"
-msgstr ""
+msgstr "読み上げ"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/annotation/annotation_dialogs.py:458
 #: bookworm/gui/book_viewer/__init__.py:312
 msgid "View"
-msgstr ""
+msgstr "表示"
 
 #. Translators: content of a message asking the user if they want to delete a
 #. comment/highlight
@@ -314,69 +321,69 @@ msgstr ""
 msgid ""
 "This action can not be reverted.\r\n"
 "Are you sure you want to remove this item?"
-msgstr ""
+msgstr "注意、削除するともとに戻せませんので、本当にこのアイテムを削除しますか？"
 
 #. Translators: title of a message asking the user if they want to delete a
 #. bookmark
 #: bookworm/annotation/annotation_dialogs.py:479
 msgid "Delete Annotation?"
-msgstr ""
+msgstr "注釈を削除"
 
 #. Translators: title of a dialog that allows the user to edit the tag set of a
 #. comment/highlight
 #: bookworm/annotation/annotation_dialogs.py:524
 msgid "Edit Tags"
-msgstr ""
+msgstr "タグ編集"
 
 #. Translators: title of a dialog that allows the user to customize
 #. how comments/highlights are exported
 #: bookworm/annotation/annotation_dialogs.py:537
 msgid "Export Options"
-msgstr ""
+msgstr "書き出すの選択"
 
 #. Translators: label of a checkbox in a dialog to set export options for
 #. comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:597
 msgid "Include book title"
-msgstr ""
+msgstr "本のタイトル"
 
 #: bookworm/annotation/annotation_dialogs.py:602
 msgid "Include section title"
-msgstr ""
+msgstr "セクションのタイトル"
 
 #: bookworm/annotation/annotation_dialogs.py:608
 msgid "Include  page number"
-msgstr ""
+msgstr "ページ番号"
 
 #. Translators: label of a checkbox in a dialog to set export options for
 #. comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:611
 msgid "Include tags"
-msgstr ""
+msgstr "タグ"
 
 #. Translators: label of a choice control in a dialog to set export options for
 #. comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:613
 msgid "Output format:"
-msgstr ""
+msgstr "出力フォーマット"
 
 #. Translators: label of an edit control in a dialog to set export options for
 #. comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:618
 msgid "Output File"
-msgstr ""
+msgstr "出力ファイル"
 
 #. Translators: text of a button in a dialog to set export options for
 #. comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:623
 msgid "&Browse"
-msgstr ""
+msgstr "参照"
 
 #. Translators: label of a checkbox in a dialog to set export options for
 #. comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:628
 msgid "Open file after exporting"
-msgstr ""
+msgstr "ファイルを書き出してから開く"
 
 #. Translators: the title of a save file dialog asking the user for a filename
 #. to export annotations to
@@ -384,7 +391,7 @@ msgstr ""
 #: bookworm/annotation/annotation_dialogs.py:655
 #: bookworm/gui/book_viewer/menubar.py:225
 msgid "Save As"
-msgstr ""
+msgstr "名前を付けて保存"
 
 #. Translators: the label of a checkbox
 #: bookworm/annotation/annotation_gui.py:31
@@ -404,211 +411,220 @@ msgstr ""
 #. Translators: the label of a checkbox
 #: bookworm/annotation/annotation_gui.py:52
 msgid "Use visual styles to indicate annotations"
-msgstr ""
+msgstr "視覚的に注釈を表示"
 
 #. Translators: the label of a checkbox
 #: bookworm/annotation/annotation_gui.py:59
 msgid "Use sounds to indicate the presence of comments"
-msgstr ""
+msgstr "現在のコメントを音声でお知らせ"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:99
 msgid "Add &Bookmark\tCtrl-B"
-msgstr ""
+msgstr "しおりを追加\tCtrl-B"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:101
 msgid "Add a bookmark at the current position"
-msgstr ""
+msgstr "現在位置にしおりを追加"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:106
 msgid "Add &Named Bookmark...\tCtrl-Shift-B"
-msgstr ""
+msgstr "しおり名を追加...\tCtrl-Shift-B"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:108
 msgid "Add a named bookmark at the current position"
-msgstr ""
+msgstr "現在位置にしおり名を追加"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:113
 msgid "Add Co&mment...\tCtrl-M"
-msgstr ""
+msgstr "コメントを追加...\tCtrl-M"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:115
 msgid "Add a comment at the current position"
-msgstr ""
+msgstr "現在位置にコメントを追加"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:120
 msgid "&Highlight Selection\tCtrl-H"
-msgstr ""
+msgstr "ハイライトの選択\tCtrl-H"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:122
 msgid "Highlight selected text and save it."
-msgstr ""
+msgstr "テキストをハイライトして保存"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:127
 msgid "Saved &Bookmarks..."
-msgstr ""
+msgstr "しおりの保存..."
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:129
 msgid "View added bookmarks"
-msgstr ""
+msgstr "しおり一覧表示"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:134
 msgid "Saved Co&mments..."
-msgstr ""
+msgstr "コメント一覧"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:136
 msgid "View, edit, and remove comments."
-msgstr ""
+msgstr "コメントの表示・編集または、削除"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:141
 msgid "Saved &Highlights..."
-msgstr ""
+msgstr "ハイライト一覧"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:143
 msgid "View saved highlights."
-msgstr ""
+msgstr "ハイライト一覧表示"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:147
 msgid "&Annotations"
-msgstr ""
+msgstr "&注釈"
 
 #. Translators: spoken message
 #: bookworm/annotation/annotation_gui.py:185
 msgid "Bookmark Added"
-msgstr ""
+msgstr "しおりを追加しました。"
 
 #. Translators: title of a dialog
 #: bookworm/annotation/annotation_gui.py:194
 msgid "Add Named Bookmark"
-msgstr ""
+msgstr "しおり名を追加しました。"
 
 #. Translators: label of a text entry
 #: bookworm/annotation/annotation_gui.py:196
 msgid "Bookmark name:"
-msgstr ""
+msgstr "しおり名"
 
 #. Translators: the title of a dialog to add a comment
 #: bookworm/annotation/annotation_gui.py:206
 msgid "New Comment"
-msgstr ""
+msgstr "新しいコメント"
 
 #. Translators: the label of an edit field to enter a comment
 #: bookworm/annotation/annotation_gui.py:208
 msgid "Comment:"
-msgstr ""
+msgstr "コメント、"
 
 #. Translators: title of a dialog
 #: bookworm/annotation/annotation_gui.py:221
 msgid "Tag Comment"
-msgstr ""
+msgstr "コメントタグ"
 
 #. Translators: label of a text entry
 #: bookworm/annotation/annotation_gui.py:223
 #: bookworm/annotation/annotation_gui.py:270
 msgid "Tags:"
-msgstr ""
+msgstr "タグ、"
 
 #: bookworm/annotation/annotation_gui.py:235
 msgid "No selection"
-msgstr ""
+msgstr "選択されていません"
 
 #. Translators: spoken message
 #: bookworm/annotation/annotation_gui.py:243
 msgid "Highlight removed"
-msgstr ""
+msgstr "ハイライトを削除されました。"
 
 #. Translators: spoken message
 #: bookworm/annotation/annotation_gui.py:246
 msgid "Already highlighted"
-msgstr ""
+msgstr "すでにハイライトされています。"
 
 #. Translators: spoken message
 #: bookworm/annotation/annotation_gui.py:253
 #: bookworm/annotation/annotation_gui.py:259
 msgid "Highlight extended"
-msgstr ""
+msgstr "拡張されたハイライト"
 
 #. Translators: spoken message
 #. Translators: title of a dialog
 #: bookworm/annotation/annotation_gui.py:268
 msgid "Tag Highlight"
-msgstr ""
+msgstr "ハイライトタグ"
 
 #. Translators: the title of a dialog to view bookmarks
 #: bookworm/annotation/annotation_gui.py:283
 msgid "Bookmarks | {book}"
-msgstr ""
+msgstr "しおり | {book}"
 
 #: bookworm/annotation/annotation_gui.py:293
 msgid "Comments"
-msgstr ""
+msgstr "コメント"
 
 #: bookworm/annotation/annotation_gui.py:306
 msgid "Highlights"
-msgstr ""
+msgstr "ハイライト"
 
 #. Translators: written to output document when exporting a comment/highlight
 #. Translators: a name of a file format
+#. Translators: file type in a save as dialog
 #: bookworm/annotation/exporters/core_renderers.py:13
-#: bookworm/gui/book_viewer/menubar.py:229
+#: bookworm/gui/book_viewer/menubar.py:229 bookworm/ocr/ocr_menu.py:238
 msgid "Plain Text"
-msgstr ""
+msgstr "テキスト"
 
 #: bookworm/annotation/exporters/core_renderers.py:24
 #: bookworm/annotation/exporters/core_renderers.py:85
-msgid "Section: {}"
-msgstr ""
+#, fuzzy
+msgid "Section: {section_title}"
+msgstr "セクションのタイトル"
 
 #. Translators: written to output document when exporting files
 #: bookworm/annotation/exporters/core_renderers.py:28
-#: bookworm/annotation/exporters/core_renderers.py:88
-msgid "Tagged: {}"
-msgstr ""
+#, fuzzy
+msgid "Tagged: {tag}"
+msgstr "タイプ: {}"
 
 #. Translators: written to the end of the plain-text file when exporting
 #. comments or highlights
 #: bookworm/annotation/exporters/core_renderers.py:38
 msgid "End of File"
-msgstr ""
+msgstr "&ファイル"
 
 #: bookworm/annotation/exporters/core_renderers.py:48
 #: bookworm/annotation/exporters/core_renderers.py:107
-#: bookworm/gui/book_viewer/render_view.py:124
-msgid "Page {}"
-msgstr ""
+#, fuzzy
+msgid "Page {number}"
+msgstr "ページ番号を読み上げ"
 
 #. Translators: the name of a document file format
 #: bookworm/annotation/exporters/core_renderers.py:70
 msgid "Markdown"
-msgstr ""
+msgstr "Markdown（MD）形式"
+
+#: bookworm/annotation/exporters/core_renderers.py:88
+#, fuzzy
+msgid "Tagged: {tags}"
+msgstr "タイプ: {}"
 
 #. Translators: written to output document when exporting a comment/highlight
 #: bookworm/annotation/exporters/core_renderers.py:120
+#, fuzzy
 msgid "Tagged"
-msgstr ""
+msgstr "タイプ: {}"
 
 #. Translators: the name of a document file format
 #: bookworm/annotation/exporters/core_renderers.py:131
 msgid "HTML"
-msgstr ""
+msgstr "HTMLページ"
 
 #: bookworm/annotation/exporters/core_renderers.py:150
+#, fuzzy
 msgid "Exported Annotations"
-msgstr ""
+msgstr "注釈を削除"
 
 #. Translators: label of a button to copy the annotation to the clipboard
 #. used when exporting annotations to HTML
@@ -619,11 +635,12 @@ msgstr ""
 #. Translators: the name of a document file format
 #: bookworm/document_formats/epub_document.py:129
 msgid "Electronic Publication (EPUB)"
-msgstr ""
+msgstr "電子書籍（epub）の形式"
 
 #: bookworm/document_formats/epub_document.py:194
+#, fuzzy
 msgid "Book contents"
-msgstr ""
+msgstr "コンテンツ"
 
 #. Translators: the name of a document file format
 #: bookworm/document_formats/fitz_document.py:167
@@ -647,8 +664,9 @@ msgstr ""
 
 #. Translators: the name of a document file format
 #: bookworm/document_formats/markdown_document.py:24
+#, fuzzy
 msgid "Markdown File"
-msgstr ""
+msgstr "Markdown（MD）形式"
 
 #. Translators: the name of a document file format
 #: bookworm/document_formats/mobi_document.py:40
@@ -657,13 +675,15 @@ msgstr ""
 
 #. Translators: the name of a document file format
 #: bookworm/document_formats/odf_document.py:86
+#, fuzzy
 msgid "Open Document Text"
-msgstr ""
+msgstr "文書を開けませんでした。"
 
 #. Translators: the name of a document file format
 #: bookworm/document_formats/odf_document.py:132
+#, fuzzy
 msgid "Open Document Presentation"
-msgstr ""
+msgstr "文書を読み込んでいます、しばらくお待ちください。"
 
 #: bookworm/document_formats/odf_document.py:195
 #: bookworm/document_formats/powerpoint_presentation.py:159
@@ -673,12 +693,12 @@ msgstr ""
 #. Translators: the name of a document file format
 #: bookworm/document_formats/pdf_document.py:46
 msgid "Portable Document (PDF)"
-msgstr ""
+msgstr "pdf形式"
 
 #. Translators: the name of a document file format
 #: bookworm/document_formats/plain_text_document.py:26
 msgid "Plain Text File"
-msgstr ""
+msgstr "テキスト形式"
 
 #: bookworm/document_formats/powerpoint_presentation.py:90
 msgid "Slide Notes"
@@ -695,12 +715,14 @@ msgid "Word Document"
 msgstr ""
 
 #: bookworm/document_formats/base/features.py:45
+#, fuzzy
 msgid "Default reading mode"
-msgstr ""
+msgstr "読み上げ中、"
 
 #: bookworm/document_formats/base/features.py:46
+#, fuzzy
 msgid "Reading order"
-msgstr ""
+msgstr "読み上げ停止中"
 
 #: bookworm/document_formats/base/features.py:47
 msgid "Physical layout"
@@ -715,8 +737,9 @@ msgid "Chapter by chapter"
 msgstr ""
 
 #: bookworm/document_formats/base/features.py:50
+#, fuzzy
 msgid "Clean text"
-msgstr ""
+msgstr "テキスト"
 
 #: bookworm/document_formats/base/features.py:51
 msgid "Full text"
@@ -725,47 +748,48 @@ msgstr ""
 #. Translators: the title of a group of controls in the search dialog
 #: bookworm/gui/components.py:99
 msgid "Search Range"
-msgstr ""
+msgstr "検索範囲"
 
 #. Translators: the label of a radio button in the search dialog
 #: bookworm/gui/components.py:101
 msgid "Page Range"
-msgstr ""
+msgstr "ページ範囲"
 
 #. Translators: the label of an edit field in the search dialog
 #. to enter the page from which the search will start
 #: bookworm/gui/components.py:107
 msgid "From:"
-msgstr ""
+msgstr "から"
 
 #. Translators: the label of an edit field in the search dialog
 #. to enter the page number at which the search will stop
 #: bookworm/gui/components.py:113
 msgid "To:"
-msgstr ""
+msgstr "まで"
 
 #. Translators: the label of a radio button in the search dialog
 #: bookworm/gui/components.py:118
 msgid "Specific section"
-msgstr ""
+msgstr "特定のセクション"
 
 #. Translators: the label of a combobox in the search dialog
 #. to choose the section to which the search will be confined
 #: bookworm/gui/components.py:121
 msgid "Select section:"
-msgstr ""
+msgstr "セクションの選択"
 
-#. Translators: the lable of the OK button in a dialog
+#. Translators: the label of the OK button in a dialog
 #: bookworm/gui/components.py:231 bookworm/gui/components.py:272
 #: bookworm/gui/settings.py:460
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #. Translators: the lable of the cancel button in a dialog
+#. Translators: the label of the cancel button in a dialog
 #: bookworm/gui/components.py:234 bookworm/gui/components.py:275
 #: bookworm/gui/settings.py:463
 msgid "Cancel"
-msgstr ""
+msgstr "キャンセル"
 
 #. Translators: content of a message to confirm the closing of a progress
 #. dialog
@@ -785,136 +809,143 @@ msgstr ""
 #. Translators: the title of the file associations dialog
 #: bookworm/gui/settings.py:39
 msgid "Bookworm File Associations"
-msgstr ""
+msgstr "Bookwormに拡張子を関連付ける"
 
 #: bookworm/gui/settings.py:51
+#, fuzzy
 msgid ""
 "This dialog will help you to setup file associations.\n"
 "Associating files with Bookworm means that when you click on a file in "
 "windows explorer, it will be opened in Bookworm by default "
 msgstr ""
+"簡単に拡張子の関連付けができます。\n"
+"必要なファイル形式を是非登録してください。登録すればファイルをクリックするだけで、スムーズに開けます。"
 
 #. Translators: the main label of a button
 #: bookworm/gui/settings.py:64
 msgid "Associate all"
-msgstr ""
+msgstr "すべて関連付ける"
 
 #. Translators: the note of a button
 #: bookworm/gui/settings.py:66
+#, fuzzy
 msgid "Use Bookworm to open all supported document formats"
-msgstr ""
+msgstr "すべてのBookworm対応ファイルを使えるようになります。"
 
 #. Translators: the main label of a button
 #: bookworm/gui/settings.py:74
 msgid "Associate files of type {format}"
-msgstr ""
+msgstr "{format}を関連付ける"
 
 #. Translators: the note of a button
 #: bookworm/gui/settings.py:76
 msgid "Associate files with {ext} extension so they always open in Bookworm"
-msgstr ""
+msgstr "{ext}の拡張子をBookwormに追加する。"
 
 #. Translators: the main label of a button
 #: bookworm/gui/settings.py:89
 msgid "Dissociate all supported file types"
-msgstr ""
+msgstr "関連付けられているすべての拡張子を解除する"
 
 #. Translators: the note of a button
 #: bookworm/gui/settings.py:91
-msgid "Unregister previously associated file types"
-msgstr ""
+#, fuzzy
+msgid "Remove previously associated file types"
+msgstr "関連付けられている拡張子を解除する"
 
 #. Translators: the text of a message indicating successful file association
 #: bookworm/gui/settings.py:108
 msgid "Files of type {format} have been associated with Bookworm."
-msgstr ""
+msgstr "{format}の拡張子をBookwormから解除されました。"
 
 #. Translators: the title of a message indicating successful file association
 #. Translators: the title of a message indicating successful removal of file
 #. association
 #: bookworm/gui/settings.py:112 bookworm/gui/settings.py:130
 msgid "Success"
-msgstr ""
+msgstr "正常に完了しました。"
 
 #. Translators: the text of a message indicating successful removal of file
 #. associations
 #: bookworm/gui/settings.py:121
 msgid "All supported file types have been set to open by default in Bookworm."
-msgstr ""
+msgstr "Bookwormに対応するすべてのファイルを設定しました。"
 
 #. Translators: the text of a message indicating successful removal of file
 #. associations
 #: bookworm/gui/settings.py:126
 msgid "All registered file associations have been removed."
-msgstr ""
+msgstr "関連付けられているすべての拡張子を解除されました。"
 
 #. Translators: the title of a group of controls in the
 #. general settings page related to the UI
 #: bookworm/gui/settings.py:210
 msgid "User Interface"
-msgstr ""
+msgstr "メイン画面"
 
 #. Translators: the label of a combobox containing display languages.
 #: bookworm/gui/settings.py:212
 msgid "Display Language:"
-msgstr ""
+msgstr "言語"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:219
 msgid "Speak user interface messages"
-msgstr ""
+msgstr "各種メッセージの読み上げ"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:226 bookworm/text_to_speech/tts_gui.py:92
 msgid "Speak page number"
-msgstr ""
+msgstr "ページ番号を読み上げ"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:233
+#, fuzzy
 msgid "Speak section title"
-msgstr ""
+msgstr "セクションのタイトル"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:240
 msgid "Play pagination sound"
-msgstr ""
+msgstr "ページを開く時に音楽を鳴らす"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:247
+#, fuzzy
 msgid "Include page label in page title"
-msgstr ""
+msgstr "セクションのタイトル"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:254
 msgid "Use file name instead of book title"
-msgstr ""
+msgstr "本のタイトル代わりにファイル名を画面のタイトルにする"
 
 #. Translators: the title of a group of controls shown in the
 #. general settings page related to miscellaneous settings
 #: bookworm/gui/settings.py:259
 msgid "Miscellaneous"
-msgstr ""
+msgstr "その他の設定"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:264
 msgid "Open recently opened books from the last position"
-msgstr ""
+msgstr "前回終了位置から読み上げを続ける"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:271
 msgid "Automatically check for updates"
-msgstr ""
+msgstr "自動的にアップデートを確認する"
 
 #. Translators: the title of a group of controls shown in the
 #. general settings page related to file associations
 #: bookworm/gui/settings.py:277
 msgid "File Associations"
-msgstr ""
+msgstr "拡張子を関連付ける"
 
 #. Translators: the label of a button
 #: bookworm/gui/settings.py:282
 msgid "Manage File &Associations"
-msgstr ""
+msgstr "拡張子の関連付けの管理"
 
 #. Translators: the content of a message asking the user to restart
 #: bookworm/gui/settings.py:302
@@ -924,18 +955,22 @@ msgid ""
 "application.\n"
 "Would you like to restart the application right now?"
 msgstr ""
+"Bookwormの表示言語を変更されました。\n"
+"設定を有効するには、プログラムを再起動する必要があります。\n"
+"今すぐ再起動しますか？"
 
 #. Translators: the title of a message telling the user
 #. that the display language have been changed
 #: bookworm/gui/settings.py:309
 msgid "Language Changed"
-msgstr ""
+msgstr "言語変更"
 
 #. Translators: the title of a group of controls in the
 #. appearance settings page related to the UI
 #: bookworm/gui/settings.py:331
+#, fuzzy
 msgid "Text Styling"
-msgstr ""
+msgstr "設定"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:336
@@ -966,7 +1001,7 @@ msgstr ""
 #. Translators: the label of a page in the settings dialog
 #: bookworm/gui/settings.py:406
 msgid "General"
-msgstr ""
+msgstr "一般"
 
 #. Translators: the label of a page in the settings dialog
 #: bookworm/gui/settings.py:408
@@ -978,27 +1013,27 @@ msgstr ""
 msgid "Categories"
 msgstr ""
 
-#. Translators: the lable of the apply button in a dialog
+#. Translators: the label of the apply button in a dialog
 #: bookworm/gui/settings.py:465
 msgid "Apply"
-msgstr ""
+msgstr "適用"
 
 #: bookworm/gui/book_viewer/__init__.py:76
 msgid "Failed to open document"
-msgstr ""
+msgstr "文書を開けませんでした。"
 
 #: bookworm/gui/book_viewer/__init__.py:77
 msgid "The document you are trying to open could not be opened in Bookworm."
-msgstr ""
+msgstr "開こうとしているファイルは、bookwormにサポートされていません。"
 
 #: bookworm/gui/book_viewer/__init__.py:93
 msgid "Opening document, please wait..."
-msgstr ""
+msgstr "文書を読み込んでいます、しばらくお待ちください。"
 
 #. Translators: the title of an error message
 #: bookworm/gui/book_viewer/__init__.py:106
 msgid "Document not found"
-msgstr ""
+msgstr "文書が見つかりませんでした。"
 
 #. Translators: the content of an error message
 #: bookworm/gui/book_viewer/__init__.py:108
@@ -1006,24 +1041,26 @@ msgid ""
 "Could not open Document.\n"
 "The document does not exist."
 msgstr ""
+"文書を開けませんでした。\n"
+"ファイルが見つかりませんでした。"
 
 #. Translators: the title of a message shown
 #. when the format of the e-book is not supported
 #: bookworm/gui/book_viewer/__init__.py:118
 msgid "Unsupported Document Format"
-msgstr ""
+msgstr "サポートされていないファイル形式です。"
 
 #. Translators: the content of a message shown
 #. when the format of the e-book is not supported
 #: bookworm/gui/book_viewer/__init__.py:121
 msgid "The format of the given document is not supported by Bookworm."
-msgstr ""
+msgstr "このファイル形式は、現在サポートされていません。"
 
 #. Translators: the title of an error message
 #: bookworm/gui/book_viewer/__init__.py:130
-#: bookworm/gui/book_viewer/__init__.py:145
-msgid "Error Openning Document"
-msgstr ""
+#, fuzzy
+msgid "Error Opening Document"
+msgstr "文書を開けませんでした。"
 
 #. Translators: the content of an error message
 #: bookworm/gui/book_viewer/__init__.py:132
@@ -1032,40 +1069,50 @@ msgid ""
 ".Either the file  has been damaged during download, or it has been "
 "corrupted in some other way."
 msgstr ""
+"ファイルを読みませんでした。\n"
+"ダウンロード時にまたは、何らかの原因によって壊れている可能性があります。"
+
+#. Translators: the title of an error message
+#: bookworm/gui/book_viewer/__init__.py:145
+msgid "Error Openning Document"
+msgstr "文書を開けませんでした。"
 
 #. Translators: the content of an error message
 #: bookworm/gui/book_viewer/__init__.py:147
+#, fuzzy
 msgid ""
 "Could not open document\n"
-".An unknown error occured while loading the file."
+".An unknown error occurred while loading the file."
 msgstr ""
+"文書を開けませんでした。\n"
+"不明なエラーが発生しましたので、"
 
 #. Translators: the text of the status bar when no book is currently open.
 #. It is being used also as a label for the page content text area when no book
 #. is opened.
 #: bookworm/gui/book_viewer/__init__.py:218
 msgid "Press (Ctrl + O) to open a document"
-msgstr ""
+msgstr "ファイルを開く(Ctrl + O)"
 
 #. Translators: the label of the table-of-contents tree
 #: bookworm/gui/book_viewer/__init__.py:232
 msgid "Table of Contents"
-msgstr ""
+msgstr "コンテンツ"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/__init__.py:305
 msgid "Open"
-msgstr ""
+msgstr "開く"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/__init__.py:308
 msgid "Search"
-msgstr ""
+msgstr "検索"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/__init__.py:310
 msgid "Go"
-msgstr ""
+msgstr "移動"
 
 #: bookworm/gui/book_viewer/__init__.py:313
 msgid "Mode"
@@ -1074,23 +1121,24 @@ msgstr ""
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/__init__.py:316
 msgid "Big"
-msgstr ""
+msgstr "大きい"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/__init__.py:318
 msgid "Small"
-msgstr ""
+msgstr "小さい"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/__init__.py:321
 msgid "Settings"
-msgstr ""
+msgstr "設定"
 
 #. Translators: label of content text control when the currently opened
 #. document is a single page document
 #: bookworm/gui/book_viewer/__init__.py:437
+#, fuzzy
 msgid "Document content"
-msgstr ""
+msgstr "文書が見つかりませんでした。"
 
 #. Translators: the label of the page content text area
 #: bookworm/gui/book_viewer/__init__.py:442
@@ -1099,15 +1147,16 @@ msgstr ""
 
 #. Translators: the label of the page content text area
 #: bookworm/gui/book_viewer/__init__.py:445
+#, fuzzy
 msgid "Page {page} of {total} — {chapter}"
-msgstr ""
+msgstr "{total}ページ中の{page}ページ目"
 
 #. Translators: a message that is announced after navigating to a page
 #. Translators: a message to announce when navigating to another page
 #: bookworm/gui/book_viewer/__init__.py:459
 #: bookworm/text_to_speech/__init__.py:182
 msgid "Page {page} of {total}"
-msgstr ""
+msgstr "{total}ページ中の{page}ページ目"
 
 #: bookworm/gui/book_viewer/__init__.py:501
 msgid "{text}: {item_type}"
@@ -1125,33 +1174,37 @@ msgstr ""
 #. increased
 #: bookworm/gui/book_viewer/__init__.py:533
 msgid "The font size has been Increased"
-msgstr ""
+msgstr "フォントサイズが大きい。"
 
 #. Translators: a message telling the user that the font size has been
 #. decreased
 #: bookworm/gui/book_viewer/__init__.py:539
 msgid "The font size has been decreased"
-msgstr ""
+msgstr "フォントサイズが小さい。"
 
 #. Translators: a message telling the user that the font size has been reset
 #: bookworm/gui/book_viewer/__init__.py:543
 msgid "The font size has been reset"
-msgstr ""
+msgstr "フォントサイズがリセットされました。"
 
 #. Translators: the content of a dialog asking the user
 #. for the password to decrypt the current e-book
 #: bookworm/gui/book_viewer/__init__.py:564
+#, fuzzy
 msgid ""
 "This document is encrypted with a password.\n"
 "You need to provide the password in order to access its content.\n"
 "Please provide the password and press enter."
 msgstr ""
+"このファイルは、パスワードにより保護されています。\n"
+"以下にパスワードを入力してください。"
 
 #. Translators: the title of a dialog asking the user to enter a password to
 #. decrypt the e-book
 #: bookworm/gui/book_viewer/__init__.py:570
+#, fuzzy
 msgid "Enter Password"
-msgstr ""
+msgstr "無効なパスワードです。"
 
 #. Translators: title of a message telling the user that they entered an
 #. incorrect
@@ -1164,55 +1217,59 @@ msgstr ""
 #. incorrect
 #. password for opening the book
 #: bookworm/gui/book_viewer/__init__.py:583
+#, fuzzy
 msgid ""
 "The password you provided is incorrect.\n"
 "Please try again with the correct password."
 msgstr ""
+"無効なパスワードです。\n"
+"再度入力してください。"
 
 #. Translators: the label of a list of search results
 #: bookworm/gui/book_viewer/core_dialogs.py:38
 msgid "Search Results"
-msgstr ""
+msgstr "検索結果：　"
 
 #. Translators: the title of a column in the search results list showing
 #. an excerpt of the text of the search result
 #: bookworm/gui/book_viewer/core_dialogs.py:49
 msgid "Text"
-msgstr ""
+msgstr "テキスト"
 
 #. Translators: the label of a progress bar indicating the progress of the
 #. search process
 #: bookworm/gui/book_viewer/core_dialogs.py:65
 msgid "Search Progress:"
-msgstr ""
+msgstr "検索処理中："
 
 #. Translators: the label of a button to close the dialog
 #. Translators: the label of an edit field in the search dialog
 #: bookworm/gui/book_viewer/core_dialogs.py:139
 msgid "Search term:"
-msgstr ""
+msgstr "検索キーワード："
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/book_viewer/core_dialogs.py:145
 msgid "Case sensitive"
-msgstr ""
+msgstr "大文字と小文字を区別"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/book_viewer/core_dialogs.py:147
 msgid "Match whole word only"
-msgstr ""
+msgstr "単語で検索"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/book_viewer/core_dialogs.py:149
 msgid "Regular expression"
-msgstr ""
+msgstr "正規表現"
 
 #: bookworm/gui/book_viewer/core_dialogs.py:198
 msgid "Page number, of {total}:"
-msgstr ""
+msgstr "{total}ページ中の:"
 
 #. Translators: the content of the about message
 #: bookworm/gui/book_viewer/menubar.py:48
+#, fuzzy
 msgid ""
 "{display_name}\n"
 "Version: {version}\n"
@@ -1236,11 +1293,19 @@ msgid ""
 " at the issue tracker (https://github.com/mush42/bookworm/issues/). Your "
 "help is greatly appreciated."
 msgstr ""
+"{display_name}\n"
+"バージョン、{version}\n"
+"Webサイト、{website}\n"
+"\n"
+"{display_name} is an accessible e-book reader that enables blind and "
+"visually impaired individuals to read e-books in an easy, accessible, and"
+" hassle-free manor. It is being developed by {author} with some "
+"contributions from the community."
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:93
 msgid "Open...\tCtrl-O"
-msgstr ""
+msgstr "開く...\tCtrl-O"
 
 #: bookworm/gui/book_viewer/menubar.py:97
 msgid "&Pin\tCtrl-P"
@@ -1249,146 +1314,152 @@ msgstr ""
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:100
 msgid "&Save As Plain Text..."
-msgstr ""
+msgstr "テキストとして保存"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:105
 msgid "&Close Current Book\tCtrl-W"
-msgstr ""
+msgstr "現在の書籍を閉じる\tCtrl-W"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:107
+#, fuzzy
 msgid "Close the currently open document"
-msgstr ""
+msgstr "現在の電子書籍を閉じる"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:113
+#, fuzzy
 msgid "Pi&nned Documents"
-msgstr ""
+msgstr "文書を開けませんでした。"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:115
+#, fuzzy
 msgid "Opens a list of documents you pinned."
-msgstr ""
+msgstr "最近開いた書籍一覧"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:121
 #: bookworm/gui/book_viewer/menubar.py:135
 msgid "Clear list"
-msgstr ""
+msgstr "すべてクリア"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:123
+#, fuzzy
 msgid "Clear the pinned documents list"
-msgstr ""
+msgstr "書籍履歴の一覧削除"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:128
 msgid "&Recently Opened"
-msgstr ""
+msgstr "最近開いたファイル"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:130
 msgid "Opens a list of recently opened books."
-msgstr ""
+msgstr "最近開いた書籍一覧"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:137
 msgid "Clear the recent books list."
-msgstr ""
+msgstr "書籍履歴の一覧削除"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:143
 msgid "&Preferences...\tCtrl-Shift-P"
-msgstr ""
+msgstr "設定...\tCtrl-Shift-P"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:145
 msgid "Configure application"
-msgstr ""
+msgstr "各種設定"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:149
 msgid "Exit"
-msgstr ""
+msgstr "bookwormの終了"
 
 #. Translators: the title of a file dialog to browse to an e-book
 #: bookworm/gui/book_viewer/menubar.py:191
+#, fuzzy
 msgid "Select a document"
-msgstr ""
+msgstr "音声選択、"
 
 #. Translators: the title of a dialog showing
 #. the progress of book export process
 #: bookworm/gui/book_viewer/menubar.py:240
 msgid "Exporting Book"
-msgstr ""
+msgstr "書籍保存"
 
 #. Translators: the message of a dialog showing the progress of book export
 #: bookworm/gui/book_viewer/menubar.py:242
 msgid "Converting your book to plain text."
-msgstr ""
+msgstr "書籍をテキスト形式に変換"
 
 #. Translators: a message shown when the book is being exported
 #: bookworm/gui/book_viewer/menubar.py:257
-msgid "Exporting Page {} of {}..."
-msgstr ""
+#, fuzzy
+msgid "Exporting Page {current} of {total}..."
+msgstr "{}ページ中の{}のページを保存しています。"
 
 #. Translators: the title of the application preferences dialog
 #: bookworm/gui/book_viewer/menubar.py:276
 msgid "{app_name} Preferences"
-msgstr ""
+msgstr "{app_name}の設定"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:324
 msgid "(No recent books)"
-msgstr ""
+msgstr "(書籍の履歴がありません)"
 
 #: bookworm/gui/book_viewer/menubar.py:325
 msgid "No recent books"
-msgstr ""
+msgstr "履歴なし"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:364
 #: bookworm/gui/book_viewer/menubar.py:776
 msgid "&Find in Book...\tCtrl-F"
-msgstr ""
+msgstr "書籍検索...\tCtrl-F"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:366
 #: bookworm/gui/book_viewer/menubar.py:776
 msgid "Search this book."
-msgstr ""
+msgstr "現在の書籍に検索"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:371
 msgid "&Find &Next\tF3"
-msgstr ""
+msgstr "次検索\tF3"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:373
 msgid "Find next occurrence."
-msgstr ""
+msgstr "次検索実行"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:378
 msgid "&Find &Previous\tShift-F3"
-msgstr ""
+msgstr "前検索\tShift-F3"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:380
 msgid "Find previous occurrence."
-msgstr ""
+msgstr "前検索実行"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:385
 #: bookworm/gui/book_viewer/menubar.py:772
 msgid "&Go To Page...\tCtrl-G"
-msgstr ""
+msgstr "ページ移動...\tCtrl-G"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:387
 msgid "Go to page"
-msgstr ""
+msgstr "ページ移動"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:392
@@ -1403,42 +1474,44 @@ msgstr ""
 #. Translators: the title of the go to page dialog
 #: bookworm/gui/book_viewer/menubar.py:419
 msgid "Go To Page"
-msgstr ""
+msgstr "ページ移動"
 
 #: bookworm/gui/book_viewer/menubar.py:426
+#, fuzzy
 msgid "Go To Page By Label"
-msgstr ""
+msgstr "ページ移動"
 
 #: bookworm/gui/book_viewer/menubar.py:426
+#, fuzzy
 msgid "Page Label"
-msgstr ""
+msgstr "新しいバージョンがあります。"
 
 #. Translators: the title of the search dialog
 #: bookworm/gui/book_viewer/menubar.py:434
 msgid "Search book"
-msgstr ""
+msgstr "書籍検索"
 
 #: bookworm/gui/book_viewer/menubar.py:460
 msgid "Searching For '{term}'"
-msgstr ""
+msgstr "'{term}'を検索中"
 
 #. Translators: message to announce the number of search results
 #. also used as the final title of the search results dialog
 #: bookworm/gui/book_viewer/menubar.py:475
 msgid "Results | {total}"
-msgstr ""
+msgstr "検索結果は、| {total}"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:548
 #: bookworm/gui/book_viewer/menubar.py:783
 msgid "&Render Page...\tCtrl-R"
-msgstr ""
+msgstr "レンダリングページ...\tCtrl-R"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:550
 #: bookworm/gui/book_viewer/menubar.py:784
 msgid "View a fully rendered version of this page."
-msgstr ""
+msgstr "レンダリングページ表示"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:555
@@ -1447,229 +1520,238 @@ msgstr ""
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:557
+#, fuzzy
 msgid "Change the current reading mode."
-msgstr ""
+msgstr "現在のページを読み上げ"
 
 #: bookworm/gui/book_viewer/menubar.py:589
 msgid "Rendered Page"
-msgstr ""
+msgstr "レンダリングページ"
 
 #: bookworm/gui/book_viewer/menubar.py:606
 msgid "Available reading modes"
 msgstr ""
 
 #: bookworm/gui/book_viewer/menubar.py:607
+#, fuzzy
 msgid "Select Reading Mode "
-msgstr ""
+msgstr "継続読み上げモードを利用する"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:634
 msgid "&User guide...\tF1"
-msgstr ""
+msgstr "ユーザーガイド...\tF1"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:636
 msgid "View Bookworm manuals"
-msgstr ""
+msgstr "マニュアルを表示"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:641
 msgid "Bookworm &website..."
-msgstr ""
+msgstr "ホームページ"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:643
 msgid "Visit the official website of Bookworm"
-msgstr ""
+msgstr "bookwormのホームページを開く"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:648
 msgid "&License"
-msgstr ""
+msgstr "ライセンス情報"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:650
 msgid "View legal information about this program ."
-msgstr ""
+msgstr "プログラムのライセンス情報"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:655
 msgid "Con&tributors"
-msgstr ""
+msgstr "貢献者"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:657
 msgid "View a list of notable contributors to the program."
-msgstr ""
+msgstr "貢献者一覧を表示"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:663
 msgid "&Restart with debug-mode enabled"
-msgstr ""
+msgstr "デバッグモードで再起動する"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:665
 msgid "Restart the program with debug mode enabled to show errors"
-msgstr ""
+msgstr "デバッグモードで再起動すると、エラーの確認ができます。"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:675
 msgid "&About Bookworm"
-msgstr ""
+msgstr "&BookWormについて"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:677
 msgid "Show general information about this program"
-msgstr ""
+msgstr "プログラムの基本情報を表示"
 
 #. Translators: the title of the about dialog
 #: bookworm/gui/book_viewer/menubar.py:706
 msgid "About {app_name}"
-msgstr ""
+msgstr "ソフト名、{app_name}"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:738
 msgid "&File"
-msgstr ""
+msgstr "&ファイル"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:740
 msgid "&Search"
-msgstr ""
+msgstr "&検索"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:742
 msgid "&Tools"
-msgstr ""
+msgstr "&ツール"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:744
 msgid "&Help"
-msgstr ""
+msgstr "&ヘルプ"
 
 #: bookworm/gui/book_viewer/menubar.py:773
 msgid "Jump to a page"
-msgstr ""
+msgstr "ページへ移動"
 
 #: bookworm/gui/book_viewer/menubar.py:822
-msgid "Supported document formats ({display})|{ext}|"
-msgstr ""
+#, fuzzy
+msgid "Supported document formats"
+msgstr "サポートされていないファイル形式です。"
 
 #: bookworm/gui/book_viewer/render_view.py:112
 msgid "Zoom is at {factor} percent"
-msgstr ""
+msgstr "ズーム、{factor} percent"
+
+#: bookworm/gui/book_viewer/render_view.py:124
+msgid "Page {}"
+msgstr "ページ: {}"
 
 #. Translators: content of a message in a progress dialog
 #: bookworm/http_tools/http_resource.py:40
+#, fuzzy
 msgid "Downloaded {downloaded} MB of {total} MB"
-msgstr ""
+msgstr " {total}メガバイト中の{downloaded}メガバイトをダウンロードしました。"
 
 #. Translators: the label of a page in the settings dialog
 #. Translators: the label of the OCR menu in the application menubar
 #: bookworm/ocr/__init__.py:54 bookworm/ocr/__init__.py:58
 #: bookworm/ocr/ocr_menu.py:107
 msgid "OCR"
-msgstr ""
+msgstr "文字認識"
 
 #. Translators: the label of a group of controls in the reading page
 #: bookworm/ocr/ocr_dialogs.py:63 bookworm/ocr/ocr_menu.py:162
 msgid "OCR Options"
-msgstr ""
+msgstr "文字認識設定"
 
 #. Translators: the title of a group of radio buttons in the OCR page
 #. in the application settings.
 #: bookworm/ocr/ocr_dialogs.py:69
 msgid "Default OCR Engine"
-msgstr ""
+msgstr "デフォルトのOCRエンジン"
 
 #. Translators: the label of a group of controls in the OCR page
 #. of the settings related to Tesseract OCR engine
 #: bookworm/ocr/ocr_dialogs.py:76
 #: bookworm/ocr_engines/tesseract_ocr_engine/__init__.py:28
 msgid "Tesseract OCR Engine"
-msgstr ""
+msgstr "tesseract（OCRエンジン）"
 
 #: bookworm/ocr/ocr_dialogs.py:81
 msgid "Download Tesseract OCR Engine"
-msgstr ""
+msgstr "ダウンロード（tesseract OCR）エンジン"
 
 #: bookworm/ocr/ocr_dialogs.py:82
 msgid "Get a free, high-quality OCR engine that supports over 100 languages."
-msgstr ""
+msgstr "無料で認識率が高い・１００言語以上をサポートするOCRエンジンを取得する"
 
 #: bookworm/ocr/ocr_dialogs.py:91
 msgid "Manage Tesseract OCR Languages"
-msgstr ""
+msgstr "tesseractの言語ファイル管理"
 
 #: bookworm/ocr/ocr_dialogs.py:92
 msgid "Add support for new languages, and /or remove installed languages."
-msgstr ""
+msgstr "新しい言語ファイルのインストール。または、インストールされているファイルの削除。"
 
 #. Translators: the label of a group of controls in the reading page
 #. of the settings related to image enhancement
 #: bookworm/ocr/ocr_dialogs.py:97
 msgid "Image processing"
-msgstr ""
+msgstr "画像処理"
 
 #. Translators: the label of a checkbox
 #: bookworm/ocr/ocr_dialogs.py:102
 msgid "Enable default image enhancement filters"
-msgstr ""
+msgstr "デフォルトの画像強化フィルタを有効にする"
 
 #: bookworm/ocr/ocr_dialogs.py:124
-msgid "Retreiving download info, please wait..."
-msgstr ""
+#, fuzzy
+msgid "Retrieving download info, please wait..."
+msgstr "ダウンロード情報を取得しています、しばらくお待ちください。"
 
 #: bookworm/ocr/ocr_dialogs.py:130
 msgid "Manage Tesseract OCR Engine Languages"
-msgstr ""
+msgstr "tesseractの言語ファイル管理"
 
 #. Translators: title of a progress dialog
 #: bookworm/ocr/ocr_dialogs.py:144
 msgid "Downloading Tesseract OCR Engine"
-msgstr ""
+msgstr "tesseract OCRエンジンをダウンロードしています。"
 
 #. Translators: message of a progress dialog
 #. Translators: content of a progress dialog
 #: bookworm/ocr/ocr_dialogs.py:146 bookworm/ocr/ocr_dialogs.py:465
 msgid "Getting download information..."
-msgstr ""
+msgstr "ダウンロード情報を取得しています。"
 
 #: bookworm/ocr/ocr_dialogs.py:158
 msgid "Restart Required"
-msgstr ""
+msgstr "再起動が必要です。"
 
 #: bookworm/ocr/ocr_dialogs.py:159
 msgid ""
 "Bookworm will now restart to complete the installation of the Tesseract "
 "OCR Engine."
-msgstr ""
+msgstr "tesseract OCRのインストールを完了するため、bookwormの再起動しています。"
 
 #. Translators: the label of a combobox
 #: bookworm/ocr/ocr_dialogs.py:186
 msgid "Recognition Language:"
-msgstr ""
+msgstr "認識言語、"
 
 #: bookworm/ocr/ocr_dialogs.py:191
 msgid "Supplied Image resolution::"
-msgstr ""
+msgstr "現在の画像の解像度"
 
 #: bookworm/ocr/ocr_dialogs.py:195
 msgid "Enable image enhancements"
-msgstr ""
+msgstr "画像の機能強化を有効にする"
 
 #: bookworm/ocr/ocr_dialogs.py:200
 msgid "Available image pre-processing filters:"
-msgstr ""
+msgstr "利用可能な画像前処理フィルタ、"
 
 #. Translators: the label of a checkbox
 #: bookworm/ocr/ocr_dialogs.py:215
 msgid "&Save these options until I close the current book"
-msgstr ""
+msgstr "現在の書籍を閉じるまで設定を保存する"
 
 #: bookworm/ocr/ocr_dialogs.py:264
 msgid "Increase image resolution"
-msgstr ""
+msgstr "画像解像度を増やす"
 
 #: bookworm/ocr/ocr_dialogs.py:265
 msgid "Binarization"
@@ -1677,15 +1759,15 @@ msgstr ""
 
 #: bookworm/ocr/ocr_dialogs.py:268
 msgid "Split two-in-one scans to individual pages"
-msgstr ""
+msgstr "二つのページに分割する"
 
 #: bookworm/ocr/ocr_dialogs.py:271
 msgid "Combine images"
-msgstr ""
+msgstr "画像の結合"
 
 #: bookworm/ocr/ocr_dialogs.py:272
 msgid "Blurring"
-msgstr ""
+msgstr "ぼうちょう"
 
 #: bookworm/ocr/ocr_dialogs.py:273
 msgid "Deskewing"
@@ -1697,58 +1779,58 @@ msgstr ""
 
 #: bookworm/ocr/ocr_dialogs.py:275
 msgid "Dilation"
-msgstr ""
+msgstr "膨張度"
 
 #: bookworm/ocr/ocr_dialogs.py:276
 msgid "Sharpen image"
-msgstr ""
+msgstr "画像を鮮明にする"
 
 #: bookworm/ocr/ocr_dialogs.py:277
 msgid "Invert colors"
-msgstr ""
+msgstr "色の反転"
 
 #: bookworm/ocr/ocr_dialogs.py:280
 msgid "Debug"
-msgstr ""
+msgstr "デバッグ"
 
 #. Translators: label of a list control containing bookmarks
 #: bookworm/ocr/ocr_dialogs.py:298
 msgid "Tesseract Languages"
-msgstr ""
+msgstr "tesseractの言語一覧、"
 
 #. Translators: text of a button to add a language to Tesseract OCR Engine
 #. (best quality model)
 #: bookworm/ocr/ocr_dialogs.py:309
 msgid "Download &Best Model"
-msgstr ""
+msgstr "認識優先モデルのダウンロード"
 
 #. Translators: text of a button to add a language to Tesseract OCR Engine
 #. (fastest model)
 #: bookworm/ocr/ocr_dialogs.py:311
 msgid "Download &Fast Model"
-msgstr ""
+msgstr "速度優先モデルのダウンロード"
 
 #: bookworm/ocr/ocr_dialogs.py:325 bookworm/ocr/ocr_dialogs.py:399
 msgid "Getting download information, please wait..."
-msgstr ""
+msgstr "ダウンロード情報を取得しています、しばらくお待ちください。"
 
 #. Translators: the title of a column in the Tesseract language list
 #: bookworm/ocr/ocr_dialogs.py:367
 msgid "Language"
-msgstr ""
+msgstr "言語"
 
 #. Translators: the title of a column in the Tesseract language list
 #: bookworm/ocr/ocr_dialogs.py:374
 msgid "Installed"
-msgstr ""
+msgstr "インストール済み"
 
 #: bookworm/ocr/ocr_dialogs.py:377
 msgid "Yes"
-msgstr ""
+msgstr "はい"
 
 #: bookworm/ocr/ocr_dialogs.py:377
 msgid "No"
-msgstr ""
+msgstr "いいえ"
 
 #. Translators: content of a messagebox
 #: bookworm/ocr/ocr_dialogs.py:409
@@ -1756,6 +1838,8 @@ msgid ""
 "Are you sure you want to remove language:\n"
 "{lang}?"
 msgstr ""
+"本当にこの言語ファイル、\n"
+"{lang}を削除しますか?"
 
 #. Translators: content of a messagebox
 #: bookworm/ocr/ocr_dialogs.py:445
@@ -1763,6 +1847,8 @@ msgid ""
 "A version of the selected language model already exists.\n"
 "Are you sure you want to replace it."
 msgstr ""
+"選択されている言語ファイルは、すでに存在しています、\n"
+"上書きしますか？"
 
 #. Translators: title of a progress dialog
 #: bookworm/ocr/ocr_dialogs.py:463
@@ -1775,7 +1861,7 @@ msgid "Language Added"
 msgstr ""
 
 #: bookworm/ocr/ocr_dialogs.py:486
-msgid "The Language Model was downloaded succesfully."
+msgid "The Language Model was downloaded successfully."
 msgstr ""
 
 #. Translators: title of a messagebox
@@ -1796,7 +1882,7 @@ msgstr ""
 #: bookworm/ocr/ocr_dialogs.py:505 bookworm/text_to_speech/tts_gui.py:426
 #: bookworm/webservices/wikiworm.py:117
 msgid "Error"
-msgstr ""
+msgstr "エラー"
 
 #. Translators: content of a messagebox
 #: bookworm/ocr/ocr_dialogs.py:507
@@ -1818,49 +1904,51 @@ msgstr ""
 #. Translators: the label of an item in the application menubar
 #: bookworm/ocr/ocr_menu.py:79
 msgid "&Automatic OCR\tCtrl-F4"
-msgstr ""
+msgstr "自動的に文字認識する\tCtrl-F4"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/ocr/ocr_menu.py:81
 msgid "Auto run  OCR when turning pages."
-msgstr ""
+msgstr "自動的にページの文字認識を実行する"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/ocr/ocr_menu.py:87
 msgid "&Change OCR Options..."
-msgstr ""
+msgstr "文字認識設定変更"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/ocr/ocr_menu.py:89
 msgid "Change OCR options"
-msgstr ""
+msgstr "文字認識設定変更"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/ocr/ocr_menu.py:94
+#, fuzzy
 msgid "Scan To &Text File..."
-msgstr ""
+msgstr "テキストファイルとしてスキャンして保存"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/ocr/ocr_menu.py:96
 msgid "Scan pages and save the text to a .txt file."
-msgstr ""
+msgstr "ページを文字認識して、テキストファイルとして保存"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/ocr/ocr_menu.py:101
 msgid "Image To Text..."
-msgstr ""
+msgstr "画像からテキストに変換"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/ocr/ocr_menu.py:103
 msgid "Run OCR on an image."
-msgstr ""
+msgstr "画像の文字認識実行"
 
 #. Translators: content of a message
 #: bookworm/ocr/ocr_menu.py:152
+#, fuzzy
 msgid ""
 "No language for OCR is present.\n"
 "Please checkout Bookworm user manual to learn how to add new languages."
-msgstr ""
+msgstr "文字認識言語が見つかりませんでした。地域や言語で設定してください。必要な言語ファイルをダウンロードする。"
 
 #. Translators: title for a message
 #: bookworm/ocr/ocr_menu.py:156
@@ -1868,76 +1956,77 @@ msgid "No Languages for OCR"
 msgstr ""
 
 #: bookworm/ocr/ocr_menu.py:174
-msgid "Cancelled"
-msgstr ""
+#, fuzzy
+msgid "Canceled"
+msgstr "キャンセルされました。"
 
 #: bookworm/ocr/ocr_menu.py:210
+#, fuzzy
 msgid "Running OCR, please wait..."
-msgstr ""
+msgstr "文書を読み込んでいます、しばらくお待ちください。"
 
 #: bookworm/ocr/ocr_menu.py:219
 msgid "Automatic OCR is enabled"
-msgstr ""
+msgstr "自動文字認識は、有効です。"
 
 #: bookworm/ocr/ocr_menu.py:221
 msgid "Automatic OCR is disabled"
-msgstr ""
+msgstr "自動文字認識は、無効です。"
 
 #. Translators: the title of a save file dialog asking the user for a filename
 #. to export notes to
 #: bookworm/ocr/ocr_menu.py:234
 msgid "Save as"
-msgstr ""
-
-#. Translators: file type in a save as dialog
-#: bookworm/ocr/ocr_menu.py:238
-msgid "Plain Text (*.txt)|.txt"
-msgstr ""
+msgstr "名前を付けて保存"
 
 #. Translators: the title of a progress dialog
 #: bookworm/ocr/ocr_menu.py:251
 msgid "Scanning Pages"
-msgstr ""
+msgstr "ページの文字認識中"
 
 #. Translators: the message of a progress dialog
 #: bookworm/ocr/ocr_menu.py:253
 msgid "Preparing book"
-msgstr ""
+msgstr "書籍を準備しています。"
 
 #: bookworm/ocr/ocr_menu.py:272
+#, fuzzy
 msgid ""
-"Successfully processed {} pages.\n"
-"Extracted text was written to: {}"
+"Successfully processed {total} pages.\n"
+"Extracted text was written to: {file}"
 msgstr ""
+"{}ページが正常に処理されました。\n"
+"「抽出されたテキストは：{}」に保存されました。"
 
 #: bookworm/ocr/ocr_menu.py:275
 msgid "OCR Completed"
-msgstr ""
+msgstr "文字認識官僚"
 
 #: bookworm/ocr/ocr_menu.py:292
 msgid "Portable Network Graphics"
-msgstr ""
+msgstr "ポータブルネットワークグラフィックス"
 
 #: bookworm/ocr/ocr_menu.py:293
 msgid "JPEG images"
-msgstr ""
+msgstr "JPEG画像"
 
 #: bookworm/ocr/ocr_menu.py:294
 msgid "Bitmap images"
-msgstr ""
+msgstr "ビットマップ画像"
 
 #: bookworm/ocr/ocr_menu.py:295
 msgid "Tiff graphics"
 msgstr ""
 
 #: bookworm/ocr/ocr_menu.py:301
-msgid "All supported image formats|{ext}|"
-msgstr ""
+#, fuzzy
+msgid "All supported image formats"
+msgstr "サポートされている画像形式、|{ext}|"
 
 #. Translators: the title of a file dialog to browse to an image
 #: bookworm/ocr/ocr_menu.py:305
 msgid "Choose image file"
-msgstr ""
+msgstr "画像の選択"
 
 #. Translators: content of a message box
 #: bookworm/ocr/ocr_menu.py:320
@@ -1950,20 +2039,22 @@ msgstr ""
 
 #. Translators: title of a message box
 #: bookworm/ocr/ocr_menu.py:325
+#, fuzzy
 msgid "Could not load image file"
-msgstr ""
+msgstr "画像の選択"
 
 #: bookworm/ocr/ocr_menu.py:339
 msgid "OCR Results"
-msgstr ""
+msgstr "文字認識結果"
 
 #: bookworm/ocr/ocr_menu.py:366
 msgid "Scan finished."
-msgstr ""
+msgstr "文字認識が完了しました。"
 
 #: bookworm/ocr/ocr_menu.py:372
-msgid "OCR cancelled"
-msgstr ""
+#, fuzzy
+msgid "OCR canceled"
+msgstr "文字認識がキャンセルされました。"
 
 #: bookworm/ocr_engines/tesseract_ocr_engine/tesseract_alt.py:20
 msgid "Tesseract OCR Engine (Alternative implementation)"
@@ -1971,11 +2062,12 @@ msgstr ""
 
 #: bookworm/speechdriver/__init__.py:16
 msgid "No Speech"
-msgstr ""
+msgstr "読み上げなし"
 
 #: bookworm/structured_text/structural_elements.py:57
+#, fuzzy
 msgid "Heading"
-msgstr ""
+msgstr "読み上げ"
 
 #: bookworm/structured_text/structural_elements.py:58
 msgid "Heading level 1"
@@ -2010,7 +2102,7 @@ msgid "Link"
 msgstr ""
 
 #: bookworm/structured_text/structural_elements.py:66
-msgid "LIST"
+msgid "List"
 msgstr ""
 
 #: bookworm/structured_text/structural_elements.py:67
@@ -2022,13 +2114,14 @@ msgid "Table"
 msgstr ""
 
 #: bookworm/structured_text/structural_elements.py:69
+#, fuzzy
 msgid "Image"
-msgstr ""
+msgstr "ページ"
 
 #. Translators: the label of a page in the settings dialog
 #: bookworm/text_to_speech/__init__.py:114
 msgid "Reading"
-msgstr ""
+msgstr "読み上げ"
 
 #. Translators: the label of a page in the settings dialog
 #. Translators: the label of a group of controls in the
@@ -2037,37 +2130,39 @@ msgstr ""
 #: bookworm/text_to_speech/__init__.py:127
 #: bookworm/text_to_speech/tts_gui.py:145
 msgid "Voice"
-msgstr ""
+msgstr "音声エンジン"
 
 #: bookworm/text_to_speech/__init__.py:124
 msgid "Back"
-msgstr ""
+msgstr "戻る"
 
 #: bookworm/text_to_speech/__init__.py:125
 msgid "Play"
-msgstr ""
+msgstr "読み上げ開始"
 
 #: bookworm/text_to_speech/__init__.py:126
 msgid "Forward"
-msgstr ""
+msgstr "次へ進む"
 
 #: bookworm/text_to_speech/__init__.py:217
+#, fuzzy
 msgid "End of document."
-msgstr ""
+msgstr "文書を開けませんでした。"
 
 #: bookworm/text_to_speech/__init__.py:240
 msgid "End of section: {chapter}."
-msgstr ""
+msgstr "{chapter}セクションの終了。"
 
 #. Translators: spoken message at the end of the document
 #: bookworm/text_to_speech/__init__.py:273
+#, fuzzy
 msgid "End of document"
-msgstr ""
+msgstr "文書を開けませんでした。"
 
 #. Translators: the title of a message telling the user that no TTS voice found
 #: bookworm/text_to_speech/__init__.py:424
 msgid "No TTS Voices"
-msgstr ""
+msgstr "音声エンジンが見つかりません"
 
 #. Translators: a message telling the user that no TTS voice found
 #: bookworm/text_to_speech/__init__.py:426
@@ -2076,105 +2171,113 @@ msgid ""
 "\n"
 "Text-to-speech functionality will be disabled."
 msgstr ""
+"現在開いている書籍言語に対して、有効な音声エンジンが設定されていません\n"
+"読み上げ機能を停止します。"
 
 #. Translators: a message telling the user that the TTS voice has been changed
 #: bookworm/text_to_speech/__init__.py:444
+#, fuzzy
 msgid ""
 "Bookworm has noticed that the currently configured Text-to-speech voice "
 "speaks a language different from that of this book.\n"
 "Do you want to temporary switch to another voice that speaks a language "
 "similar to the language  of the currently opened document?"
-msgstr ""
+msgstr "現在違う音声エンジンを設定されています。音声エンジンと書籍言語が違うので、書籍言語に対応する音声エンジンに切り替えます。"
 
 #. Translators: the title of a message telling the user that the TTS voice has
 #. been changed
 #: bookworm/text_to_speech/__init__.py:451
 msgid "Incompatible TTS Voice Detected"
-msgstr ""
+msgstr "互換性のない音声エンジンです。"
 
 #: bookworm/text_to_speech/__init__.py:478
+#, fuzzy
 msgid "Search Result."
-msgstr ""
+msgstr "検索結果：　"
 
 #: bookworm/text_to_speech/__init__.py:482
+#, fuzzy
 msgid "Bookmark."
-msgstr ""
+msgstr "しおり"
 
 #: bookworm/text_to_speech/__init__.py:484
+#, fuzzy
 msgid "Bookmark: {bookmark_name}"
-msgstr ""
+msgstr "しおり | {book}"
 
 #. Translators: the name of a built-in voice profile
 #: bookworm/text_to_speech/tts_config.py:124
 msgid "Human-like"
-msgstr ""
+msgstr "人の声"
 
 #. Translators: the name of a built-in voice profile
 #: bookworm/text_to_speech/tts_config.py:135
 msgid "Deep Reading"
-msgstr ""
+msgstr "滑らかに読み上げ"
 
 #. Translators: the name of a built-in voice profile
 #: bookworm/text_to_speech/tts_config.py:146
+#, fuzzy
 msgid "Express"
-msgstr ""
+msgstr "早く読み上げ"
 
 #. Translators: the label of a group of controls in the reading page
 #: bookworm/text_to_speech/tts_gui.py:49
 msgid "Reading Options"
-msgstr ""
+msgstr "読み上げ設定"
 
 #. Translators: the label of a checkbox to enable continuous reading
 #: bookworm/text_to_speech/tts_gui.py:54
 msgid "Use continuous reading mode"
-msgstr ""
+msgstr "継続読み上げモードを利用する"
 
 #. Translators: the title of a group of radio buttons in the reading page
 #. in the application settings related to how to read.
 #: bookworm/text_to_speech/tts_gui.py:62
 msgid "When Pressing Play:"
-msgstr ""
+msgstr "読み上げ開始時に"
 
 #. Translators: the label of a radio button
 #: bookworm/text_to_speech/tts_gui.py:67
 msgid "Read the entire book"
-msgstr ""
+msgstr "全文を読み上げ"
 
 #. Translators: the label of a radio button
 #: bookworm/text_to_speech/tts_gui.py:69
 msgid "Read the current section"
-msgstr ""
+msgstr "現在のセクションを読み上げ"
 
 #. Translators: the label of a radio button
 #: bookworm/text_to_speech/tts_gui.py:71
 msgid "Read the current page"
-msgstr ""
+msgstr "現在のページを読み上げ"
 
 #. Translators: the title of a group of radio buttons in the reading page
 #. in the application settings related to where to start reading from.
 #: bookworm/text_to_speech/tts_gui.py:79
 msgid "Start reading from:"
-msgstr ""
+msgstr "現在の位置から読み上げ開始"
 
 #. Translators: the label of a radio button
 #: bookworm/text_to_speech/tts_gui.py:83
 msgid "Cursor position"
-msgstr ""
+msgstr "カーソル位置"
 
 #: bookworm/text_to_speech/tts_gui.py:83
 msgid "Beginning of page"
-msgstr ""
+msgstr "ページを最初から"
 
 #. Translators: the label of a group of controls in the reading page
 #. of the settings related to behavior during reading  aloud
 #: bookworm/text_to_speech/tts_gui.py:87
 msgid "During Reading Aloud"
-msgstr ""
+msgstr "読み上げ中、"
 
 #. Translators: the label of a checkbox
 #: bookworm/text_to_speech/tts_gui.py:99
+#, fuzzy
 msgid "Announce the end of sections"
-msgstr ""
+msgstr "セクション終了時に音声発生"
 
 #. Translators: the label of a checkbox
 #: bookworm/text_to_speech/tts_gui.py:106
@@ -2184,112 +2287,112 @@ msgstr ""
 #. Translators: the label of a checkbox
 #: bookworm/text_to_speech/tts_gui.py:113
 msgid "Highlight spoken text"
-msgstr ""
+msgstr "読み上げ分をハイライトする"
 
 #. Translators: the label of a checkbox
 #: bookworm/text_to_speech/tts_gui.py:120
 msgid "Select spoken text"
-msgstr ""
+msgstr "読み上げ文書選択"
 
 #. Translators: the label of a combobox containing a list of tts engines
 #: bookworm/text_to_speech/tts_gui.py:148
 msgid "Speech Engine:"
-msgstr ""
+msgstr "音声エンジン"
 
 #. Translators: the label of a button that opens a dialog to change the speech
 #. engine
 #: bookworm/text_to_speech/tts_gui.py:153
 msgid "Change..."
-msgstr ""
+msgstr "変更..."
 
 #. Translators: the label of a combobox containing a list of tts voices
 #: bookworm/text_to_speech/tts_gui.py:156
 msgid "Select Voice:"
-msgstr ""
+msgstr "音声選択、"
 
 #. Translators: the label of the speech rate slider
 #: bookworm/text_to_speech/tts_gui.py:159
 msgid "Speech Rate:"
-msgstr ""
+msgstr "読み上げ速度、"
 
 #. Translators: the label of the speech volume slider
 #: bookworm/text_to_speech/tts_gui.py:165
 msgid "Speech Volume:"
-msgstr ""
+msgstr "音量、"
 
 #. Translators: the label of a group of controls in the speech
 #. settings page related to speech pauses
 #: bookworm/text_to_speech/tts_gui.py:172
 msgid "Pauses"
-msgstr ""
+msgstr "一時停止"
 
 #. Translators: the label of an edit field
 #: bookworm/text_to_speech/tts_gui.py:175
 msgid "Additional Pause At Sentence End (Ms)"
-msgstr ""
+msgstr "文末（MS）で追加の一時停止"
 
 #. Translators: the label of an edit field
 #: bookworm/text_to_speech/tts_gui.py:180
 msgid "Additional Pause At Paragraph End (Ms)"
-msgstr ""
+msgstr "段落終了（MS）での追加の一時停止"
 
 #. Translators: the label of an edit field
 #: bookworm/text_to_speech/tts_gui.py:185
 msgid "End of Page Pause (ms)"
-msgstr ""
+msgstr "ページ終了（MS）での追加の一時停止"
 
 #. Translators: the label of an edit field
 #: bookworm/text_to_speech/tts_gui.py:194
 msgid "End of Section Pause (ms)"
-msgstr ""
+msgstr "セクション終了（MS）での追加の一時停止"
 
 #: bookworm/text_to_speech/tts_gui.py:238
 msgid "Speech Engine"
-msgstr ""
+msgstr "音声エンジン"
 
 #. Translators: the title of a dialog to edit a voice profile
 #: bookworm/text_to_speech/tts_gui.py:285
 msgid "Voice Profile: {profile}"
-msgstr ""
+msgstr "音声エンジンのプロファイル、{profile}"
 
 #. Translators: the label of a combobox to select a voice profile
 #: bookworm/text_to_speech/tts_gui.py:312
 msgid "Select Voice Profile:"
-msgstr ""
+msgstr "音声プロファイルの選択"
 
 #. Translators: the label of a button to activate a voice profile
 #: bookworm/text_to_speech/tts_gui.py:318
 msgid "&Activate"
-msgstr ""
+msgstr "アクティベート"
 
 #. Translators: the label of a button to create a new voice profile
 #: bookworm/text_to_speech/tts_gui.py:324
 msgid "&New Profile..."
-msgstr ""
+msgstr "新しいプロファイル..."
 
 #. Translators: the entry of the active voice profile in the voice profiles
 #. list
 #: bookworm/text_to_speech/tts_gui.py:358
 msgid "{profile} (active)"
-msgstr ""
+msgstr "{profile})を選択されています"
 
 #. Translators: the label of an edit field to enter the voice profile name
 #: bookworm/text_to_speech/tts_gui.py:408
 msgid "Profile Name:"
-msgstr ""
+msgstr "プロファイル名、"
 
 #. Translators: the title of a dialog to enter the name of a new voice profile
 #: bookworm/text_to_speech/tts_gui.py:410
 msgid "New Voice Profile"
-msgstr ""
+msgstr "新しい音声のプロファイル"
 
 #. Translators: the content of a message notifying the user
-#. user of the existance of a voice profile with the same name
+#. user of the existence of a voice profile with the same name
 #: bookworm/text_to_speech/tts_gui.py:422
 msgid ""
 "A voice profile with the same name already exists. Please select another "
 "name."
-msgstr ""
+msgstr "すでに同じ音声プロファイル名が存在しています。違うプロファイル名を設定してください。"
 
 #. Translators: the content of a message telling the user that the voice
 #. profile he is removing is the active one
@@ -2299,12 +2402,14 @@ msgid ""
 "Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
 "menu item from the speech menu."
 msgstr ""
+"{profile}のプロファイル名は、すでに選択されています。\n"
+"読み上げメニューから解除してからご利用ください。"
 
 #. Translators: the title of a message telling the user that
 #. it is not possible to remove this voice profile
 #: bookworm/text_to_speech/tts_gui.py:455
 msgid "Cannot Remove Profile"
-msgstr ""
+msgstr "プロファイルの削除できません"
 
 #. Translators: the title of a message to confirm the removal of the voice
 #. profile
@@ -2313,196 +2418,198 @@ msgid ""
 "Are you sure you want to remove voice profile {profile}?\n"
 "This cannot be undone."
 msgstr ""
+"{profile}のプロファイルを削除しようとしていますが、本当に削除しますか?\n"
+"削除するともとに戻せませんので、ご注意ください。"
 
 #. Translators: the title of a message to confirm the removal of a voice
 #. profile
 #: bookworm/text_to_speech/tts_gui.py:466
 msgid "Remove Voice Profile?"
-msgstr ""
+msgstr "音声プロファイル削除？"
 
 #. Translators: the label of a combobox
 #: bookworm/text_to_speech/tts_gui.py:489
 msgid "Select Speech Engine:"
-msgstr ""
+msgstr "音声エンジンの選択"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:518
 msgid "&Play\tF5"
-msgstr ""
+msgstr "読み上げ\tF5"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:520
 msgid "Start reading aloud"
-msgstr ""
+msgstr "読み上げ中、"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:525
 msgid "Pa&use/Resume\tF6"
-msgstr ""
+msgstr "読み上げ一時停止・最下位\tF6"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:527
 msgid "Pause/Resume reading aloud"
-msgstr ""
+msgstr "読み上げ一時停止・最下位"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:532
 msgid "&Stop\tF7"
-msgstr ""
+msgstr "読み上げ停止\tF7"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:534
 msgid "Stop reading aloud"
-msgstr ""
+msgstr "読み上げ停止中"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:539
 msgid "&Rewind\tAlt-LeftArrow"
-msgstr ""
+msgstr "前に戻る\\左矢印"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:541
 msgid "Skip to previous paragraph"
-msgstr ""
+msgstr "前の段落に移動"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:546
 msgid "&Fast Forward\tAlt-RightArrow"
-msgstr ""
+msgstr "次へ進む\\右矢印"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:548
 msgid "Skip to next paragraph"
-msgstr ""
+msgstr "次の段落に移動"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:553
 msgid "&Voice Profiles\tCtrl-Shift-V"
-msgstr ""
+msgstr "音声プロファイル\tCtrl-Shift-V"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:555
 msgid "Manage voice profiles."
-msgstr ""
+msgstr "音声プロファイルの管理"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:560
 msgid "&Deactivate Active Voice Profile"
-msgstr ""
+msgstr "音声プロファイル選択解除"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:562
 msgid "Deactivate the active voice profile."
-msgstr ""
+msgstr "音声プロファイル選択解除"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/text_to_speech/tts_gui.py:567
 msgid "S&peech"
-msgstr ""
+msgstr "読み上げ"
 
 #. Translators: a message that is announced when the speech is paused
 #: bookworm/text_to_speech/tts_gui.py:627
 msgid "Paused"
-msgstr ""
+msgstr "一時停止"
 
 #. Translators: a message that is announced when the speech is resumed
 #: bookworm/text_to_speech/tts_gui.py:631
 msgid "Resumed"
-msgstr ""
+msgstr "再開"
 
 #. Translators: a message that is announced when the speech is stopped
 #: bookworm/text_to_speech/tts_gui.py:641
 msgid "Stopped"
-msgstr ""
+msgstr "停止"
 
 #. Translators: the title of the voice profiles dialog
 #: bookworm/text_to_speech/tts_gui.py:646
 msgid "Voice Profiles"
-msgstr ""
+msgstr "音声プロファイル"
 
 #: bookworm/webservices/__init__.py:21
 msgid "&Web Services"
-msgstr ""
+msgstr "&Webサービス"
 
 #: bookworm/webservices/url_open.py:33
 msgid "&Open URL\tCtrl+U"
-msgstr ""
+msgstr "URLを開く\tCtrl+U"
 
 #: bookworm/webservices/url_open.py:35
 msgid "&Open URL From Clipboard\tCtrl+Shift+U"
-msgstr ""
+msgstr "クリップボードからURLを開く\tCtrl+Shift+U"
 
 #. Translators: title of a dialog for entering a URL
 #: bookworm/webservices/url_open.py:48
 msgid "Enter URL"
-msgstr ""
+msgstr "URLを入力"
 
 #. Translators: label of a textbox in a dialog for entering a URL
 #: bookworm/webservices/url_open.py:50
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: bookworm/webservices/wikiworm.py:34
 msgid "&Wikipedia quick search"
-msgstr ""
+msgstr "&wikipedia検索"
 
 #: bookworm/webservices/wikiworm.py:35
 msgid "Get a quick definition from Wikipedia"
-msgstr ""
+msgstr "Wikipediaから情報取得"
 
 #: bookworm/webservices/wikiworm.py:47
 msgid "Define using Wikipedia"
-msgstr ""
+msgstr "Wikipediaの検索用語"
 
 #: bookworm/webservices/wikiworm.py:48
 msgid "Define the selected text using Wikipedia"
-msgstr ""
+msgstr "Wikipediaのカテゴリを選択してください。"
 
 #: bookworm/webservices/wikiworm.py:62
 msgid "Wikipedia Quick Search"
-msgstr ""
+msgstr "Wikipediaの検索"
 
 #: bookworm/webservices/wikiworm.py:63
 msgid "Enter term"
-msgstr ""
+msgstr "検索キーワードを入力"
 
 #: bookworm/webservices/wikiworm.py:75
 msgid "Retrieving information, please wait..."
-msgstr ""
+msgstr "処理中、しばらくお待ちください。"
 
 #: bookworm/webservices/wikiworm.py:108
 msgid ""
 "Could not connect to Wikipedia at the moment.\\Please make sure that "
 "you're connected to the internet or try again later."
-msgstr ""
+msgstr "Wikipediaに接続ができませんでした。ネット接続を確認してから再度お試しください。"
 
 #: bookworm/webservices/wikiworm.py:118
 msgid "Could not get the definition from Wikipedia."
-msgstr ""
+msgstr "Wikipediaから情報を取得できませんでした。"
 
 #: bookworm/webservices/wikiworm.py:125
 msgid "Matches"
-msgstr ""
+msgstr "検索結果"
 
 #: bookworm/webservices/wikiworm.py:126
 msgid "Multiple Matches Found"
-msgstr ""
+msgstr "複数検索結果"
 
 #: bookworm/webservices/wikiworm.py:149
 msgid "{term} — Wikipedia"
-msgstr ""
+msgstr "Wikipediaの{term}"
 
 #. Translators: label of an edit control in the dialog
 #. of viewing or editing a comment/highlight
 #: bookworm/webservices/wikiworm.py:156
 msgid "Summary"
-msgstr ""
+msgstr "本文"
 
 #: bookworm/webservices/wikiworm.py:167
 msgid "Open in &Bookworm"
-msgstr ""
+msgstr "bookwormで開く"
 
 #: bookworm/webservices/wikiworm.py:168
 msgid "&Open in Browser"
-msgstr ""
+msgstr "&ブラウザで開く"
 

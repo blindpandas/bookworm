@@ -254,7 +254,7 @@ class FileMenu(BaseMenu):
             progress_dlg.Update(
                 progress,
                 # Translators: a message shown when the book is being exported
-                _("Exporting Page {} of {}...").format(progress + 1, total),
+                _("Exporting Page {current} of {total}...").format(current=progress + 1, total=total),
             )
         progress_dlg.Dismiss()
 
@@ -760,7 +760,7 @@ class MenubarProvider:
             evt.Skip()
         except:
             log.exception(
-                "An unhandled error was occured while exiting Bookworm", exc_info=True
+                "An unhandled error was occurred while exiting Bookworm", exc_info=True
             )
             wx.Abort()
 
@@ -819,8 +819,6 @@ class MenubarProvider:
         allfiles_display = " ".join(e for e in all_exts)
         rv.insert(
             0,
-            _("Supported document formats ({display})|{ext}|").format(
-                display=allfiles_display, ext=allfiles
-            ),
+            _("Supported document formats") + f" ({allfiles_display})|{allfiles}|"
         )
         return "".join(rv)

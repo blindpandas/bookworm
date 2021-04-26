@@ -127,7 +127,7 @@ class ResourceLoader:
             wx.CallAfter(
                 self.view.notify_user,
                 # Translators: the title of an error message
-                _("Error Openning Document"),
+                _("Error Opening Document"),
                 # Translators: the content of an error message
                 _(
                     "Could not open file\n."
@@ -146,7 +146,7 @@ class ResourceLoader:
                 # Translators: the content of an error message
                 _(
                     "Could not open document\n."
-                    "An unknown error occured while loading the file."
+                    "An unknown error occurred while loading the file."
                 ),
                 icon=wx.ICON_ERROR,
             )
@@ -212,7 +212,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         )
 
         self.toc_tree_manager = TocTreeManager(self.tocTreeCtrl)
-        # Set statusbar text
+        # Set status bar text
         # Translators: the text of the status bar when no book is currently open.
         # It is being used also as a label for the page content text area when no book is opened.
         self._no_open_book_status = _("Press (Ctrl + O) to open a document")
@@ -515,7 +515,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 msg = _("No next {item}")
             else:
                 msg = _("No previous {item}")
-            speech.announce(msg.format(item=element_label), True)
+            speech.announce(msg.format(item=_(element_label)), True)
 
     def onTextCtrlZoom(self, direction, announce=True):
         self._has_text_zoom = True

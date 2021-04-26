@@ -247,7 +247,7 @@ class _DrmFitzEpubDocument(EpubDocument):
         Legal note:
         The removal of the encryption from the file does not involve any
         violation of any laws whatsoever, as long as the user has obtained
-        the eBook using leditimate means, and the user intents to use the
+        the eBook using legitimate means, and the user intents to use the
         content in a manor that does not violate the law.
         """
         filepath = Path(filename)

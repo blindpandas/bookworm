@@ -66,7 +66,7 @@ class ViewAndEditAnnotationDialog(SimpleDialog):
         # Translators: header of a group of controls in a dialog to view/edit comments/highlights
         metadataBox = make_sized_static_box(parent, _("Metadata"))
         metadataBox.SetSizerProps(expand=True)
-        # Translators: lable of an edit control in a dialog to view/edit comments/highlights
+        # Translators: label of an edit control in a dialog to view/edit comments/highlights
         wx.StaticText(metadataBox, -1, _("Tags"))
         self.tagsText = wx.TextCtrl(metadataBox, -1, style=CAN_EDIT | wx.TE_MULTILINE)
         self.tagsText.SetSizerProps(expand=True)
@@ -514,7 +514,7 @@ class AnnotationWithContentDialog(SimpleDialog):
                     sounds.clipboard.play()
             except:
                 log.exception(
-                    "Failed to copy annotation text to the clipbard", evc_info=True
+                    "Failed to copy annotation text to the clipboard", evc_info=True
                 )
         event.Skip()
 

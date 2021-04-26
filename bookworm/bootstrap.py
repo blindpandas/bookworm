@@ -97,7 +97,7 @@ def init_app_and_run_main_loop():
     try:
         set_wx_locale(appinfo.current_language)
     except:
-        log.exception("Faild to set wxLocale to the current app locale", exc_info=True)
+        log.exception("Failed to set wxLocale to the current app locale", exc_info=True)
     mainFrame = app.mainFrame = BookViewerWindow(None, appinfo.display_name)
     app.service_handler = ServiceHandler(mainFrame)
     app.service_handler.register_builtin_services()
@@ -133,5 +133,5 @@ def run():
         init_app_and_run_main_loop()
         log.info("The application has exited gracefully.")
     except BaseException:
-        log.critical("An unhandled error has occured.", exc_info=True)
+        log.critical("An unhandled error has occurred.", exc_info=True)
         raise

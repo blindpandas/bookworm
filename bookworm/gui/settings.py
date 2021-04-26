@@ -88,7 +88,7 @@ class FileAssociationDialog(SimpleDialog):
             # Translators: the main label of a button
             _("Dissociate all supported file types"),
             # Translators: the note of a button
-            _("Unregister previously associated file types"),
+            _("Remove previously associated file types"),
         )
         self.Bind(wx.EVT_BUTTON, lambda e: self.onBatchAssoc(assoc=True), assoc_btn)
         self.Bind(wx.EVT_BUTTON, lambda e: self.onBatchAssoc(assoc=False), dissoc_btn)
@@ -456,12 +456,12 @@ class PreferencesDialog(SimpleDialog):
 
     def createButtonsSizer(self):
         btnsizer = wx.StdDialogButtonSizer()
-        # Translators: the lable of the OK button in a dialog
+        # Translators: the label of the OK button in a dialog
         okBtn = wx.Button(self, wx.ID_OK, _("OK"))
         okBtn.SetDefault()
-        # Translators: the lable of the cancel button in a dialog
+        # Translators: the label of the cancel button in a dialog
         cancelBtn = wx.Button(self, wx.ID_CANCEL, _("Cancel"))
-        # Translators: the lable of the apply button in a dialog
+        # Translators: the label of the apply button in a dialog
         applyBtn = wx.Button(self, wx.ID_APPLY, _("Apply"))
         for btn in (okBtn, cancelBtn, applyBtn):
             btnsizer.AddButton(btn)

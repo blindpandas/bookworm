@@ -63,7 +63,7 @@ SEMANTIC_ELEMENT_OUTPUT_OPTIONS = {
     SemanticElementType.HEADING_6: (_("Heading level 6"), True),
     SemanticElementType.ANCHOR: (_("Anchor"), True),
     SemanticElementType.LINK: (_("Link"), True),
-    SemanticElementType.LIST: (_("LIST"), False),
+    SemanticElementType.LIST: (_("List"), False),
     SemanticElementType.QUOTE: (_("Quote"), True),
     SemanticElementType.TABLE: (_("Table"), False),
     SemanticElementType.FIGURE: (_("Image"), False),

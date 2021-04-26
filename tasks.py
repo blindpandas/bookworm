@@ -263,6 +263,11 @@ def copy_wx_catalogs(c):
         )
 
 
+def get_pot_filename():
+    name, version = [os.environ[k] for k in ["IAPP_NAME", "IAPP_VERSION"]]
+    return PROJECT_ROOT / "scripts" / f"{name}-{version}.pot"
+
+
 @task(name="gen-pot")
 @make_env
 def generate_pot(c):
@@ -271,7 +276,7 @@ def generate_pot(c):
     display_name = os.environ["IAPP_DISPLAY_NAME"]
     author = os.environ["IAPP_AUTHOR"]
     version = os.environ["IAPP_VERSION"]
-    output_filename = PROJECT_ROOT / "scripts" / f"{name}-{version}.pot"
+    output_filename = get_pot_filename()
     args = " ".join(
         (
             f'-o "{output_filename}"',
@@ -307,7 +312,7 @@ def update_msgs(c):
     print("Updating .po message catalogs with latest messages.")
     domain = os.environ["IAPP_NAME"]
     locale_dir = PACKAGE_FOLDER / "resources" / "locale"
-    potfile = PROJECT_ROOT / "scripts" / f"{domain}.pot"
+    potfile = get_pot_filename()
     if list(locale_dir.rglob("*.po")):
         c.run(
             f'pybabel update -i "{potfile}" -D {domain} '
@@ -323,8 +328,7 @@ def init_lang(c, lang):
     from bookworm import app
 
     print(f"Creating a language catalog for language '{lang}'...")
-    name, version = [os.environ[k] for k in ["IAPP_NAME", "IAPP_VERSION"]]
-    potfile = PROJECT_ROOT / "scripts" / f"{name}-{version}.pot"
+    potfile = get_pot_filename()
     locale_dir = PACKAGE_FOLDER / "resources" / "locale"
     c.run(
         f'pybabel init -D {app.name} -i "{potfile}" '

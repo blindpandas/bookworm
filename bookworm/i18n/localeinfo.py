@@ -73,7 +73,7 @@ class LocaleInfo:
 
     @property
     def parent(self):
-        return LocaleInfo(self.language)
+        return LocaleInfo(self.two_letter_language_code)
 
     @property
     def pylang(self):

@@ -73,7 +73,7 @@ class TocTreeManager:
 class EnhancedSpinCtrl(wx.SpinCtrl):
     """
     Select the content of the ctrl when focused to make editing more easier.
-    Inspired by a simular code in NVDA's gui package.
+    Inspired by a similar code in NVDA's gui package.
     """
 
     def __init__(self, *args, **kwargs):
@@ -227,7 +227,7 @@ class Dialog(wx.Dialog):
 
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
-        # Translators: the lable of the OK button in a dialog
+        # Translators: the label of the OK button in a dialog
         okBtn = wx.Button(parent, wx.ID_OK, _("OK"))
         okBtn.SetDefault()
         # Translators: the lable of the cancel button in a dialog
@@ -268,10 +268,10 @@ class SimpleDialog(sc.SizedDialog):
 
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
-        # Translators: the lable of the OK button in a dialog
+        # Translators: the label of the OK button in a dialog
         okBtn = wx.Button(self, wx.ID_OK, _("OK"))
         okBtn.SetDefault()
-        # Translators: the lable of the cancel button in a dialog
+        # Translators: the label of the cancel button in a dialog
         cancelBtn = wx.Button(self, wx.ID_CANCEL, _("Cancel"))
         for btn in (okBtn, cancelBtn):
             btnsizer.AddButton(btn)

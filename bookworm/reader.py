@@ -131,7 +131,7 @@ class EBookReader:
         self.current_page = 0
         if config.conf["general"]["open_with_last_position"]:
             try:
-                log.debug("Retreving last saved reading position from the database")
+                log.debug("Retrieving last saved reading position from the database")
                 log.debug("Navigating to the last saved position.")
                 page_number, pos = self.stored_document_info.get_last_position()
                 self.go_to_page(page_number, pos)
@@ -156,7 +156,7 @@ class EBookReader:
                 self.document.close()
             except:
                 log.exception(
-                    "An exception was raised while closing the ebook", exc_info=True
+                    "An exception was raised while closing the eBook", exc_info=True
                 )
                 if app.debug:
                     raise

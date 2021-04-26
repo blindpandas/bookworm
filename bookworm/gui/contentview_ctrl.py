@@ -44,7 +44,7 @@ SEMANTIC_KEY_MAP = {ord(k): v for k, v in SEMANTIC_MAP.items()}
 class ContentViewCtrl(wx.TextCtrl):
     """
     Provides a unified method to capture context menu requests in TextCtrl's.
-    Also contains some work arounds.
+    Also contains some work around.
     """
 
     def __init__(self, *args, **kwargs):
@@ -64,7 +64,7 @@ class ContentViewCtrl(wx.TextCtrl):
         return (left, left + self.GetLineLength(lino))
 
     def TryBefore(self, event):
-        """Prehandling of events."""
+        """Pre-handling of events."""
         evtType = event.GetEventType()
         if evtType == wx.EVT_CONTEXT_MENU.typeId:
             wx.PostEvent(self, ContextMenuEvent(self.GetId(), fromMouse=False))
