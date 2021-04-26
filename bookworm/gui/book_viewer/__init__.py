@@ -439,7 +439,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             page_number = page.number
             if self.reader.document.uses_chapter_by_chapter_navigation_model():
                 # Translators: the label of the page content text area
-                label_msg = _("{chapter}")
+                label_msg = "{chapter}"
             else:
                 # Translators: the label of the page content text area
                 label_msg = _("Page {page} of {total} — {chapter}")

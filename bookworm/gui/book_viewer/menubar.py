@@ -55,15 +55,11 @@ ABOUT_APPLICATION = _(
     "{copyright}\n"
     "This software is offered to you under the terms of The MIT license.\n"
     "You can view the license text from the help menu.\n\n"
-    "As blind developers, our responsibility is to develop applications that provide independence for "
-    "us, and for our fellow blind friends all over the world. So, if you've found Bookworm useful "
-    "in any way, please help us in making Bookworm better for you and for others. At this initial "
-    "stage, we want you to tell us about any errors you may encounter during your use of Bookworm. "
-    "To do so, open a new issue with the details of the error at "
-    "the issue tracker (https://github.com/mush42/bookworm/issues/). "
-    "Your help is greatly appreciated."
-).format(**app.__dict__)
-
+)
+EXTRA_ABOUT_MESSAGE = "\n"
+EXTRA_ABOUT_MESSAGE += _(
+    "This release of Bookworm is generously sponsored  by Capeds (www.capeds.net)."
+)
 
 class BaseMenu(wx.Menu):
     def __init__(self, view, reader, *args, **kwargs):
@@ -701,7 +697,10 @@ class HelpMenu(BaseMenu):
 
     def onAbout(self, event):
         wx.MessageBox(
-            _(ABOUT_APPLICATION),
+            "{}\n{}".format(
+                _(ABOUT_APPLICATION).format(**app.__dict__),
+                _(EXTRA_ABOUT_MESSAGE)
+            ),
             # Translators: the title of the about dialog
             _("About {app_name}").format(app_name=app.display_name),
             parent=self.view,
