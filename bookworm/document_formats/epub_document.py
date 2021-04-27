@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import annotations
 from functools import cached_property, lru_cache
 from hashlib import md5
 from zipfile import ZipFile

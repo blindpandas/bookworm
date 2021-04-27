@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import annotations
 import zipfile
 import fitz
 import ftfy

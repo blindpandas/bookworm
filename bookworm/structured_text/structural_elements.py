@@ -2,6 +2,7 @@
 
 """Provides elements that help to define the structure for a blob of text."""
 
+from __future__ import annotations
 import re
 from itertools import chain
 from chemical import it, ChemicalException

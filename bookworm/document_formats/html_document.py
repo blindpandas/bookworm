@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import annotations
 import trafilatura
 import requests
 from pathlib import Path

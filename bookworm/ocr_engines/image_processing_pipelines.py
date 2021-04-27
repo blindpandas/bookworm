@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass, field
 from io import BytesIO

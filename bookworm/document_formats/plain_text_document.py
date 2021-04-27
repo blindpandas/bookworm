@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import annotations
 import os
 from functools import cached_property
 from io import StringIO

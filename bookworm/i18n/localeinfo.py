@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import annotations
 import locale
 from babel import UnknownLocaleError, Locale, parse_locale, default_locale
 from babel.dates import format_datetime as babel_format_datetime

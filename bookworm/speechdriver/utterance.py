@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import annotations
 from typing import Any, List
 from enum import IntEnum
 from dataclasses import dataclass, field

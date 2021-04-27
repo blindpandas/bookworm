@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import annotations
 import gc
 from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
@@ -57,7 +58,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def __contains__(self, value: int):
         return -1 < value < len(self)
 
-    def __getitem__(self, index: int) -> "BasePage":
+    def __getitem__(self, index: int) -> BasePage:
         return self.get_page(index)
 
     def __getstate__(self) -> dict:
@@ -97,7 +98,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         gc.collect()
 
     @abstractmethod
-    def get_page(self, index: int) -> "BasePage":
+    def get_page(self, index: int) -> BasePage:
         """Return the page object at index."""
 
     def get_page_number_from_page_label(self, page_label):

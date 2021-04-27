@@ -2,6 +2,7 @@
 
 """Provides primitives for structuring a blob of text."""
 
+from __future__ import annotations
 import bisect
 import operator
 from collections.abc import Container

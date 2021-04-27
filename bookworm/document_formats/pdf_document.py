@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import annotations
 import ftfy
 from functools import cached_property, lru_cache
 from pyxpdf import Document as XPdfDocument, Config as XPdfConfig

@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import annotations
 from dataclasses import dataclass, field
 from bookworm import typehints as t
 from bookworm.utils import NEWLINE

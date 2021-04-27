@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import annotations
 from mistune import markdown
 from bookworm.paths import home_data_path
 from bookworm.utils import generate_file_md5

@@ -2,6 +2,7 @@
 
 """Provides value objects that are building blocks for an e-book."""
 
+from __future__ import annotations
 from dataclasses import field, dataclass
 from collections.abc import Container, Iterable, Sequence, Sized
 from weakref import ref
@@ -109,7 +110,7 @@ class Section:
         for child in self.children:
             child.parent = self
 
-    def __getitem__(self, index: int) -> "Section":
+    def __getitem__(self, index: int) -> Section:
         return self.children[index]
 
     def __len__(self):
@@ -128,12 +129,12 @@ class Section:
         child.parent = self
         self.children.append(child)
 
-    def iter_children(self) -> t.Iterable["Section"]:
+    def iter_children(self) -> t.Iterable[Section]:
         for child in self.children:
             yield child
             yield from child.iter_children()
 
-    def iter_pages(self) -> t.Iterable["BasePage"]:
+    def iter_pages(self) -> t.Iterable[BasePage]:
         document = self.documentref()
         if document is not None:
             for index in self.pager:
@@ -150,17 +151,17 @@ class Section:
         return bool(self)
 
     @property
-    def first_child(self) -> t.Optional["Section"]:
+    def first_child(self) -> t.Optional[Section]:
         if self:
             return self[0]
 
     @property
-    def last_child(self) -> t.Optional["Section"]:
+    def last_child(self) -> t.Optional[Section]:
         if self:
             return self[-1]
 
     @property
-    def next_sibling(self) -> t.Optional["Section"]:
+    def next_sibling(self) -> t.Optional[Section]:
         if self.is_root:
             return
         next_index = self.parent.children.index(self) + 1
@@ -168,7 +169,7 @@ class Section:
             return self.parent[next_index]
 
     @property
-    def prev_sibling(self) -> t.Optional["Section"]:
+    def prev_sibling(self) -> t.Optional[Section]:
         if self.is_root:
             return
         prev_index = self.parent.children.index(self) - 1
@@ -176,14 +177,14 @@ class Section:
             return self.parent[prev_index]
 
     @property
-    def simple_next(self) -> t.Optional["Section"]:
+    def simple_next(self) -> t.Optional[Section]:
         if self.next_sibling is not None:
             return self.next_sibling
         elif self.parent:
             return self.parent.simple_next
 
     @property
-    def simple_prev(self) -> t.Optional["Section"]:
+    def simple_prev(self) -> t.Optional[Section]:
         if self.prev_sibling is not None:
             return self.prev_sibling
         elif self.parent:

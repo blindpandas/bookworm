@@ -56,10 +56,10 @@ ABOUT_APPLICATION = _(
     "This software is offered to you under the terms of The MIT license.\n"
     "You can view the license text from the help menu.\n\n"
 )
-EXTRA_ABOUT_MESSAGE = "\n"
-EXTRA_ABOUT_MESSAGE += _(
+EXTRA_ABOUT_MESSAGE = _(
     "This release of Bookworm is generously sponsored  by Capeds (www.capeds.net)."
 )
+
 
 class BaseMenu(wx.Menu):
     def __init__(self, view, reader, *args, **kwargs):

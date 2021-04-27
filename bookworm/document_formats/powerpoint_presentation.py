@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import annotations
 import pptx
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.enum.shapes import PP_PLACEHOLDER
