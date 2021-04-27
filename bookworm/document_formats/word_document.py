@@ -67,11 +67,12 @@ class WordDocument(DummyDocument):
         doc_author = escape_html(props.author or "")
         return NEWLINE.join(
             [
-                "<!doctype html>",
-                "<html><head>",
-                '<meta charset="utf-8" />',
-                f'<meta name="author" content="{doc_author}">',
-                f"<title>{escape_html(doc_title)}<title>",
+                "<!DOCTYPE html>",
+                "<html>",
+                "<head>",
+                '<meta charset="utf-8"/>',
+                f'<meta name="author" content="{doc_author}"/>',
+                f"<title>{escape_html(doc_title)}</title>",
                 "</head>",
                 html_string,
                 "</html>",

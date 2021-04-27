@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 import re
+import ftfy
 from functools import cached_property
 from itertools import chain
 from uritools import isuri
 from lxml import html as html_parser
+from selectolax.parser import HTMLParser
 from inscriptis import Inscriptis
 from inscriptis.model.config import ParserConfig
 from bookworm import typehints as t
@@ -18,7 +20,15 @@ from bookworm.structured_text import (
 
 
 log = logger.getChild(__name__)
+MAX_DECODE_LENGTH = int(5e6)
 RE_STRIP_XML_DECLARATION = re.compile(r"^<\?xml [^>]+?\?>")
+TAGS_TO_STRIP = [
+    "form", "input", "button",
+    "select", "fieldset", "legend",
+    "strong", "small", "link",
+    "span", "b", "i",
+    "img", "sub", "sup",
+]
 InscriptisConfig = ParserConfig(
     display_images=True,
 )
@@ -63,6 +73,21 @@ class StructuredHtmlParser(Inscriptis):
     SEMANTIC_TAG_MAP = {t: k for k, v in SEMANTIC_HTML_ELEMENTS.items() for t in v}
     STYLE_TAG_MAP = {t: k for k, v in STYLE_HTML_ELEMENTS.items() for t in v}
 
+    @staticmethod
+    def normalize_html(html_string):
+        html_string = ftfy.fix_text(
+            html_string,
+            normalization="NFKC",
+            fix_entities=False,
+            fix_line_breaks=True,
+            max_decode_length=MAX_DECODE_LENGTH
+        )
+        if len(html_string) > 10000:
+            parsed = HTMLParser(html_string)
+            parsed.unwrap_tags(TAGS_TO_STRIP)
+            html_string = parsed.html
+        return html_string
+
     def __init__(self, *args, **kwargs):
         self.semantic_elements = {}
         self.styled_elements = {}
@@ -82,6 +107,7 @@ class StructuredHtmlParser(Inscriptis):
         # strip XML declaration, if necessary
         if html_content.startswith("<?xml "):
             html_content = RE_STRIP_XML_DECLARATION.sub("", html_content, count=1)
+        html_content = cls.normalize_html(html_content)
         return cls(html_parser.fromstring(html_content))
 
     def _parse_html_tree(self, tree):

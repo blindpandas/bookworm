@@ -206,7 +206,7 @@ class FileSystemHtmlDocument(BaseHtmlDocument):
 
     def get_html(self):
         with open(self.filename, "r", encoding="utf8") as file:
-            return file.read()
+            return StructuredHtmlParser.normalize_html(file.read())
 
     def read(self):
         self.filename = self.get_file_system_path()
