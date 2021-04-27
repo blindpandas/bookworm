@@ -4,6 +4,7 @@ from __future__ import annotations
 import mammoth
 from docx import Document as DocxDocumentReader
 from pathlib import Path
+from selectolax.parser import HTMLParser
 from bookworm.paths import home_data_path
 from bookworm.concurrency import process_worker
 from bookworm.utils import generate_file_md5, escape_html, NEWLINE
@@ -19,6 +20,8 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
+TAGS_TO_UNWRAP = ['a', 'b', 'i', 'sub', ]
+TAGS_TO_REMOVE = ["img", "style",]
 
 
 class WordDocument(DummyDocument):
@@ -31,7 +34,7 @@ class WordDocument(DummyDocument):
 
     def read(self):
         docx_file_path = self.get_file_system_path()
-        converted_file = self.get_converted_filename(docx_file_path)
+        converted_file = process_worker.submit(self.get_converted_filename, docx_file_path).result()
         raise ChangeDocument(
             old_uri=self.uri,
             new_uri=DocumentUri.from_filename(converted_file),
@@ -52,6 +55,10 @@ class WordDocument(DummyDocument):
 
     @classmethod
     def make_proper_html(cls, html_string, docx_file_path):
+        parsed = HTMLParser(html_string)
+        parsed.body.unwrap_tags(TAGS_TO_UNWRAP)
+        parsed.strip_tags(TAGS_TO_REMOVE)
+        html_string = parsed.body.html
         docx = DocxDocumentReader(docx_file_path)
         props = docx.core_properties
         doc_title = props.title.strip()
@@ -65,8 +72,8 @@ class WordDocument(DummyDocument):
                 '<meta charset="utf-8" />',
                 f'<meta name="author" content="{doc_author}">',
                 f"<title>{escape_html(doc_title)}<title>",
-                "</head><body>",
+                "</head>",
                 html_string,
-                "</body></html>",
+                "</html>",
             ]
         )

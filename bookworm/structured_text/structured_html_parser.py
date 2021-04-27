@@ -8,7 +8,6 @@ from uritools import isuri
 from lxml import html as html_parser
 from inscriptis import Inscriptis
 from inscriptis.model.config import ParserConfig
-from ftfy import fix_text
 from bookworm import typehints as t
 from bookworm.utils import remove_excess_blank_lines
 from bookworm.logger import logger
@@ -95,7 +94,7 @@ class StructuredHtmlParser(Inscriptis):
             self.record_tag_info(tag, text_start_pos, text_end_pos)
 
     def get_text(self):
-        text = fix_text(super().get_text(), normalization="NFKC")
+        text = super().get_text()
         return remove_excess_blank_lines(text)
 
     def record_tag_info(self, tag, start_pos, end_pos):
