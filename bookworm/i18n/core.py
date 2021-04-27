@@ -43,7 +43,7 @@ def get_available_locales(force_update=False):
             locales.append(localeinfo)
         except ValueError:
             continue
-    if not any(l.two_letter_language_code == "en"  for l in locales):
+    if not any(l.two_letter_language_code == "en" for l in locales):
         locales.append(LocaleInfo("en"))
     _AVAILABLE_LOCALES = {loc.pylang: loc for loc in locales}
     user_locale = get_user_locale()
@@ -73,8 +73,7 @@ def set_locale(locale_identifier):
         translation.install(names=["ngettext"])
         os.environ["LANG"] = localeinfo.pylang
         pylocale.setlocale(
-            pylocale.LC_ALL,
-            (localeinfo.two_letter_language_code, "utf-8")
+            pylocale.LC_ALL, (localeinfo.two_letter_language_code, "utf-8")
         )
         _set_app_locale(localeinfo)
         app.current_language = localeinfo
@@ -84,10 +83,7 @@ def set_locale(locale_identifier):
                 f"An error was occured while initializing i18n system.", exc_info=True
             )
         os.environ["LANG"] = "en"
-        pylocale.setlocale(
-            pylocale.LC_ALL,
-            ("en", "utf-8")
-        )
+        pylocale.setlocale(pylocale.LC_ALL, ("en", "utf-8"))
         _set_app_locale(LocaleInfo("en"))
         app.current_language = get_available_locales()["en"]
 

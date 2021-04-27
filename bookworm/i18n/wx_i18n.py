@@ -25,7 +25,7 @@ def set_wx_locale(current_locale):
     wx_language = first_true(
         possible_locales,
         pred=lambda lc: lc is not None and wx.Locale.IsAvailable(lc.Language),
-        default=None
+        default=None,
     )
     if wx_language is None:
         log.exception(

@@ -20,8 +20,13 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
-TAGS_TO_UNWRAP = ['a', 'b', 'i', 'sub', ]
-TAGS_TO_REMOVE = ["img", "style",]
+TAGS_TO_UNWRAP = [
+    "a",
+]
+TAGS_TO_REMOVE = [
+    "img",
+    "style",
+]
 
 
 class WordDocument(DummyDocument):
@@ -34,7 +39,9 @@ class WordDocument(DummyDocument):
 
     def read(self):
         docx_file_path = self.get_file_system_path()
-        converted_file = process_worker.submit(self.get_converted_filename, docx_file_path).result()
+        converted_file = process_worker.submit(
+            self.get_converted_filename, docx_file_path
+        ).result()
         raise ChangeDocument(
             old_uri=self.uri,
             new_uri=DocumentUri.from_filename(converted_file),

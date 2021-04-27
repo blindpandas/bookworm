@@ -250,7 +250,9 @@ class FileMenu(BaseMenu):
             progress_dlg.Update(
                 progress,
                 # Translators: a message shown when the book is being exported
-                _("Exporting Page {current} of {total}...").format(current=progress + 1, total=total),
+                _("Exporting Page {current} of {total}...").format(
+                    current=progress + 1, total=total
+                ),
             )
         progress_dlg.Dismiss()
 
@@ -698,8 +700,7 @@ class HelpMenu(BaseMenu):
     def onAbout(self, event):
         wx.MessageBox(
             "{}\n{}".format(
-                _(ABOUT_APPLICATION).format(**app.__dict__),
-                _(EXTRA_ABOUT_MESSAGE)
+                _(ABOUT_APPLICATION).format(**app.__dict__), _(EXTRA_ABOUT_MESSAGE)
             ),
             # Translators: the title of the about dialog
             _("About {app_name}").format(app_name=app.display_name),
@@ -817,7 +818,6 @@ class MenubarProvider:
         allfiles = ";".join(all_exts)
         allfiles_display = " ".join(e for e in all_exts)
         rv.insert(
-            0,
-            _("Supported document formats") + f" ({allfiles_display})|{allfiles}|"
+            0, _("Supported document formats") + f" ({allfiles_display})|{allfiles}|"
         )
         return "".join(rv)

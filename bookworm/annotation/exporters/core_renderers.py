@@ -21,7 +21,9 @@ class PlainTextRenderer(TextRenderer):
             self.output.write(self.book)
             self.add_newline()
         if self.section:
-            self.output.write(_("Section: {section_title}").format(section_title=self.section))
+            self.output.write(
+                _("Section: {section_title}").format(section_title=self.section)
+            )
             self.add_newline()
         if self.tag:
             # Translators: written to output document when exporting files
@@ -82,7 +84,9 @@ class MarkdownRenderer(TextRenderer):
             self.output.write(f"# {self.book}")
             self.add_newline()
         if self.section:
-            self.output.write("## " + _("Section: {section_title}").format(section_title=self.section))
+            self.output.write(
+                "## " + _("Section: {section_title}").format(section_title=self.section)
+            )
             self.add_newline()
         if self.tag:
             self.output.write("## " + _("Tagged: {tags}").format(tags=self.tag))

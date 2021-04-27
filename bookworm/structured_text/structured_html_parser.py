@@ -23,11 +23,21 @@ log = logger.getChild(__name__)
 MAX_DECODE_LENGTH = int(5e6)
 RE_STRIP_XML_DECLARATION = re.compile(r"^<\?xml [^>]+?\?>")
 TAGS_TO_STRIP = [
-    "form", "input", "button",
-    "select", "fieldset", "legend",
-    "strong", "small", "link",
-    "span", "b", "i",
-    "img", "sub", "sup",
+    "form",
+    "input",
+    "button",
+    "select",
+    "fieldset",
+    "legend",
+    "strong",
+    "small",
+    "link",
+    "span",
+    "b",
+    "i",
+    "img",
+    "sub",
+    "sup",
 ]
 InscriptisConfig = ParserConfig(
     display_images=True,
@@ -80,7 +90,7 @@ class StructuredHtmlParser(Inscriptis):
             normalization="NFKC",
             fix_entities=False,
             fix_line_breaks=True,
-            max_decode_length=MAX_DECODE_LENGTH
+            max_decode_length=MAX_DECODE_LENGTH,
         )
         if len(html_string) > 10000:
             parsed = HTMLParser(html_string)
