@@ -20,7 +20,8 @@ from bookworm.structured_text import (
 
 
 log = logger.getChild(__name__)
-INSCRIPTIS_PARSE_FUNC = Inscriptis._parse_html_tree
+INSCRIPTIS_PARSE_HTML_TREE = Inscriptis._parse_html_tree
+INSCRIPTIS_GET_TEXT = Inscriptis.get_text
 MAX_DECODE_LENGTH = int(5e6)
 RE_STRIP_XML_DECLARATION = re.compile(r"^<\?xml [^>]+?\?>")
 TAGS_TO_STRIP = [
@@ -123,14 +124,13 @@ class StructuredHtmlParser(Inscriptis):
         return cls(html_parser.fromstring(html_content))
 
     def get_text(self):
-        text = super().get_text()
-        return remove_excess_blank_lines(text)
+        return remove_excess_blank_lines(INSCRIPTIS_GET_TEXT(self))
 
     def _parse_html_tree(self, tree):
         if (tag := tree.tag) not in self.tags_of_interest:
-            return INSCRIPTIS_PARSE_FUNC(self, tree)
+            return INSCRIPTIS_PARSE_HTML_TREE(self, tree)
         start_pos = len(self.get_text())
-        INSCRIPTIS_PARSE_FUNC(self, tree)
+        INSCRIPTIS_PARSE_HTML_TREE(self, tree)
         stop_pos = len(self.get_text())
         if start_pos != stop_pos:
             if (element_type := self.SEMANTIC_TAG_MAP.get(tag)) :
