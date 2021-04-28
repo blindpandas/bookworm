@@ -1,10 +1,11 @@
 # coding: utf-8
 
 from __future__ import annotations
-from typing import Any, List
+from typing import get_type_hints
 from enum import IntEnum
 from dataclasses import dataclass, field
 from contextlib import contextmanager
+from bookworm import typehints as t
 from bookworm.logger import logger
 from .enumerations import SpeechElementKind, EmphSpec, VolumeSpec, RateSpec, PauseSpec
 
@@ -29,9 +30,17 @@ class SpeechStyle:
     """Voice volume."""
 
     def __post_init__(self):
-        for varname, vartype in self.__annotations__.items():
-            if not issubclass(vartype, IntEnum):
-                continue
+        field_info = (
+            (field_name, field_type)
+            for field_name, field_type
+            in get_type_hints(
+                self,
+                globalns=globals(),
+                localns=locals()
+            ).items()
+            if not issubclass(field_type, IntEnum)
+        )
+        for varname, vartype in field_info:
             varvalue = getattr(self, varname)
             if varvalue is not None and not isinstance(varvalue, vartype):
                 raise TypeError(f"{varname} must be of type {vartype}")
@@ -40,7 +49,7 @@ class SpeechStyle:
 @dataclass(frozen=True)
 class SpeechElement:
     kind: SpeechElementKind
-    content: Any
+    content: t.Any
     # A template for SSML content
     EMPTY_SSML = '<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en"></speak>'
 
@@ -50,7 +59,7 @@ class SpeechUtterance:
     """A blueprint for speaking some content."""
 
     priority: int = 0
-    speech_sequence: List[SpeechElement] = field(default_factory=list, compare=False)
+    speech_sequence: list[SpeechElement] = field(default_factory=list, compare=False)
 
     def add_text(self, text):
         """Append textual content."""
