@@ -145,7 +145,7 @@ class ResourceLoader:
                 _("Error Openning Document"),
                 # Translators: the content of an error message
                 _(
-                    "Could not open document\n."
+                    "Could not open document.\n"
                     "An unknown error occurred while loading the file."
                 ),
                 icon=wx.ICON_ERROR,
