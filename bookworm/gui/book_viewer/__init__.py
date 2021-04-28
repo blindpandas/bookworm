@@ -307,18 +307,13 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             # Translators: the label of a button in the application toolbar
             (10, "search", _("Search"), wx.ID_FIND),
             # Translators: the label of a button in the application toolbar
-            (20, "goto", _("Go"), BookRelatedMenuIds.goToPage),
-            # Translators: the label of a button in the application toolbar
-            (30, "view_image", _("View"), BookRelatedMenuIds.viewRenderedAsImage),
-            (31, "reading_mode", _("Mode"), BookRelatedMenuIds.changeReadingMode),
+            (20, "reading_mode", _("Mode"), BookRelatedMenuIds.changeReadingMode),
             (32, "", "", None),
             # Translators: the label of a button in the application toolbar
             (60, "zoom_out", _("Big"), wx.ID_PREVIEW_ZOOM_OUT),
             # Translators: the label of a button in the application toolbar
             (70, "zoom_in", _("Small"), wx.ID_PREVIEW_ZOOM_IN),
             (71, "", "", None),
-            # Translators: the label of a button in the application toolbar
-            (80, "settings", _("Settings"), wx.ID_PREFERENCES),
         ]
         tool_info.extend(wx.GetApp().service_handler.get_toolbar_items())
         tool_info.sort()

@@ -33,6 +33,7 @@ TAGS_TO_STRIP = [
     "small",
     "link",
     "span",
+    "emph",
     "b",
     "i",
     "img",
