@@ -218,9 +218,7 @@ class TextToSpeechService(BookwormService):
         if page_is_the_last_of_its_section:
             self.configure_end_of_section_utterance(utterance, page.section)
         else:
-            utterance.add_text(".")
             utterance.add_pause(self.config_manager["end_of_page_pause"])
-        utterance.add_text(".")
         utterance.add_bookmark(
             self.encode_bookmark(
                 {
@@ -229,7 +227,6 @@ class TextToSpeechService(BookwormService):
                 }
             )
         )
-        utterance.add_text(".")
         utterance.add_bookmark(self.encode_bookmark({"t": UT_SECTION_END}))
 
     def configure_end_of_section_utterance(self, utterance, section):
