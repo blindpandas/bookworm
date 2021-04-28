@@ -3,6 +3,7 @@
 """Provides primitives for structuring a blob of text."""
 
 from __future__ import annotations
+import math
 import bisect
 import operator
 from collections.abc import Container
@@ -28,6 +29,10 @@ class TextRange(Container):
 
     def __repr__(self):
         return f"TextRange(start={self.start}, stop={self.stop})"
+
+    @cached_property
+    def midrange(self):
+        return math.floor((self.start + self.stop)/2)
 
     def operator_imp(self, other, operator_func):
         if isinstance(other, self.__class__):

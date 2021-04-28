@@ -20,6 +20,7 @@ from bookworm.structured_text import (
 
 
 log = logger.getChild(__name__)
+INSCRIPTIS_PARSE_FUNC = Inscriptis._parse_html_tree
 MAX_DECODE_LENGTH = int(5e6)
 RE_STRIP_XML_DECLARATION = re.compile(r"^<\?xml [^>]+?\?>")
 TAGS_TO_STRIP = [
@@ -121,25 +122,18 @@ class StructuredHtmlParser(Inscriptis):
         html_content = cls.normalize_html(html_content)
         return cls(html_parser.fromstring(html_content))
 
-    def _parse_html_tree(self, tree):
-        if (tag := tree.tag) not in self.tags_of_interest:
-            return super()._parse_html_tree(tree)
-        text_start_pos = len(self.get_text())
-        super()._parse_html_tree(tree)
-        text_end_pos = len(self.get_text())
-        if text_start_pos != text_end_pos:
-            self.record_tag_info(tag, text_start_pos, text_end_pos)
-
     def get_text(self):
         text = super().get_text()
         return remove_excess_blank_lines(text)
 
-    def record_tag_info(self, tag, start_pos, end_pos):
-        if (element_type := self.SEMANTIC_TAG_MAP.get(tag)) :
-            self.semantic_elements.setdefault(element_type, []).append(
-                (start_pos, end_pos)
-            )
-        if (element_type := self.STYLE_TAG_MAP.get(tag)) :
-            self.styled_elements.setdefault(element_type, []).append(
-                (start_pos, end_pos)
-            )
+    def _parse_html_tree(self, tree):
+        if (tag := tree.tag) not in self.tags_of_interest:
+            return INSCRIPTIS_PARSE_FUNC(self, tree)
+        start_pos = len(self.get_text())
+        INSCRIPTIS_PARSE_FUNC(self, tree)
+        stop_pos = len(self.get_text())
+        if start_pos != stop_pos:
+            if (element_type := self.SEMANTIC_TAG_MAP.get(tag)) :
+                self.semantic_elements.setdefault(element_type, []).append(
+                    (start_pos, stop_pos)
+                )
