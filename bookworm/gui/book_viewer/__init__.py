@@ -507,7 +507,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 self,
                 position=start,
                 element_type=actual_element_type,
-                element_label=element_label,
+                element_label=_(element_label),
             )
         else:
             element_label = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[element_type][0]
