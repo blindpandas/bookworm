@@ -285,7 +285,7 @@ class TextToSpeechService(BookwormService):
                     text_pos = sum(text_range.as_tuple()) / 2
                     sect = self.reader.document.get_section_at_position(text_pos)
                     if _last_known_section != sect:
-                        if _last_known_section is not None:
+                        if (_last_known_section is not None) and (sect.parent is not _last_known_section):
                             self.configure_end_of_section_utterance(
                                 utterance, sect.simple_prev
                             )
