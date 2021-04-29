@@ -12,7 +12,7 @@ author = "Blind Pandas"
 author_email = "info@blindpandas.com"
 version = "0.4b1"
 version_ex = "0.4.0.1"
-url = "https://github.com/blindpandas/bookworm"
+zurl = "https://github.com/blindpandas/bookworm"
 website = "https://blindpandas.com/bookworm/"
 update_url = "https://blindpandas.com/bookworm/current_version.json"
 copyright = f"Copyright (c) 2021 {author} and {display_name} contributors."
@@ -36,6 +36,12 @@ VERSION_PATTERN = r"""
             (?P<pre_type>(a|b|rc))
             [-_\.]?
             (?P<pre_number>[0-9]+)?
+        )?
+        (?P<post>
+            [-_\.]?
+            (?P<post_type>(post))
+            [-_\.]?
+            (?P<post_number>[0-9]+)?
         )?
     )
 """
