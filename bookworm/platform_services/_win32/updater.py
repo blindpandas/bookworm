@@ -54,8 +54,8 @@ def perform_update(upstream_version_info):
         _(
             "A new update for Bookworm has been released.\n"
             "Would you like to download and install it?\n"
-            "\tInstalled Version: {current}\n"
-            "\tNew Version: {new}\n"
+            "Installed Version: {current}\n"
+            "New Version: {new}\n"
         ).format(current=app.version, new=upstream_version_info.version),
         # Translators: the title of a message indicating the availability of an update
         _("Bookworm Update"),
