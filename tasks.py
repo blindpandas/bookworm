@@ -416,14 +416,19 @@ def bundle_update(c):
     if sys.platform != "win32":
         print("Update bundles are only supported for Windows. Skipping...")
         return
+    from bookworm import app
     from bookworm.utils import recursively_iterdir
 
     env = os.environ
     frozen_dir = Path(env["IAPP_FROZEN_DIRECTORY"])
+    if app.get_version_info()["post"] is None:
+        files_to_bundle = recursively_iterdir(frozen_dir)
+    else:
+        files_to_bundle = [frozen_dir / "Bookworm.exe",]
     fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-{env['IAPP_ARCH']}-update.bundle"
     bundle_file = PROJECT_ROOT / "scripts" / fname
     with ZipFile(bundle_file, "w", compression=ZIP_LZMA, allowZip64=False) as archive:
-        for file in recursively_iterdir(frozen_dir):
+        for file in files_to_bundle:
             archive.write(file, file.relative_to(frozen_dir))
         archive.write(
             PROJECT_ROOT / "scripts" / "executables" / "bootstrap.exe", "bootstrap.exe"
