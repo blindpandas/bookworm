@@ -98,7 +98,7 @@ class EpubPage(BasePage):
         else:
             filename = splitdata[0]
             html_id = ""
-        if (anchor_info := self.document._split_section_content.get(filename, None)) :
+        if (anchor_info := self.document._split_section_content.get(filename)) :
             try:
                 return anchor_info[html_id]
             except KeyError:
@@ -106,8 +106,11 @@ class EpubPage(BasePage):
                     f"Could not get content for {html_id=} from parsed {filename=} with {href=}"
                 )
                 return ""
-        self.parse_split_chapter(href)
-        return self._get_split_section_text(href)
+        if self._get_proper_filename(filename) is not None:
+            self.parse_split_chapter(href)
+            return self._get_split_section_text(href)
+        else:
+            return ""
 
     def _get_html_with_href(self, href):
         if (filename := self._get_proper_filename(href)) :
