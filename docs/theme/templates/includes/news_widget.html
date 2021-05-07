@@ -1,0 +1,31 @@
+<div class="container-fluid">
+  <div class="row p-1 p-md-2">
+    <div class="col-md-4 col-sm-12 offset-md-1">
+      <h3 class="h2 font-weight-light mt-5 mb-3">Latest News</h3>
+      <ul class="list-unstyled m-1 m-md-3">
+      {% for article in dates[:10]| selectattr("category", "eq", "news") %}
+      <li class="media">
+        {% if article.image %}
+        <img src="{{ article.image }}" class="mr-3 news-image" alt="">
+        {% else %}
+        <p class="mr-3 news-image">
+          <span class="fa-stack fa-2x">
+            <i class="fas fa-circle fa-stack-2x text-secondary"></i>
+            <i class="fas fa-newspaper fa-stack-1x text-light"></i>
+          </span>
+        </p>
+        {% endif %}
+        <div class="media-body">
+          <a href="{{ article.url }}"><h5 class="mt-0 mb-1">{{ article.title }}</h5></a>
+          <p class="m-2">{{ article.summary }}</p>
+        </div>
+        </li>
+      {% endfor %}
+      </ul>
+    </div>
+    <div class="col-md-5 offset-md-1">
+    <h3 class="h2 font-weight-light mt-6 mb-3">Latest Tweets</h3>
+    <a class="twitter-timeline" data-width="{{ TWITTER_EMBED_WIDTH }}" data-height="{{ TWITTER_EMBED_HEIGHT }}" href="https://twitter.com/{{ TWITTER_USER }}?ref_src=twsrc%5Etfw">{{ TWITTER_EMBED_TITLE }}</a>
+    </div>
+  </div>
+</div>

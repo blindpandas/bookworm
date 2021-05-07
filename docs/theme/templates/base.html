@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="{{ DEFAULT_LANG }}">
+    <head>
+        {% block head %}
+
+        {% block head_meta %}
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1.0, user-scalable=0">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="referrer" content="origin" />
+        {% block canonical_url %}
+        <link href="{{ SITEURL }}/" rel="canonical" />
+        {% endblock canonical_url %}
+        {% if SITE_DESCRIPTION %}
+        <meta name="description" content="{{SITE_DESCRIPTION}}" />
+        {% endif %}
+        {% endblock head_meta %}
+
+        {% block og %}
+        {% include "includes/og.html" %}
+        {% endblock og %}
+
+        <title>
+        {%- block title %}{{ SITENAME }}
+        {% if SITESUBTITLE and SHOW_SITESUBTITLE_IN_HTML %} - {{ SITESUBTITLE }}{% endif %}
+        {% endblock title -%}
+        </title>
+
+        {% block favicon %}
+        {% include "includes/favicon.html" %}
+        {% endblock favicon %}
+        
+        {% block css %}
+        {% include "includes/css.html" %}
+        {% endblock css %}
+
+    {% endblock head %}
+    </head>
+    <body class="{%block body_class %}""{% endblock body_class %}">
+    {% block html_body %}
+    
+    {% block page_header %}
+    {% include "includes/navigation.html" %}
+    {% endblock page_header %}
+
+    <main id="main">
+    {% block content %}{% endblock content %}
+    </main>
+
+    {% block footer %}
+    {% include "includes/footer.html" %}
+    {% endblock footer %}
+
+    {% endblock html_body %}
+
+    {%block js %}
+    {% include "includes/js.html" %}
+    {% endblock js %}
+
+    </body>
+</html>

@@ -1,0 +1,34 @@
+{# <!-- Choosing locale --> #}
+{% if OG_LOCALE %}
+  {% set default_locale = OG_LOCALE %}
+{% else %}
+  {% set default_locale = 'en_US' %}
+{% endif %}
+
+{# <!-- Choosing description --> #}
+{% if SITESUBTITLE %}
+    {% set description = SITESUBTITLE %}
+{% else %}
+    {% set description = SITENAME %}
+{% endif %}
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="{{ SITENAME }}"/>
+<meta property="og:type" content="website" "/>
+<meta property="og:title" content="{{ SITENAME }}"/>
+<meta property="og:description" content="{{ description }}"/>
+<meta property="og:locale" content="{{ default_locale }}"/>
+<meta property="og:url" content="{{ SITEURL }}/"/>
+<meta property="og:image" content="{{ SITEURL }}/static/images/logo256x256.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="256" />
+<meta property="og:image:height" content="256" />
+<meta property="og:image:alt" content="The logo of blind pandas: an image of a panda in a circle" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@{{ TWITTER_USER }}">
+<meta name="twitter:title" content="{{ SITENAME }}">
+<meta name="twitter:description" content="{{ description}}">
+<meta name="twitter:url" content="{{ SITEURL }}/">
+<meta name="twitter:image:src" content="{{ SITEURL }}/static/images/logo256x256.png">

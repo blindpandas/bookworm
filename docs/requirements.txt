@@ -1,0 +1,9 @@
+django-htmlmin==0.11.0
+ghp-import==1.0.0
+invoke==1.4.1
+livereload==2.6.3
+markdown==3.3.3
+pelican==4.6.0
+pelican-seo==1.0.0
+Pillow==8.0.1
+PyYAML==5.4.1

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+{% include "includes/navigation.html" %}
+{% endblock page_header %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-md-center mt-md-4">
+    <div class="col-sm-9 col-md-6 my-1">
+      <h2 class="m-1 pt-3 p-md-4">
+      {% block listing_title %}{% endblock %}
+      </h2>
+      {% with posts = dates %}
+      {% include "includes/post_listing.html" with context %}
+      {% endwith %}
+      <hr />
+      {% include "includes/pagination.html" with context %}
+    </div>
+    <div class="col-sm-3 mx-1 my-2">
+      <h3>Categories</h3>
+      <ul class="list-group mb-2 mb-md-3">
+        {% for category, cat_articles in categories %}
+        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+          <a href="{{ SITEURL }}/{{ category.url }}">
+            {{ category }}
+            <span class="badge badge-primary badge-pill">{{ cat_articles|count }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      <h3>Tags</h3>
+      <ul class="list-group mb-2 mb-md-3">
+        {% for tag, tag_articles in tags %}
+        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+          <a href="{{ SITEURL }}/{{ tag.url }}">
+            {{ tag }}
+            <span class="badge badge-primary badge-pill">{{ tag_articles|count }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

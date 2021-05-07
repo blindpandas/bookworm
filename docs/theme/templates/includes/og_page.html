@@ -1,0 +1,50 @@
+{# <!-- Choosing locale --> #}
+{% if page.lang %}
+  {% set default_locale = page.lang %}
+{% elif OG_LOCALE %}
+  {% set default_locale = OG_LOCALE %}
+{% else %}
+  {% set default_locale = 'en_US' %}
+{% endif %}
+
+{# <!-- Choosing cover image --> #}
+{% if page.og_image %}
+    {% if page.og_image|lower|truncate(4, True, '') == "http" %}
+        {% set default_cover = page.og_image %}
+    {% else %}
+        {% set default_cover = SITEURL+"/"+page.og_image %}
+    {% endif %}
+{% elif page.cover %}
+    {% if page.cover|lower|truncate(4, True, '') == "http" %}
+        {% set default_cover = page.cover %}
+    {% else %}
+        {% set default_cover = SITEURL+"/"+page.cover %}
+    {% endif %}
+{% elif HEADER_COVER %}
+  {% set default_cover = SITEURL+"/"+HEADER_COVER %}
+{% else %}
+  {% set default_cover = SITEURL+"/"+THEME_STATIC_DIR+"/images/page-bg.jpg" %}
+{% endif %}
+
+{# <!-- Choosing description --> #}
+{% if page.headline %}
+    {% set description = page.headline %}
+{% elif page.summary %}
+    {% set description = page.summary|striptags|truncate(140) %}
+{% endif %}
+
+<meta property="og:site_name" content="{{ SITENAME }}"/>
+<meta property="og:title" content="{{ page.title|striptags }}"/>
+<meta property="og:description" content="{{ description }}"/>
+<meta property="og:locale" content="{{ page.metadata.get('og_locale', default_locale) }}"/>
+<meta property="og:url" content="{{ SITEURL }}/{{ page.url }}"/>
+<meta property="og:type" content="website"/>
+<meta property="og:image" content="{{ default_cover }}">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@{{ TWITTER_USER }}">
+<meta name="twitter:title" content="{{ page.title }}">
+<meta name="twitter:description" content="{{ description}}">
+<meta name="twitter:url" content="{{ SITEURL }}/">
+<meta name="twitter:image:src" content="{{ default_cover }}">

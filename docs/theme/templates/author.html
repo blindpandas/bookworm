@@ -1,0 +1,9 @@
+{% extends "listing.html" %}
+
+{% block title %}
+Posts by {{ author }} · {{ SITENAME }} Blog
+{% endblock %}
+
+{% block listing_title %}
+Posts by <span class="text-muted">{{ author }}</span>
+{% endblock listing_title %}

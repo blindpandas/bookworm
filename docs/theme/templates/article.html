@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ article.title }} · {{ SITENAME }} Blog
+{% endblock %}
+
+{% block og %}
+  {% include "includes/og_article.html" %}
+{% endblock og %}
+
+{% block css %}
+  {{ super() }}
+<link rel="stylesheet" href="/{{ THEME_STATIC_DIR }}/css/blog_post.css">
+{% endblock %}
+
+
+{% block page_header %}
+{% include "includes/navigation.html" %}
+{% endblock page_header %}
+
+{% block content %}
+{% set author_info = AUTHORS.get(article.author |string) %}
+<article>
+  <!-- Page Header-->
+  <header class="mt-4">
+      <div class="container">
+          <div class="row">
+              <div class="col-lg-8 col-md-10 mx-auto">
+                  <div class="post-heading">
+                      <h1 class="pt-3 text-primary">{{ article.title }}</h1>
+                      <aside>
+                      <span class="meta">
+                          Posted by
+                          <a href="{{ SITEURL }}/{{ article.author.url }}">{{ author_info.display }}</a>
+                          on <time datetime="{{ article.date.isoformat() }}">{{ article.locale_date }}</time>
+                      </span>
+                      {% include "includes/article_share.html" with context %}
+                  </aside>
+                </div>
+              </div>
+          </div>
+      </div>
+  </header>
+  <!-- Post Content-->
+  <div class="article-post">
+      <div class="container">
+          <div class="row">
+              <div class="col-lg-8 col-md-10 mx-auto">
+              {% if article.cover %}
+                <img class"img-fluid mx-auto" src="{{ SITEURL }}/{{ article.cover }}" alt="" style="max-width: 18rem;max-height: 18rem;">
+                {% if article.cover_caption %}
+                  <span class="caption text-primary">{{ article.cover_caption }}</span>
+                {% endif %}
+              {% endif %}
+              {{ article.content }}
+              <hr />
+              <footer>
+              <aside>
+                <p class="text-info mt-2">
+                  <span>Filed under 
+                    <a href="{{ SITEURL }}/{{ article.category.url }}">{{ article.category.name }} </a>
+                  </span>
+                  {% if article.tags %}
+                  <span>
+                    and tagged: 
+                    {% for tag in article.tags %}
+                      <a href="{{ SITEURL }}/{{ tag.url}}">#{{ tag.name }} </a>
+                    {% endfor %}
+                  </span>
+                  {% endif %}
+                </p>
+              </aside>
+              {% include "includes/article_author.html" with context %}
+              </footer>
+              </div>
+          </div>
+      </div>
+  </div>
+</article>
+{% endblock %}

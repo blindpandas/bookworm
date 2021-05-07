@@ -1,0 +1,20 @@
+<section class="services p-1 p-md-2 m-1 bg-light">
+  <div class="container-fluid d-flex align-items-center flex-column">
+    <div class="section-title">
+      <h2>Activities</h2>
+    </div>
+    <div class="row text-center">
+      {% for feature in FEATURED %}
+      <div class="col-md-6 col-lg-3 d-flex align-items-stretch p-2 mx-auto">
+        <div class="icon-box p-1 m-2">
+          <div class="icon p-2 text-secondary" role="presentation">
+            <i class="fa fa-3x {{ feature.icon }}"></i>
+          </div>
+          <h4 class="title pt-2"><a href="{{ feature.url }}">{{ feature.title }}</a></h4>
+          <p class="description">{{ feature.lead_text }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>

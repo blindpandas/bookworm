@@ -1,0 +1,92 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+hr {
+  max-width: 100px;
+  margin: 25px auto 0;
+  border-width: 1px;
+  border-color: rgba(34, 34, 34, 0.1);
+}
+
+hr.light {
+  border-color: white;
+}
+
+.logo {
+  border-radius: 25rem;
+  width: 40%;
+  height: 40%;
+}
+@media (max-width: 768px) {
+  .logo {
+    width: 35%;
+    height: 35%;
+  }
+}
+
+.container {
+  max-width: 960px;
+}
+
+.site-header a {
+  color: #325d88;
+  transition: ease-in-out color .15s;
+}
+.site-header a:hover {
+  color: #244463;
+  text-decoration: none;
+}
+
+.flex-equal > * {
+  -ms-flex: 1;
+  flex: 1;
+}
+@media (min-width: 768px) {
+  .flex-md-equal > * {
+    -ms-flex: 1;
+    flex: 1;
+  }
+}
+
+.overflow-hidden
+{
+  overflow: hidden;
+}
+
+.bg-bookworm {
+  background-color: #77216F !important;
+}
+
+.featured-app-link:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.btn-social {
+  border-radius: 100%;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  width: 3.25rem;
+  height: 3.25rem;
+  font-size: 1.25rem;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.btn-social:hover,
+.btn-social:focus {
+  background-color: rgba(230, 230, 230, .7);
+}
+
+.post-cover-preview {
+  width: 6.5rem;
+  height: 6.5rem;
+}

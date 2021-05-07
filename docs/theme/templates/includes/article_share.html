@@ -1,0 +1,21 @@
+{% set share_url = SITEURL + '/' + article.url %}
+<div class="row justify-content-center">
+  <div class="col-lg-10 my-3 mr-auto">
+    <a href="https://www.facebook.com/sharer.php?u={{ share_url }}" class="btn btn-outline-dark mx-1">
+      <span class="fab fa-facebook-f"></span>
+      <span class="sr-only">Share on Facebook</span>
+    </a>
+    <a href="https://twitter.com/share?url={{ share_url }}&amp;text={{ article.title }}" class="btn btn-outline-dark mx-1">
+      <span class="fab fa-twitter"></span>
+      <span class="sr-only">Share on Twitter</span>
+    </a>
+    <a href="https://reddit.com/submit?url={{ share_url }}&title={{ article.title }}" class="btn btn-outline-dark mx-1">
+      <span class="fab fa-reddit"></span>
+      <span class="sr-only">Share on Reddit</span>
+    </a>
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ share_url }}&title={{ article.title | striptags | safe}}" class="btn btn-outline-dark mx-1">
+      <span class="fab fa-linkedin"></span>
+      <span class="sr-only">Share on Linkedin</span>
+    </a>
+  </div>
+</div>

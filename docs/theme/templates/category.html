@@ -1,0 +1,9 @@
+{% extends "listing.html" %}
+
+{% block title %}
+{{ category }} · {{ SITENAME }} Blog
+{% endblock %}
+
+{% block listing_title %}
+Posts Filed Under <span class="text-muted">{{ category }}</span>
+{% endblock listing_title %}

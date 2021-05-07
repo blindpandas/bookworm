@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ page.title }} · {{ SITENAME }}
+{% endblock %}
+
+{% block og %}
+  {% include "includes/og_page.html" %}
+{% endblock og %}
+
+{% block page_header %}
+{% include "includes/navigation.html" %}
+{% endblock page_header %}
+
+{% block content %}
+{{ page.content }}
+{% endblock %}

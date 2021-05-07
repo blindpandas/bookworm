@@ -1,0 +1,26 @@
+<aside class="card bg-light text-black p-md-2 m-md-2">
+  <div class="card-body">
+    <h3 class="card-title" role="heading">
+      <a href="{{ SITEURL }}/{{ article.author.url }}" class="card-link">{{ author_info.display }}</a>
+    </h3>
+    <div class="row">
+      <div class="col-md-3">
+        {% if author_info.image %}
+        <img src="{{ SITEURL}}/{{ author_info.image }}" class="card-img author-thumb" alt="">
+        {% endif %}
+      </div>
+      <div class="col-md-8 offset-md-1">
+        <p class="card-text">{{ author_info.description }}</p>
+        {% if author_info.twitter_handle %}
+        <div class="card-footer">
+          <a href="https://twitter.com/{{ author_info.twitter_handle }}" class="card-link">
+            <span class="fab fa-twitter"></span>
+            Follow
+            <span class="sr-only"> @{{ author_info.twitter_handle }} on Twitter</span>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</aside>

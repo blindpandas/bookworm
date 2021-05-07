@@ -1,0 +1,9 @@
+{% extends "listing.html" %}
+
+{% block title %}
+Posts Tagged {{ tag }} · {{ SITENAME }} Blog
+{% endblock %}
+
+{% block listing_title %}
+Posts Tagged <span class="text-muted">{{ tag }}</span>
+{% endblock listing_title %}

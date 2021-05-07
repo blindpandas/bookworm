@@ -1,0 +1,31 @@
+<div class="row" role="list">
+    {% for post in posts %}
+    <div class="col-12" role="listitem">
+      <div class="card p-md-1 m-md-1">
+        <div class="card-body text-black">
+          <h3 role="heading">
+            <a href="{{ SITEURL }}/{{ post.url}}">
+              <span class="text-black">{{ post.title }}</span>
+            </a>
+          </h3>
+          <p class="card-subtitle mb-2 text-primary">
+            Written by<a href="{{ SITEURL }}/{{ post.author.url }}"> {{ post.author }} </a>on {{ post.date|strftime(post.date_format) }}, and filed under<a href="{{ SITEURL }}/{{ SITEURL }}/{{ post.category.url }}"> {{ post.category }}</a>
+          </p>
+        {% if post.cover %}
+        <img src="{{ SITEURL}}/{{ post.cover }}" class="card-img-top post-cover-preview" alt="{{ post.cover_alt }}">
+        {% endif %}
+          <p class="card-text">{{ post.summary }}</p>
+          {% if post.tags %}
+          <p>
+          Tags:
+          {% for tag in post.tags %}
+          <a class="badge" href="{{ SITEURL }}/{{ tag.url }}">#{{tag}}</a>
+          {% endfor %}
+          </p>
+          {% endif %}
+          <a href="{{ SITEURL }}/{{ post.url }}" class="card-link">Read more ➔<span class="sr-only"> {{ post.title }}</span></a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+</div>
