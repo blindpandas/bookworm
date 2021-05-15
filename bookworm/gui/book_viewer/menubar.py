@@ -685,13 +685,13 @@ class HelpMenu(BaseMenu):
         )
         self.view.Bind(
             wx.EVT_MENU,
-            lambda e: wx.LaunchDefaultApplication(str(paths.docs_path("license.txt"))),
+            lambda e: wx.LaunchDefaultApplication(str(paths.resources_path("license.txt"))),
             id=ViewerMenuIds.license,
         )
         self.view.Bind(
             wx.EVT_MENU,
             lambda e: wx.LaunchDefaultApplication(
-                str(paths.docs_path("contributors.txt"))
+                str(paths.resources_path("contributors.txt"))
             ),
             id=ViewerMenuIds.contributors,
         )
@@ -712,8 +712,8 @@ class HelpMenu(BaseMenu):
         restart_application(debug=True)
 
     def onOpenDocumentation(self, event):
-        docs = paths.docs_path(app.current_language.pylang, "bookworm.html")
-        wx.LaunchDefaultApplication(str(docs))
+        userguide_filename = paths.userguide_path(app.current_language.pylang, "bookworm.html")
+        wx.LaunchDefaultApplication(str(userguide_filename))
 
 
 class MenubarProvider:

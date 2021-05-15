@@ -176,13 +176,6 @@ def make_icons(c):
                 imgsize
             ).save(imgfile)
             print(f"Copied image {fname} to the assets folder.")
-    website_header = PROJECT_ROOT / "docs" / "img" / "bookworm.png"
-    if not website_header.exists():
-        print("Website header logo is not there, creating it.")
-        Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").resize(
-            (256, 256)
-        ).save(website_header)
-        print("Copied website header image  to the docs folder.")
 
 
 @task
@@ -191,18 +184,18 @@ def format_code(c):
     c.run("black .")
 
 
-@task(name="docs")
+@task(name="guide")
 @make_env
-def build_docs(c):
-    """Build the end-user documentation."""
+def build_user_guide(c):
+    """Build the user guide."""
     from mistune import markdown
 
-    print("Building documentations")
-    docs_src = PROJECT_ROOT / "docs" / "userguides"
-    for folder in [fd for fd in docs_src.iterdir() if fd.is_dir()]:
+    print("Building the user guide...")
+    guide_src = RESOURCES_FOLDER / "userguide"
+    for folder in [fd for fd in guide_src.iterdir() if fd.is_dir()]:
         lang = folder.name
         md = folder / "bookworm.md"
-        html = RESOURCES_FOLDER / "docs" / lang / "bookworm.html"
+        html = RESOURCES_FOLDER / "userguide" / lang / "bookworm.html"
         html.parent.mkdir(parents=True, exist_ok=True)
         content_md = md.read_text(encoding="utf8")
         content = markdown(content_md, escape=False)
@@ -213,8 +206,8 @@ def build_docs(c):
             ),
             encoding="utf8",
         )
-        print(f"Built docs for language '{lang}'")
-    print("Done building the documentations.")
+        print(f"Built the user guide for language '{lang}'")
+    print("Done building the user guide.")
 
 
 @task
@@ -225,10 +218,9 @@ def copy_assets(c):
 
     print("Copying files...")
     files_to_copy = {
-        PROJECT_ROOT / "LICENSE": RESOURCES_FOLDER / "docs" / "license.txt",
+        PROJECT_ROOT / "LICENSE": RESOURCES_FOLDER / "license.txt",
         PROJECT_ROOT
         / "contributors.txt": RESOURCES_FOLDER
-        / "docs"
         / "contributors.txt",
         PROJECT_ROOT
         / "scripts"
@@ -524,7 +516,7 @@ def pip_install(c):
         pip_install,
         clean,
         make_icons,
-        build_docs,
+        build_user_guide,
         copy_assets,
         compile_msgs,
         copy_wx_catalogs,

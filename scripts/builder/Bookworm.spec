@@ -18,6 +18,7 @@ BOOKWORM_RESOURCES = collect_data_files(
     "bookworm",
     excludes=[
         "*.po",
+        "*.md",
     ],
 )
 DATA_FILES = [

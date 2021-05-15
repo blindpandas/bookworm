@@ -64,6 +64,11 @@ def logs_path():
 
 
 @merge_paths
+def resources_path():
+    return app_path("resources")
+
+
+@merge_paths
 def locale_path():
     return app_path("resources", "locale")
 
@@ -78,10 +83,10 @@ def db_path():
 
 
 @merge_paths
-def docs_path():
-    path = app_path("resources", "docs")
+def userguide_path():
+    path = app_path("resources", "userguide")
     if not path.exists():
-        log.warning(f"Documentation files was not found in {path}. Folder not Found.")
+        log.warning(f"The user guide file was not found in {path}. Folder not Found.")
     return path
 
 
