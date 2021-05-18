@@ -435,8 +435,10 @@ def update_version_info(c):
 
     artifacts_folder = PROJECT_ROOT / "scripts"
     json_file = artifacts_folder / "release-info.json"
-    release_type = app.get_version_info()["pre_type"] or ""
-    json_info = {release_type: {"version": app.version}}
+    json_info = {
+        "version": app.version,
+        "updated": datetime.utcnow().isoformat(),
+    }
     artifacts = dict(
         installer=artifacts_folder.glob("Bookworm*setup.exe"),
         update_bundle=artifacts_folder.glob("Bookworm*update.bundle"),
