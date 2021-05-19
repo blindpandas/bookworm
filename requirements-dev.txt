@@ -5,6 +5,6 @@ distro==1.5.0;sys_platform=="linux"
 invoke==1.5.0
 jinja2==2.11.3
 packaging==20.9
-PyInstaller==4.3
+PyInstaller==4.2
 pytest==6.1.0
 wheel==0.35.1
