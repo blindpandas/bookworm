@@ -6,19 +6,20 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  0.1\n"
+"Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2021-04-28 23:58+0200\n"
-"PO-Revision-Date: 2021-04-27 00:00+0200\n"
+"PO-Revision-Date: 2021-05-19 14:02+0200\n"
 "Last-Translator: Musharraf Omer <ibnomer2011@hotmail.com>\n"
 "Language: ar_SD\n"
 "Language-Team: ar <ibnomer2011@hotmail.com>\n"
-"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : "
-"n%100>=3 && n%100<=10 ? 3 : n%100>=0 && n%100<=2 ? 4 : 5)\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n"
+"%100<=10 ? 3 : n%100>=0 && n%100<=2 ? 4 : 5);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #. Translators: the content of a message indicating a connection error
 #: bookworm/otau.py:76
@@ -34,8 +35,8 @@ msgstr "خطأ في الاتصال"
 #. app
 #: bookworm/otau.py:88
 msgid ""
-"We have faced a technical problem while checking for updates. Please try "
-"again later."
+"We have faced a technical problem while checking for updates. Please try again "
+"later."
 msgstr "لقد واجهتنا مشكلة تقنية أثناء البحث عن التحديثات. يُرجى المحاولة لاحقاً."
 
 #. Translators: the title of a message indicating an error while updating the
@@ -49,15 +50,14 @@ msgstr "خطأ أثناء البحث عن تحديثات"
 #: bookworm/otau.py:107
 msgid ""
 "Congratulations, you have already got the latest version of Bookworm.\n"
-"We are working day and night on making Bookworm better. The next version "
-"of Bookworm is on its way, so wait for it. Rest assured, we will notify "
-"you when it is released."
+"We are working day and night on making Bookworm better. The next version of "
+"Bookworm is on its way, so wait for it. Rest assured, we will notify you when it "
+"is released."
 msgstr ""
 "تهانينا، لقد حصلت بالفعل على أحدث إصدار من برنامج قارئ الكتب الإلكترونية "
 "Bookworm.\n"
-"نحن نعمل بصورة مستمرة على تطوير هذا البرنامج وجعله أكثر فائدة، وربما يصلك"
-" الإصدار الجديد منه في القريب العاجل. سيصلك إشعار من قِبَلنا بمجرد إطلاق "
-"تحديث جديد."
+"نحن نعمل بصورة مستمرة على تطوير هذا البرنامج وجعله أكثر فائدة، وربما يصلك "
+"الإصدار الجديد منه في القريب العاجل. سيصلك إشعار من قِبَلنا بمجرد إطلاق تحديث جديد."
 
 #. Translators: the title of a message indicating that there is no new version
 #: bookworm/otau.py:114
@@ -190,8 +190,8 @@ msgstr "العلامات المرجعية المحفوظة"
 #. Translators: text of a button to remove bookmarks
 #. Translators: text of a button to remove a language from Tesseract OCR Engine
 #. Translators: the label of a button to remove a voice profile
-#: bookworm/annotation/annotation_dialogs.py:137
-#: bookworm/ocr/ocr_dialogs.py:313 bookworm/text_to_speech/tts_gui.py:322
+#: bookworm/annotation/annotation_dialogs.py:137 bookworm/ocr/ocr_dialogs.py:313
+#: bookworm/text_to_speech/tts_gui.py:322
 msgid "&Remove"
 msgstr "إ&زالة"
 
@@ -409,8 +409,7 @@ msgstr "نطق العلامة المرجعية عند القفز بين العل
 #: bookworm/annotation/annotation_gui.py:45
 msgid "Select the bookmarked line when jumping"
 msgstr ""
-"تحديد السطر الذي يحتوي على العلامة المرجعية عند القفز بين العلامات "
-"المرجعية"
+"تحديد السطر الذي يحتوي على العلامة المرجعية عند القفز بين العلامات المرجعية"
 
 #. Translators: the label of a checkbox
 #: bookworm/annotation/annotation_gui.py:52
@@ -807,12 +806,12 @@ msgstr "اقتران صيغ الملفات مع Bookworm"
 #: bookworm/gui/settings.py:51
 msgid ""
 "This dialog will help you to setup file associations.\n"
-"Associating files with Bookworm means that when you click on a file in "
-"windows explorer, it will be opened in Bookworm by default "
+"Associating files with Bookworm means that when you click on a file in windows "
+"explorer, it will be opened in Bookworm by default "
 msgstr ""
 "سيساعدك مربع الحوار هذا في تعيين صيغ الملفات المقترنة بالبرنامج.\n"
-"يعني إقران الملفات ببرنامج Bookworm أنه عند النقر فوق أحد الملفات داخل "
-"مستكشف الملفات في Windows ، فسيتم فتحه في Bookworm افتراضيًا "
+"يعني إقران الملفات ببرنامج Bookworm أنه عند النقر فوق أحد الملفات داخل مستكشف "
+"الملفات في Windows ، فسيتم فتحه في Bookworm افتراضيًا "
 
 #. Translators: the main label of a button
 #: bookworm/gui/settings.py:64
@@ -940,8 +939,7 @@ msgstr "إدارة الملفات الم&قترنة"
 #: bookworm/gui/settings.py:302
 msgid ""
 "You have changed the display language of Bookworm.\n"
-"For this setting to fully take effect, you need to restart the "
-"application.\n"
+"For this setting to fully take effect, you need to restart the application.\n"
 "Would you like to restart the application right now?"
 msgstr ""
 "لقد قمتَ بتغيير لغة عرض Bookworm.\n"
@@ -1051,8 +1049,8 @@ msgstr "خطأ في فتح المستند"
 #: bookworm/gui/book_viewer/__init__.py:132
 msgid ""
 "Could not open file\n"
-".Either the file  has been damaged during download, or it has been "
-"corrupted in some other way."
+".Either the file  has been damaged during download, or it has been corrupted in "
+"some other way."
 msgstr ""
 "تعَذَّر فتح الملف.\n"
 "إما أن الملف قد تعرض للتلف أثناء التنزيل، أو ربما أن هناك سبب آخر للتلف."
@@ -1078,8 +1076,7 @@ msgstr ""
 #: bookworm/gui/book_viewer/__init__.py:218
 msgid "Press (Ctrl + O) to open a document"
 msgstr ""
-"اضغط مفتاح التحكم زائد حرف خاء لعرض المحاورة التي تمكنك من اختيار مستندٍ "
-"لفتحه"
+"اضغط مفتاح التحكم زائد حرف خاء لعرض المحاورة التي تمكنك من اختيار مستندٍ لفتحه"
 
 #. Translators: the label of the table-of-contents tree
 #: bookworm/gui/book_viewer/__init__.py:232
@@ -1124,8 +1121,7 @@ msgstr "صفحة {page} من {total} — {chapter}"
 
 #. Translators: a message that is announced after navigating to a page
 #. Translators: a message to announce when navigating to another page
-#: bookworm/gui/book_viewer/__init__.py:454
-#: bookworm/text_to_speech/__init__.py:182
+#: bookworm/gui/book_viewer/__init__.py:454 bookworm/text_to_speech/__init__.py:182
 msgid "Page {page} of {total}"
 msgstr "صفحة {page} من {total}"
 
@@ -1242,10 +1238,10 @@ msgid ""
 "Version: {version}\n"
 "Website: {website}\n"
 "\n"
-"{display_name} is an accessible document reader that enables blind and "
-"visually impaired individuals to read documents in an easy, accessible, "
-"and hassle-free manor. It is being developed by {author} with some "
-"contributions from the community.\n"
+"{display_name} is an accessible document reader that enables blind and visually "
+"impaired individuals to read documents in an easy, accessible, and hassle-free "
+"manor. It is being developed by {author} with some contributions from the "
+"community.\n"
 "\n"
 "{copyright}\n"
 "This software is offered to you under the terms of The MIT license.\n"
@@ -1256,19 +1252,20 @@ msgstr ""
 "الإصدار: {version}\n"
 "الموقع الإلكتروني: {website}\n"
 "\n"
-"{display_name} هو قارئ مستندات مخصص للمكفوفين وضعاف البصر. يتيح هذا "
-"القارئ لمستخدميه الإطلاع على الكتب والمستندات بطريقة سهلة ومبسطة. يتم "
-"تطوير البرنامج بواسطة {author} مع بعض الإسهمات من مجتمع المستخدمين.\n"
+"{display_name} هو قارئ مستندات مخصص للمكفوفين وضعاف البصر. يتيح هذا القارئ "
+"لمستخدميه الإطلاع على الكتب والمستندات بطريقة سهلة ومبسطة. يتم تطوير البرنامج "
+"بواسطة {author} مع بعض الإسهمات من مجتمع المستخدمين.\n"
 "\n"
 "{copyright}\n"
+"هذا البرنامج يتم تطويره بواسطة المُشَرَّفْ عُمَرْ، وهو  مطور برمجيات كفيف من السودان، "
+"ويساعده في هذا المجهود عدد من المطورين والمترجمين من مختلف أنحاء العالم.\n"
 "هذا البرنامج يخضع لشروط رخصة MIT license\n"
 "يمكنك عرض نص الرخصة من خلال قائمة المساعدة.\n"
 "\n"
 
 #: bookworm/gui/book_viewer/menubar.py:59
 msgid ""
-"This release of Bookworm is generously sponsored  by Capeds "
-"(www.capeds.net)."
+"This release of Bookworm is generously sponsored  by Capeds (www.capeds.net)."
 msgstr "هذا الإصدار من البرنامج تمت رعايته بواسطة منظمة Capeds (www.capeds.net)."
 
 #. Translators: the label of an item in the application menubar
@@ -1306,8 +1303,7 @@ msgid "Opens a list of documents you pinned."
 msgstr "فتح قائمة بالمستندات التي قمت بتثبيتها."
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:117
-#: bookworm/gui/book_viewer/menubar.py:131
+#: bookworm/gui/book_viewer/menubar.py:117 bookworm/gui/book_viewer/menubar.py:131
 msgid "Clear list"
 msgstr "مسح القائمة"
 
@@ -1382,14 +1378,12 @@ msgid "No recent books"
 msgstr "لم يتم فتح أي كتاب مؤخراً"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:362
-#: bookworm/gui/book_viewer/menubar.py:776
+#: bookworm/gui/book_viewer/menubar.py:362 bookworm/gui/book_viewer/menubar.py:776
 msgid "&Find in Book...\tCtrl-F"
 msgstr "ال&بحث في الكتاب...\tتحكم+ب"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:364
-#: bookworm/gui/book_viewer/menubar.py:776
+#: bookworm/gui/book_viewer/menubar.py:364 bookworm/gui/book_viewer/menubar.py:776
 msgid "Search this book."
 msgstr "البحث داخل الكتاب المفتوح."
 
@@ -1414,8 +1408,7 @@ msgid "Find previous occurrence."
 msgstr "الانتقال إلى نتيجة البحث السابقة."
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:383
-#: bookworm/gui/book_viewer/menubar.py:772
+#: bookworm/gui/book_viewer/menubar.py:383 bookworm/gui/book_viewer/menubar.py:772
 msgid "&Go To Page...\tCtrl-G"
 msgstr "الذهاب إلى &صفحة...\tتحكم+ل"
 
@@ -1463,14 +1456,12 @@ msgid "Results | {total}"
 msgstr "النتائج | {total}"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:546
-#: bookworm/gui/book_viewer/menubar.py:783
+#: bookworm/gui/book_viewer/menubar.py:546 bookworm/gui/book_viewer/menubar.py:783
 msgid "&Render Page...\tCtrl-R"
 msgstr "&عرض الصفحة...\tتحكم+ق"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:548
-#: bookworm/gui/book_viewer/menubar.py:784
+#: bookworm/gui/book_viewer/menubar.py:548 bookworm/gui/book_viewer/menubar.py:784
 msgid "View a fully rendered version of this page."
 msgstr "لعرض نسخة كاملة قابلة للتكبير من الصفحة الحالية."
 
@@ -1634,8 +1625,8 @@ msgstr "تحميل محرك Tesseract  للتعرف على الحروف ضوئي
 #: bookworm/ocr/ocr_dialogs.py:82
 msgid "Get a free, high-quality OCR engine that supports over 100 languages."
 msgstr ""
-"قم بتحميل محرك Tesseract  للتعرف على الحروف ضوئياً. وهو برنامج مجاني يدعم"
-"  أكثر من 100 لغة."
+"قم بتحميل محرك Tesseract  للتعرف على الحروف ضوئياً. وهو برنامج مجاني يدعم  أكثر "
+"من 100 لغة."
 
 #: bookworm/ocr/ocr_dialogs.py:91
 msgid "Manage Tesseract OCR Languages"
@@ -1681,11 +1672,10 @@ msgstr "ستتم إعادة تشغيل البرنامج"
 
 #: bookworm/ocr/ocr_dialogs.py:159
 msgid ""
-"Bookworm will now restart to complete the installation of the Tesseract "
-"OCR Engine."
+"Bookworm will now restart to complete the installation of the Tesseract OCR "
+"Engine."
 msgstr ""
-"ستتم إعادة تشغيل البرنامج لإكمال تثبيت محرك Tesseract  للتعرف على الحروف "
-"ضوئياً."
+"ستتم إعادة تشغيل البرنامج لإكمال تثبيت محرك Tesseract  للتعرف على الحروف ضوئياً."
 
 #. Translators: the label of a combobox
 #: bookworm/ocr/ocr_dialogs.py:186
@@ -1910,8 +1900,7 @@ msgid ""
 "Please checkout Bookworm user manual to learn how to add new languages."
 msgstr ""
 "لا يوجد لغات للتعرف الضوئي على النصوص.\n"
-"يرجى الإطلاع على دليل المستخدم الخاص بالبرنامج للتعرف على كيفية إضافة "
-"اللغات."
+"يرجى الإطلاع على دليل المستخدم الخاص بالبرنامج للتعرف على كيفية إضافة اللغات."
 
 #. Translators: title for a message
 #: bookworm/ocr/ocr_menu.py:156
@@ -1992,8 +1981,7 @@ msgstr "إختر صورة"
 msgid ""
 "Could not load image from\n"
 "{filename}.\n"
-"Please make sure the file exists and the data contained in is not "
-"corrupted."
+"Please make sure the file exists and the data contained in is not corrupted."
 msgstr ""
 "تعذر تحميل الصورة من الملف:\n"
 "{filename}.\n"
@@ -2084,8 +2072,7 @@ msgstr "إعدادات القراءة"
 #. Translators: the label of a page in the settings dialog
 #. Translators: the label of a group of controls in the
 #. speech settings page related to voice selection
-#: bookworm/text_to_speech/__init__.py:116
-#: bookworm/text_to_speech/__init__.py:127
+#: bookworm/text_to_speech/__init__.py:116 bookworm/text_to_speech/__init__.py:127
 #: bookworm/text_to_speech/tts_gui.py:145
 msgid "Voice"
 msgstr "إعدادات الصوت"
@@ -2123,8 +2110,7 @@ msgstr "لا توجد آلات نطق متوفرة"
 #. Translators: a message telling the user that no TTS voice found
 #: bookworm/text_to_speech/__init__.py:423
 msgid ""
-"A valid Text-to-speech voice was not found for the current speech engine."
-"\n"
+"A valid Text-to-speech voice was not found for the current speech engine.\n"
 "Text-to-speech functionality will be disabled."
 msgstr ""
 "لم يتم العثور على أي صوت في آلة النطق الحالية.\n"
@@ -2133,13 +2119,13 @@ msgstr ""
 #. Translators: a message telling the user that the TTS voice has been changed
 #: bookworm/text_to_speech/__init__.py:441
 msgid ""
-"Bookworm has noticed that the currently configured Text-to-speech voice "
-"speaks a language different from that of this book.\n"
-"Do you want to temporary switch to another voice that speaks a language "
-"similar to the language  of the currently opened document?"
+"Bookworm has noticed that the currently configured Text-to-speech voice speaks a "
+"language different from that of this book.\n"
+"Do you want to temporary switch to another voice that speaks a language similar "
+"to the language  of the currently opened document?"
 msgstr ""
-"اكتشف البرنامج أن صوت آلة النطق المُستَخدَم يتحدث بلغة تختلف عن لغة "
-"الكتاب الحالية.\n"
+"اكتشف البرنامج أن صوت آلة النطق المُستَخدَم يتحدث بلغة تختلف عن لغة الكتاب "
+"الحالية.\n"
 "هل تود تغيير الصوت الحالي إلى صوت آخر يماثل لغة هذا الكتاب?"
 
 #. Translators: the title of a message telling the user that the TTS voice has
@@ -2236,8 +2222,7 @@ msgstr "الإعلام بنهاية الفصل"
 #: bookworm/text_to_speech/tts_gui.py:106
 msgid "Ask to switch to a voice that speaks the language of the current book"
 msgstr ""
-"طلب تغيير لغة صوت آلة النطق في حال وجود إختلاف بين لغة صوت آلة النطق ولغة"
-" المستند"
+"طلب تغيير لغة صوت آلة النطق في حال وجود إختلاف بين لغة صوت آلة النطق ولغة المستند"
 
 #. Translators: the label of a checkbox
 #: bookworm/text_to_speech/tts_gui.py:113
@@ -2345,8 +2330,7 @@ msgstr "وضع صوتي جديد"
 #. user of the existence of a voice profile with the same name
 #: bookworm/text_to_speech/tts_gui.py:422
 msgid ""
-"A voice profile with the same name already exists. Please select another "
-"name."
+"A voice profile with the same name already exists. Please select another name."
 msgstr "هناك وضع صوتي موجود بنفس الاسم. يُرجى اختيار اسم آخر."
 
 #. Translators: the content of a message telling the user that the voice
@@ -2354,12 +2338,12 @@ msgstr "هناك وضع صوتي موجود بنفس الاسم. يُرجى اخ
 #: bookworm/text_to_speech/tts_gui.py:448
 msgid ""
 "Voice profile {profile} is the active profile.\n"
-"Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
-"menu item from the speech menu."
+"Please deactivate it first by clicking 'Deactivate Active Voice Profile` menu "
+"item from the speech menu."
 msgstr ""
 "الوضع الصوتي {profile} هو الوضع النشط حالياً.\n"
-"يُرجى تعطيله أولاً بالذهاب إلى قائمة النطق، ثم الضغط على عنصر 'تعطيل "
-"الوضع الصوتي النشط.'ز."
+"يُرجى تعطيله أولاً بالذهاب إلى قائمة النطق، ثم الضغط على عنصر 'تعطيل الوضع الصوتي "
+"النشط.'ز."
 
 #. Translators: the title of a message telling the user that
 #. it is not possible to remove this voice profile
@@ -2535,8 +2519,8 @@ msgstr "جاري الحصول على المعلومات. يُرْجَى الإن
 
 #: bookworm/webservices/wikiworm.py:108
 msgid ""
-"Could not connect to Wikipedia at the moment.\\Please make sure that "
-"you're connected to the internet or try again later."
+"Could not connect to Wikipedia at the moment.\\Please make sure that you're "
+"connected to the internet or try again later."
 msgstr ""
 "حدث خطأ في الشبكة عند محاولة الإتصال بويكيبيديا.\n"
 "تأكد من أنك متصل بالإنترنت ، أو حاول لاحقاً."
@@ -2570,4 +2554,3 @@ msgstr "فتح في برنامج &Bookworm"
 #: bookworm/webservices/wikiworm.py:168
 msgid "&Open in Browser"
 msgstr "فتح في المت&صفح"
-
