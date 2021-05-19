@@ -84,7 +84,7 @@ def db_path():
 
 @merge_paths
 def userguide_path():
-    path = app_path("resources", "userguide")
+    path = resources_path("userguide")
     if not path.exists():
         log.warning(f"The user guide file was not found in {path}. Folder not Found.")
     return path

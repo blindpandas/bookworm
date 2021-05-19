@@ -19,7 +19,9 @@ folders_to_clean:
         - scripts/builder/build
         - scripts/builder/dist
     assets:
-        - bookworm/resources/docs
+        - bookworm/resources/userguide/*/*.html
+        - bookworm/resources/license.txt
+        - bookworm/resources/contributors.txt
         - bookworm/resources/icons
         - bookworm/bookworm.ico
         - bookworm/resources/image_data.py

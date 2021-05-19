@@ -111,7 +111,9 @@ venv.bak/
 .appdata/
 
 # Generated files
-bookworm/resources/docs/*
+bookworm/resources/contributors.txt
+bookworm/resources/license.txt
+bookworm/resources/userguide/*/*.html
 bookworm/resources/icons/*
 bookworm/bookworm.ico
 bookworm/resources/image_data.py
