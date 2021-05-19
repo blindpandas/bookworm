@@ -445,7 +445,7 @@ def update_version_info(c):
     )
     for artifact_type, artifact_files in artifacts.items():
         for file in artifact_files:
-            json_info[release_type][f"{file.name}.sha1hash"] = generate_sha1hash(file)
+            json_info[f"{file.name}.sha1hash"] = generate_sha1hash(file)
     json_file.write_text(json.dumps(json_info, indent=2))
     print("Updated version information")
 
