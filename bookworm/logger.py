@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import sys
 import logging
 from logging.handlers import RotatingFileHandler
 from bookworm import paths
@@ -13,8 +12,9 @@ MESSAGE_FORMAT = "%(asctime)s %(name)s %(levelname)s: %(message)s"
 DATE_FORMAT = "%d/%m/%Y %H:%M:%S"
 
 formatter = logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT)
+bookworm_filter = logging.Filter("bookworm")
 
-logger = logging.getLogger()
+logger = logging.getLogger("bookworm")
 logger.setLevel(logging.DEBUG)
 
 # handlers

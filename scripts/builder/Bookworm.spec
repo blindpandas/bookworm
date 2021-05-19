@@ -1,33 +1,63 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-import bookworm
 from pathlib import Path
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 
-def get_datafiles():
-    bwpath = Path(bookworm.__path__[0])
-    res = bwpath / "resources"
-    rv = []
-    wavs = res.rglob("*.wav")
-    txts = res.rglob("*.txt")
-    mos = res.rglob("*.mo")
-    for collect in (wavs, txts, mos):
-        rv.extend([(str(f), str(f.relative_to(bwpath).parent)) for f in collect])
-    return rv
+# Data files
+PACKAGES_WITH_DATA = [
+    "pyxpdf_data",
+    "trafilatura",
+    "justext",
+    "tld",
+    "lazy_import",
+    "docx",
+    "pptx",
+]
+BOOKWORM_RESOURCES = collect_data_files(
+    "bookworm",
+    excludes=[
+        "*.po",
+        "*.md",
+    ],
+)
+DATA_FILES = [
+    (
+        src,
+        Path(dst).relative_to("bookworm"),
+    )
+    for src, dst in BOOKWORM_RESOURCES
+]
+for pkg_name in PACKAGES_WITH_DATA:
+    DATA_FILES += collect_data_files(pkg_name)
 
+# Hidden imports
+HIDDEN_SUBMODULES = [
+    "babel",
+    "odf",
+]
+HIDDEN_IMPORTS = [
+    "numpy",
+    "cv2",
+    "pkg_resources.py2_warn",
+]
+for package_with_submodules in HIDDEN_SUBMODULES:
+    HIDDEN_IMPORTS += collect_submodules(package_with_submodules)
 
 block_cipher = None
 
-
 a = Analysis(
     ["launcher.py"],
-    pathex=["C:\\Users\\ibnom\\app"],
+    pathex=[""],
+    datas=DATA_FILES,
     binaries=[],
-    datas=get_datafiles(),
-    hiddenimports=[],
+    # See: https://stackoverflow.com/questions/37815371/
+    hiddenimports=HIDDEN_IMPORTS,
     hookspath=[],
     runtime_hooks=[],
-    excludes=[],
+    excludes=[
+        "tkinter",
+    ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,

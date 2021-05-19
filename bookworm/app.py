@@ -1,28 +1,28 @@
 # coding: utf-8
 
 import sys
-import os
 import struct
 import re
 
 
 name = "bookworm"
 display_name = "Bookworm"
-author = "Musharraf Omer"
-author_email = "ibnomer2011@hotmail.com"
-version = "0.1b4"
-version_ex = "0.1.4.0"
-url = "https://github.com/mush42/bookworm/"
-website = "https://mush42.github.io/bookworm/"
-update_url = "https://mush42.github.io/bookworm/current_version.json"
-copyright = f"Copyright (c) 2019 {author} and {display_name} contributors."
-is_frozen = hasattr(sys, "frozen") and hasattr(sys, "_MEIPASS")
+description = "The Universally accessible document reader"
+author = "Blind Pandas"
+author_email = "info@blindpandas.com"
+version = "0.4b1"
+version_ex = "0.4.0.1"
+zurl = "https://github.com/blindpandas/bookworm"
+website = "https://blindpandas.com/bookworm/"
+update_url = "https://blindpandas.com/bookworm/current_version.json"
+copyright = f"Copyright (c) 2021 {author} and {display_name} contributors."
+is_frozen = getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
 arch = "x86" if struct.calcsize("P") == 4 else "x64"
 debug = False
 # The programatic identifier used in file association
 prog_id = "bookworm.a11y.reader.1"
 # These variables are set upon app initialization
-args = extra_args = command_line_mode = current_language = None
+args = extra_args = command_line_mode = as_main = current_language = None
 
 # Version pattern
 VERSION_PATTERN = r"""
@@ -36,6 +36,12 @@ VERSION_PATTERN = r"""
             (?P<pre_type>(a|b|rc))
             [-_\.]?
             (?P<pre_number>[0-9]+)?
+        )?
+        (?P<post>
+            [-_\.]?
+            (?P<post_type>(post))
+            [-_\.]?
+            (?P<post_number>[0-9]+)?
         )?
     )
 """

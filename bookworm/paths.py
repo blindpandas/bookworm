@@ -2,19 +2,18 @@
 
 import logging
 import platform
-import winpaths
 import bookworm
 from pathlib import Path
-from platform_utils import paths as paths_
+from platform_utils import paths as path_finder
 from functools import wraps
 from bookworm import app
-from bookworm.runtime import IS_RUNNING_PORTABLE
+from bookworm.runtime import CURRENT_PACKAGING_MODE, PackagingMode
 
 
 log = logging.getLogger("bookworm.paths")
 
-
-DATA_PATH_DEBUG = Path(bookworm.__path__[0]).parent / ".appdata"
+# The appdata path when running from source
+DATA_PATH_SOURCE = Path(bookworm.__path__[0]).parent / ".appdata"
 
 
 def merge_paths(func):
@@ -27,13 +26,12 @@ def merge_paths(func):
 
 @merge_paths
 def data_path():
-    if not app.is_frozen:
-        data_path = DATA_PATH_DEBUG
+    if CURRENT_PACKAGING_MODE is PackagingMode.Installed:
+        data_path = Path(path_finder.app_data_path(app.name))
+    elif CURRENT_PACKAGING_MODE is PackagingMode.Portable:
+        data_path = app_path("user-config")
     else:
-        if IS_RUNNING_PORTABLE:
-            data_path = app_path("user-config")
-        else:
-            data_path = Path(winpaths.get_appdata()) / app.display_name
+        data_path = DATA_PATH_SOURCE
     if not data_path.exists():
         data_path.mkdir(parents=True, exist_ok=True)
     return data_path
@@ -41,7 +39,10 @@ def data_path():
 
 @merge_paths
 def app_path():
-    return Path(paths_.app_path())
+    if CURRENT_PACKAGING_MODE in (PackagingMode.Installed, PackagingMode.Portable):
+        return Path(path_finder.app_path())
+    else:
+        return Path(bookworm.__path__[0])
 
 
 @merge_paths
@@ -63,10 +64,13 @@ def logs_path():
 
 
 @merge_paths
+def resources_path():
+    return app_path("resources")
+
+
+@merge_paths
 def locale_path():
-    if app.is_frozen:
-        return app_path("resources", "locale")
-    return Path(app.__file__).parent / "resources" / "locale"
+    return app_path("resources", "locale")
 
 
 @merge_paths
@@ -79,27 +83,27 @@ def db_path():
 
 
 @merge_paths
-def docs_path():
-    if not app.is_frozen:
-        parent = Path(DATA_PATH_DEBUG).parent
-        path = parent / "docs" / "userguides"
-    else:
-        path = app_path("resources", "docs")
+def userguide_path():
+    path = resources_path("userguide")
     if not path.exists():
-        log.warning(f"Documentation files was not found in {path}. Folder not Found.")
+        log.warning(f"The user guide file was not found in {path}. Folder not Found.")
     return path
 
 
 @merge_paths
 def home_data_path():
-    if app.is_frozen:
-        if IS_RUNNING_PORTABLE:
-            path = data_path(".saved_data")
-        else:
-            path = Path.home() / f".{app.name}"
+    if CURRENT_PACKAGING_MODE is PackagingMode.Installed:
+        path = Path.home() / f".{app.name}"
+    elif CURRENT_PACKAGING_MODE is PackagingMode.Portable:
+        path = data_path(".saved_data")
     else:
-        path = DATA_PATH_DEBUG / "home_data"
+        path = DATA_PATH_SOURCE / "home_data"
     if not path.exists():
         log.debug("%s path does not exist, creating..." % (path,))
         path.mkdir(parents=True, exist_ok=True)
     return path
+
+
+@merge_paths
+def fonts_path():
+    return app_path("resources", "fonts")

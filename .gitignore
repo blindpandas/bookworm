@@ -40,6 +40,7 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
+.pytest_cache
 nosetests.xml
 coverage.xml
 *.cover
@@ -90,6 +91,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# vscode project config folder
+.vscode
+
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -107,7 +111,13 @@ venv.bak/
 .appdata/
 
 # Generated files
+bookworm/resources/contributors.txt
+bookworm/resources/license.txt
+bookworm/resources/userguide/*/*.html
+bookworm/resources/icons/*
+bookworm/bookworm.ico
 bookworm/resources/image_data.py
+scripts/builder/assets/version_info.txt
 scripts/builder/assets/bookworm-logo.bmp
 scripts/builder/assets/bookworm.bmp
 scripts/builder/assets/bookworm.ico

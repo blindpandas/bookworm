@@ -1,9 +1,0 @@
-{
-  "b": {
-    "version": "0.1b4",
-    "x86_sha1hash": "3bb4bc38bff0dc3408925c71f1efa30d56118fab",
-    "x64_sha1hash": "44179b53968370cec09f140c1b5f0c2cd50c4882",
-    "x86_download": "https://github.com/mush42/bookworm/releases/download/Bookworm-Release-(Build-v1.0.294)/Bookworm-0.1b4-x86-update.bundle",
-    "x64_download": "https://github.com/mush42/bookworm/releases/download/Bookworm-Release-(Build-v1.0.294)/Bookworm-0.1b4-x64-update.bundle"
-  }
-}

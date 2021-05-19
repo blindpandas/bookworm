@@ -1,5 +1,12 @@
-On behalf of The Bookworm  community, we would like to thank the following people and organizations for making invaluable contributions to Bookworm:
+On behalf of The Bookworm  community, we would like to thank the following 
+people and organizations for making invaluable contributions to Bookworm:
 
-* Musharraf Omer (@mush42)
-* Ikrami Ahmed (@rami)
-* Kostadin Kolev (@k_kolev1985)
+1. Individuals:
+* Musharraf Omer (@mush42)  - Sudan
+* Mohammed Bashir - Sudan
+* Mohammed Abdin - Sudan
+* Ikrami Ahmed (@rami) - Egypt
+* Kostadin Kolev (@k_kolev1985) - Bulgaria
+
+2. Organizations:
+* Capeds (www.capeds.net)

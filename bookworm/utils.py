@@ -1,16 +1,17 @@
 # coding: utf-8
 
 import sys
-import os
+import regex
 import wx
 import hashlib
+from contextlib import contextmanager
 from functools import wraps
-from subprocess import list2cmdline
 from pathlib import Path
 from xml.sax.saxutils import escape
-from bookworm.vendor import shellapi
+from bookworm import typehints as t
 from bookworm import app
 from bookworm.concurrency import call_threaded
+from bookworm.platform_services.runtime import system_start_app
 from bookworm.logger import logger
 
 
@@ -19,6 +20,40 @@ log = logger.getChild(__name__)
 
 # Sentinel
 _missing = object()
+
+# New line character
+UNIX_NEWLINE = "\n"
+WINDOWS_NEWLINE = "\r\n"
+MAC_NEWLINE = "\r"
+NEWLINE = UNIX_NEWLINE
+MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
+
+
+@contextmanager
+def switch_stdout(out):
+    original_stdout = sys.stdout
+    try:
+        sys.stdout = out
+        yield
+    finally:
+        sys.stdout = original_stdout
+
+
+def mute_stdout():
+    return switch_stdout(None)
+
+
+def normalize_line_breaks(text, line_break=UNIX_NEWLINE):
+    text = text.replace(WINDOWS_NEWLINE, UNIX_NEWLINE).replace(
+        MAC_NEWLINE, UNIX_NEWLINE
+    )
+    if line_break != UNIX_NEWLINE:
+        text = text.replace(UNIX_NEWLINE, line_break)
+    return text
+
+
+def remove_excess_blank_lines(text):
+    return MORE_THAN_ONE_LINE.sub("\n", normalize_line_breaks(text))
 
 
 def ignore(*exceptions, retval=None):
@@ -52,7 +87,7 @@ def restart_application(*extra_args, debug=False, restore=True):
     if debug and ("--debug" not in args):
         args.append("--debug")
     wx.GetApp().ExitMainLoop()
-    shellapi.ShellExecute(None, None, sys.executable, list2cmdline(args), None, 1)
+    system_start_app(sys.executable, args)
     sys.exit(0)
 
 
@@ -73,6 +108,13 @@ def gui_thread_safe(func):
         return wx.CallAfter(func, *a, **kw)
 
     return wrapper
+
+
+def generate_file_md5(filepath):
+    hasher = hashlib.md5()
+    for chunk in open(filepath, "rb"):
+        hasher.update(chunk)
+    return hasher.hexdigest()
 
 
 def generate_sha1hash(content):
@@ -97,65 +139,29 @@ def generate_sha1hash_async(filename):
 
 def search(pattern, text):
     """Search the given text using a compiled regular expression."""
-    mat = pattern.search(text, concurrent=True)
-    if not mat:
-        return
-    pos = mat.span()[0]
-    lseg, tseg, rseg = pattern.split(text, maxsplit=1)
-    snipit = "".join([lseg[-20:], tseg, rseg[:20]])
-    return (pos, snipit)
+    snip_reach = 25
+    len_text = len(text)
+    for mat in pattern.finditer(text, concurrent=True):
+        start, end = mat.span()
+        snip_start = 0 if start <= snip_reach else (start - snip_reach)
+        snip_end = len_text if (end + snip_reach) >= len_text else (end + snip_reach)
+        snip = text[snip_start:snip_end].split()
+        if len(snip) > 3:
+            snip.pop(0)
+            snip.pop(-1)
+        yield (start, " ".join(snip))
 
 
-class cached_property(property):
-
-    """A decorator that converts a function into a lazy property.  The
-    function wrapped is called the first time to retrieve the result
-    and then that calculated result is used the next time you access
-    the value::
-
-        class Foo(object):
-
-            @cached_property
-            def foo(self):
-                # calculate something important here
-                return 42
-
-    The class has to have a `__dict__` in order for this property to
-    work.
-    
-    Taken as is from werkzeug, a WSGI toolkit for python.
-    :copyright: (c) 2014 by the Werkzeug Team.
-    """
-
-    # implementation detail: A subclass of python's builtin property
-    # decorator, we override __get__ to check for a cached value. If one
-    # choses to invoke __get__ by hand the property will still work as
-    # expected because the lookup logic is replicated in __get__ for
-    # manual invocation.
-
-    def __init__(self, func, name=None, doc=None):
-        self.__name__ = name or func.__name__
-        self.__module__ = func.__module__
-        self.__doc__ = doc or func.__doc__
-        self.func = func
-
-    def __set__(self, obj, value):
-        obj.__dict__[self.__name__] = value
-
-    def __get__(self, obj, type=None):
-        if obj is None:
-            return self
-        value = obj.__dict__.get(self.__name__, _missing)
-        if value is _missing:
-            value = self.func(obj)
-            obj.__dict__[self.__name__] = value
-        return value
+def format_datetime(date, format="medium", localized=True) -> str:
+    return app.current_language.format_datetime(
+        date, format=format, localized=localized
+    )
 
 
 def escape_html(text):
     """Escape the text so as to be used
     as a part of an HTML document.
-    
+
     Taken from python Wiki.
     """
     html_escape_table = {'"': "&quot;", "'": "&apos;"}

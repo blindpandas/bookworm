@@ -1,30 +1,37 @@
 packages_to_install:
     pure_python:
-        - "winpaths-0.2-py3-none-any.whl"
-        - "platform_utils-0.4-py3-none-any.whl"
-        - "libloader-0.21-py3-none-any.whl"
-        - "accessible_output2-0.13-py3-none-any.whl"
-        - "db_magic-1.0-py3-none-any.whl"
-    binary_x64:
-        - "ujson-1.35-cp37-cp37m-win_amd64.whl"
-        - "pycld2-0.31-cp37-cp37m-win_amd64.whl"
-    binary_x86:
-        - "ujson-1.35-cp37-cp37m-win32.whl"
-        - "pycld2-0.31-cp37-cp37m-win32.whl"
+        - "pyxpdf_data-1.1.0-py3-none-any.whl"
+    win32:
+        pure_python:
+        x64:
+            - "pycld2-0.41-cp39-cp39-win_amd64.whl"
+            - "pyxpdf-0.2.3-cp39-cp39-win_amd64.whl"
+            - "pythonnet-2.5.2-cp39-cp39-win_amd64.whl"
+        x86:
+            - "pycld2-0.41-cp39-cp39-win32.whl"
+            - "pyxpdf-0.2.3-cp39-cp39-win32.whl"
+            - "pythonnet-2.5.2-cp39-cp39-win32.whl"
 folders_to_clean:
     everytime:
         - build
         - dist
         - bookworm.egg-info
-        - scripts\builder\build
-        - scripts\builder\dist
+        - scripts/builder/build
+        - scripts/builder/dist
     assets:
-        - bookworm\resources\image_data.py
-        - scripts\Bookworm*setup.exe
-        - scripts\bookworm.pot
-        - scripts\Bookworm*update.bundle
-        - scripts\Bookworm*portable.zip
-        - scripts\release-info.json
-        - scripts\builder\assets\bookworm.bmp
-        - scripts\builder\assets\bookworm-logo.bmp
-        - scripts\builder\assets\bookworm.ico
+        - bookworm/resources/userguide/*/*.html
+        - bookworm/resources/license.txt
+        - bookworm/resources/contributors.txt
+        - bookworm/resources/icons
+        - bookworm/bookworm.ico
+        - bookworm/resources/image_data.py
+        - scripts/Bookworm*setup.exe
+        - scripts/bookworm.pot
+        - scripts/Bookworm*update.bundle
+        - scripts/Bookworm*portable.zip
+        - scripts/Bookworm-*.pot
+        - scripts/release-info.json
+        - scripts/builder/assets/version_info.txt
+        - scripts/builder/assets/bookworm.bmp
+        - scripts/builder/assets/bookworm-logo.bmp
+        - scripts/builder/assets/bookworm.ico

@@ -1,4 +1,8 @@
-recursive-include bookworm/resources/soundfiles *
-recursive-include bookworm/resources/non_breaking_prefixes *
+include bookworm/bookworm.ico
+recursive-include bookworm/resources/docs *.html *.txt
+recursive-include bookworm/resources/icons *.ico
+recursive-include bookworm/resources/non_breaking_prefixes *.txt
+recursive-include bookworm/resources/soundfiles *.wav
 recursive-include bookworm/resources/locale *.mo
 recursive-exclude tests *
+

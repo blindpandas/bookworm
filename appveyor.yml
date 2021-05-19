@@ -1,28 +1,18 @@
 os: Visual Studio 2019
 
+clone_depth: 1
 
 branches:
   only:
-    - master
-    - next
+    - main
     - develop
+    - next
     - /dev.*/
     - /release-.*/
 
-
 environment:
-  PY_PYTHON: 3.7-32
   github_access_token:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
-
-
-clone_script:
-  - cmd: >-
-      git clone -q --branch=%APPVEYOR_REPO_BRANCH% https://github.com/%APPVEYOR_REPO_NAME%.git %APPVEYOR_BUILD_FOLDER%
-      && cd %APPVEYOR_BUILD_FOLDER%
-      && git checkout -qf %APPVEYOR_REPO_COMMIT%
-      && git submodule update --init --recursive
-
 
 install:
   # NSIS Paths
@@ -31,8 +21,9 @@ install:
 
 
 before_build:
+  - cd %APPVEYOR_BUILD_FOLDER%
   # Build required dlls
-  - cd includes\sharp-onecore-synth
+  - cd includes\BookwormUWPServices
   - nuget restore
   - msbuild /t:Build /p:Configuration=Release
   - cd %APPVEYOR_BUILD_FOLDER%
@@ -41,24 +32,22 @@ before_build:
 build_script:
   # 32-bit version
   - ps: Write-Host "Building the 32-bit variant."
-
-  - C:\Python37\python.exe -m venv .venv32
+  - C:\Python39\python.exe -m venv .venv32
   - call ".venv32\Scripts\activate.bat"
-  - py -m pip -q install --upgrade pip
-  - pip -q install -r requirements-dev.txt
+  - python -m pip install invoke
   - invoke build
   - invoke create-portable
   - deactivate
   # 64-bit version
   - ps: Write-Host "Building the 64-bit variant."
-
-  - C:\Python37-x64\python.exe -m venv .venv64
+  - C:\Python39-x64\python.exe -m venv .venv64
   - call ".venv64\Scripts\activate.bat"
-  - py -m pip -q install --upgrade pip
-  - pip -q install -r requirements-dev.txt
+  - python -m pip install invoke
   - invoke build
+  - invoke create-portable
   # Update the release info file
   - invoke update-version-info
+  - invoke gen-pot
 
 
 artifacts:
@@ -66,6 +55,7 @@ artifacts:
   - path: scripts\Bookworm*update.bundle
   - path: scripts\Bookworm*portable.zip
   - path: scripts\release-info.json
+  - path: scripts\bookworm*.pot
 
 
 on_success:
@@ -81,9 +71,8 @@ deploy:
   provider: GitHub
   auth_token:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
-  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /Bookworm-.*-portable\.zip/, /release-info\.json/
+  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /Bookworm-.*-portable\.zip/, /release-info\.json/, /bookworm-.*\.pot/
   draft: true
   prerelease: true
   on:
-    branch: /release-.*/
     APPVEYOR_REPO_TAG: true

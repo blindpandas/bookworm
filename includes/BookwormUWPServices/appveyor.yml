@@ -1,0 +1,16 @@
+image: Visual Studio 2019
+
+branches:
+  only:
+    - master
+    - /dev.*/
+    - /release-.*/
+
+before_build:
+  - nuget restore
+
+build:
+  project: BookwormUWPServices.sln
+
+artifacts:
+  - path: .\bin\Release\

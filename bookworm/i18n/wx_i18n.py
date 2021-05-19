@@ -1,26 +1,38 @@
 # coding: utf-8
 
 import wx
+from more_itertools import first_true
 from bookworm import app
 from bookworm import paths
+from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
 
 
-def set_wx_language(lang):
-    log.debug(f"Setting wx locale to {lang}.")
-    wx_locale = wx.Locale()
-    if app.is_frozen:
-        wx_locale.AddCatalogLookupPathPrefix(str(paths.locale_path()))
-    wx_lang = wx_locale.FindLanguageInfo(lang)
-    if not wx_lang and "_" in lang:
-        wx_lang = wx_locale.FindLanguageInfo(lang.split("_")[0])
-    if wx_lang and not wx_locale.IsAvailable(wx_lang.Language):
-        wx_lang = None
-    if wx_lang:
-        try:
-            wx_locale.Init(wx_lang.Language)
-        except:
-            log.error(f"Cannot set wx locale to {lang}.")
+def set_wx_locale(current_locale):
+    log.debug(f"Setting wx locale to {current_locale}.")
+    if hasattr(wx.GetApp(), "AppLocale"):
+        del wx.GetApp().AppLocale
+    possible_locales = [
+        wx.Locale.FindLanguageInfo(lang)
+        for lang in (
+            current_locale.pylang,
+            current_locale.two_letter_language_code,
+        )
+    ]
+    wx_language = first_true(
+        possible_locales,
+        pred=lambda lc: lc is not None and wx.Locale.IsAvailable(lc.Language),
+        default=None,
+    )
+    if wx_language is None:
+        log.exception(
+            f"Failed to find corresponding WX language information for locale {current_locale}."
+        )
+        return
+    wx.GetApp().AppLocale = wx.Locale()
+    wx.GetApp().AppLocale.AddCatalogLookupPathPrefix(str(paths.locale_path()))
+    wx.GetApp().AppLocale.AddCatalog(wx_language.LocaleName)
+    wx.GetApp().AppLocale.Init(wx_language.Language)
