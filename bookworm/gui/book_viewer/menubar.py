@@ -98,7 +98,7 @@ class FileMenu(BaseMenu):
         self.Append(
             BookRelatedMenuIds.closeCurrentFile,
             # Translators: the label of an item in the application menubar
-            _("&Close Current Book\tCtrl-W"),
+            _("&Close Current Document\tCtrl-W"),
             # Translators: the help text of an item in the application menubar
             _("Close the currently open document"),
         )
@@ -183,7 +183,7 @@ class FileMenu(BaseMenu):
             last_folder = str(Path.home())
         openFileDlg = wx.FileDialog(
             self.view,
-            # Translators: the title of a file dialog to browse to an e-book
+            # Translators: the title of a file dialog to browse to a document
             message=_("Select a document"),
             defaultDir=last_folder,
             wildcard=self.view._get_ebooks_wildcards(),
@@ -233,9 +233,9 @@ class FileMenu(BaseMenu):
             self.view,
             # Translators: the title of a dialog showing
             # the progress of book export process
-            _("Exporting Book"),
+            _("Exporting Document"),
             # Translators: the message of a dialog showing the progress of book export
-            _("Converting your book to plain text."),
+            _("Converting document to plain text."),
             maxvalue=total,
             can_hide=True,
             can_abort=True,
@@ -359,9 +359,9 @@ class SearchMenu(BaseMenu):
         self.Append(
             wx.ID_FIND,
             # Translators: the label of an item in the application menubar
-            _("&Find in Book...\tCtrl-F"),
+            _("&Find in Document...\tCtrl-F"),
             # Translators: the help text of an item in the application menubar
-            _("Search this book."),
+            _("Search this document."),
         )
         self.Append(
             BookRelatedMenuIds.findNext,
@@ -429,7 +429,7 @@ class SearchMenu(BaseMenu):
 
     def onFind(self, event):
         # Translators: the title of the search dialog
-        dlg = SearchBookDialog(parent=self.view, title=_("Search book"))
+        dlg = SearchBookDialog(parent=self.view, title=_("Search Document"))
         if dlg.ShowModal() != wx.ID_OK:
             return
         request = dlg.GetValue()
@@ -773,7 +773,7 @@ class MenubarProvider:
                 _("Jump to a page"),
                 BookRelatedMenuIds.goToPage,
             ),
-            (20, _("&Find in Book...\tCtrl-F"), _("Search this book."), wx.ID_FIND),
+            (20, _("&Find in Document...\tCtrl-F"), _("Search this document."), wx.ID_FIND),
             (21, "", "", None),
         ]
         if self.reader.ready and self.reader.document.can_render_pages():

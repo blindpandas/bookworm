@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2021-04-28 23:58+0200\n"
-"PO-Revision-Date: 2021-05-19 14:02+0200\n"
+"POT-Creation-Date: 2021-05-19 15:31+0200\n"
+"PO-Revision-Date: 2021-05-19 15:33+0200\n"
 "Last-Translator: Musharraf Omer <ibnomer2011@hotmail.com>\n"
 "Language: ar_SD\n"
 "Language-Team: ar <ibnomer2011@hotmail.com>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.0\n"
+"Generated-By: Babel 2.9.1\n"
 "X-Generator: Poedit 2.4.1\n"
 
 #. Translators: the content of a message indicating a connection error
@@ -630,11 +630,11 @@ msgid "Copy to clipboard"
 msgstr "نسخ إلى الحافظة"
 
 #. Translators: the name of a document file format
-#: bookworm/document_formats/epub_document.py:130
+#: bookworm/document_formats/epub_document.py:133
 msgid "Electronic Publication (EPUB)"
 msgstr "صيغة المنشورات الإلكترونية (epub)"
 
-#: bookworm/document_formats/epub_document.py:196
+#: bookworm/document_formats/epub_document.py:199
 msgid "Book contents"
 msgstr "محتويات الكتاب"
 
@@ -1284,8 +1284,8 @@ msgstr "ال&حفظ كنص بسيط..."
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:101
-msgid "&Close Current Book\tCtrl-W"
-msgstr "إ&غلاق الكتاب الحالي\tتحكم+ص"
+msgid "&Close Current Document\tCtrl-W"
+msgstr "إ&غلاق المستند الحالي\tتحكم+ص"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:103
@@ -1342,7 +1342,7 @@ msgstr "لضبط خيارات البرنامج"
 msgid "Exit"
 msgstr "خروج"
 
-#. Translators: the title of a file dialog to browse to an e-book
+#. Translators: the title of a file dialog to browse to a document
 #: bookworm/gui/book_viewer/menubar.py:187
 msgid "Select a document"
 msgstr "إختر مستنداً"
@@ -1350,13 +1350,13 @@ msgstr "إختر مستنداً"
 #. Translators: the title of a dialog showing
 #. the progress of book export process
 #: bookworm/gui/book_viewer/menubar.py:236
-msgid "Exporting Book"
-msgstr "تصدير الكتاب"
+msgid "Exporting Document"
+msgstr "تصدير المستند"
 
 #. Translators: the message of a dialog showing the progress of book export
 #: bookworm/gui/book_viewer/menubar.py:238
-msgid "Converting your book to plain text."
-msgstr "تحويل الكتاب إلى نص بسيط."
+msgid "Converting document to plain text."
+msgstr "تحويل المستند إلى نص بسيط."
 
 #. Translators: a message shown when the book is being exported
 #: bookworm/gui/book_viewer/menubar.py:253
@@ -1379,13 +1379,13 @@ msgstr "لم يتم فتح أي كتاب مؤخراً"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:362 bookworm/gui/book_viewer/menubar.py:776
-msgid "&Find in Book...\tCtrl-F"
-msgstr "ال&بحث في الكتاب...\tتحكم+ب"
+msgid "&Find in Document...\tCtrl-F"
+msgstr "ال&بحث في المستند...\tتحكم+ب"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:364 bookworm/gui/book_viewer/menubar.py:776
-msgid "Search this book."
-msgstr "البحث داخل الكتاب المفتوح."
+msgid "Search this document."
+msgstr "البحث داخل المستند المفتوح."
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:369
@@ -1442,8 +1442,8 @@ msgstr "إسم الصفحة"
 
 #. Translators: the title of the search dialog
 #: bookworm/gui/book_viewer/menubar.py:432
-msgid "Search book"
-msgstr "البحث في الكتاب"
+msgid "Search Document"
+msgstr "البحث في المستند"
 
 #: bookworm/gui/book_viewer/menubar.py:458
 msgid "Searching For '{term}'"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  0.1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2021-04-28 23:58+0200\n"
+"POT-Creation-Date: 2021-05-19 15:31+0200\n"
 "PO-Revision-Date: 2020-08-31 01:45+0800\n"
 "Last-Translator: Musharraf Omer <ibnomer2011@hotmail.com>\n"
 "Language: zh_CN\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #. Translators: the content of a message indicating a connection error
 #: bookworm/otau.py:76
@@ -636,11 +636,11 @@ msgid "Copy to clipboard"
 msgstr ""
 
 #. Translators: the name of a document file format
-#: bookworm/document_formats/epub_document.py:130
+#: bookworm/document_formats/epub_document.py:133
 msgid "Electronic Publication (EPUB)"
 msgstr "电子出版物（EPUB）"
 
-#: bookworm/document_formats/epub_document.py:196
+#: bookworm/document_formats/epub_document.py:199
 #, fuzzy
 msgid "Book contents"
 msgstr "目录"
@@ -1299,7 +1299,8 @@ msgstr "另存为纯文本(&S)..."
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:101
-msgid "&Close Current Book\tCtrl-W"
+#, fuzzy
+msgid "&Close Current Document\tCtrl-W"
 msgstr "关闭当前书籍(&C) \tCtrl-W"
 
 #. Translators: the help text of an item in the application menubar
@@ -1361,7 +1362,7 @@ msgstr "应用程序设置"
 msgid "Exit"
 msgstr "退出(&E)"
 
-#. Translators: the title of a file dialog to browse to an e-book
+#. Translators: the title of a file dialog to browse to a document
 #: bookworm/gui/book_viewer/menubar.py:187
 #, fuzzy
 msgid "Select a document"
@@ -1370,12 +1371,14 @@ msgstr "语音："
 #. Translators: the title of a dialog showing
 #. the progress of book export process
 #: bookworm/gui/book_viewer/menubar.py:236
-msgid "Exporting Book"
-msgstr "导出书籍"
+#, fuzzy
+msgid "Exporting Document"
+msgstr "打开文档时出错"
 
 #. Translators: the message of a dialog showing the progress of book export
 #: bookworm/gui/book_viewer/menubar.py:238
-msgid "Converting your book to plain text."
+#, fuzzy
+msgid "Converting document to plain text."
 msgstr "将您的书籍转换为纯文本。"
 
 #. Translators: a message shown when the book is being exported
@@ -1401,13 +1404,15 @@ msgstr "没有最近阅读的书籍"
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:362
 #: bookworm/gui/book_viewer/menubar.py:776
-msgid "&Find in Book...\tCtrl-F"
+#, fuzzy
+msgid "&Find in Document...\tCtrl-F"
 msgstr "在书籍中查找(&F)... \tCtrl-F"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:364
 #: bookworm/gui/book_viewer/menubar.py:776
-msgid "Search this book."
+#, fuzzy
+msgid "Search this document."
 msgstr "搜索本书"
 
 #. Translators: the label of an item in the application menubar
@@ -1468,8 +1473,9 @@ msgstr "有可用更新"
 
 #. Translators: the title of the search dialog
 #: bookworm/gui/book_viewer/menubar.py:432
-msgid "Search book"
-msgstr "搜索书籍"
+#, fuzzy
+msgid "Search Document"
+msgstr "语音："
 
 #: bookworm/gui/book_viewer/menubar.py:458
 msgid "Searching For '{term}'"
