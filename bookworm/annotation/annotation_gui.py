@@ -179,7 +179,7 @@ class AnnotationMenu(wx.Menu):
                 bookmarker.delete(bkm.id)
                 self.service.style_bookmark(self.view, bkm.position, enable=False)
         if count and not name:
-            return speech.announce("Bookmark removed.")
+            return speech.announce(_("Bookmark removed"))
         Bookmarker(self.reader).create(title=name, position=insertionPoint)
         # Translators: spoken message
         speech.announce(_("Bookmark Added"))
@@ -259,7 +259,7 @@ class AnnotationMenu(wx.Menu):
                     return speech.announce(_("Highlight extended"))
         quote = quoter.create(title="", content=selected_text, start_pos=x, end_pos=y)
         # Translators: spoken message
-        speech.announce("Selection highlighted")
+        speech.announce(_("Selection highlighted"))
         self.service.style_highlight(self.view, x, y)
         if _with_tags:
             # add tags
