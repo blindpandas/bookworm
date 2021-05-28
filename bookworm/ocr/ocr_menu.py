@@ -292,7 +292,7 @@ class OCRMenu(wx.Menu):
             ("*.png", _("Portable Network Graphics")),
             ("*.jpg", _("JPEG images")),
             ("*.bmp", _("Bitmap images")),
-            ("*.tiff", _("Tiff graphics")),
+            ("*.tif", _("Tiff graphics")),
         ]
         for ext, name in all_exts:
             wildcard.append("{name} ({ext})|{ext}|".format(name=name, ext=ext))
