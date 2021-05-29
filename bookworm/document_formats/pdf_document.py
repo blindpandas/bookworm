@@ -74,7 +74,8 @@ class FitzPdfDocument(FitzDocument):
         XPdfConfig.load_file(cfg_file_path)
         for cfg, val in XPDF_CONFIG.items():
             setattr(XPdfConfig, cfg, val)
-        self.xpdf_doc = XPdfDocument(self.filename, userpass=password)
+        self._pdf_fileobj = open(self.filename, "rb")
+        self.xpdf_doc = XPdfDocument(self._pdf_fileobj, userpass=password)
 
     def read(self, filetype=None):
         super().read()
@@ -83,6 +84,7 @@ class FitzPdfDocument(FitzDocument):
 
     def close(self):
         super().close()
+        self._pdf_fileobj.close()
 
     def decrypt(self, password):
         is_ok = bool(self._ebook.authenticate(password))
