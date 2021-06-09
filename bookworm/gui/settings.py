@@ -328,6 +328,14 @@ class AppearancePanel(SettingsPanel):
     def addControls(self):
         # Translators: the title of a group of controls in the
         # appearance settings page related to the UI
+        GeneralAppearanceBox = self.make_static_box(_("General Appearance"))
+        wx.CheckBox(
+            GeneralAppearanceBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Maximize the application window upon startup"),
+            name="appearance.start_maximized",
+        )
         UIBox = self.make_static_box(_("Text Styling"))
         wx.CheckBox(
             UIBox,
