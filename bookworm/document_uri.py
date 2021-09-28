@@ -75,7 +75,7 @@ class DocumentUri:
     @classmethod
     def get_format_by_filename(cls, filename):
         """Get the document format using its filename."""
-        fileext = Path(filename).suffix.strip(".")
+        fileext = Path(filename).suffix.strip(".").lower()
         if (file_format := cls._get_format_given_extension(f"*.{fileext}")) :
             return file_format
         possible_exts = tuple(str(filename).split("."))
