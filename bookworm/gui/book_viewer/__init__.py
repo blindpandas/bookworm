@@ -270,7 +270,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         sizer.Add(panel, 1, wx.EXPAND)
         self.SetSizer(sizer)
         self.Fit()
-        self.SetMinSize(self.GetSize())
+        self.SetSize(self.GetSize())
         self.CenterOnScreen(wx.BOTH)
 
     def finalize_gui_creation(self):
