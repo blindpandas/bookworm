@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import winsound
 import wx
 from math import ceil
 from contextlib import contextmanager
@@ -28,6 +29,7 @@ from bookworm.signals import (
 )
 from bookworm.structured_text import TextRange
 from bookworm.gui.contentview_ctrl import ContentViewCtrl
+from bookworm.gui.caret_tracker import init_caret_tracking, EVT_CARET_MOVE
 from bookworm.gui.components import TocTreeManager, AsyncSnakDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
@@ -201,8 +203,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.userPositionTimer = wx.Timer(self)
 
         # Bind Events
-        self.Bind(wx.EVT_TIMER, self.onUserPositionTimerTick, self.userPositionTimer)
+        init_caret_tracking(self.contentTextCtrl)
+        self.contentTextCtrl.Bind(EVT_CARET_MOVE, self.onCaretMove, self.contentTextCtrl)
         self.tocTreeCtrl.Bind(wx.EVT_SET_FOCUS, self.onTocTreeFocus, self.tocTreeCtrl)
+        self.Bind(wx.EVT_TIMER, self.onUserPositionTimerTick, self.userPositionTimer)
         self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.onTOCItemClick, self.tocTreeCtrl)
         self.Bind(
             wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(-1), id=wx.ID_PREVIEW_ZOOM_OUT
@@ -393,6 +397,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.set_insertion_point(target_pos)
         if not is_single_page_doc and config.conf["general"]["speak_section_title"]:
             speech.announce(current.title)
+
+    def onCaretMove(self, event):
+        if not self.reader.ready:
+            return
+        self.reader.go_to_next()
 
     def onUserPositionTimerTick(self, event):
         try:
