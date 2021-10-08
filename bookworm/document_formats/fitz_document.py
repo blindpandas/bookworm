@@ -153,7 +153,7 @@ class FitzDocument(BaseDocument):
     def metadata(self):
         meta = self._ebook.metadata
         to_str = (
-            lambda value: "" if value is None else ftfy.fix_text_encoding(value).strip()
+            lambda value: "" if value is None else ftfy.fix_encoding(value).strip()
         )
         return BookMetadata(
             title=to_str(meta["title"]) or Path(self.filename).stem,
