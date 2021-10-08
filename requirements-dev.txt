@@ -1,10 +1,10 @@
 -r requirements.txt
 
-black==20.8b1
+black==21.9b0
 distro==1.5.0;sys_platform=="linux"
-invoke==1.5.0
+invoke==1.6.0
 jinja2==2.11.3
-packaging==20.9
-PyInstaller==4.2
+packaging==21.0
+PyInstaller==4.5.1
 pytest==6.1.0
-wheel==0.35.1
+wheel==0.37.0
