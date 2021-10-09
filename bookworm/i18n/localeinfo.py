@@ -78,7 +78,7 @@ class LocaleInfo:
 
     @property
     def pylang(self):
-        return str(self.locale)
+        return self.ietf_tag.replace("-", "_")
 
     @property
     def ietf_tag(self):

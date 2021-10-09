@@ -13,6 +13,7 @@ log = logger.getChild(__name__)
 
 def set_wx_locale(current_locale):
     log.debug(f"Setting wx locale to {current_locale}.")
+    wx.GetApp().ResetLocale()
     if hasattr(wx.GetApp(), "AppLocale"):
         del wx.GetApp().AppLocale
     possible_locales = [
