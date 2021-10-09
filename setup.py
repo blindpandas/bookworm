@@ -13,7 +13,7 @@ CWD = Path(__file__).parent
 LONG_DESCRIPTION = (CWD / "README.md").read_text()
 
 REQUIREMENTS = []
-with open(CWD / "requirements.txt", "r") as reqs:
+with open(CWD / "requirements-app.txt", "r") as reqs:
     for line in reqs:
         if any(line.startswith(prfx) for prfx in INVALID_PREFIXES):
             continue
