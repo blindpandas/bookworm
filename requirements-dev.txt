@@ -1,8 +1,7 @@
--r requirements.txt
+-r requirements-app.txt
 
 black==21.9b0
 distro==1.5.0;sys_platform=="linux"
-invoke==1.6.0
 jinja2==2.11.3
 packaging==21.0
 PyInstaller==4.5.1
