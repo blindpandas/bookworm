@@ -25,7 +25,7 @@ process_worker = ProcessPoolExecutor()
 
 
 @app_shuttingdown.connect
-def _shutdown_threaded_worker(sender):
+def _shutdown_concurrent_workers(sender):
     """Cancel any pending background tasks."""
     log.debug("Canceling  background tasks.")
     threaded_worker.shutdown(wait=False)
@@ -44,7 +44,7 @@ def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., "Future"]:
             return threaded_worker.submit(func, *args, **kwargs)
         except RuntimeError:
             log.debug(
-                f"Failed to submit function {func}; the thread executor is shutting down."
+                f"Failed to submit function {func}."
             )
 
     return wrapper
@@ -69,37 +69,37 @@ class QPResult(IntEnum):
     DEBUG = 2
 
 
-@dataclass
 class QPChannel:
-    queue: mp.Queue = field(default_factory=mp.Queue)
-    cancellation_token: CancellationToken = field(default_factory=CancellationToken)
 
-    def cancel(self):
-        self.queue.put((QPResult.CANCELLED, None))
-
-    def __post_init__(self):
+    def __init__(self):
+        self.reader, self.writer = mp.Pipe(duplex=False)
+        self.cancellation_token = CancellationToken()
         self.is_cancellation_requested = (
             self.cancellation_token.is_cancellation_requested
         )
 
     def get(self):
-        return self.queue.get()
+        return self.reader.recv()
+
+    def cancel(self):
+        self.writer.send((QPResult.CANCELLED, None))
 
     def push(self, value: t.Any):
-        self.queue.put((QPResult.OK, value))
+        self.writer.send((QPResult.OK, value))
 
     def exception(self, exc_type, exc_value, tb):
         tb_text = "".join(format_exception(exc_type, exc_value, tb))
-        self.queue.put((QPResult.FAILED, (exc_value, tb_text)))
+        self.writer.send((QPResult.FAILED, (exc_value, tb_text)))
 
     def log(self, msg: str):
-        self.queue.put((QPResult.DEBUG, f"PID: {os.getpid()}; {msg}"))
+        self.writer.send((QPResult.DEBUG, f"PID: {os.getpid()}; {msg}"))
 
     def done(self):
-        self.queue.put((QPResult.COMPLETED, None))
+        self.writer.send((QPResult.COMPLETED, None))
 
     def close(self):
-        self.queue.close()
+        self.reader.close()
+        self.writer.close()
 
 
 class QueueProcess(mp.Process):

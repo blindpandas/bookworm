@@ -198,12 +198,12 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         return QueueProcess(
             target=doctools.export_to_plain_text,
             args=(self, target_filename),
-            name="bookworm-exporter",
+            name="document-export",
         )
 
     def search(self, request: SearchRequest):
         yield from QueueProcess(
-            target=doctools.search_book, args=(self, request), name="bookworm-search"
+            target=doctools.search_book, args=(self, request), name="document-search"
         )
 
 
@@ -324,7 +324,7 @@ class SinglePageDocument(BaseDocument):
                 text,
                 request,
             ),
-            name="bookworm-search",
+            name="document-search",
         )
 
 

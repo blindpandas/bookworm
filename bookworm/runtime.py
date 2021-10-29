@@ -3,6 +3,7 @@
 """Provides information and functionality needed at runtime."""
 
 
+import multiprocessing
 from enum import Enum, auto
 from bookworm import app
 from bookworm.platform_services.runtime import (
@@ -32,3 +33,9 @@ try:
     IS_HIGH_CONTRAST_ACTIVE = is_high_contrast_active()
 except:
     IS_HIGH_CONTRAST_ACTIVE = False
+
+
+if app.is_frozen:
+    IS_IN_MAIN_PROCESS = multiprocessing.parent_process() is None
+else:
+    IS_IN_MAIN_PROCESS = (multiprocessing.current_process().name == "MainProcess")

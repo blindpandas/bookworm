@@ -131,6 +131,9 @@ def init_app_and_run_main_loop():
 def run():
     try:
         init_app_and_run_main_loop()
+        active_child_processes = "\n".join(p.name for p in multiprocessing.active_children()).strip()
+        if active_child_processes:
+            log.debug(f"Active child processes: {active_child_processes}")
         log.info("The application has exited gracefully.")
     except BaseException:
         log.critical("An unhandled error has occurred.", exc_info=True)
