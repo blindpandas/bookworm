@@ -5,7 +5,7 @@ from mistune import markdown
 from bookworm.paths import home_data_path
 from bookworm.utils import generate_file_md5
 from bookworm.document_uri import DocumentUri
-from bookworm.document_formats.base import (
+from bookworm.documents.base import (
     DummyDocument,
     ChangeDocument,
     DocumentCapability as DC,

@@ -9,7 +9,7 @@ from pathlib import Path
 from bookworm.paths import home_data_path
 from bookworm.document_uri import DocumentUri
 from bookworm.utils import generate_file_md5, mute_stdout
-from bookworm.document_formats.base import (
+from bookworm.documents.base import (
     DummyDocument,
     ChangeDocument,
     DocumentCapability as DC,

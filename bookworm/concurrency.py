@@ -145,7 +145,7 @@ class QueueProcess(mp.Process):
                 yield item
         except GeneratorExit:
             _producer.close()
-            raise OperationCancelled()
+            self.channel.cancel()
 
     def run(self):
         gen = self._generator()
@@ -157,8 +157,6 @@ class QueueProcess(mp.Process):
                     gen.close()
         except StopIteration:
             self.channel.done()
-        except OperationCancelled:
-            self.channel.cancel()
         except Exception as e:
             self.channel.exception(*sys.exc_info())
 

@@ -21,7 +21,7 @@ from bookworm.structured_text import (
     HEADING_LEVELS,
 )
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.document_formats.base import (
+from bookworm.documents.base import (
     SinglePageDocument,
     Section,
     SINGLE_PAGE_DOCUMENT_PAGER,

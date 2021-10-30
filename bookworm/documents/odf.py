@@ -21,7 +21,7 @@ from bookworm.concurrency import process_worker
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 from bookworm.utils import generate_file_md5, escape_html, NEWLINE
 from bookworm.document_uri import DocumentUri
-from bookworm.document_formats.base import (
+from bookworm.documents.base import (
     BaseDocument,
     BasePage,
     DummyDocument,

@@ -4,7 +4,7 @@ from __future__ import annotations
 import os
 from functools import cached_property
 from io import StringIO
-from bookworm.document_formats.base import (
+from bookworm.documents.base import (
     SinglePageDocument,
     Section,
     Pager,

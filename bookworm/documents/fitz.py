@@ -12,7 +12,7 @@ from pathlib import Path
 from bookworm.paths import home_data_path
 from bookworm.image_io import ImageIO
 from bookworm.utils import recursively_iterdir
-from bookworm.document_formats.base import (
+from bookworm.documents.base import (
     BaseDocument,
     BasePage,
     Section,

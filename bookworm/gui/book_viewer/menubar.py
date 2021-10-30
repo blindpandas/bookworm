@@ -16,8 +16,8 @@ from bookworm import paths
 from bookworm import app
 from bookworm.i18n import is_rtl
 from bookworm.resources import sounds
-from bookworm.document_formats import PaginationError, DocumentCapability as DC
-from bookworm.document_formats.base import READING_MODE_LABELS
+from bookworm.documents import PaginationError, DocumentCapability as DC
+from bookworm.documents.base import READING_MODE_LABELS
 from bookworm.signals import (
     navigated_to_search_result,
     config_updated,

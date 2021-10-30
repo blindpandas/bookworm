@@ -9,7 +9,7 @@ from bookworm import config
 from bookworm.database import DocumentPositionInfo
 from bookworm.i18n import is_rtl
 from bookworm.document_uri import DocumentUri
-from bookworm.document_formats import (
+from bookworm.documents import (
     BaseDocument,
     ChangeDocument,
     DocumentCapability as DC,
@@ -17,7 +17,7 @@ from bookworm.document_formats import (
     DocumentIOError,
     PaginationError,
 )
-from bookworm.document_formats.base import Section, BasePage
+from bookworm.documents.base import Section, BasePage
 from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,

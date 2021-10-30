@@ -8,7 +8,7 @@ from functools import cached_property, lru_cache
 from bookworm.i18n import LocaleInfo
 from bookworm.utils import NEWLINE
 from bookworm.structured_text import StringBuilder, SemanticElementType
-from bookworm.document_formats.base import (
+from bookworm.documents.base import (
     BaseDocument,
     BasePage,
     BookMetadata,
