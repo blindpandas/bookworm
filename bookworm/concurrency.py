@@ -4,10 +4,12 @@ from __future__ import annotations
 import sys
 import os
 import multiprocessing as mp
+import inspect
 from traceback import format_exception
 from enum import IntEnum
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from functools import wraps, partial
+from contextlib import suppress
 from dataclasses import dataclass, field
 import bookworm.typehints as t
 from bookworm.signals import app_shuttingdown
@@ -48,6 +50,11 @@ def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., "Future"]:
             )
 
     return wrapper
+
+
+
+class OperationCancelled(Exception):
+    """Raised in the generator to cancel the operation."""
 
 
 @dataclass(repr=False)
@@ -116,9 +123,9 @@ class QueueProcess(mp.Process):
     def __init__(self, *args, cancellable=True, **kwargs):
         kwargs.setdefault("daemon", True)
         super().__init__(*args, **kwargs)
+        assert inspect.isgeneratorfunction(self._target), "QueueProcess target should be a generator function."
         self.cancellable = cancellable
         self.channel = QPChannel()
-        self._is_cancelled = mp.Event()
         self._done_callback = None
 
     def cancel(self):
@@ -127,16 +134,37 @@ class QueueProcess(mp.Process):
         self.channel.cancellation_token.request_cancellation()
 
     def is_cancelled(self):
-        return self._is_cancelled.is_set()
+        return self.channel.cancellation_token.is_cancellation_requested()
 
     def add_done_callback(self, callback, *args, **kwargs):
         self._done_callback = partial(callback, *args, **kwargs)
 
-    def run(self):
+    def _generator(self):
+        _producer = self._target(*self._args, **self._kwargs)
         try:
-            self._target(*self._args, **self._kwargs, channel=self.channel)
-        except:
+            for item in _producer:
+                yield item
+        except GeneratorExit:
+            _producer.close()
+            raise OperationCancelled()
+
+    def run(self):
+        gen = self._generator()
+        try:
+            while True:
+                item = next(gen)
+                self.channel.push(item)
+                if self.is_cancelled():
+                    gen.close()
+        except StopIteration:
+            self.channel.done()
+        except OperationCancelled:
+            self.channel.cancel()
+        except Exception as e:
             self.channel.exception(*sys.exc_info())
+        finally:
+            self.close()
+            self.join()
 
     def close(self):
         self.channel.close()
@@ -159,12 +187,9 @@ class QueueProcess(mp.Process):
                 if self._done_callback is not None:
                     self._done_callback()
                 break
-            elif flag is QPResult.CANCELLED:
-                self._is_cancelled.set()
-                break
             elif flag is QPResult.FAILED:
                 exc_value, tb_text = result
                 log.exception(f"Remote exception from {self}.\nTraceback:\n{tb_text}")
                 raise exc_value
-        self.join()
-        self.close()
+            elif flag is QPResult.CANCELLED:
+                break

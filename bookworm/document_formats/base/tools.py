@@ -8,57 +8,51 @@ from bookworm.utils import NEWLINE, search
 from .elements import SearchResult
 
 
-def export_to_plain_text(doc, target_filename, channel):
+def export_to_plain_text(doc, target_filename):
     """This function runs in a separate process."""
     total = len(doc)
     out = StringIO()
     if out.write(doc.metadata.title or ""):
         out.write(f"{NEWLINE}{'-' * 30}{NEWLINE}")
-    for n in range(total):
-        if channel.is_cancellation_requested():
-            out.close()
-            doc.close()
-            channel.cancel()
-            return
-        text = doc.get_page_content(n)
-        out.write(f"{text}{NEWLINE}\f{NEWLINE}")
-        channel.push(n)
-    full_text = out.getvalue()
-    with open(target_filename, "w", encoding="utf8") as file:
-        file.write(full_text)
-    out.close()
-    doc.close()
-    channel.done()
+    try:
+        for n in range(total):
+            text = doc.get_page_content(n)
+            out.write(f"{text}{NEWLINE}\f{NEWLINE}")
+            yield n
+        full_text = out.getvalue()
+        with open(target_filename, "w", encoding="utf8") as file:
+            file.write(full_text)
+    finally:
+        out.close()
+        doc.close()
 
 
-def search_book(doc, request, channel):
+def search_book(doc, request):
     """This function also runs in a separate process."""
     pattern = _make_search_re_pattern(request)
-    for n in range(request.from_page, request.to_page + 1):
-        resultset = []
-        sect = doc[n].section.title
-        for pos, snip in search(pattern, doc.get_page_content(n)):
-            resultset.append(
-                SearchResult(excerpt=snip, page=n, position=pos, section=sect)
-            )
-        channel.push(resultset)
-    doc.close()
-    channel.done()
+    try:
+        for n in range(request.from_page, request.to_page + 1):
+            resultset = []
+            sect = doc[n].section.title
+            for pos, snip in search(pattern, doc.get_page_content(n)):
+                resultset.append(
+                    SearchResult(excerpt=snip, page=n, position=pos, section=sect)
+                )
+            yield resultset
+    finally:
+        doc.close()
 
 
-def search_single_page_document(text, request, channel):
+def search_single_page_document(text, request):
     pattern = _make_search_re_pattern(request)
     start_pos, stop_pos = request.text_range
     for pos, snip in search(pattern, text):
         actual_text_pos = start_pos + pos
-        channel.push(
-            [
-                SearchResult(
-                    excerpt=snip, page=0, position=actual_text_pos, section=""
-                ),
-            ]
-        )
-    channel.done()
+        yield [
+            SearchResult(
+                excerpt=snip, page=0, position=actual_text_pos, section=""
+            ),
+        ]
 
 
 def _make_search_re_pattern(request):
