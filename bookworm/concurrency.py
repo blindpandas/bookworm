@@ -111,11 +111,9 @@ class QPChannel:
 
 class QueueProcess(mp.Process):
     """
-    A process that passes a channel to its target.
-    The process could be iterated over to get the produced
-    results as they are generated.
-    The target should recieve a keyword argument `channel`
-    and use it to send results to the caller.
+    A process that runs a generator in parallel, yielding values from it.
+    You can iterate the process object to get the values.
+    Iteration is blocking, you can run it in a different thread.
     """
 
     QPIteratorType = t.Iterator[t.Any]
@@ -162,9 +160,6 @@ class QueueProcess(mp.Process):
             self.channel.cancel()
         except Exception as e:
             self.channel.exception(*sys.exc_info())
-        finally:
-            self.close()
-            self.join()
 
     def close(self):
         self.channel.close()
@@ -177,19 +172,29 @@ class QueueProcess(mp.Process):
         if self.is_alive():
             raise RuntimeError("Can only iterate process once.")
         self.start()
-        while True:
-            flag, result = self.channel.get()
-            if flag is QPResult.OK:
-                yield result
-            elif flag is QPResult.DEBUG:
-                log.debug(f"REMOTE PROCESS: {result}")
-            elif flag is QPResult.COMPLETED:
-                if self._done_callback is not None:
-                    self._done_callback()
-                break
-            elif flag is QPResult.FAILED:
-                exc_value, tb_text = result
-                log.exception(f"Remote exception from {self}.\nTraceback:\n{tb_text}")
-                raise exc_value
-            elif flag is QPResult.CANCELLED:
-                break
+        try:
+            while True:
+                flag, result = self.channel.get()
+                if flag is QPResult.OK:
+                    yield result
+                elif flag is QPResult.DEBUG:
+                    log.debug(f"REMOTE PROCESS: {result}")
+                elif flag is QPResult.COMPLETED:
+                    if self._done_callback is not None:
+                        self._done_callback()
+                    break
+                elif flag is QPResult.FAILED:
+                    exc_value, tb_text = result
+                    log.exception(f"Remote exception from {self}.\nTraceback:\n{tb_text}")
+                    raise exc_value
+                elif flag is QPResult.CANCELLED:
+                    break
+        finally:
+            self.join()
+            self.close()
+
+    @call_threaded
+    def map(self, callback):
+        """Asynchronously generate values and invoke the given callback with each generated value."""
+        for value in self:
+            callback(value)
