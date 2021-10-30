@@ -113,7 +113,8 @@ class QueueProcess(mp.Process):
     """
     A process that runs a generator in parallel, yielding values from it.
     You can iterate the process object to get the values.
-    Iteration is blocking, you can run it in a different thread.
+    Note that iteration is blocking.
+    You can also use the map method for asynchronous iteration.
     """
 
     QPIteratorType = t.Iterator[t.Any]
