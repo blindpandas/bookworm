@@ -7,6 +7,7 @@ from dataclasses import field, dataclass
 from collections.abc import Container, Iterable, Sequence, Sized
 from weakref import ref
 from bookworm import typehints as t
+from bookworm.parallel import SearchResult
 from bookworm.structured_text import TextRange
 
 
@@ -34,16 +35,6 @@ class SearchRequest:
     to_page: int = None
     text_range: TextRange = None
     text: str = None
-
-
-@dataclass
-class SearchResult:
-    """Holds information about a single search result."""
-
-    excerpt: str
-    page: int
-    position: int
-    section: str
 
 
 @dataclass(frozen=True, order=True)

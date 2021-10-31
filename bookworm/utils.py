@@ -10,6 +10,7 @@ from pathlib import Path
 from xml.sax.saxutils import escape
 from bookworm import typehints as t
 from bookworm import app
+from bookworm.parallel import search
 from bookworm.concurrency import call_threaded
 from bookworm.platform_services.runtime import system_start_app
 from bookworm.logger import logger
@@ -135,21 +136,6 @@ def generate_sha1hash(content):
 @call_threaded
 def generate_sha1hash_async(filename):
     return generate_sha1hash(filename)
-
-
-def search(pattern, text):
-    """Search the given text using a compiled regular expression."""
-    snip_reach = 25
-    len_text = len(text)
-    for mat in pattern.finditer(text, concurrent=True):
-        start, end = mat.span()
-        snip_start = 0 if start <= snip_reach else (start - snip_reach)
-        snip_end = len_text if (end + snip_reach) >= len_text else (end + snip_reach)
-        snip = text[snip_start:snip_end].split()
-        if len(snip) > 3:
-            snip.pop(0)
-            snip.pop(-1)
-        yield (start, " ".join(snip))
 
 
 def format_datetime(date, format="medium", localized=True) -> str:

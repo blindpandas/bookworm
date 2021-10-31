@@ -17,7 +17,7 @@ from bookworm.logger import logger
 from .exceptions import DocumentIOError, PaginationError
 from .elements import *
 from .features import DocumentCapability, ReadingMode
-from . import tools as doctools
+from bookworm.parallel import document_operations as doctools
 
 
 log = logger.getChild(__name__)

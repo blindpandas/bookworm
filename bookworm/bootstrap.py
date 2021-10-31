@@ -9,7 +9,7 @@ import wx
 from bookworm import app as appinfo
 from bookworm.paths import logs_path
 from bookworm.config import setup_config
-from bookworm.i18n import setup_i18n, set_wx_locale
+from bookworm.i18n import setup_i18n
 from bookworm.database import init_database
 from bookworm.platform_services.shell import shell_integrate, shell_disintegrate
 from bookworm.signals import app_started, app_shuttingdown
@@ -94,10 +94,6 @@ def init_app_and_run_main_loop():
 
     wxlogfilename = logs_path("wx.log") if not appinfo.debug else None
     app = BookwormApp(redirect=True, useBestVisual=True, filename=wxlogfilename)
-    try:
-        set_wx_locale(appinfo.current_language)
-    except:
-        log.exception("Failed to set wxLocale to the current app locale", exc_info=True)
     mainFrame = app.mainFrame = BookViewerWindow(None, appinfo.display_name)
     app.service_handler = ServiceHandler(mainFrame)
     app.service_handler.register_builtin_services()

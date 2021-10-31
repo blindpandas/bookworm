@@ -3,9 +3,36 @@
 """Contains generic utility functions for working with documents."""
 
 import regex as re
+from dataclasses import dataclass
 from io import StringIO
-from bookworm.utils import NEWLINE, search
-from .elements import SearchResult
+
+
+NEWLINE = "\n"
+
+
+@dataclass
+class SearchResult:
+    """Holds information about a single search result."""
+
+    excerpt: str
+    page: int
+    position: int
+    section: str
+
+
+def search(pattern, text):
+    """Search the given text using a compiled regular expression."""
+    snip_reach = 25
+    len_text = len(text)
+    for mat in pattern.finditer(text, concurrent=True):
+        start, end = mat.span()
+        snip_start = 0 if start <= snip_reach else (start - snip_reach)
+        snip_end = len_text if (end + snip_reach) >= len_text else (end + snip_reach)
+        snip = text[snip_start:snip_end].split()
+        if len(snip) > 3:
+            snip.pop(0)
+            snip.pop(-1)
+        yield (start, " ".join(snip))
 
 
 def export_to_plain_text(doc, target_filename):
