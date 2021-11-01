@@ -12,7 +12,8 @@ from bs4 import BeautifulSoup
 from bookworm.paths import home_data_path
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 from bookworm.utils import recursively_iterdir
-from bookworm.documents.base import (
+from bookworm.logger import logger
+from .. import (
     BaseDocument,
     BasePage,
     Section,
@@ -25,7 +26,6 @@ from bookworm.documents.base import (
     DocumentError,
     DocumentEncryptedError,
 )
-from bookworm.logger import logger
 from .fitz import FitzPage, FitzDocument
 
 

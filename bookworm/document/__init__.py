@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from .document import (
+from .base import (
     BaseDocument,
     BasePage,
     SinglePageDocument,
@@ -11,8 +11,6 @@ from .elements import (
     Section,
     Pager,
     BookMetadata,
-    SearchRequest,
-    SearchResult,
     TreeStackBuilder,
     SINGLE_PAGE_DOCUMENT_PAGER,
 )

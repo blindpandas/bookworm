@@ -17,7 +17,7 @@ from bookworm.runtime import PackagingMode, IS_RUNNING_PORTABLE, CURRENT_PACKAGI
 from bookworm.service_handler import ServiceHandler
 from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.gui.settings import show_file_association_dialog
-from bookworm.document_uri import DocumentUri
+from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
 
 

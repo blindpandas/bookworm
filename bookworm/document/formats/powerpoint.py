@@ -8,7 +8,8 @@ from functools import cached_property, lru_cache
 from bookworm.i18n import LocaleInfo
 from bookworm.utils import NEWLINE
 from bookworm.structured_text import StringBuilder, SemanticElementType
-from bookworm.documents.base import (
+from bookworm.logger import logger
+from .. import (
     BaseDocument,
     BasePage,
     BookMetadata,
@@ -19,7 +20,6 @@ from bookworm.documents.base import (
     DocumentError,
     DocumentEncryptedError,
 )
-from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)

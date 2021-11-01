@@ -14,10 +14,10 @@ from bookworm.structured_text import SemanticElementType, Style
 from bookworm.image_io import ImageIO
 from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
 from bookworm.logger import logger
+from . import operations as doctools
 from .exceptions import DocumentIOError, PaginationError
 from .elements import *
 from .features import DocumentCapability, ReadingMode
-from bookworm.parallel import document_operations as doctools
 
 
 log = logger.getChild(__name__)
@@ -201,7 +201,7 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
             name="document-export",
         )
 
-    def search(self, request: SearchRequest):
+    def search(self, request: doctools.SearchRequest):
         yield from QueueProcess(
             target=doctools.search_book, args=(self, request), name="document-search"
         )
@@ -316,7 +316,7 @@ class SinglePageDocument(BaseDocument):
     def get_document_style_info(self):
         raise NotImplementedError
 
-    def search(self, request: SearchRequest):
+    def search(self, request: doctools.SearchRequest):
         text = self.get_content()[request.text_range.as_slice()]
         yield from QueueProcess(
             target=doctools.search_single_page_document,

@@ -1,13 +1,33 @@
 # coding: utf-8
 
-"""Contains generic utility functions for working with documents."""
+"""
+Contains generic utility functions for working with documents.
+The functions in this module are usually run in parallel using bookworm.concurrency .QueueProcess.
+"""
 
+from __future__ import annotations
 import regex as re
 from dataclasses import dataclass
 from io import StringIO
 
 
 NEWLINE = "\n"
+
+
+@dataclass
+class SearchRequest:
+    """
+    Contains info about a search operation.
+    """
+
+    term: str
+    is_regex: bool
+    case_sensitive: bool
+    whole_word: bool
+    from_page: int = None
+    to_page: int = None
+    text_range: TextRange = None
+    text: str = None
 
 
 @dataclass

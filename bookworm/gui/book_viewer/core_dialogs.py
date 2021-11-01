@@ -5,7 +5,7 @@ import wx
 import wx.lib.sized_controls as sc
 from itertools import chain
 from bookworm import config
-from bookworm.documents import SearchRequest
+from bookworm.document.operations import SearchRequest
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from bookworm.gui.components import (

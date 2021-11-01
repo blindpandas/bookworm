@@ -16,8 +16,8 @@ from bookworm import paths
 from bookworm import app
 from bookworm.i18n import is_rtl
 from bookworm.resources import sounds
-from bookworm.documents import PaginationError, DocumentCapability as DC
-from bookworm.documents.base import READING_MODE_LABELS
+from bookworm.document import READING_MODE_LABELS, PaginationError, DocumentCapability as DC
+from bookworm.document.uri import DocumentUri
 from bookworm.signals import (
     navigated_to_search_result,
     config_updated,
@@ -28,7 +28,7 @@ from bookworm.concurrency import call_threaded, process_worker
 from bookworm.gui.components import RobustProgressDialog
 from bookworm import ocr
 from bookworm import speech
-from bookworm.reader import EBookReader, DocumentUri
+from bookworm.reader import EBookReader
 from bookworm.utils import restart_application, gui_thread_safe
 from bookworm.logger import logger
 from bookworm.gui.contentview_ctrl import EVT_CONTEXTMENU_REQUESTED

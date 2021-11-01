@@ -9,7 +9,7 @@ import sqlalchemy as sa
 from sqlalchemy import types
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 import db_magic as db
-from bookworm.document_uri import DocumentUri
+from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
 
 

@@ -7,7 +7,6 @@ from dataclasses import field, dataclass
 from collections.abc import Container, Iterable, Sequence, Sized
 from weakref import ref
 from bookworm import typehints as t
-from bookworm.parallel import SearchResult
 from bookworm.structured_text import TextRange
 
 
@@ -19,22 +18,6 @@ class BookMetadata:
     publication_year: str = ""
     isbn: str = ""
     additional_info: dict = field(default_factory=dict)
-
-
-@dataclass
-class SearchRequest:
-    """
-    Contains info about a search operation.
-    """
-
-    term: str
-    is_regex: bool
-    case_sensitive: bool
-    whole_word: bool
-    from_page: int = None
-    to_page: int = None
-    text_range: TextRange = None
-    text: str = None
 
 
 @dataclass(frozen=True, order=True)

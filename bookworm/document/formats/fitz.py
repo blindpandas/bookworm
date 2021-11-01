@@ -12,7 +12,8 @@ from pathlib import Path
 from bookworm.paths import home_data_path
 from bookworm.image_io import ImageIO
 from bookworm.utils import recursively_iterdir
-from bookworm.documents.base import (
+from bookworm.logger import logger
+from .. import (
     BaseDocument,
     BasePage,
     Section,
@@ -23,7 +24,6 @@ from bookworm.documents.base import (
     DocumentError,
     DocumentEncryptedError,
 )
-from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)

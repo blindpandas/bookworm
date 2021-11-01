@@ -8,16 +8,18 @@ from bookworm import app
 from bookworm import config
 from bookworm.database import DocumentPositionInfo
 from bookworm.i18n import is_rtl
-from bookworm.document_uri import DocumentUri
-from bookworm.documents import (
+from bookworm.document.uri import DocumentUri
+from bookworm.document.formats import *
+from bookworm.document import (
     BaseDocument,
+    BasePage,
+    Section,
     ChangeDocument,
     DocumentCapability as DC,
     DocumentError,
     DocumentIOError,
     PaginationError,
 )
-from bookworm.documents.base import Section, BasePage
 from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,

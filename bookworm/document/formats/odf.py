@@ -20,8 +20,9 @@ from bookworm.paths import home_data_path
 from bookworm.concurrency import process_worker
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 from bookworm.utils import generate_file_md5, escape_html, NEWLINE
-from bookworm.document_uri import DocumentUri
-from bookworm.documents.base import (
+from bookworm.document.uri import DocumentUri
+from bookworm.logger import logger
+from .. import (
     BaseDocument,
     BasePage,
     DummyDocument,
@@ -35,7 +36,6 @@ from bookworm.documents.base import (
     DocumentError,
     DocumentEncryptedError,
 )
-from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)

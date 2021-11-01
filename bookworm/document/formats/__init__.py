@@ -1,14 +1,5 @@
 # coding: utf-8
 
-from .base import (
-    BaseDocument,
-    SearchRequest,
-    DocumentCapability,
-    DocumentError,
-    ChangeDocument,
-    DocumentIOError,
-    PaginationError,
-)
 from .pdf import FitzPdfDocument
 from .epub import EpubDocument
 from .mobi import MobiDocument

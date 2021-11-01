@@ -4,7 +4,7 @@ import time
 import wx
 from bookworm import config
 from bookworm import speech
-from bookworm.documents import PaginationError
+from bookworm.document import PaginationError
 from bookworm.signals import reader_page_changed
 from bookworm.gui.contentview_ctrl import (
     EVT_CONTENT_NAVIGATION,

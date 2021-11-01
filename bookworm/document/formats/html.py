@@ -21,7 +21,9 @@ from bookworm.structured_text import (
     HEADING_LEVELS,
 )
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.documents.base import (
+from bookworm.utils import remove_excess_blank_lines, escape_html, NEWLINE
+from bookworm.logger import logger
+from .. import (
     SinglePageDocument,
     Section,
     SINGLE_PAGE_DOCUMENT_PAGER,
@@ -33,8 +35,6 @@ from bookworm.documents.base import (
     ChangeDocument,
     TreeStackBuilder,
 )
-from bookworm.utils import remove_excess_blank_lines, escape_html, NEWLINE
-from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)

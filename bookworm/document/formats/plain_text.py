@@ -4,7 +4,9 @@ from __future__ import annotations
 import os
 from functools import cached_property
 from io import StringIO
-from bookworm.documents.base import (
+from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
+from bookworm.logger import logger
+from .. import (
     SinglePageDocument,
     Section,
     Pager,
@@ -12,8 +14,6 @@ from bookworm.documents.base import (
     DocumentCapability as DC,
     DocumentError,
 )
-from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
-from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)

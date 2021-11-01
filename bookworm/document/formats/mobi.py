@@ -7,16 +7,16 @@ import mobi
 from tempfile import TemporaryDirectory
 from pathlib import Path
 from bookworm.paths import home_data_path
-from bookworm.document_uri import DocumentUri
+from bookworm.document.uri import DocumentUri
 from bookworm.utils import generate_file_md5, mute_stdout
-from bookworm.documents.base import (
+from bookworm.logger import logger
+from .. import (
     DummyDocument,
     ChangeDocument,
     DocumentCapability as DC,
     DocumentError,
     DocumentEncryptedError,
 )
-from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)

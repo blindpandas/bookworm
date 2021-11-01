@@ -2,16 +2,11 @@ import pytest
 from bookworm.concurrency import QueueProcess
 
 
-def _produce_sqrts(numbers, channel):
+def _produce_sqrts(numbers):
     from math import sqrt
 
     for num in numbers:
-        try:
-            value = int(sqrt(num))
-            channel.push(value)
-        except ValueError as e:
-            channel.exception(e)
-    channel.close()
+        yield int(sqrt(num))
 
 
 def test_queue_process():

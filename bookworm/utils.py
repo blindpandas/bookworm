@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import sys
+import operator
 import regex
 import wx
 import hashlib
@@ -10,7 +11,6 @@ from pathlib import Path
 from xml.sax.saxutils import escape
 from bookworm import typehints as t
 from bookworm import app
-from bookworm.parallel import search
 from bookworm.concurrency import call_threaded
 from bookworm.platform_services.runtime import system_start_app
 from bookworm.logger import logger
@@ -28,6 +28,7 @@ WINDOWS_NEWLINE = "\r\n"
 MAC_NEWLINE = "\r"
 NEWLINE = UNIX_NEWLINE
 MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
+EXCESS_LINE_REPLACEMENT_FUNC = lambda m: "\n" + m[0].replace("\n", " ")
 
 
 @contextmanager
@@ -45,16 +46,14 @@ def mute_stdout():
 
 
 def normalize_line_breaks(text, line_break=UNIX_NEWLINE):
-    text = text.replace(WINDOWS_NEWLINE, UNIX_NEWLINE).replace(
-        MAC_NEWLINE, UNIX_NEWLINE
-    )
-    if line_break != UNIX_NEWLINE:
-        text = text.replace(UNIX_NEWLINE, line_break)
-    return text
+    return text.replace("\r", " ")
 
 
 def remove_excess_blank_lines(text):
-    return MORE_THAN_ONE_LINE.sub("\n", normalize_line_breaks(text))
+    return MORE_THAN_ONE_LINE.sub(
+        EXCESS_LINE_REPLACEMENT_FUNC,
+        normalize_line_breaks(text)
+    )
 
 
 def ignore(*exceptions, retval=None):
