@@ -28,7 +28,7 @@ WINDOWS_NEWLINE = "\r\n"
 MAC_NEWLINE = "\r"
 NEWLINE = UNIX_NEWLINE
 MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
-EXCESS_LINE_REPLACEMENT_FUNC = lambda m: "\n" + m[0].replace("\n", " ")
+EXCESS_LINE_REPLACEMENT_FUNC = lambda m: m[0].replace("\n", " ")[:-1] + "\n"
 
 
 @contextmanager

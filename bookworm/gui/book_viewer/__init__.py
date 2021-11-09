@@ -350,12 +350,15 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.view.reader.set_document(document)
 
     def set_content(self, content):
+        raw_content_length = len(content)
         self.contentTextCtrl.Clear()
         self.contentTextCtrl.WriteText(content)
         self.contentTextCtrl.SetInsertionPoint(0)
         if self._has_text_zoom:
             self.contentTextCtrl.SetFont(self.contentTextCtrl.Font.MakeSmaller())
             self.contentTextCtrl.SetFont(self.contentTextCtrl.Font.MakeLarger())
+        if app.debug and raw_content_length != (textCtrlLength := self.contentTextCtrl.LastPosition):
+            log.warning(f"Content length is not the same before and after insertion: before: {raw_content_length} characters, after: {textCtrlLength} characters")
 
     def set_title(self, title):
         self.SetTitle(title)
@@ -490,7 +493,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             element_label, should_speak_whole_text = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[
                 actual_element_type
             ]
-            line_start, line_stop = self.get_containing_line(start + 1)
+            line_start, line_stop = self.get_containing_line(start)
             tstart, tstop = (
                 (start, stop) if should_speak_whole_text else (line_start, line_stop)
             )

@@ -42,13 +42,10 @@ TAGS_TO_STRIP = [
     "sub",
     "sup",
 ]
-InscriptisConfig = ParserConfig(
-    display_images=True,
-)
-
 SEMANTIC_HTML_ELEMENTS = {
     SemanticElementType.HEADING_1: {
         "h1",
+        "#aria-role=heading",
     },
     SemanticElementType.HEADING_2: {
         "h2",
@@ -78,13 +75,19 @@ SEMANTIC_HTML_ELEMENTS = {
     },
 }
 STYLE_HTML_ELEMENTS = {}
+INSCRIPTIS_ANNOTATION_RULES = {
+    t: (k,)
+    for (k, v) in SEMANTIC_HTML_ELEMENTS.items()
+    for t in v
+}
+INSCRIPTIS_CONFIG = ParserConfig(
+    display_images=True,
+    annotation_rules=INSCRIPTIS_ANNOTATION_RULES,
+)
 
 
 class StructuredHtmlParser(Inscriptis):
-    """Subclass of ```inscriptis.Inscriptis``` to record the position of structural elements."""
-
-    SEMANTIC_TAG_MAP = {t: k for k, v in SEMANTIC_HTML_ELEMENTS.items() for t in v}
-    STYLE_TAG_MAP = {t: k for k, v in STYLE_HTML_ELEMENTS.items() for t in v}
+    """Subclass of ```inscriptis.Inscriptis``` to provide the position of structural elements."""
 
     @staticmethod
     def normalize_html(html_string):
@@ -99,18 +102,12 @@ class StructuredHtmlParser(Inscriptis):
             parsed = HTMLParser(html_string)
             parsed.unwrap_tags(TAGS_TO_STRIP)
             html_string = parsed.html
-        return html_string
+        return remove_excess_blank_lines(html_string)
 
     def __init__(self, *args, **kwargs):
-        self.semantic_elements = {}
-        self.styled_elements = {}
-        self.__link_info = []
-        kwargs.setdefault("config", InscriptisConfig)
+        kwargs.setdefault("config", INSCRIPTIS_CONFIG)
         super().__init__(*args, **kwargs)
-
-    @cached_property
-    def tags_of_interest(self):
-        return set(self.SEMANTIC_TAG_MAP).union(self.STYLE_TAG_MAP)
+        self.styled_elements = {}
 
     @classmethod
     def from_string(cls, html_string):
@@ -126,14 +123,9 @@ class StructuredHtmlParser(Inscriptis):
     def get_text(self):
         return remove_excess_blank_lines(INSCRIPTIS_GET_TEXT(self))
 
-    def _parse_html_tree(self, tree):
-        if (tag := tree.tag) not in self.tags_of_interest:
-            return INSCRIPTIS_PARSE_HTML_TREE(self, tree)
-        start_pos = len(self.get_text())
-        INSCRIPTIS_PARSE_HTML_TREE(self, tree)
-        stop_pos = len(self.get_text())
-        if start_pos != stop_pos:
-            if (element_type := self.SEMANTIC_TAG_MAP.get(tag)) :
-                self.semantic_elements.setdefault(element_type, []).append(
-                    (start_pos, stop_pos)
-                )
+    @cached_property
+    def semantic_elements(self):
+        annotations = {}
+        for anot in self.get_annotations():
+            annotations.setdefault(anot.metadata, []).append((anot.start, anot.end))
+        return annotations
