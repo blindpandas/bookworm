@@ -10,7 +10,7 @@ from bookworm.signals import (
     reader_book_unloaded,
 )
 from bookworm.resources import sounds
-from bookworm.base_service import BookwormService
+from bookworm.service import BookwormService
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
 from .annotation_gui import (

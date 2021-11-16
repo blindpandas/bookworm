@@ -13,7 +13,8 @@ log = logger.getChild(__name__)
 from bookworm.otau import OTAUService
 from bookworm.annotation import AnnotationService
 from bookworm.ocr import OCRService
-from bookworm.text_to_speech import TextToSpeechService, ContReadingService
+from bookworm.text_to_speech import TextToSpeechService
+from bookworm.continuous_reading import ContReadingService
 from bookworm.webservices import (
     WebservicesBaseService,
     WikipediaService,

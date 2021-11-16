@@ -9,7 +9,7 @@ from wikipedia.exceptions import DisambiguationError
 from functools import partial
 from bookworm import app
 from bookworm.gui.components import AsyncSnakDialog, SimpleDialog
-from bookworm.base_service import BookwormService
+from bookworm.service import BookwormService
 from bookworm.resources import sounds
 from bookworm.logger import logger
 

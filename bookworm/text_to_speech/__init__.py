@@ -29,9 +29,8 @@ from bookworm.signals import (
     navigated_to_structural_element,
     navigated_to_bookmark,
 )
-from bookworm.base_service import BookwormService
+from bookworm.service import BookwormService
 from bookworm.logger import logger
-from .continuous_reading import ContReadingService
 from .tts_config import tts_config_spec, TTSConfigManager
 from .tts_gui import (
     ReadingPanel,

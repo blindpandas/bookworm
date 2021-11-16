@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import wx
-from bookworm.base_service import BookwormService
+from bookworm.service import BookwormService
 from bookworm.logger import logger
 from .wikiworm import WikipediaService
 from .url_open import UrlOpenService

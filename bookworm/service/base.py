@@ -10,7 +10,7 @@ log = logger.getChild(__name__)
 
 
 class BookwormService:
-    """Extend the core functionality."""
+    """Maintaining SRP using services."""
 
     name: str = None
     stateful_menu_ids: t.Iterable[int] = None

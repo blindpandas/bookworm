@@ -4,7 +4,7 @@ import time
 import threading
 import wx
 from bookworm import config
-from bookworm.base_service import BookwormService
+from bookworm.service import BookwormService
 from bookworm.concurrency import call_threaded
 from bookworm.signals import (
     reader_book_loaded,
@@ -28,7 +28,7 @@ class ContReadingService(BookwormService):
         self._start_timer = lambda: self._page_turn_timer.Start(
             TIMER_INTERVAL, wx.TIMER_ONE_SHOT
         )
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         # Event handling
         self.view.Bind(wx.EVT_TIMER, self.onTimerTick, self._page_turn_timer)
         reader_book_loaded.connect(self.on_reader_load, weak=False, sender=self.reader)
@@ -48,8 +48,14 @@ class ContReadingService(BookwormService):
                 self._start_timer()
                 return
             if self.textCtrl.GetInsertionPoint() == end_pos:
-                self.reader.go_to_next()
+                time.sleep(0.2)
+                self._turn_page_in_sayall()
             self._start_timer()
+
+    def _turn_page_in_sayall(self):
+        if self.textCtrl.GetInsertionPoint() == self.textCtrl.GetLastPosition():
+            with self._lock:
+                self.reader.go_to_next()
 
     def on_reader_load(self, sender):
         if config.conf["reading"]["use_continuous_reading"]:
