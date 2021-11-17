@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import winsound
 import time
 import threading
 import wx
@@ -14,49 +15,51 @@ from bookworm.signals import (
 )
 
 
-# Timer Interval
-TIMER_INTERVAL = 50
-
 
 class ContReadingService(BookwormService):
     name = "cont_reading"
     has_gui = False
 
     def __post_init__(self):
-        self.textCtrl = self.view.contentTextCtrl
-        self._page_turn_timer = wx.Timer(self.view)
-        self._start_timer = lambda: self._page_turn_timer.Start(
-            TIMER_INTERVAL, wx.TIMER_ONE_SHOT
-        )
-        self._lock = threading.RLock()
+        self._book_opened = threading.Event()
+        self._page_turn_barrier = threading.Barrier(2)
         # Event handling
-        self.view.Bind(wx.EVT_TIMER, self.onTimerTick, self._page_turn_timer)
         reader_book_loaded.connect(self.on_reader_load, weak=False, sender=self.reader)
         reader_book_unloaded.connect(
-            lambda s: self._page_turn_timer.Stop(), weak=False, sender=self.reader
+            lambda s: self._book_opened.clear(),
+            weak=False,
+            sender=self.reader
         )
+        self._worker_thread = threading.Thread(
+            target=self.start_monitoring,
+            args=(self.view.contentTextCtrl, self.reader),
+            daemon=True,
+            name="bookworm.continuous.reading.service"
+        )
+        self._worker_thread.start()
 
-    @call_threaded
-    def onTimerTick(self, event):
-        with self._lock:
-            wx.WakeUpIdle()
+    def start_monitoring(self, textCtrl, reader):
+        while True:
+            if not reader.ready:
+                self._book_opened.wait()
+            # The wx Control may be already destroied
+            if not textCtrl:
+                return
+            wx.CallAfter(wx.WakeUpIdle)
             if wx.GetKeyState(wx.WXK_CONTROL):
-                self._start_timer()
-                return
-            end_pos = self.textCtrl.GetLastPosition()
+                continue
+            end_pos = textCtrl.GetLastPosition()
             if not end_pos:
-                self._start_timer()
-                return
-            if self.textCtrl.GetInsertionPoint() == end_pos:
-                time.sleep(0.2)
-                self._turn_page_in_sayall()
-            self._start_timer()
+                continue
+            if textCtrl.GetInsertionPoint() == end_pos:
+                wx.CallAfter(textCtrl.SetInsertionPoint, 0)
+                wx.CallAfter(reader.go_to_next)
+                time.sleep(3.0)
+            else:
+                time.sleep(0.1)
 
-    def _turn_page_in_sayall(self):
-        if self.textCtrl.GetInsertionPoint() == self.textCtrl.GetLastPosition():
-            with self._lock:
-                self.reader.go_to_next()
 
     def on_reader_load(self, sender):
         if config.conf["reading"]["use_continuous_reading"]:
-            self._start_timer()
+            self._book_opened.set()
+

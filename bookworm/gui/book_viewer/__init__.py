@@ -465,9 +465,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def mute_page_and_section_speech(self):
         opsc = config.conf["general"]["speak_page_number"]
         ossc = config.conf["general"]["speak_section_title"]
-        config.conf["general"]["speak_page_number"] = False
-        config.conf["general"]["speak_section_title"] = False
         try:
+            config.conf["general"]["speak_page_number"] = False
+            config.conf["general"]["speak_section_title"] = False
             yield
         finally:
             config.conf["general"]["speak_page_number"] = opsc
