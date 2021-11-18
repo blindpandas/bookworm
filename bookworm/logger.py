@@ -10,11 +10,9 @@ from bookworm.runtime import IS_IN_MAIN_PROCESS
 
 APP_LOG_FILE = app.name
 ERROR_LOG_FILE = "error"
-MESSAGE_FORMAT = "%(asctime)s %(name)s %(levelname)s: %(message)s"
+MESSAGE_FORMAT = "%(levelname)s - %(name)s - %(asctime)s - %(threadName)s (%(thread)d):\n%(message)s"
 DATE_FORMAT = "%d/%m/%Y %H:%M:%S"
-
 formatter = logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT)
-bookworm_filter = logging.Filter("bookworm")
 
 
 def configure_logger(logger, log_file_suffix=""):
@@ -33,5 +31,5 @@ logger = logging.getLogger("bookworm")
 logger.setLevel(logging.DEBUG)
 
 
-if  IS_IN_MAIN_PROCESS:
+if  IS_IN_MAIN_PROCESS or not app.is_frozen:
     configure_logger(logger)

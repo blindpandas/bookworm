@@ -90,10 +90,10 @@ def init_app_and_run_main_loop():
     log.info(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
     if appinfo.is_frozen:
         multiprocessing.freeze_support()
-    setupSubsystems()
 
     wxlogfilename = logs_path("wx.log") if not appinfo.debug else None
     app = BookwormApp(redirect=True, useBestVisual=True, filename=wxlogfilename)
+    setupSubsystems()
     mainFrame = app.mainFrame = BookViewerWindow(None, appinfo.display_name)
     app.service_handler = ServiceHandler(mainFrame)
     app.service_handler.register_builtin_services()
