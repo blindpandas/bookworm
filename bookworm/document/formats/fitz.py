@@ -38,7 +38,7 @@ class FitzPage(BasePage):
         self._fitz_page = self.document._ebook[self.index]
 
     def _text_from_page(self, page: fitz.Page) -> str:
-        bloks = page.getTextBlocks()
+        bloks = page.get_text_blocks()
         text = [blk[4].replace("\n", " ") for blk in bloks if blk[-1] == 0]
         text = "\r\n".join(text)
         return ftfy.fix_text(text, normalization="NFKC")
@@ -48,7 +48,7 @@ class FitzPage(BasePage):
 
     def get_image(self, zoom_factor=1.0):
         mat = fitz.Matrix(zoom_factor, zoom_factor)
-        pix = self._fitz_page.getPixmap(matrix=mat, alpha=False)
+        pix = self._fitz_page.get_pixmap(matrix=mat, alpha=False)
         return ImageIO(data=pix.samples, width=pix.width, height=pix.height)
 
 
@@ -96,7 +96,7 @@ class FitzDocument(BaseDocument):
 
     @cached_property
     def toc_tree(self):
-        toc_info = self._ebook.getToC(simple=False)
+        toc_info = self._ebook.get_toc(simple=False)
         max_page = len(self) - 1
         root_item = Section(
             document=self,
