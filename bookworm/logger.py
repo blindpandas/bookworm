@@ -13,12 +13,14 @@ ERROR_LOG_FILE = "error"
 MESSAGE_FORMAT = "%(levelname)s - %(name)s - %(asctime)s - %(threadName)s (%(thread)d):\n%(message)s"
 DATE_FORMAT = "%d/%m/%Y %H:%M:%S"
 formatter = logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT)
+BOOKWORM_FILTER = logging.Filter('bookworm')
 
 
 def configure_logger(logger, log_file_suffix=""):
     app_handler = RotatingFileHandler(paths.logs_path(f"{APP_LOG_FILE}{log_file_suffix}.log"), mode="w")
     app_handler.setFormatter(formatter)
     app_handler.setLevel(logging.DEBUG)
+    app_handler.addFilter(BOOKWORM_FILTER)
     logger.addHandler(app_handler)
 
     error_handler = logging.FileHandler(paths.logs_path(f"{ERROR_LOG_FILE}{log_file_suffix}.log"), mode="w")
