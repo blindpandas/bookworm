@@ -104,3 +104,13 @@ class ImageIO:
         buf = io.BytesIO()
         self.to_pil().save(buf, format="png")
         return fitz.Pixmap(buf)
+
+    def as_bytes(self, *, format="JPEG"):
+        buf = io.BytesIO()
+        self.to_pil().save(buf, format=format)
+        return buf.getvalue()
+
+    @classmethod
+    def from_bytes(cls, value):
+        img = Image.open(io.BytesIO(value))
+        return cls.from_pil(img)

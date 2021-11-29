@@ -3,7 +3,7 @@
 from __future__ import annotations
 import gc
 from abc import ABCMeta, abstractmethod
-from collections.abc import Sequence
+from collections.abc import Sequence, Iterable
 from functools import lru_cache, cached_property, wraps
 from pycld2 import detect as detect_language, error as CLD2Error
 from pathlib import Path
@@ -24,7 +24,7 @@ log = logger.getChild(__name__)
 PAGE_CACHE_CAPACITY = 300
 
 
-class BaseDocument(Sequence, metaclass=ABCMeta):
+class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
     """Defines the core interface of a document."""
 
     __internal__ = False
@@ -60,6 +60,9 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
 
     def __getitem__(self, index: int) -> BasePage:
         return self.get_page(index)
+
+    def __iter__(self):
+        return (self[i] for i in range(len(self)))
 
     def __getstate__(self) -> dict:
         """Support for pickling."""
@@ -147,6 +150,9 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def get_page_image(self, page_number: int, zoom_factor: float = 1.0) -> ImageIO:
         """Convenience method: return the image of a page."""
         return self[page_number].get_image(zoom_factor)
+
+    def get_cover_image(self) -> ImageIO:
+        raise NotImplementedError
 
     def get_file_system_path(self):
         """Only valid for documents that have true filesystem path."""
@@ -330,6 +336,8 @@ class SinglePageDocument(BaseDocument):
 
 class DummyDocument(BaseDocument):
     """Implements core document methods for a dummy document."""
+
+    __indexable__ = True
 
     def __len__(self):
         raise NotImplementedError

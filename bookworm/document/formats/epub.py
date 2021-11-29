@@ -209,6 +209,9 @@ class EpubDocument(BaseDocument):
     def metadata(self):
         return self.fitz_doc.metadata
 
+    def get_cover_image(self):
+        return self.fitz_doc.get_cover_image()
+
 
 class FitzEPUBDocument(FitzDocument):
 

@@ -4,10 +4,12 @@ packages_to_install:
     win32:
         pure_python:
         x64:
+            - "apsw-3.36.0-cp39-cp39-win_amd64.whl"
             - "pycld2-0.41-cp39-cp39-win_amd64.whl"
             - "pyxpdf-0.2.3-cp39-cp39-win_amd64.whl"
             - "pythonnet-2.5.2-cp39-cp39-win_amd64.whl"
         x86:
+            - "apsw-3.36.0-cp39-cp39-win32.whl"
             - "pycld2-0.41-cp39-cp39-win32.whl"
             - "pyxpdf-0.2.3-cp39-cp39-win32.whl"
             - "pythonnet-2.5.2-cp39-cp39-win32.whl"

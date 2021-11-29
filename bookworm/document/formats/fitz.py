@@ -161,6 +161,9 @@ class FitzDocument(BaseDocument):
             publication_year=to_str(meta["creationDate"]),
         )
 
+    def get_cover_image(self):
+        return self.get_page_image(0)
+
 
 class FitzFB2Document(FitzDocument):
 
