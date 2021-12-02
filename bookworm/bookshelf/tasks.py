@@ -19,11 +19,8 @@ from .models import (
 log = logger.getChild(__name__)
 
 
-def add_document_to_library(document: BaseDocument, category=None, tags: t.Iterable[str]=()):
-    """Add the given document to the library database."""
-    if document.__internal__:
-        log.info(f"{document=} is an internal document.")
-        return
+def add_document_to_bookshelf(document: BaseDocument, category=None, tags: t.Iterable[str]=()):
+    """Add the given document to the bookshelf database."""
     if Document.get_or_none(uri=document.uri) is not None:
         return
     try:

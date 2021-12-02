@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from .base import (
+    create_document,
     BaseDocument,
     BasePage,
     SinglePageDocument,
@@ -26,3 +27,4 @@ from .exceptions import (
     DocumentEncryptedError,
     PaginationError,
 )
+from .formats import *

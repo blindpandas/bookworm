@@ -111,6 +111,3 @@ class ServiceHandler:
             rv.update(service.get_keyboard_shortcuts())
         return rv
 
-    def get_subcommands(self):
-        for service in self.registered_services:
-            yield from service.get_subcommands()

@@ -9,6 +9,7 @@ import sys
 import os
 import platform
 import shutil
+import subprocess
 import json
 from io import BytesIO, StringIO
 from datetime import datetime
@@ -640,19 +641,17 @@ def run_application(c, debug=True):
                 "Changes you make in the bookworm pacakge will not show up.\n"
                 "To fix this, run:\n\tpip uninstall bookworm\n\tpip install -e .\n"
             )
-        from bookworm import bootstrap
-        from bookworm import app
-
-        print(f"{app.display_name} v{app.version}")
-        if debug:
-            os.environ["BOOKWORM_DEBUG"] = "1"
-        bootstrap.run()
+        args = subprocess.list2cmdline(["--debug" if debug else ''])
+        c.run(f"python -m bookworm {args}")
+    except UnexpectedExit:
+        print("\nHandling Control+C grasefully")
+        exit(0)
     except ImportError as e:
         print("An import error was raised when starting the application.")
         print("Make sure that your development environment is ready.")
         print("To prepare your development environment run: invoke dev\r\n")
         print("Here is the traceback:\r\n")
         raise
-    except:
+    except Exception as e:
         print("An error has occured while starting Bookworm.")
         raise

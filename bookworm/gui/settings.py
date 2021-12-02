@@ -142,8 +142,9 @@ class FileAssociationDialog(SimpleDialog):
             sys.exit(0)
 
 
-def show_file_association_dialog(flag):
-    wx_app = wx.GetApp()
+def show_file_association_dialog():
+    config.setup_config()
+    wx_app = wx.App()
     dlg = FileAssociationDialog(None, standalone=True)
     wx_app.SetTopWindow(dlg)
     dlg.Show()

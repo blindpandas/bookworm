@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import multiprocessing
 import logging
 from logging.handlers import RotatingFileHandler
 from bookworm import paths
@@ -15,9 +14,13 @@ DATE_FORMAT = "%d/%m/%Y %H:%M:%S"
 formatter = logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT)
 BOOKWORM_FILTER = logging.Filter('bookworm')
 
+logger = logging.getLogger("bookworm")
+logger.setLevel(logging.DEBUG)
 
-def configure_logger(logger, log_file_suffix=""):
-    app_handler = RotatingFileHandler(paths.logs_path(f"{APP_LOG_FILE}{log_file_suffix}.log"), mode="w")
+
+
+def configure_logger(log_file_suffix=""):
+    app_handler = RotatingFileHandler(paths.logs_path(f"{APP_LOG_FILE}.{log_file_suffix}.log"), mode="w")
     app_handler.setFormatter(formatter)
     app_handler.setLevel(logging.DEBUG)
     app_handler.addFilter(BOOKWORM_FILTER)
@@ -28,10 +31,3 @@ def configure_logger(logger, log_file_suffix=""):
     error_handler.setLevel(logging.ERROR)
     logger.addHandler(error_handler)
 
-
-logger = logging.getLogger("bookworm")
-logger.setLevel(logging.DEBUG)
-
-
-if  IS_IN_MAIN_PROCESS or not app.is_frozen:
-    configure_logger(logger)

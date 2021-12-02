@@ -15,13 +15,20 @@ from bookworm.image_io import ImageIO
 from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
 from bookworm.logger import logger
 from . import operations as doctools
-from .exceptions import DocumentIOError, PaginationError
+from .exceptions import DocumentIOError, PaginationError, UnsupportedDocumentFormatError
 from .elements import *
 from .features import DocumentCapability, ReadingMode
 
 
 log = logger.getChild(__name__)
 PAGE_CACHE_CAPACITY = 300
+
+
+def create_document(uri):
+    doc_cls = BaseDocument.get_document_class_given_format(uri.format.lower())
+    if doc_cls is None:
+        raise UnsupportedDocumentFormatError(f"Document Format {uri.format} is not supported.")
+    return doc_cls(uri)
 
 
 class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
@@ -45,12 +52,18 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
     supported_reading_modes: t.Tuple[ReadingMode] = (ReadingMode.DEFAULT,)
     default_reading_mode: ReadingMode = ReadingMode.DEFAULT
 
-    document_classes: list = []
+    document_classes: list = {}
+    """Supported document types."""
 
+    @classmethod
     def __init_subclass__(cls, *args, **kwargs):
         super().__init_subclass__(*args, **kwargs)
         if cls.format is not None:
-            cls.document_classes.append(cls)
+            cls.document_classes[cls.format.lower()] = cls
+
+    @classmethod
+    def get_document_class_given_format(cls, format):
+        return cls.document_classes.get(format.lower())
 
     def __init__(self, uri):
         self.uri = uri

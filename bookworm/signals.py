@@ -11,6 +11,7 @@ _signals = Namespace()
 
 
 # Core app signals
+app_booting = _signals.signal("app/booting")
 app_started = _signals.signal("app/started")
 app_shuttingdown = _signals.signal("app/shuttingdown")
 

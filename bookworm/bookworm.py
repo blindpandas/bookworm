@@ -21,7 +21,6 @@ def main():
         sys.exit(bootstrap.run())
     except Exception:
         import logging
-        import wx
         from pathlib import Path
 
         MESSAGE_FORMAT = "%(asctime)s %(name)s %(levelname)s: %(message)s"
@@ -31,10 +30,17 @@ def main():
         extern_file.setFormatter(logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT))
         logging.getLogger("").addHandler(extern_file)
         logging.debug("An error was occurred while starting the application.")
-        logging.critical("Error details:", exc_info=True)
-        wx.SafeShowMessage(
-            "Application Error",
+        error_message = (
             "Bookworm has faced some issues.\n"
-            f"The error details has been written to the file:\n{logfile}",
+            f"The error details has been written to the file:\n{logfile}"
         )
+        if not app.command_line_mode:
+            import wx
+            wx.SafeShowMessage(
+                "Application Error",
+                error_message
+            )
+        else:
+            logging.error(error_message)
+        logging.critical("Error details:", exc_info=True)
         sys.exit(app.exit_code)

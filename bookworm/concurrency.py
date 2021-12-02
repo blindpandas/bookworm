@@ -3,7 +3,9 @@
 from __future__ import annotations
 import sys
 import os
+import threading
 import multiprocessing as mp
+import asyncio
 import inspect
 from traceback import format_exception
 from enum import IntEnum
@@ -12,7 +14,7 @@ from functools import wraps, partial
 from contextlib import suppress
 from dataclasses import dataclass, field
 import bookworm.typehints as t
-from bookworm.signals import app_shuttingdown
+from bookworm.signals import app_booting, app_shuttingdown
 from bookworm.logger import logger
 
 
@@ -26,12 +28,45 @@ threaded_worker = ThreadPoolExecutor(thread_name_prefix="bookworm_threaded_worke
 process_worker = ProcessPoolExecutor()
 
 
+# Asyncio event loop
+ASYNCIO_EVENT_LOOP = asyncio.new_event_loop()
+ASYNCIO_LOOP_THREAD = None
+
+
+
 @app_shuttingdown.connect
 def _shutdown_concurrent_workers(sender):
     """Cancel any pending background tasks."""
     log.debug("Canceling  background tasks.")
     threaded_worker.shutdown(wait=False)
     process_worker.shutdown(wait=False)
+    if ASYNCIO_LOOP_THREAD is not None:
+        log.info("Shutting down asyncio event loop")
+        ASYNCIO_EVENT_LOOP.call_soon_threadsafe(ASYNCIO_EVENT_LOOP.stop)
+
+
+def start_asyncio_event_loop():
+    """Start an ambient event loop in another thread to carry out I/O."""
+
+    global ASYNCIO_LOOP_THREAD
+    if ASYNCIO_LOOP_THREAD is not None:
+        log.debug("Attempted to start the asyncio eventloop while it is already running")
+        return
+
+    def _thread_target():
+        global ASYNCIO_EVENT_LOOP
+        log.info("Starting asyncio event loop")
+        asyncio.set_event_loop(ASYNCIO_EVENT_LOOP)
+        ASYNCIO_EVENT_LOOP.run_forever()
+
+    ASYNCIO_LOOP_THREAD = threading.Thread(target=_thread_target, daemon=True, name="bookworm.asyncio.thread")
+    ASYNCIO_LOOP_THREAD.start()
+
+
+@app_booting.connect
+def _start_aio_upon_startup(sender):
+    start_asyncio_event_loop()
+
 
 
 def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., "Future"]:
@@ -51,6 +86,15 @@ def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., "Future"]:
 
     return wrapper
 
+
+def asyncio_coroutine_to_concurrent_future(func):
+    """Returns a concurrent.futures.Future that wrapps the decorated async function."""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return asyncio.run_coroutine_threadsafe(func(*args, **kwargs), ASYNCIO_EVENT_LOOP)
+
+    return wrapper
 
 
 class OperationCancelled(Exception):

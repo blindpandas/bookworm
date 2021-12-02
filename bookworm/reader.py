@@ -34,7 +34,7 @@ log = logger.getChild(__name__)
 
 
 def get_document_format_info():
-    return {cls.format: cls for cls in BaseDocument.document_classes}
+    return BaseDocument.document_classes
 
 
 class ReaderError(Exception):

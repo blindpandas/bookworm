@@ -5,7 +5,6 @@ import re
 import ftfy
 from functools import cached_property
 from itertools import chain
-from uritools import isuri
 from lxml import html as html_parser
 from selectolax.parser import HTMLParser
 from inscriptis import Inscriptis
