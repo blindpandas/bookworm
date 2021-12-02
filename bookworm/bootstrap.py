@@ -3,7 +3,6 @@
 import sys
 import os
 import platform
-import argparse
 import multiprocessing
 import wx
 from bookworm import app as appinfo
@@ -11,17 +10,60 @@ from bookworm.paths import logs_path
 from bookworm.config import setup_config
 from bookworm.i18n import setup_i18n
 from bookworm.database import init_database
-from bookworm.platform_services.shell import shell_integrate, shell_disintegrate
 from bookworm.signals import app_started, app_shuttingdown
 from bookworm.runtime import PackagingMode, IS_RUNNING_PORTABLE, CURRENT_PACKAGING_MODE
 from bookworm.service.handler import ServiceHandler
 from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.gui.settings import show_file_association_dialog
 from bookworm.document.uri import DocumentUri
+from bookworm.platform_services.shell import shell_integrate, shell_disintegrate
+from bookworm.commandline_handler import BaseSubcommandHandler, register_subcommand, handle_app_commandline_args
 from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
+
+
+
+class LauncherSubcommandHandler(BaseSubcommandHandler):
+    subcommand_name = "launcher"
+
+    @classmethod
+    def add_arguments(cls, subparser):
+        subparser.add_argument("filename", nargs="?", help="File to open", default="")
+
+    @classmethod
+    def handle_commandline_args(cls, args):
+        arg_file = args.filename
+        if os.path.isfile(arg_file):
+            log.info(f"The application was invoked with a file: {arg_file}")
+            uri = DocumentUri.from_filename(arg_file)
+            wx.GetApp().mainFrame.open_uri(uri)
+
+
+class ShellSubcommandHandler(BaseSubcommandHandler):
+    subcommand_name = "shell"
+
+    launcher_actions = {
+        "shell_integrate": shell_integrate,
+        "shell_disintegrate": shell_disintegrate,
+        "setup_file_assoc": show_file_association_dialog,
+    }
+
+    @classmethod
+    def add_arguments(cls, subparser):
+        if CURRENT_PACKAGING_MODE is not PackagingMode.Source and not IS_RUNNING_PORTABLE:
+            subparser.add_argument("--shell-integrate", action="store_false")
+            subparser.add_argument("--shell-disintegrate", action="store_true")
+            subparser.add_argument("--setup-file-assoc", action="store_true")
+
+    @classmethod
+    def handle_commandline_args(cls, args):
+        for flag, func in cls.launcher_actions.items():
+            flag_value = getattr(args, flag, None)
+            if flag_value is not None:
+                func()
+                return 0
 
 
 class BookwormApp(wx.App):
@@ -40,16 +82,7 @@ class BookwormApp(wx.App):
         app_shuttingdown.send(self)
 
     def OnExit(self):
-        return 0
-
-
-# The following tasks are autonomous. They are executed
-#  by invoking the executable with a command line flag
-TASKS = {
-    "shell_integrate": lambda v: shell_integrate(),
-    "shell_disintegrate": lambda v: shell_disintegrate(),
-    "setup_file_assoc": show_file_association_dialog,
-}
+        return appinfo.exit_code
 
 
 def setupSubsystems():
@@ -76,46 +109,36 @@ def init_app_and_run_main_loop():
     elif CURRENT_PACKAGING_MODE is PackagingMode.Source:
         log.info("Running Bookworm from source.")
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("filename", nargs="?", default=None)
-    parser.add_argument("--debug", action="store_true")
-    if not IS_RUNNING_PORTABLE:
-        parser.add_argument("--shell-integrate", action="store_true")
-        parser.add_argument("--shell-disintegrate", action="store_true")
-        parser.add_argument("--setup-file-assoc", action="store_true")
-    appinfo.args, appinfo.extra_args = parser.parse_known_args()
-    if appinfo.args.debug or os.environ.get("BOOKWORM_DEBUG"):
-        appinfo.debug = True
-    log.info(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
-
-    wxlogfilename = logs_path("wx.log") if not appinfo.debug else None
+    # Perform app initialization
+    wxlogfilename = logs_path("wx.log")
     app = BookwormApp(redirect=True, useBestVisual=True, filename=wxlogfilename)
     setupSubsystems()
     mainFrame = app.mainFrame = BookViewerWindow(None, appinfo.display_name)
     app.service_handler = ServiceHandler(mainFrame)
     app.service_handler.register_builtin_services()
+
+    # Handle commandline arguments
+    register_subcommand(LauncherSubcommandHandler)
+    register_subcommand(ShellSubcommandHandler)
+    for service_subcommand_cls in app.service_handler.get_subcommands():
+        register_subcommand(service_subcommand_cls)
+    should_exit_early = handle_app_commandline_args()
+    if should_exit_early is not None:
+        log.debug("Exiting application after commandline handling")
+        appinfo.exit_code = int(should_exit_early)
+        return
+
+    if appinfo.args.debug or os.environ.get("BOOKWORM_DEBUG"):
+        appinfo.debug = True
+    log.info(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
+
     mainFrame.finalize_gui_creation()
     app_started.send(app)
     log.info("The application has started successfully.")
 
-    # Process known cmd arguments
-    for flag, func in TASKS.items():
-        flag_value = getattr(appinfo.args, flag, None)
-        if flag_value:
-            log.info("The application is running in command line mode.")
-            log.info(f"Invoking command `{flag}` with value `{flag_value}`.")
-            appinfo.command_line_mode = True
-            return func(flag_value)
-
     log.info("Preparing to show the application GUI.")
     app.SetTopWindow(mainFrame)
     mainFrame.Show(True)
-    arg_file = appinfo.args.filename or ""
-    if os.path.isfile(arg_file):
-        log.info(f"The application was invoked with a file: {arg_file}")
-        uri = DocumentUri.from_filename(arg_file)
-        mainFrame.open_uri(uri)
-
     app.MainLoop()
     log.info("Shutting down the application.")
     app_shuttingdown.send(app)
@@ -128,6 +151,7 @@ def run():
         if active_child_processes:
             log.debug(f"Active child processes: {active_child_processes}")
         log.info("The application has exited gracefully.")
+        return appinfo.exit_code
     except BaseException:
         log.critical("An unhandled error has occurred.", exc_info=True)
         raise

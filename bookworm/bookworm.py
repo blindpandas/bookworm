@@ -3,6 +3,7 @@
 """Make sure that runtime components are OK and run the app."""
 
 import sys
+from bookworm import app
 from bookworm.platform_services import check_runtime_components
 
 
@@ -17,7 +18,7 @@ def main():
     try:
         from bookworm import bootstrap
 
-        bootstrap.run()
+        sys.exit(bootstrap.run())
     except Exception:
         import logging
         import wx
@@ -36,4 +37,4 @@ def main():
             "Bookworm has faced some issues.\n"
             f"The error details has been written to the file:\n{logfile}",
         )
-        sys.exit(1)
+        sys.exit(app.exit_code)

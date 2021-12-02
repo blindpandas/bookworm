@@ -53,3 +53,6 @@ class BookwormService:
     def get_keyboard_shortcuts(self) -> t.Dict[int, str]:
         """Return a dictionary mapping control id's to keyboard shortcuts."""
         return {}
+
+    def get_subcommands(self) -> list:
+        return ()
