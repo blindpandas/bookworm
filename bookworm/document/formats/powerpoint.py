@@ -151,7 +151,6 @@ class PowerpointPresentation(BaseDocument):
     @cached_property
     def toc_tree(self):
         root = Section(
-            document=self,
             title=self.metadata.title,
             pager=Pager(first=0, last=self.num_slides - 1),
             level=1,
@@ -163,7 +162,6 @@ class PowerpointPresentation(BaseDocument):
                 section_title = f"{section_title}: {slide_title}"
             stack.push(
                 Section(
-                    document=self,
                     title=section_title,
                     pager=Pager(first=idx, last=idx),
                     level=2,

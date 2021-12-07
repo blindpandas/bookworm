@@ -3,34 +3,29 @@
 """Provides value objects that are building blocks for an e-book."""
 
 from __future__ import annotations
-from dataclasses import field, dataclass
+import attr
 from collections.abc import Container, Iterable, Sequence, Sized
 from weakref import ref
 from bookworm import typehints as t
 from bookworm.structured_text import TextRange
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True)
 class BookMetadata:
     title: str
     author: str
     publisher: str = ""
     publication_year: str = ""
     isbn: str = ""
-    additional_info: dict = field(default_factory=dict)
+    additional_info: dict = attr.ib(factory=dict)
 
 
-@dataclass(frozen=True, order=True)
+@attr.s(auto_attribs=True, slots=True)
 class Pager(Container, Iterable, Sized):
     """Basically, this is a glorified `range` iterator."""
 
-    __slots__ = ["first", "last"]
-
     first: int
     last: int
-
-    def __repr__(self):
-        return f"<Pager: first={self.first}, last={self.last}, total={self.last - self.first}>"
 
     def __iter__(self) -> t.Iterable[int]:
         return iter(range(self.first, self.last + 1))
@@ -41,46 +36,23 @@ class Pager(Container, Iterable, Sized):
     def __contains__(self, value):
         return self.first <= value <= self.last
 
-    def __hash__(self):
-        return hash((self.first, self.last))
 
-
+@attr.s(auto_attribs=True, repr=False, slots=True)
 class Section:
     """
     A simple (probably inefficient) custom tree
     implementation for use in the table of content.
     """
 
-    __slots__ = [
-        "documentref",
-        "title",
-        "parent",
-        "children",
-        "pager",
-        "text_range",
-        "level",
-        "data",
-    ]
+    title: str
+    parent: t.ForwardRef("Section") = None
+    children: list[t.ForwardRef("Section")] = attr.ib(factory=list)
+    pager: Pager = None
+    text_range: TextRange = None
+    level: int = None
+    data: t.Dict[t.Any, t.Any] = attr.ib(factory=dict)
 
-    def __init__(
-        self,
-        document: "BaseDocument",
-        title: str,
-        parent: t.Optional["Section"] = None,
-        children: t.Optional[t.List["Section"]] = None,
-        pager: t.Optional[Pager] = None,
-        text_range: t.Optional[TextRange] = None,
-        level: t.Optional[int] = None,
-        data: t.Optional[t.Dict[t.Hashable, t.Any]] = None,
-    ):
-        self.documentref = ref(document)
-        self.title = title
-        self.parent = parent
-        self.children = children or []
-        self.pager = pager
-        self.text_range = text_range
-        self.level = level
-        self.data = data or {}
+    def __attrs_post_init__(self):
         for child in self.children:
             child.parent = self
 
@@ -107,14 +79,6 @@ class Section:
         for child in self.children:
             yield child
             yield from child.iter_children()
-
-    def iter_pages(self) -> t.Iterable[BasePage]:
-        document = self.documentref()
-        if document is not None:
-            for index in self.pager:
-                yield document[index]
-        else:
-            raise RuntimeError("Document ref is dead!")
 
     @property
     def is_root(self) -> bool:
@@ -204,7 +168,7 @@ class TreeStackBuilder(list):
             self.top = node
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True)
 class ReadingOptions:
     reading_mode: str
 

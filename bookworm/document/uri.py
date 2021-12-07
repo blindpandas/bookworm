@@ -49,17 +49,9 @@ class DocumentUri:
         return str(URL.build(
             scheme=BOOKWORM_URI_SCHEME,
             authority=self.format,
-            path=f"{str(self.path)}",
+            path=str(self.path),
             query=self.openner_args,
         ))
-
-    @classmethod
-    def try_parse(cls, uri_string):
-        try:
-            return cls.from_uri_string(uri_string)
-        except:
-            log.exception(f"Failed to parse document uri: {uri_string=}", exc_info=True)
-            return
 
     def to_bare_uri_string(self):
         return str(URL.build(

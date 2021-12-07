@@ -11,7 +11,7 @@ from bookworm.paths import logs_path
 from bookworm.config import setup_config
 from bookworm.i18n import setup_i18n
 from bookworm.database import init_database
-from bookworm.signals import app_booting, app_started, app_shuttingdown
+from bookworm.signals import app_booting, app_started, app_shuttingdown, app_window_shown
 from bookworm.runtime import PackagingMode, IS_RUNNING_PORTABLE, CURRENT_PACKAGING_MODE, IS_IN_MAIN_PROCESS
 from bookworm.service.handler import ServiceHandler
 from bookworm.gui.book_viewer import BookViewerWindow
@@ -36,7 +36,7 @@ class LauncherSubcommandHandler(BaseSubcommandHandler):
 
     @classmethod
     def handle_commandline_args(cls, args):
-        app_started.connect(partial(cls._open_arg_file, arg_file=args.filename), weak=False)
+        app_window_shown.connect(partial(cls._open_arg_file, arg_file=args.filename), weak=False, sender=app_window_shown.ANY)
 
     @staticmethod
     def _open_arg_file(sender, arg_file):
@@ -84,8 +84,8 @@ class BookwormApp(wx.App):
         log.warning(message, codepath="wx", stack_info=True)
 
     def onEndSession(self, event):
-        self.OnExit()
         app_shuttingdown.send(self)
+        return self.OnExit()
 
     def OnExit(self):
         return appinfo.exit_code
@@ -148,6 +148,7 @@ def init_app_and_run_main_loop():
     log.info("Preparing to show the application GUI.")
     app.SetTopWindow(mainFrame)
     mainFrame.Show(True)
+    app_window_shown.send(mainFrame)
     app.MainLoop()
     log.info("Shutting down the application.")
     app_shuttingdown.send(app)
@@ -161,6 +162,6 @@ def run():
             log.debug(f"Active child processes: {active_child_processes}")
         log.info("The application has exited gracefully.")
         return appinfo.exit_code
-    except Exception:
+    except Exception as e:
         log.critical("An unhandled error has occurred.", exc_info=True)
-        raise
+        raise e

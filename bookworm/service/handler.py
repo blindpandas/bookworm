@@ -15,7 +15,7 @@ from bookworm.annotation import AnnotationService
 from bookworm.ocr import OCRService
 from bookworm.text_to_speech import TextToSpeechService
 from bookworm.continuous_reading import ContReadingService
-from bookworm.bookshelf import LibraryService
+from bookworm.bookshelf import BookshelfService
 from bookworm.webservices import (
     WebservicesBaseService,
     WikipediaService,
@@ -28,7 +28,7 @@ BUILTIN_SERVICES = (
     AnnotationService,
     WebservicesBaseService,
     OCRService,
-    LibraryService,
+    BookshelfService,
     ContReadingService,
     UrlOpenService,
     WikipediaService,

@@ -96,7 +96,8 @@ class BaseOcrEngine(metaclass=ABCMeta):
         ocr_options: "OcrOptions",
         channel: "QPChannel",
     ):
-        cls.check()
+        if not  cls.check():
+            raise RuntimeError(f"OCR Engine {cls} is not available.")
         total = len(doc)
         out = StringIO()
 

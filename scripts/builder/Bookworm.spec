@@ -50,7 +50,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ["launcher.py"],
+    ["Bookworm.py"],
     pathex=[""],
     binaries=[],
     datas=DATA_FILES,
@@ -86,6 +86,7 @@ exe = EXE(
     version="assets\\version_info.txt",
     icon="assets\\bookworm.ico",
 )
+
 coll = COLLECT(
     exe,
     a.binaries,

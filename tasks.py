@@ -45,8 +45,8 @@ def invert_image(image_path):
     from fitz import Pixmap
 
     pix = Pixmap(image_path)
-    pix.invertIRect(pix.irect)
-    buffer = BytesIO(pix.getImageData())
+    pix.invert_irect(pix.irect)
+    buffer = BytesIO(pix.tobytes())
     del pix
     return Image.open(buffer)
 
@@ -643,9 +643,8 @@ def run_application(c, debug=True):
             )
         args = subprocess.list2cmdline(["--debug" if debug else ''])
         c.run(f"python -m bookworm {args}")
-    except UnexpectedExit:
-        print("\nHandling Control+C grasefully")
-        exit(0)
+    except UnexpectedExit as e:
+        exit(-1)
     except ImportError as e:
         print("An import error was raised when starting the application.")
         print("Make sure that your development environment is ready.")

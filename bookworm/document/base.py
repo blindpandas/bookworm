@@ -24,13 +24,6 @@ log = logger.getChild(__name__)
 PAGE_CACHE_CAPACITY = 300
 
 
-def create_document(uri):
-    doc_cls = BaseDocument.get_document_class_given_format(uri.format.lower())
-    if doc_cls is None:
-        raise UnsupportedDocumentFormatError(f"Document Format {uri.format} is not supported.")
-    return doc_cls(uri)
-
-
 class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
     """Defines the core interface of a document."""
 

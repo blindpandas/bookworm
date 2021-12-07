@@ -45,7 +45,6 @@ class PlainTextDocument(SinglePageDocument):
     @cached_property
     def toc_tree(self):
         return Section(
-            document=self,
             title="",
             pager=Pager(first=0, last=0),
         )

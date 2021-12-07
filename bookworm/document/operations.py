@@ -7,14 +7,14 @@ The functions in this module are usually run in parallel using bookworm.concurre
 
 from __future__ import annotations
 import regex as re
-from dataclasses import dataclass
+import attr
 from io import StringIO
 
 
 NEWLINE = "\n"
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True, getstate_setstate=True)
 class SearchRequest:
     """
     Contains info about a search operation.
@@ -30,7 +30,7 @@ class SearchRequest:
     text: str = None
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True, getstate_setstate=True)
 class SearchResult:
     """Holds information about a single search result."""
 
@@ -41,7 +41,7 @@ class SearchResult:
 
 
 def search(pattern, text):
-    """Search the given text using a compiled regular expression."""
+    """Search the given text using a regular expression."""
     snip_reach = 25
     len_text = len(text)
     for mat in pattern.finditer(text, concurrent=True):

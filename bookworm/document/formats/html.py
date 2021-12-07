@@ -116,7 +116,6 @@ class BaseHtmlDocument(SinglePageDocument):
     @contextmanager
     def _create_toc_stack(self):
         root = Section(
-            document=self,
             pager=SINGLE_PAGE_DOCUMENT_PAGER,
             text_range=TextRange(0, -1),
             title=self._metainfo.title,
@@ -157,7 +156,6 @@ class BaseHtmlDocument(SinglePageDocument):
                 h_text = text[start_pos:stop_pos].strip()
                 h_level = int(h_element.name[-1])
                 section = Section(
-                    document=self,
                     pager=SINGLE_PAGE_DOCUMENT_PAGER,
                     title=h_text,
                     level=h_level,

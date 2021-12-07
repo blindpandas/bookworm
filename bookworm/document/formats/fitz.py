@@ -99,7 +99,6 @@ class FitzDocument(BaseDocument):
         toc_info = self._ebook.get_toc(simple=False)
         max_page = len(self) - 1
         root_item = Section(
-            document=self,
             title=self.metadata.title,
             pager=Pager(first=0, last=max_page),
             data={"html_file": None},
@@ -126,7 +125,6 @@ class FitzDocument(BaseDocument):
                 continue
             pgn = Pager(first=first_page, last=last_page)
             sect = Section(
-                document=self,
                 title=title,
                 pager=pgn,
                 data={"html_file": infodict.get("name")},

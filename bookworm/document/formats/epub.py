@@ -167,7 +167,6 @@ class EpubDocument(BaseDocument):
         toc = self.fitz_doc._ebook.get_toc(simple=False)
         sect_count = len(toc)
         root = Section(
-            document=self,
             title=self.metadata.title,
             pager=Pager(first=0, last=sect_count - 1),
             level=1,
@@ -177,7 +176,6 @@ class EpubDocument(BaseDocument):
             href = data["name"]
             stack.push(
                 Section(
-                    document=self,
                     title=title,
                     pager=Pager(first=idx, last=idx),
                     level=level + 1,
@@ -195,7 +193,6 @@ class EpubDocument(BaseDocument):
             )
             stack.push(
                 Section(
-                    document=self,
                     title=_("Book contents"),
                     pager=Pager(first=0, last=0),
                     level=2,

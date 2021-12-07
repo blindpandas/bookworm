@@ -162,7 +162,6 @@ class OdfPresentation(BaseDocument):
     @cached_property
     def toc_tree(self):
         root = Section(
-            document=self,
             title=self.metadata.title,
             pager=Pager(first=0, last=self.num_slides - 1),
             level=1,
@@ -171,7 +170,6 @@ class OdfPresentation(BaseDocument):
         for (idx, (slide_title, slide_html)) in enumerate(self.slides.items()):
             stack.push(
                 Section(
-                    document=self,
                     title=slide_title,
                     pager=Pager(first=idx, last=idx),
                     level=2,

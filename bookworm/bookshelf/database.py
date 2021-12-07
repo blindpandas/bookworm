@@ -19,10 +19,23 @@ class AutoOptimizedAPSWDatabase(APSWDatabase):
 
 class AutoCalculatedField(Field):
 
-    AUTO_GEN_COLUMN_TYPES = ('virtual', 'stored',)
+    AUTO_GEN_COLUMN_TYPES = (
+        "virtual",
+        "stored",
+    )
 
-    def __init__(self, *args, auto_gen_data_type: typing.Union[Field, str], auto_gen_expression: ColumnBase, auto_gen_always: bool=True, auto_gen_column_type: str='virtual', **kwargs):
-        assert auto_gen_column_type in self.AUTO_GEN_COLUMN_TYPES, f"auto_gen_column_type must be one of {self.AUTO_GEN_COLUMN_TYPES}"
+    def __init__(
+        self,
+        *args,
+        auto_gen_data_type: typing.Union[Field, str],
+        auto_gen_expression: ColumnBase,
+        auto_gen_always: bool = True,
+        auto_gen_column_type: str = "virtual",
+        **kwargs,
+    ):
+        assert (
+            auto_gen_column_type in self.AUTO_GEN_COLUMN_TYPES
+        ), f"auto_gen_column_type must be one of {self.AUTO_GEN_COLUMN_TYPES}"
         super().__init__(*args, **kwargs)
         self.auto_gen_data_type = auto_gen_data_type
         self.auto_gen_expression = auto_gen_expression
@@ -40,15 +53,19 @@ class AutoCalculatedField(Field):
         node_list = super().ddl(ctx)
         ag_auto_gen = SQL("GENERATED ALWAYS" if self.auto_gen_always else "")
         ag_col_type = SQL(self.auto_gen_column_type.upper())
-        return NodeList((
-            node_list,
-            ag_auto_gen,
-            SQL('AS'),
-            EnclosedNodeList([self.auto_gen_expression,]),
-            ag_col_type
-        ))
-
-
+        return NodeList(
+            (
+                node_list,
+                ag_auto_gen,
+                SQL("AS"),
+                EnclosedNodeList(
+                    [
+                        self.auto_gen_expression,
+                    ]
+                ),
+                ag_col_type,
+            )
+        )
 
 
 class ImageField(BlobField):
@@ -61,9 +78,7 @@ class ImageField(BlobField):
         return ImageIO.from_bytes(value)
 
 
-
 class DocumentUriField(TextField):
-
     def db_value(self, value):
         return value.to_uri_string()
 
@@ -73,20 +88,16 @@ class DocumentUriField(TextField):
 
 class SqliteViewSchemaManager(SchemaManager):
     def _create_table(self, safe=True, **options):
-        if not getattr(self.model, 'view_select_builder', None):
+        if not getattr(self.model, "view_select_builder", None):
             raise TypeError("view_select_builder method is required on view tables.")
         meta = self.model._meta
-        columns = {
-            field.column_name
-            for field in meta.sorted_fields
-        }
-        is_temp = options.pop('temporary', False)
+        columns = {field.column_name for field in meta.sorted_fields}
+        is_temp = options.pop("temporary", False)
         ctx = self._create_context()
-        ctx.literal('CREATE TEMPORARY VIEW ' if is_temp else 'CREATE VIEW ')
+        ctx.literal("CREATE TEMPORARY VIEW " if is_temp else "CREATE VIEW ")
         if safe:
-            ctx.literal('IF NOT EXISTS ')
-        ctx.sql(self.model).literal(' ')
-        ctx.literal('AS ')
+            ctx.literal("IF NOT EXISTS ")
+        ctx.sql(self.model).literal(" ")
+        ctx.literal("AS ")
         ctx.sql(self.model.view_select_builder())
         return ctx
-

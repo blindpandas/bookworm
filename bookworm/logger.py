@@ -20,13 +20,14 @@ logger.setLevel(logging.DEBUG)
 
 
 def configure_logger(log_file_suffix=""):
-    app_handler = RotatingFileHandler(paths.logs_path(f"{APP_LOG_FILE}.{log_file_suffix}.log"), mode="w")
+    suffix = log_file_suffix  if not log_file_suffix  else '.' + log_file_suffix 
+    app_handler = RotatingFileHandler(paths.logs_path(f"{APP_LOG_FILE}{suffix}.log"), mode="w")
     app_handler.setFormatter(formatter)
     app_handler.setLevel(logging.DEBUG)
     app_handler.addFilter(BOOKWORM_FILTER)
     logger.addHandler(app_handler)
 
-    error_handler = logging.FileHandler(paths.logs_path(f"{ERROR_LOG_FILE}{log_file_suffix}.log"), mode="w")
+    error_handler = logging.FileHandler(paths.logs_path(f"{ERROR_LOG_FILE}{suffix}.log"), mode="w")
     error_handler.setFormatter(formatter)
     error_handler.setLevel(logging.ERROR)
     logger.addHandler(error_handler)

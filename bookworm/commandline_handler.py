@@ -5,6 +5,7 @@ import sys
 import argparse
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
+from pprint import pformat as pritty_format
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.runtime import CURRENT_PACKAGING_MODE, PackagingMode
@@ -58,6 +59,6 @@ def handle_app_commandline_args():
     if args.subcommand_cls is not None:
         configure_logger(log_file_suffix="commandline")
         log.info("The application is running in command line mode.")
-        log.info(f"Received command line arguments: {args}")
+        log.info(f"Received command line arguments:\n{pritty_format(args)}")
         log.debug(f"Executing sub command: {args.subparser_name}")
         return args.subcommand_cls.handle_commandline_args(args)
