@@ -32,8 +32,8 @@ DEFAULT_CATEGORY_USER_FACING_VALUE = _("General")
 
 
 @register_subcommand
-class BookshelfSubcommandHandler(BaseSubcommandHandler):
-    subcommand_name = "bookshelf"
+class DocumentIndexerSubcommandHandler(BaseSubcommandHandler):
+    subcommand_name = "document-index"
 
     @classmethod
     def add_arguments(cls, subparser):
@@ -106,7 +106,7 @@ class BookshelfService(BookwormService):
         log.debug("Book loaded, trying to add it to the shelf...")
         uri = base64.urlsafe_b64encode(document_uri.to_uri_string().encode("utf-8")).decode("utf-8")
         args = [
-            "bookshelf",
+            DocumentIndexerSubcommandHandler.subcommand_name,
             uri,
             "--category",
             "",

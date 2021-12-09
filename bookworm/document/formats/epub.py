@@ -1,6 +1,9 @@
 # coding: utf-8
 
 from __future__ import annotations
+import copy
+import ebooklib
+import more_itertools
 from functools import cached_property, lru_cache
 from hashlib import md5
 from zipfile import ZipFile
@@ -32,22 +35,36 @@ from .fitz import FitzPage, FitzDocument
 log = logger.getChild(__name__)
 
 
+EMPTY_HTML_DOCUMENT = (
+    "<!DOCTYPE html>\n"
+    "<html>\n"
+    "<head></head>\n"
+    "<body></body>\n"
+    "</html>"
+)
+
 class EpubPage(BasePage):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        html = self._get_html_with_href(self.section.data["href"])
+        section_ref = self.section.data["href"]
+        html = self._get_html_with_href(section_ref)
         try:
-            structure_extractor = StructuredHtmlParser.from_string(html)
-            self.extracted_text = structure_extractor.get_text()
-            self.semantic_elements = structure_extractor.semantic_elements
-            self.style_info = structure_extractor.styled_elements
+            self.extracted_text, self.semantic_elements, self.style_info = self._parse_and_extract_text_info(html)
         except ValueError:
             log.exception("Failed to parse text from html", exc_info=True)
-            ref = self.section.data["href"]
-            log.debug(f"HTML: {html}\nRef: {ref}")
-            self.extracted_text = ""
-            self.semantic_elements = {}
-            self.style_info = {}
+            self.extracted_text, self.semantic_elements, self.style_info = self._parse_and_extract_text_info("<html></html>")
+        if "#" in section_ref and not self.extracted_text.strip():
+            filename, html_id = section_ref.split("#")
+            self.extracted_text, self.semantic_elements, self.style_info = self._parse_and_extract_text_info(self.document._split_section_content[filename][""])
+
+    @staticmethod
+    def _parse_and_extract_text_info(html):
+        structure_extractor = StructuredHtmlParser.from_string(html)
+        return (
+            structure_extractor.get_text(),
+            structure_extractor.semantic_elements,
+            structure_extractor.styled_elements
+        )
 
     def get_text(self):
         return self.extracted_text
@@ -113,17 +130,25 @@ class EpubPage(BasePage):
             return ""
 
     def _get_html_with_href(self, href):
+        retval_html = None
         if (filename := self._get_proper_filename(href)) :
             if href not in self.document._split_section_anchor_ids:
-                return self.document.ziparchive.read(filename).decode("utf-8")
+                retval_html = self.document.ziparchive.read(filename).decode("utf-8")
             else:
-                return self._get_split_section_text(href)
+                retval_html = self._get_split_section_text(href)
         elif (filename is None) and ("#" in href):
-            return self._get_split_section_text(href)
-        log.warning(
-            f"Could not extract text from section with href: {href} and filename: {filename}"
-        )
-        return ""
+            retval_html = self._get_split_section_text(href)
+        if retval_html is None:
+            log.warning(
+                f"Could not extract text from section with href: {href} and filename: {filename}"
+            )
+            retval_html = EMPTY_HTML_DOCUMENT
+        retval_soup = BeautifulSoup(retval_html, "lxml")
+        for file in self.document._additional_html_for_sections.get(href, ()):
+            html_content = self.document.ziparchive.read(file).decode("utf-8")
+            for elm in BeautifulSoup(html_content, 'lxml'):
+                retval_soup.body.append(copy.copy(elm))
+        return str(retval_soup)
 
 
 class EpubDocument(BaseDocument):
@@ -151,6 +176,7 @@ class EpubDocument(BaseDocument):
         self._filelist = set(self.ziparchive.namelist())
         self._split_section_anchor_ids = {}
         self._split_section_content = {}
+        self._additional_html_for_sections  = {}
         super().read()
 
     def close(self):
@@ -172,9 +198,10 @@ class EpubDocument(BaseDocument):
             level=1,
         )
         stack = TreeStackBuilder(root)
+        all_html_files = self.get_html_file_list()
         for (idx, (level, title, __, data)) in enumerate(toc):
             href = data["name"]
-            stack.push(
+            section = stack.push(
                 Section(
                     title=title,
                     pager=Pager(first=idx, last=idx),
@@ -182,9 +209,26 @@ class EpubDocument(BaseDocument):
                     data=dict(href=href),
                 )
             )
+            # ----------------
             if "#" in href:
                 filename, html_id = href.split("#")
                 self._split_section_anchor_ids.setdefault(filename, []).append(html_id)
+            # ----------------
+            section_filename = (
+                href if "#" not in href
+                else href.split("#")[0]
+            ).strip()
+            if section_filename not in all_html_files:
+                continue
+            all_html_files[all_html_files.index(section_filename)] = section
+            # End loop
+        self._additional_html_for_sections = {
+            sect.data['href']: html_files
+            for (sect, *html_files)
+            in more_itertools.split_before(all_html_files, pred=lambda item: isinstance(item, Section))
+            if html_files and isinstance(sect, Section)
+        }
+        # ------------
         if sect_count == 0:
             href = (
                 it(self.epub.items)
@@ -208,6 +252,12 @@ class EpubDocument(BaseDocument):
 
     def get_cover_image(self):
         return self.fitz_doc.get_cover_image()
+
+    def get_html_file_list(self):
+        return [
+            h.get_name().strip()
+            for h in self.epub.get_items_of_type(ebooklib.ITEM_DOCUMENT)
+        ]
 
 
 class FitzEPUBDocument(FitzDocument):

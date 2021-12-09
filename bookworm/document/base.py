@@ -79,6 +79,15 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         self.__dict__.update(state)
         self.read()
 
+    def __repr__(self):
+        return (
+            f"<{self.__class__.__name__}: "
+            f"format={self.format}, "
+            f"capabilities={self.capabilities!r}, "
+            f"uri={self.uri!r}"
+            ">"
+        )
+
     @cached_property
     def reading_options(self):
         reading_mode = int(
@@ -227,6 +236,9 @@ class BasePage(metaclass=ABCMeta):
     def __init__(self, document: BaseDocument, index: int):
         self.document = document
         self.index = index
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self.index}>"
 
     @abstractmethod
     def get_text(self) -> str:

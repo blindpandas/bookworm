@@ -166,6 +166,7 @@ class TreeStackBuilder(list):
             parent = self.top if self.top.is_root else self.top.parent
             parent.append(node)
             self.top = node
+        return node
 
 
 @attr.s(auto_attribs=True, slots=True)

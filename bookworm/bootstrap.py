@@ -135,7 +135,9 @@ def init_app_and_run_main_loop():
     # Perform app initialization
     app_booting.send()
     wxlogfilename = logs_path("wx.log")
-    app = BookwormApp(redirect=True, useBestVisual=True, filename=wxlogfilename)
+    app = BookwormApp(redirect=True, useBestVisual=True, filename=os.fspath(wxlogfilename))
+    if CURRENT_PACKAGING_MODE is PackagingMode.Source:
+        app.RestoreStdio()
     setupSubsystems()
     mainFrame = app.mainFrame = BookViewerWindow(None, appinfo.display_name)
     app.service_handler = ServiceHandler(mainFrame)

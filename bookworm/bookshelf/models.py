@@ -193,7 +193,7 @@ class DocumentFTSIndex(BaseModel, FTS5Model):
     rowid = RowIDField()
     page_number = SearchField(unindexed=True)
     document_id = SearchField(unindexed=True)
-    document_title = SearchField(unindexed=True)
+    document_title = SearchField()
     content = SearchField()
 
     @classmethod

@@ -4,13 +4,13 @@ from __future__ import annotations
 import time
 import threading
 import contextlib
+import attr
 import wx
 import wx.lib.mixins.listctrl as listmix
 import wx.lib.sized_controls as sc
 from wx.lib.combotreebox import ComboTreeBox
 from functools import reduce
 from concurrent.futures import Future
-from dataclasses import dataclass
 from itertools import chain
 import bookworm.typehints as t
 from bookworm.concurrency import threaded_worker
@@ -357,7 +357,7 @@ class AsyncSnakDialog:
             wx.CallAfter(self.snak_dg.Parent.Enable)
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True, frozen=True)
 class ColumnDefn:
     title: str
     alignment: str

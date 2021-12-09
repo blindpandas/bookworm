@@ -38,10 +38,10 @@ ASYNCIO_LOOP_THREAD = None
 def _shutdown_concurrent_workers(sender):
     """Cancel any pending background tasks."""
     log.debug("Canceling  background tasks.")
-    threaded_worker.shutdown(wait=False)
+    threaded_worker.shutdown(wait=False, cancel_futures =True)
     process_worker.shutdown(wait=False)
     if ASYNCIO_LOOP_THREAD is not None:
-        log.info("Shutting down asyncio event loop")
+        log.debug("Shutting down asyncio event loop")
         ASYNCIO_EVENT_LOOP.call_soon_threadsafe(ASYNCIO_EVENT_LOOP.stop)
 
 
