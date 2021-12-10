@@ -123,11 +123,11 @@ class BaseHtmlDocument(SinglePageDocument):
                 if "#" in href
                 else (href, None)
             )
-            if (anchor_range := self.anchors.get(anchor , None)):
+            if (anchor := self.anchors.get(anchor , None)):
                 return LinkTarget(
                     url=href,
                     is_external=False,
-                    position=anchor_range[0]
+                    position=anchor
                 )
 
     def _get_heading_level(self, parag):

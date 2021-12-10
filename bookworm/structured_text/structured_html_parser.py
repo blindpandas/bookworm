@@ -64,6 +64,7 @@ SEMANTIC_HTML_ELEMENTS = {
     },
     SemanticElementType.LINK: {
         "a#href", 
+        "a#name", 
     },
     SemanticElementType.LIST: {
         "ol",
@@ -76,6 +77,11 @@ SEMANTIC_HTML_ELEMENTS = {
     SemanticElementType.TABLE: {
         "table",
     },
+    SemanticElementType.FIGURE: {
+        "img",
+        "figure",
+        "picture",
+    }
 }
 STYLE_HTML_ELEMENTS = {}
 INSCRIPTIS_ANNOTATION_RULES = {
@@ -85,7 +91,7 @@ INSCRIPTIS_ANNOTATION_RULES = {
 }
 INSCRIPTIS_CONFIG = ParserConfig(
     css=STRICT_CSS_PROFILE,
-    display_images=True,
+    display_images=False,
     deduplicate_captions=True,
     display_links=False,
     annotation_rules=INSCRIPTIS_ANNOTATION_RULES,

@@ -35,6 +35,7 @@ SEMANTIC_MAP = {
     "L": SemanticElementType.LIST,
     "T": SemanticElementType.TABLE,
     "Q": SemanticElementType.QUOTE,
+    "G": SemanticElementType.FIGURE,
 }
 SEMANTIC_MAP |= HEADING_LEVEL_KEY_MAP
 SEMANTIC_KEY_MAP = {ord(k): v for k, v in SEMANTIC_MAP.items()}
