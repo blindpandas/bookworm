@@ -9,17 +9,19 @@ from hashlib import md5
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
 from pathlib import Path, PurePosixPath
+from urllib import parse as urllib_parse
 from chemical import it
 from ebooklib.epub import read_epub
 from bs4 import BeautifulSoup
 from bookworm.paths import home_data_path
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.utils import recursively_iterdir
+from bookworm.utils import recursively_iterdir, is_external_url
 from bookworm.logger import logger
 from .. import (
     BaseDocument,
     BasePage,
     Section,
+    LinkTarget,
     BookMetadata,
     Pager,
     DocumentCapability as DC,
@@ -49,22 +51,21 @@ class EpubPage(BasePage):
         section_ref = self.section.data["href"]
         html = self._get_html_with_href(section_ref)
         try:
-            self.extracted_text, self.semantic_elements, self.style_info = self._parse_and_extract_text_info(html)
+            self._parse_and_extract_text_info(html)
         except ValueError:
             log.exception("Failed to parse text from html", exc_info=True)
-            self.extracted_text, self.semantic_elements, self.style_info = self._parse_and_extract_text_info("<html></html>")
+            self._parse_and_extract_text_info("<html></html>")
         if "#" in section_ref and not self.extracted_text.strip():
             filename, html_id = section_ref.split("#")
-            self.extracted_text, self.semantic_elements, self.style_info = self._parse_and_extract_text_info(self.document._split_section_content[filename][""])
+            self._parse_and_extract_text_info(self.document._split_section_content[filename][""])
 
-    @staticmethod
-    def _parse_and_extract_text_info(html):
+    def _parse_and_extract_text_info(self, html):
         structure_extractor = StructuredHtmlParser.from_string(html)
-        return (
-            structure_extractor.get_text(),
-            structure_extractor.semantic_elements,
-            structure_extractor.styled_elements
-        )
+        self.extracted_text = structure_extractor.get_text()
+        self.semantic_elements = structure_extractor.semantic_elements
+        self.style_info = structure_extractor.styled_elements
+        self.link_targets = structure_extractor.link_targets
+        self.anchors = structure_extractor.anchors
 
     def get_text(self):
         return self.extracted_text
@@ -77,6 +78,38 @@ class EpubPage(BasePage):
 
     def get_image(self, zoom_factor):
         raise NotImplementedError
+
+    def resolve_link(self, link_range):
+        if (target := self.link_targets.get(link_range)):
+            if is_external_url(target):
+                return LinkTarget(
+                    url=target,
+                    is_external=True
+                )
+            filename, anchor = (
+                (target, None)
+                if "#" not in target
+                else target.split("#")
+            )
+            filename = urllib_parse.unquote(filename)
+            target_section = self.document._filename_to_section.get(filename)
+            if target_section is None:
+                for (file, sect) in self.document._filename_to_section.items():
+                    if file.endswith(filename):
+                        target_section = sect
+                        break
+            if target_section is not None:
+                target_page = self.document[target_section.pager.first]
+                target_position = target_page.anchors.get(anchor, 0)
+                return LinkTarget(
+                    url=target,
+                    is_external=False,
+                    page=target_page.index,
+                    position=target_position
+                )
+
+
+
 
     def _get_proper_filename(self, href):
         members = self.document._filelist
@@ -144,7 +177,7 @@ class EpubPage(BasePage):
             )
             retval_html = EMPTY_HTML_DOCUMENT
         retval_soup = BeautifulSoup(retval_html, "lxml")
-        for file in self.document._additional_html_for_sections.get(href, ()):
+        for file in self.section.data.get('additional_html_files', ()):
             html_content = self.document.ziparchive.read(file).decode("utf-8")
             for elm in BeautifulSoup(html_content, 'lxml'):
                 retval_soup.body.append(copy.copy(elm))
@@ -157,7 +190,7 @@ class EpubDocument(BaseDocument):
     # Translators: the name of a document file format
     name = _("Electronic Publication (EPUB)")
     extensions = ("*.epub",)
-    capabilities = DC.TOC_TREE | DC.METADATA | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE
+    capabilities = DC.TOC_TREE | DC.METADATA | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE | DC.LINKS | DC.INTERNAL_ANCHORS
     default_reading_mode = ReadingMode.CHAPTER_BASED
 
     def __len__(self):
@@ -176,7 +209,8 @@ class EpubDocument(BaseDocument):
         self._filelist = set(self.ziparchive.namelist())
         self._split_section_anchor_ids = {}
         self._split_section_content = {}
-        self._additional_html_for_sections  = {}
+        # For the purposes of resolving internal anchors
+        self._filename_to_section = {}
         super().read()
 
     def close(self):
@@ -210,8 +244,14 @@ class EpubDocument(BaseDocument):
                 )
             )
             # ----------------
-            if "#" in href:
-                filename, html_id = href.split("#")
+            filename, html_id = (
+                (href, None)
+                if "#" not in href
+                else href.split("#")
+            )
+            self._filename_to_section[filename] = section
+            # ----------------
+            if html_id is not None:
                 self._split_section_anchor_ids.setdefault(filename, []).append(html_id)
             # ----------------
             section_filename = (
@@ -222,12 +262,16 @@ class EpubDocument(BaseDocument):
                 continue
             all_html_files[all_html_files.index(section_filename)] = section
             # End loop
-        self._additional_html_for_sections = {
-            sect.data['href']: html_files
+        additional_html_files = (
+            (sect, html_files)
             for (sect, *html_files)
             in more_itertools.split_before(all_html_files, pred=lambda item: isinstance(item, Section))
             if html_files and isinstance(sect, Section)
-        }
+        )
+        for (sect, additional_html_file_list) in additional_html_files:
+            sect.data['additional_html_files'] = additional_html_file_list
+            for aditional_file in additional_html_file_list:
+                self._filename_to_section[aditional_file] = sect
         # ------------
         if sect_count == 0:
             href = (

@@ -21,11 +21,12 @@ from bookworm.structured_text import (
     HEADING_LEVELS,
 )
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.utils import remove_excess_blank_lines, escape_html, NEWLINE
+from bookworm.utils import remove_excess_blank_lines, escape_html, is_external_url, NEWLINE
 from bookworm.logger import logger
 from .. import (
     SinglePageDocument,
     Section,
+    LinkTarget,
     SINGLE_PAGE_DOCUMENT_PAGER,
     BookMetadata,
     DocumentCapability as DC,
@@ -52,6 +53,8 @@ class BaseHtmlDocument(SinglePageDocument):
         | DC.STRUCTURED_NAVIGATION
         | DC.TEXT_STYLE
         | DC.ASYNC_READ
+        | DC.LINKS
+        | DC.INTERNAL_ANCHORS
     )
 
     supported_reading_modes = (
@@ -110,6 +113,23 @@ class BaseHtmlDocument(SinglePageDocument):
     def metadata(self):
         return self._metainfo
 
+    def resolve_link(self, link_range) -> LinkTarget:
+        href = self.link_targets[link_range]
+        if is_external_url(href):
+            return LinkTarget(url=href, is_external=True)
+        else:
+            _filename, anchor = (
+                href.split("#")
+                if "#" in href
+                else (href, None)
+            )
+            if (anchor_range := self.anchors.get(anchor , None)):
+                return LinkTarget(
+                    url=href,
+                    is_external=False,
+                    position=anchor_range[0]
+                )
+
     def _get_heading_level(self, parag):
         return int(parag.dom_path[-1])
 
@@ -141,6 +161,8 @@ class BaseHtmlDocument(SinglePageDocument):
         extracted_text_and_info = StructuredHtmlParser(html)
         self._semantic_structure = extracted_text_and_info.semantic_elements
         self._style_info = extracted_text_and_info.styled_elements
+        self.link_targets = extracted_text_and_info.link_targets
+        self.anchors = extracted_text_and_info.anchors
         self._text = text = extracted_text_and_info.get_text()
         heading_poses = sorted(
             (

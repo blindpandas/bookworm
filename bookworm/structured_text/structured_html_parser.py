@@ -9,6 +9,7 @@ from lxml import html as html_parser
 from selectolax.parser import HTMLParser
 from inscriptis import Inscriptis
 from inscriptis.model.config import ParserConfig
+from inscriptis.css_profiles import RELAXED_CSS_PROFILE, STRICT_CSS_PROFILE
 from bookworm import typehints as t
 from bookworm.utils import remove_excess_blank_lines
 from bookworm.logger import logger
@@ -61,6 +62,9 @@ SEMANTIC_HTML_ELEMENTS = {
     SemanticElementType.HEADING_6: {
         "h6",
     },
+    SemanticElementType.LINK: {
+        "a#href", 
+    },
     SemanticElementType.LIST: {
         "ol",
         "ul",
@@ -80,13 +84,18 @@ INSCRIPTIS_ANNOTATION_RULES = {
     for t in v
 }
 INSCRIPTIS_CONFIG = ParserConfig(
+    css=STRICT_CSS_PROFILE,
     display_images=True,
+    deduplicate_captions=True,
+    display_links=False,
     annotation_rules=INSCRIPTIS_ANNOTATION_RULES,
 )
 
 
 class StructuredHtmlParser(Inscriptis):
     """Subclass of ```inscriptis.Inscriptis``` to provide the position of structural elements."""
+
+    __slots__ = ['link_range_to_target', 'anchors', 'styled_elements',]
 
     @staticmethod
     def normalize_html(html_string):
@@ -99,14 +108,35 @@ class StructuredHtmlParser(Inscriptis):
         )
         if len(html_string) > 10000:
             parsed = HTMLParser(html_string)
-            parsed.unwrap_tags(TAGS_TO_STRIP)
+            #parsed.unwrap_tags(TAGS_TO_STRIP)
             html_string = parsed.html
         return remove_excess_blank_lines(html_string)
 
     def __init__(self, *args, **kwargs):
+        self.link_range_to_target = {}
+        self.anchors = {}
+        self.styled_elements = {}
         kwargs.setdefault("config", INSCRIPTIS_CONFIG)
         super().__init__(*args, **kwargs)
-        self.styled_elements = {}
+
+    def _parse_html_tree(self, tree):
+        try:
+            current_index = self.canvas.current_block.idx
+        except TypeError:
+            current_index = 0
+        super()._parse_html_tree(tree)
+        try:
+            anot = self.canvas.annotations[-1]
+        except IndexError:
+            pass
+        else:
+            element_range = (anot.start, anot.end)
+            if tree.tag == 'a' and (href := tree.attrib.get('href', '')):
+                self.link_range_to_target[element_range] = href
+            if (anch := tree.attrib.get('id', '')):
+                self.anchors[anch] = (current_index)
+            if (anch := tree.attrib.get('name', '')):
+                self.anchors[anch] = (current_index,)
 
     @classmethod
     def from_string(cls, html_string):
@@ -128,3 +158,7 @@ class StructuredHtmlParser(Inscriptis):
         for anot in self.get_annotations():
             annotations.setdefault(anot.metadata, []).append((anot.start, anot.end))
         return annotations
+
+    @cached_property
+    def link_targets(self):
+        return self.link_range_to_target

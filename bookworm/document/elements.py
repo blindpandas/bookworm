@@ -134,6 +134,14 @@ class Section:
         return f"{self.title}-{self.pager.first}-{self.pager.last}"
 
 
+@attr.s(auto_attribs=True, slots=True, frozen=True)
+class LinkTarget:
+    url: str
+    is_external: bool
+    page: int = None
+    position: int = None
+
+
 class TreeStackBuilder(list):
     """
     Helps in building a tree of nodes with appropriate nesting.
@@ -175,3 +183,4 @@ class ReadingOptions:
 
 
 SINGLE_PAGE_DOCUMENT_PAGER = Pager(first=0, last=0)
+

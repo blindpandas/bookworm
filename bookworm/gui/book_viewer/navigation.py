@@ -19,6 +19,7 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 # Time_out of consecutive key presses in seconds
 DKEY_TIMEOUT = 0.75
+LINK_ACTIVATION_KEYS = {wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER}
 
 
 class NavigationProvider:
@@ -55,7 +56,13 @@ class NavigationProvider:
             self._auto_navigate(event, key_code)
         elif key_code in NAVIGATION_KEYS:
             if key_code in NAV_FOREWORD_KEYS:
-                self.reader.go_to_next()
+                if self.reader.document.supports_links():
+                    if event.ControlDown():
+                        self.try_handle_special_actions()
+                    elif event.ShiftDown():
+                        self.reader.restore_last_position_after_special_action()
+                else:
+                    self.reader.go_to_next()
             elif key_code in NAV_BACKWORD_KEYS:
                 self.reader.go_to_prev()
             self.callback()
@@ -138,3 +145,6 @@ class NavigationProvider:
 
     def _reset_up_arrow_pressed_time(self, sender, current, prev):
         self._key_press_record.clear()
+
+    def try_handle_special_actions(self):
+        return self.reader.handle_special_action_for_position(self.view.get_insertion_point())

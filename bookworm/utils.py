@@ -19,8 +19,11 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-# Sentinel
-_missing = object()
+# URL processing
+URL_REGEX = regex.compile("(?:\w+://|www\.)[^ ,.?!#%=+][^ ]*")
+URL_BAD_CHARS = '\'\\.,[](){}:;"'
+
+
 
 # New line character
 UNIX_NEWLINE = "\n"
@@ -108,6 +111,14 @@ def gui_thread_safe(func):
         return wx.CallAfter(func, *a, **kw)
 
     return wrapper
+
+
+def is_external_url(text):
+    return URL_REGEX.match(text) is not None
+
+
+def find_urls (text):
+    return [s.strip(URL_BAD_CHARS) for s in URL_REGEX.findall(text)]
 
 
 def generate_file_md5(filepath):

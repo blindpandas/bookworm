@@ -2,7 +2,6 @@
 
 import os
 from contextlib import suppress
-from dataclasses import dataclass
 from bookworm import typehints as t
 from bookworm import app
 from bookworm import config
@@ -26,7 +25,7 @@ from bookworm.signals import (
     reader_page_changed,
     reader_section_changed,
 )
-from bookworm.structured_text import TextStructureMetadata
+from bookworm.structured_text import TextStructureMetadata, SemanticElementType
 from bookworm.logger import logger
 
 
@@ -284,6 +283,22 @@ class EBookReader:
         section = section or self.active_section
         self.current_page = section.pager.last
 
+    def restore_last_position_after_special_action(self):
+        if (link_info := self.__state.get('link_nav_history', {})):
+            if (page_num := link_info.get('last_page')):
+                self.go_to_page(page_num)
+            self.view.go_to_position(*link_info['source_range'])
+            return True
+
+    def handle_special_action_for_position(self, position: int) -> bool:
+        for link_range in self.iter_semantic_ranges_for_elements_of_type(SemanticElementType.LINK):
+            if position in link_range:
+                link_info = self.__state['link_nav_history'] = {}
+                link_info['source_range'] = link_range
+                self.navigate_to_link_by_range(link_range)
+                return True
+        return False
+
     @staticmethod
     def _get_semantic_element_from_page(page, element_type, forward, anchor):
         semantics = TextStructureMetadata(page.get_semantic_structure())
@@ -298,6 +313,23 @@ class EBookReader:
         return self._get_semantic_element_from_page(
             self.get_current_page_object(), element_type, forward, anchor
         )
+
+    def iter_semantic_ranges_for_elements_of_type(self, element_type):
+        semantics = TextStructureMetadata(self.get_current_page_object().get_semantic_structure())
+        yield from semantics.iter_ranges(element_type)
+
+    def navigate_to_link_by_range(self, link_range):
+        target_info = self.get_current_page_object().resolve_link(link_range)
+        if target_info is None:
+            log.warning(f"Could not resolve link target: {link_range=}")
+            return
+        elif target_info.is_external:
+            self.view.go_to_webpage(target_info.url)
+        link_nav_info = self.__state['link_nav_history']
+        if target_info.page is not None:
+            link_nav_info['last_page'] = self.current_page
+            self.go_to_page(target_info.page)
+        self.view.go_to_position(target_info.position)
 
     def get_view_title(self, include_author=False):
         if config.conf["general"]["show_file_name_as_title"]:

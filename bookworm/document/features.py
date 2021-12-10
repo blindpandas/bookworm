@@ -29,6 +29,14 @@ class DocumentCapability(IntFlag):
     """Does this document supports extracting images out of pages?"""
     PAGE_LABELS = auto()
     """Does this document supports the notion of page labels?"""
+    LINKS = auto()
+    """
+    Does this document support external links.
+    Note: literal URLs can be deducted from the text using regexs.
+    We refer to links that are masked by textual labels.
+    """
+    INTERNAL_ANCHORS = auto()
+    """Does this document support internal links."""
 
 
 class ReadingMode(IntEnum):

@@ -188,6 +188,14 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         return DocumentCapability.STRUCTURED_NAVIGATION in cls.capabilities
 
     @classmethod
+    def supports_links(cls):
+        return (
+            DocumentCapability.LINKS in cls.capabilities
+            or
+            DocumentCapability.INTERNAL_ANCHORS in cls.capabilities
+        )
+
+    @classmethod
     def is_single_page_document(cls):
         return DocumentCapability.SINGLE_PAGE in cls.capabilities
 
@@ -265,6 +273,9 @@ class BasePage(metaclass=ABCMeta):
         """Return information about the position of styled elements."""
         raise NotImplementedError
 
+    def resolve_link(self, link_range) -> LinkTarget:
+        raise NotImplementedError
+
     def normalize_text(self, text):
         return remove_excess_blank_lines(text)
 
@@ -309,6 +320,9 @@ class SinglePage(BasePage):
 
     def get_style_info(self):
         return self.document.get_document_style_info()
+
+    def resolve_link(self, link_range):
+        return self.document.resolve_link(link_range)
 
 
 class SinglePageDocument(BaseDocument):

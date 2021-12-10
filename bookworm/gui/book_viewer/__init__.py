@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import webbrowser
 import wx
 from math import ceil
 from contextlib import contextmanager
@@ -490,16 +491,17 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 self.set_insertion_point(stop)
                 return self.navigate_to_structural_element(element_type, forward)
             self.__latest_structured_navigation_position = pos_info
-            element_label, should_speak_whole_text = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[
+            element_label, should_speak_whole_text, move_to_start_of_line = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[
                 actual_element_type
             ]
-            line_start, line_stop = self.get_containing_line(start)
-            tstart, tstop = (
-                (start, stop) if should_speak_whole_text else (line_start, line_stop)
+            text_start, text_stop = (
+                self.get_containing_line(start)
+                if should_speak_whole_text else
+                (start, stop)
             )
-            text = self.contentTextCtrl.GetRange(tstart, tstop)
+            text = self.contentTextCtrl.GetRange(text_start, text_stop)
             msg = _("{text}: {item_type}").format(text=text, item_type=_(element_label))
-            target_position = self.get_containing_line(tstop - 1)[0]
+            target_position = start if not move_to_start_of_line else self.get_containing_line(stop - 1)[0]
             self.set_insertion_point(target_position)
             sounds.structured_navigation.play()
             speech.announce(msg, True)
@@ -664,3 +666,16 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         dlg = wx.TextEntryDialog(self, label, title, style=style, value=value)
         if dlg.ShowModal() == wx.ID_OK:
             return dlg.GetValue().strip()
+
+    def go_to_webpage(self, url):
+        speech.announce(_("Opening page: {url}").format(url=url))
+        webbrowser.open_new_tab(url)
+
+    def go_to_position(self, start_pos, end_pos=None):
+        if end_pos is None:
+            start, end = self.get_containing_line(start_pos)
+        else:
+            start, end = start_pos, end_pos
+        line_text = self.contentTextCtrl.GetRange(start, end)
+        speech.announce(line_text)
+        self.set_insertion_point(start)

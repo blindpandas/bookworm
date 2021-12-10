@@ -4,10 +4,10 @@
 
 from __future__ import annotations
 import re
+import attr
 from itertools import chain
 from chemical import it, ChemicalException
 from enum import IntEnum, auto
-from dataclasses import dataclass, field
 from bookworm import typehints as t
 from bookworm.utils import normalize_line_breaks
 from .primitives import TextRange
@@ -37,7 +37,6 @@ class SemanticElementType(IntEnum):
     HEADING_4 = auto()
     HEADING_5 = auto()
     HEADING_6 = auto()
-    ANCHOR = auto()
     LINK = auto()
     LIST = auto()
     QUOTE = auto()
@@ -53,25 +52,24 @@ HEADING_LEVELS = {
     SemanticElementType.HEADING_5,
     SemanticElementType.HEADING_6,
 }
-# Maps semantic element types to (label, should_speak_whole_text)
+# Maps semantic element types to (label, should_speak_whole_text, move_to_start_of_line )
 SEMANTIC_ELEMENT_OUTPUT_OPTIONS = {
-    SemanticElementType.HEADING: (_("Heading"), True),
-    SemanticElementType.HEADING_1: (_("Heading level 1"), True),
-    SemanticElementType.HEADING_2: (_("Heading level 2"), True),
-    SemanticElementType.HEADING_3: (_("Heading level 3"), True),
-    SemanticElementType.HEADING_4: (_("Heading level 4"), True),
-    SemanticElementType.HEADING_5: (_("Heading level 5"), True),
-    SemanticElementType.HEADING_6: (_("Heading level 6"), True),
-    SemanticElementType.ANCHOR: (_("Anchor"), True),
-    SemanticElementType.LINK: (_("Link"), True),
-    SemanticElementType.LIST: (_("List"), False),
-    SemanticElementType.QUOTE: (_("Quote"), True),
-    SemanticElementType.TABLE: (_("Table"), False),
-    SemanticElementType.FIGURE: (_("Image"), False),
+    SemanticElementType.HEADING: (_("Heading"), True, True),
+    SemanticElementType.HEADING_1: (_("Heading level 1"), True, True),
+    SemanticElementType.HEADING_2: (_("Heading level 2"), True, True),
+    SemanticElementType.HEADING_3: (_("Heading level 3"), True, True),
+    SemanticElementType.HEADING_4: (_("Heading level 4"), True, True),
+    SemanticElementType.HEADING_5: (_("Heading level 5"), True, True),
+    SemanticElementType.HEADING_6: (_("Heading level 6"), True, True),
+    SemanticElementType.LINK: (_("Link"), False, False),
+    SemanticElementType.LIST: (_("List"), False, True),
+    SemanticElementType.QUOTE: (_("Quote"), True, True),
+    SemanticElementType.TABLE: (_("Table"), False, True),
+    SemanticElementType.FIGURE: (_("Image"), False, True),
 }
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True, frozen=True)
 class TextStructureMetadata:
     """Provides metadata about a blob of text based on ranges."""
 
