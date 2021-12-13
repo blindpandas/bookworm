@@ -85,7 +85,7 @@ class ServiceHandler:
 
     def process_menubar(self, menubar):
         for service in self._get_services_with_gui():
-            service.process_menubar(menubar)
+            yield service.process_menubar(menubar)
 
     def get_toolbar_items(self):
         rv = set()

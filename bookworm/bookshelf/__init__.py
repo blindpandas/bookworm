@@ -13,7 +13,7 @@ from bookworm.service import BookwormService
 from bookworm.signals import reader_book_loaded
 from bookworm.commandline_handler import BaseSubcommandHandler, register_subcommand
 from bookworm.logger import logger
-from .interface import BookshelfSettingsPanel, BookshelfMenu
+from .interface import BookshelfSettingsPanel, BookshelfMenu, BookshelfWindow
 from .models import (
     DEFAULT_BOOKSHELF_DATABASE_FILE,
     BaseModel,
@@ -73,6 +73,26 @@ class DocumentIndexerSubcommandHandler(BaseSubcommandHandler):
         return 0
 
 
+
+@register_subcommand
+class BookshelfLauncherSubcommand(BaseSubcommandHandler):
+    subcommand_name = "bookshelf"
+
+    @classmethod
+    def add_arguments(cls, subparser):
+        subparser.add_argument(
+            "--db-file",
+            help="Sqlite database file to store the document to",
+            default=os.fspath(DEFAULT_BOOKSHELF_DATABASE_FILE)
+        )
+
+    @classmethod
+    def handle_commandline_args(cls, args):
+        BookshelfWindow.show_standalone(database_file=args.db_file)
+        return 0
+
+
+
 class BookshelfService(BookwormService):
     name = "bookshelf"
     has_gui = True
@@ -93,7 +113,10 @@ class BookshelfService(BookwormService):
         ]
 
     def process_menubar(self, menubar):
-        self.menu = BookshelfMenu(self, menubar)
+        self.menu = BookshelfMenu(self)
+        # Translators: the label of an item in the application menubar
+        return (50, self.menu, _("Boo&kshelf"))
+
 
     def on_reader_loaded(self, sender):
         if not config.conf["bookshelf"]["auto_add_opened_documents_to_bookshelf"]:

@@ -55,9 +55,14 @@ class EpubPage(BasePage):
         except ValueError:
             log.exception("Failed to parse text from html", exc_info=True)
             self._parse_and_extract_text_info("<html></html>")
-        if "#" in section_ref and not self.extracted_text.strip():
+        if not self.extracted_text.strip() and "#" in section_ref:
             filename, html_id = section_ref.split("#")
-            self._parse_and_extract_text_info(self.document._split_section_content[filename][""])
+            try:
+                extra_html = self.document._split_section_content[filename][""]
+            except KeyError:
+                pass
+            else:
+                self._parse_and_extract_text_info(extra_html)
 
     def _parse_and_extract_text_info(self, html):
         structure_extractor = StructuredHtmlParser.from_string(html)

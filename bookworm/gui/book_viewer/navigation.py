@@ -57,10 +57,11 @@ class NavigationProvider:
         elif key_code in NAVIGATION_KEYS:
             if key_code in NAV_FOREWORD_KEYS:
                 if self.reader.document.supports_links():
-                    if event.ControlDown():
+                    modifiers = event.GetModifiers()
+                    if modifiers == wx.MOD_CONTROL:
                         self.try_handle_special_actions()
-                    elif event.ShiftDown():
-                        self.reader.restore_last_position_after_special_action()
+                    elif modifiers == wx.MOD_CONTROL | wx.MOD_SHIFT:
+                        self.reader.pop_navigation_stack()
                 else:
                     self.reader.go_to_next()
             elif key_code in NAV_BACKWORD_KEYS:

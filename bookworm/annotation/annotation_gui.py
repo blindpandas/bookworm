@@ -85,12 +85,11 @@ ANNOTATIONS_KEYBOARD_SHORTCUTS = {
 class AnnotationMenu(wx.Menu):
     """Annotation menu."""
 
-    def __init__(self, service, menubar):
+    def __init__(self, service):
         super().__init__()
         self.service = service
         self.view = service.view
         self.reader = service.reader
-        self.menubar = menubar
 
         # Add menu items
         self.Append(
@@ -144,7 +143,6 @@ class AnnotationMenu(wx.Menu):
         )
 
         # Translators: the label of an item in the application menubar
-        self.menubar.Insert(2, self, _("&Annotations"))
 
         # EventHandlers
         self.view.Bind(

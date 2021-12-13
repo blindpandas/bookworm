@@ -8,37 +8,11 @@ from bookworm.signals import reader_page_changed
 from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
-from bookworm.gui.components import Dialog
+from bookworm.gui.components import ImageViewControl, Dialog
 from .navigation import NavigationProvider
 
 
 log = logger.getChild(__name__)
-
-
-class ImageView(wx.Control):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
-        # Bind events
-        self.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.ClearBackground()
-        self.data = (wx.NullBitmap, 0, 0)
-
-    def AcceptsFocus(self):
-        return False
-
-    def OnPaint(self, event):
-        bmp, width, height = self.data
-        dc = wx.BufferedPaintDC(self)
-        dc.SetBackground(wx.Brush("white"))
-        dc.Clear()
-        gc = wx.GraphicsContext.Create(dc)
-        gc.DrawBitmap(bmp, 0, 0, width, height)
-
-    def RenderImage(self, bmp, width, height):
-        self.SetInitialSize(wx.Size(width, height))
-        self.data = (bmp, width, height)
-        self.Refresh()
 
 
 class ViewPageAsImageDialog(wx.Dialog):
@@ -58,7 +32,7 @@ class ViewPageAsImageDialog(wx.Dialog):
         panel.SetTransparent(0)
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.imageCtrl = ImageView(panel, -1)
+        self.imageCtrl = ImageViewControl(panel, -1)
         sizer.Add(self.imageCtrl, 1, wx.CENTER | wx.BOTH)
         panel.SetSizer(sizer)
         sizer.Fit(panel)

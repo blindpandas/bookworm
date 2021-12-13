@@ -6,9 +6,9 @@ from __future__ import annotations
 import math
 import bisect
 import operator
+import attr
 from collections.abc import Container
 from functools import cached_property
-from dataclasses import dataclass, field
 from more_itertools import locate
 from bookworm import typehints as t
 from bookworm.vendor.sentence_splitter import (
@@ -18,17 +18,12 @@ from bookworm.vendor.sentence_splitter import (
 )
 
 
+@attr.s(auto_attribs=True, slots=True)
 class TextRange(Container):
     """Represents a text range refering to a substring."""
 
-    __slots__ = ["start", "stop"]
-
-    def __init__(self, start, stop):
-        self.start = start
-        self.stop = stop
-
-    def __repr__(self):
-        return f"TextRange(start={self.start}, stop={self.stop})"
+    start: int
+    stop: int
 
     @property
     def midrange(self):
@@ -63,14 +58,14 @@ class TextRange(Container):
     def __hash__(self):
         return hash((self.start, self.stop))
 
-    def as_tuple(self):
+    def astuple(self):
         return (self.start, self.stop)
 
     def as_slice(self):
         return slice(self.start, self.stop)
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class TextInfo:
     """Provides basic structural information  about a blob of text
     Most of the properties have their values cached.
@@ -88,11 +83,13 @@ class TextInfo:
     eol: str = "\n"
     """The recognizable end-of-line sequence. Used to split the text into paragraphs."""
 
-    def __post_init__(self):
+    sent_tokenizer: SentenceSplitter = None
+
+    def __attrs_post_init__(self):
         lang = self.lang
         if lang not in splitter_supported_languages():
             lang = "en"
-        self._sent_tokenizer = SentenceSplitter(lang)
+        self.sent_tokenizer = SentenceSplitter(lang)
 
     @cached_property
     def sentence_markers(self):
@@ -103,7 +100,7 @@ class TextInfo:
         return self._record_markers(self.paragraphs)
 
     def split_sentences(self, paragraph):
-        return self._sent_tokenizer.split(paragraph)
+        return self.sent_tokenizer.split(paragraph)
 
     @cached_property
     def sentences(self):

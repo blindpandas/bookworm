@@ -1,7 +1,11 @@
 # coding: utf-8
 
-import wx
 import enum
+import itertools
+import wx
+
+
+ID_GEN = itertools.count(start=14004, step=5)
 
 
 class BookRelatedMenuIds(enum.IntEnum):
@@ -11,16 +15,19 @@ class BookRelatedMenuIds(enum.IntEnum):
 
     # File
     export = wx.ID_SAVEAS
-    pin_document = 205
-    closeCurrentFile = 211
+    pin_document = next(ID_GEN)
+    closeCurrentFile = next(ID_GEN)
+    # Document
+    document_summary = next(ID_GEN)
+    element_list = next(ID_GEN)
     # Tools
-    goToPage = 221
-    goToPageByLabel = 575
+    goToPage = next(ID_GEN)
+    goToPageByLabel = next(ID_GEN)
     searchBook = wx.ID_FIND
-    findNext = 222
-    findPrev = 223
-    viewRenderedAsImage = 224
-    changeReadingMode = 230
+    findNext = next(ID_GEN)
+    findPrev = next(ID_GEN)
+    viewRenderedAsImage = next(ID_GEN)
+    changeReadingMode = next(ID_GEN)
 
 
 class ViewerMenuIds(enum.IntEnum):
@@ -29,18 +36,19 @@ class ViewerMenuIds(enum.IntEnum):
     # Tools menu
     preferences = wx.ID_PREFERENCES
     # Help Menu
-    documentation = 801
-    website = 802
-    license = 803
-    contributors = 812
-    restart_with_debug = 804
-    about = 805
+    documentation = next(ID_GEN)
+    website = next(ID_GEN)
+    license = next(ID_GEN)
+    contributors = next(ID_GEN)
+    restart_with_debug = next(ID_GEN)
+    about = next(ID_GEN)
 
 
 KEYBOARD_SHORTCUTS = {
     wx.ID_OPEN: "Ctrl-O",
     BookRelatedMenuIds.pin_document: "Ctrl-P",
     BookRelatedMenuIds.closeCurrentFile: "Ctrl-W",
+    BookRelatedMenuIds.element_list: "Ctrl+F7",
     BookRelatedMenuIds.goToPage: "Ctrl-G",
     wx.ID_FIND: "Ctrl-F",
     BookRelatedMenuIds.findNext: "F3",

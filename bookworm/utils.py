@@ -3,6 +3,7 @@
 import sys
 import operator
 import regex
+import uuid
 import wx
 import hashlib
 from contextlib import contextmanager
@@ -141,6 +142,10 @@ def generate_sha1hash(content):
     if not is_file_like:
         file.close()
     return hasher.hexdigest()
+
+
+def random_uuid():
+    return uuid.uuid4().hex
 
 
 @call_threaded

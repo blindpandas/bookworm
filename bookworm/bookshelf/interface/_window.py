@@ -29,19 +29,31 @@ class BookshelfNoteBook(wx.Treebook):
 class BookshelfWindow(sc.SizedFrame):
 
     def __init__(self, parent, title, **kwargs):
-        kwargs.setdefault('size', (750, 840))
+        kwargs.setdefault('size', (1200, 750))
         super().__init__(parent=parent, title=title, **kwargs)
         self.make_controls()
-        # Center
-        if self.GetParent() is not None:
-            self.CenterOnParent()
-        else:
-            self.CenterOnScreen()
+        self.Maximize()
+        self.CenterOnScreen()
+
+    @classmethod
+    def show_standalone(cls, database_file):
+        app = wx.App()
+        bookshelf_window = cls(None, title=_("Bookworm Bookshelf"))
+        bookshelf_window.Show()
+        app.MainLoop()
 
     def make_controls(self):
         panel = self.GetContentsPane()
         panel.SetSizerType('horizontal')
-        self.tree_tabs = BookshelfNoteBook(panel, -1)
+        lhs_panel = sc.SizedPanel(panel)
+        lhs_panel.SetSizerType('vertical')
+        wx.StaticText(lhs_panel, -1, _("Provider"))
+        provider_choice = wx.Choice(lhs_panel, -1, choices=['Local Bookshelf', 'Pocket', 'Google Drive', 'OneDrive', 'Dropbox',])
+        wx.StaticText(lhs_panel, -1, _("Categories"))
+        self.tree_tabs = BookshelfNoteBook(lhs_panel, -1)
+        tree_ctrl = self.tree_tabs.GetTreeCtrl()
+        tree_ctrl.SetMinSize((120, -1))
+        tree_ctrl.SetLabel(_("Categories"))
         self.tree_tabs.AddPage(BookshelfResultsPage(self.tree_tabs, -1, query=None), "Hello")
         self.tree_tabs.GetTreeCtrl().SetLabel(_("Shelfs"))
         self.Bind(wx.EVT_TREEBOOK_PAGE_CHANGING, self.OnPageChanging)

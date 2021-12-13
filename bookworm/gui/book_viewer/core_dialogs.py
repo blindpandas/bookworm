@@ -1,21 +1,32 @@
 # coding: utf-8
 
+import operator
+import enum
 import threading
 import wx
 import wx.lib.sized_controls as sc
+import more_itertools
+from collections import namedtuple
 from itertools import chain
 from bookworm import config
 from bookworm.document.operations import SearchRequest
 from bookworm.utils import gui_thread_safe
-from bookworm.logger import logger
+from bookworm.image_io import ImageIO
+from bookworm.structured_text import SemanticElementType, HEADING_LEVELS, SEMANTIC_ELEMENT_OUTPUT_OPTIONS
 from bookworm.gui.components import (
     Dialog,
     SimpleDialog,
     DialogListCtrl,
+    ImageViewControl,
+    ImmutableObjectListView,
+    ColumnDefn,
     EnhancedSpinCtrl,
     PageRangeControl,
+    EnumRadioBox,
     make_sized_static_box,
 )
+from bookworm.resources import images
+from bookworm.logger import logger
 from .navigation import NavigationProvider
 
 
@@ -208,3 +219,195 @@ class GoToPageDialog(SimpleDialog):
 
     def GetValue(self):
         return self.pageNumberCtrl.GetValue() - 1
+
+
+class ElementKind(enum.IntEnum):
+    HEADING = SemanticElementType.HEADING
+    LINK = SemanticElementType.LINK
+    LIST = SemanticElementType.LIST
+    TABLE = SemanticElementType.TABLE
+    QUOTE = SemanticElementType.QUOTE
+
+    @property
+    def display(self):
+        return SEMANTIC_ELEMENT_OUTPUT_OPTIONS[self.value][0]
+
+
+class ElementListDialog(SimpleDialog):
+    """Element list dialog."""
+
+    def __init__(self, *args, view, reader, **kwargs):
+        self.reader = reader
+        self.view = view
+        super().__init__(*args, **kwargs)
+
+    def addControls(self, parent):
+        self.elementTypeRadio = EnumRadioBox(
+            parent,
+            -1,
+            label=("Element Type"),
+            choice_enum=ElementKind,
+            majorDimension=0,
+            style=wx.RA_SPECIFY_COLS
+        )
+        self.elementListViewLabel = wx.StaticText(parent, -1, _("Elements"))
+        self.elementListView = ImmutableObjectListView(
+            parent,
+            wx.ID_ANY,
+            columns=[ColumnDefn(_("Name"), 'left', 255, 'name'),]
+        )
+        self.Bind(
+            wx.EVT_RADIOBOX,
+            self.onElementTypeRadioSelected,
+            self.elementTypeRadio
+        )
+        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onListItemActivated, self.elementListView)
+        self.ElementInfo = namedtuple('ElementInfo', 'type name  text_range')
+        self.__element_Info_cache = {}
+        self.populate_element_list(self.elementTypeRadio.GetSelectedValue())
+        self.set_listview_label()
+
+    def onElementTypeRadioSelected(self, event):
+        self.set_listview_label()
+        self.populate_element_list(event.GetEventObject().GetSelectedValue())
+
+    def onListItemActivated(self, event):
+        self.SetReturnCode(wx.ID_OK)
+        self.Close()
+
+    def set_listview_label(self):
+        label = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[self.elementTypeRadio.GetSelectedValue().value][0]
+        self.elementListViewLabel.SetLabelText(label)
+
+    def populate_element_list(self, element_type):
+        if (element_infos := self.__element_Info_cache.get(element_type)) is None:
+            element_infos = list(self.iter_element_infos(element_type.value))
+            if element_type is ElementKind.HEADING:
+                for h_level in HEADING_LEVELS:
+                    element_infos.extend(self.iter_element_infos(h_level))
+            element_infos.sort(key=operator.attrgetter('text_range'))
+        self.elementListView.set_objects(
+            element_infos,
+            set_focus=False
+        )
+
+    def iter_element_infos(self, element_type):
+        ElementInfo = self.ElementInfo
+        text_whole_line = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[element_type][1]
+        for text_range in self.reader.iter_semantic_ranges_for_elements_of_type(element_type):
+            if text_whole_line:
+                name = self.view.get_text_by_range(*self.view.get_containing_line(text_range[0]))
+            else:
+                name = self.view.get_text_by_range(*text_range)
+            yield ElementInfo(
+                element_type,
+                name.strip(),
+                text_range
+            )
+
+    def ShowModal(self):
+        super().ShowModal()
+        return self.elementListView.get_selected()
+
+
+class DocumentSummaryDialog(SimpleDialog):
+
+    def __init__(self, *args, document, **kwargs):
+        self.document = document
+        self.metadata = document.metadata
+        kwargs.setdefault('title', _("Document Summary: {title}").format(title=self.metadata.title))
+        super().__init__(*args, **kwargs)
+
+    def addControls(self, parent):
+        parent.SetSizerType('horizontal')
+        parent.SetSizerProps(expand=True)
+        if (cover_image := self.get_cover_image()) is not None:
+            image_view = ImageViewControl(parent, -1)
+            image_view.RenderImageIO(cover_image)
+            parent.GetSizer().AddSpacer(20)
+        rh_panel = sc.SizedPanel(parent, -1)
+        rh_panel.SetSizerType('vertical')
+        rh_panel.SetSizerProps(expand=True, hgrow=100)
+        title_text_ctrl = self.create_info_field(
+            rh_panel,
+            label=_("Title"),
+            value=self.metadata.title,
+        )
+        title_text_style = title_text_ctrl.GetDefaultStyle()
+        title_text_style.SetFontWeight(wx.FONTWEIGHT_BOLD)
+        title_text_ctrl.SetStyle(0, title_text_ctrl.GetLastPosition(), title_text_style)
+        if (author := self.metadata.author):
+            self.create_info_field(
+                rh_panel,
+                label=_("Author"),
+                value=author
+            )
+        if (pub_date := self.metadata.publication_year):
+            self.create_info_field(
+                rh_panel,
+                label=_("Publication Date"),
+                value=pub_date
+            )
+        if (publisher := self.metadata.publisher):
+            self.create_info_field(
+                rh_panel,
+                label=_("Publisher"),
+                value=publisher
+            )
+        if self.document.has_toc_tree():
+            self.create_info_field(
+                rh_panel,
+                label=_("Number of Sections"),
+                value=str(len(self.document.toc_tree))
+            )
+        if not self.document.is_single_page_document():
+            self.create_info_field(
+                rh_panel,
+                label=_("Number of Pages"),
+                value=str(len(self.document))
+            )
+        else:
+            words = (
+                word
+                for word in self.document.get_content().split(" ")
+                if word.strip()
+            )
+            self.create_info_field(
+                rh_panel,
+                label=_("Word Count"),
+                value=str(more_itertools.ilen(words))
+            )
+        parent.SetMinSize((900, -1))
+        parent.Layout()
+        parent.Fit()
+
+    def getButtons(self, parent):
+        btnsizer = wx.StdDialogButtonSizer()
+        # Translators: the label of the close button in a dialog
+        closeBtn = wx.Button(self, wx.ID_CANCEL, _("&Close"))
+        btnsizer.AddButton(closeBtn)
+        btnsizer.Realize()
+        return btnsizer
+
+    def get_cover_image(self):
+        try:
+            cover_image = self.document.get_cover_image()
+        except NotImplementedError:
+            return
+        else:
+            from bookworm.ocr_engines.cv2_utils import image_resize
+            return cover_image.from_cv2(
+                image_resize(cover_image.to_cv2(), width=320)
+            )
+
+    def create_info_field(self, parent, label, value):
+        wx.StaticText(parent, -1, label)
+        text_ctrl = wx.TextCtrl(
+            parent,
+            -1,
+            value=value,
+            style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2
+        )
+        text_ctrl.SetSizerProps(expand=True)
+        text_ctrl.SetMinSize((500, -1))
+        return text_ctrl

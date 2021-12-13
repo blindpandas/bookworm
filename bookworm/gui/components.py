@@ -180,6 +180,37 @@ class PageRangeControl(sc.SizedPanel):
             return self.doc.toc_tree.text_range
 
 
+class ImageViewControl(wx.Control):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
+        # Bind events
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.ClearBackground()
+        self.data = (wx.NullBitmap, 0, 0)
+
+    def AcceptsFocus(self):
+        return False
+
+    def OnPaint(self, event):
+        bmp, width, height = self.data
+        dc = wx.BufferedPaintDC(self)
+        dc.SetBackground(wx.Brush("white"))
+        dc.Clear()
+        gc = wx.GraphicsContext.Create(dc)
+        gc.DrawBitmap(bmp, 0, 0, width, height)
+
+    def RenderImage(self, bmp, width, height):
+        self.SetInitialSize(wx.Size(width, height))
+        self.data = (bmp, width, height)
+        self.Refresh()
+
+    def RenderImageIO(self, image_io):
+        bmp = image_io.to_wx_bitmap()
+        return self.RenderImage(bmp, *image_io.size)
+
+
+
 class DialogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     def __init__(
         self,
@@ -412,7 +443,7 @@ class ImmutableObjectListView(DialogListCtrl):
         for i in range(len(columns)):
             self.SetColumnWidth(i, 100)
 
-    def set_objects(self, objects: ObjectCollection, focus_item: int = 0):
+    def set_objects(self, objects: ObjectCollection, focus_item: int = 0, set_focus=True):
         """Clear the list view and insert the objects."""
         self._objects = objects
         self.set_columns(self._columns)
@@ -425,7 +456,8 @@ class ImmutableObjectListView(DialogListCtrl):
                         getattr(obj, to_str) if not callable(to_str) else to_str(obj)
                     )
                 self.Append(col_labels)
-        self.set_focused_item(focus_item)
+        if set_focus:
+            self.set_focused_item(focus_item)
 
     def get_selected(self) -> t.Optional[t.Any]:
         """Return the currently selected object or None."""
@@ -619,3 +651,42 @@ class RobustProgressDialog:
 
     def PulseContinuously(self, message, interval=1500):
         return _RPDPulser(self, message, interval)
+
+
+class EnumItemContainerMixin:
+    """
+    An item container that accepts an Enum as its choices argument.
+    The Enum must provide a display property.
+    """
+
+    items_arg = None
+
+    def __init__(self, *args, choice_enum, **kwargs):
+        kwargs[self.items_arg] = [m.display for m in choice_enum]
+        super().__init__(*args, **kwargs)
+        self.choice_enum = choice_enum
+        self.choice_members = tuple(choice_enum)
+        if self.choice_members:
+            self.SetSelection(0)
+
+    def GetSelectedValue(self):
+        return self.choice_members[self.GetSelection()]
+
+    @property
+    def SelectedValue(self):
+        return self.GetSelectedValue()
+
+    def SetSelectionByValue(self, value):
+        if not isinstance(value, self.choice_enum):
+            raise TypeError(f"{value} is not a {self.choice_enum}")
+        self.SetSelection(self.choice_members.index(value))
+
+
+class EnumRadioBox(EnumItemContainerMixin, wx.RadioBox):
+    """A RadioBox that accepts enum as choices."""
+
+    items_arg = "choices"
+
+
+class EnumChoice(EnumItemContainerMixin, wx.Choice):
+    items_arg = "choices"

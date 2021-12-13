@@ -505,11 +505,11 @@ class SpeechEngineSelector(SimpleDialog):
 class SpeechMenu(wx.Menu):
     """Main menu."""
 
-    def __init__(self, service, menubar):
+    def __init__(self, service):
         super().__init__()
         self.service = service
         self.view = service.view
-        self.menubar = menubar
+        self.menubar = self.view.menuBar
 
         # Add menu items
         self.Append(
@@ -563,9 +563,6 @@ class SpeechMenu(wx.Menu):
         )
 
         # Append the menu
-        # Translators: the label of an item in the application menubar
-        self.menubar.Insert(2, self, _("S&peech"))
-
         # EventHandlers
         self.view.Bind(wx.EVT_MENU, self.onPlay, id=StatefulSpeechMenuIds.play)
         self.view.Bind(
@@ -597,7 +594,7 @@ class SpeechMenu(wx.Menu):
             wx.EVT_KEY_UP, self.onKeyUp, self.view.contentTextCtrl
         )
         # Disable this when no voice profile is active
-        self.menubar.FindItemById(
+        self.FindItemById(
             StatelessSpeechMenuIds.deactivateActiveVoiceProfile
         ).Enable(False)
 

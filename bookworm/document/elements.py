@@ -36,6 +36,9 @@ class Pager(Container, Iterable, Sized):
     def __contains__(self, value):
         return self.first <= value <= self.last
 
+    def astuple(self):
+        return (self.first, self.last)
+
 
 @attr.s(auto_attribs=True, repr=False, slots=True)
 class Section:

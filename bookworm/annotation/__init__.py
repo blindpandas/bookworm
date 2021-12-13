@@ -55,7 +55,9 @@ class AnnotationService(BookwormService):
         reader_page_changed.connect(self.highlight_highlighted_text, sender=self.reader)
 
     def process_menubar(self, menubar):
-        self.menu = AnnotationMenu(self, menubar)
+        self.menu = AnnotationMenu(self)
+        # Translators: the label of an item in the application menubar
+        return (30, self.menu, _("&Annotation"))
 
     def get_contextmenu_items(self):
         rv = [

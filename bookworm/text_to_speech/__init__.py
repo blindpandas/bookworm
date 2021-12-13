@@ -105,7 +105,9 @@ class TextToSpeechService(BookwormService):
             self.close()
 
     def process_menubar(self, menubar):
-        self.menu = SpeechMenu(self, menubar)
+        self.menu = SpeechMenu(self)
+        # Translators: the label of an item in the application menubar
+        return (20, self.menu, _("S&peech"))
 
     def get_settings_panels(self):
         return [
@@ -278,7 +280,7 @@ class TextToSpeechService(BookwormService):
         for (paragraph, text_range) in text_info.paragraphs:
             with self.queue_speech_utterance() as utterance:
                 if is_single_page_document:
-                    text_pos = sum(text_range.as_tuple()) / 2
+                    text_pos = sum(text_range.astuple()) / 2
                     sect = self.reader.document.get_section_at_position(text_pos)
                     if _last_known_section != sect:
                         if (_last_known_section is not None) and (sect.parent is not _last_known_section):
@@ -290,7 +292,7 @@ class TextToSpeechService(BookwormService):
                     self.encode_bookmark(
                         {
                             "t": UT_PARAGRAPH_BEGIN,
-                            "txr": text_range.as_tuple(),
+                            "txr": text_range.astuple(),
                         }
                     )
                 )
@@ -302,7 +304,7 @@ class TextToSpeechService(BookwormService):
                     self.encode_bookmark(
                         {
                             "t": UT_PARAGRAPH_END,
-                            "txr": text_range.as_tuple(),
+                            "txr": text_range.astuple(),
                         }
                     )
                 )

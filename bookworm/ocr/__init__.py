@@ -46,7 +46,9 @@ class OCRService(BookwormService):
         self.init_saved_options()
 
     def process_menubar(self, menubar):
-        self.menu = OCRMenu(self, menubar)
+        self.menu = OCRMenu(self)
+        # Translators: the label of an item in the application menubar
+        return (35, self.menu, _("OCR"))
 
     def get_settings_panels(self):
         return [

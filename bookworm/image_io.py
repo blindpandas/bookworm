@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 import io
+import tempfile
 import wx
 import fitz
 from dataclasses import dataclass
@@ -79,7 +80,11 @@ class ImageIO:
 
     @classmethod
     def from_wx_bitmap(cls, wx_bitmap):
-        raise NotImplementedError
+        wx_img = wx_bitmap.ConvertToImage()
+        width, height = wx_img.GetSize()
+        return cls(
+            data=bytes(wx_img.GetDataBuffer()), width=width, height=height, mode="RGB"
+        )
 
     @classmethod
     def from_fitz_pixmap(cls, pixmap):

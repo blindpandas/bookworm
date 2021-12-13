@@ -261,6 +261,15 @@ class EBookReader:
                 self.go_to_first_of_section()
             return navigated
 
+    def perform_wormhole_navigation(self, page, start, end=None, *, last_position: tuple[int, int]=None):
+        this_page = self.current_page
+        if page is not None:
+            self.go_to_page(page)
+        self.view.go_to_position(start, end)
+        if last_position is None:
+            last_position = (self.view.get_insertion_point(), None)
+        self.push_navigation_stack(this_page, *last_position)
+
     def go_to_next(self) -> bool:
         """Try to navigate to the next page."""
         current = self.current_page
@@ -283,21 +292,30 @@ class EBookReader:
         section = section or self.active_section
         self.current_page = section.pager.last
 
-    def restore_last_position_after_special_action(self):
-        if (link_info := self.__state.get('link_nav_history', {})):
-            if (page_num := link_info.get('last_page')):
+    @property
+    def navigation_stack(self):
+        return self.__state.setdefault('navigation_stack', [])
+
+    def push_navigation_stack(self, last_page, last_pos_start, last_pos_end):
+        self.navigation_stack.append({
+            'last_page': last_page,
+            'source_range': (last_pos_start, last_pos_end),
+        })
+
+    def pop_navigation_stack(self):
+        try:
+            nav_stack_top = self.navigation_stack.pop()
+        except IndexError:
+            return
+        else:
+            if (page_num := nav_stack_top.get('last_page')):
                 self.go_to_page(page_num)
-            self.view.go_to_position(*link_info['source_range'])
-            return True
+            self.view.go_to_position(*nav_stack_top['source_range'])
 
     def handle_special_action_for_position(self, position: int) -> bool:
         for link_range in self.iter_semantic_ranges_for_elements_of_type(SemanticElementType.LINK):
             if position in link_range:
-                link_info = self.__state['link_nav_history'] = {}
-                link_info['source_range'] = link_range
                 self.navigate_to_link_by_range(link_range)
-                return True
-        return False
 
     @staticmethod
     def _get_semantic_element_from_page(page, element_type, forward, anchor):
@@ -325,11 +343,11 @@ class EBookReader:
             return
         elif target_info.is_external:
             self.view.go_to_webpage(target_info.url)
-        link_nav_info = self.__state['link_nav_history']
-        if target_info.page is not None:
-            link_nav_info['last_page'] = self.current_page
-            self.go_to_page(target_info.page)
-        self.view.go_to_position(target_info.position)
+        self.perform_wormhole_navigation(
+            target_info.page,
+            target_info.position,
+            last_position=link_range
+        )
 
     def get_view_title(self, include_author=False):
         if config.conf["general"]["show_file_name_as_title"]:

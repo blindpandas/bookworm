@@ -37,10 +37,9 @@ class BookshelfSettingsPanel(SettingsPanel):
 
 class BookshelfMenu(wx.Menu):
 
-    def __init__(self, service, menubar):
+    def __init__(self, service):
         super().__init__()
         self.service = service
-        self.menubar = menubar
         self.view = service.view
         self.Append(
             StatelessBookshelfMenuIds.open_bookshelf,
@@ -70,11 +69,6 @@ class BookshelfMenu(wx.Menu):
             # Translators: the help text of an item in the application menubar
             _("Create a new book category in your bookshelf"),
         )
-
-        # Append the menu
-        # Translators: the label of an item in the application menubar
-        self.view.fileMenu.Insert(7, -1, _("Books&helf"), self, _("Bookshelf options"))
-
         # EventHandlers
         self.view.Bind(wx.EVT_MENU, self.onOpenBookshelf, id=StatelessBookshelfMenuIds.open_bookshelf)
 

@@ -77,11 +77,11 @@ SEMANTIC_HTML_ELEMENTS = {
     SemanticElementType.TABLE: {
         "table",
     },
-    SemanticElementType.FIGURE: {
-        "img",
-        "figure",
-        "picture",
-    }
+    # SemanticElementType.FIGURE: {
+        # "img",
+        # "figure",
+        # "picture",
+    # }
 }
 STYLE_HTML_ELEMENTS = {}
 INSCRIPTIS_ANNOTATION_RULES = {

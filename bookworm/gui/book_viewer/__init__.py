@@ -279,7 +279,12 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.add_tools()
         self.toolbar.Realize()
         # Process services menubar
-        wx.GetApp().service_handler.process_menubar(self.menuBar)
+        for retval in wx.GetApp().service_handler.process_menubar(self.menuBar):
+            if retval is None:
+                continue
+            menu_order, menu_object, menu_label = retval
+            self.registerMenu(menu_order, menu_object, menu_label)
+        self.doAddMenus()
         self.SetMenuBar(self.menuBar)
         # Set accelerators for the menu items
         self._set_menu_accelerators()
@@ -660,6 +665,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def get_insertion_point(self):
         return self.contentTextCtrl.GetInsertionPoint()
 
+    def get_text_by_range(self, start, end):
+        return self.contentTextCtrl.GetRange(start, end)
+
     def get_text_from_user(
         self, title, label, style=wx.OK | wx.CANCEL | wx.CENTER, value=""
     ):
@@ -679,3 +687,4 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         line_text = self.contentTextCtrl.GetRange(start, end)
         speech.announce(line_text)
         self.set_insertion_point(start)
+
