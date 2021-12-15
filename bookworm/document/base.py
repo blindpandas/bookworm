@@ -167,7 +167,7 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         return self[page_number].get_image(zoom_factor)
 
     def get_cover_image(self) -> ImageIO:
-        raise NotImplementedError
+        """Return the cover image of this document."""
 
     def get_file_system_path(self):
         """Only valid for documents that have true filesystem path."""

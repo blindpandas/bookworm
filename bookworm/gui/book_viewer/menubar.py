@@ -16,7 +16,7 @@ from bookworm import paths
 from bookworm import app
 from bookworm.i18n import is_rtl
 from bookworm.resources import sounds
-from bookworm.document import READING_MODE_LABELS, PaginationError, DocumentCapability as DC
+from bookworm.document import DocumentInfo, READING_MODE_LABELS, PaginationError, DocumentCapability as DC
 from bookworm.document.uri import DocumentUri
 from bookworm.signals import (
     navigated_to_search_result,
@@ -38,7 +38,7 @@ from bookworm.gui.book_viewer.core_dialogs import (
     SearchBookDialog,
     SearchResultsDialog,
     ElementListDialog,
-    DocumentSummaryDialog,
+    DocumentInfoDialog,
 )
 from .render_view import ViewPageAsImageDialog
 from .menu_constants import *
@@ -371,9 +371,9 @@ class DocumentMenu(BaseMenu):
             _("Show a list of semantic elements."),
         )
         self.Append(
-            BookRelatedMenuIds.document_summary,
+            BookRelatedMenuIds.document_info,
             # Translators: the label of an item in the application menubar
-            _("Document &Summary..."),
+            _("Document &Info..."),
             # Translators: the help text of an item in the application menubar
             _("Show information about number of chapters, word count..etc."),
         )
@@ -396,7 +396,7 @@ class DocumentMenu(BaseMenu):
             id=BookRelatedMenuIds.changeReadingMode,
         )
         self.view.Bind(wx.EVT_MENU, self.onElementList, id=BookRelatedMenuIds.element_list)
-        self.view.Bind(wx.EVT_MENU, self.onDocumentSummaryDialog, id=BookRelatedMenuIds.document_summary)
+        self.view.Bind(wx.EVT_MENU, self.onDocumentInfo, id=BookRelatedMenuIds.document_info)
 
     def after_loading_book(self, sender):
         ctrl_enable_info = (
@@ -468,8 +468,9 @@ class DocumentMenu(BaseMenu):
             if (selected_element_info := dlg.ShowModal()) is not None:
                 self.view.go_to_position(*selected_element_info.text_range)
 
-    def onDocumentSummaryDialog(self, event):
-        with DocumentSummaryDialog(self.view, document=self.reader.document) as dlg:
+    def onDocumentInfo(self, event):
+        document_info = DocumentInfo.from_document(self.reader.document)
+        with DocumentInfoDialog(self.view, view=self.view, document_info=document_info) as dlg:
             dlg.ShowModal()
 
 

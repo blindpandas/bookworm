@@ -10,6 +10,7 @@ from .base import (
 from .elements import (
     Section,
     Pager,
+    DocumentInfo,
     LinkTarget,
     BookMetadata,
     TreeStackBuilder,

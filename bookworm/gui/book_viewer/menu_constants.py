@@ -18,7 +18,7 @@ class BookRelatedMenuIds(enum.IntEnum):
     pin_document = next(ID_GEN)
     closeCurrentFile = next(ID_GEN)
     # Document
-    document_summary = next(ID_GEN)
+    document_info = next(ID_GEN)
     element_list = next(ID_GEN)
     # Tools
     goToPage = next(ID_GEN)

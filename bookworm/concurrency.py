@@ -7,12 +7,12 @@ import threading
 import multiprocessing as mp
 import asyncio
 import inspect
+import attr
 from traceback import format_exception
 from enum import IntEnum
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from functools import wraps, partial
 from contextlib import suppress
-from dataclasses import dataclass, field
 import bookworm.typehints as t
 from bookworm.signals import app_booting, app_shuttingdown
 from bookworm.logger import logger
@@ -101,9 +101,9 @@ class OperationCancelled(Exception):
     """Raised in the generator to cancel the operation."""
 
 
-@dataclass(repr=False)
+@attr.s(auto_attribs=True, slots=True, getstate_setstate=True, repr=False)
 class CancellationToken:
-    _cancel_event: mp.Event = field(default_factory=mp.Event)
+    _cancel_event: mp.Event = attr.ib(factory=mp.Event)
 
     def request_cancellation(self):
         self._cancel_event.set()

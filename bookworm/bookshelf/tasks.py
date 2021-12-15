@@ -37,10 +37,7 @@ def add_document_to_bookshelf(
         else:
             log.debug("Document index is not well formed. Rebuilding index...")
             existing_doc.delete_instance()
-    try:
-        cover_image = document.get_cover_image()
-    except NotImplementedError:
-        cover_image = None
+    cover_image = document.get_cover_image()
     metadata = document.metadata
     author, __ = Author.get_or_create(name=metadata.author)
     format, __ = Format.get_or_create(name=document.uri.format)

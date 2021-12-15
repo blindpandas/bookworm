@@ -6,6 +6,7 @@ from __future__ import annotations
 import attr
 from collections.abc import Container, Iterable, Sequence, Sized
 from weakref import ref
+from datetime import datetime
 from bookworm import typehints as t
 from bookworm.structured_text import TextRange
 
@@ -184,6 +185,34 @@ class TreeStackBuilder(list):
 class ReadingOptions:
     reading_mode: str
 
+
+@attr.s(auto_attribs=True, slots=True, frozen=True, kw_only=True)
+class DocumentInfo:
+    """Holds information about an unloaded document."""
+
+    uri: DocumentUri
+    title: str
+    number_of_pages: int = None
+    number_of_sections: int = None
+    authors: list[str] = ()
+    publication_date: t.Union[datetime, str] = None
+    publisher: str = ""
+    cover_image: ImageIO = None
+    data: dict[t.Any, t.Any] = attr.ib(factory=dict)
+
+    @classmethod
+    def from_document(cls, document):
+        metadata = document.metadata
+        return cls(
+            uri=document.uri,
+            title=metadata.title,
+            number_of_pages=len(document),
+            number_of_sections=len(document.toc_tree),
+            authors=metadata.author,
+            publication_date=metadata.publication_year,
+            publisher=metadata.publisher,
+            cover_image=document.get_cover_image()
+        )
 
 SINGLE_PAGE_DOCUMENT_PAGER = Pager(first=0, last=0)
 

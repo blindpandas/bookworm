@@ -353,7 +353,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def open_document(self, document):
         self.unloadCurrentEbook()
-        self.view.reader.set_document(document)
+        self.reader.set_document(document)
 
     def set_content(self, content):
         raw_content_length = len(content)

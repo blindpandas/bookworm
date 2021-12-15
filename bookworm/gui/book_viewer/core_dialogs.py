@@ -310,12 +310,13 @@ class ElementListDialog(SimpleDialog):
         return self.elementListView.get_selected()
 
 
-class DocumentSummaryDialog(SimpleDialog):
+class DocumentInfoDialog(SimpleDialog):
 
-    def __init__(self, *args, document, **kwargs):
-        self.document = document
-        self.metadata = document.metadata
-        kwargs.setdefault('title', _("Document Summary: {title}").format(title=self.metadata.title))
+    def __init__(self, *args, document_info, view, offer_open_action=True, **kwargs):
+        self.document_info = document_info
+        self.view = view
+        self.offer_open_action = offer_open_action
+        kwargs.setdefault('title', _("Document Info: {title}").format(title=self.document_info.title))
         super().__init__(*args, **kwargs)
 
     def addControls(self, parent):
@@ -324,59 +325,58 @@ class DocumentSummaryDialog(SimpleDialog):
         if (cover_image := self.get_cover_image()) is not None:
             image_view = ImageViewControl(parent, -1)
             image_view.RenderImageIO(cover_image)
-            parent.GetSizer().AddSpacer(20)
+            parent.GetSizer().AddSpacer(25)
         rh_panel = sc.SizedPanel(parent, -1)
         rh_panel.SetSizerType('vertical')
         rh_panel.SetSizerProps(expand=True, hgrow=100)
         title_text_ctrl = self.create_info_field(
             rh_panel,
             label=_("Title"),
-            value=self.metadata.title,
+            value=self.document_info.title
         )
         title_text_style = title_text_ctrl.GetDefaultStyle()
-        title_text_style.SetFontWeight(wx.FONTWEIGHT_BOLD)
+        title_text_style.SetFontWeight(wx.FONTWEIGHT_EXTRABOLD)
         title_text_ctrl.SetStyle(0, title_text_ctrl.GetLastPosition(), title_text_style)
-        if (author := self.metadata.author):
+        if (authors := self.document_info.authors):
+            if type(authors) is not str:
+                label = _("Authors")
+                authors = "\n".join(a.strip() for a in authors)
+            else:
+                label = _("Author")
             self.create_info_field(
                 rh_panel,
-                label=_("Author"),
-                value=author
+                label=label,
+                value=authors
             )
-        if (pub_date := self.metadata.publication_year):
+        if (pub_date := self.document_info.publication_date):
             self.create_info_field(
                 rh_panel,
                 label=_("Publication Date"),
                 value=pub_date
             )
-        if (publisher := self.metadata.publisher):
+        if (publisher := self.document_info.publisher):
             self.create_info_field(
                 rh_panel,
                 label=_("Publisher"),
                 value=publisher
             )
-        if self.document.has_toc_tree():
+        if (num_sections := self.document_info.number_of_sections):
             self.create_info_field(
                 rh_panel,
                 label=_("Number of Sections"),
-                value=str(len(self.document.toc_tree))
+                value=str(num_sections)
             )
-        if not self.document.is_single_page_document():
+        if (num_pages := self.document_info.number_of_pages):
             self.create_info_field(
                 rh_panel,
                 label=_("Number of Pages"),
-                value=str(len(self.document))
+                value=str(num_pages)
             )
-        else:
-            words = (
-                word
-                for word in self.document.get_content().split(" ")
-                if word.strip()
-            )
-            self.create_info_field(
-                rh_panel,
-                label=_("Word Count"),
-                value=str(more_itertools.ilen(words))
-            )
+        if self.offer_open_action:
+            # Translators: the label of the close button in a dialog
+            openBtn = wx.Button(rh_panel, wx.ID_OPEN, _("&Open"))
+            openBtn.SetSizerProps(halign='center')
+            self.Bind(wx.EVT_BUTTON, self.onOpenDocument, openBtn)
         parent.SetMinSize((900, -1))
         parent.Layout()
         parent.Fit()
@@ -389,16 +389,15 @@ class DocumentSummaryDialog(SimpleDialog):
         btnsizer.Realize()
         return btnsizer
 
+    def onOpenDocument(self, event):
+        self.Close()
+        self.view.open_uri(self.document_info.uri)
+
     def get_cover_image(self):
-        try:
-            cover_image = self.document.get_cover_image()
-        except NotImplementedError:
-            return
-        else:
-            from bookworm.ocr_engines.cv2_utils import image_resize
-            return cover_image.from_cv2(
-                image_resize(cover_image.to_cv2(), width=320)
-            )
+        if (cover_image := self.document_info.cover_image):
+            pil_image = cover_image.to_pil()
+            pil_image.thumbnail(size=(512, 512))
+            return cover_image.from_pil(pil_image)
 
     def create_info_field(self, parent, label, value):
         wx.StaticText(parent, -1, label)

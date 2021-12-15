@@ -3,7 +3,6 @@
 from __future__ import annotations
 import sys
 import argparse
-from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from pprint import pformat as pritty_format
 from bookworm import typehints as t
