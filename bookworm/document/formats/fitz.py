@@ -60,7 +60,12 @@ class FitzDocument(BaseDocument):
     name = None
     extensions = ()
     capabilities = (
-        DC.TOC_TREE | DC.METADATA | DC.GRAPHICAL_RENDERING | DC.IMAGE_EXTRACTION
+        DC.TOC_TREE
+        | DC.METADATA
+        | DC.GRAPHICAL_RENDERING
+        | DC.IMAGE_EXTRACTION
+        | DC.STRUCTURED_NAVIGATION
+        |DC.LINKS
     )
 
     @lru_cache(maxsize=1000)

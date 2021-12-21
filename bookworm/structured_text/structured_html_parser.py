@@ -108,7 +108,7 @@ class StructuredHtmlParser(Inscriptis):
         html_string = ftfy.fix_text(
             html_string,
             normalization="NFKC",
-            fix_entities=False,
+            unescape_html=False,
             fix_line_breaks=True,
             max_decode_length=MAX_DECODE_LENGTH,
         )
@@ -121,28 +121,29 @@ class StructuredHtmlParser(Inscriptis):
     def __init__(self, *args, **kwargs):
         self.link_range_to_target = {}
         self.anchors = {}
+        self.html_id_ranges = {}
         self.styled_elements = {}
         kwargs.setdefault("config", INSCRIPTIS_CONFIG)
         super().__init__(*args, **kwargs)
 
     def _parse_html_tree(self, tree):
         try:
-            current_index = self.canvas.current_block.idx
+            start_index = self.canvas.current_block.idx
         except TypeError:
-            current_index = 0
+            start_index = 0
         super()._parse_html_tree(tree)
+        end_index = self.canvas.current_block.idx
         try:
             anot = self.canvas.annotations[-1]
         except IndexError:
             pass
         else:
-            element_range = (anot.start, anot.end)
             if tree.tag == 'a' and (href := tree.attrib.get('href', '')):
-                self.link_range_to_target[element_range] = href
-            if (anch := tree.attrib.get('id', '')):
-                self.anchors[anch] = (current_index)
-            if (anch := tree.attrib.get('name', '')):
-                self.anchors[anch] = (current_index,)
+                self.link_range_to_target[(anot.start, anot.end)] = href
+        if (anch := tree.attrib.get('id', '')) or (anch := tree.attrib.get('name', '')):
+            element_range = (start_index, end_index)
+            self.anchors[anch] = element_range
+            self.html_id_ranges[anch] = element_range
 
     @classmethod
     def from_string(cls, html_string):

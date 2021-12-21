@@ -60,6 +60,6 @@ class ContReadingService(BookwormService):
 
 
     def on_reader_load(self, sender):
-        if config.conf["reading"]["use_continuous_reading"]:
+        if config.conf["reading"]["use_continuous_reading"] and not sender.document.is_single_page_document():
             self._book_opened.set()
 

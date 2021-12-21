@@ -41,7 +41,7 @@ class Pager(Container, Iterable, Sized):
         return (self.first, self.last)
 
 
-@attr.s(auto_attribs=True, repr=False, slots=True)
+@attr.s(auto_attribs=True, repr=False, slots=True, hash=False)
 class Section:
     """
     A simple (probably inefficient) custom tree
@@ -74,6 +74,9 @@ class Section:
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(title={self.title}, parent={getattr(self.parent, 'title', '')}, child_count={len(self)})>"
+
+    def __hash__(self):
+        return hash((self.title, self.pager.first, self.pager.last, self.text_range,))
 
     def append(self, child: "Section"):
         child.parent = self
@@ -192,6 +195,7 @@ class DocumentInfo:
 
     uri: DocumentUri
     title: str
+    language: LocaleInfo
     number_of_pages: int = None
     number_of_sections: int = None
     authors: list[str] = ()
@@ -206,8 +210,9 @@ class DocumentInfo:
         return cls(
             uri=document.uri,
             title=metadata.title,
-            number_of_pages=len(document),
-            number_of_sections=len(document.toc_tree),
+            language=document.language,
+            number_of_pages=len(document) if not document.is_single_page_document() else None,
+            number_of_sections=len(document.toc_tree) if document.has_toc_tree() else None,
             authors=metadata.author,
             publication_date=metadata.publication_year,
             publisher=metadata.publisher,

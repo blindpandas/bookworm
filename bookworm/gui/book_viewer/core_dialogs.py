@@ -312,11 +312,11 @@ class ElementListDialog(SimpleDialog):
 
 class DocumentInfoDialog(SimpleDialog):
 
-    def __init__(self, *args, document_info, view, offer_open_action=True, **kwargs):
+    def __init__(self, *args, document_info, view, offer_open_action=False, **kwargs):
         self.document_info = document_info
         self.view = view
         self.offer_open_action = offer_open_action
-        kwargs.setdefault('title', _("Document Info: {title}").format(title=self.document_info.title))
+        kwargs.setdefault('title', _("Document Info"))
         super().__init__(*args, **kwargs)
 
     def addControls(self, parent):
@@ -348,18 +348,6 @@ class DocumentInfoDialog(SimpleDialog):
                 label=label,
                 value=authors
             )
-        if (pub_date := self.document_info.publication_date):
-            self.create_info_field(
-                rh_panel,
-                label=_("Publication Date"),
-                value=pub_date
-            )
-        if (publisher := self.document_info.publisher):
-            self.create_info_field(
-                rh_panel,
-                label=_("Publisher"),
-                value=publisher
-            )
         if (num_sections := self.document_info.number_of_sections):
             self.create_info_field(
                 rh_panel,
@@ -371,6 +359,23 @@ class DocumentInfoDialog(SimpleDialog):
                 rh_panel,
                 label=_("Number of Pages"),
                 value=str(num_pages)
+            )
+        self.create_info_field(
+            rh_panel,
+            label=_("Language"),
+            value=self.document_info.language.native_name
+        )
+        if (pub_date := self.document_info.publication_date):
+            self.create_info_field(
+                rh_panel,
+                label=_("Publication Date"),
+                value=pub_date
+            )
+        if (publisher := self.document_info.publisher):
+            self.create_info_field(
+                rh_panel,
+                label=_("Publisher"),
+                value=publisher
             )
         if self.offer_open_action:
             # Translators: the label of the close button in a dialog

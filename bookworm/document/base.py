@@ -10,9 +10,9 @@ from pathlib import Path
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
 from bookworm.concurrency import QueueProcess, call_threaded
-from bookworm.structured_text import SemanticElementType, Style
+from bookworm.structured_text import SemanticElementType, Style, TextRange
 from bookworm.image_io import ImageIO
-from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
+from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines, get_url_spans
 from bookworm.logger import logger
 from . import operations as doctools
 from .exceptions import DocumentIOError, PaginationError, UnsupportedDocumentFormatError
@@ -166,7 +166,7 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         """Convenience method: return the image of a page."""
         return self[page_number].get_image(zoom_factor)
 
-    def get_cover_image(self) -> ImageIO:
+    def get_cover_image(self) -> t.Optional[ImageIO]:
         """Return the cover image of this document."""
 
     def get_file_system_path(self):
@@ -276,6 +276,43 @@ class BasePage(metaclass=ABCMeta):
     def resolve_link(self, link_range) -> LinkTarget:
         raise NotImplementedError
 
+    def get_link_for_text_range(self, text_range) -> LinkTarget:
+        try:
+            retval = self.resolve_link(text_range)
+        except NotImplementedError:
+            retval = None
+        if retval is None:
+            retval = self.get_external_link_target(text_range)
+        return retval
+
+    @property
+    def semantic_structure(self):
+        try:
+            semantic_structure = self.get_semantic_structure()
+        except NotImplementedError:
+            semantic_structure = {}
+        semantic_link_ranges = semantic_structure.setdefault(SemanticElementType.LINK, [])
+        all_link_ranges = [
+            *semantic_link_ranges,
+            *(
+                text_range
+                for (text_range, __url) in self.get_external_links()
+                if text_range not in semantic_link_ranges
+            ),
+        ]
+        semantic_structure[SemanticElementType.LINK] = all_link_ranges
+        return semantic_structure
+
+    def get_external_links(self) -> tuple[tuple[int, int], str]:
+        return get_url_spans(self.get_text())
+
+    def get_external_link_target(self, text_range) -> str:
+        if (url := dict(self.get_external_links()).get(text_range)):
+            return LinkTarget(
+                url=url,
+                is_external=True
+            )
+
     def normalize_text(self, text):
         return remove_excess_blank_lines(text)
 
@@ -352,6 +389,9 @@ class SinglePageDocument(BaseDocument):
         raise NotImplementedError
 
     def get_document_style_info(self):
+        raise NotImplementedError
+
+    def resolve_link(self, text_range):
         raise NotImplementedError
 
     def search(self, request: doctools.SearchRequest):

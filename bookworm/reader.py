@@ -261,13 +261,14 @@ class EBookReader:
                 self.go_to_first_of_section()
             return navigated
 
-    def perform_wormhole_navigation(self, page, start, end=None, *, last_position: tuple[int, int]=None):
+    def perform_wormhole_navigation(self, *, page, start, end, last_position: tuple[int, int]=None):
+        """Jump to a certain location in the open document storing the current position in the navigation history."""
         this_page = self.current_page
+        if last_position is None:
+            last_position = (self.view.get_insertion_point(), None)
         if page is not None:
             self.go_to_page(page)
         self.view.go_to_position(start, end)
-        if last_position is None:
-            last_position = (self.view.get_insertion_point(), None)
         self.push_navigation_stack(this_page, *last_position)
 
     def go_to_next(self) -> bool:
@@ -306,6 +307,7 @@ class EBookReader:
         try:
             nav_stack_top = self.navigation_stack.pop()
         except IndexError:
+            self.view.notify_invalid_action()
             return
         else:
             if (page_num := nav_stack_top.get('last_page')):
@@ -319,7 +321,7 @@ class EBookReader:
 
     @staticmethod
     def _get_semantic_element_from_page(page, element_type, forward, anchor):
-        semantics = TextStructureMetadata(page.get_semantic_structure())
+        semantics = TextStructureMetadata(page.semantic_structure)
         pos_getter = (
             semantics.get_next_element_pos
             if forward
@@ -333,21 +335,24 @@ class EBookReader:
         )
 
     def iter_semantic_ranges_for_elements_of_type(self, element_type):
-        semantics = TextStructureMetadata(self.get_current_page_object().get_semantic_structure())
+        semantics = TextStructureMetadata(self.get_current_page_object().semantic_structure)
         yield from semantics.iter_ranges(element_type)
 
     def navigate_to_link_by_range(self, link_range):
-        target_info = self.get_current_page_object().resolve_link(link_range)
+        target_info = self.get_current_page_object().get_link_for_text_range(link_range)
         if target_info is None:
             log.warning(f"Could not resolve link target: {link_range=}")
             return
         elif target_info.is_external:
             self.view.go_to_webpage(target_info.url)
-        self.perform_wormhole_navigation(
-            target_info.page,
-            target_info.position,
-            last_position=link_range
-        )
+        else:
+            start, end = target_info.position
+            self.perform_wormhole_navigation(
+                page=target_info.page,
+                start=start,
+                end=None,
+                last_position=link_range
+            )
 
     def get_view_title(self, include_author=False):
         if config.conf["general"]["show_file_name_as_title"]:

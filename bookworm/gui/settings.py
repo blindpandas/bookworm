@@ -365,6 +365,13 @@ class AppearancePanel(SettingsPanel):
         # Translators: label of an edit box
         wx.StaticText(fontBox, -1, _("Font Size"))
         EnhancedSpinCtrl(fontBox, -1, min=10, max=96, name="appearance.font_point_size")
+        wx.CheckBox(
+            fontBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Bold style"),
+            name="appearance.use_bold_font",
+        )
         self.Bind(
             wx.EVT_CHECKBOX,
             self.onUseOpendyslexicFontCheckBox,

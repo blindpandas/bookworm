@@ -18,12 +18,15 @@ from bookworm.vendor.sentence_splitter import (
 )
 
 
-@attr.s(auto_attribs=True, slots=True)
+@attr.s(auto_attribs=True, slots=True, hash=False)
 class TextRange(Container):
     """Represents a text range refering to a substring."""
 
     start: int
     stop: int
+
+    def __hash__(self):
+        return hash((self.start, self.stop))
 
     @property
     def midrange(self):

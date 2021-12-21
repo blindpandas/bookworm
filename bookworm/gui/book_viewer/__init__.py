@@ -301,6 +301,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         finfo = wx.FontInfo().FaceName(config.conf["appearance"]["font_facename"])
         configured_font = wx.Font(finfo)
         configured_font.SetPointSize(config.conf["appearance"]["font_point_size"])
+        if config.conf["appearance"]["use_bold_font"]:
+            configured_font.SetWeight(wx.FONTWEIGHT_BOLD)
         default_style = self.contentTextCtrl.GetDefaultStyle()
         default_style.SetFont(configured_font)
         self.contentTextCtrl.SetDefaultStyle(default_style)
@@ -397,7 +399,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def set_state_on_section_change(self, current):
         self.tocTreeSetSelection(current)
         is_single_page_doc = self.reader.document.is_single_page_document()
-        if is_single_page_doc:
+        if is_single_page_doc and current is not self.reader.document.get_section_at_position(self.get_insertion_point()):
             target_pos = self.get_containing_line(current.text_range.start + 1)[0]
             self.set_insertion_point(target_pos)
         if not is_single_page_doc and config.conf["general"]["speak_section_title"]:
@@ -508,8 +510,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             msg = _("{text}: {item_type}").format(text=text, item_type=_(element_label))
             target_position = start if not move_to_start_of_line else self.get_containing_line(stop - 1)[0]
             self.set_insertion_point(target_position)
-            sounds.structured_navigation.play()
             speech.announce(msg, True)
+            sounds.structured_navigation.play()
             navigated_to_structural_element.send(
                 self,
                 position=start,
@@ -636,6 +638,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def notify_user(self, title, message, icon=wx.ICON_INFORMATION, parent=None):
         return wx.MessageBox(message, title, style=icon, parent=parent or self)
 
+    def notify_invalid_action(self):
+        wx.Bell()
+
     def get_line_number(self, pos=None):
         pos = pos or self.contentTextCtrl.InsertionPoint
         __, __, line_number = self.contentTextCtrl.PositionToXY(pos)
@@ -666,6 +671,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         return self.contentTextCtrl.GetInsertionPoint()
 
     def get_text_by_range(self, start, end):
+        """Get text by indexes. If end is less than 0 return the text from `start` to the end of the text."""
+        end = end if end >=0  else self.contentTextCtrl.GetLastPosition()
         return self.contentTextCtrl.GetRange(start, end)
 
     def get_text_from_user(
@@ -685,6 +692,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         else:
             start, end = start_pos, end_pos
         line_text = self.contentTextCtrl.GetRange(start, end)
-        speech.announce(line_text)
         self.set_insertion_point(start)
-
+        sounds.navigation.play()
+        speech.announce(line_text)

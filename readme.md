@@ -86,4 +86,4 @@ invoke build
 
 ## License
 
-**Bookworm** is copyright (c) 2021 Blind Pandas Team. It is licensed under the [MIT License](https://github.com/bookworm-devs/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2021 Blind Pandas Team. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).

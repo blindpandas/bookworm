@@ -7,7 +7,7 @@ import uuid
 import wx
 import hashlib
 from contextlib import contextmanager
-from functools import wraps
+from functools import wraps, lru_cache
 from pathlib import Path
 from xml.sax.saxutils import escape
 from bookworm import typehints as t
@@ -20,8 +20,8 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-# URL processing
-URL_REGEX = regex.compile("(?:\w+://|www\.)[^ ,.?!#%=+][^ ]*")
+# Taken from: https://stackoverflow.com/a/47248784
+URL_REGEX = regex.compile(r"""(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))""")
 URL_BAD_CHARS = '\'\\.,[](){}:;"'
 
 
@@ -118,8 +118,12 @@ def is_external_url(text):
     return URL_REGEX.match(text) is not None
 
 
-def find_urls (text):
-    return [s.strip(URL_BAD_CHARS) for s in URL_REGEX.findall(text)]
+@lru_cache(maxsize=5)
+def get_url_spans (text):
+    return tuple(
+        (span := m.span(), text[slice(*span)].strip(URL_BAD_CHARS))
+        for m in URL_REGEX.finditer(text)
+    )
 
 
 def generate_file_md5(filepath):

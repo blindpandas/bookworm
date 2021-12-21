@@ -51,12 +51,13 @@ ABOUT_APPLICATION = _(
     "{display_name}\n"
     "Version: {version}\n"
     "Website: {website}\n\n"
-    "{display_name} is an accessible document reader that enables blind and visually impaired individuals "
+    "{display_name} is an advanced and accessible document reader that enables blind and visually impaired individuals "
     "to read documents in an easy, accessible, and hassle-free manor. "
     "It is being developed by {author} with some contributions from the community.\n\n"
     "{copyright}\n"
-    "This software is offered to you under the terms of The MIT license.\n"
-    "You can view the license text from the help menu.\n\n"
+    "{display_name} is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n"
+    "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+    "For further details, you can view the full licence from the help menu.\n"
 )
 EXTRA_ABOUT_MESSAGE = _(
     "This release of Bookworm is generously sponsored  by Capeds (www.capeds.net)."

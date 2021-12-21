@@ -26,7 +26,7 @@ class PlainTextDocument(SinglePageDocument):
     # Translators: the name of a document file format
     name = _("Plain Text File")
     extensions = ("*.txt",)
-    capabilities = DC.SINGLE_PAGE
+    capabilities = DC.SINGLE_PAGE | DC.LINKS | DC.STRUCTURED_NAVIGATION
 
     def read(self):
         self.filename = self.get_file_system_path()
@@ -41,6 +41,7 @@ class PlainTextDocument(SinglePageDocument):
 
     def close(self):
         super().close()
+        self.text_buffer.close()
 
     @cached_property
     def toc_tree(self):

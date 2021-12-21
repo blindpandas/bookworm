@@ -121,7 +121,13 @@ class PowerpointPresentation(BaseDocument):
     # Translators: the name of a document file format
     name = _("PowerPoint Presentation")
     extensions = ("*.pptx",)
-    capabilities = DC.TOC_TREE | DC.METADATA | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE
+    capabilities = (
+        DC.TOC_TREE
+        | DC.METADATA
+        | DC.STRUCTURED_NAVIGATION
+        |DC.LINKS
+        | DC.TEXT_STYLE
+    )
 
     def __len__(self):
         return self.num_slides

@@ -26,6 +26,9 @@ reader_section_changed = _signals.signal("reader/section_changed")
 config_updated = _signals.signal("config/updated")
 
 
+# Caret events
+caret_location_change = _signals.signal("caret/location_change")
+
 # Content navigation signals
 navigated_to_search_result = _signals.signal("navigation/search-result")
 navigated_to_structural_element = _signals.signal("navigation/structural-navigation")

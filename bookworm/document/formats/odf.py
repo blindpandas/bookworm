@@ -73,7 +73,7 @@ class OdfParser:
                 "<!doctype html>",
                 "<html><head>",
                 '<meta charset="utf-8" />',
-                f"<title>{escape_html(self.title)}<title>",
+                f"<title>{escape_html(self.title)}</title>",
                 "</head>",
                 html_body,
                 "</html>",
@@ -138,6 +138,7 @@ class OdfPresentation(BaseDocument):
         | DC.TOC_TREE
         | DC.METADATA
         | DC.STRUCTURED_NAVIGATION
+        |DC.LINKS
         | DC.TEXT_STYLE
     )
 
