@@ -25,9 +25,7 @@ from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,
     reader_page_changed,
-    navigated_to_search_result,
-    navigated_to_structural_element,
-    navigated_to_bookmark,
+    reading_position_change
 )
 from bookworm.service import BookwormService
 from bookworm.logger import logger
@@ -85,13 +83,7 @@ class TextToSpeechService(BookwormService):
         self.view.add_load_handler(
             lambda s: self.on_engine_state_changed(state=SynthState.ready)
         )
-        navigated_to_search_result.connect(
-            self.on_navigated_to_search_result, sender=self.view
-        )
-        navigated_to_structural_element.connect(
-            self.on_navigated_to_structural_element, sender=self.view
-        )
-        navigated_to_bookmark.connect(self.on_navigated_to_bookmark, sender=self.view)
+        reading_position_change.connect(self.on_reading_position_change, sender=self.view)
         self.initialize_state()
 
     def initialize_state(self):
@@ -471,25 +463,11 @@ class TextToSpeechService(BookwormService):
     def is_engine_ready(self):
         return self.engine is not None
 
-    def on_navigated_to_search_result(self, sender, position):
-        restart_speech.send(
-            sender, start_speech_from=position, speech_prefix=_("Search Result.")
-        )
-
-    def on_navigated_to_bookmark(self, sender, position, name):
-        speech_prefix = _("Bookmark.")
-        if name:
-            speech_prefix = _("Bookmark: {bookmark_name}").format(bookmark_name=name)
-        restart_speech.send(
-            sender, start_speech_from=position, speech_prefix=speech_prefix
-        )
-
-    def on_navigated_to_structural_element(
-        self, sender, position, element_type, element_label
-    ):
-        restart_speech.send(
-            sender, start_speech_from=position, speech_prefix=element_label
-        )
+    def on_reading_position_change(self, sender, position, **kwargs):
+        if (tts_speech_prefix := kwargs.get("tts_speech_prefix")) is not None:
+            restart_speech.send(
+                sender, start_speech_from=position, speech_prefix=tts_speech_prefix
+            )
 
     def on_state_changed(self, sender, state):
         speech_engine_state_changed.send(self.view, service=self, state=state)

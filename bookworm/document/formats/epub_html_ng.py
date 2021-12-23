@@ -15,6 +15,7 @@ from pathlib import Path, PurePosixPath
 from urllib import parse as urllib_parse
 from diskcache import Cache
 from lxml import html as lxml_html
+from selectolax.parser import HTMLParser
 from bookworm.i18n import LocaleInfo
 from bookworm.structured_text import TextRange
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
@@ -184,7 +185,6 @@ class EpubDocument(SinglePageDocument):
             ((i[0], j[0]), i[1])
             for i, j in data
         ]
-
 
     def add_toc_entry(self, entries, parent):
         for entry in entries:

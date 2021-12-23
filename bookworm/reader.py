@@ -24,6 +24,7 @@ from bookworm.signals import (
     reader_book_unloaded,
     reader_page_changed,
     reader_section_changed,
+    reading_position_change,
 )
 from bookworm.structured_text import TextStructureMetadata, SemanticElementType
 from bookworm.logger import logger
@@ -269,6 +270,7 @@ class EBookReader:
         if page is not None:
             self.go_to_page(page)
         self.view.go_to_position(start, end)
+        reading_position_change.send(self.view, position=start, tts_speech_prefix="")
         self.push_navigation_stack(this_page, *last_position)
 
     def go_to_next(self) -> bool:
@@ -312,7 +314,9 @@ class EBookReader:
         else:
             if (page_num := nav_stack_top.get('last_page')):
                 self.go_to_page(page_num)
-            self.view.go_to_position(*nav_stack_top['source_range'])
+            start, end = nav_stack_top['source_range']
+            self.view.go_to_position(start, end)
+            reading_position_change.send(self.view, position=start, tts_speech_prefix="")
 
     def handle_special_action_for_position(self, position: int) -> bool:
         for link_range in self.iter_semantic_ranges_for_elements_of_type(SemanticElementType.LINK):

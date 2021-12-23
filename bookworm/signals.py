@@ -25,11 +25,6 @@ reader_section_changed = _signals.signal("reader/section_changed")
 # Configuration
 config_updated = _signals.signal("config/updated")
 
+# Reading position
+reading_position_change = _signals.signal("caret/location_change")
 
-# Caret events
-caret_location_change = _signals.signal("caret/location_change")
-
-# Content navigation signals
-navigated_to_search_result = _signals.signal("navigation/search-result")
-navigated_to_structural_element = _signals.signal("navigation/structural-navigation")
-navigated_to_bookmark = _signals.signal("navigation/bookmark-navigation")

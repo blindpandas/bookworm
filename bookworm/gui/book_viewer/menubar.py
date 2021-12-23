@@ -19,7 +19,7 @@ from bookworm.resources import sounds
 from bookworm.document import DocumentInfo, READING_MODE_LABELS, PaginationError, DocumentCapability as DC
 from bookworm.document.uri import DocumentUri
 from bookworm.signals import (
-    navigated_to_search_result,
+    reading_position_change,
     config_updated,
     reader_book_loaded,
     reader_book_unloaded,
@@ -630,7 +630,11 @@ class SearchMenu(BaseMenu):
             sounds.navigation.play()
             return
         self.highlight_search_result(result.page, result.position)
-        navigated_to_search_result.send(self.view, position=result.position)
+        reading_position_change.send(
+            self.view,
+            position=result.position,
+            tts_speech_prefix=_("Search Result"),
+        )
 
     def onFindNext(self, event):
         self.go_to_search_result(foreword=True)

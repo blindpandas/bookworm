@@ -25,7 +25,7 @@ from bookworm.reader import (
 from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,
-    navigated_to_structural_element,
+    reading_position_change,
 )
 from bookworm.structured_text import TextRange
 from bookworm.gui.contentview_ctrl import ContentViewCtrl
@@ -512,11 +512,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.set_insertion_point(target_position)
             speech.announce(msg, True)
             sounds.structured_navigation.play()
-            navigated_to_structural_element.send(
+            reading_position_change.send(
                 self,
                 position=start,
-                element_type=actual_element_type,
-                element_label=_(element_label),
+                tts_speech_prefix=_(element_label),
             )
         else:
             element_label = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[element_type][0]

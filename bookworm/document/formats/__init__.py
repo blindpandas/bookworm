@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from .pdf import FitzPdfDocument
+#from .epub import EpubDocument
 from .epub_html_ng import EpubDocument
 from .mobi import MobiDocument
 from .plain_text import PlainTextDocument
