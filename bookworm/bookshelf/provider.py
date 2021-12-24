@@ -1,7 +1,8 @@
 # coding: utf-8
 
+from __future__ import annotations
+import attr
 from abc import ABC, abstractmethod
-from collections.abc import Collection
 from bookworm import typehints as t
 from bookworm.document import DocumentInfo
 from bookworm.logger import logger
@@ -9,31 +10,42 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 class BookshelfProvider:
-    name: str = None
-    display_name: t.TranslatableStr = None
+
+    def __init__(self, name: str, display_name: t.TranslatableStr, sources=None):
+        self.name = name
+        self.display_name = display_name
+        self.sources = sources
+
+    def __iter__(self):
+        yield from self.get_sources()
+
+    def __len__(self):
+        return len(self.sources)
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self.name}>"
 
     @abstractmethod
     def check(self) -> bool:
         """Checks the availability of this provider at runtime."""
 
-    @abstractmethod
-    def get_sources(self) -> list[Source]:
+    @classmethod
+    def get_sources(cls) -> list[t.Union[t.ForwardRef("Source"), t.ForwardRef("BookshelfProvider")]]:
         """Return a list of sources for this provider."""
+        return self.sources
 
 
-@attr.s(auto_attribs=True, slots=True)
-class Source(Collection):
-    name: str
-    display_name: t.TranslatableStr
+class Source:
+    """Represent a bookshelf source."""
+
+    def __init__(self, name: t.TranslatableStr):
+        self.name = name
 
     def __iter__(self):
-        yield from iter_items
+        yield from self.iter_items()
 
     def __len__(self):
         return self.get_item_count()
-
-    def __contains__(self, value):
-        raise NotImplementedError
 
     @abstractmethod
     def iter_items(self) -> t.Iterator[DocumentInfo]:
@@ -54,27 +66,9 @@ class Source(Collection):
 
 
 
-@attr.s(auto_atribs=True, slots=True, frozen=True)
+@attr.s(auto_attribs=True, slots=True, frozen=True)
 class SourceAction:
     name: str
     display_name: t.TranslatableStr
     function: t.Callable[[Source, DocumentInfo], bool]
 
-
-@attr.s(auto_attribs=True, slots=True)
-class MetaSource:
-    name: str
-    display_name: t.TranslatableStr
-    sources: t.Iterable[Source] = ()
-
-    def add_source(self, source: Source):
-        self.sources.append(source)
-
-    def __iter__(self):
-        yield from self.sources
-
-    def __len__(self):
-        return len(self.sources)
-
-    def get_item_count(self):
-        return sum(source.get_item_count() for source in self.sources)

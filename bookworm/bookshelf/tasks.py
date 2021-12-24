@@ -4,7 +4,7 @@ import more_itertools
 import bookworm.typehints as t
 from bookworm.document.base import BaseDocument
 from bookworm.logger import logger
-from .models import (
+from .local_bookshelf.models import (
     Author,
     Category,
     Format,

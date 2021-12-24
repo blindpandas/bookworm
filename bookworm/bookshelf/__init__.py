@@ -13,14 +13,14 @@ from bookworm.service import BookwormService
 from bookworm.signals import reader_book_loaded
 from bookworm.commandline_handler import BaseSubcommandHandler, register_subcommand
 from bookworm.logger import logger
-from .interface import BookshelfSettingsPanel, BookshelfMenu, BookshelfWindow
-from .models import (
+from .local_bookshelf.models import (
     DEFAULT_BOOKSHELF_DATABASE_FILE,
     BaseModel,
     Document,
     Page,
     DocumentFTSIndex,
 )
+from .interface import BookshelfSettingsPanel, BookshelfMenu, BookshelfWindow
 from .tasks import add_document_to_bookshelf
 
 

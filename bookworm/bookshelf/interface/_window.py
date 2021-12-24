@@ -13,11 +13,9 @@ log = logger.getChild(__name__)
 
 class BookshelfResultsPage(sc.SizedPanel):
 
-    def __init__(self, parent, id, query):
-        super().__init__(parent, id)
-        self.query = query
-        wx.Button(self, -1, _("Hey"))
-        self.book_list = wx.ListCtrl(self, -1)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.document_list = wx.ListCtrl(self, -1)
 
 
 class BookshelfNoteBook(wx.Treebook):

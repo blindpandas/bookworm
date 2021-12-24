@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import annotations
+import collections.abc
 import os.path
 import string
 import itertools
@@ -145,7 +146,10 @@ class EpubDocument(SinglePageDocument):
             for (key, value) in self.structure.html_id_ranges.items()
         }
         stack = TreeStackBuilder(root)
-        for sect in self.add_toc_entry(self.epub.toc, root):
+        toc_entries = self.epub.toc
+        if not isinstance(toc_entries, collections.abc.Iterable):
+            toc_entries = [toc_entries,]
+        for sect in self.add_toc_entry(toc_entries, root):
             href = urllib_parse.unquote(sect.data['href'])
             try:
                 sect.text_range = TextRange(*id_ranges[href])

@@ -277,12 +277,12 @@ class BasePage(metaclass=ABCMeta):
         raise NotImplementedError
 
     def get_link_for_text_range(self, text_range) -> LinkTarget:
-        try:
-            retval = self.resolve_link(text_range)
-        except NotImplementedError:
-            retval = None
+        retval = self.get_external_link_target(text_range)
         if retval is None:
-            retval = self.get_external_link_target(text_range)
+            try:
+                retval = self.resolve_link(text_range)
+            except NotImplementedError:
+                retval = None
         return retval
 
     @property
