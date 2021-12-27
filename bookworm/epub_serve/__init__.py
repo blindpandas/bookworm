@@ -12,7 +12,11 @@ import requests
 import waitress
 from functools import partial
 from bookworm.utils import is_free_port, find_free_port
-from bookworm.commandline_handler import BaseSubcommandHandler, register_subcommand, run_subcommand_in_a_new_process
+from bookworm.commandline_handler import (
+    BaseSubcommandHandler,
+    register_subcommand,
+    run_subcommand_in_a_new_process,
+)
 from bookworm.service import BookwormService
 from bookworm.signals import reader_book_loaded
 from bookworm.gui.components import AsyncSnakDialog
@@ -25,7 +29,7 @@ log = logger.getChild(__name__)
 
 
 BOOKWORM_EPUB_SERVE_DEFAULT_PORT = 31585
-BOOKWORM_EPUB_SERVE_SHARED_MEMORY_NAME = 'bkw.epub.serve.port'
+BOOKWORM_EPUB_SERVE_SHARED_MEMORY_NAME = "bkw.epub.serve.port"
 BOOKWORM_EPUB_SERVE_SHARED_MEMORY_SIZE = 32
 SERVER_READY_TIMEOUT = 120
 
@@ -50,14 +54,24 @@ class EpubServeSubcommand(BaseSubcommandHandler):
     @staticmethod
     def run_server():
         log.debug("Starting epub server...")
-        server_port = BOOKWORM_EPUB_SERVE_DEFAULT_PORT if is_free_port(BOOKWORM_EPUB_SERVE_DEFAULT_PORT) else find_free_port()
+        server_port = (
+            BOOKWORM_EPUB_SERVE_DEFAULT_PORT
+            if is_free_port(BOOKWORM_EPUB_SERVE_DEFAULT_PORT)
+            else find_free_port()
+        )
         log.debug(f"Choosing port {server_port} to run at...")
-        shm = SharedMemory(BOOKWORM_EPUB_SERVE_SHARED_MEMORY_NAME, create=True, size=BOOKWORM_EPUB_SERVE_SHARED_MEMORY_SIZE)
-        shm.buf[:BOOKWORM_EPUB_SERVE_SHARED_MEMORY_SIZE] = server_port.to_bytes(BOOKWORM_EPUB_SERVE_SHARED_MEMORY_SIZE, sys.byteorder)
+        shm = SharedMemory(
+            BOOKWORM_EPUB_SERVE_SHARED_MEMORY_NAME,
+            create=True,
+            size=BOOKWORM_EPUB_SERVE_SHARED_MEMORY_SIZE,
+        )
+        shm.buf[:BOOKWORM_EPUB_SERVE_SHARED_MEMORY_SIZE] = server_port.to_bytes(
+            BOOKWORM_EPUB_SERVE_SHARED_MEMORY_SIZE, sys.byteorder
+        )
         atexit.register(shm.unlink)
         app = EpubServingApp()
         log.debug(f"Server is running at: localhost:{server_port}/")
-        waitress.serve(app, listen=f'localhost:{server_port}')
+        waitress.serve(app, listen=f"localhost:{server_port}")
         shm.unlink()
 
     @staticmethod
@@ -78,39 +92,34 @@ class EpubServeService(BookwormService):
     stateful_menu_ids = []
 
     def __post_init__(self):
-        reader_book_loaded.connect(self.on_reader_loaded, sender=self.reader, weak=False)
+        reader_book_loaded.connect(
+            self.on_reader_loaded, sender=self.reader, weak=False
+        )
 
     def process_menubar(self, menubar):
         self.menubar = menubar
-        self.openOnWebReaderId  = wx.NewIdRef()
+        self.openOnWebReaderId = wx.NewIdRef()
         self.stateful_menu_ids.append(self.openOnWebReaderId)
         self.view.documentMenu.Append(
             self.openOnWebReaderId,
             _("Open on &web Viewer"),
-            _("Open the current EPUB book on the browser")
+            _("Open the current EPUB book on the browser"),
         )
-        self.view.Bind(
-            wx.EVT_MENU,
-            self.onOpenonWeb,
-            id=self.openOnWebReaderId
-        )
+        self.view.Bind(wx.EVT_MENU, self.onOpenonWeb, id=self.openOnWebReaderId)
 
     def on_reader_loaded(self, sender):
-        self.menubar.Enable(
-            self.openOnWebReaderId,
-            isinstance(sender, EpubDocument)
-        )
+        self.menubar.Enable(self.openOnWebReaderId, isinstance(sender, EpubDocument))
 
     def onOpenonWeb(self, event):
         task = partial(
             self.retreive_web_viewer_url,
-            os.fspath(self.reader.document.get_file_system_path())
+            os.fspath(self.reader.document.get_file_system_path()),
         )
         AsyncSnakDialog(
             task=task,
             done_callback=self.server_data_ready_callback,
             message=_("Openning in web viewer..."),
-            parent=self.view
+            parent=self.view,
         )
 
     def retreive_web_viewer_url(self, filename):
@@ -131,6 +140,8 @@ class EpubServeService(BookwormService):
         self.view.go_to_webpage(future.result())
 
     def make_epub_viewer_url(self, server_port, filename):
-        res = requests.post(f'http://localhost:{server_port}/open_epub', json=dict(filename=filename))
-        book_uid = res.json()['book_uid']
-        return f'http://localhost:{server_port}/?epub=epubs/{book_uid}'
+        res = requests.post(
+            f"http://localhost:{server_port}/open_epub", json=dict(filename=filename)
+        )
+        book_uid = res.json()["book_uid"]
+        return f"http://localhost:{server_port}/?epub=epubs/{book_uid}"

@@ -9,8 +9,8 @@ from bookworm.logger import logger
 
 log = logger.getChild(__name__)
 
-class BookshelfProvider:
 
+class BookshelfProvider:
     def __init__(self, name: str, display_name: t.TranslatableStr, sources=None):
         self.name = name
         self.display_name = display_name
@@ -30,7 +30,9 @@ class BookshelfProvider:
         """Checks the availability of this provider at runtime."""
 
     @classmethod
-    def get_sources(cls) -> list[t.Union[t.ForwardRef("Source"), t.ForwardRef("BookshelfProvider")]]:
+    def get_sources(
+        cls,
+    ) -> list[t.Union[t.ForwardRef("Source"), t.ForwardRef("BookshelfProvider")]]:
         """Return a list of sources for this provider."""
         return self.sources
 
@@ -65,10 +67,8 @@ class Source:
         """Get a list of actions for the given item."""
 
 
-
 @attr.s(auto_attribs=True, slots=True, frozen=True)
 class SourceAction:
     name: str
     display_name: t.TranslatableStr
     function: t.Callable[[Source, DocumentInfo], bool]
-

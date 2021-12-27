@@ -21,7 +21,7 @@ class NoSubcommand(Exception):
 
 cmd_args_parser = argparse.ArgumentParser()
 cmd_args_parser.add_argument("--debug", action="store_true", required=False)
-subparsers = cmd_args_parser .add_subparsers(dest="subparser_name")
+subparsers = cmd_args_parser.add_subparsers(dest="subparser_name")
 
 
 class BaseSubcommandHandler(ABC):
@@ -47,7 +47,9 @@ class DefaultCommandlineArgumentNamespace:
 
 
 def register_subcommand(subcommand_cls: BaseSubcommand):
-    subparser = subparsers.add_parser(subcommand_cls.subcommand_name, help="Sub command.")
+    subparser = subparsers.add_parser(
+        subcommand_cls.subcommand_name, help="Sub command."
+    )
     subcommand_cls.add_arguments(subparser)
     subparser.set_defaults(subcommand_cls=subcommand_cls)
     return subcommand_cls

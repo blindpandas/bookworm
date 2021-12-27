@@ -138,7 +138,7 @@ class OdfPresentation(BaseDocument):
         | DC.TOC_TREE
         | DC.METADATA
         | DC.STRUCTURED_NAVIGATION
-        |DC.LINKS
+        | DC.LINKS
         | DC.TEXT_STYLE
     )
 

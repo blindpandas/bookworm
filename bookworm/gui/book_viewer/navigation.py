@@ -148,4 +148,6 @@ class NavigationProvider:
         self._key_press_record.clear()
 
     def try_handle_special_actions(self):
-        return self.reader.handle_special_action_for_position(self.view.get_insertion_point())
+        return self.reader.handle_special_action_for_position(
+            self.view.get_insertion_point()
+        )

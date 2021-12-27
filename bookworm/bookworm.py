@@ -9,7 +9,9 @@ from pathlib import Path
 from bookworm import app
 
 
-def report_fatal_error(*, title, message, exc_info=True, exit_code=1, log_file=None, show_gui=False):
+def report_fatal_error(
+    *, title, message, exc_info=True, exit_code=1, log_file=None, show_gui=False
+):
     MESSAGE_FORMAT = "%(asctime)s %(name)s %(levelname)s: %(message)s"
     DATE_FORMAT = "%d/%m/%Y %H:%M:%S"
     logger = logging.getLogger("")
@@ -17,7 +19,9 @@ def report_fatal_error(*, title, message, exc_info=True, exit_code=1, log_file=N
 
     if log_file is not None:
         file_handler = logging.FileHandler(filename=log_file, mode="w")
-        file_handler.setFormatter(logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT))
+        file_handler.setFormatter(
+            logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT)
+        )
         logger.addHandler(file_handler)
 
     logger.debug("An error was occurred while starting the application.")
@@ -29,11 +33,11 @@ def report_fatal_error(*, title, message, exc_info=True, exit_code=1, log_file=N
     if show_gui:
         try:
             import wx
+
             wx.SafeShowMessage(title, message)
         except:
             logger.fatal("Failed to report error graphically")
     sys.exit(exit_code)
-
 
 
 def main():
@@ -41,8 +45,9 @@ def main():
         from bookworm.platform_services import check_runtime_components
 
         check_runtime_components()
-        
+
         from bookworm import bootstrap
+
         sys.exit(bootstrap.run())
     except Exception as e:
         log_file = Path.home() / "bookworm.errors.log" if app.is_frozen else None
@@ -55,5 +60,5 @@ def main():
             exc_info=True,
             log_file=log_file,
             show_gui=app.is_frozen,
-            exit_code=app.exit_code or 1
+            exit_code=app.exit_code or 1,
         )

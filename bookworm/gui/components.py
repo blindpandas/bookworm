@@ -50,7 +50,7 @@ class TocTreeManager:
             self.tree_ctrl.Expand(self.tree_ctrl.GetRootItem())
 
     def get_selected_item_data(self):
-        if (selected_item_id := self.tree_ctrl.GetFocusedItem()) :
+        if selected_item_id := self.tree_ctrl.GetFocusedItem():
             return self.tree_ctrl.GetItemData(selected_item_id)
 
     def set_selection(self, item):
@@ -154,7 +154,7 @@ class PageRangeControl(sc.SizedPanel):
         if self.is_single_page_document:
             from_page, to_page = 0, 0
         elif self.hasSection.GetValue():
-            if (selected_item := self.sectionChoice.GetSelection()) :
+            if selected_item := self.sectionChoice.GetSelection():
                 selected_section = self.sectionChoice.GetClientData(selected_item)
                 pager = selected_section.pager
                 from_page = pager.first
@@ -170,7 +170,7 @@ class PageRangeControl(sc.SizedPanel):
     def get_text_range(self):
         if not self.is_single_page_document:
             raise TypeError("Text ranges are not supported in single page documents")
-        if (selected_item := self.sectionChoice.GetSelection()) :
+        if selected_item := self.sectionChoice.GetSelection():
             section = self.sectionChoice.GetClientData(selected_item)
             start_pos, stop_pos = section.text_range
             if section.has_children:
@@ -208,7 +208,6 @@ class ImageViewControl(wx.Control):
     def RenderImageIO(self, image_io):
         bmp = image_io.to_wx_bitmap()
         return self.RenderImage(bmp, *image_io.size)
-
 
 
 class DialogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
@@ -443,7 +442,9 @@ class ImmutableObjectListView(DialogListCtrl):
         for i in range(len(columns)):
             self.SetColumnWidth(i, 100)
 
-    def set_objects(self, objects: ObjectCollection, focus_item: int = 0, set_focus=True):
+    def set_objects(
+        self, objects: ObjectCollection, focus_item: int = 0, set_focus=True
+    ):
         """Clear the list view and insert the objects."""
         self._objects = objects
         self.set_columns(self._columns)

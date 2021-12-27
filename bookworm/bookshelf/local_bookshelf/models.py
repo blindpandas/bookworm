@@ -135,7 +135,7 @@ class Page(BaseModel):
         field="id",
         model=Document,
         backref="pages",
-        on_delete="CASCADE"
+        on_delete="CASCADE",
     )
 
 
@@ -253,7 +253,7 @@ class DocumentFTSIndex(BaseModel, FTS5Model):
 
     @classmethod
     def optimize(cls):
-        return cls._fts_cmd('optimize')
+        return cls._fts_cmd("optimize")
 
     class Meta:
         extension_module = "fts5"

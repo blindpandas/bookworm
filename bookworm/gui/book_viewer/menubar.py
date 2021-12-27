@@ -16,7 +16,12 @@ from bookworm import paths
 from bookworm import app
 from bookworm.i18n import is_rtl
 from bookworm.resources import sounds
-from bookworm.document import DocumentInfo, READING_MODE_LABELS, PaginationError, DocumentCapability as DC
+from bookworm.document import (
+    DocumentInfo,
+    READING_MODE_LABELS,
+    PaginationError,
+    DocumentCapability as DC,
+)
 from bookworm.document.uri import DocumentUri
 from bookworm.signals import (
     reading_position_change,
@@ -396,14 +401,18 @@ class DocumentMenu(BaseMenu):
             self.onChangeReadingMode,
             id=BookRelatedMenuIds.changeReadingMode,
         )
-        self.view.Bind(wx.EVT_MENU, self.onElementList, id=BookRelatedMenuIds.element_list)
-        self.view.Bind(wx.EVT_MENU, self.onDocumentInfo, id=BookRelatedMenuIds.document_info)
+        self.view.Bind(
+            wx.EVT_MENU, self.onElementList, id=BookRelatedMenuIds.element_list
+        )
+        self.view.Bind(
+            wx.EVT_MENU, self.onDocumentInfo, id=BookRelatedMenuIds.document_info
+        )
 
     def after_loading_book(self, sender):
         ctrl_enable_info = (
             (
                 BookRelatedMenuIds.element_list,
-                self.reader.document.supports_structural_navigation()
+                self.reader.document.supports_structural_navigation(),
             ),
             (
                 BookRelatedMenuIds.viewRenderedAsImage,
@@ -460,10 +469,7 @@ class DocumentMenu(BaseMenu):
 
     def onElementList(self, event):
         dlg = ElementListDialog(
-            self.view,
-            title=_("Element List"),
-            view=self.view,
-            reader=self.reader
+            self.view, title=_("Element List"), view=self.view, reader=self.reader
         )
         with dlg:
             if (selected_element_info := dlg.ShowModal()) is not None:
@@ -471,7 +477,9 @@ class DocumentMenu(BaseMenu):
 
     def onDocumentInfo(self, event):
         document_info = DocumentInfo.from_document(self.reader.document)
-        with DocumentInfoDialog(self.view, view=self.view, document_info=document_info) as dlg:
+        with DocumentInfoDialog(
+            self.view, view=self.view, document_info=document_info
+        ) as dlg:
             dlg.ShowModal()
 
 
@@ -727,7 +735,9 @@ class HelpMenu(BaseMenu):
         )
         self.view.Bind(
             wx.EVT_MENU,
-            lambda e: wx.LaunchDefaultApplication(str(paths.resources_path("license.txt"))),
+            lambda e: wx.LaunchDefaultApplication(
+                str(paths.resources_path("license.txt"))
+            ),
             id=ViewerMenuIds.license,
         )
         self.view.Bind(
@@ -754,7 +764,9 @@ class HelpMenu(BaseMenu):
         restart_application(debug=True)
 
     def onOpenDocumentation(self, event):
-        userguide_filename = paths.userguide_path(app.current_language.pylang, "bookworm.html")
+        userguide_filename = paths.userguide_path(
+            app.current_language.pylang, "bookworm.html"
+        )
         wx.LaunchDefaultApplication(str(userguide_filename))
 
 
@@ -824,7 +836,12 @@ class MenubarProvider:
                 _("Jump to a page"),
                 BookRelatedMenuIds.goToPage,
             ),
-            (20, _("&Find in Document...\tCtrl-F"), _("Search this document."), wx.ID_FIND),
+            (
+                20,
+                _("&Find in Document...\tCtrl-F"),
+                _("Search this document."),
+                wx.ID_FIND,
+            ),
             (21, "", "", None),
         ]
         if self.reader.ready and self.reader.document.can_render_pages():

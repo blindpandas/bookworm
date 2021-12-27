@@ -14,9 +14,20 @@ BOOKWORM_URI_SCHEME = "bkw"
 
 
 class DocumentUri:
-    __slots__ = ['format', 'path', 'openner_args', 'view_args',]
+    __slots__ = [
+        "format",
+        "path",
+        "openner_args",
+        "view_args",
+    ]
 
-    def __init__(self, format: str, path: str, openner_args: dict[str, t.Union[str, int]], view_args: t.optional[dict[t.Any, t.Any]]=None):
+    def __init__(
+        self,
+        format: str,
+        path: str,
+        openner_args: dict[str, t.Union[str, int]],
+        view_args: t.optional[dict[t.Any, t.Any]] = None,
+    ):
         self.format = format
         self.path = path
         self.openner_args = openner_args
@@ -42,23 +53,29 @@ class DocumentUri:
     def from_filename(cls, filename):
         filepath = Path(filename)
         if (doc_format := cls.get_format_by_filename(filepath)) is None:
-            raise UnsupportedDocumentFormatError(f"Unsupported document format for file {filename}")
+            raise UnsupportedDocumentFormatError(
+                f"Unsupported document format for file {filename}"
+            )
         return cls(format=doc_format, path=str(filepath), openner_args={})
 
     def to_uri_string(self):
-        return str(URL.build(
-            scheme=BOOKWORM_URI_SCHEME,
-            authority=self.format,
-            path=str(self.path),
-            query=self.openner_args,
-        ))
+        return str(
+            URL.build(
+                scheme=BOOKWORM_URI_SCHEME,
+                authority=self.format,
+                path=str(self.path),
+                query=self.openner_args,
+            )
+        )
 
     def to_bare_uri_string(self):
-        return str(URL.build(
-            scheme=BOOKWORM_URI_SCHEME,
-            authority=self.format,
-            path=f"/{str(self.path)}",
-        ))
+        return str(
+            URL.build(
+                scheme=BOOKWORM_URI_SCHEME,
+                authority=self.format,
+                path=f"/{str(self.path)}",
+            )
+        )
 
     def create_copy(self, format=None, path=None, openner_args=None, view_args=None):
         return DocumentUri(
@@ -72,12 +89,12 @@ class DocumentUri:
     def get_format_by_filename(cls, filename):
         """Get the document format using its filename."""
         fileext = Path(filename).suffix.strip(".").lower()
-        if (file_format := cls._get_format_given_extension(f"*.{fileext}")) :
+        if file_format := cls._get_format_given_extension(f"*.{fileext}"):
             return file_format
         possible_exts = tuple(str(filename).split("."))
         for idx in range(len(possible_exts) - 1):
             fileext = ".".join(possible_exts[idx:])
-            if (file_format := cls._get_format_given_extension(f"*.{fileext}")) :
+            if file_format := cls._get_format_given_extension(f"*.{fileext}"):
                 return file_format
 
     @classmethod
@@ -102,4 +119,3 @@ class DocumentUri:
         if not isinstance(other, DocumentUri):
             return NotImplemented
         return self.to_uri_string() == other.to_uri_string()
-

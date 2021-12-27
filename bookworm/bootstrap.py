@@ -11,19 +11,32 @@ from bookworm.paths import logs_path
 from bookworm.config import setup_config
 from bookworm.i18n import setup_i18n
 from bookworm.database import init_database
-from bookworm.signals import app_booting, app_started, app_shuttingdown, app_window_shown
-from bookworm.runtime import PackagingMode, IS_RUNNING_PORTABLE, CURRENT_PACKAGING_MODE, IS_IN_MAIN_PROCESS
+from bookworm.signals import (
+    app_booting,
+    app_started,
+    app_shuttingdown,
+    app_window_shown,
+)
+from bookworm.runtime import (
+    PackagingMode,
+    IS_RUNNING_PORTABLE,
+    CURRENT_PACKAGING_MODE,
+    IS_IN_MAIN_PROCESS,
+)
 from bookworm.service.handler import ServiceHandler
 from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.gui.settings import show_file_association_dialog
 from bookworm.document.uri import DocumentUri
 from bookworm.platform_services.shell import shell_integrate, shell_disintegrate
-from bookworm.commandline_handler import BaseSubcommandHandler, register_subcommand, handle_app_commandline_args
+from bookworm.commandline_handler import (
+    BaseSubcommandHandler,
+    register_subcommand,
+    handle_app_commandline_args,
+)
 from bookworm.logger import logger, configure_logger
 
 
 log = logger.getChild(__name__)
-
 
 
 @register_subcommand
@@ -36,7 +49,11 @@ class LauncherSubcommandHandler(BaseSubcommandHandler):
 
     @classmethod
     def handle_commandline_args(cls, args):
-        app_window_shown.connect(partial(cls._open_arg_file, arg_file=args.filename), weak=False, sender=app_window_shown.ANY)
+        app_window_shown.connect(
+            partial(cls._open_arg_file, arg_file=args.filename),
+            weak=False,
+            sender=app_window_shown.ANY,
+        )
 
     @staticmethod
     def _open_arg_file(sender, arg_file):
@@ -58,7 +75,10 @@ class ShellSubcommandHandler(BaseSubcommandHandler):
 
     @classmethod
     def add_arguments(cls, subparser):
-        if CURRENT_PACKAGING_MODE is not PackagingMode.Source and not IS_RUNNING_PORTABLE:
+        if (
+            CURRENT_PACKAGING_MODE is not PackagingMode.Source
+            and not IS_RUNNING_PORTABLE
+        ):
             subparser.add_argument("--shell-integrate", action="store_true")
             subparser.add_argument("--shell-disintegrate", action="store_true")
             subparser.add_argument("--setup-file-assoc", action="store_true")
@@ -125,7 +145,7 @@ def init_app_and_run_main_loop():
         return
     appinfo.command_line_mode = False
 
-    if  IS_IN_MAIN_PROCESS or not appinfo.is_frozen:
+    if IS_IN_MAIN_PROCESS or not appinfo.is_frozen:
         configure_logger()
     log_dianostic_info()
     if appinfo.args.debug or os.getenv("BOOKWORM_DEBUG"):
@@ -135,7 +155,9 @@ def init_app_and_run_main_loop():
     # Perform app initialization
     app_booting.send()
     wxlogfilename = logs_path("wx.log")
-    app = BookwormApp(redirect=True, useBestVisual=True, filename=os.fspath(wxlogfilename))
+    app = BookwormApp(
+        redirect=True, useBestVisual=True, filename=os.fspath(wxlogfilename)
+    )
     if CURRENT_PACKAGING_MODE is PackagingMode.Source:
         app.RestoreStdio()
     setupSubsystems()
@@ -159,7 +181,9 @@ def init_app_and_run_main_loop():
 def run():
     try:
         init_app_and_run_main_loop()
-        active_child_processes = "\n".join(p.name for p in multiprocessing.active_children()).strip()
+        active_child_processes = "\n".join(
+            p.name for p in multiprocessing.active_children()
+        ).strip()
         if active_child_processes:
             log.debug(f"Active child processes: {active_child_processes}")
         log.info("The application has exited gracefully.")

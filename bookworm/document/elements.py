@@ -76,7 +76,14 @@ class Section:
         return f"<{self.__class__.__name__}(title={self.title}, parent={getattr(self.parent, 'title', '')}, child_count={len(self)})>"
 
     def __hash__(self):
-        return hash((self.title, self.pager.first, self.pager.last, self.text_range,))
+        return hash(
+            (
+                self.title,
+                self.pager.first,
+                self.pager.last,
+                self.text_range,
+            )
+        )
 
     def append(self, child: "Section"):
         child.parent = self
@@ -211,13 +218,17 @@ class DocumentInfo:
             uri=document.uri,
             title=metadata.title,
             language=document.language,
-            number_of_pages=len(document) if not document.is_single_page_document() else None,
-            number_of_sections=len(document.toc_tree) if document.has_toc_tree() else None,
+            number_of_pages=len(document)
+            if not document.is_single_page_document()
+            else None,
+            number_of_sections=len(document.toc_tree)
+            if document.has_toc_tree()
+            else None,
             authors=metadata.author,
             publication_date=metadata.publication_year,
             publisher=metadata.publisher,
-            cover_image=document.get_cover_image()
+            cover_image=document.get_cover_image(),
         )
 
-SINGLE_PAGE_DOCUMENT_PAGER = Pager(first=0, last=0)
 
+SINGLE_PAGE_DOCUMENT_PAGER = Pager(first=0, last=0)

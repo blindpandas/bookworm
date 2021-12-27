@@ -12,7 +12,11 @@ from bookworm import config
 from bookworm.document.operations import SearchRequest
 from bookworm.utils import gui_thread_safe
 from bookworm.image_io import ImageIO
-from bookworm.structured_text import SemanticElementType, HEADING_LEVELS, SEMANTIC_ELEMENT_OUTPUT_OPTIONS
+from bookworm.structured_text import (
+    SemanticElementType,
+    HEADING_LEVELS,
+    SEMANTIC_ELEMENT_OUTPUT_OPTIONS,
+)
 from bookworm.gui.components import (
     Dialog,
     SimpleDialog,
@@ -175,7 +179,7 @@ class SearchBookDialog(SimpleDialog):
             is_regex=self.isRegex.IsChecked(),
             case_sensitive=self.isCaseSensitive.IsChecked(),
             whole_word=self.isWholeWord.IsChecked(),
-            **kwargs
+            **kwargs,
         )
 
     def onIsRegex(self, event):
@@ -248,21 +252,23 @@ class ElementListDialog(SimpleDialog):
             label=("Element Type"),
             choice_enum=ElementKind,
             majorDimension=0,
-            style=wx.RA_SPECIFY_COLS
+            style=wx.RA_SPECIFY_COLS,
         )
         self.elementListViewLabel = wx.StaticText(parent, -1, _("Elements"))
         self.elementListView = ImmutableObjectListView(
             parent,
             wx.ID_ANY,
-            columns=[ColumnDefn(_("Name"), 'left', 255, 'name'),]
+            columns=[
+                ColumnDefn(_("Name"), "left", 255, "name"),
+            ],
         )
         self.Bind(
-            wx.EVT_RADIOBOX,
-            self.onElementTypeRadioSelected,
-            self.elementTypeRadio
+            wx.EVT_RADIOBOX, self.onElementTypeRadioSelected, self.elementTypeRadio
         )
-        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onListItemActivated, self.elementListView)
-        self.ElementInfo = namedtuple('ElementInfo', 'type name  text_range')
+        self.Bind(
+            wx.EVT_LIST_ITEM_ACTIVATED, self.onListItemActivated, self.elementListView
+        )
+        self.ElementInfo = namedtuple("ElementInfo", "type name  text_range")
         self.__element_Info_cache = {}
         self.populate_element_list(self.elementTypeRadio.GetSelectedValue())
         self.set_listview_label()
@@ -276,7 +282,9 @@ class ElementListDialog(SimpleDialog):
         self.Close()
 
     def set_listview_label(self):
-        label = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[self.elementTypeRadio.GetSelectedValue().value][0]
+        label = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[
+            self.elementTypeRadio.GetSelectedValue().value
+        ][0]
         self.elementListViewLabel.SetLabelText(label)
 
     def populate_element_list(self, element_type):
@@ -285,25 +293,22 @@ class ElementListDialog(SimpleDialog):
             if element_type is ElementKind.HEADING:
                 for h_level in HEADING_LEVELS:
                     element_infos.extend(self.iter_element_infos(h_level))
-            element_infos.sort(key=operator.attrgetter('text_range'))
-        self.elementListView.set_objects(
-            element_infos,
-            set_focus=False
-        )
+            element_infos.sort(key=operator.attrgetter("text_range"))
+        self.elementListView.set_objects(element_infos, set_focus=False)
 
     def iter_element_infos(self, element_type):
         ElementInfo = self.ElementInfo
         text_whole_line = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[element_type][1]
-        for text_range in self.reader.iter_semantic_ranges_for_elements_of_type(element_type):
+        for text_range in self.reader.iter_semantic_ranges_for_elements_of_type(
+            element_type
+        ):
             if text_whole_line:
-                name = self.view.get_text_by_range(*self.view.get_containing_line(text_range[0]))
+                name = self.view.get_text_by_range(
+                    *self.view.get_containing_line(text_range[0])
+                )
             else:
                 name = self.view.get_text_by_range(*text_range)
-            yield ElementInfo(
-                element_type,
-                name.strip(),
-                text_range
-            )
+            yield ElementInfo(element_type, name.strip(), text_range)
 
     def ShowModal(self):
         super().ShowModal()
@@ -311,76 +316,57 @@ class ElementListDialog(SimpleDialog):
 
 
 class DocumentInfoDialog(SimpleDialog):
-
     def __init__(self, *args, document_info, view, offer_open_action=False, **kwargs):
         self.document_info = document_info
         self.view = view
         self.offer_open_action = offer_open_action
-        kwargs.setdefault('title', _("Document Info"))
+        kwargs.setdefault("title", _("Document Info"))
         super().__init__(*args, **kwargs)
 
     def addControls(self, parent):
-        parent.SetSizerType('horizontal')
+        parent.SetSizerType("horizontal")
         parent.SetSizerProps(expand=True)
         if (cover_image := self.get_cover_image()) is not None:
             image_view = ImageViewControl(parent, -1)
             image_view.RenderImageIO(cover_image)
             parent.GetSizer().AddSpacer(25)
         rh_panel = sc.SizedPanel(parent, -1)
-        rh_panel.SetSizerType('vertical')
+        rh_panel.SetSizerType("vertical")
         rh_panel.SetSizerProps(expand=True, hgrow=100)
         title_text_ctrl = self.create_info_field(
-            rh_panel,
-            label=_("Title"),
-            value=self.document_info.title
+            rh_panel, label=_("Title"), value=self.document_info.title
         )
         title_text_style = title_text_ctrl.GetDefaultStyle()
         title_text_style.SetFontWeight(wx.FONTWEIGHT_EXTRABOLD)
         title_text_ctrl.SetStyle(0, title_text_ctrl.GetLastPosition(), title_text_style)
-        if (authors := self.document_info.authors):
+        if authors := self.document_info.authors:
             if type(authors) is not str:
                 label = _("Authors")
                 authors = "\n".join(a.strip() for a in authors)
             else:
                 label = _("Author")
+            self.create_info_field(rh_panel, label=label, value=authors)
+        if num_sections := self.document_info.number_of_sections:
             self.create_info_field(
-                rh_panel,
-                label=label,
-                value=authors
+                rh_panel, label=_("Number of Sections"), value=str(num_sections)
             )
-        if (num_sections := self.document_info.number_of_sections):
+        if num_pages := self.document_info.number_of_pages:
             self.create_info_field(
-                rh_panel,
-                label=_("Number of Sections"),
-                value=str(num_sections)
-            )
-        if (num_pages := self.document_info.number_of_pages):
-            self.create_info_field(
-                rh_panel,
-                label=_("Number of Pages"),
-                value=str(num_pages)
+                rh_panel, label=_("Number of Pages"), value=str(num_pages)
             )
         self.create_info_field(
-            rh_panel,
-            label=_("Language"),
-            value=self.document_info.language.native_name
+            rh_panel, label=_("Language"), value=self.document_info.language.native_name
         )
-        if (pub_date := self.document_info.publication_date):
+        if pub_date := self.document_info.publication_date:
             self.create_info_field(
-                rh_panel,
-                label=_("Publication Date"),
-                value=pub_date
+                rh_panel, label=_("Publication Date"), value=pub_date
             )
-        if (publisher := self.document_info.publisher):
-            self.create_info_field(
-                rh_panel,
-                label=_("Publisher"),
-                value=publisher
-            )
+        if publisher := self.document_info.publisher:
+            self.create_info_field(rh_panel, label=_("Publisher"), value=publisher)
         if self.offer_open_action:
             # Translators: the label of the close button in a dialog
             openBtn = wx.Button(rh_panel, wx.ID_OPEN, _("&Open"))
-            openBtn.SetSizerProps(halign='center')
+            openBtn.SetSizerProps(halign="center")
             self.Bind(wx.EVT_BUTTON, self.onOpenDocument, openBtn)
         parent.SetMinSize((900, -1))
         parent.Layout()
@@ -399,7 +385,7 @@ class DocumentInfoDialog(SimpleDialog):
         self.view.open_uri(self.document_info.uri)
 
     def get_cover_image(self):
-        if (cover_image := self.document_info.cover_image):
+        if cover_image := self.document_info.cover_image:
             pil_image = cover_image.to_pil()
             pil_image.thumbnail(size=(512, 512))
             return cover_image.from_pil(pil_image)
@@ -410,7 +396,7 @@ class DocumentInfoDialog(SimpleDialog):
             parent,
             -1,
             value=value,
-            style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2
+            style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2,
         )
         text_ctrl.SetSizerProps(expand=True)
         text_ctrl.SetMinSize((500, -1))

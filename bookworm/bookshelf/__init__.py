@@ -9,7 +9,11 @@ from bookworm.concurrency import call_threaded
 from bookworm.document.uri import DocumentUri
 from bookworm.service import BookwormService
 from bookworm.signals import reader_book_loaded
-from bookworm.commandline_handler import BaseSubcommandHandler, register_subcommand, run_subcommand_in_a_new_process
+from bookworm.commandline_handler import (
+    BaseSubcommandHandler,
+    register_subcommand,
+    run_subcommand_in_a_new_process,
+)
 from bookworm.logger import logger
 from .local_bookshelf.models import (
     DEFAULT_BOOKSHELF_DATABASE_FILE,
@@ -39,20 +43,20 @@ class DocumentIndexerSubcommandHandler(BaseSubcommandHandler):
         subparser.add_argument(
             "--db-file",
             help="Sqlite database file to store the document to",
-            default=os.fspath(DEFAULT_BOOKSHELF_DATABASE_FILE)
+            default=os.fspath(DEFAULT_BOOKSHELF_DATABASE_FILE),
         )
         subparser.add_argument(
             "--category",
             help="Category of the given document",
             type=str,
-            default=DEFAULT_CATEGORY_DB_VALUE
+            default=DEFAULT_CATEGORY_DB_VALUE,
         )
         subparser.add_argument(
             "--tag",
             help="Tags of the given document",
             action="append",
             dest="tags",
-            default=[]
+            default=[],
         )
 
     @classmethod
@@ -71,7 +75,6 @@ class DocumentIndexerSubcommandHandler(BaseSubcommandHandler):
         return 0
 
 
-
 @register_subcommand
 class BookshelfLauncherSubcommand(BaseSubcommandHandler):
     subcommand_name = "bookshelf"
@@ -81,14 +84,13 @@ class BookshelfLauncherSubcommand(BaseSubcommandHandler):
         subparser.add_argument(
             "--db-file",
             help="Sqlite database file to store the document to",
-            default=os.fspath(DEFAULT_BOOKSHELF_DATABASE_FILE)
+            default=os.fspath(DEFAULT_BOOKSHELF_DATABASE_FILE),
         )
 
     @classmethod
     def handle_commandline_args(cls, args):
         BookshelfWindow.show_standalone(database_file=args.db_file)
         return 0
-
 
 
 class BookshelfService(BookwormService):
@@ -102,7 +104,9 @@ class BookshelfService(BookwormService):
 
     def __post_init__(self):
         BaseModel.create_all()
-        reader_book_loaded.connect(self.on_reader_loaded, sender=self.reader, weak=False)
+        reader_book_loaded.connect(
+            self.on_reader_loaded, sender=self.reader, weak=False
+        )
 
     def get_settings_panels(self):
         return [
@@ -115,7 +119,6 @@ class BookshelfService(BookwormService):
         # Translators: the label of an item in the application menubar
         return (50, self.menu, _("Boo&kshelf"))
 
-
     def on_reader_loaded(self, sender):
         if not config.conf["bookshelf"]["auto_add_opened_documents_to_bookshelf"]:
             return
@@ -125,13 +128,15 @@ class BookshelfService(BookwormService):
     @call_threaded
     def index_document_in_a_subprocess(cls, document_uri):
         log.debug("Book loaded, trying to add it to the shelf...")
-        uri = base64.urlsafe_b64encode(document_uri.to_uri_string().encode("utf-8")).decode("utf-8")
+        uri = base64.urlsafe_b64encode(
+            document_uri.to_uri_string().encode("utf-8")
+        ).decode("utf-8")
         args = [
             DocumentIndexerSubcommandHandler.subcommand_name,
             uri,
             "--category",
             "",
             "--tag",
-            ""
+            "",
         ]
         run_subcommand_in_a_new_process(args)

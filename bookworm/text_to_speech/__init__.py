@@ -25,7 +25,7 @@ from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,
     reader_page_changed,
-    reading_position_change
+    reading_position_change,
 )
 from bookworm.service import BookwormService
 from bookworm.logger import logger
@@ -83,7 +83,9 @@ class TextToSpeechService(BookwormService):
         self.view.add_load_handler(
             lambda s: self.on_engine_state_changed(state=SynthState.ready)
         )
-        reading_position_change.connect(self.on_reading_position_change, sender=self.view)
+        reading_position_change.connect(
+            self.on_reading_position_change, sender=self.view
+        )
         self.initialize_state()
 
     def initialize_state(self):
@@ -275,7 +277,9 @@ class TextToSpeechService(BookwormService):
                     text_pos = sum(text_range.astuple()) / 2
                     sect = self.reader.document.get_section_at_position(text_pos)
                     if _last_known_section != sect:
-                        if (_last_known_section is not None) and (sect.parent is not _last_known_section):
+                        if (_last_known_section is not None) and (
+                            sect.parent is not _last_known_section
+                        ):
                             self.configure_end_of_section_utterance(
                                 utterance, sect.simple_prev
                             )

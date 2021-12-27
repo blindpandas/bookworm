@@ -7,4 +7,4 @@ from os import PathLike
 from io import FileIO
 
 
-TranslatableStr = NewType('TranslatableStr', str)
+TranslatableStr = NewType("TranslatableStr", str)

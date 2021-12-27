@@ -8,7 +8,7 @@ from pyxpdf.xpdf import TextOutput as XPdfTextOutput, TextControl as XPdfTextCon
 from pyxpdf_data import generate_xpdfrc
 from bookworm.paths import data_path
 from bookworm.logger import logger
-from .. import  ReadingMode, DocumentCapability as DC
+from .. import ReadingMode, DocumentCapability as DC
 from .fitz import FitzDocument, FitzPage
 
 log = logger.getChild(__name__)

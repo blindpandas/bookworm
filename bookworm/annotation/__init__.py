@@ -133,12 +133,14 @@ class AnnotationService(BookwormService):
             msg = _("Bookmark")
             if bookmark.title:
                 msg += f": {bookmark.title}"
-            text_to_announce = msg if config.conf["annotation"]["speak_bookmarks_on_jumping"] else None
+            text_to_announce = (
+                msg if config.conf["annotation"]["speak_bookmarks_on_jumping"] else None
+            )
             reading_position_change.send(
                 self.view,
                 position=bookmark.position,
                 text_to_announce=text_to_announce,
-                tts_speech_prefix=msg
+                tts_speech_prefix=msg,
             )
             sounds.navigation.play()
 

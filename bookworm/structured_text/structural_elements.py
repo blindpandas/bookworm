@@ -112,8 +112,8 @@ class TextStructureMetadata:
             if sorted_ranges:
                 element_type, pos = sorted_ranges[0]
                 return pos, element_type
-        if (element_ranges := self.element_map.get(element_type, ())) :
-            if (pos := self.get_range(element_ranges, forward, anchor)) :
+        if element_ranges := self.element_map.get(element_type, ()):
+            if pos := self.get_range(element_ranges, forward, anchor):
                 return pos, element_type
 
     def get_next_element_pos(self, element_type, anchor):

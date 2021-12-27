@@ -65,7 +65,7 @@ class FitzDocument(BaseDocument):
         | DC.GRAPHICAL_RENDERING
         | DC.IMAGE_EXTRACTION
         | DC.STRUCTURED_NAVIGATION
-        |DC.LINKS
+        | DC.LINKS
     )
 
     @lru_cache(maxsize=1000)
@@ -155,9 +155,7 @@ class FitzDocument(BaseDocument):
     @cached_property
     def metadata(self):
         meta = self._ebook.metadata
-        to_str = (
-            lambda value: "" if value is None else ftfy.fix_encoding(value).strip()
-        )
+        to_str = lambda value: "" if value is None else ftfy.fix_encoding(value).strip()
         return BookMetadata(
             title=to_str(meta["title"]) or Path(self.filename).stem,
             author=to_str(meta["author"]),

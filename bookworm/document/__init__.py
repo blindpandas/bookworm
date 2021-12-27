@@ -34,7 +34,9 @@ from .formats import *
 def create_document(uri, read=True):
     doc_cls = BaseDocument.get_document_class_given_format(uri.format.lower())
     if doc_cls is None:
-        raise UnsupportedDocumentFormatError(f"Document Format {uri.format} is not supported.")
+        raise UnsupportedDocumentFormatError(
+            f"Document Format {uri.format} is not supported."
+        )
     document = doc_cls(uri)
     if read:
         document.read()

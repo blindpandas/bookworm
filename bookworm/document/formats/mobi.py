@@ -43,7 +43,7 @@ class MobiDocument(DummyDocument):
         "*.mobi",
         "*.azw3",
     )
-    capabilities =  DC.ASYNC_READ
+    capabilities = DC.ASYNC_READ
 
     def __len__(self):
         raise NotImplementedError

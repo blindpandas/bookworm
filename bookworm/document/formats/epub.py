@@ -38,12 +38,9 @@ log = logger.getChild(__name__)
 
 
 EMPTY_HTML_DOCUMENT = (
-    "<!DOCTYPE html>\n"
-    "<html>\n"
-    "<head></head>\n"
-    "<body></body>\n"
-    "</html>"
+    "<!DOCTYPE html>\n" "<html>\n" "<head></head>\n" "<body></body>\n" "</html>"
 )
+
 
 class EpubPage(BasePage):
     def __init__(self, *args, **kwargs):
@@ -85,16 +82,11 @@ class EpubPage(BasePage):
         raise NotImplementedError
 
     def resolve_link(self, link_range):
-        if (target := self.link_targets.get(link_range)):
+        if target := self.link_targets.get(link_range):
             if is_external_url(target):
-                return LinkTarget(
-                    url=target,
-                    is_external=True
-                )
+                return LinkTarget(url=target, is_external=True)
             filename, anchor = (
-                (target, None)
-                if "#" not in target
-                else target.split("#")
+                (target, None) if "#" not in target else target.split("#")
             )
             filename = urllib_parse.unquote(filename)
             target_section = self.document._filename_to_section.get(filename)
@@ -110,11 +102,8 @@ class EpubPage(BasePage):
                     url=target,
                     is_external=False,
                     page=target_page.index,
-                    position=target_position
+                    position=target_position,
                 )
-
-
-
 
     def _get_proper_filename(self, href):
         members = self.document._filelist
@@ -153,7 +142,7 @@ class EpubPage(BasePage):
         else:
             filename = splitdata[0]
             html_id = ""
-        if (anchor_info := self.document._split_section_content.get(filename)) :
+        if anchor_info := self.document._split_section_content.get(filename):
             try:
                 return anchor_info[html_id]
             except KeyError:
@@ -169,7 +158,7 @@ class EpubPage(BasePage):
 
     def _get_html_with_href(self, href):
         retval_html = None
-        if (filename := self._get_proper_filename(href)) :
+        if filename := self._get_proper_filename(href):
             if href not in self.document._split_section_anchor_ids:
                 retval_html = self.document.ziparchive.read(filename).decode("utf-8")
             else:
@@ -182,9 +171,9 @@ class EpubPage(BasePage):
             )
             retval_html = EMPTY_HTML_DOCUMENT
         retval_soup = BeautifulSoup(retval_html, "lxml")
-        for file in self.section.data.get('additional_html_files', ()):
+        for file in self.section.data.get("additional_html_files", ()):
             html_content = self.document.ziparchive.read(file).decode("utf-8")
-            for elm in BeautifulSoup(html_content, 'lxml'):
+            for elm in BeautifulSoup(html_content, "lxml"):
                 retval_soup.body.append(copy.copy(elm))
         return str(retval_soup)
 
@@ -195,7 +184,14 @@ class EpubDocument(BaseDocument):
     # Translators: the name of a document file format
     name = _("Electronic Publication (EPUB)")
     extensions = ("*.epub",)
-    capabilities = DC.TOC_TREE | DC.METADATA | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE | DC.LINKS | DC.INTERNAL_ANCHORS
+    capabilities = (
+        DC.TOC_TREE
+        | DC.METADATA
+        | DC.STRUCTURED_NAVIGATION
+        | DC.TEXT_STYLE
+        | DC.LINKS
+        | DC.INTERNAL_ANCHORS
+    )
     default_reading_mode = ReadingMode.CHAPTER_BASED
 
     def __len__(self):
@@ -249,32 +245,26 @@ class EpubDocument(BaseDocument):
                 )
             )
             # ----------------
-            filename, html_id = (
-                (href, None)
-                if "#" not in href
-                else href.split("#")
-            )
+            filename, html_id = (href, None) if "#" not in href else href.split("#")
             self._filename_to_section[filename] = section
             # ----------------
             if html_id is not None:
                 self._split_section_anchor_ids.setdefault(filename, []).append(html_id)
             # ----------------
-            section_filename = (
-                href if "#" not in href
-                else href.split("#")[0]
-            ).strip()
+            section_filename = (href if "#" not in href else href.split("#")[0]).strip()
             if section_filename not in all_html_files:
                 continue
             all_html_files[all_html_files.index(section_filename)] = section
             # End loop
         additional_html_files = (
             (sect, html_files)
-            for (sect, *html_files)
-            in more_itertools.split_before(all_html_files, pred=lambda item: isinstance(item, Section))
+            for (sect, *html_files) in more_itertools.split_before(
+                all_html_files, pred=lambda item: isinstance(item, Section)
+            )
             if html_files and isinstance(sect, Section)
         )
         for (sect, additional_html_file_list) in additional_html_files:
-            sect.data['additional_html_files'] = additional_html_file_list
+            sect.data["additional_html_files"] = additional_html_file_list
             for aditional_file in additional_html_file_list:
                 self._filename_to_section[aditional_file] = sect
         # ------------

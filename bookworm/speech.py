@@ -33,5 +33,5 @@ def announce(message, urgent=False):
 
 @reading_position_change.connect
 def announce_new_reading_position(sender, position, **kwargs):
-    if (text_to_announce := kwargs.get('text_to_announce')):
+    if text_to_announce := kwargs.get("text_to_announce"):
         announce(text_to_announce, urgent=True)

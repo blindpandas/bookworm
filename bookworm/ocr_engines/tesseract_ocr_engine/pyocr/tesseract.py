@@ -309,7 +309,7 @@ def run_tesseract(
 
 
 def cleanup(filename):
-    """ Tries to remove the given filename. Ignores non-existent files """
+    """Tries to remove the given filename. Ignores non-existent files"""
     try:
         os.remove(filename)
     except OSError:  # pragma: no cover

@@ -38,4 +38,4 @@ except:
 if app.is_frozen:
     IS_IN_MAIN_PROCESS = multiprocessing.parent_process() is None
 else:
-    IS_IN_MAIN_PROCESS = (multiprocessing.current_process().name == "MainProcess")
+    IS_IN_MAIN_PROCESS = multiprocessing.current_process().name == "MainProcess"

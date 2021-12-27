@@ -23,9 +23,10 @@ log = logger.getChild(__name__)
 
 
 # Taken from: https://stackoverflow.com/a/47248784
-URL_REGEX = regex.compile(r"""(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))""")
-URL_BAD_CHARS = '\'\\.,[](){}:;"'
-
+URL_REGEX = regex.compile(
+    r"""(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))"""
+)
+URL_BAD_CHARS = "'\\.,[](){}:;\""
 
 
 # New line character
@@ -57,8 +58,7 @@ def normalize_line_breaks(text, line_break=UNIX_NEWLINE):
 
 def remove_excess_blank_lines(text):
     return MORE_THAN_ONE_LINE.sub(
-        EXCESS_LINE_REPLACEMENT_FUNC,
-        normalize_line_breaks(text)
+        EXCESS_LINE_REPLACEMENT_FUNC, normalize_line_breaks(text)
     )
 
 
@@ -121,7 +121,7 @@ def is_external_url(text):
 
 
 @lru_cache(maxsize=5)
-def get_url_spans (text):
+def get_url_spans(text):
     return tuple(
         (span := m.span(), text[slice(*span)].strip(URL_BAD_CHARS))
         for m in URL_REGEX.finditer(text)
@@ -178,7 +178,7 @@ def escape_html(text):
 def is_free_port(port):
     with contextlib_closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         try:
-            s.bind(('localhost', port))
+            s.bind(("localhost", port))
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             return True
         except socket.error as e:
@@ -190,6 +190,6 @@ def is_free_port(port):
 
 def find_free_port():
     with contextlib_closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
-        s.bind(('localhost', 0))
+        s.bind(("localhost", 0))
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         return s.getsockname()[1]

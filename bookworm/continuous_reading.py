@@ -15,7 +15,6 @@ from bookworm.signals import (
 )
 
 
-
 class ContReadingService(BookwormService):
     name = "cont_reading"
     has_gui = False
@@ -26,15 +25,13 @@ class ContReadingService(BookwormService):
         # Event handling
         reader_book_loaded.connect(self.on_reader_load, weak=False, sender=self.reader)
         reader_book_unloaded.connect(
-            lambda s: self._book_opened.clear(),
-            weak=False,
-            sender=self.reader
+            lambda s: self._book_opened.clear(), weak=False, sender=self.reader
         )
         self._worker_thread = threading.Thread(
             target=self.start_monitoring,
             args=(self.view.contentTextCtrl, self.reader),
             daemon=True,
-            name="bookworm.continuous.reading.service"
+            name="bookworm.continuous.reading.service",
         )
         self._worker_thread.start()
 
@@ -58,8 +55,9 @@ class ContReadingService(BookwormService):
             else:
                 time.sleep(0.1)
 
-
     def on_reader_load(self, sender):
-        if config.conf["reading"]["use_continuous_reading"] and not sender.document.is_single_page_document():
+        if (
+            config.conf["reading"]["use_continuous_reading"]
+            and not sender.document.is_single_page_document()
+        ):
             self._book_opened.set()
-

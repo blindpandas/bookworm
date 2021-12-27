@@ -12,7 +12,11 @@ from bookworm.i18n import LocaleInfo
 from bookworm.concurrency import QueueProcess, call_threaded
 from bookworm.structured_text import SemanticElementType, Style, TextRange
 from bookworm.image_io import ImageIO
-from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines, get_url_spans
+from bookworm.utils import (
+    normalize_line_breaks,
+    remove_excess_blank_lines,
+    get_url_spans,
+)
 from bookworm.logger import logger
 from . import operations as doctools
 from .exceptions import DocumentIOError, PaginationError, UnsupportedDocumentFormatError
@@ -191,8 +195,7 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
     def supports_links(cls):
         return (
             DocumentCapability.LINKS in cls.capabilities
-            or
-            DocumentCapability.INTERNAL_ANCHORS in cls.capabilities
+            or DocumentCapability.INTERNAL_ANCHORS in cls.capabilities
         )
 
     @classmethod
@@ -291,7 +294,9 @@ class BasePage(metaclass=ABCMeta):
             semantic_structure = self.get_semantic_structure()
         except NotImplementedError:
             semantic_structure = {}
-        semantic_link_ranges = semantic_structure.setdefault(SemanticElementType.LINK, [])
+        semantic_link_ranges = semantic_structure.setdefault(
+            SemanticElementType.LINK, []
+        )
         all_link_ranges = [
             *semantic_link_ranges,
             *(
@@ -307,11 +312,8 @@ class BasePage(metaclass=ABCMeta):
         return get_url_spans(self.get_text())
 
     def get_external_link_target(self, text_range) -> str:
-        if (url := dict(self.get_external_links()).get(text_range)):
-            return LinkTarget(
-                url=url,
-                is_external=True
-            )
+        if url := dict(self.get_external_links()).get(text_range):
+            return LinkTarget(url=url, is_external=True)
 
     def normalize_text(self, text):
         return remove_excess_blank_lines(text)

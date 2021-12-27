@@ -21,7 +21,12 @@ from bookworm.structured_text import (
     HEADING_LEVELS,
 )
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.utils import remove_excess_blank_lines, escape_html, is_external_url, NEWLINE
+from bookworm.utils import (
+    remove_excess_blank_lines,
+    escape_html,
+    is_external_url,
+    NEWLINE,
+)
 from bookworm.logger import logger
 from .. import (
     SinglePageDocument,
@@ -118,17 +123,9 @@ class BaseHtmlDocument(SinglePageDocument):
         if is_external_url(href):
             return LinkTarget(url=href, is_external=True)
         else:
-            _filename, anchor = (
-                href.split("#")
-                if "#" in href
-                else (href, None)
-            )
-            if (anchor := self.anchors.get(anchor , None)):
-                return LinkTarget(
-                    url=href,
-                    is_external=False,
-                    position=anchor
-                )
+            _filename, anchor = href.split("#") if "#" in href else (href, None)
+            if anchor := self.anchors.get(anchor, None):
+                return LinkTarget(url=href, is_external=False, position=anchor)
 
     def _get_heading_level(self, parag):
         return int(parag.dom_path[-1])

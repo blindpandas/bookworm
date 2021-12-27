@@ -28,13 +28,12 @@ from bookworm.logger import logger
 
 log = logger.getChild(__name__)
 
-WEB_RESOURCES_PATH = paths.resources_path('readium_js_viewer_lite')
+WEB_RESOURCES_PATH = paths.resources_path("readium_js_viewer_lite")
 TEMPLATE_PATH = WEB_RESOURCES_PATH / "templates"
 OPENED_EPUBS: dict[str, tuple[ZipFile, list[str]]] = {}
 
 
 class EpubServingConfig:
-
     def __init__(self, app):
         self.app = app
         atexit.register(self.close)
@@ -44,18 +43,30 @@ class EpubServingConfig:
     @property
     def default_routes(self):
         return {
-            '/': (self.index_view, None),
-            "/open_epub": (self.open_epub_view, dict(method='POST')),
-            "/close_epub": (self.close_epub_view, dict(method='DELETE')),
-            "/epubs/<book_uid>": (self.epub_archive_view, {'method': 'HEAD'}),
+            "/": (self.index_view, None),
+            "/open_epub": (self.open_epub_view, dict(method="POST")),
+            "/close_epub": (self.close_epub_view, dict(method="DELETE")),
+            "/epubs/<book_uid>": (self.epub_archive_view, {"method": "HEAD"}),
             "/epubs/<book_uid>/<path:path>": (self.epub_archive_view, None),
         } | {
-            f'/{folder}/<path:path>': (self.file_serving_view, None)
-            for folder in ('css', 'fonts', 'font-faces', 'images', 'scripts',)
+            f"/{folder}/<path:path>": (self.file_serving_view, None)
+            for folder in (
+                "css",
+                "fonts",
+                "font-faces",
+                "images",
+                "scripts",
+            )
         }
 
     def add_epub_serving_routes(self):
-        for (path, (view_func, view_kwargs,)) in self.default_routes.items():
+        for (
+            path,
+            (
+                view_func,
+                view_kwargs,
+            ),
+        ) in self.default_routes.items():
             kwargs = view_kwargs or {}
             self.app.route(path, callback=view_func, **kwargs)
 
@@ -65,12 +76,12 @@ class EpubServingConfig:
 
     def extract_epub(self, book_uid, filename):
         epub_extraction_dir = TemporaryDirectory()
-        with zipfile.ZipFile(filename, 'r') as archive:
+        with zipfile.ZipFile(filename, "r") as archive:
             archive.extractall(path=epub_extraction_dir.name)
         OPENED_EPUBS[book_uid] = epub_extraction_dir
 
     def open_epub_view(self):
-        if (filename := request.json.get("filename")):
+        if filename := request.json.get("filename"):
             if not os.path.isfile(filename):
                 raise HTTPError(400, f"Bad epub file: {filename}")
             book_uid = generate_sha1hash(filename)
@@ -80,11 +91,11 @@ class EpubServingConfig:
                     book_uid,
                     filename,
                 )
-            return {'book_uid': book_uid}
+            return {"book_uid": book_uid}
         raise HTTPError(400, f"Missing epub file name")
 
     def close_epub_view(self):
-        book_uid = request.json.get("book_uid", '').strip()
+        book_uid = request.json.get("book_uid", "").strip()
         try:
             epub_temp_folder = OPENED_EPUBS[book_uid]
         except KeyError:
@@ -92,41 +103,38 @@ class EpubServingConfig:
         else:
             threading.Thread(target=epub_temp_folder.cleanup).start()
             OPENED_EPUBS.pop(book_uid)
-            return {'deleted': book_uid}
+            return {"deleted": book_uid}
 
     def index_view(self):
-        if (
-            (book_path := request.query.get("epub")) is None
-            or
-            book_path.strip(" /").split("/")[-1] not in OPENED_EPUBS
-        ):
+        if (book_path := request.query.get("epub")) is None or book_path.strip(
+            " /"
+        ).split("/")[-1] not in OPENED_EPUBS:
             raise HTTPError(400, "Missing or Invalid book_uid")
-        response.status = '200 OK'
-        return TEMPLATE_PATH.joinpath('index.html').read_bytes()
+        response.status = "200 OK"
+        return TEMPLATE_PATH.joinpath("index.html").read_bytes()
 
     def epub_archive_view(self, book_uid, path=None):
-        if (request.path is None) or (request.method != 'GET'):
+        if (request.path is None) or (request.method != "GET"):
             return HTTPError(301, "Moved Permanently")
         try:
             epub_extraction_dir = OPENED_EPUBS[book_uid]
         except KeyError:
-            response.status = '400 Bad Request'
+            response.status = "400 Bad Request"
             return template(
-                self.get_template('error.html'),
+                self.get_template("error.html"),
                 dict(
                     title=_("Failed to load content"),
-                    message=_("Cannot retreive content. Probably the eBook has been closed.")
-                )
+                    message=_(
+                        "Cannot retreive content. Probably the eBook has been closed."
+                    ),
+                ),
             )
         filename = urllib.parse.unquote(path).strip("/")
         return static_file(filename, root=epub_extraction_dir.name)
 
     def file_serving_view(self, path):
         prefix = request.path.lstrip("/").split("/")[0].strip("/")
-        return static_file(
-            path,
-            os.fspath(WEB_RESOURCES_PATH / prefix)
-        )
+        return static_file(path, os.fspath(WEB_RESOURCES_PATH / prefix))
 
     def close(self):
         threading.Thread(
@@ -140,7 +148,6 @@ class EpubServingConfig:
 
 
 class EpubServingApp(Bottle):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.epub_serving_config = EpubServingConfig(self)
@@ -148,4 +155,3 @@ class EpubServingApp(Bottle):
     def close(self):
         super().close()
         self.epub_serving_config.close()
-

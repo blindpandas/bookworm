@@ -36,7 +36,6 @@ class BookshelfSettingsPanel(SettingsPanel):
 
 
 class BookshelfMenu(wx.Menu):
-
     def __init__(self, service):
         super().__init__()
         self.service = service
@@ -70,7 +69,11 @@ class BookshelfMenu(wx.Menu):
             _("Create a new book category in your bookshelf"),
         )
         # EventHandlers
-        self.view.Bind(wx.EVT_MENU, self.onOpenBookshelf, id=StatelessBookshelfMenuIds.open_bookshelf)
+        self.view.Bind(
+            wx.EVT_MENU,
+            self.onOpenBookshelf,
+            id=StatelessBookshelfMenuIds.open_bookshelf,
+        )
 
     def onOpenBookshelf(self, event):
         BookshelfWindow(self.view, _("Bookshelf")).Show()

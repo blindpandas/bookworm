@@ -19,9 +19,7 @@ log = logger.getChild(__name__)
 
 
 def add_document_to_bookshelf(
-    document: BaseDocument,
-    category_name,
-    tags_names: list[str]
+    document: BaseDocument, category_name, tags_names: list[str]
 ):
     """Add the given document to the bookshelf database."""
     if (existing_doc := Document.get_or_none(uri=document.uri)) is not None:

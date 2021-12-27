@@ -33,12 +33,11 @@ ASYNCIO_EVENT_LOOP = asyncio.new_event_loop()
 ASYNCIO_LOOP_THREAD = None
 
 
-
 @app_shuttingdown.connect
 def _shutdown_concurrent_workers(sender):
     """Cancel any pending background tasks."""
     log.debug("Canceling  background tasks.")
-    threaded_worker.shutdown(wait=False, cancel_futures =True)
+    threaded_worker.shutdown(wait=False, cancel_futures=True)
     process_worker.shutdown(wait=False)
     if ASYNCIO_LOOP_THREAD is not None:
         log.debug("Shutting down asyncio event loop")
@@ -50,7 +49,9 @@ def start_asyncio_event_loop():
 
     global ASYNCIO_LOOP_THREAD
     if ASYNCIO_LOOP_THREAD is not None:
-        log.debug("Attempted to start the asyncio eventloop while it is already running")
+        log.debug(
+            "Attempted to start the asyncio eventloop while it is already running"
+        )
         return
 
     def _thread_target():
@@ -59,14 +60,15 @@ def start_asyncio_event_loop():
         asyncio.set_event_loop(ASYNCIO_EVENT_LOOP)
         ASYNCIO_EVENT_LOOP.run_forever()
 
-    ASYNCIO_LOOP_THREAD = threading.Thread(target=_thread_target, daemon=True, name="bookworm.asyncio.thread")
+    ASYNCIO_LOOP_THREAD = threading.Thread(
+        target=_thread_target, daemon=True, name="bookworm.asyncio.thread"
+    )
     ASYNCIO_LOOP_THREAD.start()
 
 
 @app_booting.connect
 def _start_aio_upon_startup(sender):
     start_asyncio_event_loop()
-
 
 
 def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., "Future"]:
@@ -80,9 +82,7 @@ def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., "Future"]:
         try:
             return threaded_worker.submit(func, *args, **kwargs)
         except RuntimeError:
-            log.debug(
-                f"Failed to submit function {func}."
-            )
+            log.debug(f"Failed to submit function {func}.")
 
     return wrapper
 
@@ -92,7 +92,9 @@ def asyncio_coroutine_to_concurrent_future(func):
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        return asyncio.run_coroutine_threadsafe(func(*args, **kwargs), ASYNCIO_EVENT_LOOP)
+        return asyncio.run_coroutine_threadsafe(
+            func(*args, **kwargs), ASYNCIO_EVENT_LOOP
+        )
 
     return wrapper
 
@@ -121,7 +123,6 @@ class QPResult(IntEnum):
 
 
 class QPChannel:
-
     def __init__(self):
         self.reader, self.writer = mp.Pipe(duplex=False)
         self.cancellation_token = CancellationToken()
@@ -166,7 +167,9 @@ class QueueProcess(mp.Process):
     def __init__(self, *args, cancellable=True, **kwargs):
         kwargs.setdefault("daemon", True)
         super().__init__(*args, **kwargs)
-        assert inspect.isgeneratorfunction(self._target), "QueueProcess target should be a generator function."
+        assert inspect.isgeneratorfunction(
+            self._target
+        ), "QueueProcess target should be a generator function."
         self.cancellable = cancellable
         self.channel = QPChannel()
         self._done_callback = None
@@ -228,7 +231,9 @@ class QueueProcess(mp.Process):
                     break
                 elif flag is QPResult.FAILED:
                     exc_value, tb_text = result
-                    log.exception(f"Remote exception from {self}.\nTraceback:\n{tb_text}")
+                    log.exception(
+                        f"Remote exception from {self}.\nTraceback:\n{tb_text}"
+                    )
                     raise exc_value
                 elif flag is QPResult.CANCELLED:
                     break

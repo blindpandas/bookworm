@@ -17,11 +17,10 @@ from .models import (
 log = logger.getChild(__name__)
 
 
-
 class LocalBookshelfProvider(BookshelfProvider):
 
-    name="local_bookshelf"
-    display_name=_("Your Bookshelf")
+    name = "local_bookshelf"
+    display_name = _("Your Bookshelf")
 
     def check(self) -> bool:
         return True
@@ -31,10 +30,7 @@ class LocalBookshelfProvider(BookshelfProvider):
         retval = {}
         for table in (Category, Tag, Author):
             retval[table._meta.table_name] = tuple(
-                LocalDatabaseSource(
-                    name=table.name,
-                    query=Document.select()
-                )
+                LocalDatabaseSource(name=table.name, query=Document.select())
                 for item in table.select(table.name).distinct()
             )
         return [
@@ -44,7 +40,6 @@ class LocalBookshelfProvider(BookshelfProvider):
 
 
 class LocalDatabaseSource(ABC, Source):
-
     def __init__(self, query, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.query = query
@@ -61,5 +56,3 @@ class LocalDatabaseSource(ABC, Source):
 
     def get_item_actions(self, item: DocumentInfo) -> list[SourceAction]:
         return []
-
-

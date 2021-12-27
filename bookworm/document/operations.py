@@ -96,9 +96,7 @@ def search_single_page_document(text, request):
     for pos, snip in search(pattern, text):
         actual_text_pos = start_pos + pos
         yield [
-            SearchResult(
-                excerpt=snip, page=0, position=actual_text_pos, section=""
-            ),
+            SearchResult(excerpt=snip, page=0, position=actual_text_pos, section=""),
         ]
 
 

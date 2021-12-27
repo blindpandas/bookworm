@@ -27,4 +27,3 @@ config_updated = _signals.signal("config/updated")
 
 # Reading position
 reading_position_change = _signals.signal("caret/location_change")
-

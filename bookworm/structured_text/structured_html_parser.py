@@ -63,8 +63,8 @@ SEMANTIC_HTML_ELEMENTS = {
         "h6",
     },
     SemanticElementType.LINK: {
-        "a#href", 
-        "a#name", 
+        "a#href",
+        "a#name",
     },
     SemanticElementType.LIST: {
         "ol",
@@ -78,16 +78,14 @@ SEMANTIC_HTML_ELEMENTS = {
         "table",
     },
     # SemanticElementType.FIGURE: {
-        # "img",
-        # "figure",
-        # "picture",
+    # "img",
+    # "figure",
+    # "picture",
     # }
 }
 STYLE_HTML_ELEMENTS = {}
 INSCRIPTIS_ANNOTATION_RULES = {
-    t: (k,)
-    for (k, v) in SEMANTIC_HTML_ELEMENTS.items()
-    for t in v
+    t: (k,) for (k, v) in SEMANTIC_HTML_ELEMENTS.items() for t in v
 }
 INSCRIPTIS_CONFIG = ParserConfig(
     css=STRICT_CSS_PROFILE,
@@ -101,7 +99,11 @@ INSCRIPTIS_CONFIG = ParserConfig(
 class StructuredHtmlParser(Inscriptis):
     """Subclass of ```inscriptis.Inscriptis``` to provide the position of structural elements."""
 
-    __slots__ = ['link_range_to_target', 'anchors', 'styled_elements',]
+    __slots__ = [
+        "link_range_to_target",
+        "anchors",
+        "styled_elements",
+    ]
 
     @staticmethod
     def normalize_html(html_string):
@@ -114,7 +116,7 @@ class StructuredHtmlParser(Inscriptis):
         )
         if len(html_string) > 10000:
             parsed = HTMLParser(html_string)
-            #parsed.unwrap_tags(TAGS_TO_STRIP)
+            # parsed.unwrap_tags(TAGS_TO_STRIP)
             html_string = parsed.html
         return remove_excess_blank_lines(html_string)
 
@@ -138,9 +140,9 @@ class StructuredHtmlParser(Inscriptis):
         except IndexError:
             pass
         else:
-            if tree.tag == 'a' and (href := tree.attrib.get('href', '')):
+            if tree.tag == "a" and (href := tree.attrib.get("href", "")):
                 self.link_range_to_target[(anot.start, anot.end)] = href
-        if (anch := tree.attrib.get('id', '')) or (anch := tree.attrib.get('name', '')):
+        if (anch := tree.attrib.get("id", "")) or (anch := tree.attrib.get("name", "")):
             element_range = (start_index, end_index)
             self.anchors[anch] = element_range
             self.html_id_ranges[anch] = element_range

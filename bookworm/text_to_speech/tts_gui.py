@@ -594,9 +594,9 @@ class SpeechMenu(wx.Menu):
             wx.EVT_KEY_UP, self.onKeyUp, self.view.contentTextCtrl
         )
         # Disable this when no voice profile is active
-        self.FindItemById(
-            StatelessSpeechMenuIds.deactivateActiveVoiceProfile
-        ).Enable(False)
+        self.FindItemById(StatelessSpeechMenuIds.deactivateActiveVoiceProfile).Enable(
+            False
+        )
 
     def onPlay(self, event):
         if not self.service.is_engine_ready:

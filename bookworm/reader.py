@@ -262,7 +262,9 @@ class EBookReader:
                 self.go_to_first_of_section()
             return navigated
 
-    def perform_wormhole_navigation(self, *, page, start, end, last_position: tuple[int, int]=None):
+    def perform_wormhole_navigation(
+        self, *, page, start, end, last_position: tuple[int, int] = None
+    ):
         """Jump to a certain location in the open document storing the current position in the navigation history."""
         this_page = self.current_page
         if last_position is None:
@@ -297,13 +299,15 @@ class EBookReader:
 
     @property
     def navigation_stack(self):
-        return self.__state.setdefault('navigation_stack', [])
+        return self.__state.setdefault("navigation_stack", [])
 
     def push_navigation_stack(self, last_page, last_pos_start, last_pos_end):
-        self.navigation_stack.append({
-            'last_page': last_page,
-            'source_range': (last_pos_start, last_pos_end),
-        })
+        self.navigation_stack.append(
+            {
+                "last_page": last_page,
+                "source_range": (last_pos_start, last_pos_end),
+            }
+        )
 
     def pop_navigation_stack(self):
         try:
@@ -312,14 +316,18 @@ class EBookReader:
             self.view.notify_invalid_action()
             return
         else:
-            if (page_num := nav_stack_top.get('last_page')):
+            if page_num := nav_stack_top.get("last_page"):
                 self.go_to_page(page_num)
-            start, end = nav_stack_top['source_range']
+            start, end = nav_stack_top["source_range"]
             self.view.go_to_position(start, end)
-            reading_position_change.send(self.view, position=start, tts_speech_prefix="")
+            reading_position_change.send(
+                self.view, position=start, tts_speech_prefix=""
+            )
 
     def handle_special_action_for_position(self, position: int) -> bool:
-        for link_range in self.iter_semantic_ranges_for_elements_of_type(SemanticElementType.LINK):
+        for link_range in self.iter_semantic_ranges_for_elements_of_type(
+            SemanticElementType.LINK
+        ):
             if position in link_range:
                 self.navigate_to_link_by_range(link_range)
 
@@ -339,7 +347,9 @@ class EBookReader:
         )
 
     def iter_semantic_ranges_for_elements_of_type(self, element_type):
-        semantics = TextStructureMetadata(self.get_current_page_object().semantic_structure)
+        semantics = TextStructureMetadata(
+            self.get_current_page_object().semantic_structure
+        )
         yield from semantics.iter_ranges(element_type)
 
     def navigate_to_link_by_range(self, link_range):
@@ -352,10 +362,7 @@ class EBookReader:
         else:
             start, end = target_info.position
             self.perform_wormhole_navigation(
-                page=target_info.page,
-                start=start,
-                end=None,
-                last_position=link_range
+                page=target_info.page, start=start, end=None, last_position=link_range
             )
 
     def get_view_title(self, include_author=False):

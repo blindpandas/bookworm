@@ -86,38 +86,42 @@ class ImageIO:
     def from_wx_image(cls, wxImage):
         """
         Based on pyWiki 'Working With Images' @  http://wiki.wxpython.org/index.cgi/WorkingWithImages
-        Credit: Ray Pasco      
+        Credit: Ray Pasco
         """
         keepTransp = createTransp = True
         # These can never be simultaneous.
-        hasMask  = wxImage.HasMask()
+        hasMask = wxImage.HasMask()
         hasAlpha = wxImage.HasAlpha()
         # Always convert a mask into an aplha layer.
         # Deal with keeping or discarding this alpha later on.
-        if hasMask :    # Is always mutually exclusive with hasAlpha.                
-            wxImage.InitAlpha()     # Convert the separate mask to a 4th alpha layer.
+        if hasMask:  # Is always mutually exclusive with hasAlpha.
+            wxImage.InitAlpha()  # Convert the separate mask to a 4th alpha layer.
             hasAlpha = True
-        image_size = tuple(wxImage.GetSize())      # All images here have the same size.    
+        image_size = tuple(wxImage.GetSize())  # All images here have the same size.
         # Create an RGB pilImage and stuff it with RGB data from the wxImage.
-        pilImage = Image.new( 'RGB', image_size )
-        pilImage.frombytes( bytes(wxImage.GetDataBuffer()))
+        pilImage = Image.new("RGB", image_size)
+        pilImage.frombytes(bytes(wxImage.GetDataBuffer()))
         # May need the separated planes if an RGBA image is needed. later.
-        r_pilImage, g_pilImage, b_pilImage = pilImage.split()        
+        r_pilImage, g_pilImage, b_pilImage = pilImage.split()
         if hasAlpha and keepTransp:
             # Must recompose the pilImage from 4 layers.
             r_pilImage, g_pilImage, b_pilImage = pilImage.split()
-            # Create a Black L pilImage and stuff it with the alpha data 
+            # Create a Black L pilImage and stuff it with the alpha data
             #   extracted from the alpha layer of the wxImage.
-            pilImage_L = Image.new( 'L', image_size )
-            pilImage_L.frombytes( bytes(wxImage.GetAlphaBuffer()))
+            pilImage_L = Image.new("L", image_size)
+            pilImage_L.frombytes(bytes(wxImage.GetAlphaBuffer()))
             # Create an RGBA PIL image from the 4 layers.
-            pilImage = Image.merge( 'RGBA', (r_pilImage, g_pilImage, b_pilImage, pilImage_L) )
-        elif (not hasAlpha) and createTransp :      # Ignore keepTransp - has no meaning
+            pilImage = Image.merge(
+                "RGBA", (r_pilImage, g_pilImage, b_pilImage, pilImage_L)
+            )
+        elif (not hasAlpha) and createTransp:  # Ignore keepTransp - has no meaning
             # Create a Black L mode pilImage. The resulting image will still
             #  look the same, but will allow future transparency modification.
-            pilImage_L = Image.new( 'L', image_size )        
+            pilImage_L = Image.new("L", image_size)
             # Create an RGBA pil image from the 4 bands.
-            pilImage = Image.merge( 'RGBA', (r_pilImage, g_pilImage, b_pilImage, pilImage_L) )
+            pilImage = Image.merge(
+                "RGBA", (r_pilImage, g_pilImage, b_pilImage, pilImage_L)
+            )
         return cls.from_pil(pilImage)
 
     @classmethod

@@ -30,7 +30,7 @@ class TextRange(Container):
 
     @property
     def midrange(self):
-        return math.floor((self.start + self.stop)/2)
+        return math.floor((self.start + self.stop) / 2)
 
     def operator_imp(self, other, operator_func):
         if isinstance(other, self.__class__):
