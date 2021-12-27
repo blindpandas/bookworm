@@ -3,15 +3,13 @@
 import sys
 import os
 import base64
-import subprocess
 from bookworm import config
 from bookworm.document import create_document
 from bookworm.concurrency import call_threaded
-from bookworm.runtime import CURRENT_PACKAGING_MODE, PackagingMode
 from bookworm.document.uri import DocumentUri
 from bookworm.service import BookwormService
 from bookworm.signals import reader_book_loaded
-from bookworm.commandline_handler import BaseSubcommandHandler, register_subcommand
+from bookworm.commandline_handler import BaseSubcommandHandler, register_subcommand, run_subcommand_in_a_new_process
 from bookworm.logger import logger
 from .local_bookshelf.models import (
     DEFAULT_BOOKSHELF_DATABASE_FILE,
@@ -136,21 +134,4 @@ class BookshelfService(BookwormService):
             "--tag",
             ""
         ]
-        if CURRENT_PACKAGING_MODE is not PackagingMode.Source:
-            executable = sys.executable
-        else:
-            executable = "pyw.exe"
-            args.insert(0, "-m")
-            args.insert(1, "bookworm")
-        args.insert(0, executable)
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        subprocess.Popen(
-            args,
-            startupinfo=startupinfo,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            creationflags=subprocess.DETACHED_PROCESS
-            | subprocess.CREATE_NEW_PROCESS_GROUP
-            | subprocess.CREATE_NO_WINDOW,
-        )
+        run_subcommand_in_a_new_process(args)

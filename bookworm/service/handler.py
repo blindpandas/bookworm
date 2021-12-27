@@ -16,6 +16,7 @@ from bookworm.ocr import OCRService
 from bookworm.text_to_speech import TextToSpeechService
 from bookworm.continuous_reading import ContReadingService
 from bookworm.bookshelf import BookshelfService
+from bookworm.epub_serve import EpubServeService
 from bookworm.webservices import (
     WebservicesBaseService,
     WikipediaService,
@@ -32,6 +33,7 @@ BUILTIN_SERVICES = (
     ContReadingService,
     UrlOpenService,
     WikipediaService,
+    EpubServeService,
 )
 
 

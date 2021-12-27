@@ -3,6 +3,7 @@
 from __future__ import annotations
 import sys
 import argparse
+import subprocess
 from abc import ABC, abstractmethod
 from pprint import pformat as pritty_format
 from bookworm import typehints as t
@@ -61,3 +62,25 @@ def handle_app_commandline_args():
         log.info(f"Received command line arguments:\n{pritty_format(args)}")
         log.debug(f"Executing sub command: {args.subparser_name}")
         return args.subcommand_cls.handle_commandline_args(args)
+
+
+def run_subcommand_in_a_new_process(args, executable=None):
+    if executable is None:
+        if CURRENT_PACKAGING_MODE is not PackagingMode.Source:
+            executable = sys.executable
+        else:
+            executable = "pyw.exe"
+            args.insert(0, "-m")
+            args.insert(1, "bookworm")
+        args.insert(0, executable)
+    startupinfo = subprocess.STARTUPINFO()
+    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    subprocess.Popen(
+        args,
+        startupinfo=startupinfo,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        creationflags=subprocess.DETACHED_PROCESS
+        | subprocess.CREATE_NEW_PROCESS_GROUP
+        | subprocess.CREATE_NO_WINDOW,
+    )
