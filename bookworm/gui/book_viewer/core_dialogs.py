@@ -9,6 +9,7 @@ import more_itertools
 from collections import namedtuple
 from itertools import chain
 from bookworm import config
+from bookworm.reader import EBookReader
 from bookworm.document.operations import SearchRequest
 from bookworm.utils import gui_thread_safe
 from bookworm.image_io import ImageIO
@@ -316,10 +317,11 @@ class ElementListDialog(SimpleDialog):
 
 
 class DocumentInfoDialog(SimpleDialog):
-    def __init__(self, *args, document_info, view, offer_open_action=False, **kwargs):
+    def __init__(self, *args, document_info, view=None, offer_open_action=False, open_in_a_new_instance=False, **kwargs):
         self.document_info = document_info
         self.view = view
         self.offer_open_action = offer_open_action
+        self.open_in_a_new_instance = open_in_a_new_instance
         kwargs.setdefault("title", _("Document Info"))
         super().__init__(*args, **kwargs)
 
@@ -382,13 +384,14 @@ class DocumentInfoDialog(SimpleDialog):
 
     def onOpenDocument(self, event):
         self.Close()
-        self.view.open_uri(self.document_info.uri)
+        if self.open_in_a_new_instance:
+            EBookReader.open_document_in_a_new_instance(self.document_info.uri)
+        else:
+            self.view.open_uri(self.document_info.uri)
 
     def get_cover_image(self):
         if cover_image := self.document_info.cover_image:
-            pil_image = cover_image.to_pil()
-            pil_image.thumbnail(size=(512, 512))
-            return cover_image.from_pil(pil_image)
+            return cover_image.make_thumbnail(512, 512)        
 
     def create_info_field(self, parent, label, value):
         wx.StaticText(parent, -1, label)

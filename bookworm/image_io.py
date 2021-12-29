@@ -7,6 +7,7 @@ import wx
 import fitz
 from dataclasses import dataclass
 from PIL import Image
+from PIL import ImageOps
 from lazy_import import lazy_module
 from bookworm import typehints as t
 from bookworm.logger import logger
@@ -157,3 +158,10 @@ class ImageIO:
     def from_bytes(cls, value):
         img = Image.open(io.BytesIO(value))
         return cls.from_pil(img)
+
+    def make_thumbnail(self, width, height, *, exact_fit=False, fil_color="#fff"):
+        pil_image = self.to_pil()
+        pil_image.thumbnail(size=(width, height))
+        if exact_fit:
+            pil_image = ImageOps.pad(pil_image, (width, height), color =fil_color)
+        return self.from_pil(pil_image)

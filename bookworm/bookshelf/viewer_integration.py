@@ -3,9 +3,10 @@
 
 import wx
 from enum import IntEnum
+from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.logger import logger
-from ._window import BookshelfWindow
+from .window import BookshelfWindow
 
 log = logger.getChild(__name__)
 
@@ -76,4 +77,4 @@ class BookshelfMenu(wx.Menu):
         )
 
     def onOpenBookshelf(self, event):
-        BookshelfWindow(self.view, _("Bookshelf")).Show()
+        run_subcommand_in_a_new_process(["bookshelf",])

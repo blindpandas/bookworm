@@ -355,7 +355,7 @@ class FileMenu(BaseMenu):
 
 
 class DocumentMenu(BaseMenu):
-    """Information about the current document."""
+    """Actions related to the current document."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -363,11 +363,11 @@ class DocumentMenu(BaseMenu):
 
     def create(self):
         self.Append(
-            BookRelatedMenuIds.changeReadingMode,
+            BookRelatedMenuIds.document_info,
             # Translators: the label of an item in the application menubar
-            _("Change Reading &Mode...\tCtrl-Shift-M"),
+            _("Document &Info..."),
             # Translators: the help text of an item in the application menubar
-            _("Change the current reading mode."),
+            _("Show information about number of chapters, word count..etc."),
         )
         self.Append(
             BookRelatedMenuIds.element_list,
@@ -377,11 +377,11 @@ class DocumentMenu(BaseMenu):
             _("Show a list of semantic elements."),
         )
         self.Append(
-            BookRelatedMenuIds.document_info,
+            BookRelatedMenuIds.changeReadingMode,
             # Translators: the label of an item in the application menubar
-            _("Document &Info..."),
+            _("Change Reading &Mode...\tCtrl-Shift-M"),
             # Translators: the help text of an item in the application menubar
-            _("Show information about number of chapters, word count..etc."),
+            _("Change the current reading mode."),
         )
         self.Append(
             BookRelatedMenuIds.viewRenderedAsImage,

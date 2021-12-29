@@ -39,5 +39,8 @@ def create_document(uri, read=True):
         )
     document = doc_cls(uri)
     if read:
-        document.read()
+        try:
+            document.read()
+        except ChangeDocument as e:
+            return create_document(e.new_uri, read)
     return document

@@ -9,12 +9,6 @@
   <link href="images/readium-touch-icon.png" rel="apple-touch-icon"/>
   <link rel="stylesheet" type="text/css" href="css/readium-all.css">
 
-  <style type="text/css">
-    #reading-area {
-      margin: auto;
-      width: 70%;
-    }
-  </style>
   <script type="text/javascript" src="scripts/readium-js-viewer_all_LITE.js"> </script>
   <script type="text/javascript" src="font-faces/fonts.js"> </script>
 
@@ -124,11 +118,12 @@
                     //enableGPUHardwareAccelerationCSS3D: true,
                   });
                   // Configure the reader settings to sensable defaults
-                  Settings.get('reader', function(data) {
-                    data['syntheticSpread']= 'single';
-                    data['scroll'] = 'scroll-doc';
-                    data['theme'] = "night-theme";
-                  });
+                  var given_reader_settings = READIUM.reader.viewerSettings();
+                  given_reader_settings['syntheticSpread'] = 'single';
+                  given_reader_settings['scroll'] = 'scroll-doc';
+                  given_reader_settings['theme'] = 'night-theme';
+                  // ReadiumSDK.reader.getCurrentView().setViewSettings(given_reader_settings);
+                  document.querySelector("button#tocButt").click();
                 });
             },
             500

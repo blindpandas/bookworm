@@ -121,7 +121,7 @@ def setupSubsystems():
     init_database()
 
 
-def log_dianostic_info():
+def log_diagnostic_info():
     log.info("Starting Bookworm.")
     log.info(f"Bookworm Version: {appinfo.version}")
     log.info(f"Python version: {sys.version}")
@@ -147,7 +147,7 @@ def init_app_and_run_main_loop():
 
     if IS_IN_MAIN_PROCESS or not appinfo.is_frozen:
         configure_logger()
-    log_dianostic_info()
+    log_diagnostic_info()
     if appinfo.args.debug or os.getenv("BOOKWORM_DEBUG"):
         appinfo.debug = True
     log.info(f"Debug mode is {'on' if appinfo.debug else 'off'}.")

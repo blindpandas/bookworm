@@ -49,8 +49,8 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
     supported_reading_modes: t.Tuple[ReadingMode] = (ReadingMode.DEFAULT,)
     default_reading_mode: ReadingMode = ReadingMode.DEFAULT
 
-    document_classes: list = {}
-    """Supported document types."""
+    document_classes: dict[str, t.ForwardRef("BaseDocument")] = {}
+    """A dict of subclasses representing supported document types."""
 
     @classmethod
     def __init_subclass__(cls, *args, **kwargs):

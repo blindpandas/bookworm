@@ -13,6 +13,8 @@ from playhouse.sqlite_ext import (
     SearchField,
 )
 from bookworm.paths import db_path
+from bookworm.document import DocumentInfo
+from bookworm.i18n import LocaleInfo
 from .database import (
     AutoOptimizedAPSWDatabase,
     AutoCalculatedField,
@@ -92,9 +94,34 @@ class BaseModel(Model):
 class Author(BaseModel):
     name = TextField(index=True, null=False)
 
+    @classmethod
+    def get_all(cls):
+        return Author.select().distinct().order_by(Author.name)
+
+    @classmethod
+    def get_documents(cls, name):
+        return (
+            Document.select()
+            .join(DocumentAuthor, on=DocumentAuthor.document_id == Document.id)
+            .join(Author, on=DocumentAuthor.author_id == Author.id)
+            .where(Author.name == name)
+        )
+        
 
 class Category(BaseModel):
     name = TextField(unique=True, null=False)
+
+    @classmethod
+    def get_all(cls):
+        return Category.select().distinct().order_by(Category.name)
+
+    @classmethod
+    def get_documents(cls, name):
+        return (
+            Document.select()
+            .join(Category)
+            .where(Category.name == name)
+        )
 
 
 class Format(BaseModel):
@@ -103,6 +130,19 @@ class Format(BaseModel):
 
 class Tag(BaseModel):
     name = TextField(unique=True, null=False)
+
+    @classmethod
+    def get_all(cls):
+        return Tag.select().distinct().order_by(Tag.name)
+
+    @classmethod
+    def get_documents(cls, name):
+        return (
+            Document.select()
+            .join(DocumentTag, on=DocumentTag.document_id == Document.id)
+            .join(Tag, on=DocumentTag.tag_id == Tag.id)
+            .where(Tag.name == name)
+        )
 
 
 class Document(BaseModel):
@@ -124,7 +164,18 @@ class Document(BaseModel):
         model=Category,
         backref="documents",
     )
-    metadata = JSONField(json_dumps=ujson.dumps, json_loads=ujson.loads, null=True)
+    metadata = JSONField(json_dumps=ujson.dumps, json_loads=ujson.loads, null=True, default={})
+
+    def as_document_info(self) -> DocumentInfo:
+        return DocumentInfo(
+            uri=self.uri,
+            title=self.title,
+            language=self.metadata.get("language", LocaleInfo("en")),
+            number_of_sections=self.metadata.get("number_of_sections"),
+            number_of_pages=self.metadata.get("number_of_pages"),
+            authors=[auth.name for auth in self.authors],
+            cover_image=self.cover_image
+        )
 
 
 class Page(BaseModel):

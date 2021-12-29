@@ -89,6 +89,7 @@ class ContentViewCtrl(wx.TextCtrl):
             evtType == wx.EVT_CHAR_HOOK.typeId
             and (keycode := event.GetKeyCode()) in SEMANTIC_KEY_MAP
             and not event.ControlDown()
+            and not event.AltDown()
         ):
             wx.QueueEvent(
                 self,

@@ -28,9 +28,9 @@ from .webapp import EpubServingApp
 log = logger.getChild(__name__)
 
 
-BOOKWORM_EPUB_SERVE_DEFAULT_PORT = 31585
+BOOKWORM_EPUB_SERVE_DEFAULT_PORT = 61073
 BOOKWORM_EPUB_SERVE_SHARED_MEMORY_NAME = "bkw.epub.serve.port"
-BOOKWORM_EPUB_SERVE_SHARED_MEMORY_SIZE = 32
+BOOKWORM_EPUB_SERVE_SHARED_MEMORY_SIZE = 4
 SERVER_READY_TIMEOUT = 120
 
 
@@ -70,7 +70,7 @@ class EpubServeSubcommand(BaseSubcommandHandler):
         )
         atexit.register(shm.unlink)
         app = EpubServingApp()
-        log.debug(f"Server is running at: localhost:{server_port}/")
+        log.debug(f"Server is running at: localhost:{server_port}")
         waitress.serve(app, listen=f"localhost:{server_port}")
         shm.unlink()
 
@@ -102,8 +102,8 @@ class EpubServeService(BookwormService):
         self.stateful_menu_ids.append(self.openOnWebReaderId)
         self.view.documentMenu.Append(
             self.openOnWebReaderId,
-            _("Open on &web Viewer"),
-            _("Open the current EPUB book on the browser"),
+            _("Open in &web Viewer"),
+            _("Open the current EPUB book in the browser"),
         )
         self.view.Bind(wx.EVT_MENU, self.onOpenonWeb, id=self.openOnWebReaderId)
 
@@ -126,18 +126,28 @@ class EpubServeService(BookwormService):
         server_port = EpubServeSubcommand.get_epub_server_port()
         if server_port is not None:
             return self.make_epub_viewer_url(server_port, filename)
-        run_subcommand_in_a_new_process(args=["epub_serve"])
+        run_subcommand_in_a_new_process(args=[EpubServeSubcommand.subcommand_name,])
         now = time.monotonic()
-        while (now - time.monotonic()) <= SERVER_READY_TIMEOUT:
+        while (time.monotonic() - now) <= SERVER_READY_TIMEOUT:
             server_port = EpubServeSubcommand.get_epub_server_port()
             if server_port is not None:
                 return self.make_epub_viewer_url(server_port, filename)
             else:
                 time.sleep(1)
-        raise TimeoutError("Could not get server IP within 30 seconds")
+        raise TimeoutError("Server timed out. Failed to start the server.")
 
     def server_data_ready_callback(self, future):
-        self.view.go_to_webpage(future.result())
+        try:
+            web_viewe_url = future.result()
+        except:
+            log.exception("Error opening the web viewer", exc_info=True)
+            self.view.notify_user(
+                _("Failed to launch web viewer"),
+                _("An error occurred while opening the web viewer. Please try again."),
+                icon=wx.ICON_ERROR
+            )
+        else:
+            self.view.go_to_webpage(web_viewe_url)
 
     def make_epub_viewer_url(self, server_port, filename):
         res = requests.post(

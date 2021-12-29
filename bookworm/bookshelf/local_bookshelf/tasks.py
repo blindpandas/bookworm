@@ -4,7 +4,7 @@ import more_itertools
 import bookworm.typehints as t
 from bookworm.document.base import BaseDocument
 from bookworm.logger import logger
-from .local_bookshelf.models import (
+from .models import (
     Author,
     Category,
     Format,
@@ -19,7 +19,7 @@ log = logger.getChild(__name__)
 
 
 def add_document_to_bookshelf(
-    document: BaseDocument, category_name, tags_names: list[str]
+    document: BaseDocument, category_name: str, tags_names: list[str]
 ):
     """Add the given document to the bookshelf database."""
     if (existing_doc := Document.get_or_none(uri=document.uri)) is not None:

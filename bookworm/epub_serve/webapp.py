@@ -11,7 +11,6 @@ from tempfile import TemporaryDirectory
 from functools import lru_cache, cached_property
 from bottle import (
     Bottle,
-    Router,
     HTTPError,
     template,
     request,
@@ -30,7 +29,7 @@ log = logger.getChild(__name__)
 
 WEB_RESOURCES_PATH = paths.resources_path("readium_js_viewer_lite")
 TEMPLATE_PATH = WEB_RESOURCES_PATH / "templates"
-OPENED_EPUBS: dict[str, tuple[ZipFile, list[str]]] = {}
+OPENED_EPUBS: dict[str, TemporaryDirectory] = {}
 
 
 class EpubServingConfig:
@@ -71,8 +70,11 @@ class EpubServingConfig:
             self.app.route(path, callback=view_func, **kwargs)
 
     @lru_cache()
-    def get_template(self, filename):
-        return TEMPLATE_PATH.joinpath(filename).read_text()
+    def get_template(self, filename, as_bytes=False):
+        if as_bytes:
+            return TEMPLATE_PATH.joinpath(filename).read_bytes()
+        else:
+            return TEMPLATE_PATH.joinpath(filename).read_text()
 
     def extract_epub(self, book_uid, filename):
         epub_extraction_dir = TemporaryDirectory()
@@ -86,8 +88,7 @@ class EpubServingConfig:
                 raise HTTPError(400, f"Bad epub file: {filename}")
             book_uid = generate_sha1hash(filename)
             if book_uid not in OPENED_EPUBS:
-                threaded_worker.submit(
-                    self.extract_epub,
+                self.extract_epub(
                     book_uid,
                     filename,
                 )
@@ -109,9 +110,18 @@ class EpubServingConfig:
         if (book_path := request.query.get("epub")) is None or book_path.strip(
             " /"
         ).split("/")[-1] not in OPENED_EPUBS:
-            raise HTTPError(400, "Missing or Invalid book_uid")
+            response.status = '404 Not Found'
+            return template(
+                self.get_template('error.html'),
+                title=_("404 Not Found"),
+                message=_(
+                    "The book you are trying to access does not exist or has been closed. "
+                    "Please make sure you opened the book from within Bookworm. "
+                    "All URLs are temporary and may not work after you close the page."
+                )
+            )
         response.status = "200 OK"
-        return TEMPLATE_PATH.joinpath("index.html").read_bytes()
+        return self.get_template('index.html', as_bytes=True)
 
     def epub_archive_view(self, book_uid, path=None):
         if (request.path is None) or (request.method != "GET"):

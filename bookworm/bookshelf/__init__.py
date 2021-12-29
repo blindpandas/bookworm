@@ -5,8 +5,8 @@ import os
 import base64
 from bookworm import config
 from bookworm.document import create_document
-from bookworm.concurrency import call_threaded
 from bookworm.document.uri import DocumentUri
+from bookworm.concurrency import call_threaded
 from bookworm.service import BookwormService
 from bookworm.signals import reader_book_loaded
 from bookworm.commandline_handler import (
@@ -22,15 +22,29 @@ from .local_bookshelf.models import (
     Page,
     DocumentFTSIndex,
 )
-from .interface import BookshelfSettingsPanel, BookshelfMenu, BookshelfWindow
-from .tasks import add_document_to_bookshelf
-
+from .local_bookshelf.tasks import add_document_to_bookshelf
+from .viewer_integration import BookshelfSettingsPanel, BookshelfMenu
+from .window import run_bookshelf_standalone
 
 log = logger.getChild(__name__)
 
 
 DEFAULT_CATEGORY_DB_VALUE = "General"
 DEFAULT_CATEGORY_USER_FACING_VALUE = _("General")
+
+
+@register_subcommand
+class BookshelfSubcommandHandler(BaseSubcommandHandler):
+    subcommand_name = "bookshelf"
+
+    @classmethod
+    def add_arguments(cls, subparser):
+        pass
+
+    @classmethod
+    def handle_commandline_args(cls, args):
+        run_bookshelf_standalone()
+        return 0
 
 
 @register_subcommand
@@ -72,24 +86,6 @@ class DocumentIndexerSubcommandHandler(BaseSubcommandHandler):
                 log.warning(f"{document=} is an internal document. Doing nothing...")
             else:
                 add_document_to_bookshelf(document, args.category, args.tags)
-        return 0
-
-
-@register_subcommand
-class BookshelfLauncherSubcommand(BaseSubcommandHandler):
-    subcommand_name = "bookshelf"
-
-    @classmethod
-    def add_arguments(cls, subparser):
-        subparser.add_argument(
-            "--db-file",
-            help="Sqlite database file to store the document to",
-            default=os.fspath(DEFAULT_BOOKSHELF_DATABASE_FILE),
-        )
-
-    @classmethod
-    def handle_commandline_args(cls, args):
-        BookshelfWindow.show_standalone(database_file=args.db_file)
         return 0
 
 

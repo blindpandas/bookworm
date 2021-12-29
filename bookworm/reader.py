@@ -2,9 +2,11 @@
 
 import os
 from contextlib import suppress
+from pathlib import Path
 from bookworm import typehints as t
 from bookworm import app
 from bookworm import config
+from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.database import DocumentPositionInfo
 from bookworm.i18n import is_rtl
 from bookworm.document.uri import DocumentUri
@@ -378,3 +380,9 @@ class EBookReader:
                     title=view_title, author=author
                 )
         return view_title + f" - {app.display_name}"
+
+    @staticmethod
+    def open_document_in_a_new_instance(uri):
+        new_uri = uri.create_copy(path=Path(uri.path).as_posix())
+        q_uri_str = '"%s"' % new_uri.to_uri_string()
+        run_subcommand_in_a_new_process(["launcher", new_uri.path])
