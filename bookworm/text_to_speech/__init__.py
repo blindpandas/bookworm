@@ -10,7 +10,7 @@ from bookworm import config
 from bookworm.platform_services.speech_engines import TTS_ENGINES
 from bookworm.resources import sounds
 from bookworm.structured_text import TextInfo
-from bookworm.resources import images
+from bookworm.resources import app_icons
 from bookworm.speechdriver import DummySpeechEngine, speech_engine_state_changed
 from bookworm.speechdriver.utterance import SpeechUtterance, SpeechStyle
 from bookworm.speechdriver.enumerations import (
@@ -485,9 +485,9 @@ class TextToSpeechService(BookwormService):
         if state is SynthState.ready:
             self.clear_highlighted_ranges()
         if state is SynthState.busy:
-            image = images.pause
+            image = app_icons.pause
         else:
-            image = images.play
+            image = app_icons.play
         self.view.toolbar.SetToolNormalBitmap(
             StatefulSpeechMenuIds.playToggle, image.GetBitmap()
         )

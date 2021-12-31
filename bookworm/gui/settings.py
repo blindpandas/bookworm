@@ -13,7 +13,7 @@ from bookworm.utils import restart_application
 from bookworm.i18n import get_available_locales, set_locale
 from bookworm.signals import app_started, config_updated
 from bookworm.runtime import IS_RUNNING_PORTABLE
-from bookworm.resources import images
+from bookworm.resources import app_icons
 from bookworm.platform_services.shell import (
     shell_integrate,
     shell_disintegrate,
@@ -428,7 +428,7 @@ class PreferencesDialog(SimpleDialog):
         image_list = wx.ImageList(24, 24)
         self.tabs.AssignImageList(image_list)
         for idx, (__, image, panel_cls, label) in enumerate(page_info):
-            bmp = getattr(images, image).GetBitmap()
+            bmp = getattr(app_icons, image).GetBitmap()
             image_list.Add(bmp)
             # Create settings page
             page = panel_cls(self.tabs, self)

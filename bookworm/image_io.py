@@ -55,7 +55,7 @@ class ImageIO:
         return self.from_cv2(cv2.bitwise_not(self.to_cv2()))
 
     @classmethod
-    def from_path(cls, image_path: t.PathLike) -> "ImageBlueprint":
+    def from_filename(cls, image_path: t.PathLike) -> "ImageBlueprint":
         try:
             pil_image = Image.open(image_path).convert("RGB")
             return cls.from_pil(pil_image)

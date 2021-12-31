@@ -122,12 +122,13 @@ def make_icons(c):
 
     TARGET_SIZE = (24, 24)
     IMAGE_SOURCE_FOLDER = PROJECT_ROOT / "fullsize_images"
-    PY_MODULE = PACKAGE_FOLDER / "resources" / "image_data.py"
+    APP_ICONS_FOLDER = IMAGE_SOURCE_FOLDER / "app_icons"
+    PY_MODULE = PACKAGE_FOLDER / "resources" / "app_icons_data.py"
     print(f"Rescaling images and embedding them in {PY_MODULE}")
     if PY_MODULE.exists():
         PY_MODULE.unlink()
     with TemporaryDirectory() as temp:
-        for index, imgfile in enumerate(Path(IMAGE_SOURCE_FOLDER).iterdir()):
+        for index, imgfile in enumerate(Path(APP_ICONS_FOLDER).iterdir()):
             filename, ext = os.path.splitext(imgfile.name)
             if imgfile.is_dir() or ext != ".png":
                 continue
@@ -166,14 +167,14 @@ def make_icons(c):
     }
     if not inst_dst.exists():
         inst_dst.mkdir(parents=True, exist_ok=True)
-    make_installer_image(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").save(
+    make_installer_image(IMAGE_SOURCE_FOLDER  / "bookworm.png").save(
         inst_dst / "bookworm-logo.bmp"
     )
     for fname, imgsize in inst_imgs.items():
         imgfile = inst_dst.joinpath(fname)
         if not imgfile.exists():
             print(f"Creating image {fname}.")
-            Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").resize(
+            Image.open(IMAGE_SOURCE_FOLDER  / "bookworm.png").resize(
                 imgsize
             ).save(imgfile)
             print(f"Copied image {fname} to the assets folder.")
@@ -238,6 +239,11 @@ def copy_assets(c):
         Image.open(img).resize(ICON_SIZE).save(
             ficos_dst.joinpath(img.name.split(".")[0] + ".ico")
         )
+    # Copy the images folder
+    images_src = PROJECT_ROOT / "fullsize_images" / "images"
+    images_dst = RESOURCES_FOLDER / "images"
+    for image_file in images_src.iterdir():
+        c.run(f"cp {image_file} {images_dst}")
     print("Done copying files.")
 
 

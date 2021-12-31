@@ -226,6 +226,14 @@ class DialogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         wx.ListCtrl.__init__(self, parent, id, pos, size, style)
         listmix.ListCtrlAutoWidthMixin.__init__(self)
 
+    def set_focused_item(self, idx: int):
+        if idx >= self.ItemCount:
+            return
+        self.SetFocus()
+        self.EnsureVisible(idx)
+        self.Select(idx)
+        self.SetItemState(idx, wx.LIST_STATE_FOCUSED, wx.LIST_STATE_FOCUSED)
+
 
 class Dialog(wx.Dialog):
     """Base dialog for `Bookworm` GUI dialogs."""
@@ -465,14 +473,6 @@ class ImmutableObjectListView(DialogListCtrl):
         idx = self.GetFocusedItem()
         if idx != wx.NOT_FOUND:
             return self._objects[idx]
-
-    def set_focused_item(self, idx: int):
-        if idx >= self.ItemCount:
-            return
-        self.SetFocus()
-        self.EnsureVisible(idx)
-        self.Select(idx)
-        self.SetItemState(idx, wx.LIST_STATE_FOCUSED, wx.LIST_STATE_FOCUSED)
 
     def prevent_mutations(self):
         if not self.__is_modifying:

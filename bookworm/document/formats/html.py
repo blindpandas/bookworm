@@ -1,17 +1,16 @@
 # coding: utf-8
 
 from __future__ import annotations
-import trafilatura
 import requests
 from pathlib import Path
 from contextlib import contextmanager
 from functools import cached_property
-from more_itertools import zip_offset
+from concurrent.futures import ProcessPoolExecutor
+from more_itertools import zip_offset, first as get_first_element
 from chemical import it
 from diskcache import Cache
+from lxml import html as lxml_html
 from lxml import etree
-from lxml.html import etree as HtmlEtree
-from trafilatura.external import custom_justext, JT_STOPLIST
 from bookworm.paths import home_data_path
 from bookworm.http_tools import HttpResource
 from bookworm.structured_text import (
@@ -46,6 +45,62 @@ from .. import (
 log = logger.getChild(__name__)
 # Default cache timeout
 EXPIRE_TIMEOUT = 7 * 24 * 60 * 60
+
+
+
+def get_clean_html(html_string: str) -> (str, BookMetadata):
+    """Clean the given html using trafilatura."""
+
+    # trafilatura has a memory leak issue
+    # Therefore, we run it in a separate process
+
+    import trafilatura
+    from trafilatura.external import custom_justext, JT_STOPLIST
+
+    html_string = StructuredHtmlParser.normalize_html(html_string)
+
+    # Extract metadata
+    meta_info = trafilatura.metadata.extract_metadata(html_string) or {}
+    doc_title = meta_info.get("title", "")
+    if not doc_title:
+        html = lxml_html.fromstring(html_string)
+        extracted_title = html.xpath("head/title")
+        try:
+            doc_title = extracted_title.text
+        except AttributeError:
+            if extracted_title:
+                doc_title = extracted_title[0].text
+            else:
+                doc_title = ""
+    doc_metadata = BookMetadata(
+        title=doc_title,
+        author=meta_info.get("author", ""),
+        publisher=meta_info.get("sitename", ""),
+        publication_year=meta_info.get("date", ""),
+    )
+
+    # Extract the body
+    extracted = trafilatura.extract(html_string, output_format="xml", include_links=True)
+    xml_content = etree.fromstring(extracted)
+    main_content = xml_content.xpath("main")[0]
+    for node in main_content.cssselect("head"):
+        node.tag = "h2"
+    output_template = [
+        "<html><body>",
+        "<h1>%s</h1>" %(escape_html(doc_metadata.title),),
+       lxml_html.tostring(
+            main_content,
+            pretty_print=False,
+            method="html",
+            encoding='unicode'
+        ),
+        "</body></html>",
+    ]
+    return (
+        "".join(output_template),
+        doc_metadata
+    )
+
 
 
 class BaseHtmlDocument(SinglePageDocument):
@@ -84,15 +139,16 @@ class BaseHtmlDocument(SinglePageDocument):
         except Exception as e:
             log.exception("Failed to retrieve html content.", exc_info=True)
             raise DocumentIOError("Failed to get html") from e
-        html = trafilatura.utils.load_html(self.html_string)
-        self.parse_metadata(html)
         reading_mode = self.reading_options.reading_mode
         if reading_mode == reading_mode.CLEAN_VIEW:
-            self.parse_to_clean_text(html)
+            self.parse_to_clean_text()
         elif reading_mode == ReadingMode.FULL_TEXT_VIEW:
-            self.parse_to_full_text(html)
+            self.parse_to_full_text()
         else:
-            self.parse_html(html)
+            self.parse_html()
+
+    def parse_html(self):
+        return self.parse_to_full_text()
 
     def get_content(self):
         return self._text
@@ -127,35 +183,36 @@ class BaseHtmlDocument(SinglePageDocument):
             if anchor := self.anchors.get(anchor, None):
                 return LinkTarget(url=href, is_external=False, position=anchor)
 
-    def _get_heading_level(self, parag):
-        return int(parag.dom_path[-1])
+    def parse_to_clean_text(self):
+        with ProcessPoolExecutor(max_workers=1) as executor:
+            task = executor.submit(get_clean_html, self.html_string)
+            try:
+                result = task.result()
+            except Exception as e:
+                log.exception("Failed to parse html string for clean view", exc_info=True)
+                raise DocumentIOError from e
+            html_content, metadata = result
+            self._metainfo = metadata
+            return self.parse_text_and_structure(html_content)
 
-    @contextmanager
-    def _create_toc_stack(self):
-        root = Section(
-            pager=SINGLE_PAGE_DOCUMENT_PAGER,
-            text_range=TextRange(0, -1),
-            title=self._metainfo.title,
-            level=1,
-        )
-        stack = TreeStackBuilder(root)
-        yield stack, root
-        self._outline = root
-
-    def parse_metadata(self, html):
-        meta_info = trafilatura.metadata.extract_metadata(html) or {}
-        doc_title = meta_info.get("title", "")
-        if not doc_title:
-            doc_title = html.xpath("head/title").text
+    def parse_to_full_text(self):
+        html = lxml_html.fromstring(self.html_string)
+        # Extract metadata
+        title_els = html.cssselect("title")
+        title = _("HTML Document") if not title_els else title_els[0].text
+        author_el = html.cssselect('head > meta[name="author"]')
+        author = "" if not author_el else author_el[0].get('content')
         self._metainfo = BookMetadata(
-            title=doc_title,
-            author=meta_info.get("author", ""),
-            publisher=meta_info.get("sitename", ""),
-            publication_year=meta_info.get("date", ""),
+            title=title,
+            author=author
         )
+        return self.parse_text_and_structure(self.html_string)
 
     def parse_text_and_structure(self, html):
-        extracted_text_and_info = StructuredHtmlParser(html)
+        if type(html) in (str, bytes):
+            extracted_text_and_info = StructuredHtmlParser.from_string(html)
+        else:
+            extracted_text_and_info = StructuredHtmlParser(html)
         self._semantic_structure = extracted_text_and_info.semantic_elements
         self._style_info = extracted_text_and_info.styled_elements
         self.link_targets = extracted_text_and_info.link_targets
@@ -191,27 +248,22 @@ class BaseHtmlDocument(SinglePageDocument):
                 all_sections[-1].text_range.stop = last_pos
             root.text_range = TextRange(0, last_pos)
 
-    def parse_to_full_text(self, html):
-        return self.parse_text_and_structure(html)
+    def _get_heading_level(self, parag):
+        return int(parag.dom_path[-1])
 
-    def parse_to_clean_text(self, html):
-        extracted = trafilatura.extract(html, output_format="xml")
-        xml_content = etree.fromstring(extracted)
-        main_content = xml_content.xpath("main")[0]
-        for node in main_content.cssselect("head"):
-            node.tag = "h2"
-        html_string = (
-            "<html><body>"
-            + f"<h1>{escape_html(self.metadata.title)}</h1>"
-            + HtmlEtree.tostring(
-                main_content,
-                encoding="unicode",
-                pretty_print=False,
-                method="html",
-            )
-            + "</body></html>"
+    @contextmanager
+    def _create_toc_stack(self):
+        root = Section(
+            pager=SINGLE_PAGE_DOCUMENT_PAGER,
+            text_range=TextRange(0, -1),
+            title=self._metainfo.title,
+            level=1,
         )
-        return self.parse_text_and_structure(HtmlEtree.fromstring(html_string))
+        stack = TreeStackBuilder(root)
+        yield stack, root
+        self._outline = root
+
+
 
 
 class FileSystemHtmlDocument(BaseHtmlDocument):
@@ -223,21 +275,20 @@ class FileSystemHtmlDocument(BaseHtmlDocument):
 
     def get_html(self):
         with open(self.filename, "r", encoding="utf8") as file:
-            return StructuredHtmlParser.normalize_html(file.read())
+            return file.read()
 
     def read(self):
         self.filename = self.get_file_system_path()
         super().read()
 
-    def parse_html(self, html_string):
-        return self.parse_to_full_text(html_string)
+    def parse_html(self):
+        return self.parse_to_full_text()
 
 
 class WebHtmlDocument(BaseHtmlDocument):
 
     __internal__ = True
     format = "webpage"
-    capabilities = BaseHtmlDocument.capabilities | DC.ASYNC_READ
 
     def _get_cache_directory(self):
         return str(home_data_path("_web_cache"))
@@ -256,6 +307,7 @@ class WebHtmlDocument(BaseHtmlDocument):
         except ConnectionError as e:
             log.exception(f"Failed to obtain resource from url: {url}", exc_info=True)
             req = None
+            raise DocumentIOError from e
         stored_content, tag = _cache.get(url, tag=True)
         if stored_content is not None:
             if (req is None) or (tag == req.etag):
@@ -264,5 +316,5 @@ class WebHtmlDocument(BaseHtmlDocument):
         _cache.set(url, html_string, tag=req.etag, expire=EXPIRE_TIMEOUT)
         return html_string
 
-    def parse_html(self, html_string):
-        return self.parse_to_clean_text(html_string)
+    def parse_html(self):
+        return self.parse_to_clean_text()

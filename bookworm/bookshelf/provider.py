@@ -40,11 +40,16 @@ class BookshelfProvider(ABC):
         """Checks the availability of this provider at runtime."""
 
     @classmethod
+    @abstractmethod
     def get_sources(
         cls,
-    ) -> list[t.Union[t.ForwardRef("Source"), t.ForwardRef("BookshelfProvider")]]:
+    ) -> list[t.ForwardRef("Source")]:
         """Return a list of sources for this provider."""
-        return self.sources
+
+    @classmethod
+    @abstractmethod
+    def get_provider_actions(cls) -> list[t.ForwardRef("SourceAction")]:
+        """Return a list of actions supported by this provider."""
 
 
 class Source:

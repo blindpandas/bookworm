@@ -5,9 +5,11 @@ import wx.lib.sized_controls as sc
 from enum import IntEnum, auto
 from functools import partial
 from bookworm.concurrency import threaded_worker
-from bookworm.gui.components import ImmutableObjectListView
+from bookworm.image_io import ImageIO
+from bookworm.gui.components import DialogListCtrl
 from bookworm.gui.book_viewer.core_dialogs import DocumentInfoDialog
 from bookworm.resources import sounds
+from bookworm.paths import images_path
 from bookworm.bookshelf.provider import BookshelfProvider, Source, ContainerSource
 from bookworm.logger import logger
 
@@ -75,12 +77,12 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         items = tuple(self.source)
         icon_size = (220, 220)
         image_list = wx.ImageList(*icon_size, mask=False)
-        empty_bitmap = wx.Bitmap(wx.Size(*icon_size))
+        generic_file_icon = ImageIO.from_filename(images_path("generic_document.png")).make_thumbnail(*icon_size).to_wx_bitmap()
         for (idx, doc_info) in enumerate(items):
             if (cover_image := doc_info.cover_image):
                 item_icon = cover_image.make_thumbnail(*icon_size, exact_fit=True).to_wx_bitmap()
             else:
-                item_icon = empty_bitmap
+                item_icon = generic_file_icon
             wx.CallAfter(image_list.Add, item_icon)
         return items, image_list
 
@@ -99,9 +101,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         #self.document_list.Layout()
         self.list_label.SetLabel(_("Documents"))
         sounds.navigation.play()
-        if self.document_list.HasFocus():
-            ImmutableObjectListView.set_focused_item(self.document_list, 0)
-
+        DialogListCtrl.set_focused_item(self.document_list, 0)
 
     @property
     def selected_item(self):

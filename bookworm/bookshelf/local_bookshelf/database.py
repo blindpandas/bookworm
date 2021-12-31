@@ -72,10 +72,12 @@ class ImageField(BlobField):
     """Uses ImageIO to store and retreive images from the database."""
 
     def db_value(self, value):
-        return value.as_bytes(format="JPEG")
+        if value:
+            return value.as_bytes(format="JPEG")
 
     def python_value(self, value):
-        return ImageIO.from_bytes(value)
+        if value:
+            return ImageIO.from_bytes(value)
 
 
 class DocumentUriField(TextField):

@@ -36,6 +36,8 @@ for pkg_name in PACKAGES_WITH_DATA:
 HIDDEN_SUBMODULES = [
     "babel",
     "odf",
+    "trafilatura",
+    "justext",
 ]
 HIDDEN_IMPORTS = [
     "numpy",

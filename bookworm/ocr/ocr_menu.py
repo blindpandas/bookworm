@@ -310,7 +310,7 @@ class OCRMenu(wx.Menu):
             if not filename or not os.path.isfile(filename):
                 return
             # Load the image file
-            image = ImageIO.from_path(filename)
+            image = ImageIO.from_filename(filename)
             if image is None:
                 wx.MessageBox(
                     # Translators: content of a message box

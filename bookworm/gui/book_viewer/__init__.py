@@ -12,7 +12,7 @@ from bookworm import app
 from bookworm import config
 from bookworm import speech
 from bookworm.concurrency import threaded_worker, CancellationToken
-from bookworm.resources import sounds, images
+from bookworm.resources import sounds, app_icons
 from bookworm.paths import app_path, fonts_path
 from bookworm.structured_text import Style, SEMANTIC_ELEMENT_OUTPUT_OPTIONS
 from bookworm.reader import (
@@ -331,7 +331,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             if ident is None:
                 self.toolbar.AddSeparator()
                 continue
-            image = getattr(images, imagename).GetBitmap()
+            image = getattr(app_icons, imagename).GetBitmap()
             # Add toolbar item
             self.toolbar.AddTool(ident, label, image)
 
@@ -514,7 +514,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 move_to_start_of_line,
             ) = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[actual_element_type]
             text_start, text_stop = (
-                self.get_containing_line(start)
+                self.get_containing_line(start + 1)
                 if should_speak_whole_text
                 else (start, stop)
             )

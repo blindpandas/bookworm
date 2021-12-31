@@ -11,6 +11,7 @@ from itertools import chain
 from bookworm import config
 from bookworm.reader import EBookReader
 from bookworm.document.operations import SearchRequest
+from bookworm.paths import images_path
 from bookworm.utils import gui_thread_safe
 from bookworm.image_io import ImageIO
 from bookworm.structured_text import (
@@ -30,7 +31,6 @@ from bookworm.gui.components import (
     EnumRadioBox,
     make_sized_static_box,
 )
-from bookworm.resources import images
 from bookworm.logger import logger
 from .navigation import NavigationProvider
 
@@ -390,8 +390,9 @@ class DocumentInfoDialog(SimpleDialog):
             self.view.open_uri(self.document_info.uri)
 
     def get_cover_image(self):
-        if cover_image := self.document_info.cover_image:
-            return cover_image.make_thumbnail(512, 512)        
+        if (cover_image := self.document_info.cover_image):
+            return cover_image.make_thumbnail(512, 512)
+        return ImageIO.from_filename(images_path("generic_document.png")).make_thumbnail(270, 270)
 
     def create_info_field(self, parent, label, value):
         wx.StaticText(parent, -1, label)

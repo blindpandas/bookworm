@@ -2,7 +2,6 @@
 
 import threading
 import wx
-import trafilatura
 from functools import partial
 from url_normalize import url_normalize
 from platform_utils.clipboard import get_text as get_clipboard_text

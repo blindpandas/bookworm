@@ -41,6 +41,11 @@ class LocalBookshelfProvider(BookshelfProvider):
             for (name, sources) in retval.items()
         ]
 
+    @classmethod
+    def get_provider_actions(cls):
+        return [
+            SourceAction(_("Beep"), lambda: winsound.Beep(2000, 2000))
+        ]
 
 class LocalDatabaseSource(ABC, Source):
     def __init__(self, query, *args, **kwargs):
