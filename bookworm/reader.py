@@ -383,6 +383,4 @@ class EBookReader:
 
     @staticmethod
     def open_document_in_a_new_instance(uri):
-        new_uri = uri.create_copy(path=Path(uri.path).as_posix())
-        q_uri_str = '"%s"' % new_uri.to_uri_string()
-        run_subcommand_in_a_new_process(["launcher", new_uri.path])
+        run_subcommand_in_a_new_process(["launcher", uri.base64_encode(),])

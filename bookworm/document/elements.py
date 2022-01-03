@@ -8,6 +8,7 @@ from collections.abc import Container, Iterable, Sequence, Sized
 from weakref import ref
 from datetime import datetime
 from bookworm import typehints as t
+from bookworm.i18n import LocaleInfo
 from bookworm.structured_text import TextRange
 
 
@@ -15,6 +16,7 @@ from bookworm.structured_text import TextRange
 class BookMetadata:
     title: str
     author: str
+    description: str = ""
     publisher: str = ""
     publication_year: str = ""
     isbn: str = ""
@@ -206,9 +208,12 @@ class DocumentInfo:
     number_of_pages: int = None
     number_of_sections: int = None
     authors: list[str] = ()
+    description: str = ""
     publication_date: t.Union[datetime, str] = None
     publisher: str = ""
     cover_image: ImageIO = None
+    category: str = ""
+    tags: t.Iterable[str] = ()
     data: dict[t.Any, t.Any] = attr.ib(factory=dict)
 
     @classmethod
@@ -218,6 +223,7 @@ class DocumentInfo:
             uri=document.uri,
             title=metadata.title,
             language=document.language,
+            description=metadata.description,
             number_of_pages=len(document)
             if not document.is_single_page_document()
             else None,
@@ -228,6 +234,20 @@ class DocumentInfo:
             publication_date=metadata.publication_year,
             publisher=metadata.publisher,
             cover_image=document.get_cover_image(),
+        )
+
+    def __dict_value_serializer(self, instance, field, value):
+        if isinstance(value, LocaleInfo):
+            return value.identifier
+        elif field.name == 'uri':
+            return value.to_uri_string()
+        return value
+
+    def asdict(self, excluded_fields=()):
+        return attr.asdict(
+            self,
+            filter=lambda at, val: at.name not in excluded_fields,
+            value_serializer=self.__dict_value_serializer
         )
 
 

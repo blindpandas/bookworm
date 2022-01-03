@@ -324,7 +324,6 @@ class SnakDialog(SimpleDialog):
     def __init__(self, message, *args, dismiss_callback=None, **kwargs):
         self.message = message
         self.dismiss_callback = dismiss_callback
-        kwargs.setdefault("parent", wx.GetApp().mainFrame)
         super().__init__(*args, title="", style=0, **kwargs)
         self.CenterOnParent()
 

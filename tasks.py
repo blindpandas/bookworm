@@ -239,11 +239,6 @@ def copy_assets(c):
         Image.open(img).resize(ICON_SIZE).save(
             ficos_dst.joinpath(img.name.split(".")[0] + ".ico")
         )
-    # Copy the images folder
-    images_src = PROJECT_ROOT / "fullsize_images" / "images"
-    images_dst = RESOURCES_FOLDER / "images"
-    for image_file in images_src.iterdir():
-        c.run(f"cp {image_file} {images_dst}")
     print("Done copying files.")
 
 

@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import annotations
+import base64
 from pathlib import Path
 from yarl import URL
 from bookworm import typehints as t
@@ -58,6 +59,14 @@ class DocumentUri:
             )
         return cls(format=doc_format, path=str(filepath), openner_args={})
 
+    @classmethod
+    def is_bookworm_uri(cls, uri_string: str) -> bool:
+        try:
+            cls.from_uri_string(uri_string)
+            return True
+        except ValueError:
+            return False
+
     def to_uri_string(self):
         return str(
             URL.build(
@@ -84,6 +93,15 @@ class DocumentUri:
             openner_args=self.openner_args | (openner_args or {}),
             view_args=self.view_args | (view_args or {}),
         )
+
+    def base64_encode(self):
+        return base64.urlsafe_b64encode(self.to_uri_string().encode('utf-8'))
+
+    @classmethod
+    def from_base64_encoded_string(cls, s):
+        if isinstance(s, str):
+            s = s.encode("utf-8")
+        return cls.from_uri_string(base64.urlsafe_b64decode(s).decode('utf-8'))
 
     @classmethod
     def get_format_by_filename(cls, filename):

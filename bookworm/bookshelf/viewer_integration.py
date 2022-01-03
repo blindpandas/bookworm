@@ -55,20 +55,6 @@ class BookshelfMenu(wx.Menu):
             # Translators: the help text of an item in the application menubar
             _("Add the current book to the bookshelf"),
         )
-        self.Append(
-            StatefulBookshelfMenuIds.remove_current_book_from_shelf,
-            # Translators: the label of an item in the application menubar
-            _("&Remove Document from shelf..."),
-            # Translators: the help text of an item in the application menubar
-            _("Remove the current book from the bookshelf"),
-        )
-        self.Append(
-            StatelessBookshelfMenuIds.create_new_category,
-            # Translators: the label of an item in the application menubar
-            _("Create New &Category"),
-            # Translators: the help text of an item in the application menubar
-            _("Create a new book category in your bookshelf"),
-        )
         # EventHandlers
         self.view.Bind(
             wx.EVT_MENU,

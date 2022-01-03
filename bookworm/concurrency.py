@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from functools import wraps, partial
 from contextlib import suppress
 import bookworm.typehints as t
-from bookworm.signals import app_booting, app_shuttingdown
+from bookworm.signals import app_starting, app_shuttingdown
 from bookworm.logger import logger
 
 
@@ -66,7 +66,7 @@ def start_asyncio_event_loop():
     ASYNCIO_LOOP_THREAD.start()
 
 
-@app_booting.connect
+@app_starting.connect
 def _start_aio_upon_startup(sender):
     start_asyncio_event_loop()
 

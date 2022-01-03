@@ -7,8 +7,10 @@ import threading
 import mimetypes
 import urllib.parse
 import zipfile
+import apsw
 from tempfile import TemporaryDirectory
 from functools import lru_cache, cached_property
+from yarl import URL
 from bottle import (
     Bottle,
     HTTPError,
@@ -16,6 +18,7 @@ from bottle import (
     request,
     response,
     static_file,
+    redirect,
     abort,
 )
 from bookworm import typehints as t
@@ -27,6 +30,8 @@ from bookworm.logger import logger
 
 log = logger.getChild(__name__)
 
+
+HISTORY_DB_PATH = paths.db_path("epub_server_history.sqlite")
 WEB_RESOURCES_PATH = paths.resources_path("readium_js_viewer_lite")
 TEMPLATE_PATH = WEB_RESOURCES_PATH / "templates"
 OPENED_EPUBS: dict[str, TemporaryDirectory] = {}
@@ -36,6 +41,14 @@ class EpubServingConfig:
     def __init__(self, app):
         self.app = app
         atexit.register(self.close)
+        self.db = apsw.Connection(os.fspath(HISTORY_DB_PATH))
+        with self.db:
+            cursor = self.db.cursor()
+            cursor.execute(
+                'CREATE TABLE IF NOT EXISTS "history" '
+                '("book_uid" varchar(128) NOT NULL, "url" text NOT NULL); '
+                'CREATE UNIQUE INDEX IF NOT EXISTS "book_uid" ON "history" ("book_uid");'
+            )
         self.app.resources.add_path(WEB_RESOURCES_PATH)
         self.add_epub_serving_routes()
 
@@ -104,12 +117,21 @@ class EpubServingConfig:
         else:
             threading.Thread(target=epub_temp_folder.cleanup).start()
             OPENED_EPUBS.pop(book_uid)
+            position_url = request.json.get("position_url", "").strip()
+            position_url = urllib.parse.unquote(position_url)
+            if position_url:
+                with self.db:
+                    cursor = self.db.cursor()
+                    exists = cursor.execute('SELECT COUNT(*) FROM history WHERE "book_uid" = ?', (book_uid,)).fetchone()[0]
+                    if not exists:
+                        cursor.execute('INSERT INTO history values (?, ?)', (book_uid, position_url))
+                    else:
+                        cursor.execute('UPDATE history SET position_url = ?', (position_url,))
             return {"deleted": book_uid}
 
     def index_view(self):
-        if (book_path := request.query.get("epub")) is None or book_path.strip(
-            " /"
-        ).split("/")[-1] not in OPENED_EPUBS:
+        book_uid = request.query.get("epub", "").strip(" /").split("/")[-1]
+        if book_uid not in OPENED_EPUBS:
             response.status = '404 Not Found'
             return template(
                 self.get_template('error.html'),
@@ -120,6 +142,20 @@ class EpubServingConfig:
                     "All URLs are temporary and may not work after you close the page."
                 )
             )
+        with self.db:
+            cursor = self.db.cursor()
+            result = cursor.execute('SELECT (url) FROM history WHERE "book_uid" = ?', (book_uid,)).fetchone()
+            if result:
+                position_url = result[0].lstrip("?")
+                if position_url != request.query_string:
+                    url_parts = request.urlparts
+                    new_url = "{scheme}://{authority}/{path}".rstrip("/") + "/?{query}".format(
+                        scheme=url_parts.scheme,
+                        authority=url_parts.netloc,
+                        path="/",
+                        query=position_url.lstrip("?")
+                    )
+                    redirect(new_url)
         response.status = "200 OK"
         return self.get_template('index.html', as_bytes=True)
 

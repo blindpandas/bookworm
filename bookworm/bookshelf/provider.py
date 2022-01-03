@@ -3,11 +3,21 @@
 from __future__ import annotations
 import attr
 from abc import ABC, abstractmethod
+from enum import IntEnum, auto
+from functools import cached_property
 from bookworm import typehints as t
+from bookworm.image_io import ImageIO
+from bookworm.paths import images_path
 from bookworm.document import DocumentInfo
+from bookworm.signals import _signals
 from bookworm.logger import logger
 
 log = logger.getChild(__name__)
+
+
+
+sources_updated = _signals.signal("bookshelf/source_updated")
+items_updated = _signals.signal("bookshelf/items_updated")
 
 
 class BookshelfProvider(ABC):
@@ -52,11 +62,23 @@ class BookshelfProvider(ABC):
         """Return a list of actions supported by this provider."""
 
 
+class SourceState(IntEnum):
+    OK = auto()
+    DIRTY = auto()
+    DELETED = auto()
+
+
 class Source:
     """Represent a bookshelf source."""
 
-    def __init__(self, name: t.TranslatableStr):
+    def __init__(self, provider, name: t.TranslatableStr, sources=(), *, source_actions=(), item_actions=(), data=None):
+        self.provider = provider
         self.name = name
+        self.sources = sources
+        self.source_actions = source_actions
+        self.item_actions = item_actions
+        self.data = data if data is not None else {}
+        self.state: SourceState = SourceState.OK
 
     def __iter__(self):
         yield from self.iter_items()
@@ -64,43 +86,44 @@ class Source:
     def __len__(self):
         return self.get_item_count()
 
-    @abstractmethod
     def iter_items(self) -> t.Iterator[DocumentInfo]:
         """Return a list of documents contained in this source."""
+        yield from self.sources
 
     @abstractmethod
     def get_item_count(self):
         """Return the number of documents in this source."""
 
-    @abstractmethod
     def get_source_actions(self) -> list[BookshelfAction]:
         """Get a list of actions supported by this source."""
+        return self.source_actions
 
-    @abstractmethod
     def get_item_actions(self, item: DocumentInfo) -> list[BookshelfAction]:
         """Get a list of actions for the given item."""
+        return self.item_actions
 
 
-
-class ContainerSource(Source):
-
-    def __init__(self, *args, sources=None, source_actions=(), **kwargs):
-        super().__init__(*args, **kwargs)
-        self.sources = sources
-        self.source_actions = source_actions
-
-    def iter_items(self) -> t.Iterator[Source]:
-        yield from self.sources 
+class MetaSource(Source):
+    """Represents a source that merely groups other sources."""
 
     def get_item_count(self):
         return len(self.sources)
 
-    def get_source_actions(self):
-        return self.source_actions
-
     def get_item_actions(self, item):
         raise NotImplementedError
 
+
+
+class ItemContainerSource(MetaSource):
+    """Represents a source that groups other sources and items (i.e a directory)."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.title = self.name
+
+    @cached_property
+    def cover_image(self):
+        return ImageIO.from_filename(images_path("folder.png"))
 
 
 
@@ -110,4 +133,5 @@ class BookshelfAction:
     display: t.TranslatableStr
     func: t.Callable[[Source, DocumentInfo], bool]
     decider: t.Callable[[Source, DocumentInfo], bool] = lambda doc_info: True
+
 

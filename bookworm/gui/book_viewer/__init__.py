@@ -92,6 +92,7 @@ class ResourceLoader:
                 dismiss_callback=lambda: self._cancellation_token.request_cancellation()
                 or True,
                 message=_("Opening document, please wait..."),
+                parent=self.view
             )
 
     def resolve_document(self, resolver):

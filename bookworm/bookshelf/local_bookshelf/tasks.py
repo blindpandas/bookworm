@@ -3,15 +3,18 @@
 import more_itertools
 import bookworm.typehints as t
 from bookworm.document.base import BaseDocument
+from bookworm.document.elements import DocumentInfo
 from bookworm.logger import logger
 from .models import (
-    Author,
-    Category,
-    Format,
     Document,
     Page,
+    Category,
+    Format,
+    Author,
     Tag,
     DocumentFTSIndex,
+    DocumentAuthor,
+    DocumentTag,
 )
 
 
@@ -40,22 +43,32 @@ def add_document_to_bookshelf(
     author, __ = Author.get_or_create(name=metadata.author)
     format, __ = Format.get_or_create(name=document.uri.format)
     category, __ = Category.get_or_create(name=category_name)
+    if type(tags_names) is str:
+        tags_names = [t.strip(",").strip() for t in tags_names.split().split(",")]
     tags = [Tag.get_or_create(name=t)[0] for t in tags_names]
     log.debug("Adding document to the database ")
+    doc_info_dict = DocumentInfo.from_document(document).asdict(excluded_fields=('cover_image',))
     doc = Document.create(
         uri=document.uri,
         title=metadata.title,
-        authors=[
-            author,
-        ],
-        publication_date=metadata.publication_year,
         cover_image=cover_image,
         format=format,
         category=category,
-        tags=tags,
+        metadata=doc_info_dict
     )
     doc.save()
     doc_id = doc.get_id()
+    author.save()
+    DocumentAuthor.create(
+        document_id=doc_id,
+        author_id=author.get_id()
+    )
+    for tag in tags:
+        tag.save()
+        DocumentTag.create(
+            document_id=doc_id,
+            tag_id=tag.get_id()
+        )
     fields = [Page.number, Page.content, Page.document]
     page_objs = ((page.index, page.get_text(), doc) for page in document)
     for batch in more_itertools.chunked(page_objs, 100):

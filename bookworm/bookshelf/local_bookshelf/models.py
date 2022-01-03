@@ -96,7 +96,13 @@ class Author(BaseModel):
 
     @classmethod
     def get_all(cls):
-        return Author.select().distinct().order_by(Author.name)
+        return (
+            Author.select()
+            .join(DocumentAuthor, on=DocumentAuthor.author_id)
+            .where(DocumentAuthor.author_id == Author.id)
+            .distinct()
+            .order_by(Author.name)
+        )
 
     @classmethod
     def get_documents(cls, name):
@@ -149,8 +155,8 @@ class Document(BaseModel):
     id = AutoIncrementField()
     uri = DocumentUriField(unique=True, null=False)
     title = TextField(index=True, null=False)
-    publication_date = DateTimeField(index=True, null=True)
     date_added = DateTimeField(default=datetime.utcnow, index=True, null=False)
+    is_favorite = BooleanField(default=False)
     cover_image = ImageField(null=True)
     format = ForeignKeyField(
         column_name="format_id",
@@ -163,19 +169,17 @@ class Document(BaseModel):
         field="id",
         model=Category,
         backref="documents",
+        null=True,
     )
     metadata = JSONField(json_dumps=ujson.dumps, json_loads=ujson.loads, null=True, default={})
 
     def as_document_info(self) -> DocumentInfo:
-        return DocumentInfo(
-            uri=self.uri,
-            title=self.title,
-            language=self.metadata.get("language", LocaleInfo("en")),
-            number_of_sections=self.metadata.get("number_of_sections"),
-            number_of_pages=self.metadata.get("number_of_pages"),
-            authors=[auth.name for auth in self.authors],
-            cover_image=self.cover_image
-        )
+        kwargs = self.metadata.copy()
+        kwargs['uri'] = self.uri
+        kwargs['cover_image'] = self.cover_image
+        kwargs['language'] = LocaleInfo(kwargs['language'])
+        kwargs.setdefault('data', {}).update(database_id=self.get_id())
+        return DocumentInfo(**kwargs)
 
 
 class Page(BaseModel):
@@ -192,7 +196,11 @@ class Page(BaseModel):
 
 class DocumentAuthor(BaseModel):
     document = ForeignKeyField(
-        column_name="document_id", field="id", model=Document, backref="authors"
+        column_name="document_id",
+        field="id",
+        model=Document,
+        backref="authors",
+        on_delete="CASCADE"
     )
     author = ForeignKeyField(
         column_name="author_id", field="id", model=Author, backref="documents"
@@ -205,7 +213,11 @@ class DocumentAuthor(BaseModel):
 
 class DocumentTag(BaseModel):
     document = ForeignKeyField(
-        column_name="document_id", field="id", model=Document, backref="tags"
+        column_name="document_id",
+        field="id",
+        model=Document,
+        backref="tags",
+        on_delete="CASCADE"
     )
     tag = ForeignKeyField(
         column_name="tag_id", field="id", model=Tag, backref="documents"

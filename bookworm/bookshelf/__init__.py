@@ -2,7 +2,6 @@
 
 import sys
 import os
-import base64
 from bookworm import config
 from bookworm.document import create_document
 from bookworm.document.uri import DocumentUri
@@ -75,7 +74,7 @@ class DocumentIndexerSubcommandHandler(BaseSubcommandHandler):
 
     @classmethod
     def handle_commandline_args(cls, args):
-        doc_uri = base64.urlsafe_b64decode(args.uri.encode("utf-8")).decode("utf-8")
+        doc_uri = DocumentUri.from_base64_encoded_string(args.uri)
         try:
             document = create_document(DocumentUri.from_uri_string(doc_uri))
         except:
@@ -124,15 +123,9 @@ class BookshelfService(BookwormService):
     @call_threaded
     def index_document_in_a_subprocess(cls, document_uri):
         log.debug("Book loaded, trying to add it to the shelf...")
-        uri = base64.urlsafe_b64encode(
-            document_uri.to_uri_string().encode("utf-8")
-        ).decode("utf-8")
+        uri = document_uri.base64_encode()
         args = [
             DocumentIndexerSubcommandHandler.subcommand_name,
             uri,
-            "--category",
-            "",
-            "--tag",
-            "",
         ]
         run_subcommand_in_a_new_process(args)

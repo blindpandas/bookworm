@@ -9,6 +9,7 @@ from pprint import pformat as pritty_format
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.runtime import CURRENT_PACKAGING_MODE, PackagingMode
+from bookworm.signals import app_booting
 from bookworm.logger import logger, configure_logger
 
 
@@ -56,6 +57,7 @@ def register_subcommand(subcommand_cls: BaseSubcommand):
 
 
 def handle_app_commandline_args():
+    app_booting.send()
     default_namespace = DefaultCommandlineArgumentNamespace()
     app.args = args = cmd_args_parser.parse_args(namespace=default_namespace)
     if args.subcommand_cls is not None:

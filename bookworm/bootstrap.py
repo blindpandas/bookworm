@@ -12,7 +12,7 @@ from bookworm.config import setup_config
 from bookworm.i18n import setup_i18n
 from bookworm.database import init_database
 from bookworm.signals import (
-    app_booting,
+    app_starting,
     app_started,
     app_shuttingdown,
     app_window_shown,
@@ -61,6 +61,17 @@ class LauncherSubcommandHandler(BaseSubcommandHandler):
             log.info(f"The application was invoked with a file: {arg_file}")
             uri = DocumentUri.from_filename(arg_file)
             wx.GetApp().mainFrame.open_uri(uri)
+        elif DocumentUri.is_bookworm_uri(arg_file):
+            uri = DocumentUri.from_uri_string(arg_file)
+            log.info(f"The application was invoked with a uri: {uri}")
+            wx.GetApp().mainFrame.open_uri(uri)
+        else:
+            try:
+                uri = DocumentUri.from_base64_encoded_string(arg_file)
+            except:
+                log.exception(f"Invalid or unknown document uri: {arg_file}")
+            else:
+                wx.GetApp().mainFrame.open_uri(uri)
 
 
 @register_subcommand
@@ -153,7 +164,7 @@ def init_app_and_run_main_loop():
     log.info(f"Debug mode is {'on' if appinfo.debug else 'off'}.")
 
     # Perform app initialization
-    app_booting.send()
+    app_starting.send()
     wxlogfilename = logs_path("wx.log")
     app = BookwormApp(
         redirect=True, useBestVisual=True, filename=os.fspath(wxlogfilename)

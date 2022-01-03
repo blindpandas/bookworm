@@ -25,7 +25,6 @@ folders_to_clean:
         - bookworm/resources/license.txt
         - bookworm/resources/contributors.txt
         - bookworm/resources/icons
-        - bookworm/resources/images
         - bookworm/bookworm.ico
         - bookworm/resources/app_icons_data.py
         - scripts/Bookworm*setup.exe

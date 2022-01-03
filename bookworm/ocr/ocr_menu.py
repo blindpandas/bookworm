@@ -206,6 +206,7 @@ class OCRMenu(wx.Menu):
             done_callback=future_callback,
             message=_("Running OCR, please wait..."),
             dismiss_callback=self._on_ocr_cancelled,
+            parent=self.view
         )
 
     def onAutoScanPages(self, event):
