@@ -2,12 +2,15 @@
 
 import sys
 import os
+import urllib.parse
+import requests
 from bookworm import config
+from bookworm import local_server
 from bookworm.document import create_document
 from bookworm.document.uri import DocumentUri
-from bookworm.concurrency import call_threaded
+from bookworm.concurrency import process_worker, call_threaded
 from bookworm.service import BookwormService
-from bookworm.signals import reader_book_loaded
+from bookworm.signals import reader_book_loaded, local_server_booting
 from bookworm.commandline_handler import (
     BaseSubcommandHandler,
     register_subcommand,
@@ -25,11 +28,38 @@ from .local_bookshelf.tasks import add_document_to_bookshelf
 from .viewer_integration import BookshelfSettingsPanel, BookshelfMenu
 from .window import run_bookshelf_standalone
 
+
 log = logger.getChild(__name__)
 
 
-DEFAULT_CATEGORY_DB_VALUE = "General"
-DEFAULT_CATEGORY_USER_FACING_VALUE = _("General")
+ADD_TO_BOOKSHELF_URL_PREFIX = '/add-to-bookshelf'
+
+
+@local_server_booting.connect
+def _add_document_index_endpoint(sender):
+    from bottle import request, abort
+
+    @sender.route(ADD_TO_BOOKSHELF_URL_PREFIX, method='POST')
+    def add_to_bookshelf_view():
+        data = request.json
+        doc_uri = data['document_uri']
+        try:
+            document = create_document(DocumentUri.from_uri_string(doc_uri))
+        except:
+            log.exception(f"Failed to open document: {doc_uri}", exc_info=True)
+            abort(400, f'Failed to open document: {doc_uri}')
+        else:
+            if document.__internal__:
+                abort(400, f'Document is an internal document: {doc_uri}')
+            else:
+                process_worker.submit(
+                    add_document_to_bookshelf,
+                    document,
+                    data['category'],
+                    data['tags'],
+                    data['database_file']
+                )
+                return {'status': 'OK', 'document_uri': doc_uri}
 
 
 @register_subcommand
@@ -43,48 +73,6 @@ class BookshelfSubcommandHandler(BaseSubcommandHandler):
     @classmethod
     def handle_commandline_args(cls, args):
         run_bookshelf_standalone()
-        return 0
-
-
-@register_subcommand
-class DocumentIndexerSubcommandHandler(BaseSubcommandHandler):
-    subcommand_name = "document-index"
-
-    @classmethod
-    def add_arguments(cls, subparser):
-        subparser.add_argument("uri", help="Document URI to open")
-        subparser.add_argument(
-            "--db-file",
-            help="Sqlite database file to store the document to",
-            default=os.fspath(DEFAULT_BOOKSHELF_DATABASE_FILE),
-        )
-        subparser.add_argument(
-            "--category",
-            help="Category of the given document",
-            type=str,
-            default=DEFAULT_CATEGORY_DB_VALUE,
-        )
-        subparser.add_argument(
-            "--tag",
-            help="Tags of the given document",
-            action="append",
-            dest="tags",
-            default=[],
-        )
-
-    @classmethod
-    def handle_commandline_args(cls, args):
-        doc_uri = DocumentUri.from_base64_encoded_string(args.uri)
-        try:
-            document = create_document(DocumentUri.from_uri_string(doc_uri))
-        except:
-            log.exception("Failed to open document for indexing:\n{args.uri}")
-            return 1
-        else:
-            if document.__internal__:
-                log.warning(f"{document=} is an internal document. Doing nothing...")
-            else:
-                add_document_to_bookshelf(document, args.category, args.tags)
         return 0
 
 
@@ -123,9 +111,15 @@ class BookshelfService(BookwormService):
     @call_threaded
     def index_document_in_a_subprocess(cls, document_uri):
         log.debug("Book loaded, trying to add it to the shelf...")
-        uri = document_uri.base64_encode()
-        args = [
-            DocumentIndexerSubcommandHandler.subcommand_name,
-            uri,
-        ]
-        run_subcommand_in_a_new_process(args)
+        url = urllib.parse.urljoin(
+            local_server.get_local_server_netloc(),
+            ADD_TO_BOOKSHELF_URL_PREFIX
+        )
+        data = {
+            'document_uri': document_uri.to_uri_string(),
+            'category': 'General',
+            'tags': [],
+            'database_file': '',
+        }
+        res = requests.post(url, json=data) 
+        log.debug(f"Indexed document: {res}")

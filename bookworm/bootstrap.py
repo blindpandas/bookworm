@@ -33,6 +33,7 @@ from bookworm.commandline_handler import (
     register_subcommand,
     handle_app_commandline_args,
 )
+from bookworm.local_server import LocalServerSubcommand
 from bookworm.logger import logger, configure_logger
 
 

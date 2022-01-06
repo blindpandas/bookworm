@@ -2,8 +2,6 @@
 
 import sys
 import operator
-import socket
-import errno
 import regex
 import uuid
 import wx
@@ -173,23 +171,3 @@ def escape_html(text):
     """
     html_escape_table = {'"': "&quot;", "'": "&apos;"}
     return escape(text, html_escape_table)
-
-
-def is_free_port(port):
-    with contextlib_closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
-        try:
-            s.bind(("localhost", port))
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            return True
-        except socket.error as e:
-            if e.errno == errno.EADDRINUSE:
-                return False
-            else:
-                raise
-
-
-def find_free_port():
-    with contextlib_closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
-        s.bind(("localhost", 0))
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        return s.getsockname()[1]
