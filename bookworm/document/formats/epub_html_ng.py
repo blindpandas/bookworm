@@ -74,14 +74,25 @@ class EpubDocument(SinglePageDocument):
 
     @cached_property
     def metadata(self):
-        author = ""
-        for key in ("creator", "author"):
-            if author_metadata := self.epub.get_metadata("DC", key):
-                author = author_metadata[0][0]
-                break
+        epub_metadata = tuple(self.epub.metadata.values())
+        info = {}
+        for md in epub_metadata:
+            info.update(md)
+        info = {k: v[0][0] for k,v in info.items()}
+        author = (
+            info.get("creator", "")
+            or info.get("author", "")
+        )
+        try:
+            desc = HTMLParser(info.get("description", "")).text()
+        except:
+            desc = None
         return BookMetadata(
             title=self.epub.title,
             author=author.removeprefix("By ").strip(),
+            description=desc,
+            publication_year=info.get("date", ""),
+            publisher=info.get("publisher", "")
         )
 
     @cached_property

@@ -1,65 +1,26 @@
 # coding: utf-8
 
-import sys
-import os
+
+from __future__ import annotations
 import urllib.parse
 import requests
 from bookworm import config
 from bookworm import local_server
-from bookworm.document import create_document
-from bookworm.document.uri import DocumentUri
-from bookworm.concurrency import process_worker, call_threaded
+from bookworm.concurrency import threaded_worker
 from bookworm.service import BookwormService
-from bookworm.signals import reader_book_loaded, local_server_booting
+from bookworm.signals import reader_book_loaded
 from bookworm.commandline_handler import (
     BaseSubcommandHandler,
     register_subcommand,
-    run_subcommand_in_a_new_process,
 )
 from bookworm.logger import logger
-from .local_bookshelf.models import (
-    DEFAULT_BOOKSHELF_DATABASE_FILE,
-    BaseModel,
-    Document,
-    Page,
-    DocumentFTSIndex,
-)
-from .local_bookshelf.tasks import add_document_to_bookshelf
-from .viewer_integration import BookshelfSettingsPanel, BookshelfMenu
+from .local_bookshelf import ADD_TO_BOOKSHELF_URL_PREFIX
+from .viewer_integration import BookshelfSettingsPanel, BookshelfMenu, StatefulBookshelfMenuIds
 from .window import run_bookshelf_standalone
 
 
 log = logger.getChild(__name__)
 
-
-ADD_TO_BOOKSHELF_URL_PREFIX = '/add-to-bookshelf'
-
-
-@local_server_booting.connect
-def _add_document_index_endpoint(sender):
-    from bottle import request, abort
-
-    @sender.route(ADD_TO_BOOKSHELF_URL_PREFIX, method='POST')
-    def add_to_bookshelf_view():
-        data = request.json
-        doc_uri = data['document_uri']
-        try:
-            document = create_document(DocumentUri.from_uri_string(doc_uri))
-        except:
-            log.exception(f"Failed to open document: {doc_uri}", exc_info=True)
-            abort(400, f'Failed to open document: {doc_uri}')
-        else:
-            if document.__internal__:
-                abort(400, f'Document is an internal document: {doc_uri}')
-            else:
-                process_worker.submit(
-                    add_document_to_bookshelf,
-                    document,
-                    data['category'],
-                    data['tags'],
-                    data['database_file']
-                )
-                return {'status': 'OK', 'document_uri': doc_uri}
 
 
 @register_subcommand
@@ -84,9 +45,9 @@ class BookshelfService(BookwormService):
             auto_add_opened_documents_to_bookshelf="boolean(default=False)",
         ),
     }
+    stateful_menu_ids = StatefulBookshelfMenuIds
 
     def __post_init__(self):
-        BaseModel.create_all()
         reader_book_loaded.connect(
             self.on_reader_loaded, sender=self.reader, weak=False
         )
@@ -100,26 +61,29 @@ class BookshelfService(BookwormService):
     def process_menubar(self, menubar):
         self.menu = BookshelfMenu(self)
         # Translators: the label of an item in the application menubar
-        return (50, self.menu, _("Boo&kshelf"))
+        self.view.fileMenu.Insert(
+            6,
+            -1,
+            _("Boo&kshelf"),
+            self.menu,
+        )
 
-    def on_reader_loaded(self, sender):
-        if not config.conf["bookshelf"]["auto_add_opened_documents_to_bookshelf"]:
-            return
-        self.index_document_in_a_subprocess(sender.document.uri)
-
-    @classmethod
-    @call_threaded
-    def index_document_in_a_subprocess(cls, document_uri):
-        log.debug("Book loaded, trying to add it to the shelf...")
+    def add_document_to_bookshelf(self, document_uri, category_name=None, tags_names=(), database_file=None):
         url = urllib.parse.urljoin(
             local_server.get_local_server_netloc(),
             ADD_TO_BOOKSHELF_URL_PREFIX
         )
         data = {
             'document_uri': document_uri.to_uri_string(),
-            'category': 'General',
-            'tags': [],
-            'database_file': '',
+            'category': category_name,
+            'tags': tags_names,
+            'database_file': database_file,
         }
         res = requests.post(url, json=data) 
-        log.debug(f"Indexed document: {res}")
+        log.debug(f"Add document to local bookshelf response: {res}, {res.text}")
+
+    def on_reader_loaded(self, sender):
+        if not config.conf["bookshelf"]["auto_add_opened_documents_to_bookshelf"]:
+            return
+        log.debug("Book loaded, trying to add it to the shelf...")
+        threaded_worker.submit(self.add_document_to_bookshelf, sender.document.uri)

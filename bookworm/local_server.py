@@ -11,6 +11,7 @@ import contextlib
 import waitress
 from multiprocessing.shared_memory import SharedMemory
 from bottle import Bottle
+from bookworm import app
 from bookworm.signals import local_server_booting
 from bookworm.commandline_handler import (
     BaseSubcommandHandler,
@@ -24,7 +25,7 @@ log = logger.getChild(__name__)
 
 
 BOOKWORM_LOCAL_SERVER_DEFAULT_PORT = 61073
-BOOKWORM_LOCAL_SERVER_SHARED_MEMORY_NAME = "bkw.local.server.port"
+BOOKWORM_LOCAL_SERVER_SHARED_MEMORY_NAME = f"bkw.local.server.port.{app.version}"
 BOOKWORM_LOCAL_SERVER_SHARED_MEMORY_SIZE = 4
 SERVER_READY_TIMEOUT = 120
 

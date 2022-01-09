@@ -73,11 +73,17 @@ class ImageField(BlobField):
 
     def db_value(self, value):
         if value:
-            return value.as_bytes(format="JPEG")
+            try:
+                return value.as_bytes(format="JPEG")
+            except:
+                return None
 
     def python_value(self, value):
         if value:
-            return ImageIO.from_bytes(value)
+            try:
+                return ImageIO.from_bytes(value)
+            except:
+                return None
 
 
 class DocumentUriField(TextField):

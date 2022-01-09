@@ -181,6 +181,25 @@ class Document(BaseModel):
         kwargs.setdefault('data', {}).update(database_id=self.get_id())
         return DocumentInfo(**kwargs)
 
+    def change_category_and_tags(self, category_name=None, tags_names=None) -> bool:
+        is_category_created = is_tag_created = False
+        if category_name is not None:
+            if category_name:
+                categ, is_category_created = Category.get_or_create(name=category_name)
+                self.category =categ
+            else:
+                self.category = None
+        if tags_names is not None:
+            DocumentTag.delete().where(DocumentTag.document_id == self.get_id()).execute()
+            for tag_name in tags_names:
+                tag, is_tag_created = Tag.get_or_create(name=tag_name)
+                DocumentTag.create(
+                    document_id=self.get_id(),
+                    tag_id=tag.get_id()
+                )
+        self.save()
+        return any([is_category_created, is_tag_created])
+
 
 class Page(BaseModel):
     number = IntegerField(null=False)
@@ -203,7 +222,11 @@ class DocumentAuthor(BaseModel):
         on_delete="CASCADE"
     )
     author = ForeignKeyField(
-        column_name="author_id", field="id", model=Author, backref="documents"
+        column_name="author_id",
+        field="id",
+        model=Author,
+        backref="documents",
+        on_delete="CASCADE"
     )
 
     class Meta:
@@ -220,7 +243,11 @@ class DocumentTag(BaseModel):
         on_delete="CASCADE"
     )
     tag = ForeignKeyField(
-        column_name="tag_id", field="id", model=Tag, backref="documents"
+        column_name="tag_id",
+        field="id",
+        model=Tag,
+        backref="documents",
+        on_delete="CASCADE"
     )
 
     class Meta:

@@ -20,7 +20,6 @@ from bookworm.bookshelf.provider import (
     ItemContainerSource,
     BookshelfAction,
     sources_updated,
-    items_updated,
 )
 from bookworm.logger import logger
 
@@ -52,6 +51,15 @@ class BookshelfNotebookPage(sc.SizedPanel):
         if selected_action_id != wx.ID_NONE:
             action = actions[selected_action_id]
             action.func(*args, **kwargs)
+
+    def get_label(self):
+        return _("{name} ({count})").format(
+            name=self.source.name,
+            count=self.source.get_item_count()
+        )
+
+    def update_items(self):
+        pass
 
 
 class EmptyBookshelfPage(BookshelfNotebookPage):
@@ -85,17 +93,28 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         self.document_list.Bind(wx.EVT_KEY_UP, self.onListKeyUP, self.document_list)
         self.document_list.Bind(wx.EVT_LEFT_DCLICK, lambda e: self.activate_current_item(), self.document_list)
         self.Bind(wx.EVT_CONTEXT_MENU, self.onContextMenu, self.document_list)
-        items_updated.connect(
-            self._on_items_updated,
-            sender=self.source,
-        )
         self.items = None
         self.__source_navigation_stack = []
 
-    def _on_items_updated(self, sender):
-        winsound.Beep(1000, 1000)
+    def update_items(self):
         self.items = None
-        self.add_documents()
+        if self.IsShown():
+            callback = partial(self._update_items_future_callback, self.selected_item_index)
+            threaded_worker.submit(
+                self.get_source_items,
+                self.source
+            ).add_done_callback(callback)
+
+    def _update_items_future_callback(self, current_selection, future):
+        self._get_items_callback(future)
+        if future.exception() is None:
+            if current_selection < 0:
+                sel = 0
+            elif current_selection >= (item_count := self.document_list.GetItemCount()):
+                sel = item_count - 1
+            else:
+                sel = current_selection
+            DialogListCtrl.set_focused_item(self.document_list, sel)
 
     def add_documents(self):
         if self.items is not None:
@@ -103,10 +122,17 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         threaded_worker.submit(
             self.get_source_items,
             self.source
-        ).add_done_callback(self._get_items_callback)
+        ).add_done_callback(self._add_documents_callback)
+
+    def _add_documents_callback(self, future):
+        self._get_items_callback(future)
+        if future.exception() is None:
+            self.document_list.SetFocus()
+            DialogListCtrl.set_focused_item(self.document_list, 0)
+            sounds.navigation.play()
 
     def get_source_items(self, source):
-        items = list(source)
+        items = tuple(source.iter_items())
         icon_size = (220, 220)
         image_list = wx.ImageList(*icon_size, mask=False)
         generic_file_icon = ImageIO.from_filename(images_path("generic_document.png")).make_thumbnail(*icon_size, exact_fit=True).to_wx_bitmap()
@@ -129,14 +155,14 @@ class BookshelfResultsPage(BookshelfNotebookPage):
 
     def render_items(self, items, image_list):
         self.document_list.ClearAll()
-        self.document_list.SetFocus()
+        self.document_list.DeleteAllItems()
+        self.__source_navigation_stack.clear()
         self.items = items
         self.document_list.AssignImageList(image_list, wx.IMAGE_LIST_NORMAL)
         for (idx, item) in enumerate(items):
             wx.CallAfter(self.document_list.InsertItem, idx, item.title, idx)
         self.document_list.RefreshItems(0, self.document_list.GetItemCount())
-        self.list_label.SetLabel(_("Documents"))
-        sounds.navigation.play()
+        self.list_label.SetLabel(self.source.name)
         DialogListCtrl.set_focused_item(self.document_list, 0)
 
     @property
@@ -184,6 +210,8 @@ class BookshelfResultsPage(BookshelfNotebookPage):
             self.pop_folder_navigation_stack()
         elif event.AltDown() and (event.KeyCode == wx.WXK_LEFT):
             self.pop_folder_navigation_stack()
+        elif event.KeyCode == wx.WXK_F5:
+            self.update_items()
 
     def pop_folder_navigation_stack(self):
         try:
@@ -239,6 +267,8 @@ class BookshelfWindow(sc.SizedFrame):
     def __init__(self, parent, title, **kwargs):
         super().__init__(parent, title=title, **kwargs)
         self.providers = BookshelfProvider.get_providers()
+        self.menubar = wx.MenuBar()
+        self.SetMenuBar(self.menubar)
         self.make_controls()
         self.CenterOnScreen()
         self.Maximize()
@@ -264,6 +294,7 @@ class BookshelfWindow(sc.SizedFrame):
         tree_ctrl.SetLabel(_("Categories"))
         self.Bind(wx.EVT_CHOICE, self.onProviderChoiceChange, self.provider_choice)
         self.Bind(wx.EVT_TREEBOOK_PAGE_CHANGED, self.OnPageChanged, self.tree_tabs)
+        tree_ctrl.Bind(wx.EVT_KEY_UP, self.onTreeKeyUp, tree_ctrl)
         tree_ctrl.Bind(wx.EVT_TREE_ITEM_MENU, self.onTreeContextMenu)
         self.provider_choice.SetSelection(0)
         self.setup_provider()
@@ -272,10 +303,27 @@ class BookshelfWindow(sc.SizedFrame):
     def provider(self):
         return self.providers[self.provider_choice.GetSelection()]
 
-    def _handle_source_updated(self, sender):
-        self.setup_provider()
-        self.tree_tabs.GetTreeCtrl().SetFocus()
-        self.tree_tabs.Refresh()
+    def _handle_source_updated(self, sender, update_sources=False, update_items=False):
+        if update_sources:
+            self.setup_provider()
+            self.tree_tabs.GetTreeCtrl().SetFocus()
+            self.tree_tabs.Refresh()
+        if update_items:
+            for page_idx in range(0, self.tree_tabs.GetPageCount()):
+                page = self.tree_tabs.GetPage(page_idx)
+                if not page.source.is_valid():
+                    parent_page_id = self.tree_tabs.GetPageParent(page_idx)
+                    self.tree_tabs.DeletePage(page_idx)
+                    while parent_page_id  != wx.NOT_FOUND:
+                        parent_page = self.tree_tabs.GetPage(parent_page_id)
+                        self.tree_tabs.SetPageText(parent_page_id, parent_page.get_label())
+                        parent_page_id = self.tree_tabs.GetPageParent(parent_page_id)
+                    continue
+                page.update_items()
+                self.tree_tabs.SetPageText(
+                    page_idx,
+                    page.get_label()
+                )
 
     def setup_provider(self):
         self.tree_tabs.DeleteAllPages()
@@ -283,22 +331,53 @@ class BookshelfWindow(sc.SizedFrame):
             self.provider.get_sources(),
             self.tree_tabs
         )
+        for (menu_idx, (mb_menu, __)) in enumerate(self.menubar.GetMenus()):
+            for menu_item in mb_menu.GetMenuItems():
+                self.Unbind(wx.EVT_MENU, id=menu_item.GetId())
+            self.menubar.Remove(menu_idx)
+            mb_menu.Destroy()
+        menu_actions = {
+            wx.NewIdRef(): action
+            for action in self.provider.get_provider_actions()
+            if action.decider(self.provider)
+        } 
+        menu = wx.Menu()
+        for (item_id, action) in menu_actions.items():
+            menu.Append(item_id, action.display)
+            self.Bind(
+                wx.EVT_MENU,
+                partial(self._on_provider_menu_item_clicked, action.func),
+                id=item_id
+            )
+        menu.AppendSeparator()
+        menu.Append(wx.ID_CLOSE, _("&Exit"))
+        self.Bind(
+            wx.EVT_MENU,
+            lambda e: self.Close(),
+            id=wx.ID_CLOSE
+        )
+        self.menubar.Append(menu, _("Options"))
         sources_updated.disconnect(self._handle_source_updated)
         sources_updated.connect(self._handle_source_updated, sender=self.provider)
+        self.tree_tabs.SetFocus()
 
     def add_sources(self, sources, tree_tabs, as_subpage=False):
         for source in sources:
-            if type(source) is MetaSource:
+            if not source.is_valid():
+                continue
+            if isinstance(source, MetaSource):
+                page = EmptyBookshelfPage(tree_tabs, self, source)
                 tree_tabs.AddPage(
-                    EmptyBookshelfPage(tree_tabs, self, source),
-                    _("{name} ({count})").format(name=source.name, count=source.get_item_count())
+                    page,
+                    page.get_label()
                 )
                 self.add_sources(source, tree_tabs, as_subpage=True)
             else:
                 func = tree_tabs.AddSubPage if as_subpage else tree_tabs.AddPage
+                page = BookshelfResultsPage(tree_tabs, self, source)
                 func(
-                    BookshelfResultsPage(tree_tabs, self, source),
-                    _("{name} ({count})").format(name=source.name, count=source.get_item_count())
+                    page,
+                    page.get_label()
                 )
 
     def onProviderChoiceChange(self, event):
@@ -309,6 +388,11 @@ class BookshelfWindow(sc.SizedFrame):
         selected_page = self.tree_tabs.GetPage(page_idx)
         if isinstance(selected_page, BookshelfResultsPage):
             selected_page.add_documents()
+
+    def onTreeKeyUp(self, event):
+        event.Skip()
+        if event.KeyCode == wx.WXK_F5:
+            self.setup_provider()
 
     def onTreeContextMenu(self, event):
         page_idx = self.tree_tabs.GetSelection()
@@ -326,6 +410,9 @@ class BookshelfWindow(sc.SizedFrame):
             event.GetPoint(),
             source=source
         )
+
+    def _on_provider_menu_item_clicked(self, action_func, event):
+        action_func(self.provider)
 
 
 def run_bookshelf_standalone():

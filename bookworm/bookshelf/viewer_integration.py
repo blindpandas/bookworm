@@ -3,22 +3,25 @@
 
 import wx
 from enum import IntEnum
+from bookworm.concurrency import threaded_worker, call_threaded
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
+from bookworm.signals import reader_book_loaded
 from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.logger import logger
 from .window import BookshelfWindow
+from .local_bookshelf.models import Document
+from .local_bookshelf.dialogs import EditDocumentClassificationDialog
+
 
 log = logger.getChild(__name__)
 
 
 class StatefulBookshelfMenuIds(IntEnum):
     add_current_book_to_shelf = 25001
-    remove_current_book_from_shelf = 25002
 
 
 class StatelessBookshelfMenuIds(IntEnum):
     open_bookshelf = 25100
-    create_new_category = 25101
 
 
 class BookshelfSettingsPanel(SettingsPanel):
@@ -31,7 +34,7 @@ class BookshelfSettingsPanel(SettingsPanel):
             generalReadingBox,
             -1,
             # Translators: the label of a checkbox
-            _("Automatically add opened books to the bookshelf"),
+            _("Automatically add opened books to the local bookshelf"),
             name="bookshelf.auto_add_opened_documents_to_bookshelf",
         )
 
@@ -51,9 +54,9 @@ class BookshelfMenu(wx.Menu):
         self.Append(
             StatefulBookshelfMenuIds.add_current_book_to_shelf,
             # Translators: the label of an item in the application menubar
-            _("&Add Document to shelf..."),
+            _("&Add to local bookshelf..."),
             # Translators: the help text of an item in the application menubar
-            _("Add the current book to the bookshelf"),
+            _("Add the current book to the local bookshelf"),
         )
         # EventHandlers
         self.view.Bind(
@@ -61,6 +64,33 @@ class BookshelfMenu(wx.Menu):
             self.onOpenBookshelf,
             id=StatelessBookshelfMenuIds.open_bookshelf,
         )
+        self.view.Bind(
+            wx.EVT_MENU,
+            self.onAddDocumentToLocalBookshelf,
+            id=StatefulBookshelfMenuIds.add_current_book_to_shelf,
+        )
+        reader_book_loaded.connect(self._on_reader_loaded, sender=self.view.reader, weak=False)
 
     def onOpenBookshelf(self, event):
         run_subcommand_in_a_new_process(["bookshelf",])
+
+    def onAddDocumentToLocalBookshelf(self, event):
+        dialog = EditDocumentClassificationDialog(
+            self.view,
+            _("Document Category and Tags")
+        )
+        with dialog:
+            retval = dialog.ShowModal()
+        if retval is not None:
+            category_name, tags_names = retval
+            threaded_worker.submit(
+                self.service.add_document_to_bookshelf,
+                document_uri = self.view.reader.document.uri,
+                category_name=category_name,
+                tags_names=tags_names
+            )
+
+    @call_threaded
+    def _on_reader_loaded(self, sender):
+        if Document.select().where(Document.uri == sender.document.uri).count():
+            wx.CallAfter(self.Enable, StatefulBookshelfMenuIds.add_current_book_to_shelf, False)

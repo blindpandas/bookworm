@@ -1,14 +1,17 @@
 # coding: utf-8
 
 from __future__ import annotations
+import urllib.parse
+import requests
 import wx
-import winsound
 import peewee
 from abc import ABC, abstractmethod
 from functools import cached_property
+from bookworm import local_server
 from bookworm.signals import app_booting
 from bookworm.document import DocumentInfo
 from bookworm.logger import logger
+from .tasks import ADD_TO_BOOKSHELF_URL_PREFIX, IMPORT_FOLDER_TO_BOOKSHELF_URL_PREFIX
 from ..provider import (
     BookshelfProvider,
     Source,
@@ -16,7 +19,6 @@ from ..provider import (
     ItemContainerSource,
     BookshelfAction,
     sources_updated,
-    items_updated,
 )
 from .models import (
     BaseModel,
@@ -24,8 +26,11 @@ from .models import (
     Author,
     Category,
     Tag,
+    DocumentTag,
     DocumentFTSIndex,
 )
+from .dialogs import EditDocumentClassificationDialog, AddFolderToLocalBookshelfDialog
+
 
 log = logger.getChild(__name__)
 
@@ -44,54 +49,57 @@ class LocalBookshelfProvider(BookshelfProvider):
     def check(cls) -> bool:
         return True
 
-    @classmethod
-    def _create_local_database_sources_from_model(cls, model):
+    def _create_local_database_sources_from_model(self, model):
         remove_source_action = BookshelfAction(
             _("Remove..."),
-            func=cls._on_remove_source,
+            func=self._on_remove_source,
         )
         change_name_action = BookshelfAction(
             _("Edit name..."),
-            func=cls._on_change_name,
+            func=self._on_change_name,
+        )
+        remove_related_documents_action = BookshelfAction(
+            _("Remove Related Documents..."),
+            func=self._on_remove_related_documents,
+            decider=lambda source: source.get_item_count() > 0
         )
         return [
             LocalDatabaseSource(
-                provider=cls,
+                provider=self,
                 name=item.name,
                 query=model.get_documents(item.name),
                 model=model,
-                source_actions=[change_name_action, remove_source_action]
+                source_actions=[change_name_action, remove_related_documents_action, remove_source_action]
             )
             for item in model.get_all()
         ]
 
-    @classmethod
-    def get_sources(cls):
+    def get_sources(self):
         sources = [
             LocalDatabaseSource(
-                provider=cls,
+                provider=self,
+                name=_("Recents"),
+                query=Document.select().order_by(Document.date_added.desc()).limit(100),
+                source_actions=[]
+            ),
+            LocalDatabaseSource(
+                provider=self,
                 name=_("Favorites"),
                 query=Document.select().where(Document.is_favorite == True),
                 source_actions=[]
             ),
-            LocalDatabaseSource(
-                provider=cls,
-                name=_("Recents"),
-                query=Document.select().order_by(Document.date_added.desc()).limit(100),
-                source_actions=[]
-            )
         ]
         classifications = {
-            _("Categories"): (cls._create_local_database_sources_from_model(Category), Category),
-            _("Tags"): (cls._create_local_database_sources_from_model(Tag), Tag),
+            _("Categories"): (self._create_local_database_sources_from_model(Category), Category),
+            _("Tags"): (self._create_local_database_sources_from_model(Tag), Tag),
         }
         add_new_action = BookshelfAction(
             _("Add New..."),
-            func=cls._on_add_new,
+            func=self._on_add_new,
         )
         sources += [
             MetaSource(
-                provider=cls,
+                provider=self,
                 name=name,
                 sources=srcs,
                 source_actions=[add_new_action,],
@@ -99,33 +107,43 @@ class LocalBookshelfProvider(BookshelfProvider):
             )
             for (name, (srcs, model)) in classifications.items()
         ]
-        author_sources = [
-            LocalDatabaseSource(
-                provider=cls,
-                name=item.name,
-                query=Author.get_documents(item.name),
-                model=Author,
-            )
-            for item in Author.get_all()
-        ]
         sources += [
-            MetaSource(
-                provider=cls,
+            AuthorMetaSource(
+                provider=self,
                 name=_("Authors"),
-                sources=author_sources,
-                data={'model': Author}
+                data={'model': Author},
+                sources=None
             )
         ]
         return sources
 
-    @classmethod
-    def get_provider_actions(cls):
+    def get_provider_actions(self):
         return [
-            SourceAction(_("Beep"), lambda: winsound.Beep(2000, 2000))
+            BookshelfAction(_("Import documents from folder..."), func=self._on_add_documents_from_folder)
         ]
 
-    @classmethod
-    def _on_change_name(cls, source):
+    def _on_add_documents_from_folder(self, provider):
+        top_frame = wx.GetApp().GetTopWindow()
+        dialog = AddFolderToLocalBookshelfDialog(
+            top_frame,
+            _("Import Documents From Folder"),
+        )
+        with dialog:
+            retval = dialog.ShowModal()
+        if retval is None:
+            return
+        folder, category_name = retval
+        url = urllib.parse.urljoin(
+            local_server.get_local_server_netloc(),
+            IMPORT_FOLDER_TO_BOOKSHELF_URL_PREFIX
+        )
+        res = requests.post(
+            url,
+            json={'folder': folder, 'category_name': category_name}
+        )
+        log.debug(f"Add folder to bookshelf response: {res}")
+
+    def _on_change_name(self, source):
         instance = source.model.get(name=source.name)
         old_name = instance.name
         new_name = wx.GetTextFromUser(
@@ -143,12 +161,11 @@ class LocalBookshelfProvider(BookshelfProvider):
                     _("Duplicate name"),
                     style=wx.ICON_WARNING
                 )
-                cls._on_change_name(source)
+                self._on_change_name(source)
             else:
-                sources_updated.send(cls)
+                sources_updated.send(self, update_sources=True)
 
-    @classmethod
-    def _on_remove_source(cls, source):
+    def _on_remove_source(self, source):
         retval = wx.MessageBox(
             _("Are you sure you want to remove {name}?\nThis will not remove document classified under {name}.").format(name=source.name),
             _("Confirm"),
@@ -157,16 +174,26 @@ class LocalBookshelfProvider(BookshelfProvider):
         if retval == wx.YES:
             instance = source.model.get(name=source.name)
             source.model.delete_instance(instance)
-            sources_updated.send(cls)
+            sources_updated.send(self, update_sources=True)
 
-    @classmethod
-    def _on_add_new(cls, source):
+    def _on_remove_related_documents(self, source):
+        retval = wx.MessageBox(
+            _("Are you sure you want to remove all documents classified under {name}?\nThis will remove those documents from your bookshelf.").format(name=source.name),
+            _("Confirm"),
+            style=wx.YES_NO | wx.ICON_EXCLAMATION
+        )
+        if retval == wx.YES:
+            for item in source:
+                Document.delete().where(Document.id == item.data['database_id']).execute()
+            sources_updated.send(self, update_items=True)
+
+    def _on_add_new(self, source):
         new_name = wx.GetTextFromUser(
             _("Enter name:"),
             _("Add New"),
         )
         source.data['model'].get_or_create(name=new_name)
-        sources_updated.send(cls)
+        sources_updated.send(self, update_sources=True)
 
 
 class LocalDatabaseSource(Source):
@@ -175,13 +202,10 @@ class LocalDatabaseSource(Source):
         self.query = query
         self.model = model
 
-    def iter_items(self) -> t.Iterator[DocumentInfo]:
-        yield from self.get_items()
-
     def get_items(self):
         return [
             doc.as_document_info()
-            for doc in self.query
+            for doc in self.query.clone()
         ]
 
     def get_item_count(self):
@@ -195,12 +219,8 @@ class LocalDatabaseSource(Source):
                 func=lambda doc_info: self._toggle_favorite_status(doc_instance)
             ),
             BookshelfAction(
-                _("Edit category..."),
-                func=lambda doc_info: self._do_edit_category(doc_instance)
-            ),
-            BookshelfAction(
-                _("Edit tags..."),
-                func=lambda doc_info: self._do_edit_tags(doc_instance)
+                _("Edit category / Tags..."),
+                func=lambda doc_info: self._do_edit_category_and_tags(doc_instance)
             ),
             BookshelfAction(
                 _("Remove from bookshelf"),
@@ -212,6 +232,26 @@ class LocalDatabaseSource(Source):
     def _toggle_favorite_status(self, doc_instance):
         doc_instance.is_favorite = not doc_instance.is_favorite
         doc_instance.save()
+        sources_updated.send(self.provider, update_items=True)
+
+    def _do_edit_category_and_tags(self, doc_instance):
+        top_frame = wx.GetApp().GetTopWindow()
+        dialog = EditDocumentClassificationDialog(
+            top_frame,
+            title=_("Edit Category/Tags"),
+            categories=[cat.name for cat in Category.get_all()],
+            given_category=None if not doc_instance.category else doc_instance.category.name,
+            tags_names=[
+                Tag.get_by_id(doc_tag.tag_id).name
+                for doc_tag in DocumentTag.select().where(DocumentTag.document_id == doc_instance.get_id())
+            ]
+        )
+        with dialog:
+            if (retval := dialog.ShowModal()) is None:
+                return
+            category_name, tags_names = retval
+            anything_created = doc_instance.change_category_and_tags(category_name, tags_names)
+            sources_updated.send(self.provider, update_sources=anything_created, update_items=True)
 
     def _do_remove_from_bookshelf(self, doc_instance):
         retval = wx.MessageBox(
@@ -221,5 +261,26 @@ class LocalDatabaseSource(Source):
         )
         if retval == wx.YES:
             doc_instance.delete_instance()
-            sources_updated.send(self.provider)
+            sources_updated.send(self.provider, update_items=True)
 
+   
+
+
+class AuthorMetaSource(MetaSource):
+
+    def get_items(self):
+        return [
+            AuthorLocalDatabaseSource(
+                provider=self.provider,
+                name=item.name,
+                query=Author.get_documents(item.name),
+                model=Author,
+            )
+            for item in Author.get_all()
+        ]
+
+
+class AuthorLocalDatabaseSource(LocalDatabaseSource):
+
+    def is_valid(self):
+        return self.get_item_count() != 0

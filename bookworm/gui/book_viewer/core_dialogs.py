@@ -339,6 +339,10 @@ class DocumentInfoDialog(SimpleDialog):
             rh_panel, label=_("Title"), value=self.document_info.title
         )
         title_text_style = title_text_ctrl.GetDefaultStyle()
+        title_text_style_font_size = title_text_style.GetFontSize()
+        title_text_style.SetFontSize(
+            title_text_style_font_size + (title_text_style_font_size * .5)
+        )
         title_text_style.SetFontWeight(wx.FONTWEIGHT_EXTRABOLD)
         title_text_ctrl.SetStyle(0, title_text_ctrl.GetLastPosition(), title_text_style)
         if authors := self.document_info.authors:
@@ -348,6 +352,13 @@ class DocumentInfoDialog(SimpleDialog):
             else:
                 label = _("Author")
             self.create_info_field(rh_panel, label=label, value=authors)
+        if description := self.document_info.description:
+            desc_text_ctrl = self.create_info_field(
+                rh_panel, label=_("Description"), value=description
+            )
+            desc_text_ctrl_style = desc_text_ctrl.GetDefaultStyle()
+            desc_text_ctrl_style.SetFontWeight(wx.FONTWEIGHT_BOLD)
+            desc_text_ctrl.SetStyle(0, desc_text_ctrl.GetLastPosition(), desc_text_ctrl_style)
         if num_sections := self.document_info.number_of_sections:
             self.create_info_field(
                 rh_panel, label=_("Number of Sections"), value=str(num_sections)
@@ -359,12 +370,12 @@ class DocumentInfoDialog(SimpleDialog):
         self.create_info_field(
             rh_panel, label=_("Language"), value=self.document_info.language.native_name
         )
+        if publisher := self.document_info.publisher:
+            self.create_info_field(rh_panel, label=_("Publisher"), value=publisher)
         if pub_date := self.document_info.publication_date:
             self.create_info_field(
                 rh_panel, label=_("Publication Date"), value=pub_date
             )
-        if publisher := self.document_info.publisher:
-            self.create_info_field(rh_panel, label=_("Publisher"), value=publisher)
         if self.offer_open_action:
             # Translators: the label of the close button in a dialog
             openBtn = wx.Button(rh_panel, wx.ID_OPEN, _("&Open"))

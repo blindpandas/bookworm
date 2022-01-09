@@ -3,7 +3,6 @@
 from __future__ import annotations
 import attr
 from abc import ABC, abstractmethod
-from enum import IntEnum, auto
 from functools import cached_property
 from bookworm import typehints as t
 from bookworm.image_io import ImageIO
@@ -17,7 +16,6 @@ log = logger.getChild(__name__)
 
 
 sources_updated = _signals.signal("bookshelf/source_updated")
-items_updated = _signals.signal("bookshelf/items_updated")
 
 
 class BookshelfProvider(ABC):
@@ -34,10 +32,14 @@ class BookshelfProvider(ABC):
 
     @classmethod
     def get_providers(cls):
-        return cls.__registered_providers
+        return [
+            prov()
+            for prov in cls.__registered_providers
+            if prov.check()
+        ]
 
     def __iter__(self):
-        yield from self.get_sources()
+        yield from self.iter_items()
 
     def __len__(self):
         return len(self.sources)
@@ -45,27 +47,20 @@ class BookshelfProvider(ABC):
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self.name}>"
 
+    @classmethod
     @abstractmethod
     def check(self) -> bool:
         """Checks the availability of this provider at runtime."""
+        return True
 
-    @classmethod
     @abstractmethod
-    def get_sources(
-        cls,
-    ) -> list[t.ForwardRef("Source")]:
+    def get_sources(self) -> list[t.ForwardRef("Source")]:
         """Return a list of sources for this provider."""
 
-    @classmethod
     @abstractmethod
-    def get_provider_actions(cls) -> list[t.ForwardRef("SourceAction")]:
+    def get_provider_actions(self) -> list[t.ForwardRef("SourceAction")]:
         """Return a list of actions supported by this provider."""
 
-
-class SourceState(IntEnum):
-    OK = auto()
-    DIRTY = auto()
-    DELETED = auto()
 
 
 class Source:
@@ -78,7 +73,9 @@ class Source:
         self.source_actions = source_actions
         self.item_actions = item_actions
         self.data = data if data is not None else {}
-        self.state: SourceState = SourceState.OK
+
+    def get_items(self):
+        return self.sources
 
     def __iter__(self):
         yield from self.iter_items()
@@ -88,7 +85,7 @@ class Source:
 
     def iter_items(self) -> t.Iterator[DocumentInfo]:
         """Return a list of documents contained in this source."""
-        yield from self.sources
+        yield from self.get_items()
 
     @abstractmethod
     def get_item_count(self):
@@ -102,12 +99,15 @@ class Source:
         """Get a list of actions for the given item."""
         return self.item_actions
 
+    def is_valid(self):
+        return True
+
 
 class MetaSource(Source):
     """Represents a source that merely groups other sources."""
 
     def get_item_count(self):
-        return len(self.sources)
+        return len(self.get_items())
 
     def get_item_actions(self, item):
         raise NotImplementedError
