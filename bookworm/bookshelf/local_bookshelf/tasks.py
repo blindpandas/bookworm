@@ -1,11 +1,14 @@
 # coding: utf-8
 
+import urllib.parse
+import requests
 import more_itertools
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from functools import partial
 from bottle import request, abort
 from bookworm import typehints as t
+from bookworm import local_server
 from bookworm.concurrency import threaded_worker
 from bookworm.document import BaseDocument, create_document
 from bookworm.document.uri import DocumentUri
@@ -42,13 +45,45 @@ def _add_document_index_endpoint(sender):
     sender.route(IMPORT_FOLDER_TO_BOOKSHELF_URL_PREFIX, method='POST', callback=import_folder_to_bookshelf_view)
 
 
+def issue_add_document_request(document_uri, category_name=None, tags_names=(), database_file=None):
+    url = urllib.parse.urljoin(
+        local_server.get_local_server_netloc(),
+        ADD_TO_BOOKSHELF_URL_PREFIX
+    )
+    data = {
+        'document_uri': document_uri.to_uri_string(),
+        'category': category_name,
+        'tags': tags_names,
+        'database_file': database_file,
+    }
+    res = requests.post(url, json=data) 
+    log.debug(f"Add document to local bookshelf response: {res}, {res.text}")
+
+
+def issue_import_folder_request(folder, category_name):
+    url = urllib.parse.urljoin(
+        local_server.get_local_server_netloc(),
+        IMPORT_FOLDER_TO_BOOKSHELF_URL_PREFIX
+    )
+    res = requests.post(
+        url,
+        json={'folder': folder, 'category_name': category_name}
+    )
+    log.debug(f"Add folder to bookshelf response: {res}")
+
+
 def add_document_to_bookshelf(
-    document: BaseDocument,
+    document_or_uri: t.Union[BaseDocument , DocumentUri],
     category_name: str,
     tags_names: list[str],
     database_file: t.PathLike
 ):
     """Add the given document to the bookshelf database."""
+    document = (
+        create_document(document_or_uri)
+        if isinstance(document_or_uri, DocumentUri)
+        else document_or_uri
+    )
     if (existing_doc := Document.get_or_none(uri=document.uri)) is not None:
         log.debug("Document already in the database. Checking index...")
         db_page_count = (
@@ -63,6 +98,15 @@ def add_document_to_bookshelf(
             log.debug("Document index is not well formed. Rebuilding index...")
             existing_doc.delete_instance()
     cover_image = document.get_cover_image()
+    if cover_image:
+        try:
+            cover_image = cover_image.make_thumbnail(
+                width=512,
+                height=512,
+                exact_fit=True,
+            )
+        except:
+            cover_image = None
     metadata = document.metadata
     format, __ = Format.get_or_create(name=document.uri.format)
     if category_name:
@@ -89,7 +133,11 @@ def add_document_to_bookshelf(
         )
     if type(tags_names) is str:
         tags_names = [t.strip() for t in tags_names.split(" ")]
-    tags = [Tag.get_or_create(name=t)[0] for t in tags_names]
+    tags = [
+        Tag.get_or_create(name=t_name)[0]
+        for t in tags_names
+        if (t_name := t.strip())
+    ]
     for tag in tags:
         DocumentTag.create(
             document_id=doc_id,

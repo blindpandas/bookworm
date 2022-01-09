@@ -2,10 +2,7 @@
 
 
 from __future__ import annotations
-import urllib.parse
-import requests
 from bookworm import config
-from bookworm import local_server
 from bookworm.concurrency import threaded_worker
 from bookworm.service import BookwormService
 from bookworm.signals import reader_book_loaded
@@ -14,7 +11,7 @@ from bookworm.commandline_handler import (
     register_subcommand,
 )
 from bookworm.logger import logger
-from .local_bookshelf import ADD_TO_BOOKSHELF_URL_PREFIX
+from .local_bookshelf.tasks import issue_add_document_request
 from .viewer_integration import BookshelfSettingsPanel, BookshelfMenu, StatefulBookshelfMenuIds
 from .window import run_bookshelf_standalone
 
@@ -68,22 +65,8 @@ class BookshelfService(BookwormService):
             self.menu,
         )
 
-    def add_document_to_bookshelf(self, document_uri, category_name=None, tags_names=(), database_file=None):
-        url = urllib.parse.urljoin(
-            local_server.get_local_server_netloc(),
-            ADD_TO_BOOKSHELF_URL_PREFIX
-        )
-        data = {
-            'document_uri': document_uri.to_uri_string(),
-            'category': category_name,
-            'tags': tags_names,
-            'database_file': database_file,
-        }
-        res = requests.post(url, json=data) 
-        log.debug(f"Add document to local bookshelf response: {res}, {res.text}")
-
     def on_reader_loaded(self, sender):
         if not config.conf["bookshelf"]["auto_add_opened_documents_to_bookshelf"]:
             return
         log.debug("Book loaded, trying to add it to the shelf...")
-        threaded_worker.submit(self.add_document_to_bookshelf, sender.document.uri)
+        threaded_worker.submit(issue_add_document_request, sender.document.uri)

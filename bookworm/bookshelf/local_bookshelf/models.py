@@ -181,7 +181,7 @@ class Document(BaseModel):
         kwargs.setdefault('data', {}).update(database_id=self.get_id())
         return DocumentInfo(**kwargs)
 
-    def change_category_and_tags(self, category_name=None, tags_names=None) -> bool:
+    def change_category_and_tags(self, category_name=None, tags_names=()) -> bool:
         is_category_created = is_tag_created = False
         if category_name is not None:
             if category_name:
@@ -191,7 +191,7 @@ class Document(BaseModel):
                 self.category = None
         if tags_names is not None:
             DocumentTag.delete().where(DocumentTag.document_id == self.get_id()).execute()
-            for tag_name in tags_names:
+            for tag_name in (t.strip() for t in tags_names if t.strip()):
                 tag, is_tag_created = Tag.get_or_create(name=tag_name)
                 DocumentTag.create(
                     document_id=self.get_id(),

@@ -870,7 +870,8 @@ class MenubarProvider:
                 item.Enable(False)
         self.PopupMenu(context_menu, pos=pos)
 
-    def _get_ebooks_wildcards(self):
+    @staticmethod
+    def _get_ebooks_wildcards():
         rv = []
         all_exts = []
         visible_doc_cls = [

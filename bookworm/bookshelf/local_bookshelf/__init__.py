@@ -1,17 +1,19 @@
 # coding: utf-8
 
 from __future__ import annotations
-import urllib.parse
-import requests
+import os
 import wx
 import peewee
 from abc import ABC, abstractmethod
-from functools import cached_property
-from bookworm import local_server
+from functools import partial, cached_property
+from pathlib import Path
+from bookworm import config
 from bookworm.signals import app_booting
 from bookworm.document import DocumentInfo
+from bookworm.document.uri import DocumentUri
+from bookworm.gui.components import AsyncSnakDialog
+from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.logger import logger
-from .tasks import ADD_TO_BOOKSHELF_URL_PREFIX, IMPORT_FOLDER_TO_BOOKSHELF_URL_PREFIX
 from ..provider import (
     BookshelfProvider,
     Source,
@@ -20,6 +22,8 @@ from ..provider import (
     BookshelfAction,
     sources_updated,
 )
+from .dialogs import EditDocumentClassificationDialog, AddFolderToLocalBookshelfDialog
+from .tasks import issue_import_folder_request, add_document_to_bookshelf
 from .models import (
     BaseModel,
     Document,
@@ -29,7 +33,6 @@ from .models import (
     DocumentTag,
     DocumentFTSIndex,
 )
-from .dialogs import EditDocumentClassificationDialog, AddFolderToLocalBookshelfDialog
 
 
 log = logger.getChild(__name__)
@@ -89,10 +92,31 @@ class LocalBookshelfProvider(BookshelfProvider):
                 source_actions=[]
             ),
         ]
-        classifications = {
-            _("Categories"): (self._create_local_database_sources_from_model(Category), Category),
-            _("Tags"): (self._create_local_database_sources_from_model(Tag), Tag),
-        }
+        classifications = [
+            (_("Categories"), (self._create_local_database_sources_from_model(Category), Category)),
+            (_("Tags"), (self._create_local_database_sources_from_model(Tag), Tag)),
+        ]
+        classifications[0][1][0].append(
+            LocalDatabaseSource(
+                provider=self,
+                name=_("Uncategorized"),
+                query=Document.select().where(Document.category == None),
+                source_actions=[]
+            ),
+        )
+        untagged_query = (
+            Document.select()
+            .join(DocumentTag, on=DocumentTag.document_id == Document.id)
+            .where(DocumentTag.document_id == None)
+        )
+        classifications[1][1][0].append(
+            LocalDatabaseSource(
+                provider=self,
+                name=_("Untagged"),
+                query=untagged_query,
+                source_actions=[]
+            ),
+        )
         add_new_action = BookshelfAction(
             _("Add New..."),
             func=self._on_add_new,
@@ -105,7 +129,7 @@ class LocalBookshelfProvider(BookshelfProvider):
                 source_actions=[add_new_action,],
                 data={'model': model}
             )
-            for (name, (srcs, model)) in classifications.items()
+            for (name, (srcs, model)) in classifications
         ]
         sources += [
             AuthorMetaSource(
@@ -119,8 +143,81 @@ class LocalBookshelfProvider(BookshelfProvider):
 
     def get_provider_actions(self):
         return [
-            BookshelfAction(_("Import documents from folder..."), func=self._on_add_documents_from_folder)
+            BookshelfAction(_("Import Documents..."), func=self._on_import_document),
+            BookshelfAction(_("Import documents from folder..."), func=self._on_add_documents_from_folder),
         ]
+
+    def _on_import_document(self, provider):
+        last_folder = config.conf["history"]["last_folder"]
+        if not os.path.isdir(last_folder):
+            last_folder = str(Path.home())
+        openFileDlg = wx.FileDialog(
+            wx.GetApp().GetTopWindow(),
+            # Translators: the title of a file dialog to browse to a document
+            message=_("Import Documents To Bookshelf"),
+            defaultDir=last_folder,
+            wildcard=BookViewerWindow._get_ebooks_wildcards(),
+            style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.FD_MULTIPLE,
+        )
+        if openFileDlg.ShowModal() != wx.ID_OK:
+            return
+        filenames = [
+            filename
+            for filename in openFileDlg.GetPaths()
+            if os.path.isfile(filename)
+        ]
+        openFileDlg.Destroy()
+        if not filenames:
+            return
+        dialog = EditDocumentClassificationDialog(
+            wx.GetApp().GetTopWindow(),
+            title=_("Edit Category/Tags"),
+            categories=[cat.name for cat in Category.get_all()],
+        )
+        with dialog:
+            if (retval := dialog.ShowModal()) is not None:
+                category_name, tags_names = retval
+            else:
+                return
+        task = partial(
+            self._do_add_files_to_bookshelf,
+            filenames,
+            category_name=category_name,
+            tags_names=tags_names
+        )
+        message = (
+            _("Importing document...")
+            if len(filenames) == 1
+            else _("Importing documents...")
+        )
+        AsyncSnakDialog(
+            task=task,
+            done_callback=self._on_document_imported_callback,
+            message=message,
+            parent=wx.GetApp().GetTopWindow()
+        )
+
+    def _do_add_files_to_bookshelf(self, filenames, category_name, tags_names):
+        for filename in filenames:
+            add_document_to_bookshelf(
+                DocumentUri.from_filename(filename),
+                category_name=category_name,
+                tags_names=tags_names,
+                database_file=None
+            )
+
+    def _on_document_imported_callback(self, future):
+        try:
+            future.result()
+        except Exception as e:
+            log.exception("Failed to import document", exc_info=True)
+            wx.MessageBox(
+                _("Failed to import document. Please try again."),
+                _("Error"),
+                style=wx.ICON_ERROR
+            )
+        else:
+            sources_updated.send(self, update_sources=True)
 
     def _on_add_documents_from_folder(self, provider):
         top_frame = wx.GetApp().GetTopWindow()
@@ -133,15 +230,7 @@ class LocalBookshelfProvider(BookshelfProvider):
         if retval is None:
             return
         folder, category_name = retval
-        url = urllib.parse.urljoin(
-            local_server.get_local_server_netloc(),
-            IMPORT_FOLDER_TO_BOOKSHELF_URL_PREFIX
-        )
-        res = requests.post(
-            url,
-            json={'folder': folder, 'category_name': category_name}
-        )
-        log.debug(f"Add folder to bookshelf response: {res}")
+        issue_import_folder_request(folder, category_name)
 
     def _on_change_name(self, source):
         instance = source.model.get(name=source.name)

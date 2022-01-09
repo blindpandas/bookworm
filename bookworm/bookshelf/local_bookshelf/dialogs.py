@@ -54,7 +54,15 @@ class AddFolderToLocalBookshelfDialog(SimpleDialog):
 
     def addControls(self, parent):
         parent.SetSizerType('vertical')
-        self.folderCtrl = filebrowse.DirBrowseButton(parent, -1)
+        self.folderCtrl = filebrowse.DirBrowseButton(
+            parent,
+            -1,
+            # Translators: label of an edit control
+            labelText=_("Select a folder:"),
+            # Translators: label of a button
+            buttonText=("Browse..."),
+            toolTip='',
+        )
         wx.StaticText(parent, -1, _("Category"))
         self.categoryCombo = wx.ComboBox(
             parent,

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import winsound
+import os
 import wx
 import wx.lib.sized_controls as sc
 from enum import IntEnum, auto
@@ -266,6 +266,10 @@ class BookshelfResultsPage(BookshelfNotebookPage):
 class BookshelfWindow(sc.SizedFrame):
     def __init__(self, parent, title, **kwargs):
         super().__init__(parent, title=title, **kwargs)
+        icon_file = images_path("bookshelf.png")
+        icon = wx.Icon()
+        icon.LoadFile(os.fspath(icon_file))
+        self.SetIcon(icon)
         self.providers = BookshelfProvider.get_providers()
         self.menubar = wx.MenuBar()
         self.SetMenuBar(self.menubar)
