@@ -319,21 +319,30 @@ class DocumentFTSIndex(BaseModel, FTS5Model):
                 cls.page_number,
                 cls.document_id,
                 cls.document_title,
-                column.snippet(left="", right="", over_length="", max_tokens=24),
+                column.snippet(left="", right="", over_length="", max_tokens=20),
             )
             .where(column.match(term))
             .order_by(fn.bm25(cls._meta.entity))
-            .order_by(cls.document_id)
-            .order_by(cls.page_number.asc())
         )
 
     @classmethod
-    def search_for_term(cls, term) -> list[FullTextSearchResult]:
+    def search_for_term(cls, term, field='content') -> list[FullTextSearchResult]:
+        assert field in ('title', 'content'), "Field should be one of: (title, content)"
+        field_column = (
+            cls.document_title
+            if field == 'title'
+            else cls.content
+        )
         connection = cls._meta.database.connection()
         with connection:
             cursor = connection.cursor()
-            content_matches = cursor.execute(str(cls.perform_search(cls.content, term)))
+            content_matches = cursor.execute(str(cls.perform_search(field_column, term)))
+            yielded_docs = set()
             for (page_number, document_id, document_title, snippet) in content_matches:
+                if document_id in yielded_docs:
+                    continue
+                if field == 'title':
+                    yielded_docs.add(document_id)
                 yield FullTextSearchResult(
                     page_index=page_number,
                     document_id=document_id,

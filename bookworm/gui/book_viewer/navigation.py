@@ -60,10 +60,11 @@ class NavigationProvider:
                     modifiers = event.GetModifiers()
                     if modifiers == wx.MOD_CONTROL:
                         self.try_handle_special_actions()
+                        return
                     elif modifiers == wx.MOD_CONTROL | wx.MOD_SHIFT:
                         self.reader.pop_navigation_stack()
-                else:
-                    self.reader.go_to_next()
+                        return
+                self.reader.go_to_next()
             elif key_code in NAV_BACKWORD_KEYS:
                 self.reader.go_to_prev()
             self.callback()

@@ -22,7 +22,12 @@ from ..provider import (
     BookshelfAction,
     sources_updated,
 )
-from .dialogs import EditDocumentClassificationDialog, AddFolderToLocalBookshelfDialog
+from .dialogs import (
+    EditDocumentClassificationDialog,
+    AddFolderToLocalBookshelfDialog,
+    SearchBookshelfDialog,
+    BookshelfSearchResultsDialog,
+)
 from .tasks import issue_import_folder_request, add_document_to_bookshelf
 from .models import (
     BaseModel,
@@ -31,6 +36,7 @@ from .models import (
     Category,
     Tag,
     DocumentTag,
+    DocumentAuthor,
     DocumentFTSIndex,
 )
 
@@ -104,19 +110,6 @@ class LocalBookshelfProvider(BookshelfProvider):
                 source_actions=[]
             ),
         )
-        untagged_query = (
-            Document.select()
-            .join(DocumentTag, on=DocumentTag.document_id == Document.id)
-            .where(DocumentTag.document_id == None)
-        )
-        classifications[1][1][0].append(
-            LocalDatabaseSource(
-                provider=self,
-                name=_("Untagged"),
-                query=untagged_query,
-                source_actions=[]
-            ),
-        )
         add_new_action = BookshelfAction(
             _("Add New..."),
             func=self._on_add_new,
@@ -145,6 +138,7 @@ class LocalBookshelfProvider(BookshelfProvider):
         return [
             BookshelfAction(_("Import Documents..."), func=self._on_import_document),
             BookshelfAction(_("Import documents from folder..."), func=self._on_add_documents_from_folder),
+            BookshelfAction(_("Search Bookshelf..."), func=self._on_search_bookshelf),
         ]
 
     def _on_import_document(self, provider):
@@ -231,6 +225,65 @@ class LocalBookshelfProvider(BookshelfProvider):
             return
         folder, category_name = retval
         issue_import_folder_request(folder, category_name)
+
+    def _on_search_bookshelf(self, provider):
+        dialog = SearchBookshelfDialog(
+            wx.GetApp().GetTopWindow(),
+            _("Search Bookshelf")
+        )
+        with dialog:
+            retval = dialog.ShowModal()
+        if retval is None:
+            return
+        search_query, is_title, is_content = retval
+        task = partial(self._do_search_bookshelf, search_query, is_title, is_content)
+        AsyncSnakDialog(
+            parent=wx.GetApp().GetTopWindow(),
+            task=task,
+            done_callback=self._search_bookshelf_callback,
+            message=_("Searching bookshelf...")
+        )
+
+    def _do_search_bookshelf(self, search_query, is_title, is_content):
+        title_search_results = (
+            ()
+            if not is_title
+            else tuple(DocumentFTSIndex.search_for_term(search_query, field='title'))
+        )
+        content_search_results = (
+            ()
+            if not is_content
+            else tuple(DocumentFTSIndex.search_for_term(search_query, field='content'))
+        )
+        return (title_search_results, content_search_results)
+
+    def _search_bookshelf_callback(self, future):
+        try:
+            result = future.result()
+        except Exception as e:
+            log.exception("Failed to search bookshelf", exc_info=True)
+            wx.MessageBox(
+                _("Failed to search bookshelf,"),
+                _("Error"),
+                style=wx.ICON_ERROR
+            )
+        else:
+            title_search_results, content_search_results = result
+            wx.CallAfter(
+                self._show_search_results_dialog,
+                title_search_results,
+                content_search_results
+            )
+
+    def _show_search_results_dialog(self, title_search_results, content_search_results):
+        dialog = BookshelfSearchResultsDialog(
+            wx.GetApp().GetTopWindow(),
+            _("Search Results"),
+            title_search_results=title_search_results,
+            content_search_results=content_search_results
+        )
+        with dialog:
+            dialog.ShowModal()
 
     def _on_change_name(self, source):
         instance = source.model.get(name=source.name)
@@ -358,6 +411,15 @@ class LocalDatabaseSource(Source):
 class AuthorMetaSource(MetaSource):
 
     def get_items(self):
+        unknown_author_query = (
+            Document.select()
+            .join(
+                DocumentAuthor,
+                on=DocumentAuthor.document_id == Document.id,
+                join_type=peewee.JOIN.LEFT_OUTER
+            )
+            .where(DocumentAuthor.document_id == None)
+        )
         return [
             AuthorLocalDatabaseSource(
                 provider=self.provider,
@@ -366,6 +428,13 @@ class AuthorMetaSource(MetaSource):
                 model=Author,
             )
             for item in Author.get_all()
+        ] + [
+            AuthorLocalDatabaseSource(
+                provider=self.provider,
+                name=_("Unknown Author"),
+                query=unknown_author_query,
+                model=Author,
+            )
         ]
 
 
