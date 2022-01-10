@@ -145,8 +145,8 @@ class SearchResultsPage(sc.SizedPanel):
     def __init__(self, parent, search_results, list_label):
         super().__init__(parent, -1)
         column_spec = (
-            ColumnDefn(_("Title"), 'right', 255, operator.attrgetter('document_title')),
-            ColumnDefn(_("Snippet"), 'center', 255, operator.attrgetter('snippet')),
+            ColumnDefn(_("Snippet"), 'left', 255, operator.attrgetter('snippet')),
+            ColumnDefn(_("Title"), 'center', 255, operator.attrgetter('document_title')),
             ColumnDefn(_("Page"), 'right', 120, lambda ins: ins.page_index + 1),
         )
         wx.StaticText(self, -1, list_label)

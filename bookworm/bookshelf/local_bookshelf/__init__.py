@@ -136,7 +136,7 @@ class LocalBookshelfProvider(BookshelfProvider):
 
     def get_provider_actions(self):
         return [
-            BookshelfAction(_("Import Documents..."), func=self._on_import_document),
+            BookshelfAction(_("Import Documents...\tCtrl+O"), func=self._on_import_document),
             BookshelfAction(_("Import documents from folder..."), func=self._on_add_documents_from_folder),
             BookshelfAction(_("Search Bookshelf..."), func=self._on_search_bookshelf),
         ]

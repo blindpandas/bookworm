@@ -26,7 +26,7 @@ class ViewPageAsImageDialog(wx.Dialog):
         self.reader = self.parent.reader
         # Zoom support
         self.scaling_factor = 0.2
-        self._zoom_factor = 1
+        self._zoom_factor = 1.5
         # Translators: the label of the image of a page in a dialog to render the current page
         panel = self.scroll = scrolled.ScrolledPanel(self, -1, name=_("Page"), style=0)
         panel.SetTransparent(0)
@@ -45,6 +45,7 @@ class ViewPageAsImageDialog(wx.Dialog):
             zoom_callback=self.set_zoom,
         )
         panel.Bind(wx.EVT_KEY_UP, self.onKeyUp, panel)
+        panel.Bind(wx.EVT_CHAR_HOOK, self.onScrollChar, panel)
         panel.SetupScrolling(rate_x=self.scroll_rate_x, rate_y=self.scroll_rate_y)
         self._currently_rendered_page = self.reader.current_page
         reader_page_changed.connect(self.onPageChange, sender=self.reader)
@@ -105,6 +106,10 @@ class ViewPageAsImageDialog(wx.Dialog):
             image = image.invert()
         bmp = image.to_wx_bitmap()
         return bmp, image.size
+
+    def onScrollChar(self, event):
+        if event.KeyCode != wx.WXK_TAB:
+            event.Skip()
 
     def onKeyUp(self, event):
         event.Skip()

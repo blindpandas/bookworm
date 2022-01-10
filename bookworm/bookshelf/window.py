@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import operator
 import wx
 import wx.lib.sized_controls as sc
 from enum import IntEnum, auto
@@ -8,8 +9,9 @@ from functools import partial
 from bookworm import speech
 from bookworm.concurrency import threaded_worker
 from bookworm.image_io import ImageIO
+from bookworm.utils import fuzzy_search
 from bookworm.reader import EBookReader
-from bookworm.gui.components import DialogListCtrl, AsyncSnakDialog
+from bookworm.gui.components import AsyncSnakDialog
 from bookworm.gui.book_viewer.core_dialogs import DocumentInfoDialog
 from bookworm.resources import sounds
 from bookworm.paths import images_path
@@ -76,25 +78,41 @@ class BookshelfResultsPage(BookshelfNotebookPage):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        quick_filter_label = _("Filter documents...")
+        wx.StaticText(self, -1, quick_filter_label.rstrip("..."))
+        self.quickFilterTextCtrl = wx.TextCtrl(self, -1)
+        self.quickFilterTextCtrl.SetHint(quick_filter_label)
+        self.quickFilterTextCtrl.SetSizerProps(expand=True)
         self.list_label = wx.StaticText(self, -1, _("Loading items"))
         self.document_list = wx.ListCtrl(
             self,
             wx.ID_ANY,
             style=wx.LC_ICON | wx.LC_SINGLE_SEL
         )
-        self.SetSizerType('Grid')
         self.document_list.SetSizerProps(expand=True)
         self.document_list.SetMinSize((2000, 1000))
         self.document_list.Font = self.document_list.Font.MakeLarger().MakeLarger().MakeBold()
+        self.quickFilterTextCtrl.MoveAfterInTabOrder(self.document_list)
         self.Layout()
         # Why not use `wx.EVT_LIST_ITEM_ACTIVATED`? because pressing the spacebar is considered
         # activation command. Here we need the spacebar to be handled as a `char` because you can quickly
         # jump between items by typing
         self.document_list.Bind(wx.EVT_KEY_UP, self.onListKeyUP, self.document_list)
         self.document_list.Bind(wx.EVT_LEFT_DCLICK, lambda e: self.activate_current_item(), self.document_list)
+        self.document_list.Bind(wx.EVT_CHAR, self.onDocumentListChar, self.document_list)
         self.Bind(wx.EVT_CONTEXT_MENU, self.onContextMenu, self.document_list)
+        self.Bind(wx.EVT_TEXT, self.onQuickFilterTextChanged, self.quickFilterTextCtrl)
+        self._all_items = None
         self.items = None
         self.__source_navigation_stack = []
+
+    def set_focused_item(self, idx):
+        self.document_list.SetFocus()
+        if idx >= self.document_list.GetItemCount():
+            return
+        self.document_list.EnsureVisible(idx)
+        self.document_list.Select(idx)
+        self.document_list.SetItemState(idx, wx.LIST_STATE_FOCUSED, wx.LIST_STATE_FOCUSED | wx.LIST_STATE_SELECTED)
 
     def update_items(self):
         self.items = None
@@ -114,7 +132,8 @@ class BookshelfResultsPage(BookshelfNotebookPage):
                 sel = item_count - 1
             else:
                 sel = current_selection
-            DialogListCtrl.set_focused_item(self.document_list, sel)
+            if self.selected_item_index != sel:
+                self.set_focused_item(sel)
 
     def add_documents(self):
         if self.items is not None:
@@ -128,11 +147,10 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         self._get_items_callback(future)
         if future.exception() is None:
             self.document_list.SetFocus()
-            DialogListCtrl.set_focused_item(self.document_list, 0)
+            self.set_focused_item(0)
             sounds.navigation.play()
 
-    def get_source_items(self, source):
-        items = tuple(source.iter_items())
+    def create_image_list_from_items(self, items):
         icon_size = (220, 220)
         image_list = wx.ImageList(*icon_size, mask=False)
         generic_file_icon = ImageIO.from_filename(images_path("generic_document.png")).make_thumbnail(*icon_size, exact_fit=True).to_wx_bitmap()
@@ -142,18 +160,27 @@ class BookshelfResultsPage(BookshelfNotebookPage):
             else:
                 item_icon = generic_file_icon
             wx.CallAfter(image_list.Add, item_icon)
-        return items, image_list
+        return image_list
+
+    def get_source_items(self, source):
+        items = tuple(source.iter_items())
+        return items, self.create_image_list_from_items(items)
 
     def _get_items_callback(self, future):
         try:
             result = future.result()
         except Exception:
             log.exception(f"Failed to retrieve items for source: {self}", exc_info=True)
-            return
+            wx.MessageBox(
+                _("Failed to retrieve document information.\nPlease try again."),
+                _("Error"),
+                style=wx.ICON_ERROR
+            )
         items, image_list = result
+        self._all_items = items
         self.render_items(items, image_list)
 
-    def render_items(self, items, image_list):
+    def render_items(self, items, image_list, set_focus_to_first_item=True):
         self.document_list.ClearAll()
         self.document_list.DeleteAllItems()
         self.__source_navigation_stack.clear()
@@ -163,7 +190,8 @@ class BookshelfResultsPage(BookshelfNotebookPage):
             wx.CallAfter(self.document_list.InsertItem, idx, item.title, idx)
         self.document_list.RefreshItems(0, self.document_list.GetItemCount())
         self.list_label.SetLabel(self.source.name)
-        DialogListCtrl.set_focused_item(self.document_list, 0)
+        if set_focus_to_first_item:
+            self.set_focused_item(0)
 
     @property
     def selected_item(self):
@@ -202,22 +230,70 @@ class BookshelfResultsPage(BookshelfNotebookPage):
             dlg.CenterOnScreen()
             dlg.ShowModal()
 
+    def onQuickFilterTextChanged(self, event):
+        self.set_focused_item(0)
+        filter_query = event.GetString().strip()
+        if not filter_query:
+            self.update_items()
+        else:
+            self.filter_document_list(filter_query)
+
+    def filter_document_list(self, filter_query):
+        matching_items = fuzzy_search(
+            filter_query,
+            self._all_items,
+            string_converter=operator.attrgetter('title')
+        )
+        self.document_list.DeleteAllItems()
+        self.items = matching_items
+        self.render_items(
+            matching_items,
+            self.create_image_list_from_items(matching_items),
+            set_focus_to_first_item=False
+        )
+        if not matching_items:
+            # Translators: spoken message when no matching documents upon filtering the document list
+            speech.announce(_("No matching documents"))
+
+    def onDocumentListChar(self, event):
+        if event.KeyCode in self.ITEM_ACTIVATION_KEYS:
+            self.activate_current_item()
+            return
+        elif event.GetKeyCode() == wx.WXK_CONTROL_A:
+            self.quickFilterTextCtrl.SetFocus()
+            self.quickFilterTextCtrl.SelectAll()
+            return
+        elif event.GetKeyCode() == wx.WXK_CONTROL_Y:
+            self.quickFilterTextCtrl.Redo()
+            return
+        elif event.GetKeyCode() == wx.WXK_CONTROL_Z:
+            self.quickFilterTextCtrl.Undo()
+            return
+        elif event.KeyCode == 8:
+            if not self.quickFilterTextCtrl.IsEmpty():
+                self.quickFilterTextCtrl.SetValue(self.quickFilterTextCtrl.Value[:-1])
+                self.set_focused_item(0)
+            return
+        elif (unicode_char := event.GetUnicodeKey()) != wx.WXK_NONE:
+            self.quickFilterTextCtrl.AppendText(chr(unicode_char))
+            self.set_focused_item(0)
+        else:
+            event.Skip()
+
     def onListKeyUP(self, event):
         event.Skip()
-        if event.ControlDown() and event.KeyCode in self.ITEM_ACTIVATION_KEYS and self.document_list.HasFocus():
-            self.activate_current_item()
-        elif event.KeyCode == wx.WXK_BACK:
+        if event.KeyCode == wx.WXK_BACK:
             self.pop_folder_navigation_stack()
         elif event.AltDown() and (event.KeyCode == wx.WXK_LEFT):
             self.pop_folder_navigation_stack()
         elif event.KeyCode == wx.WXK_F5:
             self.update_items()
+            self.frame.update_pages_labels()
 
     def pop_folder_navigation_stack(self):
         try:
             prev_source = self.__source_navigation_stack.pop()
         except IndexError:
-            wx.Bell()
             return
         AsyncSnakDialog(
             message=_("Retrieving items..."),
@@ -316,18 +392,18 @@ class BookshelfWindow(sc.SizedFrame):
             for page_idx in range(0, self.tree_tabs.GetPageCount()):
                 page = self.tree_tabs.GetPage(page_idx)
                 if not page.source.is_valid():
-                    parent_page_id = self.tree_tabs.GetPageParent(page_idx)
                     self.tree_tabs.DeletePage(page_idx)
-                    while parent_page_id  != wx.NOT_FOUND:
-                        parent_page = self.tree_tabs.GetPage(parent_page_id)
-                        self.tree_tabs.SetPageText(parent_page_id, parent_page.get_label())
-                        parent_page_id = self.tree_tabs.GetPageParent(parent_page_id)
                     continue
                 page.update_items()
-                self.tree_tabs.SetPageText(
-                    page_idx,
-                    page.get_label()
-                )
+        self.update_pages_labels()
+
+    def update_pages_labels(self):
+        for page_idx in range(0, self.tree_tabs.GetPageCount()):
+            page = self.tree_tabs.GetPage(page_idx)
+            self.tree_tabs.SetPageText(
+                page_idx,
+                page.get_label()
+            )
 
     def setup_provider(self):
         self.tree_tabs.DeleteAllPages()
@@ -360,7 +436,7 @@ class BookshelfWindow(sc.SizedFrame):
             lambda e: self.Close(),
             id=wx.ID_CLOSE
         )
-        self.menubar.Append(menu, _("Options"))
+        self.menubar.Append(menu, _("&File"))
         sources_updated.disconnect(self._handle_source_updated)
         sources_updated.connect(self._handle_source_updated, sender=self.provider)
         self.tree_tabs.SetFocus()

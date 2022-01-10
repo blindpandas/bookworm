@@ -1,15 +1,13 @@
 # coding: utf-8
 
+from __future__ import annotations
 import sys
-import operator
-import regex
 import uuid
 import wx
 import hashlib
 from contextlib import contextmanager, closing as contextlib_closing
 from functools import wraps, lru_cache
 from pathlib import Path
-from xml.sax.saxutils import escape
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.concurrency import call_threaded
@@ -18,22 +16,6 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
-
-
-# Taken from: https://stackoverflow.com/a/47248784
-URL_REGEX = regex.compile(
-    r"""(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))"""
-)
-URL_BAD_CHARS = "'\\.,[](){}:;\""
-
-
-# New line character
-UNIX_NEWLINE = "\n"
-WINDOWS_NEWLINE = "\r\n"
-MAC_NEWLINE = "\r"
-NEWLINE = UNIX_NEWLINE
-MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
-EXCESS_LINE_REPLACEMENT_FUNC = lambda m: m[0].replace("\n", " ")[:-1] + "\n"
 
 
 @contextmanager
@@ -48,16 +30,6 @@ def switch_stdout(out):
 
 def mute_stdout():
     return switch_stdout(None)
-
-
-def normalize_line_breaks(text, line_break=UNIX_NEWLINE):
-    return text.replace("\r", " ")
-
-
-def remove_excess_blank_lines(text):
-    return MORE_THAN_ONE_LINE.sub(
-        EXCESS_LINE_REPLACEMENT_FUNC, normalize_line_breaks(text)
-    )
 
 
 def ignore(*exceptions, retval=None):
@@ -114,18 +86,6 @@ def gui_thread_safe(func):
     return wrapper
 
 
-def is_external_url(text):
-    return URL_REGEX.match(text) is not None
-
-
-@lru_cache(maxsize=5)
-def get_url_spans(text):
-    return tuple(
-        (span := m.span(), text[slice(*span)].strip(URL_BAD_CHARS))
-        for m in URL_REGEX.finditer(text)
-    )
-
-
 def generate_file_md5(filepath):
     hasher = hashlib.md5()
     for chunk in open(filepath, "rb"):
@@ -162,12 +122,3 @@ def format_datetime(date, format="medium", localized=True) -> str:
         date, format=format, localized=localized
     )
 
-
-def escape_html(text):
-    """Escape the text so as to be used
-    as a part of an HTML document.
-
-    Taken from python Wiki.
-    """
-    html_escape_table = {'"': "&quot;", "'": "&apos;"}
-    return escape(text, html_escape_table)
