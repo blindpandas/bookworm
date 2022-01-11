@@ -9,6 +9,7 @@ import socket
 import errno
 import contextlib
 import waitress
+from hashlib import md5
 from multiprocessing.shared_memory import SharedMemory
 from bottle import Bottle
 from bookworm import app
@@ -25,7 +26,7 @@ log = logger.getChild(__name__)
 
 
 BOOKWORM_LOCAL_SERVER_DEFAULT_PORT = 61073
-BOOKWORM_LOCAL_SERVER_SHARED_MEMORY_NAME = f"bkw.local.server.port.{app.version}"
+BOOKWORM_LOCAL_SERVER_SHARED_MEMORY_NAME = md5(sys.executable.encode("utf-8")).hexdigest()
 BOOKWORM_LOCAL_SERVER_SHARED_MEMORY_SIZE = 4
 SERVER_READY_TIMEOUT = 120
 
