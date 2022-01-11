@@ -66,6 +66,8 @@ class BookshelfProvider(ABC):
 class Source:
     """Represent a bookshelf source."""
 
+    can_rename_items = False
+
     def __init__(self, provider, name: t.TranslatableStr, sources=(), *, source_actions=(), item_actions=(), data=None):
         self.provider = provider
         self.name = name
@@ -98,6 +100,9 @@ class Source:
     def get_item_actions(self, item: DocumentInfo) -> list[BookshelfAction]:
         """Get a list of actions for the given item."""
         return self.item_actions
+
+    def change_item_title(self, item, new_title):
+        pass
 
     def is_valid(self):
         return True

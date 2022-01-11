@@ -104,11 +104,8 @@ class LocalServerSubcommand(BaseSubcommandHandler):
                 s.bind(("localhost", port))
                 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 return True
-            except socket.error as e:
-                if e.errno == errno.EADDRINUSE:
-                    return False
-                else:
-                    raise
+            except (OSError, socket.error) as e:
+                return False
 
     @staticmethod
     def find_free_port():

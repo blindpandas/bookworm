@@ -84,10 +84,13 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         self.quickFilterTextCtrl.SetHint(quick_filter_label)
         self.quickFilterTextCtrl.SetSizerProps(expand=True)
         self.list_label = wx.StaticText(self, -1, _("Loading items"))
+        doc_list_style = wx.LC_ICON | wx.LC_SINGLE_SEL
+        if self.source.can_rename_items:
+            doc_list_style |= wx.LC_EDIT_LABELS
         self.document_list = wx.ListCtrl(
             self,
             wx.ID_ANY,
-            style=wx.LC_ICON | wx.LC_SINGLE_SEL
+            style=doc_list_style
         )
         self.document_list.SetSizerProps(expand=True)
         self.document_list.SetMinSize((2000, 1000))
@@ -100,6 +103,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         self.document_list.Bind(wx.EVT_KEY_UP, self.onListKeyUP, self.document_list)
         self.document_list.Bind(wx.EVT_LEFT_DCLICK, lambda e: self.activate_current_item(), self.document_list)
         self.document_list.Bind(wx.EVT_CHAR, self.onDocumentListChar, self.document_list)
+        self.document_list.Bind(wx.EVT_LIST_END_LABEL_EDIT, self.onDocumentListEndLabelEdit, self.document_list)
         self.Bind(wx.EVT_CONTEXT_MENU, self.onContextMenu, self.document_list)
         self.Bind(wx.EVT_TEXT, self.onQuickFilterTextChanged, self.quickFilterTextCtrl)
         self._all_items = None
@@ -215,8 +219,17 @@ class BookshelfResultsPage(BookshelfNotebookPage):
                 func=self._do_open_document, 
             ),
             BookshelfAction(
+                _("Open in system viewer"),
+                func=self._do_open_document_in_system_viewer, 
+            ),
+            BookshelfAction(
                 _("Document info..."),
                 func=self._do_show_document_info 
+            ),
+            BookshelfAction(
+                _("Edit &title"),
+                func=lambda item: self.document_list.EditLabel(self.selected_item_index) ,
+                decider=lambda item: self.source.can_rename_items
             ),
         ]
 
@@ -225,6 +238,9 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         # Translators: spoken message when activating a document
         speech.announce("Openning document...")
         EBookReader.open_document_in_a_new_instance(document_info.uri)
+
+    def _do_open_document_in_system_viewer(self, document_info):
+        wx.LaunchDefaultApplication(str(document_info.uri.path))
 
     def _do_show_document_info(self, document_info):
         with DocumentInfoDialog(parent=self, document_info=document_info, offer_open_action=True, open_in_a_new_instance=True) as dlg:
@@ -260,6 +276,8 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         if event.KeyCode in self.ITEM_ACTIVATION_KEYS:
             self.activate_current_item()
             return
+        elif event.GetKeyCode() == wx.WXK_ESCAPE:
+            return
         elif event.GetKeyCode() == wx.WXK_CONTROL_A:
             self.quickFilterTextCtrl.SetFocus()
             self.quickFilterTextCtrl.SelectAll()
@@ -283,13 +301,18 @@ class BookshelfResultsPage(BookshelfNotebookPage):
 
     def onListKeyUP(self, event):
         event.Skip()
-        if event.KeyCode == wx.WXK_BACK:
-            self.pop_folder_navigation_stack()
+        if event.KeyCode == wx.WXK_F2:
+            self.document_list.EditLabel(self.selected_item_index)
         elif event.AltDown() and (event.KeyCode == wx.WXK_LEFT):
             self.pop_folder_navigation_stack()
         elif event.KeyCode == wx.WXK_F5:
             self.update_items()
             self.frame.update_pages_labels()
+
+    def onDocumentListEndLabelEdit(self, event):
+        new_title = event.GetLabel().strip()
+        if new_title:
+            self.source.change_item_title(self.selected_item, new_title)
 
     def pop_folder_navigation_stack(self):
         try:
@@ -391,7 +414,10 @@ class BookshelfWindow(sc.SizedFrame):
             self.tree_tabs.Refresh()
         if update_items:
             for page_idx in range(0, self.tree_tabs.GetPageCount()):
-                page = self.tree_tabs.GetPage(page_idx)
+                try:
+                    page = self.tree_tabs.GetPage(page_idx)
+                except wx.wxAssertionError:
+                    continue
                 if not page.source.is_valid():
                     self.tree_tabs.DeletePage(page_idx)
                     continue

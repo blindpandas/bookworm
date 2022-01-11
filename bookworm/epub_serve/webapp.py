@@ -10,7 +10,6 @@ import zipfile
 import apsw
 from tempfile import TemporaryDirectory
 from functools import lru_cache, cached_property
-from yarl import URL
 from bottle import (
     Bottle,
     HTTPError,
@@ -31,6 +30,7 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
+EPUB_SERVE_APP_PREFIX = '/web_viewer/'
 HISTORY_DB_PATH = paths.db_path("epub_server_history.sqlite")
 WEB_RESOURCES_PATH = paths.resources_path("readium_js_viewer_lite")
 TEMPLATE_PATH = WEB_RESOURCES_PATH / "templates"
@@ -149,11 +149,12 @@ class EpubServingConfig:
                 position_url = result[0].lstrip("?")
                 if position_url != request.query_string:
                     url_parts = request.urlparts
-                    new_url = ("{scheme}://{authority}/{path}".rstrip("/") + "/?{query}").format(
+                    new_url = ("{scheme}://{authority}/{path}/{EPUB_SERVE_APP_PREFIX}" + "?{query}").format(
                         scheme=url_parts.scheme,
                         authority=url_parts.netloc,
                         path="/",
-                        query=position_url.lstrip("?")
+                        EPUB_SERVE_APP_PREFIX=EPUB_SERVE_APP_PREFIX,
+                        query=urllib.parse.unquote(position_url.lstrip("?"))
                     )
                     redirect(new_url)
         response.status = "200 OK"

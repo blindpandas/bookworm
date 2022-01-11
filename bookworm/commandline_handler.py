@@ -68,7 +68,7 @@ def handle_app_commandline_args():
         return args.subcommand_cls.handle_commandline_args(args)
 
 
-def run_subcommand_in_a_new_process(args, executable=None):
+def run_subcommand_in_a_new_process(args, executable=None, *, hidden=True, detached=True):
     if executable is None:
         if CURRENT_PACKAGING_MODE is not PackagingMode.Source:
             executable = sys.executable
@@ -77,14 +77,17 @@ def run_subcommand_in_a_new_process(args, executable=None):
             args.insert(0, "-m")
             args.insert(1, "bookworm")
         args.insert(0, executable)
+    creationflags = 0
     startupinfo = subprocess.STARTUPINFO()
-    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    if detached:
+        creationflags |= subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
+    if hidden:
+        creationflags |= subprocess.CREATE_NO_WINDOW
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     subprocess.Popen(
         args,
         startupinfo=startupinfo,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
-        creationflags=subprocess.DETACHED_PROCESS
-        | subprocess.CREATE_NEW_PROCESS_GROUP
-        | subprocess.CREATE_NO_WINDOW,
+        creationflags=creationflags,
     )

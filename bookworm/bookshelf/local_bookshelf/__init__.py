@@ -339,6 +339,8 @@ class LocalBookshelfProvider(BookshelfProvider):
 
 
 class LocalDatabaseSource(Source):
+    can_rename_items = True
+
     def __init__(self, query, *args, model=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.query = query
@@ -354,7 +356,7 @@ class LocalDatabaseSource(Source):
         return self.query.count()
 
     def get_item_actions(self, item):
-        doc_instance = Document.get(item.data['database_id'])
+        doc_instance = self.get_doc_instance(item)
         retval = [
             BookshelfAction(
                 _("Remove from &Favorites") if doc_instance.is_favorite else _("Add to &Favorites"),
@@ -370,6 +372,15 @@ class LocalDatabaseSource(Source):
             ),
         ]
         return retval
+
+    def change_item_title(self, item, new_title):
+        doc_instance = self.get_doc_instance(item)
+        doc_instance.title = new_title
+        doc_instance.metadata['title'] = new_title
+        doc_instance.save()
+
+    def get_doc_instance(self, item):
+        return Document.get(item.data['database_id'])
 
     def _toggle_favorite_status(self, doc_instance):
         doc_instance.is_favorite = not doc_instance.is_favorite

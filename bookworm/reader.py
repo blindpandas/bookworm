@@ -388,4 +388,4 @@ class EBookReader:
 
     @staticmethod
     def open_document_in_a_new_instance(uri):
-        run_subcommand_in_a_new_process(["launcher", uri.base64_encode(),])
+        run_subcommand_in_a_new_process(["launcher", uri.base64_encode(),], hidden=False)

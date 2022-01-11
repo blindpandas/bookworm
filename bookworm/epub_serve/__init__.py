@@ -12,13 +12,10 @@ from bookworm.signals import reader_book_loaded, local_server_booting
 from bookworm.gui.components import AsyncSnakDialog
 from bookworm.document.formats import EpubDocument
 from bookworm.logger import logger
-from .webapp import EpubServingApp
+from .webapp import EpubServingApp, EPUB_SERVE_APP_PREFIX
 
 
 log = logger.getChild(__name__)
-
-
-EPUB_SERVE_APP_PREFIX = '/web_viewer/'
 
 
 @local_server_booting.connect

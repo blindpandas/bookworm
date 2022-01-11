@@ -51,8 +51,8 @@ Section
 SetShellVarContext All
 SetOutPath "$INSTDIR"
 File /r "$%IAPP_FROZEN_DIRECTORY%\*"
-CreateShortCut "$DESKTOP\$%IAPP_DISPLAY_NAME%.lnk" "$INSTDIR\$%IAPP_DISPLAY_NAME%.exe"
-CreateShortCut "$DESKTOP\Bookshelf.lnk" "$INSTDIR\$%IAPP_DISPLAY_NAME%.exe" "bookshelf" "$INSTDIR\bookshelf.ico"
+CreateShortCut "$DESKTOP\$%IAPP_DISPLAY_NAME%.lnk" "$INSTDIR\$%IAPP_DISPLAY_NAME%.exe" "" "" "" SW_SHOWNORMAL "" "$%IAPP_DESCRIPTION% from $%IAPP_AUTHOR% ($%IAPP_WEBSITE%)"
+CreateShortCut "$DESKTOP\Bookshelf.lnk" "$INSTDIR\$%IAPP_DISPLAY_NAME%.exe" "bookshelf" "$INSTDIR\bookshelf.ico" "" SW_SHOWNORMAL "" "Bookworm Bookshelf from $%IAPP_AUTHOR% ($%IAPP_WEBSITE%)"
 !insertmacro MUI_STARTMENU_WRITE_BEGIN startmenu
 CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
 CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$%IAPP_DISPLAY_NAME%.lnk" "$INSTDIR\$%IAPP_DISPLAY_NAME%.exe"
@@ -77,6 +77,7 @@ nsExec::ExecToStack '"$INSTDIR\Bookworm.exe" shell --shell-disintegrate'
 DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%"
 RMDir /r /REBOOTOK $INSTDIR
 Delete "$DESKTOP\$%IAPP_DISPLAY_NAME%.lnk"
+Delete "$DESKTOP\Bookshelf.lnk"
 !insertmacro MUI_STARTMENU_GETFOLDER startmenu $StartMenuFolder
 RMDir /r "$SMPROGRAMS\$StartMenuFolder"
 SectionEnd

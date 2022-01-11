@@ -320,13 +320,14 @@ class DocumentFTSIndex(BaseModel, FTS5Model):
     def perform_search(cls, column, term):
         if not cls.validate_query(term):
             term = cls.clean_query(term)
+        snip_length = len(term) + 8
         return (
             cls.select(
                 cls.rowid,
                 cls.page_number,
                 cls.document_id,
                 cls.document_title,
-                column.snippet(left="", right="", over_length="", max_tokens=20),
+                column.snippet(left="", right="", over_length="", max_tokens=snip_length),
             )
             .where(column.match(term))
             .order_by(fn.bm25(cls._meta.entity))
