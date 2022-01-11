@@ -11,6 +11,7 @@ from bookworm.logger import logger
 from .window import BookshelfWindow
 from .local_bookshelf.models import Document
 from .local_bookshelf.dialogs import EditDocumentClassificationDialog
+from .local_bookshelf.tasks import issue_add_document_request
 
 
 log = logger.getChild(__name__)
@@ -84,11 +85,12 @@ class BookshelfMenu(wx.Menu):
         if retval is not None:
             category_name, tags_names = retval
             threaded_worker.submit(
-                self.service.add_document_to_bookshelf,
+                issue_add_document_request,
                 document_uri = self.view.reader.document.uri,
                 category_name=category_name,
                 tags_names=tags_names
             )
+            wx.CallAfter(self.Enable, StatefulBookshelfMenuIds.add_current_book_to_shelf, False)
 
     @call_threaded
     def _on_reader_loaded(self, sender):
