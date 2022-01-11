@@ -52,9 +52,11 @@ SetShellVarContext All
 SetOutPath "$INSTDIR"
 File /r "$%IAPP_FROZEN_DIRECTORY%\*"
 CreateShortCut "$DESKTOP\$%IAPP_DISPLAY_NAME%.lnk" "$INSTDIR\$%IAPP_DISPLAY_NAME%.exe"
+CreateShortCut "$DESKTOP\Bookshelf.lnk" "$INSTDIR\$%IAPP_DISPLAY_NAME%.exe" "bookshelf" "$INSTDIR\bookshelf.ico"
 !insertmacro MUI_STARTMENU_WRITE_BEGIN startmenu
 CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
 CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$%IAPP_DISPLAY_NAME%.lnk" "$INSTDIR\$%IAPP_DISPLAY_NAME%.exe"
+CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Bookshelf.lnk" "$INSTDIR\$%IAPP_DISPLAY_NAME%.exe" "bookshelf" "$INSTDIR\bookshelf.ico"
 CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$%IAPP_DISPLAY_NAME% English User Guide.lnk" "$INSTDIR\resources\userguide\en\$%IAPP_NAME%.html"
 CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall $%IAPP_DISPLAY_NAME%.lnk" "$INSTDIR\Uninstall.exe"
 !insertmacro MUI_STARTMENU_WRITE_END
@@ -84,10 +86,14 @@ Function .onInit
 StrCmp $%IAPP_ARCH% "x64" +1 +3
   StrCpy $instdir "$programfiles64\$%IAPP_DISPLAY_NAME%"
   SetRegView 64
+IfFileExists "$INSTDIR\Bookworm.exe" 0 +2
+  ExecWait '"$INSTDIR\Bookworm.exe" kill-other-instances'
 FunctionEnd
 
 Function un.onInit
 !insertmacro MUI_LANGDLL_DISPLAY
 StrCmp $%IAPP_ARCH% "x64" +1 +2
   SetRegView 64
+IfFileExists "$INSTDIR\Bookworm.exe" 0 +2
+  ExecWait '"$INSTDIR\Bookworm.exe" kill-other-instances'
 FunctionEnd

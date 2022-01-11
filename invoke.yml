@@ -26,6 +26,7 @@ folders_to_clean:
         - bookworm/resources/contributors.txt
         - bookworm/resources/icons
         - bookworm/bookworm.ico
+        - bookworm/bookshelf.ico
         - bookworm/resources/app_icons_data.py
         - scripts/Bookworm*setup.exe
         - scripts/bookworm.pot

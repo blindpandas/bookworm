@@ -116,6 +116,7 @@ bookworm/resources/license.txt
 bookworm/resources/userguide/*/*.html
 bookworm/resources/icons/*
 bookworm/bookworm.ico
+bookworm/bookshelf.ico
 bookworm/resources/app_icons_data.py
 scripts/builder/assets/version_info.txt
 scripts/builder/assets/bookworm-logo.bmp

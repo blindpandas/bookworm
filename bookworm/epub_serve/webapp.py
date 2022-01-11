@@ -149,7 +149,7 @@ class EpubServingConfig:
                 position_url = result[0].lstrip("?")
                 if position_url != request.query_string:
                     url_parts = request.urlparts
-                    new_url = "{scheme}://{authority}/{path}".rstrip("/") + "/?{query}".format(
+                    new_url = ("{scheme}://{authority}/{path}".rstrip("/") + "/?{query}").format(
                         scheme=url_parts.scheme,
                         authority=url_parts.netloc,
                         path="/",
