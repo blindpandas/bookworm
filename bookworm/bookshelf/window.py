@@ -237,6 +237,9 @@ class BookshelfResultsPage(BookshelfNotebookPage):
 
     def _do_open_document_in_system_viewer(self, document_info):
         wx.LaunchDefaultApplication(str(document_info.uri.path))
+        sounds.navigation.play()
+        # Translators: spoken message when activating a document
+        speech.announce("Openning document...")
 
     def _do_show_document_info(self, document_info):
         with DocumentInfoDialog(parent=self, document_info=document_info, offer_open_action=True, open_in_a_new_instance=True) as dlg:
