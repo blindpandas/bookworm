@@ -6,6 +6,9 @@ import operator
 import wx
 import wx.lib.sized_controls as sc
 import wx.lib.filebrowsebutton as filebrowse
+from bookworm import speech
+from bookworm.reader import EBookReader
+from bookworm.resources import sounds
 from bookworm.gui.components import (
     SimpleDialog,
     ColumnDefn,
@@ -13,7 +16,13 @@ from bookworm.gui.components import (
     make_sized_static_box
 )
 from bookworm.logger import logger
-from .models import Document, Category, Tag, DocumentTag
+from .models import (
+    Document,
+    Page,
+    Category,
+    Tag,
+    DocumentTag
+)
 
 
 log = logger.getChild(__name__)
@@ -152,3 +161,20 @@ class SearchResultsPage(sc.SizedPanel):
         wx.StaticText(self, -1, list_label)
         self.result_list = ImmutableObjectListView(self, -1, columns=column_spec)
         self.result_list.set_objects(search_results, set_focus=False)
+        self.result_list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onItemActivated, self.result_list)
+
+    def onItemActivated(self, event):
+        selected_result = self.result_list.get_selected()
+        page = selected_result.page_index
+        position = Page.get_text_start_position(
+            selected_result.page_id,
+            selected_result.snippet
+        )
+        uri = selected_result.document.uri.create_copy(
+            openner_args=dict(page=page, position=position)
+        )
+        # Translators: spoken message
+        speech.announce("Openning document...")
+        sounds.navigation.play()
+        EBookReader.open_document_in_a_new_instance(uri)
+

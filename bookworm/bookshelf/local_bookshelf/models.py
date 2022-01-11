@@ -50,6 +50,7 @@ TRIGGER_DELETE_FTS_INDEX_ON_PAGE_DELETE = (
 @attr.s(auto_attribs=True, slots=True, frozen=True)
 class FullTextSearchResult:
     document_id: int
+    page_id: int
     page_index: int
     document_title: str = None
     snippet: str = None
@@ -57,8 +58,6 @@ class FullTextSearchResult:
     @property
     def document(self):
         return Document.get_by_id(self.document_id)
-        doc_id = VwDocumentPage.get(page_id=1).document_id
-        return Document.get_by_id(doc_id)
 
 
 class BaseModel(Model):
@@ -212,6 +211,13 @@ class Page(BaseModel):
         on_delete="CASCADE",
     )
 
+    @classmethod
+    def get_text_start_position(cls, page_id, text):
+        return (
+            cls.select(fn.ABS(fn.INSTR(cls.content, text)))
+            .where(cls.id == page_id)
+        ).scalar()
+
 
 class DocumentAuthor(BaseModel):
     document = ForeignKeyField(
@@ -316,6 +322,7 @@ class DocumentFTSIndex(BaseModel, FTS5Model):
             term = cls.clean_query(term)
         return (
             cls.select(
+                cls.rowid,
                 cls.page_number,
                 cls.document_id,
                 cls.document_title,
@@ -338,12 +345,13 @@ class DocumentFTSIndex(BaseModel, FTS5Model):
             cursor = connection.cursor()
             content_matches = cursor.execute(str(cls.perform_search(field_column, term)))
             yielded_docs = set()
-            for (page_number, document_id, document_title, snippet) in content_matches:
+            for (page_id, page_number, document_id, document_title, snippet) in content_matches:
                 if document_id in yielded_docs:
                     continue
                 if field == 'title':
                     yielded_docs.add(document_id)
                 yield FullTextSearchResult(
+                    page_id=page_id,
                     page_index=page_number,
                     document_id=document_id,
                     document_title=document_title,

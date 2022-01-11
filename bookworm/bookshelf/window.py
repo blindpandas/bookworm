@@ -221,8 +221,9 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         ]
 
     def _do_open_document(self, document_info):
-        speech.announce("Openning...")
         sounds.navigation.play()
+        # Translators: spoken message when activating a document
+        speech.announce("Openning document...")
         EBookReader.open_document_in_a_new_instance(document_info.uri)
 
     def _do_show_document_info(self, document_info):

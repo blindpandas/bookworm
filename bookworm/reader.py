@@ -126,6 +126,11 @@ class EBookReader:
         )
         self.set_view_parameters()
         reader_book_loaded.send(self)
+        if (open_args := self.document.uri.openner_args):
+            page = int(open_args.get('page', 0))
+            pos = int(open_args.get('position', 0))
+            self.go_to_page(page, pos)
+            self.view.contentTextCtrl.SetFocus()
 
     def set_view_parameters(self):
         self.view.set_title(self.get_view_title(include_author=True))

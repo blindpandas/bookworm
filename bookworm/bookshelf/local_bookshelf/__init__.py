@@ -278,7 +278,7 @@ class LocalBookshelfProvider(BookshelfProvider):
     def _show_search_results_dialog(self, title_search_results, content_search_results):
         dialog = BookshelfSearchResultsDialog(
             wx.GetApp().GetTopWindow(),
-            _("Search Results"),
+            _("Full Text Search Results"),
             title_search_results=title_search_results,
             content_search_results=content_search_results
         )

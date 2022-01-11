@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import contextlib
 import urllib.parse
 import requests
 import more_itertools
@@ -206,8 +207,7 @@ def _do_import_folder_to_bookshelf(folder, category_name):
 def _import_document(category_name, filename):
     try:
         uri = DocumentUri.from_filename(filename)
-        document = create_document(uri)
+        with contextlib.closing(create_document(uri)) as document:
+            add_document_to_bookshelf(document, category_name, tags_names=(), database_file=None)
     except:
         return
-    add_document_to_bookshelf(document, category_name, tags_names=(), database_file=None)
-    document.close()
