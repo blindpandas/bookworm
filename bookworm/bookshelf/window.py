@@ -223,10 +223,6 @@ class BookshelfResultsPage(BookshelfNotebookPage):
                 func=self._do_open_document_in_system_viewer, 
             ),
             BookshelfAction(
-                _("Document info..."),
-                func=self._do_show_document_info 
-            ),
-            BookshelfAction(
                 _("Edit &title"),
                 func=lambda item: self.document_list.EditLabel(self.selected_item_index) ,
                 decider=lambda item: self.source.can_rename_items
@@ -353,7 +349,11 @@ class BookshelfResultsPage(BookshelfNotebookPage):
             actions = [
                 *self.get_default_item_actions(item),
                 None,
-                *item_actions
+                *item_actions,
+            BookshelfAction(
+                _("Document info..."),
+                func=self._do_show_document_info 
+            ),
             ]
         rect = self.document_list.GetItemRect(self.selected_item_index)
         self.popup_actions_menu(
