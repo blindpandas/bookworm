@@ -10,6 +10,7 @@ import zipfile
 import apsw
 from tempfile import TemporaryDirectory
 from functools import lru_cache, cached_property
+from url_normalize import url_normalize
 from bottle import (
     Bottle,
     HTTPError,
@@ -156,7 +157,7 @@ class EpubServingConfig:
                         EPUB_SERVE_APP_PREFIX=EPUB_SERVE_APP_PREFIX,
                         query=urllib.parse.unquote(position_url.lstrip("?"))
                     )
-                    redirect(new_url)
+                    redirect(url_normalize(new_url))
         response.status = "200 OK"
         return self.get_template('index.html', as_bytes=True)
 
