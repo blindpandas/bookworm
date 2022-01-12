@@ -618,10 +618,6 @@ def create_portable_copy(c):
     frozen_dir = Path(env["IAPP_FROZEN_DIRECTORY"])
     fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-portable.zip"
     port_arch = PROJECT_ROOT / "scripts" / fname
-    # Fix appveyor images folder missing for some reason or another
-    images_dir_src = RESOURCES_FOLDER / "images"
-    images_dir_dst = c['build_folder'] / "resources"
-    c.run(f"cp -r {images_dir_src} {images_dir_dst}")
     with ZipFile(port_arch, "w", compression=ZIP_LZMA, allowZip64=False) as archive:
         for file in recursively_iterdir(frozen_dir):
             archive.write(file, file.relative_to(frozen_dir))

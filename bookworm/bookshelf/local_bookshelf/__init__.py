@@ -103,7 +103,7 @@ class LocalBookshelfProvider(BookshelfProvider):
             (_("Tags"), (self._create_local_database_sources_from_model(Tag), Tag)),
         ]
         classifications[0][1][0].append(
-            LocalDatabaseSource(
+            InvalidIfEmptyLocalDatabaseSource(
                 provider=self,
                 name=_("Uncategorized"),
                 query=Document.select().where(Document.category == None),
@@ -432,7 +432,7 @@ class AuthorMetaSource(MetaSource):
             .where(DocumentAuthor.document_id == None)
         )
         return [
-            AuthorLocalDatabaseSource(
+            InvalidIfEmptyLocalDatabaseSource(
                 provider=self.provider,
                 name=item.name,
                 query=Author.get_documents(item.name),
@@ -440,7 +440,7 @@ class AuthorMetaSource(MetaSource):
             )
             for item in Author.get_all()
         ] + [
-            AuthorLocalDatabaseSource(
+            InvalidIfEmptyLocalDatabaseSource(
                 provider=self.provider,
                 name=_("Unknown Author"),
                 query=unknown_author_query,
@@ -449,7 +449,7 @@ class AuthorMetaSource(MetaSource):
         ]
 
 
-class AuthorLocalDatabaseSource(LocalDatabaseSource):
+class InvalidIfEmptyLocalDatabaseSource(LocalDatabaseSource):
 
     def is_valid(self):
         return self.get_item_count() != 0

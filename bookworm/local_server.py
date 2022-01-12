@@ -25,8 +25,9 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
+SYS_EXECUTABLE_PATH_MD5_HASH= md5(sys.executable.encode("utf-8")).hexdigest()
 BOOKWORM_LOCAL_SERVER_DEFAULT_PORT = 61073
-BOOKWORM_LOCAL_SERVER_SHARED_MEMORY_NAME = md5(sys.executable.encode("utf-8")).hexdigest()
+BOOKWORM_LOCAL_SERVER_SHARED_MEMORY_NAME = f"local_server.port.{SYS_EXECUTABLE_PATH_MD5_HASH}"
 BOOKWORM_LOCAL_SERVER_SHARED_MEMORY_SIZE = 4
 SERVER_READY_TIMEOUT = 120
 

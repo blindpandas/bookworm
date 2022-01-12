@@ -112,7 +112,7 @@ class MetaSource(Source):
     """Represents a source that merely groups other sources."""
 
     def get_item_count(self):
-        return len(self.get_items())
+        return len([item for item in self.get_items() if item.is_valid()])
 
     def get_item_actions(self, item):
         raise NotImplementedError
