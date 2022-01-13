@@ -14,7 +14,7 @@ from bookworm.reader import EBookReader
 from bookworm.gui.components import AsyncSnakDialog
 from bookworm.gui.book_viewer.core_dialogs import DocumentInfoDialog
 from bookworm.resources import sounds
-from bookworm.paths import images_path
+from bookworm.paths import app_path, images_path
 from bookworm.bookshelf.provider import (
     BookshelfProvider,
     Source,
@@ -369,7 +369,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
 class BookshelfWindow(sc.SizedFrame):
     def __init__(self, parent, title, **kwargs):
         super().__init__(parent, title=title, **kwargs)
-        icon_file = images_path("bookshelf.png")
+        icon_file = app_path("bookshelf.ico")
         icon = wx.Icon()
         icon.LoadFile(os.fspath(icon_file))
         self.SetIcon(icon)
