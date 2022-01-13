@@ -32,7 +32,7 @@ before_build:
 build_script:
   # 32-bit version
   - ps: Write-Host "Building the 32-bit variant."
-  - C:\Python39\python.exe -m venv .venv32
+  - py -3.9-32  -m venv .venv32
   - call ".venv32\Scripts\activate.bat"
   - python -m pip install invoke
   - invoke build
@@ -40,7 +40,7 @@ build_script:
   - deactivate
   # 64-bit version
   - ps: Write-Host "Building the 64-bit variant."
-  - C:\Python39-x64\python.exe -m venv .venv64
+  - py -3.9-64 -m venv .venv64
   - call ".venv64\Scripts\activate.bat"
   - python -m pip install invoke
   - invoke build

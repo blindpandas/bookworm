@@ -367,8 +367,8 @@ class BookshelfResultsPage(BookshelfNotebookPage):
 
 
 class BookshelfWindow(sc.SizedFrame):
-    def __init__(self, parent, title, **kwargs):
-        super().__init__(parent, title=title, **kwargs)
+    def __init__(self, parent):
+        super().__init__(parent)
         icon_file = app_path("bookshelf.ico")
         icon = wx.Icon()
         icon.LoadFile(os.fspath(icon_file))
@@ -436,6 +436,10 @@ class BookshelfWindow(sc.SizedFrame):
             )
 
     def setup_provider(self):
+        self.SetTitle(
+            # Translators: title of Bookshelf window
+            _("Bookworm Bookshelf: {name}").format(name=self.provider.display_name)
+        )
         self.tree_tabs.DeleteAllPages()
         self.add_sources(
             self.provider.get_sources(),
@@ -533,7 +537,7 @@ def run_bookshelf_standalone():
     log_diagnostic_info()
     setupSubsystems()
 
-    frame = BookshelfWindow(None, _("Bookworm Bookshelf"))
+    frame = BookshelfWindow(None)
     app.SetTopWindow(frame)
     frame.Show(True)
     app.MainLoop()

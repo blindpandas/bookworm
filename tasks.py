@@ -616,7 +616,7 @@ def create_portable_copy(c):
     print("Creating portable archive...")
     env = os.environ
     frozen_dir = Path(env["IAPP_FROZEN_DIRECTORY"])
-    fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-portable.zip"
+    fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-{env['IAPP_ARCH']}-portable.zip"
     port_arch = PROJECT_ROOT / "scripts" / fname
     with ZipFile(port_arch, "w", compression=ZIP_LZMA, allowZip64=False) as archive:
         for file in recursively_iterdir(frozen_dir):
