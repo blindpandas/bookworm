@@ -18,8 +18,8 @@
 
 ## Resources
 
-* The official website: [blindpandas.com/bookworm](https://blindpandas.com/bookworm/)
-* User guide: [Bookworm user guide](https://blindpandas.com/bookworm/user-guide/)
+* The official website: [getbookworm.com](https://getbookworm.com/)
+* User guide: [Bookworm user guide](https://getbookworm.com/user-guide/)
 
 
 ## Development
@@ -86,4 +86,4 @@ invoke build
 
 ## License
 
-**Bookworm** is copyright (c) 2021 Blind Pandas Team. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2022 Blind Pandas Team. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).

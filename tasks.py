@@ -239,7 +239,7 @@ def copy_assets(c):
         Image.open(img).resize(ICON_SIZE).save(
             ficos_dst.joinpath(img.name.split(".")[0] + ".ico")
         )
-    bookshelf_ico_src = RESOURCES_FOLDER / "images" / "bookshelf.png"
+    bookshelf_ico_src = PROJECT_ROOT / "fullsize_images" / "bookshelf.png"
     bookshelf_ico_dst = PACKAGE_FOLDER / "bookshelf.ico"
     Image.open(bookshelf_ico_src).save(bookshelf_ico_dst)
     print("Done copying files.")
