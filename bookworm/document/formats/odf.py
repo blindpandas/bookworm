@@ -73,7 +73,7 @@ class OdfParser:
                 "<!doctype html>",
                 "<html><head>",
                 '<meta charset="utf-8" />',
-                f"<title>{escape_html(self.title)}<title>",
+                f"<title>{escape_html(self.title)}</title>",
                 "</head>",
                 html_body,
                 "</html>",
@@ -138,6 +138,7 @@ class OdfPresentation(BaseDocument):
         | DC.TOC_TREE
         | DC.METADATA
         | DC.STRUCTURED_NAVIGATION
+        | DC.LINKS
         | DC.TEXT_STYLE
     )
 
@@ -162,7 +163,6 @@ class OdfPresentation(BaseDocument):
     @cached_property
     def toc_tree(self):
         root = Section(
-            document=self,
             title=self.metadata.title,
             pager=Pager(first=0, last=self.num_slides - 1),
             level=1,
@@ -171,7 +171,6 @@ class OdfPresentation(BaseDocument):
         for (idx, (slide_title, slide_html)) in enumerate(self.slides.items()):
             stack.push(
                 Section(
-                    document=self,
                     title=slide_title,
                     pager=Pager(first=idx, last=idx),
                     level=2,

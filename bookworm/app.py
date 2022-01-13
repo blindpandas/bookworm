@@ -10,12 +10,13 @@ display_name = "Bookworm"
 description = "The Universally accessible document reader"
 author = "Blind Pandas"
 author_email = "info@blindpandas.com"
-version = "0.4b1"
-version_ex = "0.4.0.1"
+version = "2022.1a1"
+version_ex = "2022.1.0.0"
 url = "https://github.com/blindpandas/bookworm"
 website = "https://getbookworm.com"
 update_url = "https://getbookworm.com/update_info.json"
 copyright = f"Copyright (c) 2021 {author} and {display_name} contributors."
+exit_code = 0
 is_frozen = getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
 arch = "x86" if struct.calcsize("P") == 4 else "x64"
 debug = False

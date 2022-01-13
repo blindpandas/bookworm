@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html id="simpleViewer">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookworm Web Viewer</title>
+
+  <link href="images/readium_favicon.png" rel="shortcut icon"/>
+  <link href="images/readium-touch-icon.png" rel="apple-touch-icon"/>
+  <link rel="stylesheet" type="text/css" href="css/readium-all.css">
+
+  <script type="text/javascript" src="scripts/readium-js-viewer_all_LITE.js"> </script>
+  <script type="text/javascript" src="font-faces/fonts.js"> </script>
+
+  <script type="text/javascript">
+    var path = (window.location && window.location.pathname) ? window.location.pathname : ''; 
+    // extracts path to index.html (or more generally: /PATH/TO/*.[x]html)
+    path = path.replace(/(.*)\/.*\.[x]?html$/, "$1");
+    // removes trailing slash
+    path = path.charAt(path.length-1) == '/'
+        ? path.substr(0, path.length-1)
+        : path;            
+    var HTTPServerRootFolder =
+        window.location ? (
+        window.location.protocol
+        + "//"
+        + window.location.hostname
+        + (window.location.port ? (':' + window.location.port) : '')
+        + path) : '';
+    console.log(HTTPServerRootFolder);
+    var epub_close_url = HTTPServerRootFolder + '/close_epub';
+
+    var fontsArray = [];
+    if (typeof getFontFaces != "undefined") { // defined externally
+      fontsArray = getFontFaces(HTTPServerRootFolder + "/font-faces/");
+    }
+
+    // MUST BE *SINGLE* CALL TO require.config() FOR ALMOND (SINGLE BUNDLE) TO WORK CORRECTLY!!!
+    require.config({
+      /* http://requirejs.org/docs/api.html#config-waitSeconds */
+      waitSeconds: 0,
+      config : {
+          'readium_js_viewer/ModuleConfig' : {
+              'mathJaxUrl': HTTPServerRootFolder + '/scripts/mathjax/MathJax.js',
+              'fonts': fontsArray,
+              'annotationCSSUrl': HTTPServerRootFolder + '/css/annotations.css',
+              'jsLibRoot': HTTPServerRootFolder + '/scripts/zip/',
+              // cloud reader (strictly-speaking, this config option is false by default, but we prefer to have it explicitly set here).
+              'useSimpleLoader' : true,
+              // defaults to /epub_content/epub_library.json relative to the application's root index.html ... that being said, this is cloud reader LITE (no library view!)
+              'epubLibraryPath': undefined,
+              'imagePathPrefix': undefined,
+              'canHandleUrl' : false,
+              'canHandleDirectory' : true,
+              'workerUrl': undefined,
+              'epubReadingSystemUrl': undefined
+          }
+      }
+    });
+  </script>
+  </head>
+  <!-- This is all application-specific HTML -->
+  <body>
+      <nav id="app-navbar" class="navbar" role="banner" aria-label="{{Strings.i18n_toolbar}}">
+      </nav>
+      <div id="app-container">
+      </div>
+      <footer>
+        <p>Powered by <a href="http://readium.org/projects/readiumjs">Readium.js</a></p>
+      </footer>
+      
+      <script async type="text/javascript">
+          var getURLQueryParams = function() {
+             var params = {};
+             var query = window.location.search;
+             if (query && query.length) {
+                 query = query.substring(1);
+                 var keyParams = query.split('&');
+                 for (var x = 0; x < keyParams.length; x++)
+                 {
+                     var keyVal = keyParams[x].split('=');
+                     if (keyVal.length > 1) {
+                         params[keyVal[0]] = decodeURIComponent(keyVal[1]);
+                     }
+                 }
+             }
+             return params;
+          };
+          var urlParams = getURLQueryParams();
+          var current_book_uid = urlParams['epub'].split("/")[1].trimEnd("/").trim();
+          window.addEventListener('beforeunload', function (e) {
+            fetch(window.epub_close_url, {
+              method: 'DELETE',
+              headers: {
+                  'Content-type': 'application/json'
+              },
+              body: JSON.stringify({book_uid: current_book_uid, position_url: window.location.search})
+          });
+        }).then(function(data) {
+            console.log(data);
+        });
+      </script>
+
+      <script async defer type="text/javascript">
+        window.addEventListener("load", function(e) {
+            setTimeout(function() {
+                if (window.__initial_setup_done) {
+                  return;
+                }
+                READIUM.reader.on(ReadiumSDK.Events.CONTENT_DOCUMENT_LOADED, function() {
+                  // Remove the share bookmark as this is a local server running on a random IP
+                  document.querySelector("button.icon-shareUrl").remove();
+                  // Change the title of the document. Credits where credits due; we link to Readium in the footer,
+                  title = READIUM.reader.metadata().title + ' &middot; ' + READIUM.reader.metadata().author + ' &mdash; ' + 'Bookworm Web Viewer';
+                  document.querySelector('title').innerHTML = title;
+                  READIUM.reader.updateSettings({
+                    columnMaxWidth: 400,
+                    //enableGPUHardwareAccelerationCSS3D: true,
+                  });
+                  // Configure the reader settings to sensable defaults
+                  var given_reader_settings = READIUM.reader.viewerSettings();
+                  given_reader_settings['syntheticSpread'] = 'single';
+                  given_reader_settings['scroll'] = 'scroll-doc';
+                  given_reader_settings['theme'] = 'night-theme';
+                  // ReadiumSDK.reader.getCurrentView().setViewSettings(given_reader_settings);
+                  document.querySelector("button#tocButt").click();
+                });
+            },
+            500
+          );
+        });
+      </script>
+  </body>
+</html>

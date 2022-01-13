@@ -106,6 +106,10 @@ class LocaleInfo:
         )
 
     @property
+    def native_name(self):
+        return self.locale.display_name
+
+    @property
     def description(self):
         info = self.get_display_info()
         desc = info[1]

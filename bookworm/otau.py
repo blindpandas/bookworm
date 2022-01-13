@@ -7,7 +7,7 @@ from bookworm import typehints as t
 from bookworm.http_tools import RemoteJsonResource
 from bookworm import app
 from bookworm import config
-from bookworm.base_service import BookwormService
+from bookworm.service import BookwormService
 from bookworm.concurrency import call_threaded
 from bookworm.platform_services import updater
 from bookworm.logger import logger

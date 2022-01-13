@@ -9,6 +9,7 @@ import sys
 import os
 import platform
 import shutil
+import subprocess
 import json
 from io import BytesIO, StringIO
 from datetime import datetime
@@ -44,8 +45,8 @@ def invert_image(image_path):
     from fitz import Pixmap
 
     pix = Pixmap(image_path)
-    pix.invertIRect(pix.irect)
-    buffer = BytesIO(pix.getImageData())
+    pix.invert_irect(pix.irect)
+    buffer = BytesIO(pix.tobytes())
     del pix
     return Image.open(buffer)
 
@@ -121,12 +122,13 @@ def make_icons(c):
 
     TARGET_SIZE = (24, 24)
     IMAGE_SOURCE_FOLDER = PROJECT_ROOT / "fullsize_images"
-    PY_MODULE = PACKAGE_FOLDER / "resources" / "image_data.py"
+    APP_ICONS_FOLDER = IMAGE_SOURCE_FOLDER / "app_icons"
+    PY_MODULE = PACKAGE_FOLDER / "resources" / "app_icons_data.py"
     print(f"Rescaling images and embedding them in {PY_MODULE}")
     if PY_MODULE.exists():
         PY_MODULE.unlink()
     with TemporaryDirectory() as temp:
-        for index, imgfile in enumerate(Path(IMAGE_SOURCE_FOLDER).iterdir()):
+        for index, imgfile in enumerate(Path(APP_ICONS_FOLDER).iterdir()):
             filename, ext = os.path.splitext(imgfile.name)
             if imgfile.is_dir() or ext != ".png":
                 continue
@@ -165,14 +167,14 @@ def make_icons(c):
     }
     if not inst_dst.exists():
         inst_dst.mkdir(parents=True, exist_ok=True)
-    make_installer_image(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").save(
+    make_installer_image(IMAGE_SOURCE_FOLDER  / "bookworm.png").save(
         inst_dst / "bookworm-logo.bmp"
     )
     for fname, imgsize in inst_imgs.items():
         imgfile = inst_dst.joinpath(fname)
         if not imgfile.exists():
             print(f"Creating image {fname}.")
-            Image.open(IMAGE_SOURCE_FOLDER / "logo" / "bookworm.png").resize(
+            Image.open(IMAGE_SOURCE_FOLDER  / "bookworm.png").resize(
                 imgsize
             ).save(imgfile)
             print(f"Copied image {fname} to the assets folder.")
@@ -237,6 +239,9 @@ def copy_assets(c):
         Image.open(img).resize(ICON_SIZE).save(
             ficos_dst.joinpath(img.name.split(".")[0] + ".ico")
         )
+    bookshelf_ico_src = RESOURCES_FOLDER / "images" / "bookshelf.png"
+    bookshelf_ico_dst = PACKAGE_FOLDER / "bookshelf.ico"
+    Image.open(bookshelf_ico_src).save(bookshelf_ico_dst)
     print("Done copying files.")
 
 
@@ -589,6 +594,9 @@ def freeze(c):
             hide=True,
         )
     print("App freezed.")
+    print("Cleaning up junk folders from the frozen executable directory.")
+    for dist_info_dir in (dinfo for dinfo in c['build_folder'].glob("*.dist-info") if dinfo.is_dir()):
+        shutil.rmtree(os.fspath(dist_info_dir))
 
 
 @task(
@@ -637,19 +645,7 @@ def run_application(c, debug=True):
                 "Changes you make in the bookworm pacakge will not show up.\n"
                 "To fix this, run:\n\tpip uninstall bookworm\n\tpip install -e .\n"
             )
-        from bookworm import bootstrap
-        from bookworm import app
-
-        print(f"{app.display_name} v{app.version}")
-        if debug:
-            os.environ["BOOKWORM_DEBUG"] = "1"
-        bootstrap.run()
-    except ImportError as e:
-        print("An import error was raised when starting the application.")
-        print("Make sure that your development environment is ready.")
-        print("To prepare your development environment run: invoke dev\r\n")
-        print("Here is the traceback:\r\n")
-        raise
-    except:
-        print("An error has occured while starting Bookworm.")
-        raise
+        args = subprocess.list2cmdline(["--debug" if debug else ''])
+        c.run(f"python -m bookworm {args}")
+    except UnexpectedExit as e:
+        exit(e.result.return_code)

@@ -13,7 +13,7 @@ from bookworm.utils import restart_application
 from bookworm.i18n import get_available_locales, set_locale
 from bookworm.signals import app_started, config_updated
 from bookworm.runtime import IS_RUNNING_PORTABLE
-from bookworm.resources import images
+from bookworm.resources import app_icons
 from bookworm.platform_services.shell import (
     shell_integrate,
     shell_disintegrate,
@@ -142,8 +142,9 @@ class FileAssociationDialog(SimpleDialog):
             sys.exit(0)
 
 
-def show_file_association_dialog(flag):
-    wx_app = wx.GetApp()
+def show_file_association_dialog():
+    config.setup_config()
+    wx_app = wx.App()
     dlg = FileAssociationDialog(None, standalone=True)
     wx_app.SetTopWindow(dlg)
     dlg.Show()
@@ -364,6 +365,13 @@ class AppearancePanel(SettingsPanel):
         # Translators: label of an edit box
         wx.StaticText(fontBox, -1, _("Font Size"))
         EnhancedSpinCtrl(fontBox, -1, min=10, max=96, name="appearance.font_point_size")
+        wx.CheckBox(
+            fontBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Bold style"),
+            name="appearance.use_bold_font",
+        )
         self.Bind(
             wx.EVT_CHECKBOX,
             self.onUseOpendyslexicFontCheckBox,
@@ -420,7 +428,7 @@ class PreferencesDialog(SimpleDialog):
         image_list = wx.ImageList(24, 24)
         self.tabs.AssignImageList(image_list)
         for idx, (__, image, panel_cls, label) in enumerate(page_info):
-            bmp = getattr(images, image).GetBitmap()
+            bmp = getattr(app_icons, image).GetBitmap()
             image_list.Add(bmp)
             # Create settings page
             page = panel_cls(self.tabs, self)

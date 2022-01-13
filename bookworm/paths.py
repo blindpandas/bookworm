@@ -69,6 +69,11 @@ def resources_path():
 
 
 @merge_paths
+def images_path():
+    return resources_path("images")
+
+
+@merge_paths
 def locale_path():
     return app_path("resources", "locale")
 

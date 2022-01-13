@@ -15,6 +15,10 @@ from requests.exceptions import RequestException
 from bookworm import app
 from bookworm import config
 from bookworm import paths
+from bookworm.commandline_handler import (
+    BaseSubcommandHandler,
+    register_subcommand,
+)
 from bookworm.http_tools import HttpResource
 from bookworm.utils import generate_sha1hash
 from bookworm.gui.components import RobustProgressDialog, SnakDialog
@@ -22,6 +26,21 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
+
+
+
+@register_subcommand
+class KillOtherInstancesSubcommand(BaseSubcommandHandler):
+    subcommand_name = "kill-other-instances"
+
+    @classmethod
+    def add_arguments(cls, subparser):
+        pass
+
+    @classmethod
+    def handle_commandline_args(cls, args):
+        kill_other_running_instances()
+        return 0
 
 
 def kill_other_running_instances():
@@ -33,6 +52,7 @@ def kill_other_running_instances():
             continue
         if proc.Id != os.getpid():
             proc.Kill()
+            log.info(f"Killed other process with PID: {proc.Id}")
 
 
 def extract_update_bundle(bundle):

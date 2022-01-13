@@ -3,37 +3,62 @@
 """Make sure that runtime components are OK and run the app."""
 
 import sys
-from bookworm.platform_services import check_runtime_components
+import os
+import logging
+from pathlib import Path
+from bookworm import app
+
+
+def report_fatal_error(
+    *, title, message, exc_info=True, exit_code=1, log_file=None, show_gui=False
+):
+    MESSAGE_FORMAT = "%(asctime)s %(name)s %(levelname)s: %(message)s"
+    DATE_FORMAT = "%d/%m/%Y %H:%M:%S"
+    logger = logging.getLogger("")
+    logger.addHandler(logging.StreamHandler(sys.stderr))
+
+    if log_file is not None:
+        file_handler = logging.FileHandler(filename=log_file, mode="w")
+        file_handler.setFormatter(
+            logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT)
+        )
+        logger.addHandler(file_handler)
+
+    logger.debug("An error was occurred while starting the application.")
+    logger.fatal(title)
+    logger.fatal(message)
+    if exc_info:
+        logger.exception("ERROR DETAILS:\n", exc_info=True)
+
+    if show_gui:
+        try:
+            import wx
+
+            wx.SafeShowMessage(title, message)
+        except:
+            logger.fatal("Failed to report error graphically")
+    sys.exit(exit_code)
 
 
 def main():
     try:
-        check_runtime_components()
-    except EnvironmentError as e:
-        import wx
+        from bookworm.platform_services import check_runtime_components
 
-        wx.SafeShowMessage("Unable To Start", e.args[0])
-        sys.exit(1)
-    try:
+        check_runtime_components()
+
         from bookworm import bootstrap
 
-        bootstrap.run()
-    except Exception:
-        import logging
-        import wx
-        from pathlib import Path
-
-        MESSAGE_FORMAT = "%(asctime)s %(name)s %(levelname)s: %(message)s"
-        DATE_FORMAT = "%d/%m/%Y %H:%M:%S"
-        logfile = Path.home() / "Bookworm.errors.log"
-        extern_file = logging.FileHandler(filename=logfile, mode="w")
-        extern_file.setFormatter(logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT))
-        logging.getLogger("").addHandler(extern_file)
-        logging.debug("An error was occurred while starting the application.")
-        logging.critical("Error details:", exc_info=True)
-        wx.SafeShowMessage(
-            "Application Error",
-            "Bookworm has faced some issues.\n"
-            f"The error details has been written to the file:\n{logfile}",
+        sys.exit(bootstrap.run())
+    except Exception as e:
+        log_file = Path.home() / "bookworm.errors.log" if app.is_frozen else None
+        message = "A fatal error has occured. Please check the log for more details."
+        if log_file:
+            message += f"\nThe log has been written to the file:\n{log_file}"
+        report_fatal_error(
+            title="Failed to start Bookworm",
+            message=message,
+            exc_info=True,
+            log_file=log_file,
+            show_gui=app.is_frozen,
+            exit_code=app.exit_code or 1,
         )
-        sys.exit(1)

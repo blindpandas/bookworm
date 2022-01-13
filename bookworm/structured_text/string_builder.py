@@ -1,18 +1,18 @@
 # coding: utf-8
 
 from __future__ import annotations
-from dataclasses import dataclass, field
+import attr
 from bookworm import typehints as t
 from bookworm.utils import NEWLINE
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True)
 class StringBuilder:
-    lines: list[str] = field(default_factory=list, init=False)
+    lines: list[str] = attr.ib(factory=list, init=False)
     data: t.Optional[str] = ""
     newline: str = NEWLINE
 
-    def __post_init__(self):
+    def __attrs_post_init__(self):
         self.lines.append(self.data)
 
     def getvalue(self):

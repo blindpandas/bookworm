@@ -4,13 +4,13 @@ from __future__ import annotations
 import time
 import threading
 import contextlib
+import attr
 import wx
 import wx.lib.mixins.listctrl as listmix
 import wx.lib.sized_controls as sc
 from wx.lib.combotreebox import ComboTreeBox
 from functools import reduce
 from concurrent.futures import Future
-from dataclasses import dataclass
 from itertools import chain
 import bookworm.typehints as t
 from bookworm.concurrency import threaded_worker
@@ -50,7 +50,7 @@ class TocTreeManager:
             self.tree_ctrl.Expand(self.tree_ctrl.GetRootItem())
 
     def get_selected_item_data(self):
-        if (selected_item_id := self.tree_ctrl.GetFocusedItem()) :
+        if selected_item_id := self.tree_ctrl.GetFocusedItem():
             return self.tree_ctrl.GetItemData(selected_item_id)
 
     def set_selection(self, item):
@@ -154,7 +154,7 @@ class PageRangeControl(sc.SizedPanel):
         if self.is_single_page_document:
             from_page, to_page = 0, 0
         elif self.hasSection.GetValue():
-            if (selected_item := self.sectionChoice.GetSelection()) :
+            if selected_item := self.sectionChoice.GetSelection():
                 selected_section = self.sectionChoice.GetClientData(selected_item)
                 pager = selected_section.pager
                 from_page = pager.first
@@ -170,7 +170,7 @@ class PageRangeControl(sc.SizedPanel):
     def get_text_range(self):
         if not self.is_single_page_document:
             raise TypeError("Text ranges are not supported in single page documents")
-        if (selected_item := self.sectionChoice.GetSelection()) :
+        if selected_item := self.sectionChoice.GetSelection():
             section = self.sectionChoice.GetClientData(selected_item)
             start_pos, stop_pos = section.text_range
             if section.has_children:
@@ -178,6 +178,36 @@ class PageRangeControl(sc.SizedPanel):
             return TextRange(start_pos, stop_pos)
         else:
             return self.doc.toc_tree.text_range
+
+
+class ImageViewControl(wx.Control):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
+        # Bind events
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.ClearBackground()
+        self.data = (wx.NullBitmap, 0, 0)
+
+    def AcceptsFocus(self):
+        return False
+
+    def OnPaint(self, event):
+        bmp, width, height = self.data
+        dc = wx.BufferedPaintDC(self)
+        dc.SetBackground(wx.Brush("white"))
+        dc.Clear()
+        gc = wx.GraphicsContext.Create(dc)
+        gc.DrawBitmap(bmp, 0, 0, width, height)
+
+    def RenderImage(self, bmp, width, height):
+        self.SetInitialSize(wx.Size(width, height))
+        self.data = (bmp, width, height)
+        self.Refresh()
+
+    def RenderImageIO(self, image_io):
+        bmp = image_io.to_wx_bitmap()
+        return self.RenderImage(bmp, *image_io.size)
 
 
 class DialogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
@@ -195,6 +225,14 @@ class DialogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     ):
         wx.ListCtrl.__init__(self, parent, id, pos, size, style)
         listmix.ListCtrlAutoWidthMixin.__init__(self)
+
+    def set_focused_item(self, idx: int):
+        if idx >= self.ItemCount:
+            return
+        self.SetFocus()
+        self.EnsureVisible(idx)
+        self.Select(idx)
+        self.SetItemState(idx, wx.LIST_STATE_FOCUSED, wx.LIST_STATE_FOCUSED)
 
 
 class Dialog(wx.Dialog):
@@ -286,7 +324,6 @@ class SnakDialog(SimpleDialog):
     def __init__(self, message, *args, dismiss_callback=None, **kwargs):
         self.message = message
         self.dismiss_callback = dismiss_callback
-        kwargs.setdefault("parent", wx.GetApp().mainFrame)
         super().__init__(*args, title="", style=0, **kwargs)
         self.CenterOnParent()
 
@@ -357,7 +394,7 @@ class AsyncSnakDialog:
             wx.CallAfter(self.snak_dg.Parent.Enable)
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True, frozen=True)
 class ColumnDefn:
     title: str
     alignment: str
@@ -412,7 +449,9 @@ class ImmutableObjectListView(DialogListCtrl):
         for i in range(len(columns)):
             self.SetColumnWidth(i, 100)
 
-    def set_objects(self, objects: ObjectCollection, focus_item: int = 0):
+    def set_objects(
+        self, objects: ObjectCollection, focus_item: int = 0, set_focus=True
+    ):
         """Clear the list view and insert the objects."""
         self._objects = objects
         self.set_columns(self._columns)
@@ -425,21 +464,14 @@ class ImmutableObjectListView(DialogListCtrl):
                         getattr(obj, to_str) if not callable(to_str) else to_str(obj)
                     )
                 self.Append(col_labels)
-        self.set_focused_item(focus_item)
+        if set_focus:
+            self.set_focused_item(focus_item)
 
     def get_selected(self) -> t.Optional[t.Any]:
         """Return the currently selected object or None."""
         idx = self.GetFocusedItem()
         if idx != wx.NOT_FOUND:
             return self._objects[idx]
-
-    def set_focused_item(self, idx: int):
-        if idx >= self.ItemCount:
-            return
-        self.SetFocus()
-        self.EnsureVisible(idx)
-        self.Select(idx)
-        self.SetItemState(idx, wx.LIST_STATE_FOCUSED, wx.LIST_STATE_FOCUSED)
 
     def prevent_mutations(self):
         if not self.__is_modifying:
@@ -619,3 +651,42 @@ class RobustProgressDialog:
 
     def PulseContinuously(self, message, interval=1500):
         return _RPDPulser(self, message, interval)
+
+
+class EnumItemContainerMixin:
+    """
+    An item container that accepts an Enum as its choices argument.
+    The Enum must provide a display property.
+    """
+
+    items_arg = None
+
+    def __init__(self, *args, choice_enum, **kwargs):
+        kwargs[self.items_arg] = [m.display for m in choice_enum]
+        super().__init__(*args, **kwargs)
+        self.choice_enum = choice_enum
+        self.choice_members = tuple(choice_enum)
+        if self.choice_members:
+            self.SetSelection(0)
+
+    def GetSelectedValue(self):
+        return self.choice_members[self.GetSelection()]
+
+    @property
+    def SelectedValue(self):
+        return self.GetSelectedValue()
+
+    def SetSelectionByValue(self, value):
+        if not isinstance(value, self.choice_enum):
+            raise TypeError(f"{value} is not a {self.choice_enum}")
+        self.SetSelection(self.choice_members.index(value))
+
+
+class EnumRadioBox(EnumItemContainerMixin, wx.RadioBox):
+    """A RadioBox that accepts enum as choices."""
+
+    items_arg = "choices"
+
+
+class EnumChoice(EnumItemContainerMixin, wx.Choice):
+    items_arg = "choices"

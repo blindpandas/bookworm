@@ -5,11 +5,11 @@ import re
 import ftfy
 from functools import cached_property
 from itertools import chain
-from uritools import isuri
 from lxml import html as html_parser
 from selectolax.parser import HTMLParser
 from inscriptis import Inscriptis
 from inscriptis.model.config import ParserConfig
+from inscriptis.css_profiles import RELAXED_CSS_PROFILE, STRICT_CSS_PROFILE
 from bookworm import typehints as t
 from bookworm.utils import remove_excess_blank_lines
 from bookworm.logger import logger
@@ -42,13 +42,10 @@ TAGS_TO_STRIP = [
     "sub",
     "sup",
 ]
-InscriptisConfig = ParserConfig(
-    display_images=True,
-)
-
 SEMANTIC_HTML_ELEMENTS = {
     SemanticElementType.HEADING_1: {
         "h1",
+        "#aria-role=heading",
     },
     SemanticElementType.HEADING_2: {
         "h2",
@@ -65,6 +62,10 @@ SEMANTIC_HTML_ELEMENTS = {
     SemanticElementType.HEADING_6: {
         "h6",
     },
+    SemanticElementType.LINK: {
+        "a#href",
+        "a#name",
+    },
     SemanticElementType.LIST: {
         "ol",
         "ul",
@@ -76,41 +77,75 @@ SEMANTIC_HTML_ELEMENTS = {
     SemanticElementType.TABLE: {
         "table",
     },
+    # SemanticElementType.FIGURE: {
+    # "img",
+    # "figure",
+    # "picture",
+    # }
 }
 STYLE_HTML_ELEMENTS = {}
+INSCRIPTIS_ANNOTATION_RULES = {
+    t: (k,) for (k, v) in SEMANTIC_HTML_ELEMENTS.items() for t in v
+}
+INSCRIPTIS_CONFIG = ParserConfig(
+    css=STRICT_CSS_PROFILE,
+    display_images=False,
+    deduplicate_captions=True,
+    display_links=False,
+    annotation_rules=INSCRIPTIS_ANNOTATION_RULES,
+)
 
 
 class StructuredHtmlParser(Inscriptis):
-    """Subclass of ```inscriptis.Inscriptis``` to record the position of structural elements."""
+    """Subclass of ```inscriptis.Inscriptis``` to provide the position of structural elements."""
 
-    SEMANTIC_TAG_MAP = {t: k for k, v in SEMANTIC_HTML_ELEMENTS.items() for t in v}
-    STYLE_TAG_MAP = {t: k for k, v in STYLE_HTML_ELEMENTS.items() for t in v}
+    __slots__ = [
+        "link_range_to_target",
+        "anchors",
+        "styled_elements",
+    ]
 
     @staticmethod
     def normalize_html(html_string):
         html_string = ftfy.fix_text(
             html_string,
             normalization="NFKC",
-            fix_entities=False,
+            unescape_html=False,
             fix_line_breaks=True,
             max_decode_length=MAX_DECODE_LENGTH,
         )
         if len(html_string) > 10000:
             parsed = HTMLParser(html_string)
-            parsed.unwrap_tags(TAGS_TO_STRIP)
+            # parsed.unwrap_tags(TAGS_TO_STRIP)
             html_string = parsed.html
-        return html_string
+        return remove_excess_blank_lines(html_string)
 
     def __init__(self, *args, **kwargs):
-        self.semantic_elements = {}
+        self.link_range_to_target = {}
+        self.anchors = {}
+        self.html_id_ranges = {}
         self.styled_elements = {}
-        self.__link_info = []
-        kwargs.setdefault("config", InscriptisConfig)
+        kwargs.setdefault("config", INSCRIPTIS_CONFIG)
         super().__init__(*args, **kwargs)
 
-    @cached_property
-    def tags_of_interest(self):
-        return set(self.SEMANTIC_TAG_MAP).union(self.STYLE_TAG_MAP)
+    def _parse_html_tree(self, tree):
+        try:
+            start_index = self.canvas.current_block.idx
+        except TypeError:
+            start_index = 0
+        super()._parse_html_tree(tree)
+        end_index = self.canvas.current_block.idx
+        try:
+            anot = self.canvas.annotations[-1]
+        except IndexError:
+            pass
+        else:
+            if tree.tag == "a" and (href := tree.attrib.get("href", "")):
+                self.link_range_to_target[(anot.start, anot.end)] = href
+        if (anch := tree.attrib.get("id", "")) or (anch := tree.attrib.get("name", "")):
+            element_range = (start_index, end_index)
+            self.anchors[anch] = element_range
+            self.html_id_ranges[anch] = element_range
 
     @classmethod
     def from_string(cls, html_string):
@@ -126,14 +161,13 @@ class StructuredHtmlParser(Inscriptis):
     def get_text(self):
         return remove_excess_blank_lines(INSCRIPTIS_GET_TEXT(self))
 
-    def _parse_html_tree(self, tree):
-        if (tag := tree.tag) not in self.tags_of_interest:
-            return INSCRIPTIS_PARSE_HTML_TREE(self, tree)
-        start_pos = len(self.get_text())
-        INSCRIPTIS_PARSE_HTML_TREE(self, tree)
-        stop_pos = len(self.get_text())
-        if start_pos != stop_pos:
-            if (element_type := self.SEMANTIC_TAG_MAP.get(tag)) :
-                self.semantic_elements.setdefault(element_type, []).append(
-                    (start_pos, stop_pos)
-                )
+    @cached_property
+    def semantic_elements(self):
+        annotations = {}
+        for anot in self.get_annotations():
+            annotations.setdefault(anot.metadata, []).append((anot.start, anot.end))
+        return annotations
+
+    @cached_property
+    def link_targets(self):
+        return self.link_range_to_target

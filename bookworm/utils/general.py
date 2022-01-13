@@ -1,14 +1,13 @@
 # coding: utf-8
 
+from __future__ import annotations
 import sys
-import operator
-import regex
+import uuid
 import wx
 import hashlib
-from contextlib import contextmanager
-from functools import wraps
+from contextlib import contextmanager, closing as contextlib_closing
+from functools import wraps, lru_cache
 from pathlib import Path
-from xml.sax.saxutils import escape
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.concurrency import call_threaded
@@ -17,18 +16,6 @@ from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
-
-
-# Sentinel
-_missing = object()
-
-# New line character
-UNIX_NEWLINE = "\n"
-WINDOWS_NEWLINE = "\r\n"
-MAC_NEWLINE = "\r"
-NEWLINE = UNIX_NEWLINE
-MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
-EXCESS_LINE_REPLACEMENT_FUNC = lambda m: "\n" + m[0].replace("\n", " ")
 
 
 @contextmanager
@@ -43,17 +30,6 @@ def switch_stdout(out):
 
 def mute_stdout():
     return switch_stdout(None)
-
-
-def normalize_line_breaks(text, line_break=UNIX_NEWLINE):
-    return text.replace("\r", " ")
-
-
-def remove_excess_blank_lines(text):
-    return MORE_THAN_ONE_LINE.sub(
-        EXCESS_LINE_REPLACEMENT_FUNC,
-        normalize_line_breaks(text)
-    )
 
 
 def ignore(*exceptions, retval=None):
@@ -132,6 +108,10 @@ def generate_sha1hash(content):
     return hasher.hexdigest()
 
 
+def random_uuid():
+    return uuid.uuid4().hex
+
+
 @call_threaded
 def generate_sha1hash_async(filename):
     return generate_sha1hash(filename)
@@ -142,12 +122,3 @@ def format_datetime(date, format="medium", localized=True) -> str:
         date, format=format, localized=localized
     )
 
-
-def escape_html(text):
-    """Escape the text so as to be used
-    as a part of an HTML document.
-
-    Taken from python Wiki.
-    """
-    html_escape_table = {'"': "&quot;", "'": "&apos;"}
-    return escape(text, html_escape_table)

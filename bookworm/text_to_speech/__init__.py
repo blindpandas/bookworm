@@ -10,7 +10,7 @@ from bookworm import config
 from bookworm.platform_services.speech_engines import TTS_ENGINES
 from bookworm.resources import sounds
 from bookworm.structured_text import TextInfo
-from bookworm.resources import images
+from bookworm.resources import app_icons
 from bookworm.speechdriver import DummySpeechEngine, speech_engine_state_changed
 from bookworm.speechdriver.utterance import SpeechUtterance, SpeechStyle
 from bookworm.speechdriver.enumerations import (
@@ -25,13 +25,10 @@ from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,
     reader_page_changed,
-    navigated_to_search_result,
-    navigated_to_structural_element,
-    navigated_to_bookmark,
+    reading_position_change,
 )
-from bookworm.base_service import BookwormService
+from bookworm.service import BookwormService
 from bookworm.logger import logger
-from .continuous_reading import ContReadingService
 from .tts_config import tts_config_spec, TTSConfigManager
 from .tts_gui import (
     ReadingPanel,
@@ -86,13 +83,9 @@ class TextToSpeechService(BookwormService):
         self.view.add_load_handler(
             lambda s: self.on_engine_state_changed(state=SynthState.ready)
         )
-        navigated_to_search_result.connect(
-            self.on_navigated_to_search_result, sender=self.view
+        reading_position_change.connect(
+            self.on_reading_position_change, sender=self.view
         )
-        navigated_to_structural_element.connect(
-            self.on_navigated_to_structural_element, sender=self.view
-        )
-        navigated_to_bookmark.connect(self.on_navigated_to_bookmark, sender=self.view)
         self.initialize_state()
 
     def initialize_state(self):
@@ -106,7 +99,9 @@ class TextToSpeechService(BookwormService):
             self.close()
 
     def process_menubar(self, menubar):
-        self.menu = SpeechMenu(self, menubar)
+        self.menu = SpeechMenu(self)
+        # Translators: the label of an item in the application menubar
+        return (20, self.menu, _("S&peech"))
 
     def get_settings_panels(self):
         return [
@@ -279,10 +274,12 @@ class TextToSpeechService(BookwormService):
         for (paragraph, text_range) in text_info.paragraphs:
             with self.queue_speech_utterance() as utterance:
                 if is_single_page_document:
-                    text_pos = sum(text_range.as_tuple()) / 2
+                    text_pos = sum(text_range.astuple()) / 2
                     sect = self.reader.document.get_section_at_position(text_pos)
                     if _last_known_section != sect:
-                        if (_last_known_section is not None) and (sect.parent is not _last_known_section):
+                        if (_last_known_section is not None) and (
+                            sect.parent is not _last_known_section
+                        ):
                             self.configure_end_of_section_utterance(
                                 utterance, sect.simple_prev
                             )
@@ -291,7 +288,7 @@ class TextToSpeechService(BookwormService):
                     self.encode_bookmark(
                         {
                             "t": UT_PARAGRAPH_BEGIN,
-                            "txr": text_range.as_tuple(),
+                            "txr": text_range.astuple(),
                         }
                     )
                 )
@@ -303,7 +300,7 @@ class TextToSpeechService(BookwormService):
                     self.encode_bookmark(
                         {
                             "t": UT_PARAGRAPH_END,
-                            "txr": text_range.as_tuple(),
+                            "txr": text_range.astuple(),
                         }
                     )
                 )
@@ -470,25 +467,11 @@ class TextToSpeechService(BookwormService):
     def is_engine_ready(self):
         return self.engine is not None
 
-    def on_navigated_to_search_result(self, sender, position):
-        restart_speech.send(
-            sender, start_speech_from=position, speech_prefix=_("Search Result.")
-        )
-
-    def on_navigated_to_bookmark(self, sender, position, name):
-        speech_prefix = _("Bookmark.")
-        if name:
-            speech_prefix = _("Bookmark: {bookmark_name}").format(bookmark_name=name)
-        restart_speech.send(
-            sender, start_speech_from=position, speech_prefix=speech_prefix
-        )
-
-    def on_navigated_to_structural_element(
-        self, sender, position, element_type, element_label
-    ):
-        restart_speech.send(
-            sender, start_speech_from=position, speech_prefix=element_label
-        )
+    def on_reading_position_change(self, sender, position, **kwargs):
+        if (tts_speech_prefix := kwargs.get("tts_speech_prefix")) is not None:
+            restart_speech.send(
+                sender, start_speech_from=position, speech_prefix=tts_speech_prefix
+            )
 
     def on_state_changed(self, sender, state):
         speech_engine_state_changed.send(self.view, service=self, state=state)
@@ -502,9 +485,9 @@ class TextToSpeechService(BookwormService):
         if state is SynthState.ready:
             self.clear_highlighted_ranges()
         if state is SynthState.busy:
-            image = images.pause
+            image = app_icons.pause
         else:
-            image = images.play
+            image = app_icons.play
         self.view.toolbar.SetToolNormalBitmap(
             StatefulSpeechMenuIds.playToggle, image.GetBitmap()
         )

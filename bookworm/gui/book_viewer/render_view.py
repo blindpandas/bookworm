@@ -8,37 +8,11 @@ from bookworm.signals import reader_page_changed
 from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
-from bookworm.gui.components import Dialog
+from bookworm.gui.components import ImageViewControl, Dialog
 from .navigation import NavigationProvider
 
 
 log = logger.getChild(__name__)
-
-
-class ImageView(wx.Control):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
-        # Bind events
-        self.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.ClearBackground()
-        self.data = (wx.NullBitmap, 0, 0)
-
-    def AcceptsFocus(self):
-        return False
-
-    def OnPaint(self, event):
-        bmp, width, height = self.data
-        dc = wx.BufferedPaintDC(self)
-        dc.SetBackground(wx.Brush("white"))
-        dc.Clear()
-        gc = wx.GraphicsContext.Create(dc)
-        gc.DrawBitmap(bmp, 0, 0, width, height)
-
-    def RenderImage(self, bmp, width, height):
-        self.SetInitialSize(wx.Size(width, height))
-        self.data = (bmp, width, height)
-        self.Refresh()
 
 
 class ViewPageAsImageDialog(wx.Dialog):
@@ -52,13 +26,13 @@ class ViewPageAsImageDialog(wx.Dialog):
         self.reader = self.parent.reader
         # Zoom support
         self.scaling_factor = 0.2
-        self._zoom_factor = 1
+        self._zoom_factor = 1.5
         # Translators: the label of the image of a page in a dialog to render the current page
         panel = self.scroll = scrolled.ScrolledPanel(self, -1, name=_("Page"), style=0)
         panel.SetTransparent(0)
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.imageCtrl = ImageView(panel, -1)
+        self.imageCtrl = ImageViewControl(panel, -1)
         sizer.Add(self.imageCtrl, 1, wx.CENTER | wx.BOTH)
         panel.SetSizer(sizer)
         sizer.Fit(panel)
@@ -71,6 +45,7 @@ class ViewPageAsImageDialog(wx.Dialog):
             zoom_callback=self.set_zoom,
         )
         panel.Bind(wx.EVT_KEY_UP, self.onKeyUp, panel)
+        panel.Bind(wx.EVT_CHAR_HOOK, self.onScrollChar, panel)
         panel.SetupScrolling(rate_x=self.scroll_rate_x, rate_y=self.scroll_rate_y)
         self._currently_rendered_page = self.reader.current_page
         reader_page_changed.connect(self.onPageChange, sender=self.reader)
@@ -131,6 +106,10 @@ class ViewPageAsImageDialog(wx.Dialog):
             image = image.invert()
         bmp = image.to_wx_bitmap()
         return bmp, image.size
+
+    def onScrollChar(self, event):
+        if event.KeyCode != wx.WXK_TAB:
+            event.Skip()
 
     def onKeyUp(self, event):
         event.Skip()

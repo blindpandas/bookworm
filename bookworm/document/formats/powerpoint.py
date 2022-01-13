@@ -57,7 +57,7 @@ class PowerpointSlide(BasePage):
         for shape in shapes:
             text = self._get_shape_text(shape)
             start_pos = self.text_buffer.get_last_position()
-            if (text := text.strip()) :
+            if text := text.strip():
                 self.text_buffer.writeline(text)
             else:
                 continue
@@ -74,7 +74,7 @@ class PowerpointSlide(BasePage):
                 self.semantic_elements.setdefault(selm, []).append(
                     (start_pos, stop_pos)
                 )
-            elif (selm := PP_SHAPE_SEMANTIC_ELEMENTS.get(shape.shape_type)) :
+            elif selm := PP_SHAPE_SEMANTIC_ELEMENTS.get(shape.shape_type):
                 self.semantic_elements.setdefault(selm, []).append(
                     (start_pos, stop_pos)
                 )
@@ -121,7 +121,9 @@ class PowerpointPresentation(BaseDocument):
     # Translators: the name of a document file format
     name = _("PowerPoint Presentation")
     extensions = ("*.pptx",)
-    capabilities = DC.TOC_TREE | DC.METADATA | DC.STRUCTURED_NAVIGATION | DC.TEXT_STYLE
+    capabilities = (
+        DC.TOC_TREE | DC.METADATA | DC.STRUCTURED_NAVIGATION | DC.LINKS | DC.TEXT_STYLE
+    )
 
     def __len__(self):
         return self.num_slides
@@ -141,7 +143,7 @@ class PowerpointPresentation(BaseDocument):
 
     @cached_property
     def language(self):
-        if (lang := self.presentation.core_properties.language) :
+        if lang := self.presentation.core_properties.language:
             try:
                 return LocaleInfo(lang)
             except ValueError:
@@ -151,7 +153,6 @@ class PowerpointPresentation(BaseDocument):
     @cached_property
     def toc_tree(self):
         root = Section(
-            document=self,
             title=self.metadata.title,
             pager=Pager(first=0, last=self.num_slides - 1),
             level=1,
@@ -159,11 +160,10 @@ class PowerpointPresentation(BaseDocument):
         stack = TreeStackBuilder(root)
         for (idx, slide) in enumerate(self.slides):
             section_title = _("Slide {number}").format(number=idx + 1)
-            if (slide_title := self._get_slide_title(slide)) :
+            if slide_title := self._get_slide_title(slide):
                 section_title = f"{section_title}: {slide_title}"
             stack.push(
                 Section(
-                    document=self,
                     title=section_title,
                     pager=Pager(first=idx, last=idx),
                     level=2,

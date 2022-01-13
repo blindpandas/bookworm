@@ -19,7 +19,7 @@ log = logger.getChild(__name__)
 
 def add_shell_command(key, executable):
     key.CreateSubKey(r"shell\Open\Command").SetValue(
-        "", f'"{executable}" "%1"', RegistryValueKind.String
+        "", f'"{executable}" "launcher" "%1"', RegistryValueKind.String
     )
 
 

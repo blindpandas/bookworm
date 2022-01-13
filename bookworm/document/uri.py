@@ -1,10 +1,12 @@
 # coding: utf-8
 
 from __future__ import annotations
-from dataclasses import dataclass, field
+import base64
 from pathlib import Path
-import uritools
+from yarl import URL
 from bookworm import typehints as t
+from bookworm.document.base import BaseDocument
+from bookworm.document.exceptions import UnsupportedDocumentFormatError
 from bookworm.logger import logger
 
 
@@ -12,56 +14,76 @@ log = logger.getChild(__name__)
 BOOKWORM_URI_SCHEME = "bkw"
 
 
-@dataclass
 class DocumentUri:
-    format: str
-    path: str
-    openner_args: dict[str, t.Union[str, int]]
-    view_args: dict[t.Any, t.Any] = field(default_factory=dict)
+    __slots__ = [
+        "format",
+        "path",
+        "openner_args",
+        "view_args",
+    ]
+
+    def __init__(
+        self,
+        format: str,
+        path: str,
+        openner_args: dict[str, t.Union[str, int]],
+        view_args: t.optional[dict[t.Any, t.Any]] = None,
+    ):
+        self.format = format
+        self.path = path
+        self.openner_args = openner_args
+        self.view_args = view_args or {}
 
     @classmethod
     def from_uri_string(cls, uri_string):
         """Return a populated instance of this class or raise ValueError."""
-        if not uritools.isuri(uri_string):
-            raise ValueError(f"Invalid uri string {uri_string}")
+        invalid_uri_string_exception = ValueError(f"Invalid uri string {uri_string}")
         try:
-            parsed = uritools.urisplit(uri_string)
-        except Exception as e:
-            raise ValueError(f"Could not parse uri {uri_string}") from e
+            uri = URL(uri_string)
+        except:
+            raise invalid_uri_string_exception
+        if uri.scheme != BOOKWORM_URI_SCHEME:
+            raise invalid_uri_string_exception
         return cls(
-            format=parsed.authority,
-            path=uritools.uridecode(parsed.path).lstrip("/"),
-            openner_args=cls._unwrap_args(parsed.getquerydict()),
+            format=uri.authority,
+            path=uri.path.strip("/"),
+            openner_args=dict(uri.query),
         )
 
     @classmethod
     def from_filename(cls, filename):
         filepath = Path(filename)
         if (doc_format := cls.get_format_by_filename(filepath)) is None:
-            raise ValueError(f"Unsupported document format for file {filename}")
+            raise UnsupportedDocumentFormatError(
+                f"Unsupported document format for file {filename}"
+            )
         return cls(format=doc_format, path=str(filepath), openner_args={})
 
+    @classmethod
+    def is_bookworm_uri(cls, uri_string: str) -> bool:
+        try:
+            cls.from_uri_string(uri_string)
+            return True
+        except ValueError:
+            return False
+
     def to_uri_string(self):
-        return uritools.uricompose(
-            scheme=BOOKWORM_URI_SCHEME,
-            authority=self.format,
-            path=f"/{str(self.path)}",
-            query=self.openner_args,
+        return str(
+            URL.build(
+                scheme=BOOKWORM_URI_SCHEME,
+                authority=self.format,
+                path=str(self.path),
+                query=self.openner_args,
+            )
         )
 
-    @classmethod
-    def try_parse(cls, uri_string):
-        try:
-            return cls.from_uri_string(uri_string)
-        except:
-            log.exception(f"Failed to parse document uri: {uri_string=}", exc_info=True)
-            return
-
     def to_bare_uri_string(self):
-        return uritools.uricompose(
-            scheme=BOOKWORM_URI_SCHEME,
-            authority=self.format,
-            path=f"/{str(self.path)}",
+        return str(
+            URL.build(
+                scheme=BOOKWORM_URI_SCHEME,
+                authority=self.format,
+                path=f"/{str(self.path)}",
+            )
         )
 
     def create_copy(self, format=None, path=None, openner_args=None, view_args=None):
@@ -72,23 +94,30 @@ class DocumentUri:
             view_args=self.view_args | (view_args or {}),
         )
 
+    def base64_encode(self):
+        return base64.urlsafe_b64encode(self.to_uri_string().encode('utf-8'))
+
+    @classmethod
+    def from_base64_encoded_string(cls, s):
+        if isinstance(s, str):
+            s = s.encode("utf-8")
+        return cls.from_uri_string(base64.urlsafe_b64decode(s).decode('utf-8'))
+
     @classmethod
     def get_format_by_filename(cls, filename):
         """Get the document format using its filename."""
         fileext = Path(filename).suffix.strip(".").lower()
-        if (file_format := cls._get_format_given_extension(f"*.{fileext}")) :
+        if file_format := cls._get_format_given_extension(f"*.{fileext}"):
             return file_format
         possible_exts = tuple(str(filename).split("."))
         for idx in range(len(possible_exts) - 1):
             fileext = ".".join(possible_exts[idx:])
-            if (file_format := cls._get_format_given_extension(f"*.{fileext}")) :
+            if file_format := cls._get_format_given_extension(f"*.{fileext}"):
                 return file_format
 
     @classmethod
     def _get_format_given_extension(cls, ext):
-        from bookworm.reader import get_document_format_info
-
-        for (doc_format, doc_cls) in get_document_format_info().items():
+        for (doc_format, doc_cls) in BaseDocument.document_classes.items():
             if (doc_cls.extensions is not None) and (ext in doc_cls.extensions):
                 return doc_format
 
@@ -108,10 +137,3 @@ class DocumentUri:
         if not isinstance(other, DocumentUri):
             return NotImplemented
         return self.to_uri_string() == other.to_uri_string()
-
-    @classmethod
-    def _unwrap_args(cls, query_dict):
-        retval = {}
-        for name, valuelist in query_dict.items():
-            retval[name] = valuelist[0]
-        return retval

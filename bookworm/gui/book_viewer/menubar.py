@@ -16,10 +16,15 @@ from bookworm import paths
 from bookworm import app
 from bookworm.i18n import is_rtl
 from bookworm.resources import sounds
-from bookworm.document import READING_MODE_LABELS, PaginationError, DocumentCapability as DC
+from bookworm.document import (
+    DocumentInfo,
+    READING_MODE_LABELS,
+    PaginationError,
+    DocumentCapability as DC,
+)
 from bookworm.document.uri import DocumentUri
 from bookworm.signals import (
-    navigated_to_search_result,
+    reading_position_change,
     config_updated,
     reader_book_loaded,
     reader_book_unloaded,
@@ -37,6 +42,8 @@ from bookworm.gui.book_viewer.core_dialogs import (
     GoToPageDialog,
     SearchBookDialog,
     SearchResultsDialog,
+    ElementListDialog,
+    DocumentInfoDialog,
 )
 from .render_view import ViewPageAsImageDialog
 from .menu_constants import *
@@ -49,12 +56,13 @@ ABOUT_APPLICATION = _(
     "{display_name}\n"
     "Version: {version}\n"
     "Website: {website}\n\n"
-    "{display_name} is an accessible document reader that enables blind and visually impaired individuals "
+    "{display_name} is an advanced and accessible document reader that enables blind and visually impaired individuals "
     "to read documents in an easy, accessible, and hassle-free manor. "
     "It is being developed by {author} with some contributions from the community.\n\n"
     "{copyright}\n"
-    "This software is offered to you under the terms of The MIT license.\n"
-    "You can view the license text from the help menu.\n\n"
+    "{display_name} is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n"
+    "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+    "For further details, you can view the full licence from the help menu.\n"
 )
 EXTRA_ABOUT_MESSAGE = _(
     "This release of Bookworm is generously sponsored  by Capeds (www.capeds.net)."
@@ -346,6 +354,135 @@ class FileMenu(BaseMenu):
                 self.recentFilesMenu.Enable(item_id, False)
 
 
+class DocumentMenu(BaseMenu):
+    """Actions related to the current document."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.view.add_load_handler(self.after_loading_book)
+
+    def create(self):
+        self.Append(
+            BookRelatedMenuIds.document_info,
+            # Translators: the label of an item in the application menubar
+            _("Document &Info..."),
+            # Translators: the help text of an item in the application menubar
+            _("Show information about number of chapters, word count..etc."),
+        )
+        self.Append(
+            BookRelatedMenuIds.element_list,
+            # Translators: the label of an item in the application menubar
+            _("&Element list...\tCtrl+F7"),
+            # Translators: the help text of an item in the application menubar
+            _("Show a list of semantic elements."),
+        )
+        self.Append(
+            BookRelatedMenuIds.changeReadingMode,
+            # Translators: the label of an item in the application menubar
+            _("Change Reading &Mode...\tCtrl-Shift-M"),
+            # Translators: the help text of an item in the application menubar
+            _("Change the current reading mode."),
+        )
+        self.Append(
+            BookRelatedMenuIds.viewRenderedAsImage,
+            # Translators: the label of an item in the application menubar
+            _("&Render Page...\tCtrl-R"),
+            # Translators: the help text of an item in the application menubar
+            _("View a fully rendered version of this page."),
+        )
+        # Bind event handlers
+        self.view.Bind(
+            wx.EVT_MENU,
+            self.onViewRenderedAsImage,
+            id=BookRelatedMenuIds.viewRenderedAsImage,
+        )
+        self.view.Bind(
+            wx.EVT_MENU,
+            self.onChangeReadingMode,
+            id=BookRelatedMenuIds.changeReadingMode,
+        )
+        self.view.Bind(
+            wx.EVT_MENU, self.onElementList, id=BookRelatedMenuIds.element_list
+        )
+        self.view.Bind(
+            wx.EVT_MENU, self.onDocumentInfo, id=BookRelatedMenuIds.document_info
+        )
+
+    def after_loading_book(self, sender):
+        ctrl_enable_info = (
+            (
+                BookRelatedMenuIds.element_list,
+                self.reader.document.supports_structural_navigation(),
+            ),
+            (
+                BookRelatedMenuIds.viewRenderedAsImage,
+                self.reader.document.can_render_pages(),
+            ),
+            (
+                BookRelatedMenuIds.changeReadingMode,
+                len(self.reader.document.supported_reading_modes) > 1,
+            ),
+        )
+        for ctrl_id, enable in ctrl_enable_info:
+            self.Enable(ctrl_id, enable)
+            self.view.toolbar.EnableTool(ctrl_id, enable)
+
+    def onViewRenderedAsImage(self, event):
+        # Translators: the title of the render page dialog
+        with ViewPageAsImageDialog(
+            self.view, _("Rendered Page"), style=wx.CLOSE_BOX
+        ) as dlg:
+            dlg.Maximize()
+            dlg.ShowModal()
+
+    def _after_reading_mode_changed(self, most_recent_page):
+        with suppress(PaginationError):
+            self.reader.go_to_page(most_recent_page)
+
+    def onChangeReadingMode(self, event):
+        current_reading_mode = self.reader.document.reading_options.reading_mode
+        supported_reading_modes = self.reader.document.supported_reading_modes
+        supported_reading_modes_display = [
+            _(READING_MODE_LABELS[redmo]) for redmo in supported_reading_modes
+        ]
+        dlg = wx.SingleChoiceDialog(
+            self.view,
+            _("Available reading modes"),
+            _("Select Reading Mode "),
+            supported_reading_modes_display,
+            wx.CHOICEDLG_STYLE,
+        )
+        dlg.SetSelection(supported_reading_modes.index(current_reading_mode))
+        if dlg.ShowModal() == wx.ID_OK:
+            uri = self.reader.document.uri.create_copy()
+            new_reading_mode = supported_reading_modes[dlg.GetSelection()]
+            if current_reading_mode != new_reading_mode:
+                uri.openner_args["reading_mode"] = int(new_reading_mode)
+                most_recent_page = self.reader.current_page
+                self.view.open_uri(
+                    uri,
+                    callback=partial(
+                        self._after_reading_mode_changed, most_recent_page
+                    ),
+                )
+        dlg.Destroy()
+
+    def onElementList(self, event):
+        dlg = ElementListDialog(
+            self.view, title=_("Element List"), view=self.view, reader=self.reader
+        )
+        with dlg:
+            if (selected_element_info := dlg.ShowModal()) is not None:
+                self.view.go_to_position(*selected_element_info.text_range)
+
+    def onDocumentInfo(self, event):
+        document_info = DocumentInfo.from_document(self.reader.document)
+        with DocumentInfoDialog(
+            self.view, view=self.view, document_info=document_info
+        ) as dlg:
+            dlg.ShowModal()
+
+
 class SearchMenu(BaseMenu):
     """The search menu for the book viewer."""
 
@@ -501,7 +638,11 @@ class SearchMenu(BaseMenu):
             sounds.navigation.play()
             return
         self.highlight_search_result(result.page, result.position)
-        navigated_to_search_result.send(self.view, position=result.position)
+        reading_position_change.send(
+            self.view,
+            position=result.position,
+            tts_speech_prefix=_("Search Result"),
+        )
 
     def onFindNext(self, event):
         self.go_to_search_result(foreword=True)
@@ -529,97 +670,6 @@ class SearchMenu(BaseMenu):
         self.reader.go_to_page(page_number)
         start, end = self.view.get_containing_line(pos)
         self.view.select_text(start, end)
-
-
-class ToolsMenu(BaseMenu):
-    """The tools menu for the book viewer."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.view.add_load_handler(self.after_loading_book)
-
-    def create(self):
-        # Tools menu
-        self.Append(
-            BookRelatedMenuIds.viewRenderedAsImage,
-            # Translators: the label of an item in the application menubar
-            _("&Render Page...\tCtrl-R"),
-            # Translators: the help text of an item in the application menubar
-            _("View a fully rendered version of this page."),
-        )
-        self.Append(
-            BookRelatedMenuIds.changeReadingMode,
-            # Translators: the label of an item in the application menubar
-            _("Change Reading &Mode...\tCtrl-Shift-M"),
-            # Translators: the help text of an item in the application menubar
-            _("Change the current reading mode."),
-        )
-        # Bind event handlers
-        self.view.Bind(
-            wx.EVT_MENU,
-            self.onViewRenderedAsImage,
-            id=BookRelatedMenuIds.viewRenderedAsImage,
-        )
-        self.view.Bind(
-            wx.EVT_MENU,
-            self.onChangeReadingMode,
-            id=BookRelatedMenuIds.changeReadingMode,
-        )
-
-    def after_loading_book(self, sender):
-        ctrl_enable_info = (
-            (
-                BookRelatedMenuIds.viewRenderedAsImage,
-                self.reader.document.can_render_pages(),
-            ),
-            (
-                BookRelatedMenuIds.changeReadingMode,
-                len(self.reader.document.supported_reading_modes) > 1,
-            ),
-        )
-        for ctrl_id, enable in ctrl_enable_info:
-            self.Enable(ctrl_id, enable)
-            self.view.toolbar.EnableTool(ctrl_id, enable)
-
-    def onViewRenderedAsImage(self, event):
-        # Translators: the title of the render page dialog
-        with ViewPageAsImageDialog(
-            self.view, _("Rendered Page"), style=wx.CLOSE_BOX
-        ) as dlg:
-            dlg.Maximize()
-            dlg.ShowModal()
-
-    def _after_reading_mode_changed(self, most_recent_page):
-        with suppress(PaginationError):
-            self.reader.go_to_page(most_recent_page)
-
-    def onChangeReadingMode(self, event):
-        current_reading_mode = self.reader.document.reading_options.reading_mode
-        supported_reading_modes = self.reader.document.supported_reading_modes
-        supported_reading_modes_display = [
-            _(READING_MODE_LABELS[redmo]) for redmo in supported_reading_modes
-        ]
-        dlg = wx.SingleChoiceDialog(
-            self.view,
-            _("Available reading modes"),
-            _("Select Reading Mode "),
-            supported_reading_modes_display,
-            wx.CHOICEDLG_STYLE,
-        )
-        dlg.SetSelection(supported_reading_modes.index(current_reading_mode))
-        if dlg.ShowModal() == wx.ID_OK:
-            uri = self.reader.document.uri.create_copy()
-            new_reading_mode = supported_reading_modes[dlg.GetSelection()]
-            if current_reading_mode != new_reading_mode:
-                uri.openner_args["reading_mode"] = int(new_reading_mode)
-                most_recent_page = self.reader.current_page
-                self.view.open_uri(
-                    uri,
-                    callback=partial(
-                        self._after_reading_mode_changed, most_recent_page
-                    ),
-                )
-        dlg.Destroy()
 
 
 class HelpMenu(BaseMenu):
@@ -685,7 +735,9 @@ class HelpMenu(BaseMenu):
         )
         self.view.Bind(
             wx.EVT_MENU,
-            lambda e: wx.LaunchDefaultApplication(str(paths.resources_path("license.txt"))),
+            lambda e: wx.LaunchDefaultApplication(
+                str(paths.resources_path("license.txt"))
+            ),
             id=ViewerMenuIds.license,
         )
         self.view.Bind(
@@ -712,7 +764,9 @@ class HelpMenu(BaseMenu):
         restart_application(debug=True)
 
     def onOpenDocumentation(self, event):
-        userguide_filename = paths.userguide_path(app.current_language.pylang, "bookworm.html")
+        userguide_filename = paths.userguide_path(
+            app.current_language.pylang, "bookworm.html"
+        )
         wx.LaunchDefaultApplication(str(userguide_filename))
 
 
@@ -730,18 +784,27 @@ class MenubarProvider:
 
         # The menus
         self.fileMenu = FileMenu(self, self.reader)
+        self.documentMenu = DocumentMenu(self, self.reader)
         self.searchMenu = SearchMenu(self, self.reader)
-        self.toolsMenu = ToolsMenu(self, self.reader)
         self.helpMenu = HelpMenu(self, self.reader)
+        self.__menus = [
+            # Translators: the label of an item in the application menubar
+            (0, self.fileMenu, _("&File")),
+            # Translators: the label of an item in the application menubar
+            (5, self.searchMenu, _("&Search")),
+            # Translators: the label of an item in the application menubar
+            (10, self.documentMenu, _("&Document")),
+            # Translators: the label of an item in the application menubar
+            (100, self.helpMenu, _("&Help")),
+        ]
 
-        # Translators: the label of an item in the application menubar
-        self.menuBar.Append(self.fileMenu, _("&File"))
-        # Translators: the label of an item in the application menubar
-        self.menuBar.Append(self.searchMenu, _("&Search"))
-        # Translators: the label of an item in the application menubar
-        self.menuBar.Append(self.toolsMenu, _("&Tools"))
-        # Translators: the label of an item in the application menubar
-        self.menuBar.Append(self.helpMenu, _("&Help"))
+    def doAddMenus(self):
+        self.__menus.sort(key=lambda item: item[0])
+        for (__, menu, label) in self.__menus:
+            self.menuBar.Append(menu, label)
+
+    def registerMenu(self, order, menu, label):
+        self.__menus.append((order, menu, label))
 
     def _set_menu_accelerators(self):
         entries = []
@@ -773,7 +836,12 @@ class MenubarProvider:
                 _("Jump to a page"),
                 BookRelatedMenuIds.goToPage,
             ),
-            (20, _("&Find in Document...\tCtrl-F"), _("Search this document."), wx.ID_FIND),
+            (
+                20,
+                _("&Find in Document...\tCtrl-F"),
+                _("Search this document."),
+                wx.ID_FIND,
+            ),
             (21, "", "", None),
         ]
         if self.reader.ready and self.reader.document.can_render_pages():
@@ -802,7 +870,8 @@ class MenubarProvider:
                 item.Enable(False)
         self.PopupMenu(context_menu, pos=pos)
 
-    def _get_ebooks_wildcards(self):
+    @staticmethod
+    def _get_ebooks_wildcards():
         rv = []
         all_exts = []
         visible_doc_cls = [

@@ -31,11 +31,11 @@ HEADING_LEVEL_KEY_MAP = {
 }
 SEMANTIC_MAP = {
     "H": SemanticElementType.HEADING,
-    # "K": SemanticElementType.LINK,
-    # "A": SemanticElementType.ANCHOR,
+    "K": SemanticElementType.LINK,
     "L": SemanticElementType.LIST,
     "T": SemanticElementType.TABLE,
     "Q": SemanticElementType.QUOTE,
+    # "G": SemanticElementType.FIGURE,
 }
 SEMANTIC_MAP |= HEADING_LEVEL_KEY_MAP
 SEMANTIC_KEY_MAP = {ord(k): v for k, v in SEMANTIC_MAP.items()}
@@ -89,6 +89,7 @@ class ContentViewCtrl(wx.TextCtrl):
             evtType == wx.EVT_CHAR_HOOK.typeId
             and (keycode := event.GetKeyCode()) in SEMANTIC_KEY_MAP
             and not event.ControlDown()
+            and not event.AltDown()
         ):
             wx.QueueEvent(
                 self,

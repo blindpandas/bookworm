@@ -66,7 +66,7 @@ def get_available_builders():
 
 
 def temp_file(suffix):
-    """ Returns a temporary file """
+    """Returns a temporary file"""
     return tempfile.NamedTemporaryFile(prefix="cuneiform_", suffix=suffix)
 
 

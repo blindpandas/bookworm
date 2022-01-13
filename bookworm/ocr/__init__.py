@@ -4,7 +4,7 @@ import wx
 from lru import LRU
 from bookworm import config
 from bookworm.resources import sounds
-from bookworm.base_service import BookwormService
+from bookworm.service import BookwormService
 from bookworm.ocr_engines import GENERIC_OCR_ENGINES
 from bookworm.platform_services.ocr_provider import PLATFORM_SPECIFIC_OCR_ENGINES
 from bookworm.logger import logger
@@ -46,7 +46,9 @@ class OCRService(BookwormService):
         self.init_saved_options()
 
     def process_menubar(self, menubar):
-        self.menu = OCRMenu(self, menubar)
+        self.menu = OCRMenu(self)
+        # Translators: the label of an item in the application menubar
+        return (35, self.menu, _("OCR"))
 
     def get_settings_panels(self):
         return [

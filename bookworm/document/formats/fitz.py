@@ -38,7 +38,7 @@ class FitzPage(BasePage):
         self._fitz_page = self.document._ebook[self.index]
 
     def _text_from_page(self, page: fitz.Page) -> str:
-        bloks = page.getTextBlocks()
+        bloks = page.get_text_blocks()
         text = [blk[4].replace("\n", " ") for blk in bloks if blk[-1] == 0]
         text = "\r\n".join(text)
         return ftfy.fix_text(text, normalization="NFKC")
@@ -48,7 +48,7 @@ class FitzPage(BasePage):
 
     def get_image(self, zoom_factor=1.0):
         mat = fitz.Matrix(zoom_factor, zoom_factor)
-        pix = self._fitz_page.getPixmap(matrix=mat, alpha=False)
+        pix = self._fitz_page.get_pixmap(matrix=mat, alpha=False)
         return ImageIO(data=pix.samples, width=pix.width, height=pix.height)
 
 
@@ -60,7 +60,12 @@ class FitzDocument(BaseDocument):
     name = None
     extensions = ()
     capabilities = (
-        DC.TOC_TREE | DC.METADATA | DC.GRAPHICAL_RENDERING | DC.IMAGE_EXTRACTION
+        DC.TOC_TREE
+        | DC.METADATA
+        | DC.GRAPHICAL_RENDERING
+        | DC.IMAGE_EXTRACTION
+        | DC.STRUCTURED_NAVIGATION
+        | DC.LINKS
     )
 
     @lru_cache(maxsize=1000)
@@ -96,10 +101,9 @@ class FitzDocument(BaseDocument):
 
     @cached_property
     def toc_tree(self):
-        toc_info = self._ebook.getToC(simple=False)
+        toc_info = self._ebook.get_toc(simple=False)
         max_page = len(self) - 1
         root_item = Section(
-            document=self,
             title=self.metadata.title,
             pager=Pager(first=0, last=max_page),
             data={"html_file": None},
@@ -126,7 +130,6 @@ class FitzDocument(BaseDocument):
                 continue
             pgn = Pager(first=first_page, last=last_page)
             sect = Section(
-                document=self,
                 title=title,
                 pager=pgn,
                 data={"html_file": infodict.get("name")},
@@ -152,14 +155,15 @@ class FitzDocument(BaseDocument):
     @cached_property
     def metadata(self):
         meta = self._ebook.metadata
-        to_str = (
-            lambda value: "" if value is None else ftfy.fix_encoding(value).strip()
-        )
+        to_str = lambda value: "" if value is None else ftfy.fix_encoding(value).strip()
         return BookMetadata(
             title=to_str(meta["title"]) or Path(self.filename).stem,
             author=to_str(meta["author"]),
             publication_year=to_str(meta["creationDate"]),
         )
+
+    def get_cover_image(self):
+        return self.get_page_image(0)
 
 
 class FitzFB2Document(FitzDocument):

@@ -57,10 +57,9 @@ OCR_KEYBOARD_SHORTCUTS = {
 class OCRMenu(wx.Menu):
     """OCR menu."""
 
-    def __init__(self, service, menubar):
+    def __init__(self, service):
         super().__init__()
         self.service = service
-        self.menubar = menubar
         self.view = service.view
         self._ocr_cancelled = threading.Event()
         image2textId = wx.NewIdRef()
@@ -104,8 +103,6 @@ class OCRMenu(wx.Menu):
         )
         # Add the menu to the menubar
         # Translators: the label of the OCR menu in the application menubar
-        self.menubar.Insert(2, self, _("OCR"))
-
         # Event handlers
         self.view.Bind(
             wx.EVT_MENU, self.onScanCurrentPage, id=OCRMenuIds.scanCurrentPage
@@ -209,6 +206,7 @@ class OCRMenu(wx.Menu):
             done_callback=future_callback,
             message=_("Running OCR, please wait..."),
             dismiss_callback=self._on_ocr_cancelled,
+            parent=self.view
         )
 
     def onAutoScanPages(self, event):
@@ -313,7 +311,7 @@ class OCRMenu(wx.Menu):
             if not filename or not os.path.isfile(filename):
                 return
             # Load the image file
-            image = ImageIO.from_path(filename)
+            image = ImageIO.from_filename(filename)
             if image is None:
                 wx.MessageBox(
                     # Translators: content of a message box

@@ -11,7 +11,10 @@ _signals = Namespace()
 
 
 # Core app signals
+app_booting = _signals.signal("app/booting")
+app_starting = _signals.signal("app/starting")
 app_started = _signals.signal("app/started")
+app_window_shown = _signals.signal("app/window_shown")
 app_shuttingdown = _signals.signal("app/shuttingdown")
 
 # Book reader signals
@@ -23,8 +26,10 @@ reader_section_changed = _signals.signal("reader/section_changed")
 # Configuration
 config_updated = _signals.signal("config/updated")
 
+# Reading position
+reading_position_change = _signals.signal("caret/location_change")
 
-# Content navigation signals
-navigated_to_search_result = _signals.signal("navigation/search-result")
-navigated_to_structural_element = _signals.signal("navigation/structural-navigation")
-navigated_to_bookmark = _signals.signal("navigation/bookmark-navigation")
+
+# Local web server
+local_server_booting = _signals.signal("local_server/booting")
+

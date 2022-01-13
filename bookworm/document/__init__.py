@@ -10,6 +10,8 @@ from .base import (
 from .elements import (
     Section,
     Pager,
+    DocumentInfo,
+    LinkTarget,
     BookMetadata,
     TreeStackBuilder,
     SINGLE_PAGE_DOCUMENT_PAGER,
@@ -26,3 +28,19 @@ from .exceptions import (
     DocumentEncryptedError,
     PaginationError,
 )
+from .formats import *
+
+
+def create_document(uri, read=True):
+    doc_cls = BaseDocument.get_document_class_given_format(uri.format.lower())
+    if doc_cls is None:
+        raise UnsupportedDocumentFormatError(
+            f"Document Format {uri.format} is not supported."
+        )
+    document = doc_cls(uri)
+    if read:
+        try:
+            document.read()
+        except ChangeDocument as e:
+            return create_document(e.new_uri, read)
+    return document

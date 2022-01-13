@@ -6,9 +6,9 @@ from __future__ import annotations
 import math
 import bisect
 import operator
+import attr
 from collections.abc import Container
 from functools import cached_property
-from dataclasses import dataclass, field
 from more_itertools import locate
 from bookworm import typehints as t
 from bookworm.vendor.sentence_splitter import (
@@ -18,21 +18,19 @@ from bookworm.vendor.sentence_splitter import (
 )
 
 
+@attr.s(auto_attribs=True, slots=True, hash=False)
 class TextRange(Container):
     """Represents a text range refering to a substring."""
 
-    __slots__ = ["start", "stop"]
+    start: int
+    stop: int
 
-    def __init__(self, start, stop):
-        self.start = start
-        self.stop = stop
-
-    def __repr__(self):
-        return f"TextRange(start={self.start}, stop={self.stop})"
+    def __hash__(self):
+        return hash((self.start, self.stop))
 
     @property
     def midrange(self):
-        return math.floor((self.start + self.stop)/2)
+        return math.floor((self.start + self.stop) / 2)
 
     def operator_imp(self, other, operator_func):
         if isinstance(other, self.__class__):
@@ -63,14 +61,14 @@ class TextRange(Container):
     def __hash__(self):
         return hash((self.start, self.stop))
 
-    def as_tuple(self):
+    def astuple(self):
         return (self.start, self.stop)
 
     def as_slice(self):
         return slice(self.start, self.stop)
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class TextInfo:
     """Provides basic structural information  about a blob of text
     Most of the properties have their values cached.
@@ -88,11 +86,15 @@ class TextInfo:
     eol: str = "\n"
     """The recognizable end-of-line sequence. Used to split the text into paragraphs."""
 
-    def __post_init__(self):
+    sent_tokenizer: SentenceSplitter = None
+
+    def __attrs_post_init__(self):
         lang = self.lang
         if lang not in splitter_supported_languages():
             lang = "en"
-        self._sent_tokenizer = SentenceSplitter(lang)
+        if not self.text.endswith("\n"):
+            self.text += "\n"
+        self.sent_tokenizer = SentenceSplitter(lang)
 
     @cached_property
     def sentence_markers(self):
@@ -103,7 +105,7 @@ class TextInfo:
         return self._record_markers(self.paragraphs)
 
     def split_sentences(self, paragraph):
-        return self._sent_tokenizer.split(paragraph)
+        return self.sent_tokenizer.split(paragraph)
 
     @cached_property
     def sentences(self):
@@ -146,20 +148,22 @@ class TextInfo:
         return self.paragraph_markers
 
     def get_paragraph_to_the_right_of(self, pos):
-        markers = list(self.configured_markers)
+        marker_map = {item.start: item for item in self.configured_markers}
+        markers = list(marker_map)
         markers.sort()
         index = bisect.bisect_right(markers, pos)
         if index < len(markers):
-            return markers[index]
+            return marker_map[markers[index]]
         elif index >= len(markers) and markers:
-            return markers[-1]
+            return marker_map[markers[-1]]
         else:
             raise LookupError(
                 f"Could not find a paragraph located at the right of position {pos}"
             )
 
     def get_paragraph_to_the_left_of(self, pos):
-        markers = list(self.configured_markers)
+        marker_map = {item.start: item for item in self.configured_markers}
+        markers = list(marker_map)
         markers.sort()
         if not markers:
             raise LookupError(
@@ -167,9 +171,9 @@ class TextInfo:
             )
         index = bisect.bisect_left(markers, pos)
         if index == 0:
-            return markers[0]
+            return marker_map[markers[0]]
         elif index > 0:
-            return markers[index - 1]
+            return marker_map[markers[index - 1]]
         else:
             raise LookupError(
                 f"Could not find a paragraph located at the left of position {pos}"

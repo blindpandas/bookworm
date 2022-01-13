@@ -13,7 +13,10 @@ log = logger.getChild(__name__)
 from bookworm.otau import OTAUService
 from bookworm.annotation import AnnotationService
 from bookworm.ocr import OCRService
-from bookworm.text_to_speech import TextToSpeechService, ContReadingService
+from bookworm.text_to_speech import TextToSpeechService
+from bookworm.continuous_reading import ContReadingService
+from bookworm.bookshelf import BookshelfService
+from bookworm.epub_serve import EpubServeService
 from bookworm.webservices import (
     WebservicesBaseService,
     WikipediaService,
@@ -26,9 +29,11 @@ BUILTIN_SERVICES = (
     AnnotationService,
     WebservicesBaseService,
     OCRService,
+    BookshelfService,
     ContReadingService,
     UrlOpenService,
     WikipediaService,
+    EpubServeService,
 )
 
 
@@ -82,7 +87,7 @@ class ServiceHandler:
 
     def process_menubar(self, menubar):
         for service in self._get_services_with_gui():
-            service.process_menubar(menubar)
+            yield service.process_menubar(menubar)
 
     def get_toolbar_items(self):
         rv = set()

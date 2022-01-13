@@ -1,5 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+
 from pathlib import Path
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
@@ -35,6 +36,8 @@ for pkg_name in PACKAGES_WITH_DATA:
 HIDDEN_SUBMODULES = [
     "babel",
     "odf",
+    "trafilatura",
+    "justext",
 ]
 HIDDEN_IMPORTS = [
     "numpy",
@@ -44,16 +47,18 @@ HIDDEN_IMPORTS = [
 for package_with_submodules in HIDDEN_SUBMODULES:
     HIDDEN_IMPORTS += collect_submodules(package_with_submodules)
 
+
 block_cipher = None
 
+
 a = Analysis(
-    ["launcher.py"],
+    ["Bookworm.py"],
     pathex=[""],
-    datas=DATA_FILES,
     binaries=[],
-    # See: https://stackoverflow.com/questions/37815371/
+    datas=DATA_FILES,
     hiddenimports=HIDDEN_IMPORTS,
     hookspath=[],
+    hooksconfig={},
     runtime_hooks=[],
     excludes=[
         "tkinter",
@@ -64,10 +69,11 @@ a = Analysis(
     noarchive=False,
 )
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+
 exe = EXE(
     pyz,
     a.scripts,
-    [],
+    a.dependencies,
     exclude_binaries=True,
     name="Bookworm",
     debug=False,
@@ -75,16 +81,21 @@ exe = EXE(
     strip=False,
     upx=False,
     console=False,
+    disable_windowed_traceback=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
     version="assets\\version_info.txt",
     icon="assets\\bookworm.ico",
 )
+
 coll = COLLECT(
     exe,
     a.binaries,
     a.zipfiles,
     a.datas,
     strip=False,
-    upx=False,
+    upx=True,
     upx_exclude=[],
     name="Bookworm",
 )

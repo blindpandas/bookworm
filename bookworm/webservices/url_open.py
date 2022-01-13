@@ -2,7 +2,6 @@
 
 import threading
 import wx
-import trafilatura
 from functools import partial
 from url_normalize import url_normalize
 from platform_utils.clipboard import get_text as get_clipboard_text
@@ -11,7 +10,7 @@ from bookworm.concurrency import threaded_worker
 from bookworm.document.uri import DocumentUri
 from bookworm.gui.components import AsyncSnakDialog
 from bookworm.utils import gui_thread_safe
-from bookworm.base_service import BookwormService
+from bookworm.service import BookwormService
 from bookworm.resources import sounds
 from bookworm.logger import logger
 

@@ -2,10 +2,11 @@
 
 import os
 from contextlib import suppress
-from dataclasses import dataclass
+from pathlib import Path
 from bookworm import typehints as t
 from bookworm import app
 from bookworm import config
+from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.database import DocumentPositionInfo
 from bookworm.i18n import is_rtl
 from bookworm.document.uri import DocumentUri
@@ -25,8 +26,9 @@ from bookworm.signals import (
     reader_book_unloaded,
     reader_page_changed,
     reader_section_changed,
+    reading_position_change,
 )
-from bookworm.structured_text import TextStructureMetadata
+from bookworm.structured_text import TextStructureMetadata, SemanticElementType
 from bookworm.logger import logger
 
 
@@ -34,7 +36,7 @@ log = logger.getChild(__name__)
 
 
 def get_document_format_info():
-    return {cls.format: cls for cls in BaseDocument.document_classes}
+    return BaseDocument.document_classes
 
 
 class ReaderError(Exception):
@@ -124,6 +126,11 @@ class EBookReader:
         )
         self.set_view_parameters()
         reader_book_loaded.send(self)
+        if (open_args := self.document.uri.openner_args):
+            page = int(open_args.get('page', 0))
+            pos = int(open_args.get('position', 0))
+            self.go_to_page(page, pos)
+            self.view.contentTextCtrl.SetFocus()
 
     def set_view_parameters(self):
         self.view.set_title(self.get_view_title(include_author=True))
@@ -262,6 +269,19 @@ class EBookReader:
                 self.go_to_first_of_section()
             return navigated
 
+    def perform_wormhole_navigation(
+        self, *, page, start, end, last_position: tuple[int, int] = None
+    ):
+        """Jump to a certain location in the open document storing the current position in the navigation history."""
+        this_page = self.current_page
+        if last_position is None:
+            last_position = (self.view.get_insertion_point(), None)
+        if page is not None:
+            self.go_to_page(page)
+        self.view.go_to_position(start, end)
+        reading_position_change.send(self.view, position=start, tts_speech_prefix="")
+        self.push_navigation_stack(this_page, *last_position)
+
     def go_to_next(self) -> bool:
         """Try to navigate to the next page."""
         current = self.current_page
@@ -284,9 +304,43 @@ class EBookReader:
         section = section or self.active_section
         self.current_page = section.pager.last
 
+    @property
+    def navigation_stack(self):
+        return self.__state.setdefault("navigation_stack", [])
+
+    def push_navigation_stack(self, last_page, last_pos_start, last_pos_end):
+        self.navigation_stack.append(
+            {
+                "last_page": last_page,
+                "source_range": (last_pos_start, last_pos_end),
+            }
+        )
+
+    def pop_navigation_stack(self):
+        try:
+            nav_stack_top = self.navigation_stack.pop()
+        except IndexError:
+            self.view.notify_invalid_action()
+            return
+        else:
+            if page_num := nav_stack_top.get("last_page"):
+                self.go_to_page(page_num)
+            start, end = nav_stack_top["source_range"]
+            self.view.go_to_position(start, end)
+            reading_position_change.send(
+                self.view, position=start, tts_speech_prefix=""
+            )
+
+    def handle_special_action_for_position(self, position: int) -> bool:
+        for link_range in self.iter_semantic_ranges_for_elements_of_type(
+            SemanticElementType.LINK
+        ):
+            if position in link_range:
+                self.navigate_to_link_by_range(link_range)
+
     @staticmethod
     def _get_semantic_element_from_page(page, element_type, forward, anchor):
-        semantics = TextStructureMetadata(page.get_semantic_structure())
+        semantics = TextStructureMetadata(page.semantic_structure)
         pos_getter = (
             semantics.get_next_element_pos
             if forward
@@ -298,6 +352,25 @@ class EBookReader:
         return self._get_semantic_element_from_page(
             self.get_current_page_object(), element_type, forward, anchor
         )
+
+    def iter_semantic_ranges_for_elements_of_type(self, element_type):
+        semantics = TextStructureMetadata(
+            self.get_current_page_object().semantic_structure
+        )
+        yield from semantics.iter_ranges(element_type)
+
+    def navigate_to_link_by_range(self, link_range):
+        target_info = self.get_current_page_object().get_link_for_text_range(link_range)
+        if target_info is None:
+            log.warning(f"Could not resolve link target: {link_range=}")
+            return
+        elif target_info.is_external:
+            self.view.go_to_webpage(target_info.url)
+        else:
+            start, end = target_info.position
+            self.perform_wormhole_navigation(
+                page=target_info.page, start=start, end=None, last_position=link_range
+            )
 
     def get_view_title(self, include_author=False):
         if config.conf["general"]["show_file_name_as_title"]:
@@ -312,3 +385,7 @@ class EBookReader:
                     title=view_title, author=author
                 )
         return view_title + f" - {app.display_name}"
+
+    @staticmethod
+    def open_document_in_a_new_instance(uri):
+        run_subcommand_in_a_new_process(["launcher", uri.base64_encode(),], hidden=False)

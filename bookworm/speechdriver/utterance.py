@@ -32,11 +32,8 @@ class SpeechStyle:
     def __post_init__(self):
         field_info = (
             (field_name, field_type)
-            for field_name, field_type
-            in get_type_hints(
-                self,
-                globalns=globals(),
-                localns=locals()
+            for field_name, field_type in get_type_hints(
+                self, globalns=globals(), localns=locals()
             ).items()
             if not issubclass(field_type, IntEnum)
         )

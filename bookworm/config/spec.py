@@ -27,5 +27,6 @@ config_spec = StringIO(
     font_facename = string(default="")
     font_family = string(default="")
     font_point_size = integer(default=12)
+    use_bold_font = boolean(default=False)
 """
 )

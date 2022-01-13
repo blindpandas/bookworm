@@ -3,19 +3,23 @@
 from __future__ import annotations
 import gc
 from abc import ABCMeta, abstractmethod
-from collections.abc import Sequence
+from collections.abc import Sequence, Iterable
 from functools import lru_cache, cached_property, wraps
 from pycld2 import detect as detect_language, error as CLD2Error
 from pathlib import Path
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
 from bookworm.concurrency import QueueProcess, call_threaded
-from bookworm.structured_text import SemanticElementType, Style
+from bookworm.structured_text import SemanticElementType, Style, TextRange
 from bookworm.image_io import ImageIO
-from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
+from bookworm.utils import (
+    normalize_line_breaks,
+    remove_excess_blank_lines,
+    get_url_spans,
+)
 from bookworm.logger import logger
 from . import operations as doctools
-from .exceptions import DocumentIOError, PaginationError
+from .exceptions import DocumentIOError, PaginationError, UnsupportedDocumentFormatError
 from .elements import *
 from .features import DocumentCapability, ReadingMode
 
@@ -24,7 +28,7 @@ log = logger.getChild(__name__)
 PAGE_CACHE_CAPACITY = 300
 
 
-class BaseDocument(Sequence, metaclass=ABCMeta):
+class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
     """Defines the core interface of a document."""
 
     __internal__ = False
@@ -45,12 +49,18 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     supported_reading_modes: t.Tuple[ReadingMode] = (ReadingMode.DEFAULT,)
     default_reading_mode: ReadingMode = ReadingMode.DEFAULT
 
-    document_classes: list = []
+    document_classes: dict[str, t.ForwardRef("BaseDocument")] = {}
+    """A dict of subclasses representing supported document types."""
 
+    @classmethod
     def __init_subclass__(cls, *args, **kwargs):
         super().__init_subclass__(*args, **kwargs)
         if cls.format is not None:
-            cls.document_classes.append(cls)
+            cls.document_classes[cls.format.lower()] = cls
+
+    @classmethod
+    def get_document_class_given_format(cls, format):
+        return cls.document_classes.get(format.lower())
 
     def __init__(self, uri):
         self.uri = uri
@@ -61,6 +71,9 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     def __getitem__(self, index: int) -> BasePage:
         return self.get_page(index)
 
+    def __iter__(self):
+        return (self[i] for i in range(len(self)))
+
     def __getstate__(self) -> dict:
         """Support for pickling."""
         return dict(uri=self.uri)
@@ -69,6 +82,15 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """Support for unpickling."""
         self.__dict__.update(state)
         self.read()
+
+    def __repr__(self):
+        return (
+            f"<{self.__class__.__name__}: "
+            f"format={self.format}, "
+            f"capabilities={self.capabilities!r}, "
+            f"uri={self.uri!r}"
+            ">"
+        )
 
     @cached_property
     def reading_options(self):
@@ -148,6 +170,9 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
         """Convenience method: return the image of a page."""
         return self[page_number].get_image(zoom_factor)
 
+    def get_cover_image(self) -> t.Optional[ImageIO]:
+        """Return the cover image of this document."""
+
     def get_file_system_path(self):
         """Only valid for documents that have true filesystem path."""
         if (filepath := Path(self.uri.path)).exists():
@@ -165,6 +190,13 @@ class BaseDocument(Sequence, metaclass=ABCMeta):
     @classmethod
     def supports_structural_navigation(cls):
         return DocumentCapability.STRUCTURED_NAVIGATION in cls.capabilities
+
+    @classmethod
+    def supports_links(cls):
+        return (
+            DocumentCapability.LINKS in cls.capabilities
+            or DocumentCapability.INTERNAL_ANCHORS in cls.capabilities
+        )
 
     @classmethod
     def is_single_page_document(cls):
@@ -216,6 +248,9 @@ class BasePage(metaclass=ABCMeta):
         self.document = document
         self.index = index
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self.index}>"
+
     @abstractmethod
     def get_text(self) -> str:
         """Return the text content or raise NotImplementedError."""
@@ -240,6 +275,45 @@ class BasePage(metaclass=ABCMeta):
     def get_style_info(self) -> dict[SemanticElementType, list[tuple[int, int]]]:
         """Return information about the position of styled elements."""
         raise NotImplementedError
+
+    def resolve_link(self, link_range) -> LinkTarget:
+        raise NotImplementedError
+
+    def get_link_for_text_range(self, text_range) -> LinkTarget:
+        retval = self.get_external_link_target(text_range)
+        if retval is None:
+            try:
+                retval = self.resolve_link(text_range)
+            except NotImplementedError:
+                retval = None
+        return retval
+
+    @property
+    def semantic_structure(self):
+        try:
+            semantic_structure = self.get_semantic_structure()
+        except NotImplementedError:
+            semantic_structure = {}
+        semantic_link_ranges = semantic_structure.setdefault(
+            SemanticElementType.LINK, []
+        )
+        all_link_ranges = [
+            *semantic_link_ranges,
+            *(
+                text_range
+                for (text_range, __url) in self.get_external_links()
+                if text_range not in semantic_link_ranges
+            ),
+        ]
+        semantic_structure[SemanticElementType.LINK] = all_link_ranges
+        return semantic_structure
+
+    def get_external_links(self) -> tuple[tuple[int, int], str]:
+        return get_url_spans(self.get_text())
+
+    def get_external_link_target(self, text_range) -> str:
+        if url := dict(self.get_external_links()).get(text_range):
+            return LinkTarget(url=url, is_external=True)
 
     def normalize_text(self, text):
         return remove_excess_blank_lines(text)
@@ -286,6 +360,9 @@ class SinglePage(BasePage):
     def get_style_info(self):
         return self.document.get_document_style_info()
 
+    def resolve_link(self, link_range):
+        return self.document.resolve_link(link_range)
+
 
 class SinglePageDocument(BaseDocument):
     """Provides sain defaults for single page documents."""
@@ -316,6 +393,9 @@ class SinglePageDocument(BaseDocument):
     def get_document_style_info(self):
         raise NotImplementedError
 
+    def resolve_link(self, text_range):
+        raise NotImplementedError
+
     def search(self, request: doctools.SearchRequest):
         text = self.get_content()[request.text_range.as_slice()]
         yield from QueueProcess(
@@ -330,6 +410,8 @@ class SinglePageDocument(BaseDocument):
 
 class DummyDocument(BaseDocument):
     """Implements core document methods for a dummy document."""
+
+    __indexable__ = True
 
     def __len__(self):
         raise NotImplementedError

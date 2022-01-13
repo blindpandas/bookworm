@@ -30,3 +30,7 @@ class DocumentEncryptedError(DocumentError):
 
 class PaginationError(DocumentError, IndexError):
     """Raised when the  `next` or `prev` page is not available."""
+
+
+class UnsupportedDocumentFormatError(DocumentError):
+    """Raised when the document format is not supported."""
