@@ -1,184 +1,50 @@
 # coding: utf-8
 
 from __future__ import annotations
-import copy
-import ebooklib
+import collections.abc
+import os.path
+import string
+import itertools
 import more_itertools
+import ebooklib
+import ebooklib.epub
+import fitz
+from contextlib import suppress
+from io import StringIO
 from functools import cached_property, lru_cache
-from hashlib import md5
-from zipfile import ZipFile
-from tempfile import TemporaryDirectory
 from pathlib import Path, PurePosixPath
 from urllib import parse as urllib_parse
-from chemical import it
-from ebooklib.epub import read_epub
-from bs4 import BeautifulSoup
-from bookworm.paths import home_data_path
+from diskcache import Cache
+from lxml import html as lxml_html
+from selectolax.parser import HTMLParser
+from bookworm.i18n import LocaleInfo
+from bookworm.structured_text import TextRange
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.utils import recursively_iterdir, is_external_url
+from bookworm.utils import is_external_url
+from bookworm.paths import home_data_path
+from bookworm.image_io import ImageIO
 from bookworm.logger import logger
 from .. import (
-    BaseDocument,
-    BasePage,
+    SinglePageDocument,
+    BookMetadata,
     Section,
     LinkTarget,
-    BookMetadata,
-    Pager,
     DocumentCapability as DC,
-    ReadingMode,
     TreeStackBuilder,
     ChangeDocument,
     DocumentError,
-    DocumentEncryptedError,
+    SINGLE_PAGE_DOCUMENT_PAGER,
 )
-from .fitz import FitzPage, FitzDocument
 
 
 log = logger.getChild(__name__)
+HTML_FILE_EXTS = {
+    ".html",
+    ".xhtml",
+}
 
 
-EMPTY_HTML_DOCUMENT = (
-    "<!DOCTYPE html>\n" "<html>\n" "<head></head>\n" "<body></body>\n" "</html>"
-)
-
-
-class EpubPage(BasePage):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        section_ref = self.section.data["href"]
-        html = self._get_html_with_href(section_ref)
-        try:
-            self._parse_and_extract_text_info(html)
-        except ValueError:
-            log.exception("Failed to parse text from html", exc_info=True)
-            self._parse_and_extract_text_info("<html></html>")
-        if not self.extracted_text.strip() and "#" in section_ref:
-            filename, html_id = section_ref.split("#")
-            try:
-                extra_html = self.document._split_section_content[filename][""]
-            except KeyError:
-                pass
-            else:
-                self._parse_and_extract_text_info(extra_html)
-
-    def _parse_and_extract_text_info(self, html):
-        structure_extractor = StructuredHtmlParser.from_string(html)
-        self.extracted_text = structure_extractor.get_text()
-        self.semantic_elements = structure_extractor.semantic_elements
-        self.style_info = structure_extractor.styled_elements
-        self.link_targets = structure_extractor.link_targets
-        self.anchors = structure_extractor.anchors
-
-    def get_text(self):
-        return self.extracted_text
-
-    def get_style_info(self) -> dict:
-        return self.style_info
-
-    def get_semantic_structure(self) -> dict:
-        return self.semantic_elements
-
-    def get_image(self, zoom_factor):
-        raise NotImplementedError
-
-    def resolve_link(self, link_range):
-        if target := self.link_targets.get(link_range):
-            if is_external_url(target):
-                return LinkTarget(url=target, is_external=True)
-            filename, anchor = (
-                (target, None) if "#" not in target else target.split("#")
-            )
-            filename = urllib_parse.unquote(filename)
-            target_section = self.document._filename_to_section.get(filename)
-            if target_section is None:
-                for (file, sect) in self.document._filename_to_section.items():
-                    if file.endswith(filename):
-                        target_section = sect
-                        break
-            if target_section is not None:
-                target_page = self.document[target_section.pager.first]
-                target_position = target_page.anchors.get(anchor, 0)
-                return LinkTarget(
-                    url=target,
-                    is_external=False,
-                    page=target_page.index,
-                    position=target_position,
-                )
-
-    def _get_proper_filename(self, href):
-        members = self.document._filelist
-        if href in members:
-            return href
-        for filename in members:
-            if filename.endswith(href):
-                return filename
-
-    def parse_split_chapter(self, href):
-        filename = self._get_proper_filename(href.split("#")[0])
-        split_anchors = self.document._split_section_anchor_ids[filename]
-        self.document._split_section_content[filename] = {}
-        chapter_content = self.document.ziparchive.read(filename).decode("utf-8")
-        soup = BeautifulSoup(chapter_content, "lxml")
-        for this_anchor in reversed(split_anchors):
-            this_tag = soup.find(attrs={"id": lambda x: x == this_anchor})
-            markup_split = str(soup).split(str(this_tag))
-            soup = BeautifulSoup(markup_split[0], "lxml")
-            # If the tag is None, it probably means the content is overlapping
-            # Skipping the insert is the way forward
-            if this_tag:
-                this_markup = BeautifulSoup(
-                    str(this_tag).strip() + markup_split[1], "lxml"
-                )
-                self.document._split_section_content[filename][this_anchor] = str(
-                    this_markup
-                )
-        # Remaining markup is assigned here
-        self.document._split_section_content[filename][""] = str(soup)
-
-    def _get_split_section_text(self, href):
-        splitdata = href.split("#")
-        if len(splitdata) == 2:
-            filename, html_id = splitdata
-        else:
-            filename = splitdata[0]
-            html_id = ""
-        if anchor_info := self.document._split_section_content.get(filename):
-            try:
-                return anchor_info[html_id]
-            except KeyError:
-                log.warning(
-                    f"Could not get content for {html_id=} from parsed {filename=} with {href=}"
-                )
-                return ""
-        if self._get_proper_filename(filename) is not None:
-            self.parse_split_chapter(href)
-            return self._get_split_section_text(href)
-        else:
-            return ""
-
-    def _get_html_with_href(self, href):
-        retval_html = None
-        if filename := self._get_proper_filename(href):
-            if href not in self.document._split_section_anchor_ids:
-                retval_html = self.document.ziparchive.read(filename).decode("utf-8")
-            else:
-                retval_html = self._get_split_section_text(href)
-        elif (filename is None) and ("#" in href):
-            retval_html = self._get_split_section_text(href)
-        if retval_html is None:
-            log.warning(
-                f"Could not extract text from section with href: {href} and filename: {filename}"
-            )
-            retval_html = EMPTY_HTML_DOCUMENT
-        retval_soup = BeautifulSoup(retval_html, "lxml")
-        for file in self.section.data.get("additional_html_files", ()):
-            html_content = self.document.ziparchive.read(file).decode("utf-8")
-            for elm in BeautifulSoup(html_content, "lxml"):
-                retval_soup.body.append(copy.copy(elm))
-        return str(retval_soup)
-
-
-class EpubDocument(BaseDocument):
+class EpubDocument(SinglePageDocument):
 
     format = "epub"
     # Translators: the name of a document file format
@@ -187,179 +53,290 @@ class EpubDocument(BaseDocument):
     capabilities = (
         DC.TOC_TREE
         | DC.METADATA
+        | DC.SINGLE_PAGE
         | DC.STRUCTURED_NAVIGATION
         | DC.TEXT_STYLE
+        | DC.ASYNC_READ
         | DC.LINKS
         | DC.INTERNAL_ANCHORS
     )
-    default_reading_mode = ReadingMode.CHAPTER_BASED
-
-    def __len__(self):
-        return self.toc_tree.pager.last + 1
-
-    @lru_cache(maxsize=1000)
-    def get_page(self, index):
-        return EpubPage(self, index)
 
     def read(self):
-        self.fitz_doc = FitzEPUBDocument(self.uri)
-        self.fitz_doc.read()
-        self.filename = self.fitz_doc.filename
-        self.epub = read_epub(self.filename)
-        self.ziparchive = ZipFile(self.filename, "r")
-        self._filelist = set(self.ziparchive.namelist())
-        self._split_section_anchor_ids = {}
-        self._split_section_content = {}
-        # For the purposes of resolving internal anchors
-        self._filename_to_section = {}
         super().read()
+        self.epub = ebooklib.epub.read_epub(self.get_file_system_path())
+        self.html_content = self.html_content
+        self.structure = StructuredHtmlParser.from_string(self.html_content)
+        self.toc = self.parse_epub()
 
-    def close(self):
-        super().close()
-        self.fitz_doc.close()
-        self.ziparchive.close()
-
-    @cached_property
-    def language(self):
-        return self.fitz_doc.language
-
-    @cached_property
+    @property
     def toc_tree(self):
-        toc = self.fitz_doc._ebook.get_toc(simple=False)
-        sect_count = len(toc)
-        root = Section(
-            title=self.metadata.title,
-            pager=Pager(first=0, last=sect_count - 1),
-            level=1,
-        )
-        stack = TreeStackBuilder(root)
-        all_html_files = self.get_html_file_list()
-        for (idx, (level, title, __, data)) in enumerate(toc):
-            href = data["name"]
-            section = stack.push(
-                Section(
-                    title=title,
-                    pager=Pager(first=idx, last=idx),
-                    level=level + 1,
-                    data=dict(href=href),
-                )
-            )
-            # ----------------
-            filename, html_id = (href, None) if "#" not in href else href.split("#")
-            self._filename_to_section[filename] = section
-            # ----------------
-            if html_id is not None:
-                self._split_section_anchor_ids.setdefault(filename, []).append(html_id)
-            # ----------------
-            section_filename = (href if "#" not in href else href.split("#")[0]).strip()
-            if section_filename not in all_html_files:
-                continue
-            all_html_files[all_html_files.index(section_filename)] = section
-            # End loop
-        additional_html_files = (
-            (sect, html_files)
-            for (sect, *html_files) in more_itertools.split_before(
-                all_html_files, pred=lambda item: isinstance(item, Section)
-            )
-            if html_files and isinstance(sect, Section)
-        )
-        for (sect, additional_html_file_list) in additional_html_files:
-            sect.data["additional_html_files"] = additional_html_file_list
-            for aditional_file in additional_html_file_list:
-                self._filename_to_section[aditional_file] = sect
-        # ------------
-        if sect_count == 0:
-            href = (
-                it(self.epub.items)
-                .find(lambda item: "html" in item.media_type)
-                .file_name
-            )
-            stack.push(
-                Section(
-                    title=_("Book contents"),
-                    pager=Pager(first=0, last=0),
-                    level=2,
-                    data=dict(href=href),
-                )
-            )
-            object.__setattr__(root.pager, "last", 0)
-        return root
+        return self.toc
+
+    @cached_property
+    def epub_metadata(self):
+        info = {}
+        for md in tuple(self.epub.metadata.values()):
+            info.update(md)
+        return {k: v[0][0] for k,v in info.items()}
 
     @cached_property
     def metadata(self):
-        return self.fitz_doc.metadata
+        info = self.epub_metadata
+        author = (
+            info.get("creator", "")
+            or info.get("author", "")
+        )
+        try:
+            desc = HTMLParser(info.get("description", "")).text()
+        except:
+            desc = None
+        return BookMetadata(
+            title=self.epub.title,
+            author=author.removeprefix("By ").strip(),
+            description=desc,
+            publication_year=info.get("date", ""),
+            publisher=info.get("publisher", "")
+        )
+
+    @cached_property
+    def language(self):
+        if (epub_lang := self.epub_metadata.get('language')) is not None:
+            try:
+                return LocaleInfo(epub_lang)
+            except:
+                log.exception("Failed to parse epub language `{epub_lang}`", exc_info=True)
+        return (
+            self.get_language(self.html_content, is_html=True)
+            or LocaleInfo("en")
+        )
+
+    def get_content(self):
+        return self.structure.get_text()
+
+    def get_document_semantic_structure(self):
+        return self.structure.semantic_elements
+
+    def get_document_style_info(self):
+        return self.structure.styled_elements
+
+    def resolve_link(self, link_range) -> LinkTarget:
+        href = urllib_parse.unquote(self.structure.link_targets[link_range])
+        if is_external_url(href):
+            return LinkTarget(url=href, is_external=True)
+        else:
+            for (html_id, text_range) in self.structure.html_id_ranges.items():
+                if html_id.endswith(href):
+                    return LinkTarget(
+                        url=href, is_external=False, page=None, position=text_range
+                    )
 
     def get_cover_image(self):
-        return self.fitz_doc.get_cover_image()
-
-    def get_html_file_list(self):
-        return [
-            h.get_name().strip()
-            for h in self.epub.get_items_of_type(ebooklib.ITEM_DOCUMENT)
-        ]
-
-
-class FitzEPUBDocument(FitzDocument):
-
-    __internal__ = True
-
-    def read(self):
+        if not (
+            cover := more_itertools.first(
+                self.epub.get_items_of_type(ebooklib.ITEM_COVER), None
+            )
+        ):
+            cover = more_itertools.first(
+                filter(
+                    lambda item: "cover" in item.file_name.lower(),
+                    self.epub.get_items_of_type(ebooklib.ITEM_IMAGE),
+                ),
+                None,
+            )
+        if cover:
+            return ImageIO.from_bytes(cover.content)
         try:
-            super().read()
-        except DocumentEncryptedError:
-            log.debug("Got an encrypted file, will try to decrypt it...")
-            raise ChangeDocument(
-                old_uri=self.uri,
-                new_uri=self.uri.create_copy(format="drm_epub"),
-                reason="Document is encrypted with DRM",
+            with fitz.open(self.get_file_system_path()) as fitz_document:
+                return ImageIO.from_fitz_pixmap(fitz_document.get_page_pixmap(0))
+        except:
+            log.warning(
+                "Failed to obtain the cover image for epub document.", exc_info=True
             )
 
+    @lru_cache(maxsize=10)
+    def get_section_at_position(self, pos):
+        for ((start, end), section) in self.start_positions_for_sections:
+            if start <= pos < end:
+                return section
+        return self.toc_tree
 
-class _DrmFitzEpubDocument(EpubDocument):
-    """Fixes DRM encrypted epub documents."""
-
-    __internal__ = True
-    format = "drm_epub"
-
-    def read(self):
-        self._original_filename = self.get_file_system_path()
-        try:
-            self.filename = self.make_unrestricted_file(self._original_filename)
-            self.uri = self.uri.create_copy(
-                path=self.filename,
+    @cached_property
+    def epub_html_items(self) -> tuple[str]:
+        if (html_items := tuple(self.epub.get_items_of_type(ebooklib.ITEM_DOCUMENT))):
+            return html_items
+        else:
+            return tuple(
+                filter(
+                    lambda item: os.path.splitext(item.file_name)[1] in HTML_FILE_EXTS,
+                    self.epub.items,
+                )
             )
-            super().read()
-        except Exception as e:
-            raise DocumentError("Could not open DRM encrypted epub document") from e
 
-    @staticmethod
-    def make_unrestricted_file(filename):
-        """
-        Try to remove Digital Rights Management (DRM) type
-        encryption from the EPUB document.
+    def get_epub_html_item_by_href(self, href):
+        if (epub_item := self.epub.get_item_with_href("href")):
+            return epub_item
+        item_name = PurePosixPath(href).name
+        return more_itertools.first(
+            (
+                item for item in self.epub_html_items
+                if PurePosixPath(item.file_name).name == item_name
+            ),
+            None
+        )
 
-        Legal note:
-        The removal of the encryption from the file does not involve any
-        violation of any laws whatsoever, as long as the user has obtained
-        the eBook using legitimate means, and the user intents to use the
-        content in a manor that does not violate the law.
-        """
-        filepath = Path(filename)
-        content_hash = md5()
-        with open(filepath, "rb") as ebook_file:
-            for chunk in ebook_file:
-                content_hash.update(chunk)
-        identifier = content_hash.hexdigest()
-        processed_book = home_data_path(f"{identifier}.epub")
-        if processed_book.exists():
-            return str(processed_book)
-        _temp = TemporaryDirectory()
-        temp_path = Path(_temp.name)
-        ZipFile(filename).extractall(temp_path)
-        with ZipFile(processed_book, "w") as book:
-            for file in recursively_iterdir(temp_path):
-                if "encryption.xml" in file.name.lower():
-                    continue
-                book.write(file, file.relative_to(temp_path))
-        _temp.cleanup()
-        return str(processed_book)
+    def parse_epub(self):
+        root = Section(
+            title=self.metadata.title,
+            pager=SINGLE_PAGE_DOCUMENT_PAGER,
+            level=1,
+            text_range=TextRange(0, len(self.get_content())),
+        )
+        id_ranges = {
+            urllib_parse.unquote(key): value
+            for (key, value) in self.structure.html_id_ranges.items()
+        }
+        stack = TreeStackBuilder(root)
+        toc_entries = self.epub.toc
+        if not isinstance(toc_entries, collections.abc.Iterable):
+            toc_entries = [
+                toc_entries,
+            ]
+        for sect in self.add_toc_entry(toc_entries, root):
+            href = urllib_parse.unquote(sect.data["href"])
+            try:
+                sect.text_range = TextRange(*id_ranges[href])
+            except KeyError:
+                # Let's start the dance!
+                text_range = None
+                # Strip  punctuation as ebooklib, for some reason, strips those from html_ids
+                for (h_id, t_range) in id_ranges.items():
+                    if (href == h_id.strip("/")) or (
+                        href == h_id.strip(string.punctuation)
+                    ):
+                        text_range = t_range
+                        break
+                if text_range is None and "#" in href:
+                    filename = href.split("#")[0]
+                    text_range = id_ranges.get(filename)
+                if text_range is None:
+                    log.warning(
+                        f"Could not determine the starting position for href: {href} and section: {sect!r}"
+                    )
+                    text_range = (
+                        stack.top.text_range.astuple()
+                        if stack.top is not root
+                        else (0, 0)
+                    )
+                sect.text_range = TextRange(*text_range)
+            stack.push(sect)
+        return root
+
+    @cached_property
+    def start_positions_for_sections(self):
+        sect_starting_poses = [
+            (0, self.toc_tree),
+        ] + [(sect.text_range.start, sect) for sect in self.toc_tree.iter_children()]
+        data = list(
+            more_itertools.zip_offset(
+                sect_starting_poses, sect_starting_poses, offsets=(0, 1), longest=True
+            )
+        )
+        data[-1] = list(data[-1])
+        data[-1][1] = data[-1][0]
+        return [((i[0], j[0]), i[1]) for i, j in data]
+
+    def add_toc_entry(self, entries, parent):
+        for entry in entries:
+            current_level = parent.level + 1
+            if type(entry) is ebooklib.epub.Link:
+                sect = Section(
+                    title=entry.title or self._get_title_for_section(entry.href),
+                    pager=SINGLE_PAGE_DOCUMENT_PAGER,
+                    level=current_level,
+                    parent=parent,
+                    data=dict(href=entry.href.lstrip("./")),
+                )
+                yield sect
+            else:
+                epub_sect, children = entry
+                num_pages = len(children)
+                sect = Section(
+                    title=epub_sect.title or self._get_title_for_section(epub_sect.href),
+                    level=current_level,
+                    pager=SINGLE_PAGE_DOCUMENT_PAGER,
+                    parent=parent,
+                    data=dict(href=epub_sect.href.lstrip("./")),
+                )
+                yield sect
+                yield from self.add_toc_entry(
+                    children,
+                    parent=sect,
+                )
+
+    @cached_property
+    def html_content(self):
+        cache = Cache(
+            self._get_cache_directory(), eviction_policy="least-frequently-used"
+        )
+        cache_key = self.uri.to_uri_string()
+        if cached_html_content := cache.get(cache_key):
+            return cached_html_content.decode("utf-8")
+        html_content_gen = ((item.file_name, item.content) for item in self.epub_html_items)
+        buf = StringIO()
+        for (filename, html_content) in html_content_gen:
+            buf.write(self.prefix_html_ids(filename, html_content))
+            buf.write("\n<br/>\n")
+        html_content = self.build_html(
+            title=self.epub.title, body_content=buf.getvalue()
+        )
+        cache.set(cache_key, html_content.encode("utf-8"))
+        return html_content
+
+    def prefix_html_ids(self, filename, html):
+        tree = lxml_html.fromstring(html)
+        #try:
+        #    data_html_title = tree.xpath('/html/head/title//text()')[0]
+        #except IndexError:
+        #    data_html_title = ""
+        #tree.set('data-html-title', data_html_title)
+        tree.make_links_absolute(filename)
+        if os.path.splitext(filename)[1] in HTML_FILE_EXTS:
+            for node in tree.cssselect("[id]"):
+                node.set("id", filename + "#" + node.get("id"))
+        with suppress(IndexError):
+            tree.remove(tree.head)
+            tree.body.tag = "section"
+        tree.tag = "div"
+        tree.insert(0, tree.makeelement("header", attrib={"id": filename}))
+        return lxml_html.tostring(tree, method="html", encoding="unicode")
+
+    def build_html(self, title, body_content):
+        return (
+            "<!doctype html>\n"
+            '<html class="no-js" lang="">\n'
+            "<head>\n"
+            '<meta charset="utf-8">'
+            f"<title>{title}</title>\n"
+            "</head>\n"
+            "<body>\n"
+            f"{body_content}\n"
+            "</body>\n"
+            "</html>"
+        )
+
+    def _get_title_for_section(self, href):
+        filename = (
+            href.split("#")[0]
+            if "#" in href
+            else href
+        )
+        html_doc = self.get_epub_html_item_by_href(filename)
+        if html_doc is not None:
+            if (title_list := lxml_html.fromstring(html_doc.content).xpath("/html/head/title//text()")):
+                return title_list[0]
+        else:
+            log.warning(f"Could not resolve href: {href}")
+        return ""
+
+    def _get_cache_directory(self):
+        return str(home_data_path(".parsed_epub_cache"))

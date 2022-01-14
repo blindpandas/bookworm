@@ -180,9 +180,10 @@ class BookshelfResultsPage(BookshelfNotebookPage):
                 _("Error"),
                 style=wx.ICON_ERROR
             )
-        items, image_list = result
-        self._all_items = items
-        self.render_items(items, image_list)
+        else:
+            items, image_list = result
+            self._all_items = items
+            self.render_items(items, image_list)
 
     def render_items(self, items, image_list, set_focus_to_first_item=True):
         self.document_list.ClearAll()
@@ -215,11 +216,11 @@ class BookshelfResultsPage(BookshelfNotebookPage):
     def get_default_item_actions(self, item):
         return [
             BookshelfAction(
-                _("Open"),
+                _("&Open"),
                 func=self._do_open_document, 
             ),
             BookshelfAction(
-                _("Open in system viewer"),
+                _("Open in &system viewer"),
                 func=self._do_open_document_in_system_viewer, 
             ),
             BookshelfAction(
@@ -233,10 +234,12 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         sounds.navigation.play()
         # Translators: spoken message when activating a document
         speech.announce("Openning document...")
-        EBookReader.open_document_in_a_new_instance(document_info.uri)
+        uri = self.source.resolve_item_uri(document_info)
+        EBookReader.open_document_in_a_new_instance(uri)
 
     def _do_open_document_in_system_viewer(self, document_info):
-        wx.LaunchDefaultApplication(str(document_info.uri.path))
+        uri = self.source.resolve_item_uri(document_info)
+        wx.LaunchDefaultApplication(str(uri.path))
         sounds.navigation.play()
         # Translators: spoken message when activating a document
         speech.announce("Openning document...")
@@ -293,8 +296,9 @@ class BookshelfResultsPage(BookshelfNotebookPage):
                 self.set_focused_item(0)
             return
         elif (unicode_char := event.GetUnicodeKey()) != wx.WXK_NONE:
-            self.quickFilterTextCtrl.AppendText(chr(unicode_char))
-            self.set_focused_item(0)
+            if not event.ControlDown():
+                self.quickFilterTextCtrl.AppendText(chr(unicode_char))
+                self.set_focused_item(0)
         else:
             event.Skip()
 
@@ -302,11 +306,13 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         event.Skip()
         if event.KeyCode == wx.WXK_F2:
             self.document_list.EditLabel(self.selected_item_index)
-        elif event.AltDown() and (event.KeyCode == wx.WXK_LEFT):
-            self.pop_folder_navigation_stack()
         elif event.KeyCode == wx.WXK_F5:
             self.update_items()
             self.frame.update_pages_labels()
+        elif event.ControlDown() and event.KeyCode == ord("F"):
+            self.quickFilterTextCtrl.SetFocus()
+        elif event.AltDown() and (event.KeyCode == wx.WXK_LEFT):
+            self.pop_folder_navigation_stack()
 
     def onDocumentListEndLabelEdit(self, event):
         new_title = event.GetLabel().strip()
@@ -354,7 +360,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
                 None,
                 *item_actions,
             BookshelfAction(
-                _("Document info..."),
+                _("Document &info..."),
                 func=self._do_show_document_info 
             ),
             ]

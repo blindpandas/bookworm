@@ -7,6 +7,7 @@ from bookworm.concurrency import threaded_worker, call_threaded
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.signals import reader_book_loaded
 from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
+from bookworm.document import DocumentIOError
 from bookworm.logger import logger
 from .window import BookshelfWindow
 from .local_bookshelf.models import Document
@@ -30,14 +31,15 @@ class BookshelfSettingsPanel(SettingsPanel):
 
     def addControls(self):
         # Translators: the label of a group of controls in the reading page
-        generalReadingBox = self.make_static_box(_("Bookshelf"))
+        static_box = self.make_static_box(_("Local Bookshelf"))
         wx.CheckBox(
-            generalReadingBox,
+            static_box,
             -1,
             # Translators: the label of a checkbox
             _("Automatically add opened books to the local bookshelf"),
             name="bookshelf.auto_add_opened_documents_to_bookshelf",
         )
+
 
 
 class BookshelfMenu(wx.Menu):
@@ -94,5 +96,16 @@ class BookshelfMenu(wx.Menu):
 
     @call_threaded
     def _on_reader_loaded(self, sender):
-        if Document.select().where(Document.uri == sender.document.uri).count():
-            wx.CallAfter(self.Enable, StatefulBookshelfMenuIds.add_current_book_to_shelf, False)
+        try:
+            sender.document.get_file_system_path()
+            has_file_system_path = True
+        except DocumentIOError:
+            has_file_system_path = False
+        wx.CallAfter(
+            self.Enable,
+            StatefulBookshelfMenuIds.add_current_book_to_shelf,
+            all([
+                not Document.select().where(Document.uri == sender.document.uri).count(),
+                has_file_system_path
+            ]),
+        )

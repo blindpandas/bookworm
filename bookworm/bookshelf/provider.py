@@ -101,6 +101,9 @@ class Source:
         """Get a list of actions for the given item."""
         return self.item_actions
 
+    def resolve_item_uri(self, item):
+        return item.uri
+
     def change_item_title(self, item, new_title):
         pass
 

@@ -178,3 +178,36 @@ class SearchResultsPage(sc.SizedPanel):
         sounds.navigation.play()
         EBookReader.open_document_in_a_new_instance(uri)
 
+
+
+class BundleErrorsDialog(SimpleDialog):
+
+    def __init__(self, *args, info: list[tuple[str]], **kwargs):
+        self.info = info
+        super().__init__(*args, **kwargs)
+
+    def addControls(self, parent):
+        parent.SetSizerType("vertical")
+        column_spec = (
+            # Translators: title of a list control colum
+            ColumnDefn(_("Error"), 'left', 255, operator.itemgetter(0)),
+            # Translators: title of a list control colum
+            ColumnDefn(_("File Name"), 'center', 255, operator.itemgetter(1)),
+            # Translators: title of a list control colum
+            ColumnDefn(_("Title"), 'right', 255, operator.itemgetter(2)),
+        )
+        # Translators: label of a list control showing file copy errors
+        wx.StaticText(parent, -1, _("Errors"))
+        result_list = ImmutableObjectListView(parent, -1, columns=column_spec)
+        reason = _("Failed to copy document")
+        result_list.set_objects([(reason, *i) for i in self.info], set_focus=True)
+
+    def getButtons(self, parent):
+        btnsizer = wx.StdDialogButtonSizer()
+        # Translators: the label of the cancel button in a dialog
+        cancelBtn = wx.Button(self, wx.ID_CANCEL, _("&Close"))
+        btnsizer.AddButton(cancelBtn)
+        btnsizer.Realize()
+        return btnsizer
+
+

@@ -8,6 +8,7 @@ It uses the `invoke` command runner to define and run commands.
 import sys
 import os
 import platform
+import itertools
 import shutil
 import subprocess
 import json
@@ -444,13 +445,13 @@ def update_version_info(c):
         "version": app.version,
         "updated": datetime.utcnow().isoformat(),
     }
-    artifacts = dict(
-        installer=artifacts_folder.glob("Bookworm*setup.exe"),
-        update_bundle=artifacts_folder.glob("Bookworm*update.bundle"),
-    )
-    for artifact_type, artifact_files in artifacts.items():
-        for file in artifact_files:
-            json_info[f"{file.name}.sha1hash"] = generate_sha1hash(file)
+    artifacts = sorted(itertools.chain(
+        artifacts_folder.glob("Bookworm*setup.exe"),
+        artifacts_folder.glob("Bookworm*portable.zip"),
+        artifacts_folder.glob("Bookworm*update.bundle"),
+    ))
+    for file in artifacts:
+        json_info[f"{file.name}.sha1hash"] = generate_sha1hash(file)
     json_file.write_text(json.dumps(json_info, indent=2))
     print("Updated version information")
 

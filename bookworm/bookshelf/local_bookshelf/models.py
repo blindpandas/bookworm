@@ -27,7 +27,7 @@ from .database import (
 
 
 BOOKWORM_BOOKSHELF_APP_ID = 10194273
-BOOKWORM_BOOKSHELF_SCHEMA_VERSION = 1
+BOOKWORM_BOOKSHELF_SCHEMA_VERSION = 2
 DEFAULT_BOOKSHELF_DATABASE_FILE = db_path("bookshelf.sqlite")
 database = AutoOptimizedAPSWDatabase(
     os.fspath(DEFAULT_BOOKSHELF_DATABASE_FILE),
@@ -85,9 +85,26 @@ class BaseModel(Model):
         with database:
             cursor = database.connection().cursor()
             cursor.execute(f"PRAGMA application_id={BOOKWORM_BOOKSHELF_APP_ID}")
-            cursor.execute(f"PRAGMA user_version={BOOKWORM_BOOKSHELF_SCHEMA_VERSION}")
             # Create a trigger to remove FTS indexes for deleted pages
             cursor.execute(TRIGGER_DELETE_FTS_INDEX_ON_PAGE_DELETE)
+        cls.perform_migrations()
+
+    @classmethod
+    def perform_migrations(cls):
+        database = cls._meta.database
+        user_version = database.connection().cursor().execute('pragma user_version').fetchone()[0]
+        if user_version == BOOKWORM_BOOKSHELF_SCHEMA_VERSION:
+            return
+        elif user_version == 0:
+            database.connection().cursor().execute(f"PRAGMA user_version={BOOKWORM_BOOKSHELF_SCHEMA_VERSION}")
+            return
+        if user_version== 1:
+            with database.transaction():
+                cursor = database.connection().cursor()
+                cursor.execute('ALTER TABLE "document" ADD COLUMN "in_reading_list" INTEGER DEFAULT  0;')
+                cursor.execute('ALTER TABLE "document" ADD COLUMN "is_currently_reading" INTEGER DEFAULT  0;')
+                cursor.execute(f"PRAGMA user_version=2")
+        cls.perform_migrations()
 
 
 class Author(BaseModel):
@@ -110,6 +127,7 @@ class Author(BaseModel):
             .join(DocumentAuthor, on=DocumentAuthor.document_id == Document.id)
             .join(Author, on=DocumentAuthor.author_id == Author.id)
             .where(Author.name == name)
+            .order_by(Document.title.asc())
         )
         
 
@@ -126,6 +144,7 @@ class Category(BaseModel):
             Document.select()
             .join(Category)
             .where(Category.name == name)
+            .order_by(Document.title.asc())
         )
 
 
@@ -147,7 +166,9 @@ class Tag(BaseModel):
             .join(DocumentTag, on=DocumentTag.document_id == Document.id)
             .join(Tag, on=DocumentTag.tag_id == Tag.id)
             .where(Tag.name == name)
+            .order_by(Document.title.asc())
         )
+
 
 
 class Document(BaseModel):
@@ -155,7 +176,7 @@ class Document(BaseModel):
     uri = DocumentUriField(unique=True, null=False)
     title = TextField(index=True, null=False)
     date_added = DateTimeField(default=datetime.utcnow, index=True, null=False)
-    is_favorite = BooleanField(default=False)
+    favorited = BooleanField(default=False, column_name="is_favorite")
     cover_image = ImageField(null=True)
     format = ForeignKeyField(
         column_name="format_id",
@@ -171,6 +192,8 @@ class Document(BaseModel):
         null=True,
     )
     metadata = JSONField(json_dumps=ujson.dumps, json_loads=ujson.loads, null=True, default={})
+    in_reading_list = BooleanField(default=False)
+    is_currently_reading = BooleanField(default=False)
 
     def as_document_info(self) -> DocumentInfo:
         kwargs = self.metadata.copy()

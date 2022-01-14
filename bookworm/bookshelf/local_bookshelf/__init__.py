@@ -1,11 +1,13 @@
 # coding: utf-8
 
 from __future__ import annotations
+import math
 import os
 import wx
 import peewee
 from abc import ABC, abstractmethod
 from functools import partial, cached_property
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from bookworm import config
 from bookworm.signals import app_booting
@@ -27,9 +29,11 @@ from .dialogs import (
     AddFolderToLocalBookshelfDialog,
     SearchBookshelfDialog,
     BookshelfSearchResultsDialog,
+    BundleErrorsDialog,
 )
-from .tasks import issue_import_folder_request, add_document_to_bookshelf
+from .tasks import issue_import_folder_request, add_document_to_bookshelf, bundle_single_document
 from .models import (
+    DEFAULT_BOOKSHELF_DATABASE_FILE,
     BaseModel,
     Document,
     Author,
@@ -87,14 +91,26 @@ class LocalBookshelfProvider(BookshelfProvider):
         sources = [
             LocalDatabaseSource(
                 provider=self,
-                name=_("Recents"),
-                query=Document.select().order_by(Document.date_added.desc()).limit(100),
+                name=_("Recently Added"),
+                query=Document.select().order_by(Document.date_added.desc()).limit(10),
+                source_actions=[]
+            ),
+            LocalDatabaseSource(
+                provider=self,
+                name=_("Currently Reading"),
+                query=Document.select().where(Document.is_currently_reading == True).order_by(Document.title.asc()),
+                source_actions=[]
+            ),
+            LocalDatabaseSource(
+                provider=self,
+                name=_("Wish List"),
+                query=Document.select().where(Document.in_reading_list == True).order_by(Document.title.asc()),
                 source_actions=[]
             ),
             LocalDatabaseSource(
                 provider=self,
                 name=_("Favorites"),
-                query=Document.select().where(Document.is_favorite == True),
+                query=Document.select().where(Document.favorited == True).order_by(Document.title.asc()),
                 source_actions=[]
             ),
         ]
@@ -106,7 +122,7 @@ class LocalBookshelfProvider(BookshelfProvider):
             InvalidIfEmptyLocalDatabaseSource(
                 provider=self,
                 name=_("Uncategorized"),
-                query=Document.select().where(Document.category == None),
+                query=Document.select().where(Document.category == None).order_by(Document.title.asc()),
                 source_actions=[]
             ),
         )
@@ -139,6 +155,7 @@ class LocalBookshelfProvider(BookshelfProvider):
             BookshelfAction(_("Import Documents...\tCtrl+O"), func=self._on_import_document),
             BookshelfAction(_("Import documents from folder..."), func=self._on_add_documents_from_folder),
             BookshelfAction(_("Search Bookshelf..."), func=self._on_search_bookshelf),
+            BookshelfAction(_("Bundle Documents..."), func=self._on_bundle_documents),
         ]
 
     def _on_import_document(self, provider):
@@ -197,7 +214,7 @@ class LocalBookshelfProvider(BookshelfProvider):
                 DocumentUri.from_filename(filename),
                 category_name=category_name,
                 tags_names=tags_names,
-                database_file=None
+                database_file=DEFAULT_BOOKSHELF_DATABASE_FILE
             )
 
     def _on_document_imported_callback(self, future):
@@ -285,6 +302,56 @@ class LocalBookshelfProvider(BookshelfProvider):
         with dialog:
             dialog.ShowModal()
 
+    def _on_bundle_documents(self, provider):
+        retval = wx.MessageBox(
+            _("This will create copies of all of the documents you have added to your Local Bookshelf.\nAfter this operation, you can open documents stored in your bookshelf, even if you have deleted or moved the original documents.\n\nPlease note that this action will create duplicate copies of all of your added documents."),
+            _("Bundle Documents?"),
+            style=wx.YES_NO | wx.ICON_EXCLAMATION
+        )
+        if retval != wx.YES:
+            return
+        AsyncSnakDialog(
+            task=self._do_bundle_documents,
+            message=_("Bundling documents. Please wait..."),
+            done_callback=self._done_bundling_callback,
+            parent=wx.GetApp().GetTopWindow(),
+        )
+
+    def _do_bundle_documents(self):
+        num_documents = Document.select().count()
+        num_succesfull = 0
+        func = partial(bundle_single_document, DEFAULT_BOOKSHELF_DATABASE_FILE)
+        errors = []
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            for (idx, (is_ok, src_file, doc_title)) in enumerate(executor.map(func, Document.select())):
+                if not is_ok:
+                    errors.append((src_file, doc_title))
+                num_succesfull += (1 * is_ok)
+        return num_documents, num_succesfull, errors
+
+    def _done_bundling_callback(self, future):
+        try:
+            result = future.result()
+        except:
+            log.exception("Error bundling documents", exc_info=True)
+            return
+        num_documents, num_succesfull, errors = result
+        if not errors:
+            wx.MessageBox(
+                _("Bundled {num_documents} files.").format(num_documents=num_documents),
+                _("Done"),
+                style=wx.ICON_INFORMATION
+            )
+        else:
+            num_faild = num_documents - num_succesfull
+            dialog = BundleErrorsDialog(
+                None,
+                _("Bundle Results: {num_succesfull} successfull, {num_faild} faild").format(num_succesfull=num_succesfull, num_faild=num_faild),
+                info=errors
+            )
+            with dialog:
+                dialog.ShowModal()
+
     def _on_change_name(self, source):
         instance = source.model.get(name=source.name)
         old_name = instance.name
@@ -359,15 +426,23 @@ class LocalDatabaseSource(Source):
         doc_instance = self.get_doc_instance(item)
         retval = [
             BookshelfAction(
-                _("Remove from &Favorites") if doc_instance.is_favorite else _("Add to &Favorites"),
-                func=lambda doc_info: self._toggle_favorite_status(doc_instance)
-            ),
-            BookshelfAction(
-                _("Edit category / Tags..."),
+                _("&Edit category / tags..."),
                 func=lambda doc_info: self._do_edit_category_and_tags(doc_instance)
             ),
             BookshelfAction(
-                _("Remove from bookshelf"),
+                _("Remove from &currently reading") if doc_instance.is_currently_reading else _("Add to &currently reading"),
+                func=partial(self._toggle_togglable_attribute, doc_instance, 'is_currently_reading')
+            ),
+            BookshelfAction(
+                _("Remove from &wish list") if doc_instance.in_reading_list else _("Add to &wish list"),
+                func=partial(self._toggle_togglable_attribute, doc_instance, 'in_reading_list')
+            ),
+            BookshelfAction(
+                _("Remove from &favorites") if doc_instance.favorited else _("Add to &favorites"),
+                func=partial(self._toggle_togglable_attribute, doc_instance, 'favorited')
+            ),
+            BookshelfAction(
+                _("&Remove from bookshelf"),
                 func=lambda doc_info: self._do_remove_from_bookshelf(doc_instance)
             ),
         ]
@@ -382,8 +457,12 @@ class LocalDatabaseSource(Source):
     def get_doc_instance(self, item):
         return Document.get(item.data['database_id'])
 
-    def _toggle_favorite_status(self, doc_instance):
-        doc_instance.is_favorite = not doc_instance.is_favorite
+    def _toggle_togglable_attribute(self, doc_instance, attribute, *__doc_info):
+        setattr(
+            doc_instance,
+            attribute,
+            not getattr(doc_instance, attribute)
+        )
         doc_instance.save()
         sources_updated.send(self.provider, update_items=True)
 
@@ -430,12 +509,13 @@ class AuthorMetaSource(MetaSource):
                 join_type=peewee.JOIN.LEFT_OUTER
             )
             .where(DocumentAuthor.document_id == None)
+            .order_by(Document.title.asc())
         )
         return [
             InvalidIfEmptyLocalDatabaseSource(
                 provider=self.provider,
                 name=item.name,
-                query=Author.get_documents(item.name),
+                query=Author.get_documents(item.name).order_by(Document.title.asc()),
                 model=Author,
             )
             for item in Author.get_all()

@@ -94,7 +94,6 @@ class BaseOcrEngine(metaclass=ABCMeta):
         doc: "BaseDocument",
         output_file: t.PathLike,
         ocr_options: "OcrOptions",
-        channel: "QPChannel",
     ):
         if not cls.check():
             raise RuntimeError(f"OCR Engine {cls} is not available.")
@@ -108,22 +107,18 @@ class BaseOcrEngine(metaclass=ABCMeta):
             )
             return cls.preprocess_and_recognize(ocr_req)
 
-        with ThreadPoolExecutor(4) as pool:
-            for (idx, res) in enumerate(pool.map(recognize_page, doc)):
-                if channel.is_cancellation_requested():
-                    doc.close()
-                    out.close()
-                    channel.cancel()
-                    return
-                out.write(
-                    f"Page {res.cookie}{NEWLINE}{res.recognized_text}{NEWLINE}\f{NEWLINE}"
-                )
-                channel.push(idx)
-        with open(output_file, "w", encoding="utf8") as file:
-            file.write(out.getvalue())
-        out.close()
-        doc.close()
-        channel.done()
+        try:
+            with ThreadPoolExecutor(4) as pool:
+                for (idx, res) in enumerate(pool.map(recognize_page, doc)):
+                    out.write(
+                        f"Page {res.cookie}{NEWLINE}{res.recognized_text}{NEWLINE}\f{NEWLINE}"
+                    )
+                    yield idx
+            with open(output_file, "w", encoding="utf8") as file:
+                file.write(out.getvalue())
+        finally:
+            out.close()
+            doc.close()
 
     @classmethod
     def get_sorted_languages(cls):

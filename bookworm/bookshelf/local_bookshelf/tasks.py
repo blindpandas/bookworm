@@ -1,7 +1,9 @@
 # coding: utf-8
 
+import os
 import contextlib
 import urllib.parse
+import shutil
 import requests
 import more_itertools
 from pathlib import Path
@@ -10,13 +12,16 @@ from functools import partial
 from bottle import request, abort
 from bookworm import typehints as t
 from bookworm import local_server
+from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.concurrency import threaded_worker
+from bookworm.utils import generate_file_md5
 from bookworm.document import BaseDocument, create_document
 from bookworm.document.uri import DocumentUri
 from bookworm.document.elements import DocumentInfo
 from bookworm.signals import app_shuttingdown, local_server_booting
 from bookworm.logger import logger
 from .models import (
+    DEFAULT_BOOKSHELF_DATABASE_FILE,
     Document,
     Page,
     Category,
@@ -46,7 +51,7 @@ def _add_document_index_endpoint(sender):
     sender.route(IMPORT_FOLDER_TO_BOOKSHELF_URL_PREFIX, method='POST', callback=import_folder_to_bookshelf_view)
 
 
-def issue_add_document_request(document_uri, category_name=None, tags_names=(), database_file=None):
+def issue_add_document_request(document_uri, category_name=None, tags_names=(), database_file=DEFAULT_BOOKSHELF_DATABASE_FILE):
     url = urllib.parse.urljoin(
         local_server.get_local_server_netloc(),
         ADD_TO_BOOKSHELF_URL_PREFIX
@@ -71,6 +76,33 @@ def issue_import_folder_request(folder, category_name):
         json={'folder': folder, 'category_name': category_name}
     )
     log.debug(f"Add folder to bookshelf response: {res}")
+
+
+def get_bundled_documents_folder(database_file):
+    dest_path = os.path.join(os.path.dirname(database_file), "bundled_documents")
+    if not os.path.isdir(dest_path):
+        Path(dest_path).mkdir(parents=True, exist_ok=True)
+    return dest_path
+
+
+def copy_document_to_bundled_documents(source_document_path, bundled_documents_folder):
+    if os.path.normpath(os.path.dirname(source_document_path)) == os.path.normpath(bundled_documents_folder):
+        return source_document_path
+    src_md5 = generate_file_md5(source_document_path)
+    bundled_document_path = os.path.join(
+        bundled_documents_folder,
+        src_md5 + os.path.splitext(source_document_path)[-1]
+    )
+    if os.path.isfile(bundled_document_path):
+        return bundled_document_path
+    try:
+        shutil.copy(
+            os.fspath(source_document_path),
+            os.fspath(bundled_document_path)
+        )
+    except:
+        return
+    return bundled_document_path
 
 
 def add_document_to_bookshelf(
@@ -98,6 +130,14 @@ def add_document_to_bookshelf(
         else:
             log.debug("Document index is not well formed. Rebuilding index...")
             existing_doc.delete_instance()
+    if IS_RUNNING_PORTABLE:
+        bundled_document_path = copy_document_to_bundled_documents(
+            source_document_path=document.get_file_system_path(),
+            bundled_documents_folder=get_bundled_documents_folder(database_file)
+        )
+        uri = document.uri.create_copy(path=bundled_document_path)
+    else:
+        uri = document.uri
     cover_image = document.get_cover_image()
     if cover_image:
         try:
@@ -109,7 +149,7 @@ def add_document_to_bookshelf(
         except:
             cover_image = None
     metadata = document.metadata
-    format, __ = Format.get_or_create(name=document.uri.format)
+    format, __ = Format.get_or_create(name=uri.format)
     if category_name:
         category, __ = Category.get_or_create(name=category_name)
     else:
@@ -117,7 +157,7 @@ def add_document_to_bookshelf(
     log.debug("Adding document to the database ")
     doc_info_dict = DocumentInfo.from_document(document).asdict(excluded_fields=('cover_image',))
     doc = Document.create(
-        uri=document.uri,
+        uri=uri,
         title=metadata.title,
         cover_image=cover_image,
         format=format,
@@ -208,6 +248,22 @@ def _import_document(category_name, filename):
     try:
         uri = DocumentUri.from_filename(filename)
         with contextlib.closing(create_document(uri)) as document:
-            add_document_to_bookshelf(document, category_name, tags_names=(), database_file=None)
+            add_document_to_bookshelf(document, category_name, tags_names=(), database_file=DEFAULT_BOOKSHELF_DATABASE_FILE)
     except:
         return
+
+
+def bundle_single_document(database_file, doc_instance):
+    bundled_documents_folder = get_bundled_documents_folder(database_file)
+    document_src = doc_instance.uri.path
+    if not os.path.isfile(document_src):
+        return False, document_src, doc_instance.title
+    copied_document_path = copy_document_to_bundled_documents(
+        document_src,
+        bundled_documents_folder
+    )
+    if not copied_document_path:
+        return False, document_src, doc_instance.title
+    doc_instance.uri = doc_instance.uri.create_copy(path=copied_document_path)
+    doc_instance.save()
+    return True, document_src, doc_instance.title
