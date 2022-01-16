@@ -19,6 +19,7 @@ class BookMetadata:
     description: str = ""
     publisher: str = ""
     publication_year: str = ""
+    creation_date: str = ""
     isbn: str = ""
     additional_info: dict = attr.ib(factory=dict)
 
@@ -209,6 +210,7 @@ class DocumentInfo:
     number_of_sections: int = None
     authors: list[str] = ()
     description: str = ""
+    creation_date: t.Union[datetime, str] = None
     publication_date: t.Union[datetime, str] = None
     publisher: str = ""
     cover_image: ImageIO = None
@@ -231,6 +233,7 @@ class DocumentInfo:
             if document.has_toc_tree()
             else None,
             authors=metadata.author,
+            creation_date=metadata.creation_date,
             publication_date=metadata.publication_year,
             publisher=metadata.publisher,
             cover_image=document.get_cover_image(),

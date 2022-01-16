@@ -32,9 +32,7 @@ class EpubServeService(BookwormService):
     stateful_menu_ids = []
 
     def __post_init__(self):
-        reader_book_loaded.connect(
-            self._on_reader_loaded, sender=self.reader, weak=False
-        )
+        self.view.add_load_handler(self._on_reader_loaded)
 
     def process_menubar(self, menubar):
         self.menubar = menubar
@@ -48,7 +46,10 @@ class EpubServeService(BookwormService):
         self.view.Bind(wx.EVT_MENU, self.onOpenonWeb, id=self.openOnWebReaderId)
 
     def _on_reader_loaded(self, sender):
-        self.menubar.Enable(self.openOnWebReaderId, isinstance(sender, EpubDocument))
+        self.view.documentMenu.Enable(
+            self.openOnWebReaderId,
+            isinstance(sender.document, EpubDocument)
+        )
 
     def onOpenonWeb(self, event):
         task = partial(

@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 import ftfy
+import regex
 from functools import cached_property, lru_cache
+from datetime import datetime
+from dateutil.tz import tzutc, tzoffset
 from pyxpdf import Document as XPdfDocument, Config as XPdfConfig
 from pyxpdf.xpdf import TextOutput as XPdfTextOutput, TextControl as XPdfTextControl
 from pyxpdf_data import generate_xpdfrc
 from bookworm.paths import data_path
+from bookworm.utils import format_datetime
 from bookworm.logger import logger
 from .. import ReadingMode, DocumentCapability as DC
 from .fitz import FitzDocument, FitzPage
@@ -18,6 +22,20 @@ BOOKWORM_READING_MODE_TO_XPDF_READING_MODE = {
     ReadingMode.READING_ORDER: "simple",
     ReadingMode.PHYSICAL: "physical",
 }
+# All of the parsing code is obtained from: 
+# https://stackoverflow.com/a/26796646
+PDF_DATE_PATTERN = regex.compile(
+    r"(D:)?"
+    r"(?P<year>\d\d\d\d)"
+    r"(?P<month>\d\d)"
+    r"(?P<day>\d\d)"
+    r"(?P<hour>\d\d)"
+    r"(?P<minute>\d\d)"
+    r"(?P<second>\d\d)"
+    r"(?P<tz_offset>[+-zZ])?"
+    r"(?P<tz_hour>\d\d)?"
+    r"'?(?P<tz_minute>\d\d)?'?"
+)
 
 
 class FitzPdfPage(FitzPage):
@@ -86,11 +104,48 @@ class FitzPdfDocument(FitzDocument):
         super().close()
         self._pdf_fileobj.close()
 
+    @cached_property
+    def metadata(self):
+        meta = super().metadata
+        if (pub_year :=meta.publication_year):
+            try:
+                parsed_creation_date = format_datetime(self._parse_pdf_creation_date(pub_year))
+            except:
+                pass
+            else:
+                meta.creation_date = parsed_creation_date
+                meta.publication_year = ""
+        return meta
+
     def decrypt(self, password):
         is_ok = bool(self._ebook.authenticate(password))
         if is_ok:
             self.create_xpdf_document(password=password)
         return is_ok
+
+    @staticmethod
+    def _parse_pdf_creation_date(date_str: str) -> datetime:
+        match = PDF_DATE_PATTERN.match(date_str)
+        if match:
+            date_info = match.groupdict()
+            for k, v in date_info.items(): 
+                if v is None:
+                    pass
+                elif k == 'tz_offset':
+                    date_info[k] = v.lower()
+                else:
+                    date_info[k] = int(v)
+
+            if date_info['tz_offset'] in ('z', None):
+                date_info['tzinfo'] = tzutc()
+            else:
+                multiplier = 1 if date_info['tz_offset'] == '+' else -1
+                date_info['tzinfo'] = tzoffset(None, multiplier*(3600 * date_info['tz_hour'] + 60 * date_info['tz_minute']))
+
+            for k in ('tz_offset', 'tz_hour', 'tz_minute'):
+                del date_info[k]
+
+            return datetime(**date_info)
 
     @staticmethod
     def get_xpdf_config_file():

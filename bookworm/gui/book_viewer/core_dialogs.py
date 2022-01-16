@@ -372,6 +372,10 @@ class DocumentInfoDialog(SimpleDialog):
         )
         if publisher := self.document_info.publisher:
             self.create_info_field(rh_panel, label=_("Publisher"), value=publisher)
+        if creation_date := self.document_info.creation_date:
+            self.create_info_field(
+                rh_panel, label=_("Creation Date"), value=creation_date
+            )
         if pub_date := self.document_info.publication_date:
             self.create_info_field(
                 rh_panel, label=_("Publication Date"), value=pub_date
