@@ -123,8 +123,11 @@ def generate_sha1hash_async(filename):
     return generate_sha1hash(filename)
 
 
-def format_datetime(date, format="medium", localized=True) -> str:
+def format_datetime(datetime_to_format, format="medium", localized=True, date_only=False) -> str:
     return app.current_language.format_datetime(
-        date, format=format, localized=localized
+        datetime_to_format,
+        date_only=date_only,
+        format=format,
+        localized=localized
     )
 

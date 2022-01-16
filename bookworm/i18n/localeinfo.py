@@ -3,7 +3,7 @@
 from __future__ import annotations
 import locale
 from babel import UnknownLocaleError, Locale, parse_locale, default_locale
-from babel.dates import format_datetime as babel_format_datetime
+from babel.dates import format_datetime as babel_format_datetime, format_date as babel_format_date
 from languagecodes import iso_639_alpha2
 from tzlocal import get_localzone
 
@@ -117,11 +117,16 @@ class LocaleInfo:
             desc = f"{info[2]} ({desc})"
         return desc
 
-    def format_datetime(self, datetime_obj, format, localized) -> str:
-        if localized:
-            tzinfo = get_localzone()
+    def format_datetime(self, datetime_obj, date_only, format, localized) -> str:
+        if date_only:
+            return babel_format_date(
+                datetime_obj, format=format, locale=self.locale
+            )
         else:
-            tzinfo = None
-        return babel_format_datetime(
-            datetime_obj, format=format, tzinfo=tzinfo, locale=self.locale
-        )
+            if localized:
+                tzinfo = get_localzone()
+            else:
+                tzinfo = None
+            return babel_format_datetime(
+                datetime_obj, format=format, tzinfo=tzinfo, locale=self.locale
+            )

@@ -6,6 +6,7 @@ import os.path
 import string
 import itertools
 import more_itertools
+import dateparser
 import ebooklib
 import ebooklib.epub
 import fitz
@@ -20,7 +21,7 @@ from selectolax.parser import HTMLParser
 from bookworm.i18n import LocaleInfo
 from bookworm.structured_text import TextRange
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.utils import is_external_url
+from bookworm.utils import is_external_url, format_datetime
 from bookworm.paths import home_data_path
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
@@ -90,11 +91,15 @@ class EpubDocument(SinglePageDocument):
             desc = HTMLParser(info.get("description", "")).text()
         except:
             desc = None
+        if (pubdate := dateparser.parse(info.get("date", ""), languages=[self.language.two_letter_language_code, ])):
+            publish_date = self.language.format_datetime(pubdate, date_only=True, format='long', localized=True)
+        else:
+            publish_date = ""
         return BookMetadata(
             title=self.epub.title,
             author=author.removeprefix("By ").strip(),
             description=desc,
-            publication_year=info.get("date", ""),
+            publication_year=publish_date,
             publisher=info.get("publisher", "")
         )
 

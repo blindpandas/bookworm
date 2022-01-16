@@ -109,9 +109,9 @@ class FitzPdfDocument(FitzDocument):
         meta = super().metadata
         if (pub_year :=meta.publication_year):
             try:
-                parsed_creation_date = format_datetime(self._parse_pdf_creation_date(pub_year))
+                parsed_creation_date = self.language.format_datetime(self._parse_pdf_creation_date(pub_year), format='medium', localized=True, date_only=False)
             except:
-                pass
+                log.exception("Failed to parse pdf creation date", exc_info=True)
             else:
                 meta.creation_date = parsed_creation_date
                 meta.publication_year = ""
