@@ -11,6 +11,7 @@ from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from functools import partial
 from bottle import request, abort
 from bookworm import typehints as t
+from bookworm import paths
 from bookworm import local_server
 from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.concurrency import threaded_worker
@@ -78,11 +79,11 @@ def issue_import_folder_request(folder, category_name):
     log.debug(f"Add folder to bookshelf response: {res}")
 
 
-def get_bundled_documents_folder(database_file):
-    dest_path = os.path.join(os.path.dirname(database_file), "bundled_documents")
-    if not os.path.isdir(dest_path):
-        Path(dest_path).mkdir(parents=True, exist_ok=True)
-    return dest_path
+def get_bundled_documents_folder():
+    bd_path = paths.data_path("bundled_documents")
+    if not bd_path.exists():
+        bd_path.mkdir(parents=True, exist_ok=True)
+    return bd_path
 
 
 def copy_document_to_bundled_documents(source_document_path, bundled_documents_folder):
@@ -133,7 +134,7 @@ def add_document_to_bookshelf(
     if IS_RUNNING_PORTABLE:
         bundled_document_path = copy_document_to_bundled_documents(
             source_document_path=document.get_file_system_path(),
-            bundled_documents_folder=get_bundled_documents_folder(database_file)
+            bundled_documents_folder=get_bundled_documents_folder()
         )
         uri = document.uri.create_copy(path=bundled_document_path)
     else:
@@ -254,7 +255,7 @@ def _import_document(category_name, filename):
 
 
 def bundle_single_document(database_file, doc_instance):
-    bundled_documents_folder = get_bundled_documents_folder(database_file)
+    bundled_documents_folder = get_bundled_documents_folder()
     document_src = doc_instance.uri.path
     if not os.path.isfile(document_src):
         return False, document_src, doc_instance.title
