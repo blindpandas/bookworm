@@ -25,7 +25,7 @@ class UpdateChannel(BaseModel):
         return hash(self.__root__)
 
     @validator("__root__")
-    def validate_identifer(cls, v):
+    def validate_identifier(cls, v):
         if v not in ["", "b", "a", "dev"]:
             raise TypeError("Unrecognized release identifier")
         return v
