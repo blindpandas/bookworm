@@ -2,23 +2,23 @@
 
 from __future__ import annotations
 import sys
+import os
+import contextlib
 import uuid
 import wx
 import hashlib
-from contextlib import contextmanager, closing as contextlib_closing
 from functools import wraps, lru_cache
 from pathlib import Path
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.concurrency import call_threaded
-from bookworm.platform_services.runtime import system_start_app
 from bookworm.logger import logger
 
 
 log = logger.getChild(__name__)
 
 
-@contextmanager
+@contextlib.contextmanager
 def switch_stdout(out):
     original_stdout = sys.stdout
     try:
@@ -55,15 +55,21 @@ def ignore(*exceptions, retval=None):
 
 
 def restart_application(*extra_args, debug=False, restore=True):
-    args = list(extra_args) + ["--restarted"]
+    from bookworm.commandline_handler import run_subcommand_in_a_new_process
+
+    args = ["launcher", "--restarted"]
+    if debug and ("--debug" not in args):
+        args.insert(0, "--debug")
     reader = wx.GetApp().mainFrame.reader
     if restore and reader.ready:
-        args.insert(0, f"{reader.document.filename}")
-        reader.save_current_position()
-    if debug and ("--debug" not in args):
-        args.append("--debug")
+        args.append(reader.document.uri.base64_encode())
+        with contextlib.suppress(Exception):
+            reader.save_current_position()
+    else:
+        args.append(os.devnull)
     wx.GetApp().ExitMainLoop()
-    system_start_app(sys.executable, args)
+    log.info(f"Restarting application with args: {args}")
+    run_subcommand_in_a_new_process(args, hidden=False, detached=True)
     sys.exit(0)
 
 

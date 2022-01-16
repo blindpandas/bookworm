@@ -47,6 +47,7 @@ class LauncherSubcommandHandler(BaseSubcommandHandler):
     @classmethod
     def add_arguments(cls, subparser):
         subparser.add_argument("filename", help="File to open", default="")
+        subparser.add_argument("--restarted", action="store_true")
 
     @classmethod
     def handle_commandline_args(cls, args):
