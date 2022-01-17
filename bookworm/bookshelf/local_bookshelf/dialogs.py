@@ -39,14 +39,14 @@ class EditDocumentClassificationDialog(SimpleDialog):
 
     def addControls(self, parent):
         parent.SetSizerType('form')
-        wx.StaticText(parent, -1, _("Category"))
+        wx.StaticText(parent, -1, _("Reading List"))
         self.categoryCombo = wx.ComboBox(
             parent,
             -1,
             choices=self.categories
         )
         self.categoryCombo.SetSizerProps(expand=True)
-        wx.StaticText(parent, -1, _("Tags"))
+        wx.StaticText(parent, -1, _("Collections"))
         self.tagsTextCtrl = wx.TextCtrl(
             parent,
             -1,
@@ -78,7 +78,7 @@ class AddFolderToLocalBookshelfDialog(SimpleDialog):
             buttonText=("Browse..."),
             toolTip='',
         )
-        wx.StaticText(parent, -1, _("Category"))
+        wx.StaticText(parent, -1, _("Reading List"))
         self.categoryCombo = wx.ComboBox(
             parent,
             -1,

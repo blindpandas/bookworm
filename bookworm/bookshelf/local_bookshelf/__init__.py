@@ -115,13 +115,13 @@ class LocalBookshelfProvider(BookshelfProvider):
             ),
         ]
         classifications = [
-            (_("Categories"), (self._create_local_database_sources_from_model(Category), Category)),
-            (_("Tags"), (self._create_local_database_sources_from_model(Tag), Tag)),
+            (_("Reading Lists"), (self._create_local_database_sources_from_model(Category), Category)),
+            (_("Collections"), (self._create_local_database_sources_from_model(Tag), Tag)),
         ]
         classifications[0][1][0].append(
             InvalidIfEmptyLocalDatabaseSource(
                 provider=self,
-                name=_("Uncategorized"),
+                name=_("General"),
                 query=Document.select().where(Document.category == None).order_by(Document.title.asc()),
                 source_actions=[]
             ),
@@ -182,7 +182,7 @@ class LocalBookshelfProvider(BookshelfProvider):
             return
         dialog = EditDocumentClassificationDialog(
             wx.GetApp().GetTopWindow(),
-            title=_("Edit Category/Tags"),
+            title=_("Edit reading list/collections"),
             categories=[cat.name for cat in Category.get_all()],
         )
         with dialog:
@@ -426,7 +426,7 @@ class LocalDatabaseSource(Source):
         doc_instance = self.get_doc_instance(item)
         retval = [
             BookshelfAction(
-                _("&Edit category / tags..."),
+                _("&Edit reading list / collections..."),
                 func=lambda doc_info: self._do_edit_category_and_tags(doc_instance)
             ),
             BookshelfAction(
@@ -434,7 +434,7 @@ class LocalDatabaseSource(Source):
                 func=partial(self._toggle_togglable_attribute, doc_instance, 'is_currently_reading')
             ),
             BookshelfAction(
-                _("Remove from &wish list") if doc_instance.in_reading_list else _("Add to &wish list"),
+                _("Remove from &want to read") if doc_instance.in_reading_list else _("Add to &want to read"),
                 func=partial(self._toggle_togglable_attribute, doc_instance, 'in_reading_list')
             ),
             BookshelfAction(
@@ -470,7 +470,7 @@ class LocalDatabaseSource(Source):
         top_frame = wx.GetApp().GetTopWindow()
         dialog = EditDocumentClassificationDialog(
             top_frame,
-            title=_("Edit Category/Tags"),
+            title=_("Edit reading list/collections"),
             categories=[cat.name for cat in Category.get_all()],
             given_category=None if not doc_instance.category else doc_instance.category.name,
             tags_names=[

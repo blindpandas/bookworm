@@ -96,7 +96,7 @@ def check_for_updates(verbose=False):
     # Precede with the update
     update_channel = app.get_version_info().get("pre_type", "")
     upstream_version_info = update_info.get_update_info_for_channel(update_channel)
-    if (upstream_version_info is None) or (upstream_version_info == app.version):
+    if (upstream_version_info is None) or (upstream_version_info.version == app.version):
         log.info("No new version.")
         config.conf["general"]["last_update_check"] = time.time()
         config.save()
