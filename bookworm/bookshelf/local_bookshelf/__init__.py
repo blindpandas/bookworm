@@ -431,15 +431,15 @@ class LocalDatabaseSource(Source):
             ),
             BookshelfAction(
                 _("Remove from &currently reading") if doc_instance.is_currently_reading else _("Add to &currently reading"),
-                func=partial(self._toggle_togglable_attribute, doc_instance, 'is_currently_reading')
+                func=lambda __: self._do_toggle_currently_reading(doc_instance)
             ),
             BookshelfAction(
                 _("Remove from &want to read") if doc_instance.in_reading_list else _("Add to &want to read"),
-                func=partial(self._toggle_togglable_attribute, doc_instance, 'in_reading_list')
+                func=lambda __: self._do_toggle_in_reading_list(doc_instance)
             ),
             BookshelfAction(
                 _("Remove from &favorites") if doc_instance.favorited else _("Add to &favorites"),
-                func=partial(self._toggle_togglable_attribute, doc_instance, 'favorited')
+                func=lambda __: self._do_toggle_favorited(doc_instance)
             ),
             BookshelfAction(
                 _("&Remove from bookshelf"),
@@ -457,12 +457,22 @@ class LocalDatabaseSource(Source):
     def get_doc_instance(self, item):
         return Document.get(item.data['database_id'])
 
-    def _toggle_togglable_attribute(self, doc_instance, attribute, *__doc_info):
-        setattr(
-            doc_instance,
-            attribute,
-            not getattr(doc_instance, attribute)
-        )
+    def _do_toggle_favorited(self, doc_instance):
+        doc_instance.favorited = not doc_instance.favorited
+        doc_instance.save()
+        sources_updated.send(self.provider, update_items=True)
+
+    def _do_toggle_currently_reading(self, doc_instance):
+        doc_instance.is_currently_reading = not doc_instance.is_currently_reading
+        if doc_instance.is_currently_reading:
+            doc_instance.in_reading_list = False
+        doc_instance.save()
+        sources_updated.send(self.provider, update_items=True)
+
+    def _do_toggle_in_reading_list(self, doc_instance):
+        doc_instance.in_reading_list = not doc_instance.in_reading_list
+        if doc_instance.in_reading_list:
+            doc_instance.is_currently_reading = False
         doc_instance.save()
         sources_updated.send(self.provider, update_items=True)
 
