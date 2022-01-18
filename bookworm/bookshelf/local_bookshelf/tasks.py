@@ -4,6 +4,7 @@ import os
 import contextlib
 import urllib.parse
 import shutil
+import peewee
 import requests
 import more_itertools
 from pathlib import Path
@@ -266,5 +267,8 @@ def bundle_single_document(database_file, doc_instance):
     if not copied_document_path:
         return False, document_src, doc_instance.title
     doc_instance.uri = doc_instance.uri.create_copy(path=copied_document_path)
-    doc_instance.save()
+    try:
+        doc_instance.save()
+    except peewee.IntegrityError:
+        return False, document_src, doc_instance.title
     return True, document_src, doc_instance.title
