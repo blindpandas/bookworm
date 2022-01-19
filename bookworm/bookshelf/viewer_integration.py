@@ -78,9 +78,18 @@ class BookshelfMenu(wx.Menu):
         run_subcommand_in_a_new_process(["bookshelf",])
 
     def onAddDocumentToLocalBookshelf(self, event):
+        try:
+            self.view.reader.document.get_file_system_path()
+        except DocumentIOError:
+            wx.MessageBox(
+                _("You can not add this document to Bookshelf.\nThe document should exist locally in your computer."),
+                _("Can not add document"),
+                style=wx.ICON_WARNING
+            )
+            return
         dialog = EditDocumentClassificationDialog(
             self.view,
-            _("Document Category and Tags")
+            _("Reading list and collections")
         )
         with dialog:
             retval = dialog.ShowModal()
@@ -96,16 +105,8 @@ class BookshelfMenu(wx.Menu):
 
     @call_threaded
     def _on_reader_loaded(self, sender):
-        try:
-            sender.document.get_file_system_path()
-            has_file_system_path = True
-        except DocumentIOError:
-            has_file_system_path = False
         wx.CallAfter(
             self.Enable,
             StatefulBookshelfMenuIds.add_current_book_to_shelf,
-            all([
-                not Document.select().where(Document.uri == sender.document.uri).count(),
-                has_file_system_path
-            ]),
+            not Document.select().where(Document.uri == sender.document.uri).count()
         )
