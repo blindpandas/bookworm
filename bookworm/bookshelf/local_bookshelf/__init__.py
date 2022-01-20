@@ -72,7 +72,7 @@ class LocalBookshelfProvider(BookshelfProvider):
             func=self._on_change_name,
         )
         remove_related_documents_action = BookshelfAction(
-            _("Remove Related Documents..."),
+            _("Clear documents..."),
             func=self._on_remove_related_documents,
             decider=lambda source: source.get_item_count() > 0
         )
@@ -156,6 +156,7 @@ class LocalBookshelfProvider(BookshelfProvider):
             BookshelfAction(_("Import documents from folder..."), func=self._on_add_documents_from_folder),
             BookshelfAction(_("Search Bookshelf..."), func=self._on_search_bookshelf),
             BookshelfAction(_("Bundle Documents..."), func=self._on_bundle_documents),
+            BookshelfAction(_("Clear invalid documents..."), func=self._on_clear_invalid_documents),
         ]
 
     def _on_import_document(self, provider):
@@ -352,6 +353,19 @@ class LocalBookshelfProvider(BookshelfProvider):
             with dialog:
                 dialog.ShowModal()
 
+    def _on_clear_invalid_documents(self, provider):
+        retval = wx.MessageBox(
+            _("This action will clear invalid documents from your bookshelf.\nInvalid documents are the documents which no longer exist on your computer."),
+            _("Clear Invalid Documents?"),
+            style=wx.YES_NO | wx.ICON_EXCLAMATION
+        )
+        if retval != wx.YES:
+            return
+        for doc in Document.select():
+            if not os.path.isfile(doc.uri.path):
+                doc.delete_instance()
+        sources_updated.send(self, update_items=True)
+
     def _on_change_name(self, source):
         instance = source.model.get(name=source.name)
         old_name = instance.name
@@ -387,8 +401,8 @@ class LocalBookshelfProvider(BookshelfProvider):
 
     def _on_remove_related_documents(self, source):
         retval = wx.MessageBox(
-            _("Are you sure you want to remove all documents classified under {name}?\nThis will remove those documents from your bookshelf.").format(name=source.name),
-            _("Confirm"),
+            _("Are you sure you want to clear all documents classified under {name}?\nThis will remove those documents from your bookshelf.").format(name=source.name),
+            _("Clear All Documents"),
             style=wx.YES_NO | wx.ICON_EXCLAMATION
         )
         if retval == wx.YES:
