@@ -377,18 +377,18 @@ class EBookReader:
             try:
                 document_path = self.document.get_file_system_path()
             except DocumentIOError:
-                pass
+                view_title = self.current_book.title
             else:
                 filename = os.path.split(document_path)[-1]
                 view_title = os.path.splitext(filename)[0]
         else:
             view_title = self.current_book.title
-            if include_author and self.current_book.author:
-                author = self.current_book.author
-                # Translators: the title of the window when an e-book is open
-                view_title = _("{title} — by {author}").format(
-                    title=view_title, author=author
-                )
+        if include_author and self.current_book.author:
+            author = self.current_book.author
+            # Translators: the title of the window when an e-book is open
+            view_title = _("{title} — by {author}").format(
+                title=view_title, author=author
+            )
         return view_title + f" - {app.display_name}"
 
     @staticmethod
