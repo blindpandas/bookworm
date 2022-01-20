@@ -374,8 +374,13 @@ class EBookReader:
 
     def get_view_title(self, include_author=False):
         if config.conf["general"]["show_file_name_as_title"]:
-            filename = os.path.split(self.document.filename)[-1]
-            view_title = os.path.splitext(filename)[0]
+            try:
+                document_path = self.document.get_file_system_path()
+            except DocumentIOError:
+                pass
+            else:
+                filename = os.path.split(document_path)[-1]
+                view_title = os.path.splitext(filename)[0]
         else:
             view_title = self.current_book.title
             if include_author and self.current_book.author:
