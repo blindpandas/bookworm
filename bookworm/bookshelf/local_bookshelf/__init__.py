@@ -103,7 +103,7 @@ class LocalBookshelfProvider(BookshelfProvider):
             ),
             LocalDatabaseSource(
                 provider=self,
-                name=_("Want to read"),
+                name=_("Want to Read"),
                 query=Document.select().where(Document.in_reading_list == True).order_by(Document.title.asc()),
                 source_actions=[]
             ),
