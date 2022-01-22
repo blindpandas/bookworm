@@ -1,8 +1,8 @@
 # coding: utf-8
 
+import math
 import webbrowser
 import wx
-from math import ceil
 from contextlib import contextmanager
 from concurrent.futures import Future
 from functools import partial
@@ -251,16 +251,20 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             name="content_view",
         )
         self.contentTextCtrl.SetMargins(self._get_text_view_margins())
+        self.readingProgressBar = wx.Gauge(panel, -1, style=wx.GA_HORIZONTAL | wx.GA_SMOOTH)
 
         # Use a sizer to layout the controls, stacked horizontally and with
         # a 10 pixel border around each
         mainSizer = wx.BoxSizer(wx.HORIZONTAL)
         lftSizer = wx.BoxSizer(wx.VERTICAL)
         rgtSizer = wx.BoxSizer(wx.VERTICAL)
+        rgtBottomSizer = wx.BoxSizer(wx.HORIZONTAL)
         lftSizer.Add(tocTreeLabel, 0, wx.ALL, 5)
         lftSizer.Add(self.tocTreeCtrl, 1, wx.ALL, 5)
         rgtSizer.Add(self.contentTextCtrlLabel, 0, wx.EXPAND | wx.ALL, 5)
         rgtSizer.Add(self.contentTextCtrl, 1, wx.EXPAND | wx.ALL, 5)
+        rgtBottomSizer.Add(self.readingProgressBar, 1, wx.EXPAND | wx.ALL, 1)
+        rgtSizer.Add(rgtBottomSizer, 0, wx.ALL | wx.EXPAND, 4)
         mainSizer.Add(lftSizer, 0, wx.ALL | wx.EXPAND, 10)
         mainSizer.Add(rgtSizer, 1, wx.ALL | wx.EXPAND, 10)
         panel.SetSizer(mainSizer)
@@ -372,6 +376,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             log.warning(
                 f"Content length is not the same before and after insertion: before: {raw_content_length} characters, after: {textCtrlLength} characters"
             )
+        self.update_reading_progress()
 
     def set_title(self, title):
         self.SetTitle(title)
@@ -416,11 +421,22 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if not is_single_page_doc and config.conf["general"]["speak_section_title"]:
             speech.announce(current.title)
 
+    def update_reading_progress(self):
+        if self.reader.document is None:
+            return
+        if self.reader.document.is_single_page_document():
+            current_ratio = self.contentTextCtrl.GetInsertionPoint() / self.contentTextCtrl.GetLastPosition()
+        else:
+            current_ratio = self.reader.current_page / len(self.reader.document)
+        current_percentage = math.ceil(current_ratio * 100)
+        wx.CallAfter(self.readingProgressBar.SetValue, current_percentage)
+
     def onUserPositionTimerTick(self, event):
         try:
             threaded_worker.submit(self.reader.save_current_position)
         except:
             log.exception("Failed to save current position", exc_info=True)
+        self.update_reading_progress()
 
     def onTocTreeFocus(self, event):
         event.Skip(True)
