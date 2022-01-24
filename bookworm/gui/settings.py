@@ -255,6 +255,13 @@ class GeneralPanel(SettingsPanel):
             _("Use file name instead of book title"),
             name="general.show_file_name_as_title",
         )
+        wx.CheckBox(
+            UIBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Show reading progress percentage"),
+            name="general.show_reading_progress_percentage",
+        )
         # Translators: the title of a group of controls shown in the
         # general settings page related to miscellaneous settings
         miscBox = self.make_static_box(_("Miscellaneous"))

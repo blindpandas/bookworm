@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 import locale
+import babel.numbers
 from babel import UnknownLocaleError, Locale, parse_locale, default_locale
 from babel.dates import format_datetime as babel_format_datetime, format_date as babel_format_date
 from languagecodes import iso_639_alpha2
@@ -130,3 +131,6 @@ class LocaleInfo:
             return babel_format_datetime(
                 datetime_obj, format=format, tzinfo=tzinfo, locale=self.locale
             )
+
+    def format_percentage(self, percentage):
+        return babel.numbers.format_percent(percentage, locale=self.locale)

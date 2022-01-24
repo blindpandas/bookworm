@@ -191,7 +191,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.toolbar.SetWindowStyle(
             wx.TB_FLAT | wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_TEXT
         )
-        self.CreateStatusBar()
+        self.statusBar = self.CreateStatusBar()
         self._nav_provider = NavigationProvider(
             ctrl=self.contentTextCtrl,
             reader=self.reader,
@@ -348,7 +348,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             func(self.reader)
 
     def default_book_loaded_callback(self):
-        self.userPositionTimer.Start(1500)
+        self.userPositionTimer.Start(1200)
         if self.contentTextCtrl.HasFocus():
             self.tocTreeCtrl.SetFocus()
 
@@ -376,7 +376,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             log.warning(
                 f"Content length is not the same before and after insertion: before: {raw_content_length} characters, after: {textCtrlLength} characters"
             )
-        self.update_reading_progress()
 
     def set_title(self, title):
         self.SetTitle(title)
@@ -388,6 +387,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def unloadCurrentEbook(self):
         self.userPositionTimer.Stop()
+        self.readingProgressBar.SetValue(0)
         self.reader.unload()
         self.clear_toc_tree()
         self.set_title(app.display_name)
@@ -422,21 +422,34 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             speech.announce(current.title)
 
     def update_reading_progress(self):
-        if self.reader.document is None:
-            return
         if self.reader.document.is_single_page_document():
             current_ratio = self.contentTextCtrl.GetInsertionPoint() / self.contentTextCtrl.GetLastPosition()
         else:
             current_ratio = self.reader.current_page / len(self.reader.document)
-        current_percentage = math.ceil(current_ratio * 100)
-        wx.CallAfter(self.readingProgressBar.SetValue, current_percentage)
+        percentage_ratio = math.ceil(current_ratio * 100)
+        wx.CallAfter(self.readingProgressBar.SetValue, percentage_ratio)
+        percentage_display = app.current_language.format_percentage(percentage_ratio / 100)
+        # Translators: text of reading progress shown in the status bar
+        status_text =_("{percentage} completed").format(percentage=percentage_display)
+        if (existing_status := self.get_statusbar_text()):
+            status_text = f"{status_text} {chr(0x00B7)} {existing_status}"
+        wx.CallAfter(
+            self.set_status,
+            status_text,
+            statusbar_only=True
+        )
 
     def onUserPositionTimerTick(self, event):
         try:
             threaded_worker.submit(self.reader.save_current_position)
         except:
             log.exception("Failed to save current position", exc_info=True)
-        self.update_reading_progress()
+        if (
+            self.reader.ready
+            and config.conf["general"]["show_reading_progress_percentage"]
+            and self.reader.document.is_single_page_document()
+        ):
+            self.update_reading_progress()
 
     def onTocTreeFocus(self, event):
         event.Skip(True)
@@ -466,35 +479,20 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.set_content(page.get_text())
         if config.conf["general"]["play_pagination_sound"]:
             sounds.pagination.play()
+        status_text = self.get_statusbar_text()
+        self.set_status(status_text)
         if self.reader.document.is_single_page_document():
             # Translators: label of content text control when the currently opened
             # document is a single page document
-            self.set_status(_("Document content"))
-        else:
-            page_number = page.number
-            if self.reader.document.uses_chapter_by_chapter_navigation_model():
-                # Translators: the label of the page content text area
-                label_msg = "{chapter}"
-            else:
-                # Translators: the label of the page content text area
-                label_msg = _("Page {page} of {total} — {chapter}")
-                if config.conf["general"]["include_page_label"] and (
-                    page_label := page.get_label()
-                ):
-                    page_number = f"{page_number} ({page_label})"
-            self.set_status(
-                label_msg.format(
-                    page=page_number,
-                    total=len(self.reader.document),
-                    chapter=page.section.title,
-                )
+            self.contentTextCtrlLabel.SetLabel(_("Document content"))
+        if config.conf["general"]["speak_page_number"]:
+            # Translators: a message that is announced after navigating to a page
+            spoken_msg = _("Page {page} of {total}").format(
+                page=page.number, total=len(self.reader.document)
             )
-            if config.conf["general"]["speak_page_number"]:
-                # Translators: a message that is announced after navigating to a page
-                spoken_msg = _("Page {page} of {total}").format(
-                    page=page.number, total=len(self.reader.document)
-                )
-                speech.announce(spoken_msg)
+            speech.announce(spoken_msg)
+        if config.conf["general"]["show_reading_progress_percentage"]:
+            self.update_reading_progress()
 
     @contextmanager
     def mute_page_and_section_speech(self):
@@ -651,6 +649,29 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             end,
             attr,
         )
+
+    def get_statusbar_text(self):
+        page = self.reader.get_current_page_object()
+        if self.reader.document.is_single_page_document():
+            return self.reader.current_book.title
+        else:
+            page_number = page.number
+            if self.reader.document.uses_chapter_by_chapter_navigation_model():
+                # Translators: the label of the page content text area
+                label_msg = "{chapter}"
+            else:
+                # Translators: the label of the page content text area
+                label_msg = _("Page {page} of {total}")
+                label_msg = f"{label_msg} " + chr(0x00B7) + " {chapter}"
+                if config.conf["general"]["include_page_label"] and (
+                    page_label := page.get_label()
+                ):
+                    page_number = f"{page_number} ({page_label})"
+            return  label_msg.format(
+                page=page_number,
+                total=len(self.reader.document),
+                chapter=page.section.title,
+            )
 
     def get_selection_range(self):
         return TextRange(*self.contentTextCtrl.GetSelection())
