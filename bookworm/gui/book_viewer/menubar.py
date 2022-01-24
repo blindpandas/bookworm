@@ -16,6 +16,7 @@ from bookworm import paths
 from bookworm import app
 from bookworm.i18n import is_rtl
 from bookworm.resources import sounds
+from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.document import (
     DocumentInfo,
     READING_MODE_LABELS,
@@ -95,6 +96,8 @@ class FileMenu(BaseMenu):
         # File menu
         # Translators: the label of an item in the application menubar
         self.Append(wx.ID_OPEN, _("Open...\tCtrl-O"))
+        # Translators: the label of an item in the application menubar
+        self.Append(wx.ID_NEW, _("New Window...\tCtrl-N"))
         self.AppendSeparator()
         # Translators: the label of an item in the application menubar
         self.Append(
@@ -153,6 +156,7 @@ class FileMenu(BaseMenu):
         self.Append(wx.ID_EXIT, _("Exit"))
         # Bind event handlers
         self.view.Bind(wx.EVT_MENU, self.onOpenEBook, id=wx.ID_OPEN)
+        self.view.Bind(wx.EVT_MENU, self.onNewWindow, id=wx.ID_NEW)
         self.view.Bind(
             wx.EVT_MENU, self.onClearPinDocuments, id=self.clearPinnedDocumentsID
         )
@@ -205,6 +209,12 @@ class FileMenu(BaseMenu):
                 config.conf["history"]["last_folder"] = os.path.split(filename)[0]
                 config.save()
                 self.view.open_uri(DocumentUri.from_filename(filename))
+
+    def onNewWindow(self, event):
+        args = []
+        if app.debug:
+            args.append("--debug")
+        run_subcommand_in_a_new_process(args, hidden=False)
 
     def onClearPinDocuments(self, event):
         recents_manager.clear_pinned()
