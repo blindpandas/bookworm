@@ -425,7 +425,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if self.reader.document.is_single_page_document():
             current_ratio = self.contentTextCtrl.GetInsertionPoint() / self.contentTextCtrl.GetLastPosition()
         else:
-            current_ratio = self.reader.current_page / len(self.reader.document)
+            current_ratio = (self.reader.current_page + 1) / len(self.reader.document)
         percentage_ratio = math.ceil(current_ratio * 100)
         wx.CallAfter(self.readingProgressBar.SetValue, percentage_ratio)
         percentage_display = app.current_language.format_percentage(percentage_ratio / 100)
