@@ -92,7 +92,7 @@ class ResourceLoader:
                 dismiss_callback=lambda: self._cancellation_token.request_cancellation()
                 or True,
                 message=_("Opening document, please wait..."),
-                parent=self.view
+                parent=self.view,
             )
 
     def resolve_document(self, resolver):
@@ -251,7 +251,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             name="content_view",
         )
         self.contentTextCtrl.SetMargins(self._get_text_view_margins())
-        self.readingProgressBar = wx.Gauge(panel, -1, style=wx.GA_HORIZONTAL | wx.GA_SMOOTH)
+        self.readingProgressBar = wx.Gauge(
+            panel, -1, style=wx.GA_HORIZONTAL | wx.GA_SMOOTH
+        )
 
         # Use a sizer to layout the controls, stacked horizontally and with
         # a 10 pixel border around each
@@ -423,21 +425,22 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def update_reading_progress(self):
         if self.reader.document.is_single_page_document():
-            current_ratio = self.contentTextCtrl.GetInsertionPoint() / self.contentTextCtrl.GetLastPosition()
+            current_ratio = (
+                self.contentTextCtrl.GetInsertionPoint()
+                / self.contentTextCtrl.GetLastPosition()
+            )
         else:
             current_ratio = (self.reader.current_page + 1) / len(self.reader.document)
         percentage_ratio = math.ceil(current_ratio * 100)
         wx.CallAfter(self.readingProgressBar.SetValue, percentage_ratio)
-        percentage_display = app.current_language.format_percentage(percentage_ratio / 100)
-        # Translators: text of reading progress shown in the status bar
-        status_text =_("{percentage} completed").format(percentage=percentage_display)
-        if (existing_status := self.get_statusbar_text()):
-            status_text = f"{status_text} {chr(0x00B7)} {existing_status}"
-        wx.CallAfter(
-            self.set_status,
-            status_text,
-            statusbar_only=True
+        percentage_display = app.current_language.format_percentage(
+            percentage_ratio / 100
         )
+        # Translators: text of reading progress shown in the status bar
+        status_text = _("{percentage} completed").format(percentage=percentage_display)
+        if existing_status := self.get_statusbar_text():
+            status_text = f"{status_text} {chr(0x00B7)} {existing_status}"
+        wx.CallAfter(self.set_status, status_text, statusbar_only=True)
 
     def onUserPositionTimerTick(self, event):
         try:
@@ -667,7 +670,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                     page_label := page.get_label()
                 ):
                     page_number = f"{page_number} ({page_label})"
-            return  label_msg.format(
+            return label_msg.format(
                 page=page_number,
                 total=len(self.reader.document),
                 chapter=page.section.title,

@@ -28,7 +28,6 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-
 @register_subcommand
 class KillOtherInstancesSubcommand(BaseSubcommandHandler):
     subcommand_name = "kill-other-instances"

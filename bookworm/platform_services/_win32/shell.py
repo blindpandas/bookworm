@@ -25,7 +25,7 @@ def add_shell_command(key, executable):
 
 def register_application(prog_id, executable, supported_exts):
     exe = os.path.split(executable)[-1]
-    with RegKey.LocalSoftware(fr"Applications\{exe}", ensure_created=True) as exe_key:
+    with RegKey.LocalSoftware(rf"Applications\{exe}", ensure_created=True) as exe_key:
         add_shell_command(exe_key, executable)
         with RegKey(exe_key, "SupportedTypes", ensure_created=True) as supkey:
             for ext in get_ext_info(supported_exts):
@@ -40,7 +40,7 @@ def associate_extension(ext, prog_id, executable, desc, icon=None):
             iconkey.SetValue("", icon or executable)
         add_shell_command(progkey, executable)
     # Associate file type
-    with RegKey.LocalSoftware(fr"{ext}\OpenWithProgids", ensure_created=True) as askey:
+    with RegKey.LocalSoftware(rf"{ext}\OpenWithProgids", ensure_created=True) as askey:
         askey.SetValue(prog_id, System.Array[System.Byte]([]), RegistryValueKind.Binary)
     # Set this executable as the default handler for files with this extension
     with RegKey.LocalSoftware(ext, ensure_created=True) as defkey:
@@ -57,7 +57,7 @@ def remove_association(ext, prog_id):
     except System.ArgumentException:
         log.exception(f"Faild to remove the prog_id key", exc_info=True)
     try:
-        with RegKey.LocalSoftware(fr"{ext}\OpenWithProgids") as k:
+        with RegKey.LocalSoftware(rf"{ext}\OpenWithProgids") as k:
             k.DeleteSubKey(prog_id)
     except System.ArgumentException:
         log.exception(f"Faild to remove the openwith prog_id key", exc_info=True)

@@ -20,10 +20,7 @@ log = logger.getChild(__name__)
 
 @local_server_booting.connect
 def _register_epub_serving_app(sender):
-    sender.mount(
-        EPUB_SERVE_APP_PREFIX,
-        EpubServingApp()
-    )
+    sender.mount(EPUB_SERVE_APP_PREFIX, EpubServingApp())
 
 
 class EpubServeService(BookwormService):
@@ -47,8 +44,7 @@ class EpubServeService(BookwormService):
 
     def _on_reader_loaded(self, sender):
         self.view.documentMenu.Enable(
-            self.openOnWebReaderId,
-            isinstance(sender.document, EpubDocument)
+            self.openOnWebReaderId, isinstance(sender.document, EpubDocument)
         )
 
     def onOpenonWeb(self, event):
@@ -68,14 +64,10 @@ class EpubServeService(BookwormService):
         base_url = urllib.parse.urljoin(netloc, EPUB_SERVE_APP_PREFIX)
         log.info(base_url)
         res = requests.post(
-            urllib.parse.urljoin(base_url, 'open_epub'),
-            json=dict(filename=filename)
+            urllib.parse.urljoin(base_url, "open_epub"), json=dict(filename=filename)
         )
         book_uid = res.json()["book_uid"]
-        return urllib.parse.urljoin(
-            base_url,
-            f"?epub=epubs/{book_uid}"
-        )
+        return urllib.parse.urljoin(base_url, f"?epub=epubs/{book_uid}")
 
     def server_data_ready_callback(self, future):
         try:
@@ -85,7 +77,7 @@ class EpubServeService(BookwormService):
             self.view.notify_user(
                 _("Failed to launch web viewer"),
                 _("An error occurred while opening the web viewer. Please try again."),
-                icon=wx.ICON_ERROR
+                icon=wx.ICON_ERROR,
             )
         else:
             self.view.go_to_webpage(web_viewe_url)

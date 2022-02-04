@@ -14,7 +14,6 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-
 sources_updated = _signals.signal("bookshelf/source_updated")
 
 
@@ -32,11 +31,7 @@ class BookshelfProvider(ABC):
 
     @classmethod
     def get_providers(cls):
-        return [
-            prov()
-            for prov in cls.__registered_providers
-            if prov.check()
-        ]
+        return [prov() for prov in cls.__registered_providers if prov.check()]
 
     def __iter__(self):
         yield from self.iter_items()
@@ -62,13 +57,21 @@ class BookshelfProvider(ABC):
         """Return a list of actions supported by this provider."""
 
 
-
 class Source:
     """Represent a bookshelf source."""
 
     can_rename_items = False
 
-    def __init__(self, provider, name: t.TranslatableStr, sources=(), *, source_actions=(), item_actions=(), data=None):
+    def __init__(
+        self,
+        provider,
+        name: t.TranslatableStr,
+        sources=(),
+        *,
+        source_actions=(),
+        item_actions=(),
+        data=None,
+    ):
         self.provider = provider
         self.name = name
         self.sources = sources
@@ -121,7 +124,6 @@ class MetaSource(Source):
         raise NotImplementedError
 
 
-
 class ItemContainerSource(MetaSource):
     """Represents a source that groups other sources and items (i.e a directory)."""
 
@@ -134,12 +136,8 @@ class ItemContainerSource(MetaSource):
         return ImageIO.from_filename(images_path("folder.png"))
 
 
-
-
 @attr.s(auto_attribs=True, slots=True, frozen=True)
 class BookshelfAction:
     display: t.TranslatableStr
     func: t.Callable[[Source, DocumentInfo], bool]
     decider: t.Callable[[Source, DocumentInfo], bool] = lambda doc_info: True
-
-

@@ -68,7 +68,9 @@ def handle_app_commandline_args():
         return args.subcommand_cls.handle_commandline_args(args)
 
 
-def run_subcommand_in_a_new_process(args, executable=None, *, hidden=True, detached=True):
+def run_subcommand_in_a_new_process(
+    args, executable=None, *, hidden=True, detached=True
+):
     if executable is None:
         if CURRENT_PACKAGING_MODE is not PackagingMode.Source:
             executable = sys.executable
@@ -80,7 +82,9 @@ def run_subcommand_in_a_new_process(args, executable=None, *, hidden=True, detac
     creationflags = 0
     startupinfo = subprocess.STARTUPINFO()
     if detached:
-        creationflags |= subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
+        creationflags |= (
+            subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
+        )
     if hidden:
         creationflags |= subprocess.CREATE_NO_WINDOW
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW

@@ -95,13 +95,13 @@ class DocumentUri:
         )
 
     def base64_encode(self):
-        return base64.urlsafe_b64encode(self.to_uri_string().encode('utf-8'))
+        return base64.urlsafe_b64encode(self.to_uri_string().encode("utf-8"))
 
     @classmethod
     def from_base64_encoded_string(cls, s):
         if isinstance(s, str):
             s = s.encode("utf-8")
-        return cls.from_uri_string(base64.urlsafe_b64decode(s).decode('utf-8'))
+        return cls.from_uri_string(base64.urlsafe_b64decode(s).decode("utf-8"))
 
     @classmethod
     def get_format_by_filename(cls, filename):

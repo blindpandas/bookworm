@@ -25,9 +25,11 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-SYS_EXECUTABLE_PATH_MD5_HASH= md5(sys.executable.encode("utf-8")).hexdigest()
+SYS_EXECUTABLE_PATH_MD5_HASH = md5(sys.executable.encode("utf-8")).hexdigest()
 BOOKWORM_LOCAL_SERVER_DEFAULT_PORT = 61073
-BOOKWORM_LOCAL_SERVER_SHARED_MEMORY_NAME = f"local_server.port.{SYS_EXECUTABLE_PATH_MD5_HASH}"
+BOOKWORM_LOCAL_SERVER_SHARED_MEMORY_NAME = (
+    f"local_server.port.{SYS_EXECUTABLE_PATH_MD5_HASH}"
+)
 BOOKWORM_LOCAL_SERVER_SHARED_MEMORY_SIZE = 4
 SERVER_READY_TIMEOUT = 120
 
@@ -36,7 +38,11 @@ def get_local_server_netloc():
     server_port = LocalServerSubcommand.get_local_server_port()
     if server_port is not None:
         return f"http://localhost:{server_port}"
-    run_subcommand_in_a_new_process(args=[LocalServerSubcommand.subcommand_name,])
+    run_subcommand_in_a_new_process(
+        args=[
+            LocalServerSubcommand.subcommand_name,
+        ]
+    )
     now = time.monotonic()
     while (time.monotonic() - now) <= SERVER_READY_TIMEOUT:
         server_port = LocalServerSubcommand.get_local_server_port()

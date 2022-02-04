@@ -22,7 +22,7 @@ BOOKWORM_READING_MODE_TO_XPDF_READING_MODE = {
     ReadingMode.READING_ORDER: "simple",
     ReadingMode.PHYSICAL: "physical",
 }
-# All of the parsing code is obtained from: 
+# All of the parsing code is obtained from:
 # https://stackoverflow.com/a/26796646
 PDF_DATE_PATTERN = regex.compile(
     r"(D:)?"
@@ -107,9 +107,14 @@ class FitzPdfDocument(FitzDocument):
     @cached_property
     def metadata(self):
         meta = super().metadata
-        if (pub_year :=meta.publication_year):
+        if pub_year := meta.publication_year:
             try:
-                parsed_creation_date = self.language.format_datetime(self._parse_pdf_creation_date(pub_year), format='medium', localized=True, date_only=False)
+                parsed_creation_date = self.language.format_datetime(
+                    self._parse_pdf_creation_date(pub_year),
+                    format="medium",
+                    localized=True,
+                    date_only=False,
+                )
             except:
                 log.exception("Failed to parse pdf creation date", exc_info=True)
             else:
@@ -128,21 +133,25 @@ class FitzPdfDocument(FitzDocument):
         match = PDF_DATE_PATTERN.match(date_str)
         if match:
             date_info = match.groupdict()
-            for k, v in date_info.items(): 
+            for k, v in date_info.items():
                 if v is None:
                     pass
-                elif k == 'tz_offset':
+                elif k == "tz_offset":
                     date_info[k] = v.lower()
                 else:
                     date_info[k] = int(v)
 
-            if date_info['tz_offset'] in ('z', None):
-                date_info['tzinfo'] = tzutc()
+            if date_info["tz_offset"] in ("z", None):
+                date_info["tzinfo"] = tzutc()
             else:
-                multiplier = 1 if date_info['tz_offset'] == '+' else -1
-                date_info['tzinfo'] = tzoffset(None, multiplier*(3600 * date_info['tz_hour'] + 60 * date_info['tz_minute']))
+                multiplier = 1 if date_info["tz_offset"] == "+" else -1
+                date_info["tzinfo"] = tzoffset(
+                    None,
+                    multiplier
+                    * (3600 * date_info["tz_hour"] + 60 * date_info["tz_minute"]),
+                )
 
-            for k in ('tz_offset', 'tz_hour', 'tz_minute'):
+            for k in ("tz_offset", "tz_hour", "tz_minute"):
                 del date_info[k]
 
             return datetime(**date_info)

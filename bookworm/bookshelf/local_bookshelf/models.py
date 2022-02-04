@@ -92,17 +92,25 @@ class BaseModel(Model):
     @classmethod
     def perform_migrations(cls):
         database = cls._meta.database
-        user_version = database.connection().cursor().execute('pragma user_version').fetchone()[0]
+        user_version = (
+            database.connection().cursor().execute("pragma user_version").fetchone()[0]
+        )
         if user_version == BOOKWORM_BOOKSHELF_SCHEMA_VERSION:
             return
         elif user_version == 0:
-            database.connection().cursor().execute(f"PRAGMA user_version={BOOKWORM_BOOKSHELF_SCHEMA_VERSION}")
+            database.connection().cursor().execute(
+                f"PRAGMA user_version={BOOKWORM_BOOKSHELF_SCHEMA_VERSION}"
+            )
             return
-        if user_version== 1:
+        if user_version == 1:
             with database.transaction():
                 cursor = database.connection().cursor()
-                cursor.execute('ALTER TABLE "document" ADD COLUMN "in_reading_list" INTEGER DEFAULT  0;')
-                cursor.execute('ALTER TABLE "document" ADD COLUMN "is_currently_reading" INTEGER DEFAULT  0;')
+                cursor.execute(
+                    'ALTER TABLE "document" ADD COLUMN "in_reading_list" INTEGER DEFAULT  0;'
+                )
+                cursor.execute(
+                    'ALTER TABLE "document" ADD COLUMN "is_currently_reading" INTEGER DEFAULT  0;'
+                )
                 cursor.execute(f"PRAGMA user_version=2")
         cls.perform_migrations()
 
@@ -129,7 +137,7 @@ class Author(BaseModel):
             .where(Author.name == name)
             .order_by(Document.title.asc())
         )
-        
+
 
 class Category(BaseModel):
     name = TextField(unique=True, null=False)
@@ -170,7 +178,6 @@ class Tag(BaseModel):
         )
 
 
-
 class Document(BaseModel):
     id = AutoIncrementField()
     uri = DocumentUriField(unique=True, null=False)
@@ -191,16 +198,18 @@ class Document(BaseModel):
         backref="documents",
         null=True,
     )
-    metadata = JSONField(json_dumps=ujson.dumps, json_loads=ujson.loads, null=True, default={})
+    metadata = JSONField(
+        json_dumps=ujson.dumps, json_loads=ujson.loads, null=True, default={}
+    )
     in_reading_list = BooleanField(default=False)
     is_currently_reading = BooleanField(default=False)
 
     def as_document_info(self) -> DocumentInfo:
         kwargs = self.metadata.copy()
-        kwargs['uri'] = self.uri
-        kwargs['cover_image'] = self.cover_image
-        kwargs['language'] = LocaleInfo(kwargs['language'])
-        kwargs.setdefault('data', {}).update(database_id=self.get_id())
+        kwargs["uri"] = self.uri
+        kwargs["cover_image"] = self.cover_image
+        kwargs["language"] = LocaleInfo(kwargs["language"])
+        kwargs.setdefault("data", {}).update(database_id=self.get_id())
         return DocumentInfo(**kwargs)
 
     def change_category_and_tags(self, category_name=None, tags_names=()) -> bool:
@@ -208,17 +217,16 @@ class Document(BaseModel):
         if category_name is not None:
             if category_name:
                 categ, is_category_created = Category.get_or_create(name=category_name)
-                self.category =categ
+                self.category = categ
             else:
                 self.category = None
         if tags_names is not None:
-            DocumentTag.delete().where(DocumentTag.document_id == self.get_id()).execute()
+            DocumentTag.delete().where(
+                DocumentTag.document_id == self.get_id()
+            ).execute()
             for tag_name in (t.strip() for t in tags_names if t.strip()):
                 tag, is_tag_created = Tag.get_or_create(name=tag_name)
-                DocumentTag.create(
-                    document_id=self.get_id(),
-                    tag_id=tag.get_id()
-                )
+                DocumentTag.create(document_id=self.get_id(), tag_id=tag.get_id())
         self.save()
         return any([is_category_created, is_tag_created])
 
@@ -237,8 +245,7 @@ class Page(BaseModel):
     @classmethod
     def get_text_start_position(cls, page_id, text):
         return (
-            cls.select(fn.ABS(fn.INSTR(cls.content, text)))
-            .where(cls.id == page_id)
+            cls.select(fn.ABS(fn.INSTR(cls.content, text))).where(cls.id == page_id)
         ).scalar()
 
 
@@ -248,14 +255,14 @@ class DocumentAuthor(BaseModel):
         field="id",
         model=Document,
         backref="authors",
-        on_delete="CASCADE"
+        on_delete="CASCADE",
     )
     author = ForeignKeyField(
         column_name="author_id",
         field="id",
         model=Author,
         backref="documents",
-        on_delete="CASCADE"
+        on_delete="CASCADE",
     )
 
     class Meta:
@@ -269,14 +276,14 @@ class DocumentTag(BaseModel):
         field="id",
         model=Document,
         backref="tags",
-        on_delete="CASCADE"
+        on_delete="CASCADE",
     )
     tag = ForeignKeyField(
         column_name="tag_id",
         field="id",
         model=Tag,
         backref="documents",
-        on_delete="CASCADE"
+        on_delete="CASCADE",
     )
 
     class Meta:
@@ -350,29 +357,35 @@ class DocumentFTSIndex(BaseModel, FTS5Model):
                 cls.page_number,
                 cls.document_id,
                 cls.document_title,
-                column.snippet(left="", right="", over_length="", max_tokens=snip_length),
+                column.snippet(
+                    left="", right="", over_length="", max_tokens=snip_length
+                ),
             )
             .where(column.match(term))
             .order_by(fn.bm25(cls._meta.entity))
         )
 
     @classmethod
-    def search_for_term(cls, term, field='content') -> list[FullTextSearchResult]:
-        assert field in ('title', 'content'), "Field should be one of: (title, content)"
-        field_column = (
-            cls.document_title
-            if field == 'title'
-            else cls.content
-        )
+    def search_for_term(cls, term, field="content") -> list[FullTextSearchResult]:
+        assert field in ("title", "content"), "Field should be one of: (title, content)"
+        field_column = cls.document_title if field == "title" else cls.content
         connection = cls._meta.database.connection()
         with connection:
             cursor = connection.cursor()
-            content_matches = cursor.execute(str(cls.perform_search(field_column, term)))
+            content_matches = cursor.execute(
+                str(cls.perform_search(field_column, term))
+            )
             yielded_docs = set()
-            for (page_id, page_number, document_id, document_title, snippet) in content_matches:
+            for (
+                page_id,
+                page_number,
+                document_id,
+                document_title,
+                snippet,
+            ) in content_matches:
                 if document_id in yielded_docs:
                     continue
-                if field == 'title':
+                if field == "title":
                     yielded_docs.add(document_id)
                 yield FullTextSearchResult(
                     page_id=page_id,

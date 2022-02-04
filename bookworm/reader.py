@@ -126,9 +126,9 @@ class EBookReader:
         )
         self.set_view_parameters()
         reader_book_loaded.send(self)
-        if (open_args := self.document.uri.openner_args):
-            page = int(open_args.get('page', 0))
-            pos = int(open_args.get('position', 0))
+        if open_args := self.document.uri.openner_args:
+            page = int(open_args.get("page", 0))
+            pos = int(open_args.get("position", 0))
             self.go_to_page(page, pos)
             self.view.contentTextCtrl.SetFocus()
 
@@ -393,4 +393,10 @@ class EBookReader:
 
     @staticmethod
     def open_document_in_a_new_instance(uri):
-        run_subcommand_in_a_new_process(["launcher", uri.base64_encode(),], hidden=False)
+        run_subcommand_in_a_new_process(
+            [
+                "launcher",
+                uri.base64_encode(),
+            ],
+            hidden=False,
+        )

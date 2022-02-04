@@ -30,11 +30,10 @@ log = logger.getChild(__name__)
 
 
 class BookshelfNotebookPage(sc.SizedPanel):
-
     def __init__(self, parent, frame, source):
         super().__init__(parent, -1)
         self.frame = frame
-        self.source =source
+        self.source = source
 
     def popup_actions_menu(self, actions, menu_pos, *args, **kwargs):
         actions = {wx.NewIdRef(): action for action in actions}
@@ -46,18 +45,14 @@ class BookshelfNotebookPage(sc.SizedPanel):
                 menu.AppendSeparator()
                 continue
             menu.Append(item_id, action.display)
-        selected_action_id = self.frame.GetPopupMenuSelectionFromUser(
-            menu,
-            menu_pos
-        )
+        selected_action_id = self.frame.GetPopupMenuSelectionFromUser(menu, menu_pos)
         if selected_action_id != wx.ID_NONE:
             action = actions[selected_action_id]
             action.func(*args, **kwargs)
 
     def get_label(self):
         return _("{name} ({count})").format(
-            name=self.source.name,
-            count=self.source.get_item_count()
+            name=self.source.name, count=self.source.get_item_count()
         )
 
     def update_items(self):
@@ -65,16 +60,17 @@ class BookshelfNotebookPage(sc.SizedPanel):
 
 
 class EmptyBookshelfPage(BookshelfNotebookPage):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.Enable(False)
 
 
-
 class BookshelfResultsPage(BookshelfNotebookPage):
 
-    ITEM_ACTIVATION_KEYS = {wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER,}
+    ITEM_ACTIVATION_KEYS = {
+        wx.WXK_RETURN,
+        wx.WXK_NUMPAD_ENTER,
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -87,23 +83,31 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         doc_list_style = wx.LC_ICON | wx.LC_SINGLE_SEL
         if self.source.can_rename_items:
             doc_list_style |= wx.LC_EDIT_LABELS
-        self.document_list = wx.ListCtrl(
-            self,
-            wx.ID_ANY,
-            style=doc_list_style
-        )
+        self.document_list = wx.ListCtrl(self, wx.ID_ANY, style=doc_list_style)
         self.document_list.SetSizerProps(expand=True)
         self.document_list.SetMinSize((2000, 1000))
-        self.document_list.Font = self.document_list.Font.MakeLarger().MakeLarger().MakeBold()
+        self.document_list.Font = (
+            self.document_list.Font.MakeLarger().MakeLarger().MakeBold()
+        )
         self.quickFilterTextCtrl.MoveAfterInTabOrder(self.document_list)
         self.Layout()
         # Why not use `wx.EVT_LIST_ITEM_ACTIVATED`? because pressing the spacebar is considered
         # activation command. Here we need the spacebar to be handled as a `char` because you can quickly
         # jump between items by typing
         self.document_list.Bind(wx.EVT_KEY_UP, self.onListKeyUP, self.document_list)
-        self.document_list.Bind(wx.EVT_LEFT_DCLICK, lambda e: self.activate_current_item(), self.document_list)
-        self.document_list.Bind(wx.EVT_CHAR, self.onDocumentListChar, self.document_list)
-        self.document_list.Bind(wx.EVT_LIST_END_LABEL_EDIT, self.onDocumentListEndLabelEdit, self.document_list)
+        self.document_list.Bind(
+            wx.EVT_LEFT_DCLICK,
+            lambda e: self.activate_current_item(),
+            self.document_list,
+        )
+        self.document_list.Bind(
+            wx.EVT_CHAR, self.onDocumentListChar, self.document_list
+        )
+        self.document_list.Bind(
+            wx.EVT_LIST_END_LABEL_EDIT,
+            self.onDocumentListEndLabelEdit,
+            self.document_list,
+        )
         self.Bind(wx.EVT_CONTEXT_MENU, self.onContextMenu, self.document_list)
         self.Bind(wx.EVT_TEXT, self.onQuickFilterTextChanged, self.quickFilterTextCtrl)
         self._all_items = None
@@ -116,15 +120,18 @@ class BookshelfResultsPage(BookshelfNotebookPage):
             return
         self.document_list.EnsureVisible(idx)
         self.document_list.Select(idx)
-        self.document_list.SetItemState(idx, wx.LIST_STATE_FOCUSED, wx.LIST_STATE_FOCUSED | wx.LIST_STATE_SELECTED)
+        self.document_list.SetItemState(
+            idx, wx.LIST_STATE_FOCUSED, wx.LIST_STATE_FOCUSED | wx.LIST_STATE_SELECTED
+        )
 
     def update_items(self):
         self.items = None
         if self.IsShown():
-            callback = partial(self._update_items_future_callback, self.selected_item_index)
+            callback = partial(
+                self._update_items_future_callback, self.selected_item_index
+            )
             threaded_worker.submit(
-                self.get_source_items,
-                self.source
+                self.get_source_items, self.source
             ).add_done_callback(callback)
 
     def _update_items_future_callback(self, current_selection, future):
@@ -142,10 +149,9 @@ class BookshelfResultsPage(BookshelfNotebookPage):
     def add_documents(self):
         if self.items is not None:
             return
-        threaded_worker.submit(
-            self.get_source_items,
-            self.source
-        ).add_done_callback(self._add_documents_callback)
+        threaded_worker.submit(self.get_source_items, self.source).add_done_callback(
+            self._add_documents_callback
+        )
 
     def _add_documents_callback(self, future):
         self._get_items_callback(future)
@@ -157,10 +163,16 @@ class BookshelfResultsPage(BookshelfNotebookPage):
     def create_image_list_from_items(self, items):
         icon_size = (220, 220)
         image_list = wx.ImageList(*icon_size, mask=False)
-        generic_file_icon = ImageIO.from_filename(images_path("generic_document.png")).make_thumbnail(*icon_size, exact_fit=True).to_wx_bitmap()
+        generic_file_icon = (
+            ImageIO.from_filename(images_path("generic_document.png"))
+            .make_thumbnail(*icon_size, exact_fit=True)
+            .to_wx_bitmap()
+        )
         for (idx, item) in enumerate(items):
-            if (cover_image := item.cover_image):
-                item_icon = cover_image.make_thumbnail(*icon_size, exact_fit=True).to_wx_bitmap()
+            if cover_image := item.cover_image:
+                item_icon = cover_image.make_thumbnail(
+                    *icon_size, exact_fit=True
+                ).to_wx_bitmap()
             else:
                 item_icon = generic_file_icon
             wx.CallAfter(image_list.Add, item_icon)
@@ -178,7 +190,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
             wx.MessageBox(
                 _("Failed to retrieve document information.\nPlease try again."),
                 _("Error"),
-                style=wx.ICON_ERROR
+                style=wx.ICON_ERROR,
             )
         else:
             items, image_list = result
@@ -217,16 +229,18 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         return [
             BookshelfAction(
                 _("&Open"),
-                func=self._do_open_document, 
+                func=self._do_open_document,
             ),
             BookshelfAction(
                 _("Open in &system viewer"),
-                func=self._do_open_document_in_system_viewer, 
+                func=self._do_open_document_in_system_viewer,
             ),
             BookshelfAction(
                 _("Edit &title"),
-                func=lambda item: self.document_list.EditLabel(self.selected_item_index) ,
-                decider=lambda item: self.source.can_rename_items
+                func=lambda item: self.document_list.EditLabel(
+                    self.selected_item_index
+                ),
+                decider=lambda item: self.source.can_rename_items,
             ),
         ]
 
@@ -245,7 +259,12 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         speech.announce("Openning document...")
 
     def _do_show_document_info(self, document_info):
-        with DocumentInfoDialog(parent=self, document_info=document_info, offer_open_action=True, open_in_a_new_instance=True) as dlg:
+        with DocumentInfoDialog(
+            parent=self,
+            document_info=document_info,
+            offer_open_action=True,
+            open_in_a_new_instance=True,
+        ) as dlg:
             dlg.CenterOnScreen()
             dlg.ShowModal()
 
@@ -259,16 +278,14 @@ class BookshelfResultsPage(BookshelfNotebookPage):
 
     def filter_document_list(self, filter_query):
         matching_items = fuzzy_search(
-            filter_query,
-            self._all_items,
-            string_converter=operator.attrgetter('title')
+            filter_query, self._all_items, string_converter=operator.attrgetter("title")
         )
         self.document_list.DeleteAllItems()
         self.items = matching_items
         self.render_items(
             matching_items,
             self.create_image_list_from_items(matching_items),
-            set_focus_to_first_item=False
+            set_focus_to_first_item=False,
         )
         if not matching_items:
             # Translators: spoken message when no matching documents upon filtering the document list
@@ -328,7 +345,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
             message=_("Retrieving items..."),
             task=partial(self.get_source_items, prev_source),
             done_callback=self._get_items_callback,
-            parent=self.frame
+            parent=self.frame,
         )
 
     def activate_current_item(self):
@@ -339,7 +356,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
                 message=_("Retrieving items..."),
                 task=partial(self.get_source_items, item),
                 done_callback=self._navigate_to_folder,
-                parent=self.frame
+                parent=self.frame,
             )
         else:
             self._do_open_document(item)
@@ -359,17 +376,12 @@ class BookshelfResultsPage(BookshelfNotebookPage):
                 *self.get_default_item_actions(item),
                 None,
                 *item_actions,
-            BookshelfAction(
-                _("Document &info..."),
-                func=self._do_show_document_info 
-            ),
+                BookshelfAction(
+                    _("Document &info..."), func=self._do_show_document_info
+                ),
             ]
         rect = self.document_list.GetItemRect(self.selected_item_index)
-        self.popup_actions_menu(
-            actions,
-            wx.Point(rect.Right, rect.Bottom),
-            item
-        )
+        self.popup_actions_menu(actions, wx.Point(rect.Right, rect.Bottom), item)
 
 
 class BookshelfWindow(sc.SizedFrame):
@@ -436,10 +448,7 @@ class BookshelfWindow(sc.SizedFrame):
     def update_pages_labels(self):
         for page_idx in range(0, self.tree_tabs.GetPageCount()):
             page = self.tree_tabs.GetPage(page_idx)
-            self.tree_tabs.SetPageText(
-                page_idx,
-                page.get_label()
-            )
+            self.tree_tabs.SetPageText(page_idx, page.get_label())
 
     def setup_provider(self):
         self.SetTitle(
@@ -447,10 +456,7 @@ class BookshelfWindow(sc.SizedFrame):
             _("Bookworm Bookshelf: {name}").format(name=self.provider.display_name)
         )
         self.tree_tabs.DeleteAllPages()
-        self.add_sources(
-            self.provider.get_sources(),
-            self.tree_tabs
-        )
+        self.add_sources(self.provider.get_sources(), self.tree_tabs)
         for (menu_idx, (mb_menu, __)) in enumerate(self.menubar.GetMenus()):
             for menu_item in mb_menu.GetMenuItems():
                 self.Unbind(wx.EVT_MENU, id=menu_item.GetId())
@@ -460,22 +466,18 @@ class BookshelfWindow(sc.SizedFrame):
             wx.NewIdRef(): action
             for action in self.provider.get_provider_actions()
             if action.decider(self.provider)
-        } 
+        }
         menu = wx.Menu()
         for (item_id, action) in menu_actions.items():
             menu.Append(item_id, action.display)
             self.Bind(
                 wx.EVT_MENU,
                 partial(self._on_provider_menu_item_clicked, action.func),
-                id=item_id
+                id=item_id,
             )
         menu.AppendSeparator()
         menu.Append(wx.ID_CLOSE, _("&Exit"))
-        self.Bind(
-            wx.EVT_MENU,
-            lambda e: self.Close(),
-            id=wx.ID_CLOSE
-        )
+        self.Bind(wx.EVT_MENU, lambda e: self.Close(), id=wx.ID_CLOSE)
         self.menubar.Append(menu, _("&File"))
         sources_updated.disconnect(self._handle_source_updated)
         sources_updated.connect(self._handle_source_updated, sender=self.provider)
@@ -487,18 +489,12 @@ class BookshelfWindow(sc.SizedFrame):
                 continue
             if isinstance(source, MetaSource):
                 page = EmptyBookshelfPage(tree_tabs, self, source)
-                tree_tabs.AddPage(
-                    page,
-                    page.get_label()
-                )
+                tree_tabs.AddPage(page, page.get_label())
                 self.add_sources(source, tree_tabs, as_subpage=True)
             else:
                 func = tree_tabs.AddSubPage if as_subpage else tree_tabs.AddPage
                 page = BookshelfResultsPage(tree_tabs, self, source)
-                func(
-                    page,
-                    page.get_label()
-                )
+                func(page, page.get_label())
 
     def onProviderChoiceChange(self, event):
         self.setup_provider()
@@ -521,15 +517,9 @@ class BookshelfWindow(sc.SizedFrame):
         selected_page = self.tree_tabs.GetPage(page_idx)
         source = selected_page.source
         actions = (
-            action
-            for action in source.get_source_actions()
-            if action.decider(source)
+            action for action in source.get_source_actions() if action.decider(source)
         )
-        selected_page.popup_actions_menu(
-            actions,
-            event.GetPoint(),
-            source=source
-        )
+        selected_page.popup_actions_menu(actions, event.GetPoint(), source=source)
 
     def _on_provider_menu_item_clicked(self, action_func, event):
         action_func(self.provider)

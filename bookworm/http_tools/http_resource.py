@@ -29,11 +29,11 @@ class ResourceDownloadProgress:
 
     @property
     def total_mb(self) -> float:
-        return round(self.total_size / (1024 ** 2), 2)
+        return round(self.total_size / (1024**2), 2)
 
     @property
     def downloaded_mb(self) -> float:
-        return round(self.downloaded / (1024 ** 2), 2)
+        return round(self.downloaded / (1024**2), 2)
 
     @property
     def user_message(self):
@@ -51,7 +51,7 @@ ProgressCallback = t.Callable[[ResourceDownloadProgress], None]
 class ResourceDownloadRequest:
     request: requests.Request
     _cancellation_event: threading.Event = field(default_factory=threading.Event)
-    DEFAULT_CHUNK_SIZE: t.ClassVar = 1024 ** 2
+    DEFAULT_CHUNK_SIZE: t.ClassVar = 1024**2
 
     def __post_init__(self):
         self.headers = self.request.headers

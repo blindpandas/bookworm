@@ -12,12 +12,15 @@ from bookworm.commandline_handler import (
 )
 from bookworm.logger import logger
 from .local_bookshelf.tasks import issue_add_document_request
-from .viewer_integration import BookshelfSettingsPanel, BookshelfMenu, StatefulBookshelfMenuIds
+from .viewer_integration import (
+    BookshelfSettingsPanel,
+    BookshelfMenu,
+    StatefulBookshelfMenuIds,
+)
 from .window import run_bookshelf_standalone
 
 
 log = logger.getChild(__name__)
-
 
 
 @register_subcommand

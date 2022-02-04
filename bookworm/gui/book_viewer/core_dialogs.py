@@ -317,7 +317,15 @@ class ElementListDialog(SimpleDialog):
 
 
 class DocumentInfoDialog(SimpleDialog):
-    def __init__(self, *args, document_info, view=None, offer_open_action=False, open_in_a_new_instance=False, **kwargs):
+    def __init__(
+        self,
+        *args,
+        document_info,
+        view=None,
+        offer_open_action=False,
+        open_in_a_new_instance=False,
+        **kwargs,
+    ):
         self.document_info = document_info
         self.view = view
         self.offer_open_action = offer_open_action
@@ -341,7 +349,7 @@ class DocumentInfoDialog(SimpleDialog):
         title_text_style = title_text_ctrl.GetDefaultStyle()
         title_text_style_font_size = title_text_style.GetFontSize()
         title_text_style.SetFontSize(
-            title_text_style_font_size + (title_text_style_font_size * .5)
+            title_text_style_font_size + (title_text_style_font_size * 0.5)
         )
         title_text_style.SetFontWeight(wx.FONTWEIGHT_EXTRABOLD)
         title_text_ctrl.SetStyle(0, title_text_ctrl.GetLastPosition(), title_text_style)
@@ -358,7 +366,9 @@ class DocumentInfoDialog(SimpleDialog):
             )
             desc_text_ctrl_style = desc_text_ctrl.GetDefaultStyle()
             desc_text_ctrl_style.SetFontWeight(wx.FONTWEIGHT_BOLD)
-            desc_text_ctrl.SetStyle(0, desc_text_ctrl.GetLastPosition(), desc_text_ctrl_style)
+            desc_text_ctrl.SetStyle(
+                0, desc_text_ctrl.GetLastPosition(), desc_text_ctrl_style
+            )
         if num_sections := self.document_info.number_of_sections:
             self.create_info_field(
                 rh_panel, label=_("Number of Sections"), value=str(num_sections)
@@ -373,9 +383,7 @@ class DocumentInfoDialog(SimpleDialog):
         if publisher := self.document_info.publisher:
             self.create_info_field(rh_panel, label=_("Publisher"), value=publisher)
         if creation_date := self.document_info.creation_date:
-            self.create_info_field(
-                rh_panel, label=_("Created at"), value=creation_date
-            )
+            self.create_info_field(rh_panel, label=_("Created at"), value=creation_date)
         if pub_date := self.document_info.publication_date:
             self.create_info_field(
                 rh_panel, label=_("Publication Date"), value=pub_date
@@ -405,9 +413,11 @@ class DocumentInfoDialog(SimpleDialog):
             self.view.open_uri(self.document_info.uri)
 
     def get_cover_image(self):
-        if (cover_image := self.document_info.cover_image):
+        if cover_image := self.document_info.cover_image:
             return cover_image.make_thumbnail(512, 512)
-        return ImageIO.from_filename(images_path("generic_document.png")).make_thumbnail(270, 270)
+        return ImageIO.from_filename(
+            images_path("generic_document.png")
+        ).make_thumbnail(270, 270)
 
     def create_info_field(self, parent, label, value):
         wx.StaticText(parent, -1, label)

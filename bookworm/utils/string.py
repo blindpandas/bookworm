@@ -10,20 +10,23 @@ from bookworm.logger import logger
 
 try:
     from rapidfuzz.process import extract as fuzzy_matcher
+
     _IS_FUZZYWUZZY = False
 except ImportError:
     from fuzzywuzzy.process import extractBests as fuzzy_matcher
+
     _IS_FUZZYWUZZY = True
 
 
 log = logger.getChild(__name__)
 
 
-_T = t.TypeVar('T')
+_T = t.TypeVar("T")
 
 
 # Taken from: https://stackoverflow.com/a/47248784
-URL_REGEX = regex.compile(    r"""(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))"""
+URL_REGEX = regex.compile(
+    r"""(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))"""
 )
 URL_BAD_CHARS = "'\\.,[](){}:;\""
 
@@ -47,18 +50,23 @@ def remove_excess_blank_lines(text):
     )
 
 
-def fuzzy_search(query: str, choices: list[_T], limit: int=25, score_cutoff: float=50, string_converter=str) -> list[_T]:
+def fuzzy_search(
+    query: str,
+    choices: list[_T],
+    limit: int = 25,
+    score_cutoff: float = 50,
+    string_converter=str,
+) -> list[_T]:
     if _IS_FUZZYWUZZY:
-        match_choices = {idx: string_converter(item) for (idx, item) in enumerate(choices)}
+        match_choices = {
+            idx: string_converter(item) for (idx, item) in enumerate(choices)
+        }
     else:
         match_choices = [string_converter(c) for c in choices]
     return [
         choices[idx]
         for (__, __, idx) in fuzzy_matcher(
-            query,
-            match_choices,
-            limit=limit,
-            score_cutoff=score_cutoff
+            query, match_choices, limit=limit, score_cutoff=score_cutoff
         )
     ]
 

@@ -242,7 +242,7 @@ class DocumentInfo:
     def __dict_value_serializer(self, instance, field, value):
         if isinstance(value, LocaleInfo):
             return value.identifier
-        elif field.name == 'uri':
+        elif field.name == "uri":
             return value.to_uri_string()
         return value
 
@@ -250,7 +250,7 @@ class DocumentInfo:
         return attr.asdict(
             self,
             filter=lambda at, val: at.name not in excluded_fields,
-            value_serializer=self.__dict_value_serializer
+            value_serializer=self.__dict_value_serializer,
         )
 
 

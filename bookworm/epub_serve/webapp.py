@@ -31,7 +31,7 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-EPUB_SERVE_APP_PREFIX = '/web_viewer/'
+EPUB_SERVE_APP_PREFIX = "/web_viewer/"
 HISTORY_DB_PATH = paths.db_path("epub_server_history.sqlite")
 WEB_RESOURCES_PATH = paths.resources_path("readium_js_viewer_lite")
 TEMPLATE_PATH = WEB_RESOURCES_PATH / "templates"
@@ -123,43 +123,55 @@ class EpubServingConfig:
             if position_url:
                 with self.db:
                     cursor = self.db.cursor()
-                    exists = cursor.execute('SELECT COUNT(*) FROM history WHERE "book_uid" = ?', (book_uid,)).fetchone()[0]
+                    exists = cursor.execute(
+                        'SELECT COUNT(*) FROM history WHERE "book_uid" = ?', (book_uid,)
+                    ).fetchone()[0]
                     if not exists:
-                        cursor.execute('INSERT INTO history values (?, ?)', (book_uid, position_url))
+                        cursor.execute(
+                            "INSERT INTO history values (?, ?)",
+                            (book_uid, position_url),
+                        )
                     else:
-                        cursor.execute('UPDATE history SET position_url = ?', (position_url,))
+                        cursor.execute(
+                            "UPDATE history SET position_url = ?", (position_url,)
+                        )
             return {"deleted": book_uid}
 
     def index_view(self):
         book_uid = request.query.get("epub", "").strip(" /").split("/")[-1]
         if book_uid not in OPENED_EPUBS:
-            response.status = '404 Not Found'
+            response.status = "404 Not Found"
             return template(
-                self.get_template('error.html'),
+                self.get_template("error.html"),
                 title=_("404 Not Found"),
                 message=_(
                     "The book you are trying to access does not exist or has been closed. "
                     "Please make sure you opened the book from within Bookworm. "
                     "All URLs are temporary and may not work after you close the page."
-                )
+                ),
             )
         with self.db:
             cursor = self.db.cursor()
-            result = cursor.execute('SELECT (url) FROM history WHERE "book_uid" = ?', (book_uid,)).fetchone()
+            result = cursor.execute(
+                'SELECT (url) FROM history WHERE "book_uid" = ?', (book_uid,)
+            ).fetchone()
             if result:
                 position_url = result[0].lstrip("?")
                 if position_url != request.query_string:
                     url_parts = request.urlparts
-                    new_url = ("{scheme}://{authority}/{path}/{EPUB_SERVE_APP_PREFIX}" + "?{query}").format(
+                    new_url = (
+                        "{scheme}://{authority}/{path}/{EPUB_SERVE_APP_PREFIX}"
+                        + "?{query}"
+                    ).format(
                         scheme=url_parts.scheme,
                         authority=url_parts.netloc,
                         path="/",
                         EPUB_SERVE_APP_PREFIX=EPUB_SERVE_APP_PREFIX,
-                        query=urllib.parse.unquote(position_url.lstrip("?"))
+                        query=urllib.parse.unquote(position_url.lstrip("?")),
                     )
                     redirect(url_normalize(new_url))
         response.status = "200 OK"
-        return self.get_template('index.html', as_bytes=True)
+        return self.get_template("index.html", as_bytes=True)
 
     def epub_archive_view(self, book_uid, path=None):
         if (request.path is None) or (request.method != "GET"):

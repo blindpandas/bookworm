@@ -32,4 +32,3 @@ reading_position_change = _signals.signal("caret/location_change")
 
 # Local web server
 local_server_booting = _signals.signal("local_server/booting")
-

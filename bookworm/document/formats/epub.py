@@ -78,21 +78,25 @@ class EpubDocument(SinglePageDocument):
         info = {}
         for md in tuple(self.epub.metadata.values()):
             info.update(md)
-        return {k: v[0][0] for k,v in info.items()}
+        return {k: v[0][0] for k, v in info.items()}
 
     @cached_property
     def metadata(self):
         info = self.epub_metadata
-        author = (
-            info.get("creator", "")
-            or info.get("author", "")
-        )
+        author = info.get("creator", "") or info.get("author", "")
         try:
             desc = HTMLParser(info.get("description", "")).text()
         except:
             desc = None
-        if (pubdate := dateparser.parse(info.get("date", ""), languages=[self.language.two_letter_language_code, ])):
-            publish_date = self.language.format_datetime(pubdate, date_only=True, format='long', localized=True)
+        if pubdate := dateparser.parse(
+            info.get("date", ""),
+            languages=[
+                self.language.two_letter_language_code,
+            ],
+        ):
+            publish_date = self.language.format_datetime(
+                pubdate, date_only=True, format="long", localized=True
+            )
         else:
             publish_date = ""
         return BookMetadata(
@@ -100,20 +104,19 @@ class EpubDocument(SinglePageDocument):
             author=author.removeprefix("By ").strip(),
             description=desc,
             publication_year=publish_date,
-            publisher=info.get("publisher", "")
+            publisher=info.get("publisher", ""),
         )
 
     @cached_property
     def language(self):
-        if (epub_lang := self.epub_metadata.get('language')) is not None:
+        if (epub_lang := self.epub_metadata.get("language")) is not None:
             try:
                 return LocaleInfo(epub_lang)
             except:
-                log.exception("Failed to parse epub language `{epub_lang}`", exc_info=True)
-        return (
-            self.get_language(self.html_content, is_html=True)
-            or LocaleInfo("en")
-        )
+                log.exception(
+                    "Failed to parse epub language `{epub_lang}`", exc_info=True
+                )
+        return self.get_language(self.html_content, is_html=True) or LocaleInfo("en")
 
     def get_content(self):
         return self.structure.get_text()
@@ -167,7 +170,7 @@ class EpubDocument(SinglePageDocument):
 
     @cached_property
     def epub_html_items(self) -> tuple[str]:
-        if (html_items := tuple(self.epub.get_items_of_type(ebooklib.ITEM_DOCUMENT))):
+        if html_items := tuple(self.epub.get_items_of_type(ebooklib.ITEM_DOCUMENT)):
             return html_items
         else:
             return tuple(
@@ -178,15 +181,16 @@ class EpubDocument(SinglePageDocument):
             )
 
     def get_epub_html_item_by_href(self, href):
-        if (epub_item := self.epub.get_item_with_href("href")):
+        if epub_item := self.epub.get_item_with_href("href"):
             return epub_item
         item_name = PurePosixPath(href).name
         return more_itertools.first(
             (
-                item for item in self.epub_html_items
+                item
+                for item in self.epub_html_items
                 if PurePosixPath(item.file_name).name == item_name
             ),
-            None
+            None,
         )
 
     def parse_epub(self):
@@ -266,7 +270,8 @@ class EpubDocument(SinglePageDocument):
                 epub_sect, children = entry
                 num_pages = len(children)
                 sect = Section(
-                    title=epub_sect.title or self._get_title_for_section(epub_sect.href),
+                    title=epub_sect.title
+                    or self._get_title_for_section(epub_sect.href),
                     level=current_level,
                     pager=SINGLE_PAGE_DOCUMENT_PAGER,
                     parent=parent,
@@ -286,7 +291,9 @@ class EpubDocument(SinglePageDocument):
         cache_key = self.uri.to_uri_string()
         if cached_html_content := cache.get(cache_key):
             return cached_html_content.decode("utf-8")
-        html_content_gen = ((item.file_name, item.content) for item in self.epub_html_items)
+        html_content_gen = (
+            (item.file_name, item.content) for item in self.epub_html_items
+        )
         buf = StringIO()
         for (filename, html_content) in html_content_gen:
             buf.write(self.prefix_html_ids(filename, html_content))
@@ -299,11 +306,11 @@ class EpubDocument(SinglePageDocument):
 
     def prefix_html_ids(self, filename, html):
         tree = lxml_html.fromstring(html)
-        #try:
+        # try:
         #    data_html_title = tree.xpath('/html/head/title//text()')[0]
-        #except IndexError:
+        # except IndexError:
         #    data_html_title = ""
-        #tree.set('data-html-title', data_html_title)
+        # tree.set('data-html-title', data_html_title)
         tree.make_links_absolute(filename)
         if os.path.splitext(filename)[1] in HTML_FILE_EXTS:
             for node in tree.cssselect("[id]"):
@@ -330,14 +337,12 @@ class EpubDocument(SinglePageDocument):
         )
 
     def _get_title_for_section(self, href):
-        filename = (
-            href.split("#")[0]
-            if "#" in href
-            else href
-        )
+        filename = href.split("#")[0] if "#" in href else href
         html_doc = self.get_epub_html_item_by_href(filename)
         if html_doc is not None:
-            if (title_list := lxml_html.fromstring(html_doc.content).xpath("/html/head/title//text()")):
+            if title_list := lxml_html.fromstring(html_doc.content).xpath(
+                "/html/head/title//text()"
+            ):
                 return title_list[0]
         else:
             log.warning(f"Could not resolve href: {href}")

@@ -147,9 +147,9 @@ class LineBox(object):
 
     @property
     def content(self):
-        txt = u""
+        txt = ""
         for box in self.word_boxes:
-            txt += box.content + u" "
+            txt += box.content + " "
         txt = txt.strip()
         return txt
 
@@ -351,18 +351,18 @@ class TextBuilder(BaseBuilder):
         file_descriptor.write(text)
 
     def start_line(self, box):
-        self.built_text.append(u"")
+        self.built_text.append("")
 
     def add_word(self, word, box, confidence=0):
-        if self.built_text[-1] != u"":
-            self.built_text[-1] += u" "
+        if self.built_text[-1] != "":
+            self.built_text[-1] += " "
         self.built_text[-1] += word
 
     def end_line(self):
         pass
 
     def get_output(self):
-        return u"\n".join(self.built_text)
+        return "\n".join(self.built_text)
 
     def __str__(self):
         return "Raw text"

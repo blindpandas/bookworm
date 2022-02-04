@@ -163,5 +163,5 @@ class ImageIO:
         pil_image = self.to_pil()
         pil_image.thumbnail(size=(width, height))
         if exact_fit:
-            pil_image = ImageOps.pad(pil_image, (width, height), color =fil_color)
+            pil_image = ImageOps.pad(pil_image, (width, height), color=fil_color)
         return self.from_pil(pil_image)

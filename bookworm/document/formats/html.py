@@ -47,7 +47,6 @@ log = logger.getChild(__name__)
 EXPIRE_TIMEOUT = 7 * 24 * 60 * 60
 
 
-
 def get_clean_html(html_string: str) -> (str, BookMetadata):
     """Clean the given html using trafilatura."""
 
@@ -80,27 +79,22 @@ def get_clean_html(html_string: str) -> (str, BookMetadata):
     )
 
     # Extract the body
-    extracted = trafilatura.extract(html_string, output_format="xml", include_links=True)
+    extracted = trafilatura.extract(
+        html_string, output_format="xml", include_links=True
+    )
     xml_content = etree.fromstring(extracted)
     main_content = xml_content.xpath("main")[0]
     for node in main_content.cssselect("head"):
         node.tag = "h2"
     output_template = [
         "<html><body>",
-        "<h1>%s</h1>" %(escape_html(doc_metadata.title),),
-       lxml_html.tostring(
-            main_content,
-            pretty_print=False,
-            method="html",
-            encoding='unicode'
+        "<h1>%s</h1>" % (escape_html(doc_metadata.title),),
+        lxml_html.tostring(
+            main_content, pretty_print=False, method="html", encoding="unicode"
         ),
         "</body></html>",
     ]
-    return (
-        "".join(output_template),
-        doc_metadata
-    )
-
+    return ("".join(output_template), doc_metadata)
 
 
 class BaseHtmlDocument(SinglePageDocument):
@@ -189,7 +183,9 @@ class BaseHtmlDocument(SinglePageDocument):
             try:
                 result = task.result()
             except Exception as e:
-                log.exception("Failed to parse html string for clean view", exc_info=True)
+                log.exception(
+                    "Failed to parse html string for clean view", exc_info=True
+                )
                 raise DocumentIOError from e
             html_content, metadata = result
             self._metainfo = metadata
@@ -201,11 +197,8 @@ class BaseHtmlDocument(SinglePageDocument):
         title_els = html.cssselect("title")
         title = _("HTML Document") if not title_els else title_els[0].text
         author_el = html.cssselect('head > meta[name="author"]')
-        author = "" if not author_el else author_el[0].get('content')
-        self._metainfo = BookMetadata(
-            title=title,
-            author=author
-        )
+        author = "" if not author_el else author_el[0].get("content")
+        self._metainfo = BookMetadata(title=title, author=author)
         return self.parse_text_and_structure(self.html_string)
 
     def parse_text_and_structure(self, html):
@@ -262,8 +255,6 @@ class BaseHtmlDocument(SinglePageDocument):
         stack = TreeStackBuilder(root)
         yield stack, root
         self._outline = root
-
-
 
 
 class FileSystemHtmlDocument(BaseHtmlDocument):

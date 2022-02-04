@@ -104,10 +104,10 @@ def _make_search_re_pattern(request):
     I = re.I if not request.case_sensitive else 0
     if request.is_regex:
         term = request.term
-        term = fr"({term})"
+        term = rf"({term})"
     else:
         term = re.escape(request.term, literal_spaces=True)
-        term = fr"({term})"
+        term = rf"({term})"
         if request.whole_word:
-            term = fr"\b{term}\b"
+            term = rf"\b{term}\b"
     return re.compile(term, I | re.M)

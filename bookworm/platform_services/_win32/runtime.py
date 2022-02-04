@@ -78,7 +78,7 @@ def is_running_portable():
         return False
     unins_key = RegKey(
         Registry.LocalMachine,
-        path=fr"Software\Microsoft\Windows\CurrentVersion\Uninstall\{app.name}",
+        path=rf"Software\Microsoft\Windows\CurrentVersion\Uninstall\{app.name}",
         writable=False,
     )
     with unins_key:
