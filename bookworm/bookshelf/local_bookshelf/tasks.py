@@ -72,7 +72,7 @@ def issue_add_document_request(
         "document_uri": document_uri.to_uri_string(),
         "category": category_name,
         "tags": tags_names,
-        "database_file": database_file,
+        "database_file": os.fspath(database_file),
     }
     res = requests.post(url, json=data)
     log.debug(f"Add document to local bookshelf response: {res}, {res.text}")
