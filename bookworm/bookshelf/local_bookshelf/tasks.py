@@ -221,7 +221,7 @@ def import_folder_to_bookshelf_view():
         return {"status": "Failed", "reason": "Folder not found"}
     category_name = data.get("category_name") or folder.name
     threaded_worker.submit(_do_import_folder_to_bookshelf, folder, category_name)
-    return {"satus": "processing"}
+    return {"status": "processing"}
 
 
 def _do_import_folder_to_bookshelf(folder, category_name):
