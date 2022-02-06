@@ -2,7 +2,6 @@
 
 import sys
 import os
-import pytesseract
 from pathlib import Path
 from PIL import Image
 from bookworm import typehints as t
@@ -11,6 +10,7 @@ from bookworm.i18n import LocaleInfo
 from bookworm.paths import data_path
 from bookworm.ocr_engines import OcrRequest, OcrResult, BaseOcrEngine
 from bookworm.logger import logger
+from . import pytesseract
 
 
 log = logger.getChild(__name__)
@@ -61,9 +61,3 @@ class TesseractOcrEngine(BaseOcrEngine):
             recognized_text=recognized_text,
             cookie=ocr_request.cookie,
         )
-
-    @classmethod
-    def scan_to_text(cls, *args, **kwargs):
-        os.environ["OMP_THREAD_LIMIT"] = "2"
-        # os.environ["TESSEDIT_DO_INVERT"] = "0"
-        super().scan_to_text(*args, **kwargs)
