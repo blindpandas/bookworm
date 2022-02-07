@@ -340,7 +340,6 @@ def osd_to_dict(osd):
     }
 
 
-@run_once
 def get_languages(config=''):
     cmd_args = [tesseract_cmd, '--list-langs']
     if config:

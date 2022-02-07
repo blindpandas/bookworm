@@ -3,7 +3,6 @@
 import sys
 import os
 from pathlib import Path
-from PIL import Image
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.i18n import LocaleInfo
@@ -21,20 +20,16 @@ def get_tesseract_path():
     return data_path(f"tesseract_ocr_{app.arch}").resolve()
 
 class TesseractOcrEngine(BaseOcrEngine):
-    name = "tesseract_ocr_alt"
-    display_name = _("Tesseract OCR Engine (Alternative implementation)")
+    name = "tesseract_ocr"
+    display_name = _("Tesseract OCR Engine")
 
-    @classmethod
-    def check_on_windows(cls):
-        return cls.check()
     @classmethod
     def check(cls) -> bool:
         if sys.platform == "win32":
-            tesseract_executable = (get_tesseract_path() /  "tesseract.exe").resolve()
-            pytesseract.pytesseract.tesseract_cmd = os.fspath(tesseract_executable)
-        try:
-            return any(pytesseract.get_languages())
-        except:
+            tesseract_executable = get_tesseract_path().joinpath("tesseract.exe").resolve()
+            if tesseract_executable.is_file():
+                pytesseract.pytesseract.tesseract_cmd = os.fspath(tesseract_executable)
+                return True
             return False
 
     @classmethod
@@ -49,13 +44,10 @@ class TesseractOcrEngine(BaseOcrEngine):
 
     @classmethod
     def recognize(cls, ocr_request: OcrRequest) -> OcrResult:
-        img = Image.frombytes(
-            "RGB",
-            (ocr_request.image.width, ocr_request.image.height),
-            ocr_request.image.data,
-        )
         recognized_text = pytesseract.image_to_string(
-            img, ocr_request.language.given_locale_name, nice=1
+            ocr_request.image.to_pil(),
+            ocr_request.language.given_locale_name,
+            nice=1
         )
         return OcrResult(
             recognized_text=recognized_text,

@@ -1,17 +1,14 @@
 # coding: utf-8
 
 import sys
-import time
 import wx
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit
 from tempfile import TemporaryFile
 from zipfile import ZipFile
-from pydantic import validator, BaseModel, HttpUrl
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.http_tools import RemoteJsonResource, HttpResource
-from bookworm.gui.components import RobustProgressDialog
 from bookworm.ocr_engines.tesseract_ocr_engine import (
     TesseractOcrEngine,
     get_tesseract_path,
@@ -19,35 +16,36 @@ from bookworm.ocr_engines.tesseract_ocr_engine import (
 from bookworm.logger import logger
 
 log = logger.getChild(__name__)
-TESSERACT_INFO_URL = "https://bookworm.capeds.net/tesseract_info.json"
-_TESSERACT_INFO_CACHE = None
 
 
-class TesseractDownloadInfo(BaseModel):
-    engine_x86: HttpUrl
-    engine_x64: HttpUrl
-    languages: t.List[str]
-    best_traineddata_base_url: HttpUrl
-    fast_traineddata_base_url: HttpUrl
+BRANCH = 'tesseract-v51'
+if app.arch == "x86":
+    TESSERACT_ENGINE_DOWNLOAD_URL = f"https://raw.githubusercontent.com/blindpandas/bookworm/{BRANCH}/packages/tesseract/tesseract_v5.1_x86.zip"
+else:
+    TESSERACT_ENGINE_DOWNLOAD_URL = f"https://raw.githubusercontent.com/blindpandas/bookworm/{BRANCH}/packages/tesseract/tesseract_v5.1_x64.zip"
+FAST_TRAINEDDATA_DOWNLOAD_URL = "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/main/{lang_code}.traineddata"
+BEST_TRAINEDDATA_DOWNLOAD_URL = "https://raw.githubusercontent.com/tesseract-ocr/tessdata_best/main/{lang_code}.traineddata"
 
-    def get_engine_download_url(self):
-        return self.engine_x86 if app.arch == "x86" else self.engine_x64
 
-    def get_language_download_url(self, language: str, variant: str) -> HttpUrl:
-        if language not in self.languages:
-            raise ValueError(f"Language {language} is not available for download.")
-        url = (
-            self.best_traineddata_base_url
-            if variant == "best"
-            else self.fast_traineddata_base_url
-        )
-        return urljoin(url, f"{language}.traineddata")
-
+def get_downloadable_languages():
+    return (
+        'afr', 'sqi', 'amh', 'ara', 'hye', 'asm', 'aze_cyrl', 'aze',
+        'ben', 'eus', 'bel', 'bos', 'bre', 'bul', 'mya', 'cat', 'ceb',
+        'chr', 'chi_sim', 'hrv', 'ces', 'dan', 'nld', 'dzo', 'eng',
+        'epo', 'est', 'fao', 'fil', 'fin', 'fra', 'glg', 'kat_old', 'kat',
+        'deu', 'ell', 'guj', 'heb', 'hin', 'hun', 'isl', 'ind', 'gle',
+        'ita_old', 'ita', 'jpn_vert', 'jpn', 'jav', 'kan', 'kaz',
+        'khm', 'kor_vert', 'kor', 'kmr', 'kir', 'lao', 'lav', 'lit', 'ltz',
+        'mkd', 'msa', 'mal', 'mlt', 'mri', 'mar', 'mon', 'nep', 'nor',
+        'ori', 'pus', 'fas', 'pol', 'por', 'pan', 'que', 'ron', 'rus', 'gla',
+        'srp_latn', 'srp', 'snd', 'sin', 'slk', 'slv', 'spa_old', 'spa',
+        'sun', 'swa', 'swe', 'tgk', 'tam', 'tat', 'tel', 'tha', 'bod', 'tir',
+        'ton', 'tur', 'ukr', 'urd', 'uig', 'uzb_cyrl', 'uzb', 'vie', 'cym', 'fry', 'yid', 'yor'
+    )
 
 def is_tesseract_available():
     return (
         sys.platform == "win32"
-        and TesseractOcrEngine.check_on_windows()
         and TesseractOcrEngine.check()
     )
 
@@ -60,49 +58,11 @@ def get_language_path(language):
     return Path(get_tessdata(), f"{language}.traineddata")
 
 
-def get_tesseract_download_info():
-    global _TESSERACT_INFO_CACHE
-    if _TESSERACT_INFO_CACHE is None:
-        _TESSERACT_INFO_CACHE = RemoteJsonResource(
-            url=TESSERACT_INFO_URL,
-            model=TesseractDownloadInfo,
-        ).get()
-    return _TESSERACT_INFO_CACHE
-
-
-def get_tesseract_download_info_from_future(future, parent):
-    try:
-        return future.result()
-    except ConnectionError:
-        log.exception("Failed to get Tesseract download info.", exc_info=True)
-        wx.GetApp().mainFrame.notify_user(
-            # Translators: title of a messagebox
-            _("Connection Error"),
-            # Translators: content of a messagebox
-            _(
-                "Could not get Tesseract download information.\n"
-                "Please check your internet connection and try again."
-            ),
-            icon=wx.ICON_ERROR,
-            parent=parent,
-        )
-    except:
-        log.exception("Error getting tesseract download info", exc_info=True)
-        wx.GetApp().mainFrame.notify_user(
-            # Translators: title of a message box
-            _("Error"),
-            # Translators: content of a message box
-            _("Failed to parse Tesseract download information. Please try again."),
-            icon=wx.ICON_ERROR,
-            parent=parent,
-        )
-
-
-def download_tesseract_engine(engine_download_url, progress_dlg):
+def download_tesseract_engine(progress_dlg):
     tesseract_directory = get_tesseract_path()
     callback = lambda prog: progress_dlg.Update(prog.percentage, prog.user_message)
     try:
-        dl_request = HttpResource(engine_download_url).download()
+        dl_request = HttpResource(TESSERACT_ENGINE_DOWNLOAD_URL).download()
         progress_dlg.set_abort_callback(dl_request.cancel)
         with TemporaryFile() as dlfile:
             dl_request.download_to_file(dlfile, callback)
@@ -140,9 +100,15 @@ def download_tesseract_engine(engine_download_url, progress_dlg):
         )
 
 
-def download_language(url, target_file, progress_dlg):
+def download_language(lang_code, variant, target_file, progress_dlg):
+    url_prefix = (
+        BEST_TRAINEDDATA_DOWNLOAD_URL
+        if variant == 'best'
+        else FAST_TRAINEDDATA_DOWNLOAD_URL
+    )
+    download_url = url_prefix.format(lang_code=lang_code)
     callback = lambda prog: progress_dlg.Update(prog.percentage, prog.user_message)
-    dl_request = HttpResource(url).download()
+    dl_request = HttpResource(download_url).download()
     progress_dlg.set_abort_callback(dl_request.cancel)
     dl_request.download_to_filesystem(target_file, callback)
     return not dl_request.is_cancelled()

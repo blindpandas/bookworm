@@ -118,26 +118,6 @@ class OcrPanel(SettingsPanel):
             self._service._init_ocr_engine()
 
     def onDownloadTesseractEngine(self, event):
-        AsyncSnakDialog(
-            task=tesseract_download.get_tesseract_download_info,
-            done_callback=self._on_tesseract_download_info,
-            message=_("Retrieving download info, please wait..."),
-            parent=self,
-        )
-
-    def onDownloadTesseractLanguages(self, event):
-        TesseractLanguageManager(
-            title=_("Manage Tesseract OCR Engine Languages"), parent=self
-        ).ShowModal()
-
-    def _on_tesseract_download_info(self, future):
-        if (
-            info := tesseract_download.get_tesseract_download_info_from_future(
-                future, self
-            )
-        ) is None:
-            return
-        dl_url = info.get_engine_download_url()
         progress_dlg = RobustProgressDialog(
             self,
             # Translators: title of a progress dialog
@@ -148,8 +128,13 @@ class OcrPanel(SettingsPanel):
             can_abort=True,
         )
         threaded_worker.submit(
-            tesseract_download.download_tesseract_engine, dl_url, progress_dlg
+            tesseract_download.download_tesseract_engine, progress_dlg
         ).add_done_callback(partial(self._after_tesseract_install, progress_dlg))
+
+    def onDownloadTesseractLanguages(self, event):
+        TesseractLanguageManager(
+            title=_("Manage Tesseract OCR Engine Languages"), parent=self
+        ).ShowModal()
 
     def _after_tesseract_install(self, progress_dlg, future):
         progress_dlg.Dismiss()
@@ -288,43 +273,24 @@ class TesseractLanguageManager(SimpleDialog):
     """
 
     def __init__(self, *args, **kwargs):
-        self.online_languages = ()
         super().__init__(*args, **kwargs)
         self.SetSize((600, -1))
         self.CenterOnScreen()
 
     def addControls(self, parent):
-        # Translators: label of a list control containing bookmarks
-        wx.StaticText(parent, -1, _("Tesseract Languages"))
-        listPanel = sc.SizedPanel(parent)
-        listPanel.SetSizerType("horizontal")
-        listPanel.SetSizerProps(expand=True, align="center")
-        self.tesseractLanguageList = ImmutableObjectListView(
-            listPanel, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER, size=(500, -1)
-        )
-        self.btnPanel = btnPanel = sc.SizedPanel(parent, -1)
-        btnPanel.SetSizerType("horizontal")
-        btnPanel.SetSizerProps(expand=True)
-        # Translators: text of a button to add a language to Tesseract OCR Engine (best quality model)
-        self.addBestButton = wx.Button(btnPanel, wx.ID_ANY, _("Download &Best Model"))
-        # Translators: text of a button to add a language to Tesseract OCR Engine (fastest model)
-        self.addFastButton = wx.Button(btnPanel, wx.ID_ANY, _("Download &Fast Model"))
-        # Translators: text of a button to remove a language from Tesseract OCR Engine
-        self.removeButton = wx.Button(btnPanel, wx.ID_REMOVE, _("&Remove"))
-        self.Bind(wx.EVT_BUTTON, self.onAdd, self.addFastButton)
-        self.Bind(wx.EVT_BUTTON, self.onAdd, self.addBestButton)
-        self.Bind(wx.EVT_BUTTON, self.onRemove, id=wx.ID_REMOVE)
-        self.Bind(
-            wx.EVT_LIST_ITEM_FOCUSED,
-            self.onListFocusChanged,
-            self.tesseractLanguageList,
-        )
-        AsyncSnakDialog(
-            task=tesseract_download.get_tesseract_download_info,
-            done_callback=self._on_tesseract_dl_info,
-            message=_("Getting download information, please wait..."),
-            parent=self,
-        )
+        self.notebookCtrl = wx.Notebook(parent, -1)
+        panel_info = [
+            (_("Installed Languages"), TesseractLanguagePanel(self.notebookCtrl, is_offline=True)),
+            (_("Downloadable Languages"), TesseractLanguagePanel(self.notebookCtrl, is_offline=False))
+        ]
+        for (label, panel) in panel_info:
+            panel.SetSizerType("vertical")
+            self.notebookCtrl.AddPage(
+                panel,
+                label
+            )
+        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.onNotebookPageChanged, self.notebookCtrl)
+        self.notebookCtrl.GetCurrentPage().populate_list(set_focus=False)
 
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
@@ -333,34 +299,63 @@ class TesseractLanguageManager(SimpleDialog):
         btnsizer.Realize()
         return btnsizer
 
-    def _on_tesseract_dl_info(self, future):
-        if (
-            info := tesseract_download.get_tesseract_download_info_from_future(
-                future, self
-            )
-        ) is None:
-            return
-        self.online_languages = info.languages
-        self.populate_list()
+    def onNotebookPageChanged(self, event):
+        selected_page = self.notebookCtrl.GetPage(event.GetSelection())
+        selected_page.populate_list(set_focus=False)
 
-    def populate_list(self):
-        language_identifiers = set(
-            (True, lang.given_locale_name)
-            for lang in TesseractOcrEngine.get_recognition_languages()
+
+class TesseractLanguagePanel(sc.SizedPanel):
+
+    def __init__(self, *args, is_offline, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.is_offline = is_offline
+        self.online_languages = tesseract_download.get_downloadable_languages()
+
+        # Translators: label of a list control containing bookmarks
+        wx.StaticText(self, -1, _("Tesseract Languages"))
+        listPanel = sc.SizedPanel(self)
+        listPanel.SetSizerType("horizontal")
+        listPanel.SetSizerProps(expand=True, align="center")
+        self.tesseractLanguageList = ImmutableObjectListView(
+            listPanel, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER, size=(500, -1)
         )
-        _installed_langs = {lang[1].lower() for lang in language_identifiers}
-        language_identifiers.update(
-            (False, lang)
-            for lang in self.online_languages
-            if lang.lower() not in _installed_langs
+        self.btnPanel = btnPanel = sc.SizedPanel(self, -1)
+        btnPanel.SetSizerType("horizontal")
+        btnPanel.SetSizerProps(expand=True)
+        if not self.is_offline:
+            # Translators: text of a button to add a language to Tesseract OCR Engine (best quality model)
+            self.addBestButton = wx.Button(btnPanel, wx.ID_ANY, _("Download &Best Model"))
+            # Translators: text of a button to add a language to Tesseract OCR Engine (fastest model)
+            self.addFastButton = wx.Button(btnPanel, wx.ID_ANY, _("Download &Fast Model"))
+            self.Bind(wx.EVT_BUTTON, self.onAdd, self.addFastButton)
+            self.Bind(wx.EVT_BUTTON, self.onAdd, self.addBestButton)
+        else:
+            # Translators: text of a button to remove a language from Tesseract OCR Engine
+            self.removeButton = wx.Button(btnPanel, wx.ID_REMOVE, _("&Remove"))
+            self.Bind(wx.EVT_BUTTON, self.onRemove, id=wx.ID_REMOVE)
+        self.tesseractLanguageList.Bind(
+            wx.EVT_SET_FOCUS,
+            self.onListFocus,
+            self.tesseractLanguageList
         )
-        languages = [
-            (
-                lang[0],
-                LocaleInfo.from_three_letter_code(lang[1]),
-            )
-            for lang in sorted(language_identifiers, key=lambda l: l, reverse=True)
+
+    def populate_list(self, set_focus=True):
+        installed_languages = [
+            (True, info)
+            for info in sorted(TesseractOcrEngine.get_recognition_languages(), key=lambda l: l.english_name)
         ]
+        if self.is_offline:
+            languages = installed_languages
+        else:
+            languages = []
+            added_locale_infos = set(l[1] for l in installed_languages)
+            for lang in self.online_languages:
+                loc_info = LocaleInfo.from_three_letter_code(lang)
+                if loc_info in added_locale_infos:
+                    continue
+                else:
+                    languages.append((False, loc_info))
+                    added_locale_infos.add(loc_info)
         column_defn = [
             ColumnDefn(
                 # Translators: the title of a column in the Tesseract language list
@@ -378,26 +373,63 @@ class TesseractLanguageManager(SimpleDialog):
             ),
         ]
         self.tesseractLanguageList.set_columns(column_defn)
-        self.tesseractLanguageList.set_objects(languages, focus_item=0)
+        if set_focus:
+            self.tesseractLanguageList.set_objects(languages, focus_item=0)
+        else:
+            self.tesseractLanguageList.set_objects(languages, set_focus=False)
         # Maintain the state of the list
         if not any(languages):
-            self.addBestButton.Enable(False)
-            self.addFastButton.Enable(False)
-            self.removeButton.Enable(False)
+            if not self.is_offline:
+                self.addBestButton.Enable(False)
+                self.addFastButton.Enable(False)
+            else:
+                self.removeButton.Enable(False)
             self.btnPanel.Enable(False)
 
     def onAdd(self, event):
         if (selected := self.tesseractLanguageList.get_selected()) is None:
             return
         lang = selected[1]
-        variant = "best" if event.GetEventObject() == self.addBestButton else "fast"
-        AsyncSnakDialog(
-            task=tesseract_download.get_tesseract_download_info,
-            done_callback=partial(
-                self._on_download_language, lang.given_locale_name, variant
-            ),
-            message=_("Getting download information, please wait..."),
-            parent=self,
+        variant = 'best' if event.GetEventObject() == self.addBestButton else 'fast'
+        lang_code = lang.given_locale_name
+        if lang_code not in self.online_languages:
+            log.debug(f"Could not find download info for language {lang_code}")
+            return
+        target_file = tesseract_download.get_language_path(lang_code)
+        if target_file.exists():
+            msg = wx.MessageBox(
+                # Translators: content of a messagebox
+                _(
+                    "A version of the selected language model already exists.\n"
+                    "Are you sure you want to replace it."
+                ),
+                # Translators: title of a message box
+                _("Confirm"),
+                style=wx.YES_NO | wx.ICON_WARNING,
+                parent=self,
+            )
+            if msg == wx.NO:
+                return
+        try:
+            target_file.unlink(missing_ok=True)
+        except:
+            return
+        progress_dlg = RobustProgressDialog(
+            wx.GetApp().mainFrame,
+            # Translators: title of a progress dialog
+            _("Downloading Language"),
+            # Translators: content of a progress dialog
+            _("Getting download information..."),
+            maxvalue=100,
+            can_hide=True,
+            can_abort=True,
+        )
+        threaded_worker.submit(
+            tesseract_download.download_language, lang_code, variant, target_file, progress_dlg
+        ).add_done_callback(
+            lambda future: wx.CallAfter(
+                self._after_download_language, progress_dlg, future
+            )
         )
 
     def onRemove(self, event):
@@ -421,60 +453,9 @@ class TesseractLanguageManager(SimpleDialog):
         except:
             log.exception(f"Could not remove language {lang}", exc_info=True)
 
-    def onListFocusChanged(self, event):
-        if (selected := self.tesseractLanguageList.get_selected()) is not None:
-            is_installed = selected[0]
-            self.addBestButton.Enable(not is_installed)
-            self.addFastButton.Enable(not is_installed)
-            self.removeButton.Enable(is_installed)
-
-    def _on_download_language(self, lang_name, variant, future):
-        if (
-            info := tesseract_download.get_tesseract_download_info_from_future(
-                future, self
-            )
-        ) is None:
-            return
-        if lang_name not in info.languages:
-            log.debug(f"Could not find download info for language {lang_name}")
-            return
-        target_file = tesseract_download.get_language_path(lang_name)
-        if target_file.exists():
-            msg = wx.MessageBox(
-                # Translators: content of a messagebox
-                _(
-                    "A version of the selected language model already exists.\n"
-                    "Are you sure you want to replace it."
-                ),
-                # Translators: title of a messagebox
-                _("Confirm"),
-                style=wx.YES_NO | wx.ICON_WARNING,
-                parent=self,
-            )
-            if msg == wx.NO:
-                return
-        try:
-            target_file.unlink(missing_ok=True)
-        except:
-            return
-        progress_dlg = RobustProgressDialog(
-            wx.GetApp().mainFrame,
-            # Translators: title of a progress dialog
-            _("Downloading Language"),
-            # Translators: content of a progress dialog
-            _("Getting download information..."),
-            maxvalue=100,
-            can_hide=True,
-            can_abort=True,
-        )
-        url = info.get_language_download_url(lang_name, variant=variant)
-        threaded_worker.submit(
-            tesseract_download.download_language, url, target_file, progress_dlg
-        ).add_done_callback(
-            lambda future: wx.CallAfter(
-                self._after_download_language, progress_dlg, future
-            )
-        )
+    def onListFocus(self, event):
+        if self.tesseractLanguageList.get_selected() is None:
+            self.tesseractLanguageList.set_focused_item(0)
 
     def _after_download_language(self, progress_dlg, future):
         progress_dlg.Dismiss()
@@ -490,7 +471,7 @@ class TesseractLanguageManager(SimpleDialog):
         except ConnectionError:
             log.exception("Failed to download language data from {url}", exc_info=True)
             wx.GetApp().mainFrame.notify_user(
-                # Translators: title of a messagebox
+                # Translators: title of a message box
                 _("Connection Error"),
                 # Translators: content of a messagebox
                 _(
@@ -508,3 +489,5 @@ class TesseractLanguageManager(SimpleDialog):
                 icon=wx.ICON_ERROR,
                 parent=self,
             )
+
+
