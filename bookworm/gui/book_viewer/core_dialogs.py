@@ -330,7 +330,9 @@ class DocumentInfoDialog(SimpleDialog):
         self.view = view
         self.offer_open_action = offer_open_action
         self.open_in_a_new_instance = open_in_a_new_instance
+        # Translators: title of a dialog
         kwargs.setdefault("title", _("Document Info"))
+        kwargs.setdefault("size", (750, 750))
         super().__init__(*args, **kwargs)
 
     def addControls(self, parent):

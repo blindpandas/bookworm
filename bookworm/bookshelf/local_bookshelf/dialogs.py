@@ -44,6 +44,8 @@ class EditDocumentClassificationDialog(SimpleDialog):
         wx.StaticText(parent, -1, _("Collections"))
         self.tagsTextCtrl = wx.TextCtrl(parent, -1, value=" ".join(self.tags_names))
         self.tagsTextCtrl.SetSizerProps(expand=True)
+        # Translators: label of a check box
+        self.addToFTSCheckbox = wx.CheckBox(parent, -1, _("Add to full-text search index"))
         if self.given_category:
             self.categoryCombo.SetStringSelection(self.given_category)
 
@@ -52,6 +54,7 @@ class EditDocumentClassificationDialog(SimpleDialog):
             return (
                 self.categoryCombo.GetValue().strip(),
                 tuple(tg.strip() for tg in self.tagsTextCtrl.GetValue().split(" ")),
+                self.addToFTSCheckbox.IsChecked()
             )
 
 
@@ -72,12 +75,18 @@ class AddFolderToLocalBookshelfDialog(SimpleDialog):
             parent, -1, choices=[cat.name for cat in Category.get_all()]
         )
         self.categoryCombo.SetSizerProps(expand=True)
+        # Translators: label of a check box
+        self.addToFTSCheckbox = wx.CheckBox(parent, -1, _("Add to full-text search index"))
 
     def ShowModal(self):
         if (retval := super().ShowModal()) == wx.ID_OK:
             selected_folder = self.folderCtrl.GetValue()
             if os.path.isdir(selected_folder):
-                return (selected_folder, self.categoryCombo.GetValue())
+                return (
+                    selected_folder,
+                    self.categoryCombo.GetValue(),
+                    self.addToFTSCheckbox.IsChecked()
+                )
 
 
 class SearchBookshelfDialog(SimpleDialog):

@@ -32,7 +32,7 @@ from .dialogs import (
     BundleErrorsDialog,
 )
 from .tasks import (
-    issue_import_folder_request,
+    import_folder_to_bookshelf,
     add_document_to_bookshelf,
     bundle_single_document,
 )
@@ -214,7 +214,7 @@ class LocalBookshelfProvider(BookshelfProvider):
         )
         with dialog:
             if (retval := dialog.ShowModal()) is not None:
-                category_name, tags_names = retval
+                category_name, tags_names, should_add_to_fts = retval
             else:
                 return
         task = partial(
@@ -222,6 +222,7 @@ class LocalBookshelfProvider(BookshelfProvider):
             filenames,
             category_name=category_name,
             tags_names=tags_names,
+            should_add_to_fts=should_add_to_fts
         )
         message = (
             _("Importing document...")
@@ -235,12 +236,13 @@ class LocalBookshelfProvider(BookshelfProvider):
             parent=wx.GetApp().GetTopWindow(),
         )
 
-    def _do_add_files_to_bookshelf(self, filenames, category_name, tags_names):
+    def _do_add_files_to_bookshelf(self, filenames, category_name, tags_names, should_add_to_fts):
         for filename in filenames:
             add_document_to_bookshelf(
                 DocumentUri.from_filename(filename),
                 category_name=category_name,
                 tags_names=tags_names,
+                should_add_to_fts=should_add_to_fts,
                 database_file=DEFAULT_BOOKSHELF_DATABASE_FILE,
             )
 
@@ -267,8 +269,27 @@ class LocalBookshelfProvider(BookshelfProvider):
             retval = dialog.ShowModal()
         if retval is None:
             return
-        folder, category_name = retval
-        issue_import_folder_request(folder, category_name)
+        folder, category_name, should_add_to_fts = retval
+        task = partial(import_folder_to_bookshelf, folder, category_name, should_add_to_fts)
+        AsyncSnakDialog(
+            task=task,
+            done_callback=self._on_folder_import_done,
+            message=_("Importing documents from folder. Please wait..."),
+            parent=wx.GetApp().GetTopWindow(),
+        )
+
+    def _on_folder_import_done(self, future):
+        try:
+            future.result()
+            wx.MessageBox(
+                _("Documents imported from folder."), _("Operation Completed"), style=wx.ICON_INFORMATION
+            )
+            sources_updated.send(self, update_sources=True)
+        except Exception:
+            log.exception("Failed to import folder", exc_info=True)
+            wx.MessageBox(
+                _("Failed to import documents from folder."), _("Error"), style=wx.ICON_ERROR
+            )
 
     def _on_search_bookshelf(self, provider):
         dialog = SearchBookshelfDialog(
@@ -549,7 +570,7 @@ class LocalDatabaseSource(Source):
         with dialog:
             if (retval := dialog.ShowModal()) is None:
                 return
-            category_name, tags_names = retval
+            category_name, tags_names, should_add_to_fts = retval
             anything_created = doc_instance.change_category_and_tags(
                 category_name, tags_names
             )

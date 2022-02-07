@@ -18,7 +18,7 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-BRANCH = 'tesseract-v51'
+BRANCH = 'develop'
 if app.arch == "x86":
     TESSERACT_ENGINE_DOWNLOAD_URL = f"https://raw.githubusercontent.com/blindpandas/bookworm/{BRANCH}/packages/tesseract/tesseract_v5.1_x86.zip"
 else:

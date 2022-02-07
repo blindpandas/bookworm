@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 import math
 import re
-import pytesseract
 
 
 # function to resize the image without distortion i.e resizing with ratios
@@ -205,6 +204,8 @@ def get_otsu(image):
 
 # function to correct the 2d skew of the image
 def correct_skew(image):
+    from bookworm.ocr_engines.tesseract_ocr_engine import pytesseract
+
     # resizing the image to 2000x3000 to sync it with
     #  the morphological tranformations in get_median_angle() function
     image_resized = image_resize(image, 2000, 3000)

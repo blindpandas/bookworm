@@ -38,7 +38,6 @@ from .models import (
 
 log = logger.getChild(__name__)
 ADD_TO_BOOKSHELF_URL_PREFIX = "/add-to-bookshelf"
-IMPORT_FOLDER_TO_BOOKSHELF_URL_PREFIX = "/import-folder-to-bookshelf"
 local_bookshelf_process_executor = ProcessPoolExecutor(max_workers=8)
 
 
@@ -52,17 +51,13 @@ def _add_document_index_endpoint(sender):
     sender.route(
         ADD_TO_BOOKSHELF_URL_PREFIX, method="POST", callback=add_to_bookshelf_view
     )
-    sender.route(
-        IMPORT_FOLDER_TO_BOOKSHELF_URL_PREFIX,
-        method="POST",
-        callback=import_folder_to_bookshelf_view,
-    )
 
 
 def issue_add_document_request(
     document_uri,
     category_name=None,
     tags_names=(),
+    should_add_to_fts=True,
     database_file=DEFAULT_BOOKSHELF_DATABASE_FILE,
 ):
     url = urllib.parse.urljoin(
@@ -73,17 +68,10 @@ def issue_add_document_request(
         "category": category_name,
         "tags": tags_names,
         "database_file": os.fspath(database_file),
+        "should_add_to_fts": should_add_to_fts
     }
     res = requests.post(url, json=data)
     log.debug(f"Add document to local bookshelf response: {res}, {res.text}")
-
-
-def issue_import_folder_request(folder, category_name):
-    url = urllib.parse.urljoin(
-        local_server.get_local_server_netloc(), IMPORT_FOLDER_TO_BOOKSHELF_URL_PREFIX
-    )
-    res = requests.post(url, json={"folder": folder, "category_name": category_name})
-    log.debug(f"Add folder to bookshelf response: {res}")
 
 
 def get_bundled_documents_folder():
@@ -115,6 +103,7 @@ def add_document_to_bookshelf(
     document_or_uri: t.Union[BaseDocument, DocumentUri],
     category_name: str,
     tags_names: list[str],
+    should_add_to_fts: bool,
     database_file: t.PathLike,
 ):
     """Add the given document to the bookshelf database."""
@@ -124,18 +113,20 @@ def add_document_to_bookshelf(
         else document_or_uri
     )
     if (existing_doc := Document.get_or_none(uri=document.uri)) is not None:
-        log.debug("Document already in the database. Checking index...")
-        db_page_count = (
-            DocumentFTSIndex.select()
-            .where(DocumentFTSIndex.document_id == existing_doc.get_id())
-            .count()
-        )
-        if db_page_count == len(document):
-            log.debug("Document index is OK")
-            return
-        else:
-            log.debug("Document index is not well formed. Rebuilding index...")
-            existing_doc.delete_instance()
+        log.debug("Document already in the database...")
+        if should_add_to_fts:
+            log.debug("Checking index...")
+            db_page_count = (
+                DocumentFTSIndex.select()
+                .where(DocumentFTSIndex.document_id == existing_doc.get_id())
+                .count()
+            )
+            if db_page_count == len(document):
+                log.debug("Document index is OK")
+                return
+            else:
+                log.debug("Document index is not well formed. Rebuilding index...")
+                existing_doc.delete_instance()
     if IS_RUNNING_PORTABLE:
         bundled_document_path = copy_document_to_bundled_documents(
             source_document_path=document.get_file_system_path(),
@@ -184,12 +175,13 @@ def add_document_to_bookshelf(
     ]
     for tag in tags:
         DocumentTag.create(document_id=doc_id, tag_id=tag.get_id())
-    fields = [Page.number, Page.content, Page.document]
-    page_objs = ((page.index, page.get_text(), doc) for page in document)
-    for batch in more_itertools.chunked(page_objs, 100):
-        Page.insert_many(batch, fields).execute()
-    DocumentFTSIndex.add_document_to_search_index(doc.get_id()).execute()
-    DocumentFTSIndex.optimize()
+    if should_add_to_fts:
+        fields = [Page.number, Page.content, Page.document]
+        page_objs = ((page.index, page.get_text(), doc) for page in document)
+        for batch in more_itertools.chunked(page_objs, 100):
+            Page.insert_many(batch, fields).execute()
+        DocumentFTSIndex.add_document_to_search_index(doc.get_id()).execute()
+        DocumentFTSIndex.optimize()
 
 
 def add_to_bookshelf_view():
@@ -209,22 +201,16 @@ def add_to_bookshelf_view():
                 document,
                 data["category"],
                 data["tags"],
+                data["should_add_to_fts"],
                 data["database_file"],
             )
             return {"status": "OK", "document_uri": doc_uri}
 
 
-def import_folder_to_bookshelf_view():
-    data = request.json
-    folder = Path(data["folder"])
+def import_folder_to_bookshelf(folder, category_name, should_add_to_fts):
+    folder = Path(folder)
     if (not folder.is_dir()) or (not folder.exists()):
-        return {"status": "Failed", "reason": "Folder not found"}
-    category_name = data.get("category_name") or folder.name
-    threaded_worker.submit(_do_import_folder_to_bookshelf, folder, category_name)
-    return {"status": "processing"}
-
-
-def _do_import_folder_to_bookshelf(folder, category_name):
+        raise FileNotFoundError(f"Folder {folder} not found") from RuntimeError 
     all_document_extensions = set()
     for doc_cls in BaseDocument.document_classes.values():
         if not doc_cls.__internal__:
@@ -238,13 +224,13 @@ def _do_import_folder_to_bookshelf(folder, category_name):
         max_workers=8, thread_name_prefix="bookshelf.import.folder"
     ) as executor:
         for retval in executor.map(
-            partial(_import_document, category_name), doc_filenames
+            partial(_import_document, category_name, should_add_to_fts), doc_filenames
         ):
             if retval:
                 log.info(f"Added document: {retval}")
 
 
-def _import_document(category_name, filename):
+def _import_document(category_name, should_add_to_fts, filename):
     try:
         uri = DocumentUri.from_filename(filename)
         with contextlib.closing(create_document(uri)) as document:
@@ -252,6 +238,7 @@ def _import_document(category_name, filename):
                 document,
                 category_name,
                 tags_names=(),
+                should_add_to_fts=should_add_to_fts,
                 database_file=DEFAULT_BOOKSHELF_DATABASE_FILE,
             )
     except:
