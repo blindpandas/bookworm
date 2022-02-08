@@ -20,9 +20,9 @@ log = logger.getChild(__name__)
 
 BRANCH = 'develop'
 if app.arch == "x86":
-    TESSERACT_ENGINE_DOWNLOAD_URL = f"https://raw.githubusercontent.com/blindpandas/bookworm/{BRANCH}/packages/tesseract/tesseract_v5.1_x86.zip"
+    TESSERACT_ENGINE_DOWNLOAD_URL = f"https://raw.githubusercontent.com/blindpandas/bookworm/{BRANCH}/packages/tesseract/tesseract_x86.zip"
 else:
-    TESSERACT_ENGINE_DOWNLOAD_URL = f"https://raw.githubusercontent.com/blindpandas/bookworm/{BRANCH}/packages/tesseract/tesseract_v5.1_x64.zip"
+    TESSERACT_ENGINE_DOWNLOAD_URL = f"https://raw.githubusercontent.com/blindpandas/bookworm/{BRANCH}/packages/tesseract/tesseract_x64.zip"
 FAST_TRAINEDDATA_DOWNLOAD_URL = "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/main/{lang_code}.traineddata"
 BEST_TRAINEDDATA_DOWNLOAD_URL = "https://raw.githubusercontent.com/tesseract-ocr/tessdata_best/main/{lang_code}.traineddata"
 

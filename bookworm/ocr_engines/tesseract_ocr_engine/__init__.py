@@ -33,6 +33,13 @@ class TesseractOcrEngine(BaseOcrEngine):
             return False
 
     @classmethod
+    def get_tesseract_version(cls):
+        if cls.check():
+            info = pytesseract.get_tesseract_version()
+            return ".".join(str(i) for i in info.version[:4])
+        raise RuntimeError("Could not find tesseract executable")
+
+    @classmethod
     def get_recognition_languages(cls) -> t.List[LocaleInfo]:
         langs = []
         for lng in pytesseract.get_languages():

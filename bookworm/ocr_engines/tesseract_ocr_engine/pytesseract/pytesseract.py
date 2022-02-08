@@ -379,12 +379,18 @@ def get_tesseract_version():
     """
     Returns LooseVersion object of the Tesseract version
     """
+    startupinfo = subprocess.STARTUPINFO()
+    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    startupinfo.wShowWindow = subprocess.SW_HIDE
+
     try:
         output = subprocess.check_output(
             [tesseract_cmd, '--version'],
             stderr=subprocess.STDOUT,
             env=environ,
             stdin=subprocess.DEVNULL,
+            startupinfo=startupinfo,
+            creationflags=subprocess.CREATE_NO_WINDOW
         )
     except OSError:
         raise TesseractNotFoundError()
