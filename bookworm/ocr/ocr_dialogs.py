@@ -91,7 +91,10 @@ class OcrPanel(SettingsPanel):
                 _("Manage Tesseract OCR Languages"),
                 _("Add support for new languages, and /or remove installed languages."),
             )
+            # Translators: label of a button
+            updateTesseractBtn = wx.Button(tessBox, -1, _("Update Tesseract engine..."))
             self.Bind(wx.EVT_BUTTON, self.onDownloadTesseractLanguages, tessLangDlBtn)
+            self.Bind(wx.EVT_BUTTON, self.onUpdateTesseractEngine, updateTesseractBtn)
         # Translators: the label of a group of controls in the reading page
         # of the settings related to image enhancement
         miscBox = self.make_static_box(_("Image processing"))
@@ -146,6 +149,46 @@ class OcrPanel(SettingsPanel):
                 ),
             )
             wx.CallAfter(restart_application)
+
+    def onUpdateTesseractEngine(self, event):
+        AsyncSnakDialog(
+            task=tesseract_download.is_new_tesseract_version_available,
+            done_callback=self._on_update_tesseract_version_retreived,
+            # Translators: message of a dialog
+            message=_("Checking for updates. Please wait..."),
+            parent=wx.GetApp().GetTopWindow(),
+        )
+
+    def _on_update_tesseract_version_retreived(self, future):
+        try:
+            if (is_update_available := future.result()):
+                retval = wx.MessageBox(
+                    _("A new version of Tesseract OCr engine is available for download.\nIt is strongly recommended to update to the latest version for the best accuracy and performance.\nWould you like to update to the new version?"),
+                    _("Update Tesseract OCr Engine?"),
+                    style=wx.YES_NO | wx.ICON_EXCLAMATION,
+                )
+                if retval != wx.YES:
+                    return
+                AsyncSnakDialog(
+                    task=tesseract_download.remove_tesseract,
+                    done_callback=lambda fut: self.onDownloadTesseractEngine(None),
+                    # Translators: message of a dialog
+                    message=_("Removing old Tesseract version. Please wait..."),
+                    parent=wx.GetApp().GetTopWindow(),
+                )
+            else:
+                wx.MessageBox(
+                    # Translators: content of a message box
+                    _("Your version of Tesseract OCR engine is up to date."),
+                    # Translators: title of a message box
+                    _("No updates"),
+                    style=wx.ICON_INFORMATION
+                )
+        except:
+            log.exception("Failed to check for updates for tesseract OCR engine", exc_info=True)
+            wx.MessageBox(
+                _("Failed to check for updates for Tesseract OCr engine."), _("Error"), style=wx.ICON_ERROR
+            )
 
 
 class OCROptionsDialog(SimpleDialog):

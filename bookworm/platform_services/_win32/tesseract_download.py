@@ -1,6 +1,8 @@
 # coding: utf-8
 
 import sys
+import shutil
+import requests
 import wx
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit
@@ -19,6 +21,7 @@ log = logger.getChild(__name__)
 
 
 BRANCH = 'develop'
+TESSERACT_VERSION_URL = f"https://raw.githubusercontent.com/blindpandas/bookworm/{BRANCH}/packages/tesseract/version"
 if app.arch == "x86":
     TESSERACT_ENGINE_DOWNLOAD_URL = f"https://raw.githubusercontent.com/blindpandas/bookworm/{BRANCH}/packages/tesseract/tesseract_x86.zip"
 else:
@@ -56,6 +59,11 @@ def get_tessdata():
 
 def get_language_path(language):
     return Path(get_tessdata(), f"{language}.traineddata")
+
+
+def is_new_tesseract_version_available():
+    remote_version = requests.get(TESSERACT_VERSION_URL).text
+    return TesseractOcrEngine.get_tesseract_version() != remote_version
 
 
 def download_tesseract_engine(progress_dlg):
@@ -112,3 +120,8 @@ def download_language(lang_code, variant, target_file, progress_dlg):
     progress_dlg.set_abort_callback(dl_request.cancel)
     dl_request.download_to_filesystem(target_file, callback)
     return not dl_request.is_cancelled()
+
+
+def remove_tesseract():
+    tesseract_path = get_tesseract_path()
+    shutil.rmtree(tesseract_path, ignore_errors=False)
