@@ -20,7 +20,7 @@ from bookworm.logger import logger
 log = logger.getChild(__name__)
 
 
-BRANCH = 'develop'
+BRANCH = "develop"
 TESSERACT_VERSION_URL = f"https://raw.githubusercontent.com/blindpandas/bookworm/{BRANCH}/packages/tesseract/version"
 if app.arch == "x86":
     TESSERACT_ENGINE_DOWNLOAD_URL = f"https://raw.githubusercontent.com/blindpandas/bookworm/{BRANCH}/packages/tesseract/tesseract_x86.zip"
@@ -32,25 +32,119 @@ BEST_TRAINEDDATA_DOWNLOAD_URL = "https://raw.githubusercontent.com/tesseract-ocr
 
 def get_downloadable_languages():
     return (
-        'afr', 'sqi', 'amh', 'ara', 'hye', 'asm', 'aze_cyrl', 'aze',
-        'ben', 'eus', 'bel', 'bos', 'bre', 'bul', 'mya', 'cat', 'ceb',
-        'chr', 'chi_sim', 'hrv', 'ces', 'dan', 'nld', 'dzo', 'eng',
-        'epo', 'est', 'fao', 'fil', 'fin', 'fra', 'glg', 'kat_old', 'kat',
-        'deu', 'ell', 'guj', 'heb', 'hin', 'hun', 'isl', 'ind', 'gle',
-        'ita_old', 'ita', 'jpn_vert', 'jpn', 'jav', 'kan', 'kaz',
-        'khm', 'kor_vert', 'kor', 'kmr', 'kir', 'lao', 'lav', 'lit', 'ltz',
-        'mkd', 'msa', 'mal', 'mlt', 'mri', 'mar', 'mon', 'nep', 'nor',
-        'ori', 'pus', 'fas', 'pol', 'por', 'pan', 'que', 'ron', 'rus', 'gla',
-        'srp_latn', 'srp', 'snd', 'sin', 'slk', 'slv', 'spa_old', 'spa',
-        'sun', 'swa', 'swe', 'tgk', 'tam', 'tat', 'tel', 'tha', 'bod', 'tir',
-        'ton', 'tur', 'ukr', 'urd', 'uig', 'uzb_cyrl', 'uzb', 'vie', 'cym', 'fry', 'yid', 'yor'
+        "afr",
+        "sqi",
+        "amh",
+        "ara",
+        "hye",
+        "asm",
+        "aze_cyrl",
+        "aze",
+        "ben",
+        "eus",
+        "bel",
+        "bos",
+        "bre",
+        "bul",
+        "mya",
+        "cat",
+        "ceb",
+        "chr",
+        "chi_sim",
+        "hrv",
+        "ces",
+        "dan",
+        "nld",
+        "dzo",
+        "eng",
+        "epo",
+        "est",
+        "fao",
+        "fil",
+        "fin",
+        "fra",
+        "glg",
+        "kat_old",
+        "kat",
+        "deu",
+        "ell",
+        "guj",
+        "heb",
+        "hin",
+        "hun",
+        "isl",
+        "ind",
+        "gle",
+        "ita_old",
+        "ita",
+        "jpn_vert",
+        "jpn",
+        "jav",
+        "kan",
+        "kaz",
+        "khm",
+        "kor_vert",
+        "kor",
+        "kmr",
+        "kir",
+        "lao",
+        "lav",
+        "lit",
+        "ltz",
+        "mkd",
+        "msa",
+        "mal",
+        "mlt",
+        "mri",
+        "mar",
+        "mon",
+        "nep",
+        "nor",
+        "ori",
+        "pus",
+        "fas",
+        "pol",
+        "por",
+        "pan",
+        "que",
+        "ron",
+        "rus",
+        "gla",
+        "srp_latn",
+        "srp",
+        "snd",
+        "sin",
+        "slk",
+        "slv",
+        "spa_old",
+        "spa",
+        "sun",
+        "swa",
+        "swe",
+        "tgk",
+        "tam",
+        "tat",
+        "tel",
+        "tha",
+        "bod",
+        "tir",
+        "ton",
+        "tur",
+        "ukr",
+        "urd",
+        "uig",
+        "uzb_cyrl",
+        "uzb",
+        "vie",
+        "cym",
+        "fry",
+        "yid",
+        "yor",
     )
 
+
 def is_tesseract_available():
-    return (
-        sys.platform == "win32"
-        and TesseractOcrEngine.check()
-    )
+    return sys.platform == "win32" and TesseractOcrEngine.check()
 
 
 def get_tessdata():
@@ -111,7 +205,7 @@ def download_tesseract_engine(progress_dlg):
 def download_language(lang_code, variant, target_file, progress_dlg):
     url_prefix = (
         BEST_TRAINEDDATA_DOWNLOAD_URL
-        if variant == 'best'
+        if variant == "best"
         else FAST_TRAINEDDATA_DOWNLOAD_URL
     )
     download_url = url_prefix.format(lang_code=lang_code)

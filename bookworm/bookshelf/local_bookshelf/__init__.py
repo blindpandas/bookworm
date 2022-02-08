@@ -222,7 +222,7 @@ class LocalBookshelfProvider(BookshelfProvider):
             filenames,
             category_name=category_name,
             tags_names=tags_names,
-            should_add_to_fts=should_add_to_fts
+            should_add_to_fts=should_add_to_fts,
         )
         message = (
             _("Importing document...")
@@ -236,7 +236,9 @@ class LocalBookshelfProvider(BookshelfProvider):
             parent=wx.GetApp().GetTopWindow(),
         )
 
-    def _do_add_files_to_bookshelf(self, filenames, category_name, tags_names, should_add_to_fts):
+    def _do_add_files_to_bookshelf(
+        self, filenames, category_name, tags_names, should_add_to_fts
+    ):
         for filename in filenames:
             add_document_to_bookshelf(
                 DocumentUri.from_filename(filename),
@@ -270,7 +272,9 @@ class LocalBookshelfProvider(BookshelfProvider):
         if retval is None:
             return
         folder, category_name, should_add_to_fts = retval
-        task = partial(import_folder_to_bookshelf, folder, category_name, should_add_to_fts)
+        task = partial(
+            import_folder_to_bookshelf, folder, category_name, should_add_to_fts
+        )
         AsyncSnakDialog(
             task=task,
             done_callback=self._on_folder_import_done,
@@ -282,13 +286,17 @@ class LocalBookshelfProvider(BookshelfProvider):
         try:
             future.result()
             wx.MessageBox(
-                _("Documents imported from folder."), _("Operation Completed"), style=wx.ICON_INFORMATION
+                _("Documents imported from folder."),
+                _("Operation Completed"),
+                style=wx.ICON_INFORMATION,
             )
             sources_updated.send(self, update_sources=True)
         except Exception:
             log.exception("Failed to import folder", exc_info=True)
             wx.MessageBox(
-                _("Failed to import documents from folder."), _("Error"), style=wx.ICON_ERROR
+                _("Failed to import documents from folder."),
+                _("Error"),
+                style=wx.ICON_ERROR,
             )
 
     def _on_search_bookshelf(self, provider):
@@ -566,7 +574,7 @@ class LocalDatabaseSource(Source):
                     DocumentTag.document_id == doc_instance.get_id()
                 )
             ],
-            can_fts_index=False
+            can_fts_index=False,
         )
         with dialog:
             if (retval := dialog.ShowModal()) is None:

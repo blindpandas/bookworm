@@ -68,7 +68,7 @@ def issue_add_document_request(
         "category": category_name,
         "tags": tags_names,
         "database_file": os.fspath(database_file),
-        "should_add_to_fts": should_add_to_fts
+        "should_add_to_fts": should_add_to_fts,
     }
     res = requests.post(url, json=data)
     log.debug(f"Add document to local bookshelf response: {res}, {res.text}")
@@ -210,7 +210,7 @@ def add_to_bookshelf_view():
 def import_folder_to_bookshelf(folder, category_name, should_add_to_fts):
     folder = Path(folder)
     if (not folder.is_dir()) or (not folder.exists()):
-        raise FileNotFoundError(f"Folder {folder} not found") from RuntimeError 
+        raise FileNotFoundError(f"Folder {folder} not found") from RuntimeError
     all_document_extensions = set()
     for doc_cls in BaseDocument.document_classes.values():
         if not doc_cls.__internal__:

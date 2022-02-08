@@ -28,51 +28,51 @@ except ImportError:
     import Image
 
 
-tesseract_cmd = 'tesseract'
+tesseract_cmd = "tesseract"
 
-numpy_installed = find_loader('numpy') is not None
+numpy_installed = find_loader("numpy") is not None
 if numpy_installed:
     from numpy import ndarray
 
-pandas_installed = find_loader('pandas') is not None
+pandas_installed = find_loader("pandas") is not None
 if pandas_installed:
     import pandas as pd
 
-DEFAULT_ENCODING = 'utf-8'
-LANG_PATTERN = re.compile('^[a-z_]+$')
-RGB_MODE = 'RGB'
+DEFAULT_ENCODING = "utf-8"
+LANG_PATTERN = re.compile("^[a-z_]+$")
+RGB_MODE = "RGB"
 SUPPORTED_FORMATS = {
-    'JPEG',
-    'PNG',
-    'PBM',
-    'PGM',
-    'PPM',
-    'TIFF',
-    'BMP',
-    'GIF',
-    'WEBP',
+    "JPEG",
+    "PNG",
+    "PBM",
+    "PGM",
+    "PPM",
+    "TIFF",
+    "BMP",
+    "GIF",
+    "WEBP",
 }
 
 OSD_KEYS = {
-    'Page number': ('page_num', int),
-    'Orientation in degrees': ('orientation', int),
-    'Rotate': ('rotate', int),
-    'Orientation confidence': ('orientation_conf', float),
-    'Script': ('script', str),
-    'Script confidence': ('script_conf', float),
+    "Page number": ("page_num", int),
+    "Orientation in degrees": ("orientation", int),
+    "Rotate": ("rotate", int),
+    "Orientation confidence": ("orientation_conf", float),
+    "Script": ("script", str),
+    "Script confidence": ("script_conf", float),
 }
 
 
 class Output:
-    BYTES = 'bytes'
-    DATAFRAME = 'data.frame'
-    DICT = 'dict'
-    STRING = 'string'
+    BYTES = "bytes"
+    DATAFRAME = "data.frame"
+    DICT = "dict"
+    STRING = "string"
 
 
 class PandasNotSupported(EnvironmentError):
     def __init__(self):
-        super().__init__('Missing pandas package')
+        super().__init__("Missing pandas package")
 
 
 class TesseractError(RuntimeError):
@@ -86,21 +86,21 @@ class TesseractNotFoundError(EnvironmentError):
     def __init__(self):
         super().__init__(
             f"{tesseract_cmd} is not installed or it's not in your PATH."
-            + ' See README file for more information.',
+            + " See README file for more information.",
         )
 
 
 class TSVNotSupported(EnvironmentError):
     def __init__(self):
         super().__init__(
-            'TSV output not supported. Tesseract >= 3.05 required',
+            "TSV output not supported. Tesseract >= 3.05 required",
         )
 
 
 class ALTONotSupported(EnvironmentError):
     def __init__(self):
         super().__init__(
-            'ALTO output not supported. Tesseract >= 4.1.0 required',
+            "ALTO output not supported. Tesseract >= 4.1.0 required",
         )
 
 
@@ -129,7 +129,7 @@ def timeout_manager(proc, seconds=None):
             yield error_string
         except subprocess.TimeoutExpired:
             kill(proc, -1)
-            raise RuntimeError('Tesseract process timeout')
+            raise RuntimeError("Tesseract process timeout")
     finally:
         proc.stdin.close()
         proc.stdout.close()
@@ -148,14 +148,14 @@ def run_once(func):
 
 
 def get_errors(error_string):
-    return ' '.join(
+    return " ".join(
         line for line in error_string.decode(DEFAULT_ENCODING).splitlines()
     ).strip()
 
 
 def cleanup(temp_name):
     """Tries to remove temp files by filename wildcard path."""
-    for filename in iglob(temp_name + '*' if temp_name else temp_name):
+    for filename in iglob(temp_name + "*" if temp_name else temp_name):
         try:
             remove(filename)
         except OSError as e:
@@ -168,16 +168,16 @@ def prepare(image):
         image = Image.fromarray(image)
 
     if not isinstance(image, Image.Image):
-        raise TypeError('Unsupported image object')
+        raise TypeError("Unsupported image object")
 
-    extension = 'PNG' if not image.format else image.format
+    extension = "PNG" if not image.format else image.format
     if extension not in SUPPORTED_FORMATS:
-        raise TypeError('Unsupported image format/type')
+        raise TypeError("Unsupported image format/type")
 
-    if 'A' in image.getbands():
+    if "A" in image.getbands():
         # discard and replace the alpha channel with white background
         background = Image.new(RGB_MODE, image.size, (255, 255, 255))
-        background.paste(image, (0, 0), image.getchannel('A'))
+        background.paste(image, (0, 0), image.getchannel("A"))
         image = background
 
     image.format = extension
@@ -187,7 +187,7 @@ def prepare(image):
 @contextmanager
 def save(image):
     try:
-        with NamedTemporaryFile(prefix='tess_', delete=False) as f:
+        with NamedTemporaryFile(prefix="tess_", delete=False) as f:
             if isinstance(image, str):
                 yield f.name, realpath(normpath(normcase(image)))
                 return
@@ -204,21 +204,21 @@ def subprocess_args(include_stdout=True):
     # for reference and comments.
 
     kwargs = {
-        'stdin': subprocess.PIPE,
-        'stderr': subprocess.PIPE,
-        'env': environ,
+        "stdin": subprocess.PIPE,
+        "stderr": subprocess.PIPE,
+        "env": environ,
     }
 
-    kwargs['startupinfo'] = subprocess.STARTUPINFO()
-    kwargs['startupinfo'].dwFlags |= subprocess.STARTF_USESHOWWINDOW
-    kwargs['startupinfo'].wShowWindow = subprocess.SW_HIDE
+    kwargs["startupinfo"] = subprocess.STARTUPINFO()
+    kwargs["startupinfo"].dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    kwargs["startupinfo"].wShowWindow = subprocess.SW_HIDE
 
     if include_stdout:
-        kwargs['stdout'] = subprocess.PIPE
+        kwargs["stdout"] = subprocess.PIPE
     else:
-        kwargs['stdout'] = subprocess.DEVNULL
+        kwargs["stdout"] = subprocess.DEVNULL
 
-    kwargs['creationflags'] = subprocess.CREATE_NO_WINDOW
+    kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
     return kwargs
 
 
@@ -227,24 +227,24 @@ def run_tesseract(
     output_filename_base,
     extension,
     lang,
-    config='',
+    config="",
     nice=0,
     timeout=0,
 ):
     cmd_args = []
 
-    if not sys.platform.startswith('win32') and nice != 0:
-        cmd_args += ('nice', '-n', str(nice))
+    if not sys.platform.startswith("win32") and nice != 0:
+        cmd_args += ("nice", "-n", str(nice))
 
     cmd_args += (tesseract_cmd, input_filename, output_filename_base)
 
     if lang is not None:
-        cmd_args += ('-l', lang)
+        cmd_args += ("-l", lang)
 
     if config:
         cmd_args += shlex.split(config)
 
-    if extension and extension not in {'box', 'osd', 'tsv', 'xml'}:
+    if extension and extension not in {"box", "osd", "tsv", "xml"}:
         cmd_args.append(extension)
 
     try:
@@ -261,9 +261,9 @@ def run_tesseract(
 
 def run_and_get_output(
     image,
-    extension='',
+    extension="",
     lang=None,
-    config='',
+    config="",
     nice=0,
     timeout=0,
     return_bytes=False,
@@ -271,18 +271,18 @@ def run_and_get_output(
 
     with save(image) as (temp_name, input_filename):
         kwargs = {
-            'input_filename': input_filename,
-            'output_filename_base': temp_name,
-            'extension': extension,
-            'lang': lang,
-            'config': config,
-            'nice': nice,
-            'timeout': timeout,
+            "input_filename": input_filename,
+            "output_filename_base": temp_name,
+            "extension": extension,
+            "lang": lang,
+            "config": config,
+            "nice": nice,
+            "timeout": timeout,
         }
 
         run_tesseract(**kwargs)
-        filename = kwargs['output_filename_base'] + extsep + extension
-        with open(filename, 'rb') as output_file:
+        filename = kwargs["output_filename_base"] + extsep + extension
+        with open(filename, "rb") as output_file:
             if return_bytes:
                 return output_file.read()
             return output_file.read().decode(DEFAULT_ENCODING)
@@ -290,7 +290,7 @@ def run_and_get_output(
 
 def file_to_dict(tsv, cell_delimiter, str_col_idx):
     result = {}
-    rows = [row.split(cell_delimiter) for row in tsv.strip().split('\n')]
+    rows = [row.split(cell_delimiter) for row in tsv.strip().split("\n")]
     if len(rows) < 2:
         return result
 
@@ -299,7 +299,7 @@ def file_to_dict(tsv, cell_delimiter, str_col_idx):
     if len(rows[-1]) < length:
         # Fixes bug that occurs when last text string in TSV is null, and
         # last row is missing a final cell in TSV file
-        rows[-1].append('')
+        rows[-1].append("")
 
     if str_col_idx < 0:
         str_col_idx += length
@@ -335,13 +335,13 @@ def is_valid(val, _type):
 def osd_to_dict(osd):
     return {
         OSD_KEYS[kv[0]][0]: OSD_KEYS[kv[0]][1](kv[1])
-        for kv in (line.split(': ') for line in osd.split('\n'))
+        for kv in (line.split(": ") for line in osd.split("\n"))
         if len(kv) == 2 and is_valid(kv[1], OSD_KEYS[kv[0]][1])
     }
 
 
-def get_languages(config=''):
-    cmd_args = [tesseract_cmd, '--list-langs']
+def get_languages(config=""):
+    cmd_args = [tesseract_cmd, "--list-langs"]
     if config:
         cmd_args += shlex.split(config)
 
@@ -355,7 +355,7 @@ def get_languages(config=''):
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             startupinfo=startupinfo,
-            creationflags=subprocess.CREATE_NO_WINDOW
+            creationflags=subprocess.CREATE_NO_WINDOW,
         )
     except OSError:
         raise TesseractNotFoundError()
@@ -385,12 +385,12 @@ def get_tesseract_version():
 
     try:
         output = subprocess.check_output(
-            [tesseract_cmd, '--version'],
+            [tesseract_cmd, "--version"],
             stderr=subprocess.STDOUT,
             env=environ,
             stdin=subprocess.DEVNULL,
             startupinfo=startupinfo,
-            creationflags=subprocess.CREATE_NO_WINDOW
+            creationflags=subprocess.CREATE_NO_WINDOW,
         )
     except OSError:
         raise TesseractNotFoundError()
@@ -400,7 +400,7 @@ def get_tesseract_version():
 
     try:
         loose_version = LooseVersion(version)
-        assert loose_version > '0'
+        assert loose_version > "0"
     except AttributeError:
         raise SystemExit(f'Invalid tesseract version: "{raw_version}"')
 
@@ -410,7 +410,7 @@ def get_tesseract_version():
 def image_to_string(
     image,
     lang=None,
-    config='',
+    config="",
     nice=0,
     output_type=Output.STRING,
     timeout=0,
@@ -418,11 +418,11 @@ def image_to_string(
     """
     Returns the result of a Tesseract OCR run on the provided image to string
     """
-    args = [image, 'txt', lang, config, nice, timeout]
+    args = [image, "txt", lang, config, nice, timeout]
 
     return {
         Output.BYTES: lambda: run_and_get_output(*(args + [True])),
-        Output.DICT: lambda: {'text': run_and_get_output(*args)},
+        Output.DICT: lambda: {"text": run_and_get_output(*args)},
         Output.STRING: lambda: run_and_get_output(*args),
     }[output_type]()
 
@@ -430,17 +430,17 @@ def image_to_string(
 def image_to_pdf_or_hocr(
     image,
     lang=None,
-    config='',
+    config="",
     nice=0,
-    extension='pdf',
+    extension="pdf",
     timeout=0,
 ):
     """
     Returns the result of a Tesseract OCR run on the provided image to pdf/hocr
     """
 
-    if extension not in {'pdf', 'hocr'}:
-        raise ValueError(f'Unsupported extension: {extension}')
+    if extension not in {"pdf", "hocr"}:
+        raise ValueError(f"Unsupported extension: {extension}")
     args = [image, extension, lang, config, nice, timeout, True]
 
     return run_and_get_output(*args)
@@ -449,7 +449,7 @@ def image_to_pdf_or_hocr(
 def image_to_alto_xml(
     image,
     lang=None,
-    config='',
+    config="",
     nice=0,
     timeout=0,
 ):
@@ -457,11 +457,11 @@ def image_to_alto_xml(
     Returns the result of a Tesseract OCR run on the provided image to ALTO XML
     """
 
-    if get_tesseract_version() < '4.1.0':
+    if get_tesseract_version() < "4.1.0":
         raise ALTONotSupported()
 
-    config = f'-c tessedit_create_alto=1 {config.strip()}'
-    args = [image, 'xml', lang, config, nice, timeout, True]
+    config = f"-c tessedit_create_alto=1 {config.strip()}"
+    args = [image, "xml", lang, config, nice, timeout, True]
 
     return run_and_get_output(*args)
 
@@ -469,7 +469,7 @@ def image_to_alto_xml(
 def image_to_boxes(
     image,
     lang=None,
-    config='',
+    config="",
     nice=0,
     output_type=Output.STRING,
     timeout=0,
@@ -477,14 +477,14 @@ def image_to_boxes(
     """
     Returns string containing recognized characters and their box boundaries
     """
-    config = f'{config.strip()} batch.nochop makebox'
-    args = [image, 'box', lang, config, nice, timeout]
+    config = f"{config.strip()} batch.nochop makebox"
+    args = [image, "box", lang, config, nice, timeout]
 
     return {
         Output.BYTES: lambda: run_and_get_output(*(args + [True])),
         Output.DICT: lambda: file_to_dict(
-            f'char left bottom right top page\n{run_and_get_output(*args)}',
-            ' ',
+            f"char left bottom right top page\n{run_and_get_output(*args)}",
+            " ",
             0,
         ),
         Output.STRING: lambda: run_and_get_output(*args),
@@ -495,7 +495,7 @@ def get_pandas_output(args, config=None):
     if not pandas_installed:
         raise PandasNotSupported()
 
-    kwargs = {'quoting': QUOTE_NONE, 'sep': '\t'}
+    kwargs = {"quoting": QUOTE_NONE, "sep": "\t"}
     try:
         kwargs.update(config)
     except (TypeError, ValueError):
@@ -507,7 +507,7 @@ def get_pandas_output(args, config=None):
 def image_to_data(
     image,
     lang=None,
-    config='',
+    config="",
     nice=0,
     output_type=Output.STRING,
     timeout=0,
@@ -518,11 +518,11 @@ def image_to_data(
     and other information. Requires Tesseract 3.05+
     """
 
-    if get_tesseract_version() < '3.05':
+    if get_tesseract_version() < "3.05":
         raise TSVNotSupported()
 
-    config = f'-c tessedit_create_tsv=1 {config.strip()}'
-    args = [image, 'tsv', lang, config, nice, timeout]
+    config = f"-c tessedit_create_tsv=1 {config.strip()}"
+    args = [image, "tsv", lang, config, nice, timeout]
 
     return {
         Output.BYTES: lambda: run_and_get_output(*(args + [True])),
@@ -530,15 +530,15 @@ def image_to_data(
             args + [True],
             pandas_config,
         ),
-        Output.DICT: lambda: file_to_dict(run_and_get_output(*args), '\t', -1),
+        Output.DICT: lambda: file_to_dict(run_and_get_output(*args), "\t", -1),
         Output.STRING: lambda: run_and_get_output(*args),
     }[output_type]()
 
 
 def image_to_osd(
     image,
-    lang='osd',
-    config='',
+    lang="osd",
+    config="",
     nice=0,
     output_type=Output.STRING,
     timeout=0,
@@ -546,9 +546,9 @@ def image_to_osd(
     """
     Returns string containing the orientation and script detection (OSD)
     """
-    psm_dash = '' if get_tesseract_version() < '3.05' else '-'
-    config = f'{psm_dash}-psm 0 {config.strip()}'
-    args = [image, 'osd', lang, config, nice, timeout]
+    psm_dash = "" if get_tesseract_version() < "3.05" else "-"
+    config = f"{psm_dash}-psm 0 {config.strip()}"
+    args = [image, "osd", lang, config, nice, timeout]
 
     return {
         Output.BYTES: lambda: run_and_get_output(*(args + [True])),
@@ -560,22 +560,22 @@ def image_to_osd(
 def main():
     if len(sys.argv) == 2:
         filename, lang = sys.argv[1], None
-    elif len(sys.argv) == 4 and sys.argv[1] == '-l':
+    elif len(sys.argv) == 4 and sys.argv[1] == "-l":
         filename, lang = sys.argv[3], sys.argv[2]
     else:
-        print('Usage: pytesseract [-l lang] input_file\n', file=sys.stderr)
+        print("Usage: pytesseract [-l lang] input_file\n", file=sys.stderr)
         return 2
 
     try:
         with Image.open(filename) as img:
             print(image_to_string(img, lang=lang))
     except TesseractNotFoundError as e:
-        print(f'{str(e)}\n', file=sys.stderr)
+        print(f"{str(e)}\n", file=sys.stderr)
         return 1
     except OSError as e:
-        print(f'{type(e).__name__}: {e}', file=sys.stderr)
+        print(f"{type(e).__name__}: {e}", file=sys.stderr)
         return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

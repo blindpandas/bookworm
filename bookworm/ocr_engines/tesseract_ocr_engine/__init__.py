@@ -15,9 +15,9 @@ from . import pytesseract
 log = logger.getChild(__name__)
 
 
-
 def get_tesseract_path():
     return data_path(f"tesseract_ocr_{app.arch}").resolve()
+
 
 class TesseractOcrEngine(BaseOcrEngine):
     name = "tesseract_ocr"
@@ -26,7 +26,9 @@ class TesseractOcrEngine(BaseOcrEngine):
     @classmethod
     def check(cls) -> bool:
         if sys.platform == "win32":
-            tesseract_executable = get_tesseract_path().joinpath("tesseract.exe").resolve()
+            tesseract_executable = (
+                get_tesseract_path().joinpath("tesseract.exe").resolve()
+            )
             if tesseract_executable.is_file():
                 pytesseract.pytesseract.tesseract_cmd = os.fspath(tesseract_executable)
                 return True
@@ -52,9 +54,7 @@ class TesseractOcrEngine(BaseOcrEngine):
     @classmethod
     def recognize(cls, ocr_request: OcrRequest) -> OcrResult:
         recognized_text = pytesseract.image_to_string(
-            ocr_request.image.to_pil(),
-            ocr_request.language.given_locale_name,
-            nice=1
+            ocr_request.image.to_pil(), ocr_request.language.given_locale_name, nice=1
         )
         return OcrResult(
             recognized_text=recognized_text,

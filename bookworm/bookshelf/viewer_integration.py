@@ -100,13 +100,13 @@ class BookshelfMenu(wx.Menu):
         with dialog:
             retval = dialog.ShowModal()
         if retval is not None:
-            category_name, tags_names, should_add_to_fts= retval
+            category_name, tags_names, should_add_to_fts = retval
             threaded_worker.submit(
                 issue_add_document_request,
                 document_uri=self.view.reader.document.uri,
                 category_name=category_name,
                 tags_names=tags_names,
-                should_add_to_fts=should_add_to_fts
+                should_add_to_fts=should_add_to_fts,
             )
             wx.CallAfter(
                 self.Enable, StatefulBookshelfMenuIds.add_current_book_to_shelf, False

@@ -161,9 +161,11 @@ class OcrPanel(SettingsPanel):
 
     def _on_update_tesseract_version_retreived(self, future):
         try:
-            if (is_update_available := future.result()):
+            if is_update_available := future.result():
                 retval = wx.MessageBox(
-                    _("A new version of Tesseract OCr engine is available for download.\nIt is strongly recommended to update to the latest version for the best accuracy and performance.\nWould you like to update to the new version?"),
+                    _(
+                        "A new version of Tesseract OCr engine is available for download.\nIt is strongly recommended to update to the latest version for the best accuracy and performance.\nWould you like to update to the new version?"
+                    ),
                     _("Update Tesseract OCr Engine?"),
                     style=wx.YES_NO | wx.ICON_EXCLAMATION,
                 )
@@ -182,12 +184,16 @@ class OcrPanel(SettingsPanel):
                     _("Your version of Tesseract OCR engine is up to date."),
                     # Translators: title of a message box
                     _("No updates"),
-                    style=wx.ICON_INFORMATION
+                    style=wx.ICON_INFORMATION,
                 )
         except:
-            log.exception("Failed to check for updates for tesseract OCR engine", exc_info=True)
+            log.exception(
+                "Failed to check for updates for tesseract OCR engine", exc_info=True
+            )
             wx.MessageBox(
-                _("Failed to check for updates for Tesseract OCr engine."), _("Error"), style=wx.ICON_ERROR
+                _("Failed to check for updates for Tesseract OCr engine."),
+                _("Error"),
+                style=wx.ICON_ERROR,
             )
 
 
@@ -323,16 +329,21 @@ class TesseractLanguageManager(SimpleDialog):
     def addControls(self, parent):
         self.notebookCtrl = wx.Notebook(parent, -1)
         panel_info = [
-            (_("Installed Languages"), TesseractLanguagePanel(self.notebookCtrl, is_offline=True)),
-            (_("Downloadable Languages"), TesseractLanguagePanel(self.notebookCtrl, is_offline=False))
+            (
+                _("Installed Languages"),
+                TesseractLanguagePanel(self.notebookCtrl, is_offline=True),
+            ),
+            (
+                _("Downloadable Languages"),
+                TesseractLanguagePanel(self.notebookCtrl, is_offline=False),
+            ),
         ]
         for (label, panel) in panel_info:
             panel.SetSizerType("vertical")
-            self.notebookCtrl.AddPage(
-                panel,
-                label
-            )
-        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.onNotebookPageChanged, self.notebookCtrl)
+            self.notebookCtrl.AddPage(panel, label)
+        self.Bind(
+            wx.EVT_NOTEBOOK_PAGE_CHANGED, self.onNotebookPageChanged, self.notebookCtrl
+        )
         self.notebookCtrl.GetCurrentPage().populate_list(set_focus=False)
 
     def getButtons(self, parent):
@@ -348,7 +359,6 @@ class TesseractLanguageManager(SimpleDialog):
 
 
 class TesseractLanguagePanel(sc.SizedPanel):
-
     def __init__(self, *args, is_offline, **kwargs):
         super().__init__(*args, **kwargs)
         self.is_offline = is_offline
@@ -367,9 +377,13 @@ class TesseractLanguagePanel(sc.SizedPanel):
         btnPanel.SetSizerProps(expand=True)
         if not self.is_offline:
             # Translators: text of a button to add a language to Tesseract OCR Engine (best quality model)
-            self.addBestButton = wx.Button(btnPanel, wx.ID_ANY, _("Download &Best Model"))
+            self.addBestButton = wx.Button(
+                btnPanel, wx.ID_ANY, _("Download &Best Model")
+            )
             # Translators: text of a button to add a language to Tesseract OCR Engine (fastest model)
-            self.addFastButton = wx.Button(btnPanel, wx.ID_ANY, _("Download &Fast Model"))
+            self.addFastButton = wx.Button(
+                btnPanel, wx.ID_ANY, _("Download &Fast Model")
+            )
             self.Bind(wx.EVT_BUTTON, self.onAdd, self.addFastButton)
             self.Bind(wx.EVT_BUTTON, self.onAdd, self.addBestButton)
         else:
@@ -377,15 +391,16 @@ class TesseractLanguagePanel(sc.SizedPanel):
             self.removeButton = wx.Button(btnPanel, wx.ID_REMOVE, _("&Remove"))
             self.Bind(wx.EVT_BUTTON, self.onRemove, id=wx.ID_REMOVE)
         self.tesseractLanguageList.Bind(
-            wx.EVT_SET_FOCUS,
-            self.onListFocus,
-            self.tesseractLanguageList
+            wx.EVT_SET_FOCUS, self.onListFocus, self.tesseractLanguageList
         )
 
     def populate_list(self, set_focus=True):
         installed_languages = [
             (True, info)
-            for info in sorted(TesseractOcrEngine.get_recognition_languages(), key=lambda l: l.english_name)
+            for info in sorted(
+                TesseractOcrEngine.get_recognition_languages(),
+                key=lambda l: l.english_name,
+            )
         ]
         if self.is_offline:
             languages = installed_languages
@@ -433,7 +448,7 @@ class TesseractLanguagePanel(sc.SizedPanel):
         if (selected := self.tesseractLanguageList.get_selected()) is None:
             return
         lang = selected[1]
-        variant = 'best' if event.GetEventObject() == self.addBestButton else 'fast'
+        variant = "best" if event.GetEventObject() == self.addBestButton else "fast"
         lang_code = lang.given_locale_name
         if lang_code not in self.online_languages:
             log.debug(f"Could not find download info for language {lang_code}")
@@ -468,7 +483,11 @@ class TesseractLanguagePanel(sc.SizedPanel):
             can_abort=True,
         )
         threaded_worker.submit(
-            tesseract_download.download_language, lang_code, variant, target_file, progress_dlg
+            tesseract_download.download_language,
+            lang_code,
+            variant,
+            target_file,
+            progress_dlg,
         ).add_done_callback(
             lambda future: wx.CallAfter(
                 self._after_download_language, progress_dlg, future
@@ -532,5 +551,3 @@ class TesseractLanguagePanel(sc.SizedPanel):
                 icon=wx.ICON_ERROR,
                 parent=self,
             )
-
-
