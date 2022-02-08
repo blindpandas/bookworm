@@ -566,6 +566,7 @@ class LocalDatabaseSource(Source):
                     DocumentTag.document_id == doc_instance.get_id()
                 )
             ],
+            can_fts_index=False
         )
         with dialog:
             if (retval := dialog.ShowModal()) is None:

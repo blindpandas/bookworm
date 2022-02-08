@@ -29,11 +29,13 @@ class EditDocumentClassificationDialog(SimpleDialog):
         categories: list[str] = None,
         given_category: str = None,
         tags_names: list[str] = (),
+        can_fts_index=True,
         **kwargs,
     ):
         self.categories = categories or [cat.name for cat in Category.get_all()]
         self.given_category = given_category
         self.tags_names = tags_names
+        self.can_fts_index = can_fts_index
         super().__init__(*args, **kwargs)
 
     def addControls(self, parent):
@@ -45,7 +47,14 @@ class EditDocumentClassificationDialog(SimpleDialog):
         self.tagsTextCtrl = wx.TextCtrl(parent, -1, value=" ".join(self.tags_names))
         self.tagsTextCtrl.SetSizerProps(expand=True)
         # Translators: label of a check box
-        self.addToFTSCheckbox = wx.CheckBox(parent, -1, _("Add to full-text search index"))
+        add_to_fts_label = _("Add to full-text search index")
+        if self.can_fts_index:
+            self.addToFTSCheckbox = wx.CheckBox(parent, -1, add_to_fts_label)
+            self.addToFTSCheckbox.SetValue(True)
+        else:
+            self.addToFTSCheckbox = wx.CheckBox(parent, -1, add_to_fts_label, style=wx.CHK_3STATE )
+            self.addToFTSCheckbox.Set3StateValue(wx.CHK_UNDETERMINED)
+            self.addToFTSCheckbox.Enable(False)
         if self.given_category:
             self.categoryCombo.SetStringSelection(self.given_category)
 
@@ -77,6 +86,7 @@ class AddFolderToLocalBookshelfDialog(SimpleDialog):
         self.categoryCombo.SetSizerProps(expand=True)
         # Translators: label of a check box
         self.addToFTSCheckbox = wx.CheckBox(parent, -1, _("Add to full-text search index"))
+        self.addToFTSCheckbox.SetValue(True)
 
     def ShowModal(self):
         if (retval := super().ShowModal()) == wx.ID_OK:
