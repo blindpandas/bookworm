@@ -32,7 +32,7 @@ class ImageIO:
     mode: str = "RGB"
 
     def __repr__(self):
-        return f"<ImageBlueprint: width={self.width}, height={self.height}, mode={self.mode}>"
+        return f"<ImageIO: width={self.width}, height={self.height}, mode={self.mode}>"
 
     def __array__(self):
         return self.to_cv2()
