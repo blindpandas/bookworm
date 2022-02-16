@@ -50,7 +50,7 @@ cd bookworm
 ```bash
 python -m venv .env
 .env\\scripts\\activate
-``
+```
 * Install "invoke" : invoke is the command runner we use to define and run the build process. Install it from pip using:
 ```bash
 pip install invoke
