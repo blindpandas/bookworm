@@ -429,7 +429,7 @@ def bundle_update(c):
         for file in files_to_bundle:
             archive.write(file, file.relative_to(frozen_dir))
         archive.write(
-            PROJECT_ROOT / "scripts" / "executables" / "bootstrap.exe", "bootstrap.exe"
+            PROJECT_ROOT / "scripts" / "executables" / "bootstrap" / "bootstrap.exe", "bootstrap.exe"
         )
     print("Done preparing update bundle.")
 
