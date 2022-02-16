@@ -2,9 +2,10 @@
 
 """Utilities to facilitate working with the Windows Registry."""
 
+from dataclasses import dataclass
+
 import System
 from Microsoft.Win32 import Registry, RegistryKey, RegistryValueKind
-from dataclasses import dataclass
 
 
 @dataclass

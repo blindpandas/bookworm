@@ -1,30 +1,25 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import zipfile
-import fitz
-import ftfy
 from functools import cached_property, lru_cache
 from hashlib import md5
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
-from pathlib import Path
-from bookworm.paths import home_data_path
-from bookworm.image_io import ImageIO
-from bookworm.utils import recursively_iterdir
-from bookworm.logger import logger
-from .. import (
-    BaseDocument,
-    BasePage,
-    Section,
-    BookMetadata,
-    Pager,
-    DocumentCapability as DC,
-    ChangeDocument,
-    DocumentError,
-    DocumentEncryptedError,
-)
 
+import fitz
+import ftfy
+
+from bookworm.image_io import ImageIO
+from bookworm.logger import logger
+from bookworm.paths import home_data_path
+from bookworm.utils import recursively_iterdir
+
+from .. import BaseDocument, BasePage, BookMetadata, ChangeDocument
+from .. import DocumentCapability as DC
+from .. import DocumentEncryptedError, DocumentError, Pager, Section
 
 log = logger.getChild(__name__)
 fitz.Tools().mupdf_display_errors(False)

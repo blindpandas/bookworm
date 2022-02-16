@@ -2,12 +2,13 @@
 
 import uuid
 from pathlib import Path
-from configobj import ConfigObj, ConfigObjError, ParseError
-from configobj.validate import Validator, ValidateError
-from bookworm import config
-from bookworm.paths import config_path
-from bookworm.concurrency import call_threaded
 
+from configobj import ConfigObj, ConfigObjError, ParseError
+from configobj.validate import ValidateError, Validator
+
+from bookworm import config
+from bookworm.concurrency import call_threaded
+from bookworm.paths import config_path
 
 # Some useful constants
 PARAGRAPH_PAUSE_MAX = 5000

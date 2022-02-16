@@ -1,15 +1,17 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import math
 import threading
-import requests
 from dataclasses import dataclass, field
 from pathlib import Path
 from tempfile import SpooledTemporaryFile
+
+import requests
+
 from bookworm import typehints as t
 from bookworm.logger import logger
-
 
 log = logger.getChild(__name__)
 

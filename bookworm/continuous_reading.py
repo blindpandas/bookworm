@@ -1,18 +1,16 @@
 # coding: utf-8
 
-import winsound
-import time
 import threading
+import time
+import winsound
+
 import wx
+
 from bookworm import config
-from bookworm.service import BookwormService
 from bookworm.concurrency import call_threaded
-from bookworm.signals import (
-    reader_book_loaded,
-    reader_book_unloaded,
-    reader_page_changed,
-    config_updated,
-)
+from bookworm.service import BookwormService
+from bookworm.signals import (config_updated, reader_book_loaded,
+                              reader_book_unloaded, reader_page_changed)
 
 
 class ContReadingService(BookwormService):

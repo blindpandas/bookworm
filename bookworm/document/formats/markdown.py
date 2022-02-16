@@ -1,19 +1,17 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 from mistune import markdown
-from bookworm.paths import home_data_path
-from bookworm.utils import generate_file_md5
+
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
-from .. import (
-    DummyDocument,
-    ChangeDocument,
-    DocumentCapability as DC,
-    DocumentError,
-    DocumentEncryptedError,
-)
+from bookworm.paths import home_data_path
+from bookworm.utils import generate_file_md5
 
+from .. import ChangeDocument
+from .. import DocumentCapability as DC
+from .. import DocumentEncryptedError, DocumentError, DummyDocument
 
 log = logger.getChild(__name__)
 

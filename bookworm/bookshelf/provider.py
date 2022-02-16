@@ -1,15 +1,18 @@
 # coding: utf-8
 
 from __future__ import annotations
-import attr
+
 from abc import ABC, abstractmethod
 from functools import cached_property
+
+import attr
+
 from bookworm import typehints as t
-from bookworm.image_io import ImageIO
-from bookworm.paths import images_path
 from bookworm.document import DocumentInfo
-from bookworm.signals import _signals
+from bookworm.image_io import ImageIO
 from bookworm.logger import logger
+from bookworm.paths import images_path
+from bookworm.signals import _signals
 
 log = logger.getChild(__name__)
 

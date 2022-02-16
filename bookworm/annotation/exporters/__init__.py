@@ -1,8 +1,10 @@
 # coding: utf-8
 
 from dataclasses import dataclass
+
 from bookworm.logger import logger
-from .core_renderers import MarkdownRenderer, HTMLRenderer, PlainTextRenderer
+
+from .core_renderers import HTMLRenderer, MarkdownRenderer, PlainTextRenderer
 
 log = logger.getChild(__name__)
 

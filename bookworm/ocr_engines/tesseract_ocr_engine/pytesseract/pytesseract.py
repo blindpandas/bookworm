@@ -11,13 +11,8 @@ from errno import ENOENT
 from functools import wraps
 from glob import iglob
 from io import BytesIO
-from os import environ
-from os import extsep
-from os import linesep
-from os import remove
-from os.path import normcase
-from os.path import normpath
-from os.path import realpath
+from os import environ, extsep, linesep, remove
+from os.path import normcase, normpath, realpath
 from pkgutil import find_loader
 from tempfile import NamedTemporaryFile
 from time import sleep

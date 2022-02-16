@@ -1,26 +1,21 @@
 # coding: utf-8
 
 from __future__ import annotations
-import pptx
-from pptx.enum.shapes import MSO_SHAPE_TYPE
-from pptx.enum.shapes import PP_PLACEHOLDER
-from functools import cached_property, lru_cache
-from bookworm.i18n import LocaleInfo
-from bookworm.utils import NEWLINE
-from bookworm.structured_text import StringBuilder, SemanticElementType
-from bookworm.logger import logger
-from .. import (
-    BaseDocument,
-    BasePage,
-    BookMetadata,
-    Section,
-    Pager,
-    DocumentCapability as DC,
-    TreeStackBuilder,
-    DocumentError,
-    DocumentEncryptedError,
-)
 
+from functools import cached_property, lru_cache
+
+import pptx
+from pptx.enum.shapes import MSO_SHAPE_TYPE, PP_PLACEHOLDER
+
+from bookworm.i18n import LocaleInfo
+from bookworm.logger import logger
+from bookworm.structured_text import SemanticElementType, StringBuilder
+from bookworm.utils import NEWLINE
+
+from .. import BaseDocument, BasePage, BookMetadata
+from .. import DocumentCapability as DC
+from .. import (DocumentEncryptedError, DocumentError, Pager, Section,
+                TreeStackBuilder)
 
 log = logger.getChild(__name__)
 PP_HEADING_TYPES = {

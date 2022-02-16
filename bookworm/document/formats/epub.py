@@ -1,42 +1,39 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import collections.abc
+import itertools
 import os.path
 import string
-import itertools
-import more_itertools
+from contextlib import suppress
+from functools import cached_property, lru_cache
+from io import StringIO
+from pathlib import Path, PurePosixPath
+from urllib import parse as urllib_parse
+
 import dateparser
 import ebooklib
 import ebooklib.epub
 import fitz
-from contextlib import suppress
-from io import StringIO
-from functools import cached_property, lru_cache
-from pathlib import Path, PurePosixPath
-from urllib import parse as urllib_parse
+import more_itertools
 from diskcache import Cache
 from lxml import html as lxml_html
 from selectolax.parser import HTMLParser
+
 from bookworm.i18n import LocaleInfo
-from bookworm.structured_text import TextRange
-from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.utils import is_external_url, format_datetime
-from bookworm.paths import home_data_path
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
-from .. import (
-    SinglePageDocument,
-    BookMetadata,
-    Section,
-    LinkTarget,
-    DocumentCapability as DC,
-    TreeStackBuilder,
-    ChangeDocument,
-    DocumentError,
-    SINGLE_PAGE_DOCUMENT_PAGER,
-)
+from bookworm.paths import home_data_path
+from bookworm.structured_text import TextRange
+from bookworm.structured_text.structured_html_parser import \
+    StructuredHtmlParser
+from bookworm.utils import format_datetime, is_external_url
 
+from .. import SINGLE_PAGE_DOCUMENT_PAGER, BookMetadata, ChangeDocument
+from .. import DocumentCapability as DC
+from .. import (DocumentError, LinkTarget, Section, SinglePageDocument,
+                TreeStackBuilder)
 
 log = logger.getChild(__name__)
 HTML_FILE_EXTS = {

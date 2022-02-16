@@ -1,20 +1,17 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import os
 from functools import cached_property
 from io import StringIO
-from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
-from bookworm.logger import logger
-from .. import (
-    SinglePageDocument,
-    Section,
-    Pager,
-    BookMetadata,
-    DocumentCapability as DC,
-    DocumentError,
-)
 
+from bookworm.logger import logger
+from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
+
+from .. import BookMetadata
+from .. import DocumentCapability as DC
+from .. import DocumentError, Pager, Section, SinglePageDocument
 
 log = logger.getChild(__name__)
 

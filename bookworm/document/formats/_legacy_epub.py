@@ -1,38 +1,32 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import copy
-import ebooklib
-import more_itertools
 from functools import cached_property, lru_cache
 from hashlib import md5
-from zipfile import ZipFile
-from tempfile import TemporaryDirectory
 from pathlib import Path, PurePosixPath
+from tempfile import TemporaryDirectory
 from urllib import parse as urllib_parse
+from zipfile import ZipFile
+
+import ebooklib
+import more_itertools
+from bs4 import BeautifulSoup
 from chemical import it
 from ebooklib.epub import read_epub
-from bs4 import BeautifulSoup
-from bookworm.paths import home_data_path
-from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.utils import recursively_iterdir, is_external_url
-from bookworm.logger import logger
-from .. import (
-    BaseDocument,
-    BasePage,
-    Section,
-    LinkTarget,
-    BookMetadata,
-    Pager,
-    DocumentCapability as DC,
-    ReadingMode,
-    TreeStackBuilder,
-    ChangeDocument,
-    DocumentError,
-    DocumentEncryptedError,
-)
-from .fitz import FitzPage, FitzDocument
 
+from bookworm.logger import logger
+from bookworm.paths import home_data_path
+from bookworm.structured_text.structured_html_parser import \
+    StructuredHtmlParser
+from bookworm.utils import is_external_url, recursively_iterdir
+
+from .. import BaseDocument, BasePage, BookMetadata, ChangeDocument
+from .. import DocumentCapability as DC
+from .. import (DocumentEncryptedError, DocumentError, LinkTarget, Pager,
+                ReadingMode, Section, TreeStackBuilder)
+from .fitz import FitzDocument, FitzPage
 
 log = logger.getChild(__name__)
 

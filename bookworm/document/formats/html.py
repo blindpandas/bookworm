@@ -1,46 +1,34 @@
 # coding: utf-8
 
 from __future__ import annotations
-import requests
-from pathlib import Path
+
+from concurrent.futures import ProcessPoolExecutor
 from contextlib import contextmanager
 from functools import cached_property
-from concurrent.futures import ProcessPoolExecutor
-from more_itertools import zip_offset, first as get_first_element
+from pathlib import Path
+
+import requests
 from chemical import it
 from diskcache import Cache
-from lxml import html as lxml_html
 from lxml import etree
-from bookworm.paths import home_data_path
-from bookworm.http_tools import HttpResource
-from bookworm.structured_text import (
-    TextRange,
-    SemanticElementType,
-    Style,
-    HEADING_LEVELS,
-)
-from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.utils import (
-    remove_excess_blank_lines,
-    escape_html,
-    is_external_url,
-    NEWLINE,
-)
-from bookworm.logger import logger
-from .. import (
-    SinglePageDocument,
-    Section,
-    LinkTarget,
-    SINGLE_PAGE_DOCUMENT_PAGER,
-    BookMetadata,
-    DocumentCapability as DC,
-    ReadingMode,
-    DocumentError,
-    DocumentIOError,
-    ChangeDocument,
-    TreeStackBuilder,
-)
+from lxml import html as lxml_html
+from more_itertools import first as get_first_element
+from more_itertools import zip_offset
 
+from bookworm.http_tools import HttpResource
+from bookworm.logger import logger
+from bookworm.paths import home_data_path
+from bookworm.structured_text import (HEADING_LEVELS, SemanticElementType,
+                                      Style, TextRange)
+from bookworm.structured_text.structured_html_parser import \
+    StructuredHtmlParser
+from bookworm.utils import (NEWLINE, escape_html, is_external_url,
+                            remove_excess_blank_lines)
+
+from .. import SINGLE_PAGE_DOCUMENT_PAGER, BookMetadata, ChangeDocument
+from .. import DocumentCapability as DC
+from .. import (DocumentError, DocumentIOError, LinkTarget, ReadingMode,
+                Section, SinglePageDocument, TreeStackBuilder)
 
 log = logger.getChild(__name__)
 # Default cache timeout
@@ -54,7 +42,7 @@ def get_clean_html(html_string: str) -> (str, BookMetadata):
     # Therefore, we run it in a separate process
 
     import trafilatura
-    from trafilatura.external import custom_justext, JT_STOPLIST
+    from trafilatura.external import JT_STOPLIST, custom_justext
 
     html_string = StructuredHtmlParser.normalize_html(html_string)
 

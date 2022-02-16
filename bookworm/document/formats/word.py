@@ -1,23 +1,22 @@
 # coding: utf-8
 
 from __future__ import annotations
+
+from pathlib import Path
+
 import mammoth
 from docx import Document as DocxDocumentReader
-from pathlib import Path
 from selectolax.parser import HTMLParser
-from bookworm.paths import home_data_path
+
 from bookworm.concurrency import process_worker
-from bookworm.utils import generate_file_md5, escape_html, NEWLINE
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
-from .. import (
-    DummyDocument,
-    ChangeDocument,
-    DocumentCapability as DC,
-    DocumentError,
-    DocumentEncryptedError,
-)
+from bookworm.paths import home_data_path
+from bookworm.utils import NEWLINE, escape_html, generate_file_md5
 
+from .. import ChangeDocument
+from .. import DocumentCapability as DC
+from .. import DocumentEncryptedError, DocumentError, DummyDocument
 
 log = logger.getChild(__name__)
 TAGS_TO_UNWRAP = [

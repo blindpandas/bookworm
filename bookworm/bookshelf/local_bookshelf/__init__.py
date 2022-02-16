@@ -1,53 +1,36 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import math
 import os
-import wx
-import peewee
 from abc import ABC, abstractmethod
-from functools import partial, cached_property
 from concurrent.futures import ThreadPoolExecutor
+from functools import cached_property, partial
 from pathlib import Path
+
+import peewee
+import wx
+
 from bookworm import config
-from bookworm.signals import app_booting
 from bookworm.document import DocumentInfo
 from bookworm.document.uri import DocumentUri
-from bookworm.gui.components import AsyncSnakDialog
 from bookworm.gui.book_viewer import BookViewerWindow
+from bookworm.gui.components import AsyncSnakDialog
 from bookworm.logger import logger
-from ..provider import (
-    BookshelfProvider,
-    Source,
-    MetaSource,
-    ItemContainerSource,
-    BookshelfAction,
-    sources_updated,
-)
-from .dialogs import (
-    EditDocumentClassificationDialog,
-    AddFolderToLocalBookshelfDialog,
-    SearchBookshelfDialog,
-    BookshelfSearchResultsDialog,
-    BundleErrorsDialog,
-)
-from .tasks import (
-    import_folder_to_bookshelf,
-    add_document_to_bookshelf,
-    bundle_single_document,
-)
-from .models import (
-    DEFAULT_BOOKSHELF_DATABASE_FILE,
-    BaseModel,
-    Document,
-    Author,
-    Category,
-    Tag,
-    DocumentTag,
-    DocumentAuthor,
-    DocumentFTSIndex,
-)
+from bookworm.signals import app_booting
 
+from ..provider import (BookshelfAction, BookshelfProvider,
+                        ItemContainerSource, MetaSource, Source,
+                        sources_updated)
+from .dialogs import (AddFolderToLocalBookshelfDialog,
+                      BookshelfSearchResultsDialog, BundleErrorsDialog,
+                      EditDocumentClassificationDialog, SearchBookshelfDialog)
+from .models import (DEFAULT_BOOKSHELF_DATABASE_FILE, Author, BaseModel,
+                     Category, Document, DocumentAuthor, DocumentFTSIndex,
+                     DocumentTag, Tag)
+from .tasks import (add_document_to_bookshelf, bundle_single_document,
+                    import_folder_to_bookshelf)
 
 log = logger.getChild(__name__)
 

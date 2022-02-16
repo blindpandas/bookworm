@@ -4,19 +4,20 @@
 import clr
 
 clr.AddReference("System.Windows.Forms")
-from System.Windows.Forms import SystemInformation
-
 import sys
 import winsound
-import winpaths
-from subprocess import list2cmdline
 from functools import lru_cache
 from pathlib import Path
-from bookworm import app
-from platform_utils.paths import app_path
-from . import shellapi
-from .win_registry import RegKey, Registry
+from subprocess import list2cmdline
 
+import winpaths
+from platform_utils.paths import app_path
+from System.Windows.Forms import SystemInformation
+
+from bookworm import app
+
+from . import shellapi
+from .win_registry import Registry, RegKey
 
 PLAYER_FLAGS = winsound.SND_ASYNC | winsound.SND_FILENAME
 UWP_SERVICES_AVAILABEL = False

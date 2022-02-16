@@ -1,55 +1,44 @@
 # coding: utf-8
 
-import sys
 import os
+import sys
 import threading
-import wx
 import webbrowser
-from operator import ge, le
 from contextlib import suppress
 from functools import partial
+from operator import ge, le
 from pathlib import Path
+
+import wx
 from chemical import it
 from slugify import slugify
-from bookworm import config
-from bookworm import paths
-from bookworm import app
-from bookworm.i18n import is_rtl
-from bookworm.resources import sounds
+
+from bookworm import app, config, ocr, paths, speech
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
-from bookworm.document import (
-    DocumentInfo,
-    READING_MODE_LABELS,
-    PaginationError,
-    DocumentCapability as DC,
-)
-from bookworm.document.uri import DocumentUri
-from bookworm.signals import (
-    reading_position_change,
-    config_updated,
-    reader_book_loaded,
-    reader_book_unloaded,
-)
 from bookworm.concurrency import call_threaded, process_worker
+from bookworm.document import READING_MODE_LABELS
+from bookworm.document import DocumentCapability as DC
+from bookworm.document import DocumentInfo, PaginationError
+from bookworm.document.uri import DocumentUri
+from bookworm.gui.book_viewer.core_dialogs import (DocumentInfoDialog,
+                                                   ElementListDialog,
+                                                   GoToPageDialog,
+                                                   SearchBookDialog,
+                                                   SearchResultsDialog)
 from bookworm.gui.components import RobustProgressDialog
-from bookworm import ocr
-from bookworm import speech
-from bookworm.reader import EBookReader
-from bookworm.utils import restart_application, gui_thread_safe
-from bookworm.logger import logger
 from bookworm.gui.contentview_ctrl import EVT_CONTEXTMENU_REQUESTED
 from bookworm.gui.settings import PreferencesDialog
-from bookworm.gui.book_viewer.core_dialogs import (
-    GoToPageDialog,
-    SearchBookDialog,
-    SearchResultsDialog,
-    ElementListDialog,
-    DocumentInfoDialog,
-)
-from .render_view import ViewPageAsImageDialog
-from .menu_constants import *
-from . import recents_manager
+from bookworm.i18n import is_rtl
+from bookworm.logger import logger
+from bookworm.reader import EBookReader
+from bookworm.resources import sounds
+from bookworm.signals import (config_updated, reader_book_loaded,
+                              reader_book_unloaded, reading_position_change)
+from bookworm.utils import gui_thread_safe, restart_application
 
+from . import recents_manager
+from .menu_constants import *
+from .render_view import ViewPageAsImageDialog
 
 log = logger.getChild(__name__)
 # Translators: the content of the about message
