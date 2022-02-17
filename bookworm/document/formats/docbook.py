@@ -1,81 +1,44 @@
 # coding: utf-8
 
 from __future__ import annotations
+import os
 import contextlib
-import string
+import subprocess
 import dateparser
 import lxml
 from functools import cached_property
 from pathlib import Path
-from more_itertools import zip_offset, first as get_first_element
+from diskcache import Cache
+from more_itertools import flatten, first as get_first_element
+from bookworm import app
+from bookworm.paths import home_data_path
 from bookworm.i18n import LocaleInfo
-from bookworm.structured_text import (
-    TextRange,
-    SemanticElementType,
-    Style,
-    HEADING_LEVELS,
-)
-from bookworm.utils import (
-    remove_excess_blank_lines,
-    NEWLINE,
-)
 from bookworm.logger import logger
 from .. import (
-    SinglePageDocument,
-    Section,
-    SINGLE_PAGE_DOCUMENT_PAGER,
     BookMetadata,
-    DocumentCapability as DC,
-    ReadingMode,
     DocumentError,
     DocumentIOError,
-    TreeStackBuilder,
 )
+from .html import BaseHtmlDocument
 
 
 log = logger.getChild(__name__)
+EXPIRE_TIMEOUT = 30 * 24 * 60 * 60
 
 
-
-class DocbookDocument(SinglePageDocument):
+class DocbookDocument(BaseHtmlDocument):
     """Docbook is a format for writing technical documentation. It uses it's own markup."""
 
     format = "docbook"
     # Translators: the name of a document file format
     name = _("Docbook Document")
     extensions = ("*.docbook",)
-    capabilities = (
-        DC.TOC_TREE
-        | DC.METADATA
-        | DC.SINGLE_PAGE
-        | DC.STRUCTURED_NAVIGATION
-        | DC.TEXT_STYLE
-        | DC.LINKS
-        | DC.INTERNAL_ANCHORS
-    )
 
     def read(self):
+        self.filename = self.get_file_system_path()
+        with open(self.filename, "rb") as file:
+            self.xml_tree = lxml.etree.fromstring(file.read())
         super().read()
-        self._text = None
-        self._outline = None
-        self._metainfo = None
-        self._semantic_structure = {}
-        self._style_info = {}
-        with open(self.get_file_system_path(), "rb") as file:
-            xml_content = file.read()
-        self.xml_tree = lxml.etree.fromstring(xml_content)
-        self.parse()
-
-    def parse(self):
-        self._metainfo = self._get_book_metadata()
-        self._text = "".join(
-            par
-            for par in self.xml_tree.itertext(tag="para")
-            if par.strip(string.whitespace)
-        ).strip()
-        #self._text = remove_excess_blank_lines(self._text)
-        with self._create_toc_stack() as stack:
-            pass
 
     @cached_property
     def language(self):
@@ -87,37 +50,9 @@ class DocbookDocument(SinglePageDocument):
         plane_text = "\n".join(self.xml_tree.itertext(tag="para"))
         return self.get_language(plane_text, is_html=False)
 
-    def get_content(self):
-        return self._text
-
-    def get_document_semantic_structure(self):
-        return self._semantic_structure
-
-    def get_document_style_info(self):
-        return self._style_info
-
-    @cached_property
-    def toc_tree(self):
-        root = self._outline
-        if len(root) == 1:
-            return root[0]
-        return root
-
     @cached_property
     def metadata(self):
-        return self._metainfo
-
-    @contextlib.contextmanager
-    def _create_toc_stack(self):
-        root = Section(
-            pager=SINGLE_PAGE_DOCUMENT_PAGER,
-            text_range=TextRange(0, -1),
-            title=self._metainfo.title,
-            level=1,
-        )
-        stack = TreeStackBuilder(root)
-        yield stack, root
-        self._outline = root
+        return self._get_book_metadata()
 
     def _get_book_metadata(self):
         xml_tree = self.xml_tree
@@ -158,4 +93,68 @@ class DocbookDocument(SinglePageDocument):
             publisher=publisher,
         )
 
+    def _get_cache_directory(self):
+        return str(home_data_path(".docbook_html_cache"))
 
+    def get_html(self):
+        if (html_string := getattr(self, "html_string", None)) is not None:
+            return html_string
+        cache_key = self.uri.to_uri_string()
+        _cache = Cache(
+            self._get_cache_directory(), eviction_policy="least-frequently-used"
+        )
+        if not (html_content := _cache.get(cache_key)):
+            html_content = self._get_html_from_docbook()
+            _cache.set(cache_key, html_content, expire=EXPIRE_TIMEOUT)
+        return html_content
+
+    def parse_html(self):
+        return self.parse_to_full_text()
+
+    def _get_html_from_docbook(self):
+        xsltproc_path = self._get_xsltproc_path()
+        xsltproc_executable = xsltproc_path / "xsltproc.exe"
+        xsltproc_xhtml_xsl = xsltproc_path / "docbook-xsl-nons-1.79.2" / "xhtml" / "docbook.xsl"
+        args = [
+            xsltproc_executable,
+            os.fspath(xsltproc_xhtml_xsl),
+            os.fspath(self.filename),
+            "--novalid",
+            "--nonet",
+            "--nowrite",
+            "--encoding",
+            "UTF8",
+        ]
+        creationflags = subprocess.CREATE_NO_WINDOW
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        ret = subprocess.run(
+            args,
+            capture_output=True,
+            creationflags=creationflags,
+            startupinfo=startupinfo,
+        )
+        html_bytes = ret.stdout
+        html_bytes.replace(b"</p><p>", b"<br />")
+        content_tree = lxml.etree.fromstring(html_bytes)
+        block_classes = [
+            "chapter",
+            *[f"sect{i}" for i in range(1, 7)]
+        ]
+        span_block_elements = flatten(
+            content_tree.xpath(f"//*[@class='{blk_cls}']")
+            for blk_cls in block_classes
+        )
+        for elem in span_block_elements:
+            elem.tag = "p"
+        for el in content_tree.xpath('//ns:sup',namespaces={'ns':'http://www.w3.org/1999/xhtml'}):
+            el.clear()
+        return lxml.etree.tostring(content_tree, encoding="unicode")
+
+
+    @staticmethod
+    def _get_xsltproc_path():
+        if app.is_frozen:
+            return app_path("xsltproc")
+        else:
+            return Path.cwd() / "scripts" / "executables" / "xsltproc"

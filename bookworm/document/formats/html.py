@@ -162,6 +162,8 @@ class BaseHtmlDocument(SinglePageDocument):
         root = self._outline
         if len(root) == 1:
             return root[0]
+        if root.title is None:
+            root.title = self.metadata.title
         return root
 
     @cached_property
