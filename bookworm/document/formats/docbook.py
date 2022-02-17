@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 import os
+import copy
 import contextlib
 import subprocess
 import dateparser
@@ -11,7 +12,7 @@ from pathlib import Path
 from diskcache import Cache
 from more_itertools import flatten, first as get_first_element
 from bookworm import app
-from bookworm.paths import home_data_path
+from bookworm.paths import home_data_path, resources_path
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 from .. import (
@@ -112,31 +113,9 @@ class DocbookDocument(BaseHtmlDocument):
         return self.parse_to_full_text()
 
     def _get_html_from_docbook(self):
-        xsltproc_path = self._get_xsltproc_path()
-        xsltproc_executable = xsltproc_path / "xsltproc.exe"
-        xsltproc_xhtml_xsl = xsltproc_path / "docbook-xsl-nons-1.79.2" / "xhtml" / "docbook.xsl"
-        args = [
-            xsltproc_executable,
-            os.fspath(xsltproc_xhtml_xsl),
-            os.fspath(self.filename),
-            "--novalid",
-            "--nonet",
-            "--nowrite",
-            "--encoding",
-            "UTF8",
-        ]
-        creationflags = subprocess.CREATE_NO_WINDOW
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        ret = subprocess.run(
-            args,
-            capture_output=True,
-            creationflags=creationflags,
-            startupinfo=startupinfo,
-        )
-        html_bytes = ret.stdout
-        html_bytes.replace(b"</p><p>", b"<br />")
-        content_tree = lxml.etree.fromstring(html_bytes)
+        xslt = lxml.etree.parse(os.fspath(self._get_xslt_resource_path()))
+        transform = lxml.etree.XSLT(xslt)
+        content_tree = transform(copy.copy(self.xml_tree))
         block_classes = [
             "chapter",
             *[f"sect{i}" for i in range(1, 7)]
@@ -151,10 +130,6 @@ class DocbookDocument(BaseHtmlDocument):
             el.clear()
         return lxml.etree.tostring(content_tree, encoding="unicode")
 
-
     @staticmethod
-    def _get_xsltproc_path():
-        if app.is_frozen:
-            return app_path("xsltproc")
-        else:
-            return Path.cwd() / "scripts" / "executables" / "xsltproc"
+    def _get_xslt_resource_path():
+        return resources_path("xslt", "xhtml", "docbook.xsl")
