@@ -90,7 +90,6 @@ class WordDocument(DummyDocument):
         )
 
 
-
 class Word97Document(DummyDocument):
 
     format = "doc"
@@ -101,8 +100,7 @@ class Word97Document(DummyDocument):
 
     def read(self):
         converted_file = threaded_worker.submit(
-            self.get_converted_filename,
-            self.get_file_system_path()
+            self.get_converted_filename, self.get_file_system_path()
         ).result()
         raise ChangeDocument(
             old_uri=self.uri,
@@ -121,12 +119,7 @@ class Word97Document(DummyDocument):
 
     @classmethod
     def convert_to_docbook(cls, filename):
-        args = [
-            cls.get_antiword_executable_path(),
-            "-x",
-            "db",
-            filename
-        ]
+        args = [cls.get_antiword_executable_path(), "-x", "db", filename]
         creationflags = subprocess.CREATE_NO_WINDOW
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
@@ -149,4 +142,11 @@ class Word97Document(DummyDocument):
         if app.is_frozen:
             return app_path("antiword", "bin", "antiword.exe")
         else:
-            return Path.cwd() / "scripts" / "executables" / "antiword" / "bin"  / "antiword.exe"
+            return (
+                Path.cwd()
+                / "scripts"
+                / "executables"
+                / "antiword"
+                / "bin"
+                / "antiword.exe"
+            )
