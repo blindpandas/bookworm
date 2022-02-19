@@ -2,7 +2,7 @@
 
 black==22.1.0
 distro==1.5.0;sys_platform=="linux"
-jinja2==2.11.3
+jinja2==3.0.3
 packaging==21.0
 PyInstaller==4.9
 pytest==6.2.5
