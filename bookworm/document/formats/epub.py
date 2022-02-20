@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 import collections.abc
-import os.path
+import os
 import string
 import itertools
 import more_itertools
@@ -349,4 +349,4 @@ class EpubDocument(SinglePageDocument):
         return ""
 
     def _get_cache_directory(self):
-        return str(home_data_path(".parsed_epub_cache"))
+        return os.fspath(home_data_path(".parsed_epub_cache"))

@@ -168,16 +168,16 @@ def make_icons(c):
     }
     if not inst_dst.exists():
         inst_dst.mkdir(parents=True, exist_ok=True)
-    make_installer_image(IMAGE_SOURCE_FOLDER  / "bookworm.png").save(
+    make_installer_image(IMAGE_SOURCE_FOLDER / "bookworm.png").save(
         inst_dst / "bookworm-logo.bmp"
     )
     for fname, imgsize in inst_imgs.items():
         imgfile = inst_dst.joinpath(fname)
         if not imgfile.exists():
             print(f"Creating image {fname}.")
-            Image.open(IMAGE_SOURCE_FOLDER  / "bookworm.png").resize(
-                imgsize
-            ).save(imgfile)
+            Image.open(IMAGE_SOURCE_FOLDER / "bookworm.png").resize(imgsize).save(
+                imgfile
+            )
             print(f"Copied image {fname} to the assets folder.")
 
 
@@ -222,9 +222,7 @@ def copy_assets(c):
     print("Copying files...")
     files_to_copy = {
         PROJECT_ROOT / "LICENSE": RESOURCES_FOLDER / "license.txt",
-        PROJECT_ROOT
-        / "contributors.txt": RESOURCES_FOLDER
-        / "contributors.txt",
+        PROJECT_ROOT / "contributors.txt": RESOURCES_FOLDER / "contributors.txt",
         PROJECT_ROOT
         / "scripts"
         / "builder"
@@ -422,14 +420,17 @@ def bundle_update(c):
     if app.get_version_info()["post"] is None:
         files_to_bundle = recursively_iterdir(frozen_dir)
     else:
-        files_to_bundle = [frozen_dir / "Bookworm.exe",]
+        files_to_bundle = [
+            frozen_dir / "Bookworm.exe",
+        ]
     fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-{env['IAPP_ARCH']}-update.bundle"
     bundle_file = PROJECT_ROOT / "scripts" / fname
     with ZipFile(bundle_file, "w", compression=ZIP_LZMA, allowZip64=False) as archive:
         for file in files_to_bundle:
             archive.write(file, file.relative_to(frozen_dir))
         archive.write(
-            PROJECT_ROOT / "scripts" / "executables" / "bootstrap.exe", "bootstrap.exe"
+            PROJECT_ROOT / "scripts" / "executables" / "bootstrap" / "bootstrap.exe",
+            "bootstrap.exe",
         )
     print("Done preparing update bundle.")
 
@@ -445,11 +446,13 @@ def update_version_info(c):
         "version": app.version,
         "updated": datetime.utcnow().isoformat(),
     }
-    artifacts = sorted(itertools.chain(
-        artifacts_folder.glob("Bookworm*setup.exe"),
-        artifacts_folder.glob("Bookworm*portable.zip"),
-        artifacts_folder.glob("Bookworm*update.bundle"),
-    ))
+    artifacts = sorted(
+        itertools.chain(
+            artifacts_folder.glob("Bookworm*setup.exe"),
+            artifacts_folder.glob("Bookworm*portable.zip"),
+            artifacts_folder.glob("Bookworm*update.bundle"),
+        )
+    )
     for file in artifacts:
         json_info[f"{file.name}.sha1hash"] = generate_sha1hash(file)
     json_file.write_text(json.dumps(json_info, indent=2))
@@ -596,13 +599,26 @@ def freeze(c):
         )
     print("App freezed.")
     print("Cleaning up junk folders from the frozen executable directory.")
-    for dist_info_dir in (dinfo for dinfo in c['build_folder'].glob("*.dist-info") if dinfo.is_dir()):
+    for dist_info_dir in (
+        dinfo for dinfo in c["build_folder"].glob("*.dist-info") if dinfo.is_dir()
+    ):
         shutil.rmtree(os.fspath(dist_info_dir))
+
+
+@task
+@make_env
+def copy_executables(c):
+    if sys.platform == "win32":
+        print("Copying antiword executable")
+        build_folder = c["build_folder"]
+        antiword_executable_dir = PROJECT_ROOT / "scripts" / "executables" / "antiword"
+        c.run(f"cp -r {antiword_executable_dir} {build_folder}")
+    print("Done copying executables.")
 
 
 @task(
     pre=(freeze,),
-    post=(make_installer, bundle_update),
+    post=(copy_executables, make_installer, bundle_update),
 )
 @make_env
 def build(c):
@@ -646,7 +662,7 @@ def run_application(c, debug=True):
                 "Changes you make in the bookworm pacakge will not show up.\n"
                 "To fix this, run:\n\tpip uninstall bookworm\n\tpip install -e .\n"
             )
-        args = subprocess.list2cmdline(["--debug" if debug else ''])
+        args = subprocess.list2cmdline(["--debug" if debug else ""])
         c.run(f"python -m bookworm {args}")
     except UnexpectedExit as e:
         exit(e.result.return_code)

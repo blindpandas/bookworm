@@ -7,5 +7,6 @@ recursive-include bookworm/resources *.html
 recursive-include bookworm/resources/locale *.mo
 recursive-include bookworm/resources/fonts *.ttf
 recursive-include bookworm/resources/readium_js_viewer_lite *.*
+recursive-include bookworm/resources/xslt *.*
 recursive-exclude tests *
 
