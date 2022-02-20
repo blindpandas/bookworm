@@ -8,10 +8,8 @@ from functools import cached_property
 from concurrent.futures import ProcessPoolExecutor
 from more_itertools import zip_offset, first as get_first_element
 from chemical import it
-from diskcache import Cache
 from lxml import html as lxml_html
 from lxml import etree
-from bookworm.paths import home_data_path
 from bookworm.http_tools import HttpResource
 from bookworm.structured_text import (
     TextRange,
@@ -109,12 +107,6 @@ class BaseHtmlDocument(SinglePageDocument):
         | DC.ASYNC_READ
         | DC.LINKS
         | DC.INTERNAL_ANCHORS
-    )
-
-    supported_reading_modes = (
-        ReadingMode.DEFAULT,
-        ReadingMode.CLEAN_VIEW,
-        ReadingMode.FULL_TEXT_VIEW,
     )
 
     def __getstate__(self) -> dict:
@@ -280,32 +272,30 @@ class WebHtmlDocument(BaseHtmlDocument):
 
     __internal__ = True
     format = "webpage"
-
-    def _get_cache_directory(self):
-        return str(home_data_path("_web_cache"))
+    supported_reading_modes = (
+        ReadingMode.DEFAULT,
+        ReadingMode.CLEAN_VIEW,
+        ReadingMode.FULL_TEXT_VIEW,
+    )
 
     def get_html(self):
         if (html_string := getattr(self, "html_string", None)) is not None:
             return html_string
         url = self.uri.path
-        _cache = Cache(
-            self._get_cache_directory(), eviction_policy="least-frequently-used"
-        )
         try:
             req = HttpResource(url).download()
-            if "html" not in req.content_type.lower():
-                raise DocumentError("Not HTML content ")
         except ConnectionError as e:
             log.exception(f"Failed to obtain resource from url: {url}", exc_info=True)
             req = None
             raise DocumentIOError from e
-        stored_content, tag = _cache.get(url, tag=True)
-        if stored_content is not None:
-            if (req is None) or (tag == req.etag):
-                return stored_content
         html_string = req.get_text()
-        _cache.set(url, html_string, tag=req.etag, expire=EXPIRE_TIMEOUT)
-        return html_string
+        html_tree = lxml_html.fromstring(html_string)
+        html_tree.make_links_absolute(
+            base_url=url,
+            resolve_base_href=True,
+            handle_failures='discard'
+        )
+        return lxml_html.tostring(html_tree, encoding='unicode')
 
     def parse_html(self):
         return self.parse_to_clean_text()
