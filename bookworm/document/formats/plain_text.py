@@ -3,7 +3,6 @@
 from __future__ import annotations
 import os
 from functools import cached_property
-from io import StringIO
 from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
 from bookworm.logger import logger
 from .. import (
@@ -30,18 +29,17 @@ class PlainTextDocument(SinglePageDocument):
 
     def read(self):
         self.filename = self.get_file_system_path()
-        self.text_buffer = StringIO()
         with open(self.filename, "r", encoding="utf8") as file:
-            self.text_buffer.write(file.read())
+            self.text = file.read()
         super().read()
 
     def get_content(self):
-        text = remove_excess_blank_lines(self.text_buffer.getvalue())
+        text = remove_excess_blank_lines(self.text)
         return normalize_line_breaks(text)
 
     def close(self):
         super().close()
-        self.text_buffer.close()
+        del self.text
 
     @cached_property
     def toc_tree(self):

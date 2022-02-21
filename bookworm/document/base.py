@@ -370,12 +370,18 @@ class SinglePageDocument(BaseDocument):
     def __len__(self):
         return 1
 
-    def get_page(self, index: int) -> SinglePage:
-        return SinglePage(self, index)
-
     @abstractmethod
     def get_content(self) -> str:
         """Get the content of this document."""
+
+    def get_page(self, index: int) -> SinglePage:
+        return SinglePage(self, index)
+
+    @cached_property
+    def language(self) -> str:
+        return self.get_language(
+            samples=self.get_content()[:1000]
+        )
 
     def get_section_at_position(self, pos):
         """Return the section at the given position."""
