@@ -297,6 +297,13 @@ class WebHtmlDocument(BaseHtmlDocument):
             resolve_base_href=True,
             handle_failures='discard'
         )
+        # Now strip the base_url from internal anchors
+        for internal_anchor in html_tree.xpath(f"//a[starts-with(@href, '{url}')]"):
+            if "#" in (href := internal_anchor.get("href")):
+                internal_anchor.set(
+                    "href",
+                    "#" + href.split("#")[1]
+                )
         return lxml_html.tostring(html_tree, encoding='unicode')
 
     def parse_html(self):
