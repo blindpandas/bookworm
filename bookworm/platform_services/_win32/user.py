@@ -18,7 +18,10 @@ def get_user_locale():
 
 def set_app_locale(localeinfo):
     culture = CultureInfo.GetCultureInfoByIetfLanguageTag(localeinfo.language)
-    CultureInfo.CurrentCulture = culture
-    CultureInfo.CurrentUICulture = culture
-    CultureInfo.DefaultThreadCurrentUICulture = culture
+    try:
+        CultureInfo.CurrentCulture = culture
+        CultureInfo.CurrentUICulture = culture
+        CultureInfo.DefaultThreadCurrentUICulture = culture
+    except TypeError: #105
+        pass
     ctypes.windll.kernel32.SetThreadLocale(culture.LCID)
