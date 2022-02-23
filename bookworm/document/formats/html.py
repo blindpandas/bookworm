@@ -10,6 +10,7 @@ from more_itertools import zip_offset, first as get_first_element
 from chemical import it
 from lxml import html as lxml_html
 from lxml import etree
+from yarl import URL
 from bookworm.http_tools import HttpResource
 from bookworm.structured_text import (
     TextRange,
@@ -297,10 +298,14 @@ class WebHtmlDocument(BaseHtmlDocument):
             resolve_base_href=True,
             handle_failures='discard'
         )
+        current_url_path = URL(url).path
         # Now strip the base_url from internal anchors
-        for internal_anchor in html_tree.xpath(f"//a[starts-with(@href, '{url}')]"):
-            if "#" in (href := internal_anchor.get("href")):
-                internal_anchor.set(
+        for maybe_internal_anchor in html_tree.xpath(f"//a[starts-with(@href, '{url}')]"):
+            href = maybe_internal_anchor.get("href")
+            if (URL(href).path) != current_url_path:
+                continue
+            if "#" in href:
+                maybe_internal_anchor.set(
                     "href",
                     "#" + href.split("#")[1]
                 )
