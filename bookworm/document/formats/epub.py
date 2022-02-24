@@ -306,18 +306,15 @@ class EpubDocument(SinglePageDocument):
 
     def prefix_html_ids(self, filename, html):
         tree = lxml_html.fromstring(html)
-        # try:
-        #    data_html_title = tree.xpath('/html/head/title//text()')[0]
-        # except IndexError:
-        #    data_html_title = ""
-        # tree.set('data-html-title', data_html_title)
-        tree.make_links_absolute(filename)
+        tree.make_links_absolute(filename, resolve_base_href=False, handle_failures='ignore')
         if os.path.splitext(filename)[1] in HTML_FILE_EXTS:
-            for node in tree.cssselect("[id]"):
+            for node in tree.xpath("//*[@id]"):
                 node.set("id", filename + "#" + node.get("id"))
-        with suppress(IndexError):
+        try:
             tree.remove(tree.head)
             tree.body.tag = "section"
+        except:
+            pass
         tree.tag = "div"
         tree.insert(0, tree.makeelement("header", attrib={"id": filename}))
         return lxml_html.tostring(tree, method="html", encoding="unicode")
