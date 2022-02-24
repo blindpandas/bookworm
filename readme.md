@@ -1,4 +1,4 @@
-[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/blindpandas/bookworm?branch=develop&svg=true)
+![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/blindpandas/bookworm?branch=develop&svg=true)
 
 # Bookworm
 
@@ -50,7 +50,7 @@ cd bookworm
 ```bash
 python -m venv .env
 .env\\scripts\\activate
-``
+```
 * Install "invoke" : invoke is the command runner we use to define and run the build process. Install it from pip using:
 ```bash
 pip install invoke
