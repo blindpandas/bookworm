@@ -20,6 +20,8 @@ log = logger.getChild(__name__)
 # Time_out of consecutive key presses in seconds
 DKEY_TIMEOUT = 0.75
 LINK_ACTIVATION_KEYS = {wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER}
+# Paginate by how many characters
+PAGINATION_NUM_CHARS = 2000 # typical number of chars per page in English documents
 
 
 class NavigationProvider:
@@ -69,8 +71,9 @@ class NavigationProvider:
                 self.reader.go_to_prev()
             self.callback()
         elif isinstance(self._nav_ctrl, wx.TextCtrl) and key_code == wx.WXK_PAGEDOWN:
-            self._nav_ctrl.InsertionPoint = self._nav_ctrl.GetLastPosition() - 1
-            event.Skip(False)
+            self._do_paginate(self._nav_ctrl, down=True)
+        elif isinstance(self._nav_ctrl, wx.TextCtrl) and key_code == wx.WXK_PAGEUP:
+            self._do_paginate(self._nav_ctrl, down=False)
         if event.GetModifiers() == wx.MOD_ALT and key_code in (
             wx.WXK_PAGEUP,
             wx.WXK_PAGEDOWN,
@@ -152,3 +155,17 @@ class NavigationProvider:
         return self.reader.handle_special_action_for_position(
             self.view.get_insertion_point()
         )
+
+    def _do_paginate(self, text_ctrl, down):
+        current_pos = self.view.get_containing_line(text_ctrl.GetInsertionPoint())[0]
+        if down:
+            target_pos = current_pos + PAGINATION_NUM_CHARS
+            if target_pos >= (last_pos := text_ctrl.GetLastPosition()):
+                text_ctrl.SetInsertionPoint(last_pos - 1)
+                return
+        else:
+            target_pos = current_pos - PAGINATION_NUM_CHARS
+            if target_pos < 0:
+                target_pos = 0
+        target_fol = self.view.get_containing_line(round(target_pos / PAGINATION_NUM_CHARS) * PAGINATION_NUM_CHARS)
+        text_ctrl.SetInsertionPoint(target_fol)
