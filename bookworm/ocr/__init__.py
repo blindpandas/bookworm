@@ -22,10 +22,7 @@ from .ocr_menu import (
 log = logger.getChild(__name__)
 OCR_ENGINES = GENERIC_OCR_ENGINES + PLATFORM_SPECIFIC_OCR_ENGINES
 AVAILABLE_OCR_ENGINES = [ocr_eng for ocr_eng in OCR_ENGINES if ocr_eng.check()]
-
 PAGE_CACHE_SIZE = 500
-
-
 OCR_CONFIG_SPEC = {
     "ocr": dict(
         engine='string(default="")',
@@ -37,6 +34,10 @@ OCR_CONFIG_SPEC = {
 class _OCRManagerMixin:
     _ocr_engines = OCR_ENGINES
     _available_ocr_engines = AVAILABLE_OCR_ENGINES
+
+    @classmethod
+    def check(cls):
+        return True
 
     @classmethod
     def get_ocr_engine_by_name(cls, engine_name):
@@ -57,6 +58,7 @@ class OCRSettingsService(_OCRManagerMixin, BookwormService):
     """A separate service to enable users to download Tesseract if they're not on Windows 10."""
 
     name = "ocr_settings"
+    config_spec = OCR_CONFIG_SPEC
     has_gui = True
 
     def get_settings_panels(self):
@@ -68,11 +70,8 @@ class OCRSettingsService(_OCRManagerMixin, BookwormService):
 
 class OCRService(_OCRManagerMixin, BookwormService):
     name = "ocr"
-    config_spec = OCR_CONFIG_SPEC
     stateful_menu_ids = OCRMenuIds
     has_gui = True
-    _ocr_engines = OCR_ENGINES
-    _available_ocr_engines = AVAILABLE_OCR_ENGINES
 
     @classmethod
     def check(cls):
