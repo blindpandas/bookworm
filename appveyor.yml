@@ -18,7 +18,8 @@ install:
   # NSIS Paths
   # https://www.appveyor.com/docs/build-environment/#tools
   - set PATH=%PATH%;C:\Program Files (x86)\NSIS
-
+  # Python stdout encoding 
+  - set PYTHONIOENCODING=utf-8
 
 before_build:
   - cd %APPVEYOR_BUILD_FOLDER%
