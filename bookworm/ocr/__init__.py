@@ -36,10 +36,6 @@ class _OCRManagerMixin:
     _available_ocr_engines = AVAILABLE_OCR_ENGINES
 
     @classmethod
-    def check(cls):
-        return True
-
-    @classmethod
     def get_ocr_engine_by_name(cls, engine_name):
         for ocr_engine in cls._available_ocr_engines:
             if ocr_engine.name == engine_name:
@@ -60,6 +56,10 @@ class OCRSettingsService(_OCRManagerMixin, BookwormService):
     name = "ocr_settings"
     config_spec = OCR_CONFIG_SPEC
     has_gui = True
+
+    @classmethod
+    def check(cls):
+        return True
 
     def get_settings_panels(self):
         return [
