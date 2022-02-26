@@ -167,5 +167,5 @@ class NavigationProvider:
             target_pos = current_pos - PAGINATION_NUM_CHARS
             if target_pos < PAGINATION_NUM_CHARS:
                 target_pos = 0
-        target_fol = self.view.get_containing_line(round(target_pos / PAGINATION_NUM_CHARS) * PAGINATION_NUM_CHARS)
+        target_fol = self.view.get_containing_line(round(target_pos / PAGINATION_NUM_CHARS) * PAGINATION_NUM_CHARS)[0]
         text_ctrl.SetInsertionPoint(target_fol)
