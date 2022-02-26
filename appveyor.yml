@@ -38,7 +38,6 @@ build_script:
   - python -m pip install invoke
   - invoke dev
   - python -m pytest -vvv
-  - invoke clean --assets
   - invoke build
   - invoke create-portable
   - deactivate
@@ -49,7 +48,6 @@ build_script:
   - python -m pip install invoke
   - invoke dev
   - python -m pytest -vvv
-  - invoke clean --assets
   - invoke build
   - invoke create-portable
   # Update the release info file
