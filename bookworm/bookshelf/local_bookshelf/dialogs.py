@@ -40,9 +40,11 @@ class EditDocumentClassificationDialog(SimpleDialog):
 
     def addControls(self, parent):
         parent.SetSizerType("form")
+        # Translators: label of a combo box for choosing a document's reading list
         wx.StaticText(parent, -1, _("Reading List"))
         self.categoryCombo = wx.ComboBox(parent, -1, choices=self.categories)
         self.categoryCombo.SetSizerProps(expand=True)
+        # Translators: label of a text box for entering a document's collections
         wx.StaticText(parent, -1, _("Collections"))
         self.tagsTextCtrl = wx.TextCtrl(parent, -1, value=" ".join(self.tags_names))
         self.tagsTextCtrl.SetSizerProps(expand=True)
@@ -75,12 +77,13 @@ class AddFolderToLocalBookshelfDialog(SimpleDialog):
         self.folderCtrl = filebrowse.DirBrowseButton(
             parent,
             -1,
-            # Translators: label of an edit control
+            # Translators: label of an edit control for entering the path to a folder to import to the bookshelf
             labelText=_("Select a folder:"),
             # Translators: label of a button
             buttonText=("Browse..."),
             toolTip="",
         )
+        # Translators: label of a combo box for choosing a document's reading list
         wx.StaticText(parent, -1, _("Reading List"))
         self.categoryCombo = wx.ComboBox(
             parent, -1, choices=[cat.name for cat in Category.get_all()]
@@ -106,13 +109,17 @@ class AddFolderToLocalBookshelfDialog(SimpleDialog):
 class SearchBookshelfDialog(SimpleDialog):
     def addControls(self, parent):
         parent.SetSizerType("vertical")
+        # Translators: label of a text box for entering a search term
         wx.StaticText(parent, -1, _("Search"))
         self.searchQueryTextCtrl = wx.TextCtrl(parent, -1)
         self.searchQueryTextCtrl.SetSizerProps(expand=True)
+        # Translators: title of a group of controls to select which document field to search in when searching bookshelf
         searchFieldBox = make_sized_static_box(parent, _("Search Field"))
         pnl = sc.SizedPanel(searchFieldBox, -1)
         pnl.SetSizerType("horizontal")
+        # Translators: label of a check box that enables/disables searching document  title when searching the bookshelf
         self.shouldSearchInTitle = wx.CheckBox(pnl, -1, _("Title"))
+        # Translators: label of a check box that enables/disables searching document content when searching the bookshelf
         self.shouldSearchInContent = wx.CheckBox(pnl, -1, _("Content"))
         self.shouldSearchInTitle.SetValue(True)
         self.shouldSearchInContent.SetValue(True)
@@ -141,13 +148,23 @@ class BookshelfSearchResultsDialog(SimpleDialog):
         parent.SetSizerType("vertical")
         self.tabs = wx.Notebook(parent, -1)
         self.tabs.AddPage(
-            SearchResultsPage(self.tabs, self.title_search_results, _("Title Matches")),
+            SearchResultsPage(
+                self.tabs,
+                self.title_search_results,
+                # Translators: label of a list showing search results of documents with title matching the given  search query
+                _("Title matches"),
+            ),
+            # Translators: the label of a tab in a tabl control in a dialog showing a list of search results in the bookshelf
             _("Title Matches"),
         )
         self.tabs.AddPage(
             SearchResultsPage(
-                self.tabs, self.content_search_results, _("Content Matches")
+                self.tabs,
+                self.content_search_results,
+                # Translators: label of a list showing search results of content matching the given  search query
+                _("Content matches"),
             ),
+            # Translators: the label of a tab in a tabl control in a dialog showing a list of search results in the bookshelf
             _("Content Matches"),
         )
 
@@ -166,8 +183,13 @@ class SearchResultsPage(sc.SizedPanel):
         column_spec = (
             ColumnDefn(_("Snippet"), "left", 255, operator.attrgetter("snippet")),
             ColumnDefn(
-                _("Title"), "center", 255, operator.attrgetter("document_title")
+                # Translators: header of a column in a list control in a dialog showing a list of search results of matching document titles
+                _("Title"),
+                "center",
+                255,
+                operator.attrgetter("document_title"),
             ),
+            # Translators: header of a column in a list control in a dialog showing a list of search results of matching document pages
             ColumnDefn(_("Page"), "right", 120, lambda ins: ins.page_index + 1),
         )
         wx.StaticText(self, -1, list_label)
@@ -200,16 +222,17 @@ class BundleErrorsDialog(SimpleDialog):
     def addControls(self, parent):
         parent.SetSizerType("vertical")
         column_spec = (
-            # Translators: title of a list control colum
+            # Translators: title of a list control colum showing errors encountered when bundling documents
             ColumnDefn(_("Error"), "left", 255, operator.itemgetter(0)),
-            # Translators: title of a list control colum
+            # Translators: title of a list control colum showing the file names of files not bundled due to errors when bundling documents
             ColumnDefn(_("File Name"), "center", 255, operator.itemgetter(1)),
-            # Translators: title of a list control colum
+            # Translators: title of a list control colum showing the document titles  of documents not bundled due to errors when bundling documents
             ColumnDefn(_("Title"), "right", 255, operator.itemgetter(2)),
         )
         # Translators: label of a list control showing file copy errors
         wx.StaticText(parent, -1, _("Errors"))
         result_list = ImmutableObjectListView(parent, -1, columns=column_spec)
+        # Translators: label shown in a list control indicating the failure to copy the document when bundling documents
         reason = _("Failed to copy document")
         result_list.set_objects([(reason, *i) for i in self.info], set_focus=True)
 

@@ -51,6 +51,7 @@ class BookshelfNotebookPage(sc.SizedPanel):
             action.func(*args, **kwargs)
 
     def get_label(self):
+        # Translator: label of a reading list or collection entry in the bookshelf tree. It shows the count of documents under that reading list/collection
         return _("{name} ({count})").format(
             name=self.source.name, count=self.source.get_item_count()
         )
@@ -74,11 +75,13 @@ class BookshelfResultsPage(BookshelfNotebookPage):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Translators: label of a text box to filter documents in bookshelf
         quick_filter_label = _("Filter documents...")
         wx.StaticText(self, -1, quick_filter_label.rstrip("..."))
         self.quickFilterTextCtrl = wx.TextCtrl(self, -1)
         self.quickFilterTextCtrl.SetHint(quick_filter_label)
         self.quickFilterTextCtrl.SetSizerProps(expand=True)
+        # Translators: label of the bookshelf document list. This label is shown when the documents are being loaded from the database
         self.list_label = wx.StaticText(self, -1, _("Loading items"))
         doc_list_style = wx.LC_ICON | wx.LC_SINGLE_SEL
         if self.source.can_rename_items:
@@ -188,7 +191,9 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         except Exception:
             log.exception(f"Failed to retrieve items for source: {self}", exc_info=True)
             wx.MessageBox(
-                _("Failed to retrieve document information.\nPlease try again."),
+                # Translators: content of a message shown when the bookshelf fails to load and show documents
+                _("Failed to retrieve documents.\nPlease try again."),
+                # Translators: title of a message indicating an error
                 _("Error"),
                 style=wx.ICON_ERROR,
             )
@@ -228,14 +233,17 @@ class BookshelfResultsPage(BookshelfNotebookPage):
     def get_default_item_actions(self, item):
         return [
             BookshelfAction(
+                # Translators: label of an item in the context menu of a document in the bookshelf
                 _("&Open"),
                 func=self._do_open_document,
             ),
             BookshelfAction(
+                # Translators: label of an item in the context menu of a document in the bookshelf
                 _("Open in &system viewer"),
                 func=self._do_open_document_in_system_viewer,
             ),
             BookshelfAction(
+                # Translators: label of an item in the context menu of a document in the bookshelf
                 _("Edit &title"),
                 func=lambda item: self.document_list.EditLabel(
                     self.selected_item_index
@@ -288,7 +296,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
             set_focus_to_first_item=False,
         )
         if not matching_items:
-            # Translators: spoken message when no matching documents upon filtering the document list
+            # Translators: spoken message when no matching documents were found when filtering the document list
             speech.announce(_("No matching documents"))
 
     def onDocumentListChar(self, event):
@@ -342,6 +350,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         except IndexError:
             return
         AsyncSnakDialog(
+            # Translators: message shown when loading documents in the bookshelf
             message=_("Retrieving items..."),
             task=partial(self.get_source_items, prev_source),
             done_callback=self._get_items_callback,
@@ -353,6 +362,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
             return
         if isinstance(item, ItemContainerSource):
             AsyncSnakDialog(
+                # Translators: message shown when loading documents in the bookshelf
                 message=_("Retrieving items..."),
                 task=partial(self.get_source_items, item),
                 done_callback=self._navigate_to_folder,
@@ -377,7 +387,9 @@ class BookshelfResultsPage(BookshelfNotebookPage):
                 None,
                 *item_actions,
                 BookshelfAction(
-                    _("Document &info..."), func=self._do_show_document_info
+                    # Translators: label of an item in the context menu of a document in the bookshelf
+                    _("Document &info..."),
+                    func=self._do_show_document_info,
                 ),
             ]
         rect = self.document_list.GetItemRect(self.selected_item_index)
@@ -405,17 +417,21 @@ class BookshelfWindow(sc.SizedFrame):
         lhs_panel = sc.SizedPanel(panel)
         lhs_panel.SetSizerType("vertical")
         lhs_panel.SetSizerProps(expand=True)
+        # Translators: label of the combo box showing a list of bookshelf providers.
+        # Currently, only the Local Bookshelf provider is implemented. In the future, other providers may be added, such as Bookshare and Pocket.
         wx.StaticText(lhs_panel, -1, _("Provider"))
         self.provider_choice = wx.Choice(
             lhs_panel,
             -1,
             choices=[prov.display_name for prov in self.providers],
         )
+        # Translators: label of the bookshelf tree that shows reading lists and collections and other categories
         wx.StaticText(lhs_panel, -1, _("Categories"))
         self.tree_tabs = wx.Treebook(lhs_panel, -1)
         self.tree_tabs.SetSizerProps(expand=True)
         tree_ctrl = self.tree_tabs.GetTreeCtrl()
         tree_ctrl.SetMinSize((200, 1000))
+        # Translators: label of the bookshelf tree that shows reading lists and collections and other categories
         tree_ctrl.SetLabel(_("Categories"))
         self.Bind(wx.EVT_CHOICE, self.onProviderChoiceChange, self.provider_choice)
         self.Bind(wx.EVT_TREEBOOK_PAGE_CHANGED, self.OnPageChanged, self.tree_tabs)
@@ -476,8 +492,10 @@ class BookshelfWindow(sc.SizedFrame):
                 id=item_id,
             )
         menu.AppendSeparator()
+        # Translators: label of a menu item to exit the application
         menu.Append(wx.ID_CLOSE, _("&Exit"))
         self.Bind(wx.EVT_MENU, lambda e: self.Close(), id=wx.ID_CLOSE)
+        # Translators: lable of the file menu in the menu bar
         self.menubar.Append(menu, _("&File"))
         sources_updated.disconnect(self._handle_source_updated)
         sources_updated.connect(self._handle_source_updated, sender=self.provider)

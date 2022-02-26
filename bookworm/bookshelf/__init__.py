@@ -64,6 +64,7 @@ class BookshelfService(BookwormService):
         self.view.fileMenu.Insert(
             6,
             -1,
+            # Translators: the label of the bookshelf sub menu found in the file menu of the application
             _("Boo&kshelf"),
             self.menu,
         )

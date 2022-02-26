@@ -30,7 +30,7 @@ class BookshelfSettingsPanel(SettingsPanel):
     config_section = "bookshelf"
 
     def addControls(self):
-        # Translators: the label of a group of controls in the reading page
+        # Translators: the label of a group of controls in the bookshelf page in the preferences dialog
         static_box = self.make_static_box(_("Local Bookshelf"))
         wx.CheckBox(
             static_box,
@@ -87,15 +87,19 @@ class BookshelfMenu(wx.Menu):
             self.view.reader.document.get_file_system_path()
         except DocumentIOError:
             wx.MessageBox(
+                # Translators: content of a message indicating failure to add the current document to the bookshelf
                 _(
                     "You can not add this document to Bookshelf.\nThe document should exist locally in your computer."
                 ),
+                # Translators: title of a message indicating failure to add the current document to the bookshelf
                 _("Can not add document"),
                 style=wx.ICON_WARNING,
             )
             return
         dialog = EditDocumentClassificationDialog(
-            self.view, _("Reading list and collections")
+            self.view,
+            # Translators: title of a dialog to select reading list and collections for a document when adding it to the bookshelf
+            _("Reading list and collections"),
         )
         with dialog:
             retval = dialog.ShowModal()
