@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 import os
+import ftfy
 from functools import cached_property
 from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
 from bookworm.logger import logger
@@ -35,7 +36,7 @@ class PlainTextDocument(SinglePageDocument):
 
     def get_content(self):
         text = remove_excess_blank_lines(self.text)
-        return normalize_line_breaks(text)
+        return ftfy.ftfy(text)
 
     def close(self):
         super().close()
