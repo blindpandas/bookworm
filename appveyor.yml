@@ -37,7 +37,7 @@ build_script:
   - call ".venv32\Scripts\activate.bat"
   - python -m pip install invoke
   - invoke dev
-  - pytest
+  - python -m pytest -vvv
   - invoke clean --assets
   - invoke build
   - invoke create-portable
@@ -48,7 +48,7 @@ build_script:
   - call ".venv64\Scripts\activate.bat"
   - python -m pip install invoke
   - invoke dev
-  - pytest
+  - python -m pytest -vvv
   - invoke clean --assets
   - invoke build
   - invoke create-portable
