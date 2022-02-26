@@ -56,21 +56,22 @@ class OcrPanel(SettingsPanel):
     config_section = "ocr"
 
     def addControls(self):
-        self._service = wx.GetApp().service_handler.get_service("ocr")
+        self._service = wx.GetApp().service_handler.get_service("ocr_settings")
         self._engines = self._service._available_ocr_engines
         _engines_display = [_(e.display_name) for e in self._engines]
         # Translators: the label of a group of controls in the reading page
         generalOcrBox = self.make_static_box(_("OCR Options"))
-        self.ocrEngine = wx.RadioBox(
-            generalOcrBox,
-            -1,
-            # Translators: the title of a group of radio buttons in the OCR page
-            # in the application settings.
-            _("Default OCR Engine"),
-            majorDimension=1,
-            style=wx.RA_SPECIFY_COLS,
-            choices=_engines_display,
-        )
+        if any(self._engines):
+            self.ocrEngine = wx.RadioBox(
+                generalOcrBox,
+                -1,
+                # Translators: the title of a group of radio buttons in the OCR page
+                # in the application settings.
+                _("Default OCR Engine"),
+                majorDimension=1,
+                style=wx.RA_SPECIFY_COLS,
+                choices=_engines_display,
+            )
         # Translators: the label of a group of controls in the OCR page
         # of the settings related to Tesseract OCR engine
         tessBox = self.make_static_box(_("Tesseract OCR Engine"))
@@ -106,15 +107,18 @@ class OcrPanel(SettingsPanel):
         # Translators: the label of a group of controls in the reading page
         # of the settings related to image enhancement
         miscBox = self.make_static_box(_("Image processing"))
-        wx.CheckBox(
-            miscBox,
-            -1,
-            # Translators: the label of a checkbox
-            _("Enable default image enhancement filters"),
-            name="ocr.enhance_images",
-        )
+        if any(self._engines):
+            wx.CheckBox(
+                miscBox,
+                -1,
+                # Translators: the label of a checkbox
+                _("Enable default image enhancement filters"),
+                name="ocr.enhance_images",
+            )
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
+        if not any(self._engines):
+            return
         if strategy is ReconciliationStrategies.load:
             self.ocrEngine.SetSelection(
                 self._engines.index(self._service.get_first_available_ocr_engine())
