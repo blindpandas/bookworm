@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import annotations
+import gc
 import ftfy
 import regex
 from functools import cached_property, lru_cache
@@ -103,6 +104,9 @@ class FitzPdfDocument(FitzDocument):
     def close(self):
         super().close()
         self._pdf_fileobj.close()
+        del self._pdf_fileobj
+        del self.xpdf_doc
+        gc.collect()
 
     @cached_property
     def metadata(self):
