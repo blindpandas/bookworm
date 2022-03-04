@@ -37,7 +37,12 @@ class DocbookDocument(BaseHtmlDocument):
     def read(self):
         self.filename = self.get_file_system_path()
         with open(self.filename, "rb") as file:
-            self.xml_tree = lxml.etree.fromstring(file.read())
+            content = file.read()
+        try:
+            self.xml_tree = lxml.etree.fromstring(content)
+        except lxml.etree.XMLSyntaxError:
+            xml_bytes = content.decode("utf-8", errors="replace").encode("utf-8")
+            self.xml_tree = lxml.etree.fromstring(xml_bytes)
         super().read()
 
     @cached_property
