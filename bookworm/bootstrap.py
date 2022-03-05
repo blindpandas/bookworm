@@ -112,6 +112,9 @@ class BookwormApp(wx.App):
         self.Bind(wx.EVT_END_SESSION, self.onEndSession)
         return True
 
+    def InitLocale(self):
+        pass
+
     def OnAssert(self, file, line, cond, msg):
         message = f"{file}, line {line}:\nassert {cond}: {msg}"
         log.warning(message, codepath="wx", stack_info=True)

@@ -94,7 +94,7 @@ def setup_i18n():
     try:
         pylocale.getlocale(pylocale.LC_ALL)
     except ValueError:
-        pylocale.setlocale(pylocale.LC_ALL, ("en", "utf-8"))
+        pylocale.setlocale(pylocale.LC_ALL, 'C')
 
 
 def is_rtl(lang):
