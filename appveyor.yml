@@ -7,6 +7,7 @@ branches:
     - main
     - develop
     - next
+    - /try.*/
     - /dev.*/
     - /release-.*/
 
