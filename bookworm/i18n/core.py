@@ -87,14 +87,6 @@ def set_locale(locale_identifier):
 def setup_i18n():
     set_locale(config.conf["general"]["language"])
     pylocale.setlocale(pylocale.LC_ALL, app.current_language.pylang)
-    try:
-        set_wx_locale(app.current_language)
-    except:
-        log.exception("Failed to set wxLocale to the current app locale", exc_info=True)
-    try:
-        pylocale.getlocale(pylocale.LC_ALL)
-    except ValueError:
-        pylocale.setlocale(pylocale.LC_ALL, ("en", "utf-8"))
 
 
 def is_rtl(lang):
