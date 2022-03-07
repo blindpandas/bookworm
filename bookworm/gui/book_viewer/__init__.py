@@ -14,6 +14,7 @@ from bookworm import speech
 from bookworm.concurrency import threaded_worker, CancellationToken
 from bookworm.resources import sounds, app_icons
 from bookworm.paths import app_path, fonts_path
+from bookworm.document import DummyDocument
 from bookworm.structured_text import Style, SEMANTIC_ELEMENT_OUTPUT_OPTIONS
 from bookworm.reader import (
     EBookReader,
@@ -159,19 +160,11 @@ class ResourceLoader:
                     raise _last_exception
 
     def load(self, document):
-        with reader_book_loaded.connected_to(
-            self.book_loaded_handler, sender=self.view.reader
-        ):
-            if isinstance(document, Future):
-                document = document.result()
-            if (document is not None) and (
-                not self._cancellation_token.is_cancellation_requested()
-            ):
-                self.view.reader.set_document(document)
-
-    @gui_thread_safe
-    def book_loaded_handler(self, sender):
-        self.view.invoke_load_handlers()
+        if (document is None) or (self._cancellation_token.is_cancellation_requested()):
+            return
+        if isinstance(document, Future):
+            document = document.result()
+        self.view.load_document(document)
         if self.callback is not None:
             self.callback()
 
@@ -354,6 +347,16 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if self.contentTextCtrl.HasFocus():
             self.tocTreeCtrl.SetFocus()
 
+    def load_document(self, document) -> bool:
+        with reader_book_loaded.connected_to(
+            self.book_loaded_handler, sender=self.reader
+        ):
+            self.reader.set_document(document)
+
+    @gui_thread_safe
+    def book_loaded_handler(self, sender):
+        self.invoke_load_handlers()
+
     def open_uri(self, uri, callback=None):
         self.unloadCurrentEbook()
         ResourceLoader(
@@ -388,6 +391,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.contentTextCtrlLabel.SetLabel(text)
 
     def unloadCurrentEbook(self):
+        true_unload_opt = (
+            not isinstance(self.reader.document, DummyDocument)
+            and self.reader.document is not None
+        )
         self.userPositionTimer.Stop()
         self.readingProgressBar.SetValue(0)
         self.reader.unload()
@@ -398,6 +405,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.onTextCtrlZoom(0, announce=False)
         self.clear_highlight()
         self.set_status(self._no_open_book_status)
+        if true_unload_opt:
+            sounds.close_document.play()
 
     def add_toc_tree(self, tree):
         self.toc_tree_manager.build_tree(tree)
@@ -425,9 +434,12 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def update_reading_progress(self):
         if self.reader.document.is_single_page_document():
+            char_count = self.contentTextCtrl.GetLastPosition()
+            if char_count == 0:
+                return
             current_ratio = (
                 self.contentTextCtrl.GetInsertionPoint()
-                / self.contentTextCtrl.GetLastPosition()
+                / char_count
             )
         else:
             current_ratio = (self.reader.current_page + 1) / len(self.reader.document)

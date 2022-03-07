@@ -5,6 +5,8 @@ import threading
 import time
 import wx
 import functools
+import secrets
+from functools import cached_property
 from PIL import Image
 from copy import copy
 from pathlib import Path
@@ -25,6 +27,15 @@ from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
 from bookworm.resources import sounds
 from bookworm.gui.components import SimpleDialog, AsyncSnakDialog, RobustProgressDialog
 from bookworm.utils import gui_thread_safe
+from bookworm.document import (
+    SinglePageDocument,
+    VirtualDocument,
+    DocumentCapability as DC,
+    DocumentUri,
+    BookMetadata,
+    Section,
+    SINGLE_PAGE_DOCUMENT_PAGER
+)
 from bookworm.logger import logger
 from .ocr_dialogs import OCROptionsDialog
 
@@ -39,6 +50,49 @@ log = logger.getChild(__name__)
 # Signals
 ocr_started = _signals.signal("ocr-started")
 ocr_ended = _signals.signal("ocr-ended")
+
+
+class _ImageOcrRegonitionResultsDocument(VirtualDocument, SinglePageDocument):
+    __internal__ = True
+    format = "ocr_image_recog"
+    name = "Image Recognition Results"
+    extensions = ()
+    capabilities = DC.SINGLE_PAGE | DC.LINKS | DC.STRUCTURED_NAVIGATION
+
+    def __init__(self, ocr_result, language, image_name, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ocr_result = ocr_result
+        self.language = language
+        self.image_name = image_name
+
+    def read(self):
+        super().read()
+
+    def get_content(self):
+        return self.ocr_result.recognized_text
+
+    @cached_property
+    def language(self):
+        return self.language
+
+    def close(self):
+        super().close()
+
+    @cached_property
+    def toc_tree(self):
+        return Section(
+            title="",
+            pager=SINGLE_PAGE_DOCUMENT_PAGER,
+        )
+
+    @cached_property
+    def metadata(self):
+        return BookMetadata(
+            title=_("Recognition Results: {image_name}").format(image_name=self.image_name),
+            author="",
+            publication_year="",
+        )
+
 
 
 class OCRMenuIds(IntEnum):
@@ -329,12 +383,19 @@ class OCRMenu(wx.Menu):
                 return
 
             def _ocr_callback(ocr_result):
-                content = ocr_result.recognized_text
-                if self.service.reader.ready:
-                    self.view.unloadCurrentEbook()
-                self.view.set_content(content)
-                self.view.set_text_direction(options.language.is_rtl)
-                self.view.set_status(_("OCR Results"))
+                recog_uri = DocumentUri(
+                    format=_ImageOcrRegonitionResultsDocument.format,
+                    path=secrets.token_urlsafe(10),
+                    openner_args={},
+                    view_args={'add_to_recents': False}
+                )
+                recog_document = _ImageOcrRegonitionResultsDocument(
+                    ocr_result=ocr_result,
+                    language=options.language,
+                    image_name=Path(filename).stem,
+                    uri=recog_uri
+                )
+                wx.CallAfter(self.view.load_document, recog_document)
 
             factor = options.zoom_factor
             resized_image = image.to_pil().resize(

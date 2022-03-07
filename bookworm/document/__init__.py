@@ -6,6 +6,7 @@ from .base import (
     SinglePageDocument,
     SinglePage,
     DummyDocument,
+    VirtualDocument,
 )
 from .elements import (
     Section,
@@ -28,6 +29,7 @@ from .exceptions import (
     DocumentEncryptedError,
     PaginationError,
 )
+from .uri import DocumentUri
 from .formats import *
 
 

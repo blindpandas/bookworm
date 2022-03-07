@@ -432,3 +432,10 @@ class DummyDocument(BaseDocument):
     @property
     def metadata(self):
         raise NotImplementedError
+
+
+class VirtualDocument:
+    """
+    A Marker to denote a virtual document.
+    Subclasses of this should be considered one shot documents.
+    """
