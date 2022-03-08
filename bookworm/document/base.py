@@ -439,3 +439,9 @@ class VirtualDocument:
     A Marker to denote a virtual document.
     Subclasses of this should be considered one shot documents.
     """
+
+    def __init__(self):
+        self.uri.view_args.update({
+            'add_to_recents': False,
+            'allow_pinning': False
+        })

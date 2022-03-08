@@ -85,7 +85,7 @@ class FileMenu(BaseMenu):
         self._recents = {}
         self._pinned = {}
         super().__init__(*args, **kwargs)
-        reader_book_loaded.connect(self.after_loading_book)
+        self.view.add_load_handler(self.after_loading_book)
         reader_book_unloaded.connect(self.after_unloading_book, sender=self.reader)
 
     def create(self):
@@ -178,12 +178,17 @@ class FileMenu(BaseMenu):
         self.populate_recent_file_list()
 
     def after_loading_book(self, sender):
-        self.Check(
-            BookRelatedMenuIds.pin_document, recents_manager.is_pinned(sender.document)
-        )
-        self.populate_pinned_documents_list()
-        recents_manager.add_to_recents(sender.document)
-        self.populate_recent_file_list()
+        doc = sender.document
+        if doc.uri.view_args.get('allow_pinning', True):
+            self.Check(
+                BookRelatedMenuIds.pin_document, recents_manager.is_pinned(doc)
+            )
+            self.populate_pinned_documents_list()
+        else:
+            self.Enable(BookRelatedMenuIds.pin_document, False)
+        if doc.uri.view_args.get("add_to_recents", True):
+            recents_manager.add_to_recents(doc)
+            self.populate_recent_file_list()
 
     def after_unloading_book(self, sender):
         self.populate_pinned_documents_list()

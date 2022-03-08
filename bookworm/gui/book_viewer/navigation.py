@@ -83,6 +83,7 @@ class NavigationProvider:
             elif key_code == wx.WXK_PAGEUP:
                 self.reader.navigate(to="prev", unit="section")
             self.callback()
+            return
         if event.GetModifiers() == wx.MOD_ALT and (
             key_code in (wx.WXK_HOME, wx.WXK_END)
         ):

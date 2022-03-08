@@ -5,7 +5,6 @@ import threading
 import time
 import wx
 import functools
-import secrets
 from functools import cached_property
 from PIL import Image
 from copy import copy
@@ -52,15 +51,16 @@ ocr_started = _signals.signal("ocr-started")
 ocr_ended = _signals.signal("ocr-ended")
 
 
-class _ImageOcrRegonitionResultsDocument(VirtualDocument, SinglePageDocument):
+class _ImageOcrRegonitionResultsDocument(SinglePageDocument, VirtualDocument):
     __internal__ = True
     format = "ocr_image_recog"
     name = "Image Recognition Results"
     extensions = ()
     capabilities = DC.SINGLE_PAGE | DC.LINKS | DC.STRUCTURED_NAVIGATION
 
-    def __init__(self, ocr_result, language, image_name, *args, **kwargs):
+    def __init__(self, *args, ocr_result, language, image_name, **kwargs):
         super().__init__(*args, **kwargs)
+        VirtualDocument.__init__(self)
         self.ocr_result = ocr_result
         self.language = language
         self.image_name = image_name
@@ -385,15 +385,14 @@ class OCRMenu(wx.Menu):
             def _ocr_callback(ocr_result):
                 recog_uri = DocumentUri(
                     format=_ImageOcrRegonitionResultsDocument.format,
-                    path=secrets.token_urlsafe(10),
+                    path=filename,
                     openner_args={},
-                    view_args={'add_to_recents': False}
                 )
                 recog_document = _ImageOcrRegonitionResultsDocument(
+                    recog_uri,
                     ocr_result=ocr_result,
                     language=options.language,
                     image_name=Path(filename).stem,
-                    uri=recog_uri
                 )
                 wx.CallAfter(self.view.load_document, recog_document)
 

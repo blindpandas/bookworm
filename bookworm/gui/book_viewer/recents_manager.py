@@ -18,8 +18,6 @@ def get_document_unique(model, document):
 
 
 def add_to_recents(document):
-    if not document.uri.view_args.get("add_to_recents", True):
-        return
     doc_info = get_document_unique(RecentDocument, document)
     doc_info.record_open()
 

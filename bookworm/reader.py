@@ -121,26 +121,20 @@ class EBookReader:
             return
         self.document = document
         self.current_book = self.document.metadata
+        self.__state.setdefault("current_page_index", -1)
+        self.current_page = 0
+        self.set_view_parameters()
+        log.debug("Retrieving last saved reading position from the database")
         self.stored_document_info = DocumentPositionInfo.get_or_create(
             title=self.current_book.title, uri=self.document.uri
         )
-        self.set_view_parameters()
-        reader_book_loaded.send(self)
         if open_args := self.document.uri.openner_args:
             page = int(open_args.get("page", 0))
             pos = int(open_args.get("position", 0))
             self.go_to_page(page, pos)
             self.view.contentTextCtrl.SetFocus()
-
-    def set_view_parameters(self):
-        self.view.set_title(self.get_view_title(include_author=True))
-        self.view.set_text_direction(self.document.language.is_rtl)
-        self.view.add_toc_tree(self.document.toc_tree)
-        self.__state.setdefault("current_page_index", -1)
-        self.current_page = 0
-        if config.conf["general"]["open_with_last_position"]:
+        elif config.conf["general"]["open_with_last_position"]:
             try:
-                log.debug("Retrieving last saved reading position from the database")
                 log.debug("Navigating to the last saved position.")
                 page_number, pos = self.stored_document_info.get_last_position()
                 self.go_to_page(page_number, pos)
@@ -148,6 +142,16 @@ class EBookReader:
                 log.exception(
                     "Failed to restore last saved reading position", exc_info=True
                 )
+        self.__state.setdefault(
+            "active_section",
+            self.document.get_section_at_position(self.view.get_insertion_point())
+        )
+        reader_book_loaded.send(self)
+
+    def set_view_parameters(self):
+        self.view.set_title(self.get_view_title(include_author=True))
+        self.view.set_text_direction(self.document.language.is_rtl)
+        self.view.add_toc_tree(self.document.toc_tree)
 
     def decrypt_document(self, document):
         return bool(self.view.try_decrypt_document(document))
@@ -215,7 +219,8 @@ class EBookReader:
             )
         self.__state["current_page_index"] = value
         page = self.document[value]
-        self.active_section = page.section
+        if not self.document.is_single_page_document():
+            self.active_section = page.section
         self.view.set_state_on_page_change(page)
         # if config.conf["appearance"]["apply_text_styles"] and DC.TEXT_STYLE in self.document.capabilities:
         # self.view.apply_text_styles(page.get_style_info())

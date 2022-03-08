@@ -407,6 +407,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.set_status(self._no_open_book_status)
         if true_unload_opt:
             sounds.close_document.play()
+            # Translators: spoken message when the document has been closed
+            speech.announce(_("Document closed."))
 
     def add_toc_tree(self, tree):
         self.toc_tree_manager.build_tree(tree)
@@ -420,17 +422,13 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def set_state_on_section_change(self, current):
         self.tocTreeSetSelection(current)
         is_single_page_doc = self.reader.document.is_single_page_document()
-        if (
-            is_single_page_doc
-            and current
-            is not self.reader.document.get_section_at_position(
-                self.get_insertion_point()
-            )
-        ):
+        if is_single_page_doc:
             target_pos = self.get_containing_line(current.text_range.start + 1)[0]
             self.set_insertion_point(target_pos)
-        if not is_single_page_doc and config.conf["general"]["speak_section_title"]:
+        if config.conf["general"]["speak_section_title"]:
             speech.announce(current.title)
+        if is_single_page_doc:
+            sounds.navigation.play()
 
     def update_reading_progress(self):
         if self.reader.document.is_single_page_document():
@@ -472,6 +470,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             return
         condition = (
             self.reader.ready
+            and self.reader.active_section is not None
             and self.get_insertion_point() not in self.reader.active_section.text_range
         )
         if condition:
