@@ -17,6 +17,7 @@ from .. import (
 
 
 log = logger.getChild(__name__)
+MAX_NUM_CHARS = round(2e6)
 
 
 class PlainTextDocument(SinglePageDocument):
@@ -35,6 +36,8 @@ class PlainTextDocument(SinglePageDocument):
         super().read()
 
     def get_content(self):
+        if len(self.text) > MAX_NUM_CHARS:
+            return self.text
         text = remove_excess_blank_lines(self.text)
         return ftfy.ftfy(text)
 
