@@ -122,8 +122,8 @@ class EBookReader:
         self.document = document
         self.current_book = self.document.metadata
         self.__state.setdefault("current_page_index", -1)
-        self.current_page = 0
         self.set_view_parameters()
+        self.current_page = 0
         log.debug("Retrieving last saved reading position from the database")
         self.stored_document_info = DocumentPositionInfo.get_or_create(
             title=self.current_book.title, uri=self.document.uri
@@ -142,10 +142,11 @@ class EBookReader:
                 log.exception(
                     "Failed to restore last saved reading position", exc_info=True
                 )
-        self.__state.setdefault(
-            "active_section",
-            self.document.get_section_at_position(self.view.get_insertion_point())
-        )
+        if self.active_section is None:
+            self.__state.setdefault(
+                "active_section",
+                self.document.get_section_at_position(self.view.get_insertion_point())
+            )
         reader_book_loaded.send(self)
 
     def set_view_parameters(self):
