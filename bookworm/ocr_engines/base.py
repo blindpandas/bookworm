@@ -22,18 +22,31 @@ log = logger.getChild(__name__)
 
 @dataclass
 class OcrRequest:
-    language: LocaleInfo
+    languages: list[LocaleInfo]
     image: ImageIO
     image_processing_pipelines: t.Tuple[ImageProcessingPipeline] = field(
         default_factory=tuple
     )
     cookie: t.Optional[t.Any] = None
 
+    def __post_init__(self):
+        if not self.languages:
+            raise ValueError("At least one language should be provided for the OCR request to be valid.")
+
+    @property
+    def language(self):
+        """Returns the primary language."""
+        return self.languages[0]
+
 
 @dataclass
 class OcrResult:
     recognized_text: str
-    cookie: t.Optional[t.Any] = None
+    ocr_request: OcrRequest
+
+    @property
+    def cookie(self):
+        return self.ocr_request.cookie
 
 
 class BaseOcrEngine(metaclass=ABCMeta):
@@ -43,6 +56,8 @@ class BaseOcrEngine(metaclass=ABCMeta):
     """The short name for this engine."""
     display_name = None
     """The user-facing name of this engine."""
+    __supports_more_than_one_recognition_language__ = False
+    """Does this engine supports more than one recognition language?"""
 
     @classmethod
     @abstractmethod
@@ -61,11 +76,11 @@ class BaseOcrEngine(metaclass=ABCMeta):
         for image in images:
             ocr_req = OcrRequest(
                 image=image,
-                language=ocr_request.language,
+                languages=ocr_request.languages,
             )
             recog_result = cls.recognize(ocr_req)
             text.append(recog_result.recognized_text)
-        return OcrResult(recognized_text="\n".join(text), cookie=ocr_request.cookie)
+        return OcrResult(recognized_text="\n".join(text), ocr_request=ocr_request)
 
     @classmethod
     def preprocess_image(
@@ -103,7 +118,7 @@ class BaseOcrEngine(metaclass=ABCMeta):
         def recognize_page(page):
             image = page.get_image(ocr_options.zoom_factor)
             ocr_req = OcrRequest(
-                language=ocr_options.language, image=image, cookie=page.number
+                languages=ocr_options.languages, image=image, cookie=page.number
             )
             return cls.preprocess_and_recognize(ocr_req)
 

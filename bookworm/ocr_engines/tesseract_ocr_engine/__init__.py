@@ -22,6 +22,7 @@ def get_tesseract_path():
 class TesseractOcrEngine(BaseOcrEngine):
     name = "tesseract_ocr"
     display_name = _("Tesseract OCR Engine")
+    __supports_more_than_one_recognition_language__ = True
 
     @classmethod
     def check(cls) -> bool:
@@ -53,10 +54,11 @@ class TesseractOcrEngine(BaseOcrEngine):
 
     @classmethod
     def recognize(cls, ocr_request: OcrRequest) -> OcrResult:
+        recog_languages = "+".join(lang.given_locale_name for lang in ocr_request.languages)
         recognized_text = pytesseract.image_to_string(
-            ocr_request.image.to_pil(), ocr_request.language.given_locale_name, nice=1
+            ocr_request.image.to_pil(), recog_languages, nice=1
         )
         return OcrResult(
             recognized_text=recognized_text,
-            cookie=ocr_request.cookie,
+            ocr_request=ocr_request,
         )

@@ -58,11 +58,11 @@ class _ImageOcrRegonitionResultsDocument(SinglePageDocument, VirtualDocument):
     extensions = ()
     capabilities = DC.SINGLE_PAGE | DC.LINKS | DC.STRUCTURED_NAVIGATION
 
-    def __init__(self, *args, ocr_result, language, image_name, **kwargs):
+    def __init__(self, *args, ocr_result, image_name, **kwargs):
         super().__init__(*args, **kwargs)
         VirtualDocument.__init__(self)
         self.ocr_result = ocr_result
-        self.language = language
+        self.language = ocr_result.ocr_request.language
         self.image_name = image_name
 
     def read(self):
@@ -213,6 +213,7 @@ class OCRMenu(wx.Menu):
             title=_("OCR Options"),
             languages=langs,
             stored_options=last_stored_options,
+            is_multilingual=self.service.current_ocr_engine.__supports_more_than_one_recognition_language__,
             **dlg_kw,
         )
         self.service.saved_scanned_pages.clear()
@@ -231,6 +232,12 @@ class OCRMenu(wx.Menu):
             reader.current_page,
             ocr_opts.zoom_factor,
         )
+        ocr_request = OcrRequest(
+            languages=ocr_opts.languages,
+            image=image,
+            image_processing_pipelines=ocr_opts.image_processing_pipelines,
+            cookie=reader.current_page,
+        )
 
         def _ocr_callback(ocr_result):
             page_number = ocr_result.cookie
@@ -238,14 +245,8 @@ class OCRMenu(wx.Menu):
             self.service.saved_scanned_pages[page_number] = content
             if page_number == self.view.reader.current_page:
                 self.view.set_content(content)
-                self.view.set_text_direction(ocr_opts.language.is_rtl)
+                self.view.set_text_direction(ocr_request.language.is_rtl)
 
-        ocr_request = OcrRequest(
-            language=ocr_opts.language,
-            image=image,
-            image_processing_pipelines=ocr_opts.image_processing_pipelines,
-            cookie=reader.current_page,
-        )
         self._run_ocr(ocr_request, _ocr_callback)
 
     def _run_ocr(self, ocr_request, callback):
@@ -391,7 +392,6 @@ class OCRMenu(wx.Menu):
                 recog_document = _ImageOcrRegonitionResultsDocument(
                     recog_uri,
                     ocr_result=ocr_result,
-                    language=options.language,
                     image_name=Path(filename).stem,
                 )
                 wx.CallAfter(self.view.load_document, recog_document)
@@ -401,7 +401,7 @@ class OCRMenu(wx.Menu):
                 (factor * image.width, factor * image.height), resample=Image.LANCZOS
             )
             ocr_request = OcrRequest(
-                language=options.language,
+                languages=options.languages,
                 image=ImageIO.from_pil(resized_image),
                 image_processing_pipelines=options.image_processing_pipelines,
             )

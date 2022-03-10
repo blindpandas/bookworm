@@ -49,6 +49,14 @@ class _OCRManagerMixin:
             or more_itertools.first(cls._available_ocr_engines, None)
         )
 
+    def _init_ocr_engine(self):
+        self.current_ocr_engine = self.get_first_available_ocr_engine()
+        self.init_saved_options()
+
+    def init_saved_options(self):
+        self.stored_options = None
+        self.saved_scanned_pages = LRU(size=PAGE_CACHE_SIZE)
+
 
 class OCRSettingsService(_OCRManagerMixin, BookwormService):
     """A separate service to enable users to download Tesseract if they're not on Windows 10."""
@@ -95,10 +103,3 @@ class OCRService(_OCRManagerMixin, BookwormService):
         if (dlg := getattr(self.menu, "_wait_dlg", None)) is not None:
             dlg.Dismiss()
 
-    def _init_ocr_engine(self):
-        self.current_ocr_engine = self.get_first_available_ocr_engine()
-        self.init_saved_options()
-
-    def init_saved_options(self):
-        self.stored_options = None
-        self.saved_scanned_pages = LRU(size=PAGE_CACHE_SIZE)

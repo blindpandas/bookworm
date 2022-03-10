@@ -28,6 +28,7 @@ except Exception as e:
 class DocrEngine(BaseOcrEngine):
     name = "docr"
     display_name = _("Windows 10 OCR")
+    __supports_more_than_one_recognition_language__ = False
 
     @classmethod
     def check(cls) -> bool:
@@ -44,5 +45,5 @@ class DocrEngine(BaseOcrEngine):
         recognized_text = docr_eng.recognize(image.data, image.width, image.height)
         return OcrResult(
             recognized_text=recognized_text,
-            cookie=ocr_request.cookie,
+            ocr_request=ocr_request,
         )

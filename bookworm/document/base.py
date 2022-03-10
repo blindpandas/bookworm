@@ -442,6 +442,8 @@ class VirtualDocument:
 
     def __init__(self):
         self.uri.view_args.update({
+            'is_virtual': True,
+            'save_last_position': False,
             'add_to_recents': False,
             'allow_pinning': False
         })

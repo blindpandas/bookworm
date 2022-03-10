@@ -46,6 +46,9 @@ class AnnotationService(BookwormService):
         self.view.contentTextCtrl.Bind(
             wx.EVT_KEY_UP, self.onKeyUp, self.view.contentTextCtrl
         )
+        self.view.add_load_handler(
+            lambda red: wx.CallAfter(self._check_is_virtual, red)
+        )
         reader_book_loaded.connect(self.on_book_load, sender=self.reader)
         reader_book_unloaded.connect(self.on_book_unload, sender=self.reader)
         reader_page_changed.connect(self.comments_page_handler, sender=self.reader)
@@ -60,6 +63,8 @@ class AnnotationService(BookwormService):
         return (30, self.menu, _("&Annotation"))
 
     def get_contextmenu_items(self):
+        if self.reader.document.uri.view_args.get("is_virtual", False):
+            return []
         rv = [
             (
                 3,
@@ -143,6 +148,10 @@ class AnnotationService(BookwormService):
                 tts_speech_prefix=msg,
             )
             sounds.navigation.play()
+
+    def _check_is_virtual(self, sender):
+        enable = not sender.document.uri.view_args.get("is_virtual", False)
+        self.view.synchronise_menu(self.stateful_menu_ids, enable)
 
     def on_book_load(self, sender):
         self.bookmarker = Bookmarker(sender)
