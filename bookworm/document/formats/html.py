@@ -58,23 +58,17 @@ def get_clean_html(html_string: str) -> (str, BookMetadata):
     html_string = StructuredHtmlParser.normalize_html(html_string)
 
     # Extract metadata
-    meta_info = trafilatura.metadata.extract_metadata(html_string) or {}
-    doc_title = meta_info.get("title", "")
+    meta_info = trafilatura.metadata.extract_metadata(html_string) 
+    doc_title = meta_info.title
     if not doc_title:
         html = lxml_html.fromstring(html_string)
-        extracted_title = html.xpath("head/title")
-        try:
-            doc_title = extracted_title.text
-        except AttributeError:
-            if extracted_title:
-                doc_title = extracted_title[0].text
-            else:
-                doc_title = ""
+        extracted_title = html.xpath("/html/head/title//text()")
+        doc_title = extracted_title if extracted_title else ""
     doc_metadata = BookMetadata(
         title=doc_title,
-        author=meta_info.get("author", ""),
-        publisher=meta_info.get("sitename", ""),
-        publication_year=meta_info.get("date", ""),
+        author=meta_info.author or "",
+        publisher=meta_info.sitename or "",
+        publication_year=meta_info.date or "",
     )
 
     # Extract the body
