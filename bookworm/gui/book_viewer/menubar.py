@@ -251,6 +251,10 @@ class FileMenu(BaseMenu):
         )
         if not filename.strip():
             return
+        if self.reader.document.is_single_page_document():
+            with open(filename, "w", encoding="utf-8") as file:
+                file.write(self.reader.document.get_content())
+            return
         total = len(self.reader.document)
         dlg = RobustProgressDialog(
             self.view,
