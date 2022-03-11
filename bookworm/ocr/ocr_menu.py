@@ -51,7 +51,7 @@ ocr_started = _signals.signal("ocr-started")
 ocr_ended = _signals.signal("ocr-ended")
 
 
-class _ImageOcrRegonitionResultsDocument(SinglePageDocument, VirtualDocument):
+class _ImageOcrRegonitionResultsDocument(VirtualDocument, SinglePageDocument):
     __internal__ = True
     format = "ocr_image_recog"
     name = "Image Recognition Results"
@@ -59,7 +59,7 @@ class _ImageOcrRegonitionResultsDocument(SinglePageDocument, VirtualDocument):
     capabilities = DC.SINGLE_PAGE | DC.LINKS | DC.STRUCTURED_NAVIGATION
 
     def __init__(self, *args, ocr_result, image_name, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(SinglePageDocument, self).__init__(*args, **kwargs)
         VirtualDocument.__init__(self)
         self.ocr_result = ocr_result
         self.language = ocr_result.ocr_request.language
@@ -88,7 +88,7 @@ class _ImageOcrRegonitionResultsDocument(SinglePageDocument, VirtualDocument):
     @cached_property
     def metadata(self):
         return BookMetadata(
-            title=_("Recognition Results: {image_name}").format(image_name=self.image_name),
+            title=_("Recognition Result: {image_name}").format(image_name=self.image_name),
             author="",
             publication_year="",
         )

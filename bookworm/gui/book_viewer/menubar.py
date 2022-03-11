@@ -2,6 +2,7 @@
 
 import sys
 import os
+import inspect
 import threading
 import wx
 import webbrowser
@@ -268,7 +269,10 @@ class FileMenu(BaseMenu):
             can_abort=True,
         )
         process = self.reader.document.export_to_text(filename)
-        dlg.set_abort_callback(process.cancel)
+        if inspect.isgenerator(process):
+            dlg.set_abort_callback(process.close)
+        else:
+            dlg.set_abort_callback(process.cancel)
         self._continue_with_export_to_text(process, dlg, total)
 
     @call_threaded

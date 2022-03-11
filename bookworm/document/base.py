@@ -447,3 +447,9 @@ class VirtualDocument:
             'add_to_recents': False,
             'allow_pinning': False
         })
+
+    def search(self, request: doctools.SearchRequest):
+        yield from doctools.search_book(self, request)
+
+    def export_to_text(self, target_filename: t.PathLike):
+        yield from doctools.export_to_plain_text(self, target_filename)

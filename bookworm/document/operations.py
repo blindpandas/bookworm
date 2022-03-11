@@ -65,7 +65,7 @@ def export_to_plain_text(doc, target_filename):
         for n in range(total):
             text = doc.get_page_content(n)
             out.write(f"{text}{NEWLINE}\f{NEWLINE}")
-            yield n
+            yield n + 1
         full_text = out.getvalue()
         with open(target_filename, "w", encoding="utf8") as file:
             file.write(full_text)
