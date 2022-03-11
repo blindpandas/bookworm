@@ -35,6 +35,7 @@ for pkg_name in PACKAGES_WITH_DATA:
 # Hidden imports
 HIDDEN_SUBMODULES = [
     "babel",
+    "cssselect",
     "odf",
     "trafilatura",
     "justext",
