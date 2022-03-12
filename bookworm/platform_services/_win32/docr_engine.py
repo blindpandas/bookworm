@@ -36,11 +36,14 @@ class DocrEngine(BaseOcrEngine):
 
     @classmethod
     def get_recognition_languages(cls) -> t.List[LocaleInfo]:
-        return [LocaleInfo(lang) for lang in Win10DocrEngine.get_supported_languages()]
+        return [
+            LocaleInfo(lang, given_locale_name=lang)
+            for lang in Win10DocrEngine.get_supported_languages()
+        ]
 
     @classmethod
     def recognize(cls, ocr_request: OcrRequest) -> OcrResult:
-        docr_eng = Win10DocrEngine(ocr_request.language.ietf_tag)
+        docr_eng = Win10DocrEngine(ocr_request.language.given_locale_name)
         image = ocr_request.image.as_rgba()
         recognized_text = docr_eng.recognize(image.data, image.width, image.height)
         return OcrResult(
