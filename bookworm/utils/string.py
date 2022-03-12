@@ -1,7 +1,11 @@
 # coding: utf-8
 
 from __future__ import annotations
+import codecs
+import attr
+import chardet
 import regex
+from io import StringIO, BytesIO
 from functools import lru_cache
 from xml.sax.saxutils import escape
 from bookworm import typehints as t
@@ -19,6 +23,7 @@ except ImportError:
 
 
 log = logger.getChild(__name__)
+FALLBACK_ENCODING = 'latin1'
 
 
 _T = t.TypeVar("T")
@@ -38,6 +43,44 @@ MAC_NEWLINE = "\r"
 NEWLINE = UNIX_NEWLINE
 MORE_THAN_ONE_LINE = regex.compile(r"[\n]{2,}")
 EXCESS_LINE_REPLACEMENT_FUNC = lambda m: m[0].replace("\n", " ")[:-1] + "\n"
+
+
+@attr.s(auto_attribs=True, slots=True, frozen=True, repr=False)
+class TextContentDecoder:
+    content: bytes
+    prefered_encoding: str = "utf-8"
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: content_length: {len(self.content)}, prefered_encoding: {self.prefered_encoding}>"
+    @classmethod
+    def from_filename(cls, filename: os.PathLike, prefered_encoding="utf-8"):
+        with open(filename, "rb") as file:
+            return cls(file.read(), prefered_encoding)
+
+    def get_text(self):
+        text, encoding = self.get_text_and_explain()
+        return text
+
+    def get_text_and_explain(self) -> tuple[str, str]:
+        try:
+            return self.content.decode(self.prefered_encoding), self.prefered_encoding
+        except UnicodeDecodeError:
+            pass
+        encoding_res = chardet.detect(self.content[:5000])
+        if encoding_res['confidence'] >= 0.5:
+            try:
+                return self.content.decode(encoding_res['encoding'], errors='replace'), encoding_res['encoding']
+            except UnicodeDecodeError:
+                pass
+        log.warning(f"Failed to detect content encoding. Resorting to '{FALLBACK_ENCODING}'")
+        return self.content.decode(FALLBACK_ENCODING, errors='replace'), FALLBACK_ENCODING
+
+    def get_utf8(self):
+        __, encoding = self.get_text_and_explain()
+        outbuf = BytesIO()
+        encoded_file = codecs.EncodedFile(outbuf, data_encoding=encoding, file_encoding='utf-8', errors="replace")
+        encoded_file.write(self.content)
+        return encoded_file.getvalue().decode("utf-8")
 
 
 def normalize_line_breaks(text, line_break=UNIX_NEWLINE):

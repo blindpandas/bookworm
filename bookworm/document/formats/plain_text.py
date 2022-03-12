@@ -4,7 +4,7 @@ from __future__ import annotations
 import os
 import ftfy
 from functools import cached_property
-from bookworm.utils import normalize_line_breaks, remove_excess_blank_lines
+from bookworm.utils import TextContentDecoder, normalize_line_breaks, remove_excess_blank_lines
 from bookworm.logger import logger
 from .. import (
     SinglePageDocument,
@@ -31,8 +31,9 @@ class PlainTextDocument(SinglePageDocument):
 
     def read(self):
         self.filename = self.get_file_system_path()
-        with open(self.filename, "r", encoding="utf8") as file:
-            self.text = file.read()
+        with open(self.filename, "rb") as file:
+            content = file.read()
+        self.text = TextContentDecoder(content).get_utf8()
         super().read()
 
     def get_content(self):
