@@ -70,7 +70,7 @@ While reading a document, you can press Ctrl + B (or select the Add Bookmark men
 
 #### Viewing Bookmarks
 
-Go to the Annotations menu and select "View Bookmarks" menu item. A dialog containing added bookmarks will be shown. Clicking any item in the bookmarks list will immediately take you to the position of that bookmark. Alternatively, to quickl jump through added bookmarks, you can use f2 and f3 keys, which will directly go to the cursor position of the bookmark.
+Go to the Annotations menu and select "View Bookmarks" menu item. A dialog containing added bookmarks will be shown. Clicking any item in the bookmarks list will immediately take you to the position of that bookmark. Alternatively, to quickly jump through added bookmarks, you can use f2 and f3 keys, which will directly go to the cursor position of the bookmark.
 
 #### Adding comments
 
@@ -92,6 +92,7 @@ To export comments, follow these steps:
 
 1. In the annotation menu, navigate to Saved Comments;
 2. Search for "Export" and press enter or alternatively, you can use the keyboard shortcut Alt+x to open the export menu;
+
 You then have the following options, you can uncheck or leave checked any option you want:
 * Include book title – this option allows you to include the title of the book in the final output file when you export comments;
 * Include section title – an option that is used to include the title of the section in which the comment is left;
