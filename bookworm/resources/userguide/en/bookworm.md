@@ -23,17 +23,17 @@ Bookworm runs on the Microsoft Windows operating system. It works well with your
 
 ## Installation
 
-To get Bookworm up and running on your computer, follow these steps:
+To install and run Bookworm on your computer, first visit the [official website of Bookworm](https://getbookworm.com)
 
-1. Point your web browser to the [(getbookworm.com), the official website of Bookworm](https://getbookworm.com/)
-2. Bookworm comes in three flavors. Download the one that sutes you:
+Bookworm comes in three flavors:
+
 * 32-bit installer for computers running 32-bit or 64-bit Windows
 * 64-bit installer for computers running 64-bit Windows
 * Portable version to run from a flash drive
+
 If you have legacy SAPI5 voices installed on your system and want to use them with Bookworm, we recommend installing the 32-bit version of Bookworm or using the 32-bit portable version.
 
-2. Run the installer and follow the prompts
-3. Once the installation is successfully completed, you can launch Bookworm from your *desktop* or from the list of programs in the start menu.
+After selecting the appropriate version that suits you, download it. If you downloaded the installer version of Bookworm, run the .exe file and follow the instructions on the screen, or if you chose to use a portable copy of Bookworm, unzip the contents of the archive wherever you want and run the Bookworm executable to launch the portable copy.
 
 
 ## Usage
@@ -70,7 +70,7 @@ While reading a document, you can press Ctrl + B (or select the Add Bookmark men
 
 #### Viewing Bookmarks
 
-Go to the Annotations menu and select "View Bookmarks" menu item. A dialog containing added bookmarks will be shown. Clicking any item in the bookmarks list will immediately take you to the position of that bookmark. Alternatively, to quickly jump through added bookmarks, you can use f2 and f3 keys, which will directly go to the cursor position of the bookmark.
+Go to the Annotations menu and select "View Bookmarks" menu item. A dialog containing added bookmarks will be shown. Clicking any item in the bookmarks list will immediately take you to the position of that bookmark. Alternatively, to quickly jump through added bookmarks, you can use f2 and shift+f2 keys, which will directly go to the cursor position of the bookmark.
 
 #### Adding comments
 
