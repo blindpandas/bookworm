@@ -3,19 +3,19 @@
 ## Introduction
 
 Bookworm is a document reader that allows you to read PDF, EPUB, MOBI, and many other document formats using a versatile, yet simple, and highly accessible interface.
-Bookworm provides you with a rich set of tools for reading your documents. You can search the document, bookmark and highlight interesting content, use text-to-speech, and convert scanned documents to plain text using Optical Character Recgonition (OCR).
-Bookworm runs on Microsoft's Windows operating system. It works well with your favorite screen reader such as NVDA and JAWS. Even if no screen reader is active, Bookworm can function as a self-voicing application using its builtin text-to-speech features.
+Bookworm provides you with a rich set of tools for reading your documents. You can search your document, bookmark and highlight content of interest, use text-to-speech, and convert scanned documents to plain text using Optical Character Recognition (OCR).
+Bookworm runs on the Microsoft Windows operating system. It works well with your favorite screen readers like NVDA and JAWS. Even when a screen reader is not active, Bookworm can act as a self-voicing application using the built-in text-to-speech features.
 
 ## Features
 
 * Supports more than 15 document formats, including EPUB, PDF, MOBI, and Microsoft Word documents
 * Supports structured navigation using single-letter navigation commands to jump between headings, lists, tables, and quotes
 * Full text search with customizable search options
-* Advanced and simple to use annotation tools. You can add named bookmarks to mark interesting positions in the text for later reference, and you can add notes to capture an interesting thought or create a summary of the content at a specific position of the text. Bookworm allows you to quickly jump to a specific note and view it. Later on, you can export these notes to a text file or an HTML document for future reference.
+* Advanced and easy to use annotation tools. You can add named bookmarks to mark places of interest in the text for later reference, and you can add comments to capture an interesting thought or create a summary of the content at a particular position in the text. Bookworm allows you to quickly jump to a specific comment and view it. Later, you can export these comments to a text file or HTML document for later use.
 * For PDF documents, Bookworm supports two different styles of viewing pages; plain-text and fully rendered, zoomable, images.
 * Support for using OCR to extract text from scanned documents and images using Windows10 builtin OCR engine. You also  have the option of downloading and using the freely available Tesseract OCR Engine within Bookworm.
 * Look for term definition in Wikipedia, and read Wikipedia articles from within Bookworm
-* Integrated web article extractor, which allows you to open URLs and have Bookworm automatically extract the main article from the page
+* A built-in web article extractor that allows you to open URLs and automatically extract the main article from the page.
 * Document navigation via Table of content is extensively supported for all document formats
 * Support for reading books aloud using Text-to-speech, with customizable voice options using voice profiles
 * Support for text zoom using the standard zoom-in/zoom-out/reset commands
@@ -23,17 +23,17 @@ Bookworm runs on Microsoft's Windows operating system. It works well with your f
 
 ## Installation
 
-To get Bookworm up and running on your computer, follow these steps:
+To install and run Bookworm on your computer, first visit the [official website of Bookworm](https://getbookworm.com)
 
-1. Point your web browser to the [(getbookworm.com), the official website of Bookworm](https://getbookworm.com/)
-2. Bookworm comes in three flavors. Download the one that sutes you:
-* 32-bit installer for computers running a 32-bit or 64-bit variant of Windows
-* 64-bit installer for computers running a 64-bit variant of Windows
-* Portable version for running from a USB thumb drive
-If you have some legacy SAPI5 voices installed in your system, and you want to use them with Bookworm, we recommend installing the 32-bit variant of Bookworm.
+Bookworm comes in three flavors:
 
-2. Run the installer and follow the prompts
-3. After the installation has finished successfully , you can launch Bookworm from the *Desktop* or from the program list found in the Start Menu
+* 32-bit installer for computers running 32-bit or 64-bit Windows
+* 64-bit installer for computers running 64-bit Windows
+* Portable version to run from a flash drive
+
+If you have legacy SAPI5 voices installed on your system and want to use them with Bookworm, we recommend installing the 32-bit version of Bookworm or using the 32-bit portable version.
+
+After selecting the appropriate version that suits you, download it. If you downloaded the installer version of Bookworm, run the .exe file and follow the instructions on the screen, or if you chose to use a portable copy of Bookworm, unzip the contents of the archive wherever you want and run the Bookworm executable to launch the portable copy.
 
 
 ## Usage
@@ -60,43 +60,49 @@ The main window of Bookworm consists of the following two parts:
 * Alt + Page up: navigate to previous section
 
 
-### Bookmarks & Notes
+### Bookmarks & Comments
 
-Bookworm allows you to annotate the opened document.  You can add a bookmark to remember a specific location in the document, and later on, quickly jump to  it. Also, you can take a note to capture a thought or summarize some content.
+Bookworm allows you to annotate an open document. You can add a bookmark to remember a specific location in a document and then quickly jump to it. In addition, you can add a comment to capture a thought or summarize the content.
 
 #### Adding Bookmarks
 
-While reading a document, you can press Ctrl + B (or select the "Add Bookmark" menu item from the "Annotations" menu to add a bookmark. The bookmark is added at the current position of the cursor. You'll be asked to provide a title for the bookmark. Type the desired title and click the OK Button. A bookmark will be added at the current location, and the current line will be visually highlighted.
+While reading a document, you can press Ctrl + B (or select the Add Bookmark menu item) from the Annotations menu to add a bookmark. The bookmark will be added at the current cursor position. Alternatively, you can add a Named bookmark by pressing ctrl+shift+b, a window will open and ask for the name of the bookmark or, alternatively, choose Add Named Bookmark from the Annotations menu.
 
 #### Viewing Bookmarks
 
-Press Ctrl + Shift + B, or select the "View Bookmarks" menu item from the "Annotations" menu. A dialog containing added bookmarks will be shown. Clicking any item in the bookmarks list will immediately take you to the position of that bookmark.
+Go to the Annotations menu and select "View Bookmarks" menu item. A dialog containing added bookmarks will be shown. Clicking any item in the bookmarks list will immediately take you to the position of that bookmark. Alternatively, to quickly jump through added bookmarks, you can use f2 and shift+f2 keys, which will directly go to the cursor position of the bookmark.
 
-Additionally, you can press F2 to edit the title of the selected bookmark in place, or you can click the "Delete" button or the "Delete" key on your keyboard to remove the selected bookmark.
+#### Adding comments
 
-#### Taking Notes
+While reading a document, you can press Ctrl+m (or select the Add Comment menu item) from the Annotations menu to add a comment. You will be prompted for the content of the comment. Enter the content and click "OK". The comment will be added at the current location.
 
-While reading a document, you can press Ctrl + N (or select the "Take Note" menu item from the "Annotations" menu to take a note. The note will be added at the current position of the cursor. You'll be asked to provide the title and the content for the note. Type the desired title and content, and then click the OK button. A note will be added at the current location.
+When you go to a page that contains at least one comment, you will hear a small sound indicating that there is a comment on the current page.
 
-When you navigate to a page containing at least one note, you will hear a little sound indicating the existence of a note in the current page..
+#### Managing comments
 
-#### Managing Notes
+Select the "Saved Comments" menu item from the "Annotations" menu. A dialog box will appear with added comments. Clicking on any item in the list of comments will immediately jump to the position of that comment. Clicking the View button will open a dialog box showing the tag and contents of the selected comment.
 
-Press Ctrl + Shift + N, or select the "Manage Notes" menu item from the "Annotations" menu. A dialog containing added notes will be shown. Clicking any item in the notes list will immediately take you to the position of that note. Clicking the "View" button will bring up a dialog showing the title and the content of the selected note.
+Alternatively, you can click the "Edit" button to change the tag and content of the selected comment, press F2 to edit the tag of the selected comment in place, or you can press the Delete key on your keyboard or Alt+d shortcut to delete the selected comment.
 
-Additionally, you can click the "Edit" button to edit the title and the content of the selected note, press  F2 to edit the title of the selected note in place, or you can click the "Delete" button or the "Delete" key on your keyboard to remove the selected note.
+#### Exporting comments
 
-#### Exporting Notes
+Bookworm allows you to export your comments to a plain text file or an HTML document, which can then be opened in a web browser. Optionally, Bookworm allows you to export your comments to Markdown, which is a text format for writing structured documents popular among computer power users.
 
-Bookworm allows you to export your notes to a plain-text file, or to an HTML document which you can then open in your web browser.  Optionally, Bookworm allows you to export your notes to markdown, which is a text-base format for writing structured documents popular among expert computer users.
+To export comments, follow these steps:
 
-To export your notes, follow these steps:
+1. In the annotation menu, navigate to Saved Comments;
+2. Search for "Export" and press enter or alternatively, you can use the keyboard shortcut Alt+x to open the export menu;
 
-1. From the "Annotations" menu select the "Notes Exporter..." menu item
-2. Select the export range. This tells Bookworm whether you want to export the notes of the whole document, or you just want to export the notes of the current section. 
-3. Select the output format. This determines the format of the file you get after exporting. Exporting to a plain-text gives you a simple, nicely formatted text file, exporting to HTML gives you a web page, and exporting to markdown gives you a markdown document which is a text format popular among expert computer users.
-4. If you want Bookworm to open the file to which your notes have been exported, you can check the "Open file after exporting" checkbox.
-5. Click Export. You will be asked to select the file name of the exported file, and the location to which the file is saved. Clicking "Save" will save the file, and open it if you have instructed Bookworm to do so.
+You then have the following options, you can uncheck or leave checked any option you want:
+
+* Include book title – this option allows you to include the title of the book in the final output file when you export comments;
+* Include section title – an option that is used to include the title of the section in which the comment is left;
+* Include  page number – this option is used to include the page numbers on which the comment was made;
+* Include tags – this option is used to include or not include comment tags that were made during the annotation.
+
+After specifying the correct option according to your needs, you must select the file output format, of which there are currently three – plain text format, Html, and Markdown.
+After selecting the desired format, a read-only text area appears called "Output File" and is empty by default. You must click the Browse button, or alternatively, use alt+b to open an explorer window to specify the filename and folder where the output file will be saved.
+When specifying a file name and file folder, there is an "Open file after exporting" checkbox that allows Bookworm to automatically open the output file after saving. Clear this check box if you don't want to automatically open the saved file and click OK. The file will be saved in the specified folder and you can open it with either Bookworm or any other text editor, like "Notepad".
 
 
 ### Reading Aloud
@@ -114,13 +120,16 @@ During reading aloud, you can skip backward or foreword by paragraph by pressing
 
 In addition to the speech settings, Bookworm gives you the ability to fine-tune its reading behavior through these settings. All of the following settings could be found in the reading page of the application preferences.
 
-* What to read: this option controls what happens when you instruct Bookworm to "Play" the current document. You can choose to "Read the entire document", "Read the current section", or read just "The current page". By default, Bookworm reads the entire document in a continuous manner, unless you instruct it to stop when it reaches the end of the page or the end of the current section.
-* Where to start: this option controls the position from which to start reading aloud. You can choose to start reading from the "Position of the caret" or the "Start of the current page".
-* How to read: this set of options control how Bookworm behave during reading aloud. You can turn on/off any one of the following options by checking/unchecking its respective checkbox:
+* When Pressing Play: This setting determines what happens when you tell Bookworm to "Play" the current document. You can select "Read Entire Document", "Read Current Section", or read only "Current Page". By default, Bookworm continuously reads the entire document unless you tell it to stop when it reaches the end of the page or the end of the current section.
+* Start reading from: this option determines the position from which to start reading aloud. You can start reading from "Cursor position" or "Start of current page".
+* During Reading Aloud: this set of options control how Bookworm behave during reading aloud. You can turn on/off any one of the following options by checking/unchecking its respective checkbox:
 
+* Speak page number – text-to-speech will speak each page as you navigate to it;
+* Announce the end of sections – when a section is finished, text-to-speech will let you know;
+* Ask to switch to a voice that speaks the language of the current book – this option will determine whether or not Bookworm will warn about an incompatible voice, what happens by default when the selected text-to-speech language voice differs from the language of the open document;
 * Highlight spoken text: if this option is turned on, the currently spoken text is visually highlighted.
 * Select spoken text: if this option is turned on, the currently spoken text is selected. This enables you, for instance, to press Ctrl + C to copy the currently spoken paragraph.
-* Play end-of-section sound: if this option is turned on, Bookworm plays a little sound when it reaches the end of a section.
+
 
 
 ### Continuous Reading Mode
@@ -136,7 +145,7 @@ Note that due to the way this feature is currently implemented, the following li
 
 ### Viewing A Fully Rendered Version of The Current Page
 
-Bookworm allows you to view a fully rendered version of the document. While a document is opened, you can press Ctrl + R or select the "Render Page" menu item from the tools menu. We call this view "The Render View" as oppose to the, default, Textual View.
+Bookworm allows you to view a fully rendered version of the document. While a document is opened, you can press Ctrl + R or select the "Render Page" menu item from the document menu. We call this view "The Render View" as oppose to the, default, Textual View.
 
 When you are in the Render View, you can use the usual zoom commands to zoom the page in and out:
 
@@ -149,7 +158,7 @@ Note that you can also use the document navigation commands, mentioned above,  t
 
 ### Navigating To A Specific Page
 
-To navigate to a specific page in the currently opened document., press Ctrl + G, or select the "Go To..." menu item from the tools menu to show the "Go To Page" dialog. In this dialog you can type the number of any page you want to navigate to, and Bookworm will take you to it. Note that this dialog will indicate to you the total number of pages found in the current document.
+To navigate to a specific page in the currently opened document., press Ctrl + G, or select the "Go To Page..." menu item from the search menu to show the "Go To Page" dialog. In this dialog you can type the number of any page you want to navigate to, and Bookworm will take you to it. Note that this dialog will indicate to you the total number of pages found in the current document.
 
  
 ### Searching The document
@@ -157,7 +166,7 @@ To navigate to a specific page in the currently opened document., press Ctrl + G
 To find a specific term, or a portion of text in the currently opened document, you can press Ctrl + F to bring up the "Search Document Dialog". This Dialog allows you to type the text you want to search for as well as configuring the  search process itself. The following options are available:
 
 * Case Sensitive: The search will take into account the case of the letters in the search term.
-* Whole Word Only: The search term must be found as a whole word, i.e. not as a part of another word
+* Match whole word only: The search term must be found as a whole word, i.e. not as a part of another word
 * Search Range: This allows you to confine the search to certain pages or a specific section.
 
 After clicking the OK button in the "Search document Dialog", another dialog containing search results will be shown. Clicking any item in the search results list will immediately take you to the position of that result with the search term highlighted for you.
@@ -167,7 +176,7 @@ Note that if you've closed the search results window, you can press F3 and Shift
 
 ## Managing File Associations
 
-The "Manage File Associations" button, found in the general page in the application preferences, helps you to manage which file types are associated with Bookworm. Associating files with Bookworm means that when you click on a file in Windows explorer, that file would be opened in Bookworm by default. Note that this dialog is always shown to the user in the first run of the program.
+The "Manage File Associations" button, found in the general page in the application preferences, helps you to manage which file types are associated with Bookworm. Associating files with Bookworm means that when you click on a file in Windows explorer, that file would be opened in Bookworm by default. Please note that this dialog box is always shown to the user at the first launch of the program and is available only when using the installer, in the portable version this option is not required, respectively, in the portable version, the ability to associate files is disabled and a few tricks are required if you still want Bookworm to open any supported document by default.
 
 Once you launch the file associations manager, you will have the following options:
 
@@ -199,4 +208,4 @@ To keep yourself updated with the latest news about Bookworm, you can visit Book
 
 ## License
 
-**Bookworm** is copyright (c) 2019 Musharraf Omer and Bookworm Contributors. It is licensed under the [MIT License](https://github.com/mush42/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2019-2022 Musharraf Omer and Bookworm Contributors. It is licensed under the [MIT License](https://github.com/mush42/bookworm/blob/master/LICENSE).
