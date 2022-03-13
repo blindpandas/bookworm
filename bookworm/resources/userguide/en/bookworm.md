@@ -94,6 +94,7 @@ To export comments, follow these steps:
 2. Search for "Export" and press enter or alternatively, you can use the keyboard shortcut Alt+x to open the export menu;
 
 You then have the following options, you can uncheck or leave checked any option you want:
+
 * Include book title – this option allows you to include the title of the book in the final output file when you export comments;
 * Include section title – an option that is used to include the title of the section in which the comment is left;
 * Include  page number – this option is used to include the page numbers on which the comment was made;
