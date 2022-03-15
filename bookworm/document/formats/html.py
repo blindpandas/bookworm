@@ -255,7 +255,7 @@ class FileSystemHtmlDocument(BaseHtmlDocument):
 
     def get_html(self):
         with open(self.filename, "r", encoding="utf8") as file:
-            return file.read()
+            return StructuredHtmlParser.preprocess_html_string(file.read())
 
     def read(self):
         self.filename = self.get_file_system_path()
@@ -285,7 +285,7 @@ class WebHtmlDocument(BaseHtmlDocument):
             log.exception(f"Failed to obtain resource from url: {url}", exc_info=True)
             req = None
             raise DocumentIOError from e
-        html_string = req.get_text()
+        html_string = StructuredHtmlParser.preprocess_html_string(req.get_text())
         html_tree = lxml_html.fromstring(html_string)
         html_tree.make_links_absolute(
             base_url=url,

@@ -148,7 +148,7 @@ class StructuredHtmlParser(Inscriptis):
             self.html_id_ranges[anch] = element_range
 
     @classmethod
-    def from_string(cls, html_string):
+    def preprocess_html_string(cls, html_string):
         html_content = html_string.strip()
         if not html_content:
             raise ValueError("Invalid html content")
@@ -156,7 +156,16 @@ class StructuredHtmlParser(Inscriptis):
         if html_content.startswith("<?xml "):
             html_content = RE_STRIP_XML_DECLARATION.sub("", html_content, count=1)
         html_content = cls.normalize_html(html_content)
+        return html_content
+
+    @classmethod
+    def from_string(cls, html_string):
+        html_content = cls.preprocess_html_string(html_string)
         return cls(html_parser.fromstring(html_content))
+
+    @classmethod
+    def from_lxml_html_tree(cls, lxml_html_tree):
+        return cls(lxml_html_tree)
 
     def get_text(self):
         return remove_excess_blank_lines(INSCRIPTIS_GET_TEXT(self))
