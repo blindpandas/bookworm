@@ -6,7 +6,7 @@
 
 * Supports over 15 document formats
 * Support for named **bookmarks**. This enables you to mark interesting positions in the text for later reference
-* Support for taking notes, this helps you to capture an interesting thought or create a summary of the content at a specific position of the text. Bookworm allows you to quickly jump to a specific note and view it. Later on, you can export these notes to a text file or an HTML document for future reference.
+* Support for adding comments to capture an interesting thought or create a summary of the content at a particular position in the text. Bookworm allows you to quickly jump to a specific comment and view it. Later, you can export these comments to a text file or HTML document for later use.
 * Two different styles of viewing pages; plain-text and fully rendered, zoomable, images.
 * Full text search with customizable search options
 * Book navigation via Table of content is extensively supported for all document formats
@@ -86,4 +86,4 @@ invoke build
 
 ## License
 
-**Bookworm** is copyright (c) 2022 Blind Pandas Team. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2019-2022 Blind Pandas Team. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
