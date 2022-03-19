@@ -59,7 +59,7 @@ def get_clean_html(html_string: str) -> (str, BookMetadata):
     html_string = StructuredHtmlParser.normalize_html(html_string)
 
     # Extract metadata
-    meta_info = trafilatura.metadata.extract_metadata(html_string) 
+    meta_info = trafilatura.metadata.extract_metadata(html_string)
     doc_title = meta_info.title
     if not doc_title:
         html = lxml_html.fromstring(html_string)
@@ -289,22 +289,19 @@ class WebHtmlDocument(BaseHtmlDocument):
         html_string = StructuredHtmlParser.preprocess_html_string(req.get_text())
         html_tree = lxml_html.fromstring(html_string)
         html_tree.make_links_absolute(
-            base_url=url,
-            resolve_base_href=True,
-            handle_failures='discard'
+            base_url=url, resolve_base_href=True, handle_failures="discard"
         )
         current_url_path = URL(url).path
         # Now strip the base_url from internal anchors
-        for maybe_internal_anchor in html_tree.xpath(f"//a[starts-with(@href, '{url}')]"):
+        for maybe_internal_anchor in html_tree.xpath(
+            f"//a[starts-with(@href, '{url}')]"
+        ):
             href = maybe_internal_anchor.get("href")
             if (URL(href).path) != current_url_path:
                 continue
             if "#" in href:
-                maybe_internal_anchor.set(
-                    "href",
-                    "#" + href.split("#")[1]
-                )
-        return lxml_html.tostring(html_tree, encoding='unicode')
+                maybe_internal_anchor.set("href", "#" + href.split("#")[1])
+        return lxml_html.tostring(html_tree, encoding="unicode")
 
     def parse_html(self):
         return self.parse_to_clean_text()

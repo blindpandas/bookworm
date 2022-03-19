@@ -213,7 +213,13 @@ class OCROptionsDialog(SimpleDialog):
     """OCR options."""
 
     def __init__(
-        self, *args, stored_options=None, languages=(), force_save=False, is_multilingual=False, **kwargs
+        self,
+        *args,
+        stored_options=None,
+        languages=(),
+        force_save=False,
+        is_multilingual=False,
+        **kwargs,
     ):
         self.stored_options = stored_options
         self.languages = {lang.description: lang for lang in languages}
@@ -238,12 +244,19 @@ class OCROptionsDialog(SimpleDialog):
         )
         self.primaryLangChoice.SetSizerProps(expand=True)
         # Translators: the label of a checkbox
-        self.recogLangSwitcher = wx.CheckBox(recogLangBox, -1, _("Add a secondary recognition language"))
+        self.recogLangSwitcher = wx.CheckBox(
+            recogLangBox, -1, _("Add a secondary recognition language")
+        )
         # Translators: the label of a combobox
-        self.secondaryLangLabel = wx.StaticText(recogLangBox, -1, _("Secondary recognition Language"))
+        self.secondaryLangLabel = wx.StaticText(
+            recogLangBox, -1, _("Secondary recognition Language")
+        )
         self.secondaryLangChoice = wx.Choice(recogLangBox, -1)
         self.secondaryLangChoice.SetSizerProps(expand=True)
-        self.secondary_recog_controls = (self.secondaryLangLabel, self.secondaryLangChoice)
+        self.secondary_recog_controls = (
+            self.secondaryLangLabel,
+            self.secondaryLangChoice,
+        )
         imageResBox = make_sized_static_box(parent, _("Image"))
         wx.StaticText(imageResBox, -1, _("Supplied Image resolution::"))
         self.zoomFactorSlider = wx.Slider(imageResBox, -1, minValue=0, maxValue=10)
@@ -294,7 +307,11 @@ class OCROptionsDialog(SimpleDialog):
         )
         enable_or_disable_image_pipelines()
         self.Bind(wx.EVT_CHECKBOX, self.onLangSwitchChecked, self.recogLangSwitcher)
-        self.Bind(wx.EVT_CHOICE, lambda e: self._adjust_lang_selection(), self.primaryLangChoice)
+        self.Bind(
+            wx.EVT_CHOICE,
+            lambda e: self._adjust_lang_selection(),
+            self.primaryLangChoice,
+        )
         self.recogLangSwitcher.SetValue(False)
         self.recogLangSwitcher.Enable(self.is_multilingual)
         for control in self.secondary_recog_controls:
@@ -330,17 +347,17 @@ class OCROptionsDialog(SimpleDialog):
 
     def _adjust_lang_selection(self):
         self.secondaryLangChoice.Clear()
-        if (selected := self.primaryLangChoice.GetStringSelection()):
-            nonselected_langs = set(self.languages.keys()) - {selected,}
+        if selected := self.primaryLangChoice.GetStringSelection():
+            nonselected_langs = set(self.languages.keys()) - {
+                selected,
+            }
         else:
             nonselected_langs = list(self.languages.keys())
         self.secondaryLangChoice.Append(list(nonselected_langs))
 
     def get_selected_recognition_langs(self):
-        retval = [
-            self.languages[self.primaryLangChoice.GetStringSelection()]
-        ]
-        if (selection := self.secondaryLangChoice.GetStringSelection()):
+        retval = [self.languages[self.primaryLangChoice.GetStringSelection()]]
+        if selection := self.secondaryLangChoice.GetStringSelection():
             retval.append(self.languages[selection])
         return retval
 

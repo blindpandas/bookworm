@@ -124,7 +124,7 @@ class EBookReader:
         self.__state.setdefault("current_page_index", -1)
         self.set_view_parameters()
         self.current_page = 0
-        if self.document.uri.view_args.get('save_last_position', True):
+        if self.document.uri.view_args.get("save_last_position", True):
             log.debug("Retrieving last saved reading position from the database")
             self.stored_document_info = DocumentPositionInfo.get_or_create(
                 title=self.current_book.title, uri=self.document.uri
@@ -134,7 +134,10 @@ class EBookReader:
             pos = int(open_args.get("position", 0))
             self.go_to_page(page, pos)
             self.view.contentTextCtrl.SetFocus()
-        elif self.stored_document_info and config.conf["general"]["open_with_last_position"]:
+        elif (
+            self.stored_document_info
+            and config.conf["general"]["open_with_last_position"]
+        ):
             try:
                 log.debug("Navigating to the last saved position.")
                 page_number, pos = self.stored_document_info.get_last_position()
@@ -146,7 +149,7 @@ class EBookReader:
         if self.active_section is None:
             self.__state.setdefault(
                 "active_section",
-                self.document.get_section_at_position(self.view.get_insertion_point())
+                self.document.get_section_at_position(self.view.get_insertion_point()),
             )
         reader_book_loaded.send(self)
 

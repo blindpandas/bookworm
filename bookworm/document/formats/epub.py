@@ -306,7 +306,9 @@ class EpubDocument(SinglePageDocument):
 
     def prefix_html_ids(self, filename, html):
         tree = lxml_html.fromstring(html)
-        tree.make_links_absolute(filename, resolve_base_href=False, handle_failures='ignore')
+        tree.make_links_absolute(
+            filename, resolve_base_href=False, handle_failures="ignore"
+        )
         if os.path.splitext(filename)[1] in HTML_FILE_EXTS:
             for node in tree.xpath("//*[@id]"):
                 node.set("id", filename + "#" + node.get("id"))

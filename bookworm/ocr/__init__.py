@@ -44,10 +44,9 @@ class _OCRManagerMixin:
     @classmethod
     def get_first_available_ocr_engine(cls):
         """Return the configured ocr engine or the first available one, None otherwise."""
-        return (
-            cls.get_ocr_engine_by_name(config.conf["ocr"]["engine"])
-            or more_itertools.first(cls._available_ocr_engines, None)
-        )
+        return cls.get_ocr_engine_by_name(
+            config.conf["ocr"]["engine"]
+        ) or more_itertools.first(cls._available_ocr_engines, None)
 
     def _init_ocr_engine(self):
         self.current_ocr_engine = self.get_first_available_ocr_engine()
@@ -102,4 +101,3 @@ class OCRService(_OCRManagerMixin, BookwormService):
     def shutdown(self):
         if (dlg := getattr(self.menu, "_wait_dlg", None)) is not None:
             dlg.Dismiss()
-

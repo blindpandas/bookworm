@@ -180,10 +180,8 @@ class FileMenu(BaseMenu):
 
     def after_loading_book(self, sender):
         doc = sender.document
-        if doc.uri.view_args.get('allow_pinning', True):
-            self.Check(
-                BookRelatedMenuIds.pin_document, recents_manager.is_pinned(doc)
-            )
+        if doc.uri.view_args.get("allow_pinning", True):
+            self.Check(BookRelatedMenuIds.pin_document, recents_manager.is_pinned(doc))
             self.populate_pinned_documents_list()
         else:
             self.Enable(BookRelatedMenuIds.pin_document, False)

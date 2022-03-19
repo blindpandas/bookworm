@@ -4,7 +4,11 @@ from __future__ import annotations
 import os
 import ftfy
 from functools import cached_property
-from bookworm.utils import TextContentDecoder, normalize_line_breaks, remove_excess_blank_lines
+from bookworm.utils import (
+    TextContentDecoder,
+    normalize_line_breaks,
+    remove_excess_blank_lines,
+)
 from bookworm.logger import logger
 from .. import (
     SinglePageDocument,

@@ -33,7 +33,7 @@ from bookworm.document import (
     DocumentUri,
     BookMetadata,
     Section,
-    SINGLE_PAGE_DOCUMENT_PAGER
+    SINGLE_PAGE_DOCUMENT_PAGER,
 )
 from bookworm.logger import logger
 from .ocr_dialogs import OCROptionsDialog
@@ -88,11 +88,12 @@ class _ImageOcrRegonitionResultsDocument(VirtualDocument, SinglePageDocument):
     @cached_property
     def metadata(self):
         return BookMetadata(
-            title=_("Recognition Result: {image_name}").format(image_name=self.image_name),
+            title=_("Recognition Result: {image_name}").format(
+                image_name=self.image_name
+            ),
             author="",
             publication_year="",
         )
-
 
 
 class OCRMenuIds(IntEnum):

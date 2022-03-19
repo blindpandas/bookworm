@@ -435,10 +435,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             char_count = self.contentTextCtrl.GetLastPosition()
             if char_count == 0:
                 return
-            current_ratio = (
-                self.contentTextCtrl.GetInsertionPoint()
-                / char_count
-            )
+            current_ratio = self.contentTextCtrl.GetInsertionPoint() / char_count
         else:
             current_ratio = (self.reader.current_page + 1) / len(self.reader.document)
         percentage_ratio = math.ceil(current_ratio * 100)

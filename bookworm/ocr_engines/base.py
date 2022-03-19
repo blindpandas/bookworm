@@ -31,7 +31,9 @@ class OcrRequest:
 
     def __post_init__(self):
         if not self.languages:
-            raise ValueError("At least one language should be provided for the OCR request to be valid.")
+            raise ValueError(
+                "At least one language should be provided for the OCR request to be valid."
+            )
 
     @property
     def language(self):

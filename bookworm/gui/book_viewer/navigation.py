@@ -21,7 +21,7 @@ log = logger.getChild(__name__)
 DKEY_TIMEOUT = 0.75
 LINK_ACTIVATION_KEYS = {wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER}
 # Paginate by how many characters
-PAGINATION_NUM_CHARS = 2000 # typical number of chars per page in English documents
+PAGINATION_NUM_CHARS = 2000  # typical number of chars per page in English documents
 
 
 class NavigationProvider:
@@ -168,5 +168,7 @@ class NavigationProvider:
             target_pos = current_pos - PAGINATION_NUM_CHARS
             if target_pos < PAGINATION_NUM_CHARS:
                 target_pos = 0
-        target_fol = self.view.get_containing_line(round(target_pos / PAGINATION_NUM_CHARS) * PAGINATION_NUM_CHARS)[0]
+        target_fol = self.view.get_containing_line(
+            round(target_pos / PAGINATION_NUM_CHARS) * PAGINATION_NUM_CHARS
+        )[0]
         text_ctrl.SetInsertionPoint(target_fol)

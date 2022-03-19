@@ -54,7 +54,9 @@ class TesseractOcrEngine(BaseOcrEngine):
 
     @classmethod
     def recognize(cls, ocr_request: OcrRequest) -> OcrResult:
-        recog_languages = "+".join(lang.given_locale_name for lang in ocr_request.languages)
+        recog_languages = "+".join(
+            lang.given_locale_name for lang in ocr_request.languages
+        )
         recognized_text = pytesseract.image_to_string(
             ocr_request.image.to_pil(), recog_languages, nice=1
         )

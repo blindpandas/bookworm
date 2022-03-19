@@ -24,18 +24,20 @@ class MarkdownDocument(BaseHtmlDocument):
         html_tree = lxml.html.fromstring(rendered_markdown)
         if not (doc_title := html_tree.xpath("(/html/body/h1)[1]//text()")):
             doc_title = self.filename.stem
-        return "\n".join([
-            '<!doctype html>',
-            '<html>',
-            '<head>',
-            '<meta charset="utf-8">',
-            f'<title>{doc_title}</title>',
-            '</head>',
-            '<body>',
-            rendered_markdown,
-            '</body>',
-            '</html>'
-        ])
+        return "\n".join(
+            [
+                "<!doctype html>",
+                "<html>",
+                "<head>",
+                '<meta charset="utf-8">',
+                f"<title>{doc_title}</title>",
+                "</head>",
+                "<body>",
+                rendered_markdown,
+                "</body>",
+                "</html>",
+            ]
+        )
 
     def read(self):
         self.filename = self.get_file_system_path()

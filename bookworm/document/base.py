@@ -379,9 +379,7 @@ class SinglePageDocument(BaseDocument):
 
     @cached_property
     def language(self) -> str:
-        return self.get_language(
-            samples=self.get_content()[:1000]
-        )
+        return self.get_language(samples=self.get_content()[:1000])
 
     def get_section_at_position(self, pos):
         """Return the section at the given position."""
@@ -441,12 +439,14 @@ class VirtualDocument:
     """
 
     def __init__(self):
-        self.uri.view_args.update({
-            'is_virtual': True,
-            'save_last_position': False,
-            'add_to_recents': False,
-            'allow_pinning': False
-        })
+        self.uri.view_args.update(
+            {
+                "is_virtual": True,
+                "save_last_position": False,
+                "add_to_recents": False,
+                "allow_pinning": False,
+            }
+        )
 
     def search(self, request: doctools.SearchRequest):
         yield from doctools.search_book(self, request)
