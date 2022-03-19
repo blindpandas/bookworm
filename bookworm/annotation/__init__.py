@@ -30,7 +30,6 @@ ANNOTATION_CONFIG_SPEC = {
     "annotation": dict(
         use_visuals="boolean(default=True)",
         play_sound_for_comments="boolean(default=True)",
-        exclude_named_bookmarks_when_jumping="boolean(default=False)",
         select_bookmarked_line_on_jumping="boolean(default=True)",
         speak_bookmarks_on_jumping="boolean(default=True)",
     )
@@ -121,9 +120,19 @@ class AnnotationService(BookwormService):
         event.Skip()
         if not self.reader.ready:
             return
+        forward = event.GetModifiers() != wx.MOD_SHIFT
         if event.GetKeyCode() == wx.WXK_F2:
-            bookmark = self.get_annotation(Bookmarker, foreword=event.GetModifiers() != wx.MOD_SHIFT)
+            bookmark = self.get_annotation(Bookmarker, foreword=forward)
             if bookmark is None:
+                no_annotation_msg = (
+                    # Translators: spoken message
+                    _("No next bookmark")
+                    if forward
+                    # Translators: spoken message
+                    else _("No previous bookmark")
+                )
+                speech.announce(no_annotation_msg)
+                sounds.invalid.play()
                 return
             self.reader.go_to_page(bookmark.page_number, bookmark.position)
             if config.conf["annotation"]["select_bookmarked_line_on_jumping"]:
@@ -143,14 +152,24 @@ class AnnotationService(BookwormService):
             )
             sounds.navigation.play()
         elif event.KeyCode == wx.WXK_F8:
-            comment = self.get_annotation(NoteTaker, foreword=event.GetModifiers() != wx.MOD_SHIFT)
+            comment = self.get_annotation(NoteTaker, foreword=forward)
             if not isinstance(comment, Note):
+                no_annotation_msg = (
+                    # Translators: spoken message
+                    _("No next comment")
+                    if forward
+                    # Translators: spoken message
+                    else _("No previous comment")
+                )
+                speech.announce(no_annotation_msg)
+                sounds.invalid.play()
                 return
             self.reader.go_to_page(comment.page_number, comment.position)
             self.view.select_text(*self.view.get_containing_line(comment.position))
             reading_position_change.send(
                 self.view,
                 position=comment.position,
+                # Translators: spoken message when jumping to a comment
                 text_to_announce=_("Comment: {comment}").format(comment=comment.content),
             )
             sounds.navigation.play()
@@ -158,8 +177,17 @@ class AnnotationService(BookwormService):
             sel_range = self.view.get_selection_range()
             if sel_range.start != sel_range.stop:
                 self.view.unselect_text()
-            highlight = self.get_annotation(Quoter, foreword=event.GetModifiers() != wx.MOD_SHIFT)
+            highlight = self.get_annotation(Quoter, foreword=forward)
             if not isinstance(highlight, Quote):
+                no_annotation_msg = (
+                    # Translators: spoken message
+                    _("No next highlight")
+                    if forward
+                    # Translators: spoken message
+                    else _("No previous highlight")
+                )
+                speech.announce(no_annotation_msg)
+                sounds.invalid.play()
                 return
             self.reader.go_to_page(highlight.page_number, highlight.start_pos)
             self.view.select_text(highlight.start_pos, highlight.end_pos)
@@ -186,7 +214,6 @@ class AnnotationService(BookwormService):
         self.view.synchronise_menu(self.stateful_menu_ids, enable)
 
     def on_book_unload(self, sender):
-        print(self.__state)
         self.__state.clear()
 
     @classmethod
