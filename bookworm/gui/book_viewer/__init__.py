@@ -684,6 +684,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 chapter=page.section.title,
             )
 
+    def unselect_text(self):
+        self.contentTextCtrl.SelectNone()
+
     def get_selection_range(self):
         return TextRange(*self.contentTextCtrl.GetSelection())
 

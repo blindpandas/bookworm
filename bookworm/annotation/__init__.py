@@ -19,6 +19,7 @@ from .annotation_gui import (
     AnnotationsMenuIds,
     ANNOTATIONS_KEYBOARD_SHORTCUTS,
 )
+from .annotation_models import Quote, Note
 from .annotator import Bookmarker, NoteTaker, Quoter
 
 
@@ -43,13 +44,13 @@ class AnnotationService(BookwormService):
     has_gui = True
 
     def __post_init__(self):
+        self.__state = {}
         self.view.contentTextCtrl.Bind(
             wx.EVT_KEY_UP, self.onKeyUp, self.view.contentTextCtrl
         )
         self.view.add_load_handler(
             lambda red: wx.CallAfter(self._check_is_virtual, red)
         )
-        reader_book_loaded.connect(self.on_book_load, sender=self.reader)
         reader_book_unloaded.connect(self.on_book_unload, sender=self.reader)
         reader_page_changed.connect(self.comments_page_handler, sender=self.reader)
         reader_page_changed.connect(
@@ -121,16 +122,9 @@ class AnnotationService(BookwormService):
         if not self.reader.ready:
             return
         if event.GetKeyCode() == wx.WXK_F2:
-            self.go_to_bookmark(foreword=event.GetModifiers() != wx.MOD_SHIFT)
-
-    def go_to_bookmark(self, *, foreword):
-        page_number = self.reader.current_page
-        start, end = self.view.get_containing_line(self.view.get_insertion_point())
-        if foreword:
-            bookmark = self.bookmarker.get_first_after(page_number, end)
-        else:
-            bookmark = self.bookmarker.get_first_before(page_number, start)
-        if bookmark is not None:
+            bookmark = self.get_annotation(Bookmarker, foreword=event.GetModifiers() != wx.MOD_SHIFT)
+            if bookmark is None:
+                return
             self.reader.go_to_page(bookmark.page_number, bookmark.position)
             if config.conf["annotation"]["select_bookmarked_line_on_jumping"]:
                 self.view.select_text(*self.view.get_containing_line(bookmark.position))
@@ -148,16 +142,52 @@ class AnnotationService(BookwormService):
                 tts_speech_prefix=msg,
             )
             sounds.navigation.play()
+        elif event.KeyCode == wx.WXK_F8:
+            comment = self.get_annotation(NoteTaker, foreword=event.GetModifiers() != wx.MOD_SHIFT)
+            if not isinstance(comment, Note):
+                return
+            self.reader.go_to_page(comment.page_number, comment.position)
+            self.view.select_text(*self.view.get_containing_line(comment.position))
+            reading_position_change.send(
+                self.view,
+                position=comment.position,
+                text_to_announce=_("Comment: {comment}").format(comment=comment.content),
+            )
+            sounds.navigation.play()
+        elif event.KeyCode == wx.WXK_F9:
+            sel_range = self.view.get_selection_range()
+            if sel_range.start != sel_range.stop:
+                self.view.unselect_text()
+            highlight = self.get_annotation(Quoter, foreword=event.GetModifiers() != wx.MOD_SHIFT)
+            if not isinstance(highlight, Quote):
+                return
+            self.reader.go_to_page(highlight.page_number, highlight.start_pos)
+            self.view.select_text(highlight.start_pos, highlight.end_pos)
+            reading_position_change.send(
+                self.view,
+                position=highlight.start_pos,
+                text_to_announce=_("Highlight"),
+            )
+            sounds.navigation.play()
+
+    def get_annotation(self, annotator_cls, *, foreword):
+        if not (annotator := self.__state.get(annotator_cls.__name__)):
+            annotator = self.__state.setdefault(annotator_cls.__name__, annotator_cls(self.reader))
+        page_number = self.reader.current_page
+        start, end = self.view.get_containing_line(self.view.get_insertion_point())
+        if foreword:
+            annot = annotator.get_first_after(page_number, end)
+        else:
+            annot = annotator.get_first_before(page_number, start)
+        return annot
 
     def _check_is_virtual(self, sender):
         enable = not sender.document.uri.view_args.get("is_virtual", False)
         self.view.synchronise_menu(self.stateful_menu_ids, enable)
 
-    def on_book_load(self, sender):
-        self.bookmarker = Bookmarker(sender)
-
     def on_book_unload(self, sender):
-        self.bookmarker = None
+        print(self.__state)
+        self.__state.clear()
 
     @classmethod
     def comments_page_handler(cls, sender, current, prev):
