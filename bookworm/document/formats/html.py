@@ -20,6 +20,7 @@ from bookworm.structured_text import (
 )
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 from bookworm.utils import (
+    TextContentDecoder,
     remove_excess_blank_lines,
     escape_html,
     is_external_url,
@@ -254,8 +255,8 @@ class FileSystemHtmlDocument(BaseHtmlDocument):
     extensions = ("*.html", "*.htm", "*.xhtml")
 
     def get_html(self):
-        with open(self.filename, "r", encoding="utf8") as file:
-            return StructuredHtmlParser.preprocess_html_string(file.read())
+        content = TextContentDecoder.from_filename(self.filename).get_utf8()
+        return StructuredHtmlParser.preprocess_html_string(content)
 
     def read(self):
         self.filename = self.get_file_system_path()

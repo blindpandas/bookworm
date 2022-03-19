@@ -49,13 +49,15 @@ EXCESS_LINE_REPLACEMENT_FUNC = lambda m: m[0].replace("\n", " ")[:-1] + "\n"
 class TextContentDecoder:
     content: bytes
     prefered_encoding: str = "utf-8"
+    fallback_encoding: str =FALLBACK_ENCODING
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: content_length: {len(self.content)}, prefered_encoding: {self.prefered_encoding}>"
+
     @classmethod
-    def from_filename(cls, filename: os.PathLike, prefered_encoding="utf-8"):
+    def from_filename(cls, filename: os.PathLike, prefered_encoding="utf-8", fallback_encoding=FALLBACK_ENCODING):
         with open(filename, "rb") as file:
-            return cls(file.read(), prefered_encoding)
+            return cls(file.read(), prefered_encoding, fallback_encoding)
 
     def get_text(self):
         text, encoding = self.get_text_and_explain()
