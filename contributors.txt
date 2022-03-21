@@ -2,11 +2,19 @@ On behalf of The Bookworm  community, we would like to thank the following
 people and organizations for making invaluable contributions to Bookworm:
 
 1. Individuals:
-* Musharraf Omer (@mush42)  - Sudan
-* Mohammed Bashir - Sudan
-* Mohammed Abdin - Sudan
-* Ikrami Ahmed (@rami) - Egypt
-* Kostadin Kolev (@k_kolev1985) - Bulgaria
+* Musharraf Omer (@mush42) - lead developer
+* Cary Rowen - Simplified Chinese language translator and contributer
+* Cleverson Casarin Uliana - Brazilian  Portuguese language translator
+* Ikrami Ahmed - Arabic language translator
+* Jani Kinnunen - Finnish language translator
+* Kostadin Kolev - Bulgarian language translator and contributor
+* Michel Such - Frensh language translator
+* Miguel Ángel Pacheco - Spanish language translator
+* Mohammed Bashir - Japanese language translator and contributer
+* Mohammed Abdin - project advocate and sponser
+* Paul Iyobo - repository maintainer
+* Simone Dalmaso - Italian language translator
+* Zvonimir Stanečić - Croatian language translator
 
 2. Organizations:
 * Capeds (www.capeds.net)
