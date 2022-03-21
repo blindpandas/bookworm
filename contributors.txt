@@ -13,6 +13,7 @@ people and organizations for making invaluable contributions to Bookworm:
 * Mohammed Bashir - Japanese language translator and contributer
 * Mohammed Abdin - project advocate and sponser
 * Paul Iyobo - repository maintainer
+* Shaban Mamedov - contributor
 * Simone Dalmaso - Italian language translator
 * Zvonimir Stanečić - Croatian language translator
 
