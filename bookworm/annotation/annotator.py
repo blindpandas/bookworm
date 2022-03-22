@@ -150,10 +150,12 @@ class Annotator:
             ),
             model.page_number > page_number,
         )
-        return (self.session.query(model)
+        return (
+            self.session.query(model)
             .filter_by(book_id=self.current_book.id)
             .filter(sa.or_(*clauses))
-            .first())
+            .first()
+        )
 
     def get_first_before(self, page_number, pos):
         model = self.model
@@ -164,12 +166,14 @@ class Annotator:
             ),
             model.page_number < page_number,
         )
-        return (self.session.query(model)
+        return (
+            self.session.query(model)
             .filter_by(book_id=self.current_book.id)
             .filter(sa.or_(*clauses))
             .order_by(model.page_number.desc())
             .order_by(model.position.desc())
-            .first())
+            .first()
+        )
 
     def create(self, **kwargs):
         if not self.reader.document.is_single_page_document():
@@ -250,10 +254,12 @@ class Quoter(TaggedAnnotator):
             ),
             model.page_number > page_number,
         )
-        return (self.session.query(model)
+        return (
+            self.session.query(model)
             .filter_by(book_id=self.current_book.id)
             .filter(sa.or_(*clauses))
-            .first())
+            .first()
+        )
 
     def get_first_before(self, page_number, pos):
         model = self.model
@@ -264,9 +270,11 @@ class Quoter(TaggedAnnotator):
             ),
             model.page_number < page_number,
         )
-        return (self.session.query(model)
+        return (
+            self.session.query(model)
             .filter_by(book_id=self.current_book.id)
             .filter(sa.or_(*clauses))
             .order_by(model.page_number.desc())
             .order_by(model.position.desc())
-            .first())
+            .first()
+        )

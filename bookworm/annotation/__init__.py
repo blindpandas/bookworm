@@ -170,7 +170,9 @@ class AnnotationService(BookwormService):
                 self.view,
                 position=comment.position,
                 # Translators: spoken message when jumping to a comment
-                text_to_announce=_("Comment: {comment}").format(comment=comment.content),
+                text_to_announce=_("Comment: {comment}").format(
+                    comment=comment.content
+                ),
             )
             sounds.navigation.play()
         elif event.KeyCode == wx.WXK_F9:
@@ -200,7 +202,9 @@ class AnnotationService(BookwormService):
 
     def get_annotation(self, annotator_cls, *, foreword):
         if not (annotator := self.__state.get(annotator_cls.__name__)):
-            annotator = self.__state.setdefault(annotator_cls.__name__, annotator_cls(self.reader))
+            annotator = self.__state.setdefault(
+                annotator_cls.__name__, annotator_cls(self.reader)
+            )
         page_number = self.reader.current_page
         start, end = self.view.get_containing_line(self.view.get_insertion_point())
         if foreword:
