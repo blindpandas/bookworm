@@ -23,9 +23,7 @@ from .. import (
 
 
 log = logger.getChild(__name__)
-TAGS_TO_UNWRAP = [
-    "a",
-]
+TAGS_TO_UNWRAP = []
 TAGS_TO_REMOVE = [
     "img",
     "style",
