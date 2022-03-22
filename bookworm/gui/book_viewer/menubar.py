@@ -4,6 +4,7 @@ import sys
 import os
 import inspect
 import threading
+import shutil
 import wx
 import webbrowser
 from operator import ge, le
@@ -32,7 +33,7 @@ from bookworm.signals import (
     reader_book_unloaded,
 )
 from bookworm.concurrency import call_threaded, process_worker
-from bookworm.gui.components import RobustProgressDialog
+from bookworm.gui.components import RobustProgressDialog, AsyncSnakDialog
 from bookworm import ocr
 from bookworm import speech
 from bookworm.reader import EBookReader
@@ -115,6 +116,14 @@ class FileMenu(BaseMenu):
             _("Close the currently open document"),
         )
         self.AppendSeparator()
+        self.Append(
+            ViewerMenuIds.clear_documents_cache,
+            # Translators: the label of an item in the application menubar
+            _("C&lear Documents Cache..."),
+            # Translators: the help text of an item in the application menubar
+            _("Clear the document cache. Helps in fixing some issues with openning documents."),
+        )
+        self.AppendSeparator()
         self.AppendSubMenu(
             self.pinnedDocumentsMenu,
             # Translators: the label of an item in the application menubar
@@ -169,6 +178,9 @@ class FileMenu(BaseMenu):
         )
         self.view.Bind(
             wx.EVT_MENU, self.onCloseCurrentFile, id=BookRelatedMenuIds.closeCurrentFile
+        )
+        self.view.Bind(
+            wx.EVT_MENU, self.onClearDocumentCache, id=ViewerMenuIds.clear_documents_cache
         )
         self.view.Bind(wx.EVT_MENU, self.onClearRecentFileList, id=wx.ID_CLEAR)
         self.view.Bind(wx.EVT_MENU, self.onPreferences, id=wx.ID_PREFERENCES)
@@ -307,6 +319,36 @@ class FileMenu(BaseMenu):
 
     def onCloseCurrentFile(self, event):
         self.view.unloadCurrentEbook()
+
+    def onClearDocumentCache(self, event):
+        retval = wx.MessageBox(
+            # Translators: content of a message
+            _("Are you sure you want to clear the documents cache?"),
+            # Translators: title of a message box
+            _("Clear Documents Cache?"),
+            style=wx.YES_NO | wx.ICON_WARNING
+        )
+        if retval != wx.YES:
+            return
+        task = partial(
+            shutil.rmtree,
+            paths.home_data_path(),
+            ignore_errors=True
+        )
+        done_callback = lambda fut: wx.MessageBox(
+            # Translators: content of a message box
+            _("Documents cache has been cleared."),
+            # Translators: title of a message box
+            _("Success"),
+            style=wx.ICON_INFORMATION
+        )
+        AsyncSnakDialog(
+            task=task,
+            done_callback=done_callback,
+            # Translators: content of a message in a message box
+            message=_("Clearing documents cache..."),
+            parent=self.view
+        )
 
     def populate_pinned_documents_list(self):
         clear_item = self.pinnedDocumentsMenu.FindItemById(self.clearPinnedDocumentsID)
