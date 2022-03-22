@@ -240,3 +240,33 @@ class Quoter(TaggedAnnotator):
     """Highlights."""
 
     model = Quote
+
+    def get_first_after(self, page_number, pos):
+        model = self.model
+        clauses = (
+            sa.and_(
+                model.page_number == page_number,
+                model.start_pos > pos,
+            ),
+            model.page_number > page_number,
+        )
+        return (self.session.query(model)
+            .filter_by(book_id=self.current_book.id)
+            .filter(sa.or_(*clauses))
+            .first())
+
+    def get_first_before(self, page_number, pos):
+        model = self.model
+        clauses = (
+            sa.and_(
+                model.page_number == page_number,
+                model.end_pos < pos,
+            ),
+            model.page_number < page_number,
+        )
+        return (self.session.query(model)
+            .filter_by(book_id=self.current_book.id)
+            .filter(sa.or_(*clauses))
+            .order_by(model.page_number.desc())
+            .order_by(model.position.desc())
+            .first())
