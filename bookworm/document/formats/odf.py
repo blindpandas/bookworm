@@ -96,7 +96,7 @@ class OdfTextDocument(DummyDocument):
         raise ChangeDocument(
             old_uri=self.uri,
             new_uri=DocumentUri.from_filename(converted_file),
-            reason="Docx converted to html",
+            reason="ODF converted to html",
         )
 
 
