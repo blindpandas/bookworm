@@ -57,7 +57,13 @@ The main window of Bookworm consists of the following two parts:
 * Alt + Home: navigate to the first page of the current section
 * Alt + End: navigate to the last page of the current section
 * Alt + Page down: navigate to next section
-* Alt + Page up: navigate to previous section
+* Alt + Page up: navigate to previous section;
+* F2: go to the next bookmark;
+* Shift + F2: go to the previous bookmark;
+* F8: go to the next comment;
+* Shift + F8: go to the previous comment;
+* F9: go to next quote;
+* Shift + F9: Go to the previous quote.
 
 
 ### Bookmarks & Comments
@@ -194,7 +200,7 @@ Either way, when a new version is found, Bookworm will ask you if you want to in
 
 ## Reporting Problems & Issues
 
-As blind developers, our responsibility is to develop applications that provide independence for us, and for our fellow blind friends all over the world. So, if you've found Bookworm useful in any way, please help us in making Bookworm better for you and for others. At this initial stage, we want you to tell us about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/mush42/bookworm/issues/). Your help is greatly appreciated.
+As blind developers, our responsibility is to develop applications that provide independence for us, and for our fellow blind friends all over the world. So, if you've found Bookworm useful in any way, please help us in making Bookworm better for you and for others. At this initial stage, we want you to tell us about any errors you may encounter during your use of Bookworm. To do so, open a new issue with the details of the error at [the issue tracker](https://github.com/blindpandas/bookworm/issues/). Your help is greatly appreciated.
 
 Before submitting a new issue, make sure that you ran Bookworm in debug mode. To turn on debug mode, go to the "Help" menu and then click "Restart with debug-mode enabled" and try to reproduce the issue with debug mode enabled. In the majority of cases, when the error happens again with debug mode enabled, a dialog will be shown with the details of that error. You can then copy this information and include it with your problem report.
 
