@@ -18,6 +18,7 @@ class ChangeDocument(Exception):
         self.old_uri = old_uri
         self.new_uri = new_uri
         self.reason = reason
+        self.new_uri.fallback_uri = self.old_uri
 
 
 class DocumentIOError(DocumentError, IOError):
