@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Bookworm\n"
+"Project-Id-Version: 'Bookworm'\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-02-09 12:31+0000\n"
-"PO-Revision-Date: 2022-02-19 09:04+0800\n"
+"POT-Creation-Date: 2022-03-24 13:27+0000\n"
+"PO-Revision-Date: 2022-03-24 22:36+0800\n"
 "Last-Translator: Musharraf Omer <ibnomer2011@hotmail.com>\n"
 "Language-Team: Cary-Rowen <manchen_0528@outlook.com>\n"
 "Language: zh_CN\n"
@@ -18,6 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.9.1\n"
 "X-Generator: Poedit 2.4.3\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 
 #. Translators: the content of a message indicating a connection error
 #: bookworm/otau.py:76
@@ -73,51 +74,51 @@ msgid "Update the application"
 msgstr "更新应用程序"
 
 #. Translators: the title of the window when an e-book is open
-#: bookworm/reader.py:389
+#: bookworm/reader.py:407
 msgid "{title} — by {author}"
 msgstr "{title} —作者 {author}"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/annotation/__init__.py:60
+#: bookworm/annotation/__init__.py:63
 msgid "&Annotation"
 msgstr "注解(&A)"
 
-#: bookworm/annotation/__init__.py:66
+#: bookworm/annotation/__init__.py:71
 msgid "&Bookmark...\tCtrl-B"
 msgstr "添加书签(&B)... \tCtrl-B"
 
-#: bookworm/annotation/__init__.py:67 bookworm/annotation/__init__.py:73
+#: bookworm/annotation/__init__.py:72 bookworm/annotation/__init__.py:78
 msgid "Bookmark the current location"
 msgstr "在当前位置添加书签"
 
-#: bookworm/annotation/__init__.py:72
+#: bookworm/annotation/__init__.py:77
 msgid "&Named Bookmark...\tCtrl-Shift-B"
 msgstr "命名书签(&N)...\tCtrl-Shift-B"
 
-#: bookworm/annotation/__init__.py:78
+#: bookworm/annotation/__init__.py:83
 msgid "Co&mment...\tCtrl-m"
 msgstr "注释... \tCtrl-m"
 
-#: bookworm/annotation/__init__.py:79
+#: bookworm/annotation/__init__.py:84
 msgid "Add a comment at the current location"
 msgstr "在当前位置添加注释"
 
-#: bookworm/annotation/__init__.py:89
+#: bookworm/annotation/__init__.py:94
 msgid "Highlight Selection\tCtrl-Shift-H"
 msgstr "标记为高亮(&H)... \tCtrl-Shift-H"
 
-#: bookworm/annotation/__init__.py:90
+#: bookworm/annotation/__init__.py:95
 msgid "Highlight and save selected text."
 msgstr "高亮显示并保存所选文本。"
 
 #. Translators: the label of a button in the application toolbar
 #. Translators: spoken message when jumping to a bookmark
-#: bookworm/annotation/__init__.py:99 bookworm/annotation/__init__.py:133
+#: bookworm/annotation/__init__.py:104 bookworm/annotation/__init__.py:141
 msgid "Bookmark"
 msgstr "书签"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/annotation/__init__.py:101
+#: bookworm/annotation/__init__.py:106
 msgid "Comment"
 msgstr "注释"
 
@@ -125,20 +126,61 @@ msgstr "注释"
 #. Translators: the title of a group of controls in the
 #. Translators: label for a aria region containing annotation
 #. used when exporting annotations to HTML
-#: bookworm/annotation/__init__.py:111 bookworm/annotation/annotation_gui.py:26
+#: bookworm/annotation/__init__.py:116 bookworm/annotation/annotation_gui.py:26
 #: bookworm/annotation/exporters/core_renderers.py:169
 msgid "Annotation"
 msgstr "注解"
 
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:129
+msgid "No next bookmark"
+msgstr "往下没有书签"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:132
+msgid "No previous bookmark"
+msgstr "往上没有书签"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:159
+msgid "No next comment"
+msgstr "往下没有注释"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:162
+msgid "No previous comment"
+msgstr "往上没有注释"
+
+#. Translators: spoken message when jumping to a comment
+#: bookworm/annotation/__init__.py:173
+msgid "Comment: {comment}"
+msgstr "注释： {comment}"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:186
+msgid "No next highlight"
+msgstr "往下没有高亮"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:189
+msgid "No previous highlight"
+msgstr "往上没有高亮"
+
+#: bookworm/annotation/__init__.py:199
+msgid "Highlight"
+msgstr "高亮"
+
 #. Translators: label of an edit control in the dialog
 #. of viewing or editing a comment/highlight
 #. Translators: label of an edit control to filter annotations by content
+#. Translators: label of a check box that enables/disables searching document
+#. content when searching the bookshelf
 #. Translators: the label of the text area which shows the
 #. content of the current page
 #: bookworm/annotation/annotation_dialogs.py:63
 #: bookworm/annotation/annotation_dialogs.py:270
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:116
-#: bookworm/gui/book_viewer/__init__.py:247
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:123
+#: bookworm/gui/book_viewer/__init__.py:240
 msgid "Content"
 msgstr "内容"
 
@@ -177,10 +219,10 @@ msgstr "最近更新时间"
 #. Translators: the label of a button to close the dialog
 #: bookworm/annotation/annotation_dialogs.py:95
 #: bookworm/annotation/annotation_dialogs.py:152
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:157
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:219
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:174
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:242
 #: bookworm/gui/book_viewer/core_dialogs.py:405 bookworm/gui/settings.py:98
-#: bookworm/ocr/ocr_dialogs.py:360 bookworm/text_to_speech/tts_gui.py:328
+#: bookworm/ocr/ocr_dialogs.py:420 bookworm/text_to_speech/tts_gui.py:328
 #: bookworm/webservices/wikiworm.py:177
 msgid "&Close"
 msgstr "关闭(&C)"
@@ -200,7 +242,7 @@ msgstr "保存书签"
 #. Translators: text of a button to remove a language from Tesseract OCR Engine
 #. Translators: the label of a button to remove a voice profile
 #: bookworm/annotation/annotation_dialogs.py:137
-#: bookworm/ocr/ocr_dialogs.py:399 bookworm/text_to_speech/tts_gui.py:322
+#: bookworm/ocr/ocr_dialogs.py:459 bookworm/text_to_speech/tts_gui.py:322
 msgid "&Remove"
 msgstr "删除(&R)"
 
@@ -212,13 +254,15 @@ msgstr "名称"
 
 #. Translators: the title of a column in the bookmarks list
 #. Translators: text of a toggle button to sort comments/highlights list
+#. Translators: header of a column in a list control in a dialog showing a list
+#. of search results of matching document pages
 #. Translators: the title of a column in the search results list
 #. Translators: the label of the image of a page in a dialog to render the
 #. current page
 #: bookworm/annotation/annotation_dialogs.py:168
 #: bookworm/annotation/annotation_dialogs.py:359
 #: bookworm/annotation/exporters/core_renderers.py:176
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:171
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:193
 #: bookworm/gui/book_viewer/core_dialogs.py:58
 #: bookworm/gui/book_viewer/render_view.py:31
 msgid "Page"
@@ -258,7 +302,7 @@ msgstr "删除书签？"
 #: bookworm/annotation/annotation_dialogs.py:559
 #: bookworm/annotation/exporters/core_renderers.py:141
 msgid "Book"
-msgstr "书籍"
+msgstr "文档"
 
 #. Translators: label of an editable combobox to filter annotations by tag
 #: bookworm/annotation/annotation_dialogs.py:259
@@ -315,7 +359,7 @@ msgstr "删除(&D)..."
 #. Translators: text of a button in a dialog to view comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:386
 msgid "E&xport..."
-msgstr "导出(&E)"
+msgstr "导出(&X)"
 
 #. Translators: title of a dialog to view or edit a single comment/highlight
 #: bookworm/annotation/annotation_dialogs.py:458
@@ -362,7 +406,7 @@ msgstr "包含书名"
 
 #: bookworm/annotation/annotation_dialogs.py:602
 msgid "Include section title"
-msgstr "包括章节标题"
+msgstr "包含章节标题"
 
 #: bookworm/annotation/annotation_dialogs.py:608
 msgid "Include  page number"
@@ -402,185 +446,180 @@ msgstr "导出后打开文件"
 #. to export annotations to
 #. Translators: the title of a dialog to save the exported book
 #: bookworm/annotation/annotation_dialogs.py:655
-#: bookworm/gui/book_viewer/menubar.py:239
+#: bookworm/gui/book_viewer/menubar.py:255
 msgid "Save As"
 msgstr "另存为"
 
 #. Translators: the label of a checkbox
 #: bookworm/annotation/annotation_gui.py:31
-msgid "Exclude named bookmarks when jumping between bookmarks"
-msgstr "在书签之间跳转时忽略命名书签"
-
-#. Translators: the label of a checkbox
-#: bookworm/annotation/annotation_gui.py:38
 msgid "Speak the bookmark when jumping"
 msgstr "跳转时读出书签"
 
 #. Translators: the label of a checkbox
-#: bookworm/annotation/annotation_gui.py:45
+#: bookworm/annotation/annotation_gui.py:38
 msgid "Select the bookmarked line when jumping"
 msgstr "跳转时选中书签线"
 
 #. Translators: the label of a checkbox
-#: bookworm/annotation/annotation_gui.py:52
+#: bookworm/annotation/annotation_gui.py:45
 msgid "Use visual styles to indicate annotations"
 msgstr "使用视觉样式显示注释"
 
 #. Translators: the label of a checkbox
-#: bookworm/annotation/annotation_gui.py:59
+#: bookworm/annotation/annotation_gui.py:52
 msgid "Use sounds to indicate the presence of comments"
 msgstr "使用音效提示注释"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:98
+#: bookworm/annotation/annotation_gui.py:91
 msgid "Add &Bookmark\tCtrl-B"
 msgstr "添加书签(&B)... \tCtrl-B"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:100
+#: bookworm/annotation/annotation_gui.py:93
 msgid "Add a bookmark at the current position"
 msgstr "在当前位置添加书签"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:105
+#: bookworm/annotation/annotation_gui.py:98
 msgid "Add &Named Bookmark...\tCtrl-Shift-B"
 msgstr "添加命名书签(&N)... \tCtrl-Shift-B"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:107
+#: bookworm/annotation/annotation_gui.py:100
 msgid "Add a named bookmark at the current position"
 msgstr "在当前位置添加并命名书签"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:112
+#: bookworm/annotation/annotation_gui.py:105
 msgid "Add Co&mment...\tCtrl-M"
 msgstr "添加注释(&M)... \tCtrl-M"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:114
+#: bookworm/annotation/annotation_gui.py:107
 msgid "Add a comment at the current position"
 msgstr "在当前位置添加注释"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:119
+#: bookworm/annotation/annotation_gui.py:112
 msgid "&Highlight Selection\tCtrl-H"
 msgstr "标记为高亮(&H)... \tCtrl-H"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:121
+#: bookworm/annotation/annotation_gui.py:114
 msgid "Highlight selected text and save it."
 msgstr "高亮显示所选文本并保存。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:126
+#: bookworm/annotation/annotation_gui.py:119
 msgid "Saved &Bookmarks..."
 msgstr "已保存的书签..."
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:128
+#: bookworm/annotation/annotation_gui.py:121
 msgid "View added bookmarks"
 msgstr "查看已添加的书签"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:133
+#: bookworm/annotation/annotation_gui.py:126
 msgid "Saved Co&mments..."
 msgstr "已保存的注释(&C)..."
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:135
+#: bookworm/annotation/annotation_gui.py:128
 msgid "View, edit, and remove comments."
 msgstr "查看，编辑和删除注释。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:140
+#: bookworm/annotation/annotation_gui.py:133
 msgid "Saved &Highlights..."
 msgstr "已保存的高亮(&H)..."
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:142
+#: bookworm/annotation/annotation_gui.py:135
 msgid "View saved highlights."
 msgstr "查看已保存的高亮显示。"
 
-#: bookworm/annotation/annotation_gui.py:180
+#: bookworm/annotation/annotation_gui.py:173
 msgid "Bookmark removed"
 msgstr "书签已删除"
 
 #. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:183
+#: bookworm/annotation/annotation_gui.py:176
 msgid "Bookmark Added"
 msgstr "书签已添加"
 
 #. Translators: title of a dialog
-#: bookworm/annotation/annotation_gui.py:192
+#: bookworm/annotation/annotation_gui.py:185
 msgid "Add Named Bookmark"
 msgstr "命名书签"
 
 #. Translators: label of a text entry
-#: bookworm/annotation/annotation_gui.py:194
+#: bookworm/annotation/annotation_gui.py:187
 msgid "Bookmark name:"
 msgstr "书签名称"
 
 #. Translators: the title of a dialog to add a comment
-#: bookworm/annotation/annotation_gui.py:204
+#: bookworm/annotation/annotation_gui.py:197
 msgid "New Comment"
 msgstr "添加注释"
 
 #. Translators: the label of an edit field to enter a comment
-#: bookworm/annotation/annotation_gui.py:206
+#: bookworm/annotation/annotation_gui.py:199
 msgid "Comment:"
 msgstr "注释"
 
 #. Translators: title of a dialog
-#: bookworm/annotation/annotation_gui.py:219
+#: bookworm/annotation/annotation_gui.py:212
 msgid "Tag Comment"
 msgstr "标签注释"
 
 #. Translators: label of a text entry
-#: bookworm/annotation/annotation_gui.py:221
-#: bookworm/annotation/annotation_gui.py:268
+#: bookworm/annotation/annotation_gui.py:214
+#: bookworm/annotation/annotation_gui.py:261
 msgid "Tags:"
 msgstr "标签："
 
-#: bookworm/annotation/annotation_gui.py:233
+#: bookworm/annotation/annotation_gui.py:226
 msgid "No selection"
 msgstr "无章节"
 
 #. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:241
+#: bookworm/annotation/annotation_gui.py:234
 msgid "Highlight removed"
 msgstr "已取消高亮"
 
 #. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:244
+#: bookworm/annotation/annotation_gui.py:237
 msgid "Already highlighted"
 msgstr "已高亮显示"
 
 #. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:251
-#: bookworm/annotation/annotation_gui.py:257
+#: bookworm/annotation/annotation_gui.py:244
+#: bookworm/annotation/annotation_gui.py:250
 msgid "Highlight extended"
 msgstr "高亮扩展"
 
 #. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:260
+#: bookworm/annotation/annotation_gui.py:253
 msgid "Selection highlighted"
 msgstr "高亮显示选中"
 
 #. Translators: title of a dialog
-#: bookworm/annotation/annotation_gui.py:266
+#: bookworm/annotation/annotation_gui.py:259
 msgid "Tag Highlight"
 msgstr "标签高亮"
 
 #. Translators: the title of a dialog to view bookmarks
-#: bookworm/annotation/annotation_gui.py:281
+#: bookworm/annotation/annotation_gui.py:274
 msgid "Bookmarks | {book}"
 msgstr "书签 | {book}"
 
-#: bookworm/annotation/annotation_gui.py:291
+#: bookworm/annotation/annotation_gui.py:284
 msgid "Comments"
 msgstr "注释"
 
-#: bookworm/annotation/annotation_gui.py:304
+#: bookworm/annotation/annotation_gui.py:297
 msgid "Highlights"
 msgstr "高亮"
 
@@ -588,7 +627,7 @@ msgstr "高亮"
 #. Translators: a name of a file format
 #. Translators: file type in a save as dialog
 #: bookworm/annotation/exporters/core_renderers.py:13
-#: bookworm/gui/book_viewer/menubar.py:243 bookworm/ocr/ocr_menu.py:236
+#: bookworm/gui/book_viewer/menubar.py:259 bookworm/ocr/ocr_menu.py:292
 msgid "Plain Text"
 msgstr "纯文本"
 
@@ -647,12 +686,18 @@ msgstr "复制到剪贴板"
 msgid "Bookshelf"
 msgstr "书架"
 
-#: bookworm/bookshelf/__init__.py:67
+#. Translators: the label of an item in the application menubar
+#. Translators: the label of the bookshelf sub menu found in the file menu of
+#. the application
+#: bookworm/bookshelf/__init__.py:68
 msgid "Boo&kshelf"
 msgstr "书架(&K)"
 
-#. Translators: the label of a group of controls in the reading page
-#: bookworm/bookshelf/local_bookshelf/__init__.py:63
+#. Translators: the label of a group of controls in the bookshelf page in the
+#. preferences dialog
+#. Translators: the name of a book shelf type.
+#. This bookshelf type is stored in a local database
+#: bookworm/bookshelf/local_bookshelf/__init__.py:65
 #: bookworm/bookshelf/viewer_integration.py:34
 msgid "Local Bookshelf"
 msgstr "本地书架"
@@ -660,7 +705,7 @@ msgstr "本地书架"
 #. Translators: the label of a checkbox
 #: bookworm/bookshelf/viewer_integration.py:39
 msgid "Automatically add opened books to the local bookshelf"
-msgstr "将打开的书籍自动添加到本地书架"
+msgstr "将打开的文档自动添加到本地书架"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/bookshelf/viewer_integration.py:52
@@ -680,9 +725,11 @@ msgstr "添加到本地书架(&A)..."
 #. Translators: the help text of an item in the application menubar
 #: bookworm/bookshelf/viewer_integration.py:61
 msgid "Add the current book to the local bookshelf"
-msgstr "将当前书籍添加到本地书架"
+msgstr "将当前文档添加到本地书架"
 
-#: bookworm/bookshelf/viewer_integration.py:90
+#. Translators: content of a message indicating failure to add the current
+#. document to the bookshelf
+#: bookworm/bookshelf/viewer_integration.py:91
 msgid ""
 "You can not add this document to Bookshelf.\n"
 "The document should exist locally in your computer."
@@ -690,233 +737,328 @@ msgstr ""
 "您不能将此文档添加到书架。\n"
 "要添加的文档应该存在于您的本地计算机。"
 
-#: bookworm/bookshelf/viewer_integration.py:93
+#. Translators: title of a message indicating failure to add the current
+#. document to the bookshelf
+#: bookworm/bookshelf/viewer_integration.py:95
 msgid "Can not add document"
-msgstr "无法添加书籍"
+msgstr "无法添加文档"
 
-#: bookworm/bookshelf/viewer_integration.py:98
+#. Translators: title of a dialog to select reading list and collections for a
+#. document when adding it to the bookshelf
+#: bookworm/bookshelf/viewer_integration.py:102
 msgid "Reading list and collections"
 msgstr "阅读清单和收藏"
 
-#: bookworm/bookshelf/window.py:54
+#: bookworm/bookshelf/window.py:55
 msgid "{name} ({count})"
 msgstr "{name} ({count})"
 
-#: bookworm/bookshelf/window.py:77
+#. Translators: label of a text box to filter documents in bookshelf
+#: bookworm/bookshelf/window.py:79
 msgid "Filter documents..."
-msgstr "查找书籍"
+msgstr "查找文档"
 
-#: bookworm/bookshelf/window.py:82
+#. Translators: label of the bookshelf document list. This label is shown when
+#. the documents are being loaded from the database
+#: bookworm/bookshelf/window.py:85
 msgid "Loading items"
 msgstr "加载项目"
 
-#: bookworm/bookshelf/window.py:191
+#. Translators: content of a message shown when the bookshelf fails to load and
+#. show documents
+#: bookworm/bookshelf/window.py:195
 msgid ""
-"Failed to retrieve document information.\n"
+"Failed to retrieve documents.\n"
 "Please try again."
 msgstr ""
-"无法检索书籍信息。\n"
+"无法检索文档。\n"
 "请再试一次。"
 
+#. Translators: title of a message indicating an error
+#. Translators: title of a message shown when importing documents to the
+#. bookshelf has failed
+#. Translators: title  of a message shown when importing documents from a
+#. folder to the bookshelf has failed
+#. Translators: title of a message shown when searching bookshelf has failed
 #. Translators: spoken message
-#. Translators: title of a list control colum
+#. Translators: title of a list control colum showing errors encountered when
+#. bundling documents
 #. Translators: title of a messagebox
 #. Translators: the title of a message telling the user that an error has
 #. occurred
-#: bookworm/bookshelf/local_bookshelf/__init__.py:258
-#: bookworm/bookshelf/local_bookshelf/__init__.py:298
-#: bookworm/bookshelf/local_bookshelf/__init__.py:338
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:204
-#: bookworm/bookshelf/window.py:192 bookworm/ocr/ocr_dialogs.py:203
-#: bookworm/ocr/ocr_dialogs.py:556 bookworm/text_to_speech/tts_gui.py:426
+#: bookworm/bookshelf/local_bookshelf/__init__.py:288
+#: bookworm/bookshelf/local_bookshelf/__init__.py:334
+#: bookworm/bookshelf/local_bookshelf/__init__.py:380
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:226
+#: bookworm/bookshelf/window.py:197 bookworm/ocr/ocr_dialogs.py:207
+#: bookworm/ocr/ocr_dialogs.py:616 bookworm/text_to_speech/tts_gui.py:426
 #: bookworm/webservices/wikiworm.py:117
 msgid "Error"
 msgstr "错误"
 
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
 #. Translators: the label of the close button in a dialog
-#: bookworm/bookshelf/window.py:231
+#: bookworm/bookshelf/window.py:237
 #: bookworm/gui/book_viewer/core_dialogs.py:395
 msgid "&Open"
 msgstr "打开(&O)"
 
-#: bookworm/bookshelf/window.py:235
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/window.py:242
 msgid "Open in &system viewer"
 msgstr "在系统查看器中打开(&S)"
 
-#: bookworm/bookshelf/window.py:239
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/window.py:247
 msgid "Edit &title"
 msgstr "编辑标题(&T)"
 
 #. Translators: spoken message when activating a document
-#. Translators: spoken message when no matching documents upon filtering the
-#. document list
-#: bookworm/bookshelf/window.py:292
+#. Translators: spoken message when no matching documents were found when
+#. filtering the document list
+#: bookworm/bookshelf/window.py:300
 msgid "No matching documents"
-msgstr "没有匹配的书籍"
+msgstr "没有匹配的文档"
 
-#: bookworm/bookshelf/window.py:345 bookworm/bookshelf/window.py:356
+#. Translators: message shown when loading documents in the bookshelf
+#: bookworm/bookshelf/window.py:354 bookworm/bookshelf/window.py:366
 msgid "Retrieving items..."
 msgstr "正在检索项目..."
 
-#: bookworm/bookshelf/window.py:380
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/window.py:391
 msgid "Document &info..."
-msgstr "书籍信息(&I)..."
+msgstr "文档信息(&I)..."
 
-#: bookworm/bookshelf/window.py:408
+#. Translators: label of the combo box showing a list of bookshelf providers.
+#. Currently, only the Local Bookshelf provider is implemented. In the future,
+#. other providers may be added, such as Bookshare and Pocket.
+#: bookworm/bookshelf/window.py:422
 msgid "Provider"
 msgstr "来源"
 
+#. Translators: label of the bookshelf tree that shows reading lists and
+#. collections and other categories
 #. Translators: label of the settings categories list box
-#: bookworm/bookshelf/window.py:414 bookworm/bookshelf/window.py:419
+#: bookworm/bookshelf/window.py:429 bookworm/bookshelf/window.py:435
 #: bookworm/gui/settings.py:459
 msgid "Categories"
 msgstr "类别"
 
 #. Translators: title of Bookshelf window
-#: bookworm/bookshelf/window.py:456
+#: bookworm/bookshelf/window.py:472
 msgid "Bookworm Bookshelf: {name}"
 msgstr "Bookworm 书架： {name}"
 
-#: bookworm/bookshelf/window.py:479
+#. Translators: label of a menu item to exit the application
+#: bookworm/bookshelf/window.py:496
 msgid "&Exit"
 msgstr "退出(&E)"
 
+#. Translators: lable of the file menu in the menu bar
 #. Translators: the label of an item in the application menubar
-#: bookworm/bookshelf/window.py:481 bookworm/gui/book_viewer/menubar.py:802
+#: bookworm/bookshelf/window.py:499 bookworm/gui/book_viewer/menubar.py:855
 msgid "&File"
 msgstr "文件(&F)"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:71
+#. Translators: the label of a menu item to remove a bookshelf reading list or
+#. collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:74
 msgid "Remove..."
 msgstr "删除"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:75
+#. Translators: the label of a menu item to change the name of a bookshelf
+#. reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:79
 msgid "Edit name..."
 msgstr "编辑名称..."
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:79
+#. Translators: the label of a menu item to remove all documents under a
+#. specific bookshelf reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:84
 msgid "Clear documents..."
-msgstr "清除书籍..."
+msgstr "清除文档..."
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:102
+#. Translators: the name of a category in the bookshelf for recently added
+#. documents
+#: bookworm/bookshelf/local_bookshelf/__init__.py:108
 msgid "Recently Added"
 msgstr "最近添加"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:108
+#. Translators: the name of a category in the bookshelf for documents currently
+#. being read by the user
+#: bookworm/bookshelf/local_bookshelf/__init__.py:115
 msgid "Currently Reading"
 msgstr "正在阅读"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:116
+#. Translators: the name of a category in the bookshelf for documents the user
+#. wants to read
+#: bookworm/bookshelf/local_bookshelf/__init__.py:124
 msgid "Want to Read"
 msgstr "想要阅读"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:124
+#. Translators: the name of a category in the bookshelf for documents favored
+#. by the user
+#: bookworm/bookshelf/local_bookshelf/__init__.py:133
 msgid "Favorites"
 msgstr "最爱"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:133
+#. Translators: the name of a category in the bookshelf which contains the
+#. user's reading lists
+#: bookworm/bookshelf/local_bookshelf/__init__.py:143
 msgid "Reading Lists"
 msgstr "阅读清单"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:137
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:46
+#. Translators: the name of a category in the bookshelf which contains the
+#. user's collections
+#. Translators: label of a text box for entering a document's collections
+#: bookworm/bookshelf/local_bookshelf/__init__.py:148
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:48
 msgid "Collections"
 msgstr "收藏"
 
+#. Translators: the name of a reading list in the bookshelf which contains
+#. documents that do not have any category assigned to them
 #. Translators: the label of a page in the settings dialog
-#: bookworm/bookshelf/local_bookshelf/__init__.py:144
+#: bookworm/bookshelf/local_bookshelf/__init__.py:156
 #: bookworm/gui/settings.py:429
 msgid "General"
 msgstr "常规"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:152
+#. Translators: the label of a menu item in the bookshelf to add a new reading
+#. list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:165
 msgid "Add New..."
 msgstr "新增"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:169
+#. Translators: the name of a category in the bookshelf that lists the authors
+#. of the documents stored in the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:184
 #: bookworm/gui/book_viewer/core_dialogs.py:360
 msgid "Authors"
 msgstr "作者"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:177
+#. Translators: the label of a menu item in the bookshelf file menu to import
+#. documents to the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:195
 msgid "Import Documents...\tCtrl+O"
-msgstr "导入书籍...\tCtrl+O"
+msgstr "导入文档...\tCtrl+O"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:180
+#. Translators: the label of a menu item in the bookshelf file menu to import
+#. an entire folder to the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:200
 msgid "Import documents from folder..."
 msgstr "从文件夹导入(&F)..."
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:183
+#. Translators: the label of a menu item in the bookshelf file menu to search
+#. documents contained in the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:204
 msgid "Search Bookshelf..."
 msgstr "搜索书架..."
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:184
+#. Translators: the label of a menu item in the bookshelf file menu to copy the
+#. files added to the bookshelf to a private folder that blongs to Bookworm.
+#. This is important to make the bookshelf works with  portable copies, or if
+#. the user wants to move or rename added documents
+#: bookworm/bookshelf/local_bookshelf/__init__.py:207
 msgid "Bundle Documents..."
-msgstr "存档书籍..."
+msgstr "存档文档..."
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:186
+#. Translators: the label of a menu item in the bookshelf file menu to clear
+#. documents that no longer exist in the file system
+#: bookworm/bookshelf/local_bookshelf/__init__.py:210
 msgid "Clear invalid documents..."
 msgstr "清除无效文档..."
 
 #. Translators: the title of a file dialog to browse to a document
-#: bookworm/bookshelf/local_bookshelf/__init__.py:197
+#: bookworm/bookshelf/local_bookshelf/__init__.py:222
 msgid "Import Documents To Bookshelf"
 msgstr "将文件导入书架"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:212
-#: bookworm/bookshelf/local_bookshelf/__init__.py:566
+#. Translators: the title of a dialog to edit the document's reading list or
+#. collection
+#. Translators: title of a dialog to change the reading list or collection for
+#. a document
+#: bookworm/bookshelf/local_bookshelf/__init__.py:238
+#: bookworm/bookshelf/local_bookshelf/__init__.py:638
 msgid "Edit reading list/collections"
 msgstr "编辑阅读列表/收藏"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:228
+#. Translators: a message shown when Bookworm is importing documents to the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:255
 msgid "Importing document..."
 msgstr "正在导入文档..."
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:230
+#. Translators: a message shown when Bookworm is importing documents to the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:258
 msgid "Importing documents..."
 msgstr "正在导入文档..."
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:257
+#. Translators: content of a message shown when importing documents to the
+#. bookshelf has failed
+#: bookworm/bookshelf/local_bookshelf/__init__.py:286
 msgid "Failed to import document. Please try again."
-msgstr "书籍导入失败。请重试。"
+msgstr "文档导入失败。请重试。"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:268
+#. Translators: title of a dialog to import an entire folder to the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:299
 msgid "Import Documents From Folder"
 msgstr "从文件夹导入文件"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:281
+#. Translators: a message shown when importing an entire folder to the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:313
 msgid "Importing documents from folder. Please wait..."
 msgstr "正在从文件夹导入文档。请稍等..."
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:289
+#. Translators: content of a message shown when importing documents from a
+#. folder to the bookshelf is successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:322
 msgid "Documents imported from folder."
 msgstr "从文件夹导入的文档。"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:290
+#. Translators: title of a message shown when importing documents from a folder
+#. to the bookshelf is successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:324
 msgid "Operation Completed"
 msgstr "操作完成"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:297
+#. Translators: content of a message shown when importing documents from a
+#. folder to the bookshelf has failed
+#: bookworm/bookshelf/local_bookshelf/__init__.py:332
 msgid "Failed to import documents from folder."
 msgstr "从文件夹导入文档失败。"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:304
+#. Translators: title of a dialog to search bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:342
 msgid "Search Bookshelf"
 msgstr "搜索书架"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:316
+#. Translators: a message shown while searching bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:355
 msgid "Searching bookshelf..."
 msgstr "搜索书架..."
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:338
+#. Translators: content of a message shown when searching bookshelf has failed
+#: bookworm/bookshelf/local_bookshelf/__init__.py:378
 msgid "Failed to search bookshelf,"
 msgstr "搜索书架失败，"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:351
+#. Translators: title of a dialog that shows bookshelf search results. It
+#. searches documents by title and content, hence full-text
+#: bookworm/bookshelf/local_bookshelf/__init__.py:395
 msgid "Full Text Search Results"
 msgstr "全文搜索结果"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:360
+#. Translators: content of a message to confirm the bundling of documents added
+#. to bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:405
 msgid ""
 "This will create copies of all of the documents you have added to your Local "
 "Bookshelf.\n"
@@ -926,61 +1068,84 @@ msgid ""
 "Please note that this action will create duplicate copies of all of your "
 "added documents."
 msgstr ""
-"该操作将为您添加到本地书架的所有书籍创建副本。\n"
-"完成该操作后，即使您将原始书籍移动或删除，您也可以打开存储在书架中的书籍。\n"
-"请注意，该操作将创建您添加的所有书籍的副本。"
+"该操作将为您添加到本地书架的所有文档创建副本。\n"
+"完成该操作后，即使您将原始文档移动或删除，您也可以打开存储在书架中的文档。\n"
+"请注意，该操作将创建您添加的所有文档的副本。"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:363
+#. Translators: title of a message to confirm the bundling of documents added
+#. to bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:409
 msgid "Bundle Documents?"
-msgstr "存档书籍？"
+msgstr "存档文档？"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:370
+#. Translators: a message shown when bundling documents added to bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:417
 msgid "Bundling documents. Please wait..."
 msgstr "正在存档文件。请稍后..."
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:398
+#. Translators: content of a message when bundling of documents is successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:446
 msgid "Bundled {num_documents} files."
 msgstr "存档了 {num_documents} 个文件。"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:399
+#. Translators: title of a message when bundling of documents is successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:448
 msgid "Done"
 msgstr "完毕"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:406
+#. Translators: title of a dialog that shows titles and paths of documents
+#. which have not been bundled successfully
+#: bookworm/bookshelf/local_bookshelf/__init__.py:456
 msgid "Bundle Results: {num_succesfull} successfull, {num_faild} faild"
 msgstr "存档结果： {num_succesfull} 成功，{num_faild} 失败"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:416
+#. Translators: content of a message to confirm the clearing of documents
+#. which have been added to bookshelf, but they have been moved, renamed, or
+#. deleted
+#: bookworm/bookshelf/local_bookshelf/__init__.py:468
 msgid ""
 "This action will clear invalid documents from your bookshelf.\n"
 "Invalid documents are the documents which no longer exist on your computer."
 msgstr ""
-"此操作将从您的书架中清除无效书籍。\\n\n"
-"无效书籍是您计算机上不再存在的书籍。"
+"此操作将从您的书架中清除无效文档。\\n\n"
+"无效文档是您的计算机上不再存在的文档。"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:419
+#. Translators: title of a message to confirm the clearing of documents
+#. which have been added to bookshelf, but they have been moved, renamed, or
+#. deleted
+#: bookworm/bookshelf/local_bookshelf/__init__.py:473
 msgid "Clear Invalid Documents?"
 msgstr "清除无效文档？"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:433
+#. Translators: label of a text box to change the name of a reading list or
+#. collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:488
 msgid "New name:"
 msgstr "新名称："
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:433
+#. Translators: title of a dialog to change the name of a reading list or
+#. collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:490
 msgid "Edit Name"
 msgstr "编辑名称"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:441
+#. Translators: content of a message when changing the name of a reading list
+#. or collection was not successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:500
 msgid ""
 "The given name {name} already exists.\n"
 "Please choose another name."
 msgstr "名称 {name} 已存在。请选择其他名称。"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:444
+#. Translators: title of a message when changing the name of a reading list or
+#. collection was not successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:504
 msgid "Duplicate name"
 msgstr "重复名称"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:453
+#. Translators: content of a message to confirm the removal of a reading list
+#. or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:514
 msgid ""
 "Are you sure you want to remove {name}?\n"
 "This will not remove document classified under {name}."
@@ -988,67 +1153,94 @@ msgstr ""
 "确定要移除 {name} 吗？\n"
 "这不会删除 {name} 下的文档。"
 
+#. Translators: title of a message to confirm the removal of a reading list or
+#. collection
 #. Translators: title of a message box
 #. Translators: title of a messagebox
-#: bookworm/bookshelf/local_bookshelf/__init__.py:456
-#: bookworm/gui/components.py:603 bookworm/ocr/ocr_dialogs.py:473
-#: bookworm/ocr/ocr_dialogs.py:515
+#: bookworm/bookshelf/local_bookshelf/__init__.py:518
+#: bookworm/gui/components.py:603 bookworm/ocr/ocr_dialogs.py:533
+#: bookworm/ocr/ocr_dialogs.py:575
 msgid "Confirm"
 msgstr "确认"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:466
+#. Translators: content of a message to confirm the removal of all documents
+#. classified under a specific reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:529
 msgid ""
 "Are you sure you want to clear all documents classified under {name}?\n"
 "This will remove those documents from your bookshelf."
 msgstr ""
-"确定要删除 {name} 类别下的所有书籍吗？\n"
-"该操作将从您的书架中删除这些书籍。"
+"确定要删除 {name} 类别下的所有文档吗？\n"
+"该操作将从您的书架中删除这些文档。"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:469
+#. Translators: title of a message to confirm the removal of all documents
+#. classified under a specific reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:533
 msgid "Clear All Documents"
 msgstr "清除所有文档"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:481
+#. Translators: label of a text box for the name of a new reading list or
+#. collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:546
 msgid "Enter name:"
 msgstr "输入名称："
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:482
+#. Translators: title of a dialog  for adding a new reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:548
 msgid "Add New"
 msgstr "新增"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:506
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:573
 msgid "&Edit reading list / collections..."
 msgstr "编辑阅读列表/收藏(&D)..."
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:510
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:578
 msgid "Remove from &currently reading"
 msgstr "从正在阅读中删除(&C)"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:512
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:580
 msgid "Add to &currently reading"
 msgstr "添加到正在阅读(&C)"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:516
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:585
 msgid "Remove from &want to read"
 msgstr "从想要阅读中删除(&W)"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:518
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:587
 msgid "Add to &want to read"
 msgstr "添加到想要阅读(&W)"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:522
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:592
 msgid "Remove from &favorites"
 msgstr "从最爱中删除(&F)"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:524
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:594
 msgid "Add to &favorites"
 msgstr "添加到最爱(&F)"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:528
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:599
 msgid "&Remove from bookshelf"
 msgstr "从书架中移除(&R)"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:592
+#. Translators: content of a message to confirm the removal of this document
+#. from bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:665
 msgid ""
 "Are you sure you want to remove this document from your bookshelf?\n"
 "Title: {title}\n"
@@ -1058,73 +1250,105 @@ msgstr ""
 "标题：{title}\n"
 "这将会从所有标签和类别中删除该文档。"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:595
+#. Translators: title of a message to confirm the removal of this document from
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:669
 msgid "Remove From Bookshelf?"
 msgstr "从书架上移除？"
 
-#: bookworm/bookshelf/local_bookshelf/__init__.py:626
+#. Translators: the name of a category under the Authors category. This
+#. category shows documents for which  author info is not available
+#: bookworm/bookshelf/local_bookshelf/__init__.py:701
 msgid "Unknown Author"
 msgstr "未知作者"
 
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:43
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:84
+#. Translators: label of a combo box for choosing a document's reading list
+#. Translators: label of a button
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:44
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:87
 msgid "Reading List"
 msgstr "阅读列表"
 
 #. Translators: label of a check box
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:50
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:91
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:52
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:94
 msgid "Add to full-text search index"
 msgstr "添加到全文搜索索引"
 
-#. Translators: label of an edit control
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:79
+#. Translators: label of an edit control for entering the path to a folder to
+#. import to the bookshelf
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:81
 msgid "Select a folder:"
 msgstr "选择一个文件夹："
 
+#. Translators: label of a text box for entering a search term
 #. Translators: the label of a button in the application toolbar
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:109
-#: bookworm/gui/book_viewer/__init__.py:325
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:113
+#: bookworm/gui/book_viewer/__init__.py:318
 msgid "Search"
 msgstr "搜索"
 
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:112
+#. Translators: title of a group of controls to select which document field to
+#. search in when searching bookshelf
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:117
 msgid "Search Field"
 msgstr "搜索范围"
 
-#. Translators: title of a list control colum
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:115
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:169
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:208
+#. Translators: label of a check box that enables/disables searching document
+#. title when searching the bookshelf
+#. Translators: header of a column in a list control in a dialog showing a list
+#. of search results of matching document titles
+#. Translators: title of a list control colum showing the document titles  of
+#. documents not bundled due to errors when bundling documents
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:121
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:187
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:230
 #: bookworm/gui/book_viewer/core_dialogs.py:349
 msgid "Title"
 msgstr "标题"
 
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:144
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:145
+#. Translators: label of a list showing search results of documents with title
+#. matching the given  search query
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:155
+msgid "Title matches"
+msgstr "标题匹配"
+
+#. Translators: the label of a tab in a tabl control in a dialog showing a list
+#. of search results in the bookshelf
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:158
 msgid "Title Matches"
 msgstr "标题匹配"
 
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:149
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:151
+#. Translators: label of a list showing search results of content matching the
+#. given  search query
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:165
+msgid "Content matches"
+msgstr "内容匹配"
+
+#. Translators: the label of a tab in a tabl control in a dialog showing a list
+#. of search results in the bookshelf
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:168
 msgid "Content Matches"
 msgstr "内容匹配"
 
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:167
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:184
 msgid "Snippet"
 msgstr "片段"
 
-#. Translators: title of a list control colum
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:206
+#. Translators: title of a list control colum showing the file names of files
+#. not bundled due to errors when bundling documents
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:228
 msgid "File Name"
 msgstr "文件名"
 
 #. Translators: label of a list control showing file copy errors
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:211
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:233
 msgid "Errors"
 msgstr "错误"
 
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:213
+#. Translators: label shown in a list control indicating the failure to copy
+#. the document when bundling documents
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:236
 msgid "Failed to copy document"
 msgstr "无法复制文档"
 
@@ -1157,14 +1381,14 @@ msgid "Full text"
 msgstr "全文"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/_legacy_epub.py:185
+#: bookworm/document/formats/docbook.py:34
+msgid "Docbook Document"
+msgstr "Docbook Document"
+
+#. Translators: the name of a document file format
 #: bookworm/document/formats/epub.py:52
 msgid "Electronic Publication (EPUB)"
 msgstr "Electronic Publication (EPUB)"
-
-#: bookworm/document/formats/_legacy_epub.py:279
-msgid "Book contents"
-msgstr "书籍内容"
 
 #. Translators: the name of a document file format
 #: bookworm/document/formats/fitz.py:173
@@ -1182,12 +1406,12 @@ msgid "Comic Book Archive"
 msgstr "Comic Book Archive"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/html.py:198 bookworm/document/formats/html.py:264
+#: bookworm/document/formats/html.py:188 bookworm/document/formats/html.py:254
 msgid "HTML Document"
 msgstr "HTML Document"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/markdown.py:25
+#: bookworm/document/formats/markdown.py:18
 msgid "Markdown File"
 msgstr "Markdown File"
 
@@ -1212,12 +1436,12 @@ msgid "Slide {number}"
 msgstr "幻灯片 {number}"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/pdf.py:65
+#: bookworm/document/formats/pdf.py:66
 msgid "Portable Document (PDF)"
 msgstr "Portable Document (PDF)"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/plain_text.py:27
+#: bookworm/document/formats/plain_text.py:32
 msgid "Plain Text File"
 msgstr "Plain Text File"
 
@@ -1231,9 +1455,14 @@ msgid "PowerPoint Presentation"
 msgstr "PowerPoint Presentation"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/word.py:36
+#: bookworm/document/formats/word.py:37
 msgid "Word Document"
 msgstr "Word Document"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/word.py:95
+msgid "Word 97 - 2003 Document"
+msgstr "Word 97 - 2003 Document"
 
 #: bookworm/epub_serve/__init__.py:40
 msgid "Open in &web Viewer"
@@ -1241,7 +1470,7 @@ msgstr "在 Web 查看器中打开(&W)"
 
 #: bookworm/epub_serve/__init__.py:41
 msgid "Open the current EPUB book in the browser"
-msgstr "在浏览器中打开当前 EPUB 书籍"
+msgstr "在浏览器中打开当前 EPUB 文档"
 
 #: bookworm/epub_serve/__init__.py:58
 msgid "Openning in web viewer..."
@@ -1356,7 +1585,7 @@ msgstr "关联所有格式"
 #. Translators: the note of a button
 #: bookworm/gui/settings.py:66
 msgid "Use Bookworm to open all supported document formats"
-msgstr "使用Bookworm打开所有支持的书籍格式"
+msgstr "使用Bookworm打开所有支持的文档格式"
 
 #. Translators: the main label of a button
 #: bookworm/gui/settings.py:74
@@ -1386,7 +1615,9 @@ msgstr "{format}类型已与Bookworm关联。"
 #. Translators: the title of a message indicating successful file association
 #. Translators: the title of a message indicating successful removal of file
 #. association
-#: bookworm/gui/settings.py:112 bookworm/gui/settings.py:130
+#. Translators: title of a message box
+#: bookworm/gui/book_viewer/menubar.py:342 bookworm/gui/settings.py:112
+#: bookworm/gui/settings.py:130
 msgid "Success"
 msgstr "成功"
 
@@ -1441,7 +1672,7 @@ msgstr "在页标题中包含页标签"
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:255
 msgid "Use file name instead of book title"
-msgstr "以文件名代替书籍名称"
+msgstr "以文件名代替文档名称"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:262
@@ -1457,7 +1688,7 @@ msgstr "杂项"
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:272
 msgid "Open recently opened books from the last position"
-msgstr "最近阅读列表中打开书籍时跳转到上次阅读位置"
+msgstr "最近阅读列表中打开文档时跳转到上次阅读位置"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:279
@@ -1548,51 +1779,51 @@ msgstr "外观"
 msgid "Apply"
 msgstr "应用(&A)"
 
-#: bookworm/gui/book_viewer/__init__.py:77
-msgid "Failed to open document"
-msgstr "无法打开书籍"
-
 #: bookworm/gui/book_viewer/__init__.py:78
-msgid "The document you are trying to open could not be opened in Bookworm."
-msgstr "该书籍无法在 Bookworm 中打开。"
+msgid "Failed to open document"
+msgstr "无法打开文档"
 
-#: bookworm/gui/book_viewer/__init__.py:94
+#: bookworm/gui/book_viewer/__init__.py:79
+msgid "The document you are trying to open could not be opened in Bookworm."
+msgstr "该文档无法在 Bookworm 中打开。"
+
+#: bookworm/gui/book_viewer/__init__.py:95
 msgid "Opening document, please wait..."
 msgstr "正在打开文件，请稍候..."
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:108
+#: bookworm/gui/book_viewer/__init__.py:109
 msgid "Document not found"
-msgstr "书籍不存在"
+msgstr "文档不存在"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:110
+#: bookworm/gui/book_viewer/__init__.py:111
 msgid ""
 "Could not open Document.\n"
 "The document does not exist."
 msgstr ""
-"无法打开书籍。\n"
-"该书籍不存在。"
+"无法打开文档。\n"
+"该文档不存在。"
 
 #. Translators: the title of a message shown
 #. when the format of the e-book is not supported
-#: bookworm/gui/book_viewer/__init__.py:120
+#: bookworm/gui/book_viewer/__init__.py:121
 msgid "Unsupported Document Format"
 msgstr "不支持的文件格式"
 
 #. Translators: the content of a message shown
 #. when the format of the e-book is not supported
-#: bookworm/gui/book_viewer/__init__.py:123
+#: bookworm/gui/book_viewer/__init__.py:124
 msgid "The format of the given document is not supported by Bookworm."
-msgstr "Bookworm不支持该书籍格式。"
+msgstr "Bookworm不支持该文档格式。"
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:132
+#: bookworm/gui/book_viewer/__init__.py:133
 msgid "Error Opening Document"
-msgstr "打开书籍时出错"
+msgstr "打开文档时出错"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:134
+#: bookworm/gui/book_viewer/__init__.py:135
 msgid ""
 "Could not open file\n"
 ".Either the file  has been damaged during download, or it has been corrupted "
@@ -1602,12 +1833,12 @@ msgstr ""
 "文件以损坏。"
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:147
+#: bookworm/gui/book_viewer/__init__.py:148
 msgid "Error Openning Document"
-msgstr "打开书籍时出错"
+msgstr "打开文档时出错"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:149
+#: bookworm/gui/book_viewer/__init__.py:150
 msgid ""
 "Could not open document.\n"
 "An unknown error occurred while loading the file."
@@ -1619,113 +1850,118 @@ msgstr ""
 #. Translators: the text of the status bar when no book is currently open.
 #. It is being used also as a label for the page content text area when no book
 #. is opened.
-#: bookworm/gui/book_viewer/__init__.py:220
+#: bookworm/gui/book_viewer/__init__.py:213
 msgid "Press (Ctrl + O) to open a document"
-msgstr "按 (Ctrl + O) 打开书籍"
+msgstr "按 (Ctrl + O) 打开文档"
 
 #. Translators: the label of the table-of-contents tree
-#: bookworm/gui/book_viewer/__init__.py:234
+#: bookworm/gui/book_viewer/__init__.py:227
 msgid "Table of Contents"
 msgstr "目录"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:322
+#: bookworm/gui/book_viewer/__init__.py:315
 msgid "Open"
 msgstr "打开"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:327
+#: bookworm/gui/book_viewer/__init__.py:320
 msgid "Mode"
 msgstr "模式"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:330
+#: bookworm/gui/book_viewer/__init__.py:323
 msgid "Big"
 msgstr "大"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:332
+#: bookworm/gui/book_viewer/__init__.py:325
 msgid "Small"
 msgstr "小"
 
+#. Translators: spoken message when the document has been closed
+#: bookworm/gui/book_viewer/__init__.py:411
+msgid "Document closed."
+msgstr "已关闭文档"
+
 #. Translators: text of reading progress shown in the status bar
-#: bookworm/gui/book_viewer/__init__.py:440
+#: bookworm/gui/book_viewer/__init__.py:447
 msgid "{percentage} completed"
 msgstr "{percentage} 完成"
 
 #. Translators: label of content text control when the currently opened
 #. document is a single page document
-#: bookworm/gui/book_viewer/__init__.py:490
+#: bookworm/gui/book_viewer/__init__.py:498
 msgid "Document content"
-msgstr "书籍内容"
+msgstr "文档内容"
 
 #. Translators: a message that is announced after navigating to a page
 #. Translators: the label of the page content text area
 #. Translators: a message to announce when navigating to another page
-#: bookworm/gui/book_viewer/__init__.py:493
-#: bookworm/gui/book_viewer/__init__.py:667
+#: bookworm/gui/book_viewer/__init__.py:501
+#: bookworm/gui/book_viewer/__init__.py:675
 #: bookworm/text_to_speech/__init__.py:177
 msgid "Page {page} of {total}"
 msgstr "第{page}页，共{total}页。"
 
-#: bookworm/gui/book_viewer/__init__.py:540
+#: bookworm/gui/book_viewer/__init__.py:548
 msgid "{text}: {item_type}"
 msgstr "{text}: {item_type}"
 
-#: bookworm/gui/book_viewer/__init__.py:557
+#: bookworm/gui/book_viewer/__init__.py:565
 msgid "No next {item}"
-msgstr "没有下一个{item}"
+msgstr "往下没有{item}"
 
-#: bookworm/gui/book_viewer/__init__.py:559
+#: bookworm/gui/book_viewer/__init__.py:567
 msgid "No previous {item}"
-msgstr "没有上一个{item}"
+msgstr "往上没有{item}"
 
 #. Translators: a message telling the user that the font size has been
 #. increased
-#: bookworm/gui/book_viewer/__init__.py:575
+#: bookworm/gui/book_viewer/__init__.py:583
 msgid "The font size has been Increased"
 msgstr "增大字体"
 
 #. Translators: a message telling the user that the font size has been
 #. decreased
-#: bookworm/gui/book_viewer/__init__.py:581
+#: bookworm/gui/book_viewer/__init__.py:589
 msgid "The font size has been decreased"
 msgstr "减小字体"
 
 #. Translators: a message telling the user that the font size has been reset
-#: bookworm/gui/book_viewer/__init__.py:585
+#: bookworm/gui/book_viewer/__init__.py:593
 msgid "The font size has been reset"
 msgstr "重置字体"
 
 #. Translators: the content of a dialog asking the user
 #. for the password to decrypt the current e-book
-#: bookworm/gui/book_viewer/__init__.py:606
+#: bookworm/gui/book_viewer/__init__.py:614
 msgid ""
 "This document is encrypted with a password.\n"
 "You need to provide the password in order to access its content.\n"
 "Please provide the password and press enter."
 msgstr ""
-"该书籍已加密，您需要输入密码才能查阅其内容。\n"
+"该文档已加密，您需要输入密码才能查阅其内容。\n"
 "\n"
 "请输入密码，然后按回车键。"
 
 #. Translators: the title of a dialog asking the user to enter a password to
 #. decrypt the e-book
-#: bookworm/gui/book_viewer/__init__.py:612
+#: bookworm/gui/book_viewer/__init__.py:620
 msgid "Enter Password"
 msgstr "输入密码"
 
 #. Translators: title of a message telling the user that they entered an
 #. incorrect
 #. password for opening the book
-#: bookworm/gui/book_viewer/__init__.py:622
+#: bookworm/gui/book_viewer/__init__.py:630
 msgid "Incorrect Password"
 msgstr "密码错误"
 
 #. Translators: content of a message telling the user that they entered an
 #. incorrect
 #. password for opening the book
-#: bookworm/gui/book_viewer/__init__.py:625
+#: bookworm/gui/book_viewer/__init__.py:633
 msgid ""
 "The password you provided is incorrect.\n"
 "Please try again with the correct password."
@@ -1733,7 +1969,7 @@ msgstr ""
 "您输入的密码无效。\n"
 "请键入正确的密码再试一次。"
 
-#: bookworm/gui/book_viewer/__init__.py:742
+#: bookworm/gui/book_viewer/__init__.py:753
 msgid "Opening page: {url}"
 msgstr "打开页面：{url}"
 
@@ -1786,7 +2022,7 @@ msgstr "元素"
 #. Translators: title of a dialog
 #: bookworm/gui/book_viewer/core_dialogs.py:334
 msgid "Document Info"
-msgstr "书籍信息"
+msgstr "文档信息"
 
 #: bookworm/gui/book_viewer/core_dialogs.py:363
 msgid "Author"
@@ -1805,7 +2041,7 @@ msgid "Number of Pages"
 msgstr "页数"
 
 #. Translators: the title of a column in the Tesseract language list
-#: bookworm/gui/book_viewer/core_dialogs.py:383 bookworm/ocr/ocr_dialogs.py:428
+#: bookworm/gui/book_viewer/core_dialogs.py:383 bookworm/ocr/ocr_dialogs.py:488
 msgid "Language"
 msgstr "语言："
 
@@ -1822,7 +2058,7 @@ msgid "Publication Date"
 msgstr "出版日期"
 
 #. Translators: the content of the about message
-#: bookworm/gui/book_viewer/menubar.py:56
+#: bookworm/gui/book_viewer/menubar.py:58
 msgid ""
 "{display_name}\n"
 "Version: {version}\n"
@@ -1862,354 +2098,386 @@ msgstr ""
 "FITNESS FOR A PARTICULAR PURPOSE.\n"
 "For further details, you can view the full licence from the help menu.\n"
 
-#: bookworm/gui/book_viewer/menubar.py:68
+#: bookworm/gui/book_viewer/menubar.py:70
 msgid ""
 "This release of Bookworm is generously sponsored  by Capeds (www.capeds.net)."
 msgstr "此版本的 Bookworm 由 Capeds (www.capeds.net) 赞助开发。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:98
+#: bookworm/gui/book_viewer/menubar.py:100
 msgid "Open...\tCtrl-O"
 msgstr "打开... \tCtrl-O"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:100
+#: bookworm/gui/book_viewer/menubar.py:102
 msgid "New Window...\tCtrl-N"
 msgstr "新窗口...\tCtrl-N"
 
-#: bookworm/gui/book_viewer/menubar.py:104
+#: bookworm/gui/book_viewer/menubar.py:106
 msgid "&Pin\tCtrl-P"
 msgstr "固定(&P)\tCtrl-P"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:107
+#: bookworm/gui/book_viewer/menubar.py:109
 msgid "&Save As Plain Text..."
 msgstr "另存为纯文本(&S)..."
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:112
-msgid "&Close Current Document\tCtrl-W"
-msgstr "关闭当前书籍(&C)\tCtrl+W"
-
-#. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:114
-msgid "Close the currently open document"
-msgstr "关闭当前打开的书籍"
-
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:120
-msgid "Pi&nned Documents"
-msgstr "固定的书籍"
+msgid "&Close Current Document\tCtrl-W"
+msgstr "关闭当前文档(&C)\tCtrl+W"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:122
-msgid "Opens a list of documents you pinned."
-msgstr "查看固定的书籍列表。"
+#: bookworm/gui/book_viewer/menubar.py:116
+msgid "Close the currently open document"
+msgstr "关闭当前打开的文档"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:128
-#: bookworm/gui/book_viewer/menubar.py:142
+#: bookworm/gui/book_viewer/menubar.py:122
+msgid "C&lear Documents Cache..."
+msgstr "清除文档缓存(&L)..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:124
+msgid ""
+"Clear the document cache. Helps in fixing some issues with openning "
+"documents."
+msgstr "清除文档缓存。有助于解决打开文档的一些问题。"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:130
+msgid "Pi&nned Documents"
+msgstr "固定的文档"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:132
+msgid "Opens a list of documents you pinned."
+msgstr "查看固定的文档列表。"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:138
+#: bookworm/gui/book_viewer/menubar.py:152
 msgid "Clear list"
 msgstr "清除列表"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:130
+#: bookworm/gui/book_viewer/menubar.py:140
 msgid "Clear the pinned documents list"
-msgstr "清除固定的书籍列表。"
+msgstr "清除固定的文档列表。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:135
+#: bookworm/gui/book_viewer/menubar.py:145
 msgid "&Recently Opened"
-msgstr "最近打开的书籍(&D)"
+msgstr "最近打开的文档(&D)"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:137
+#: bookworm/gui/book_viewer/menubar.py:147
 msgid "Opens a list of recently opened books."
-msgstr "查看最近打开的书籍列表。"
+msgstr "查看最近打开的文档列表。"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:144
+#: bookworm/gui/book_viewer/menubar.py:154
 msgid "Clear the recent books list."
-msgstr "清除最近打开的书籍列表。"
+msgstr "清除最近打开的文档列表。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:150
+#: bookworm/gui/book_viewer/menubar.py:160
 msgid "&Preferences...\tCtrl-Shift-P"
 msgstr "首选项(&P)... \tCtrl-Shift-P"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:152
+#: bookworm/gui/book_viewer/menubar.py:162
 msgid "Configure application"
 msgstr "应用程序设置"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:156
+#: bookworm/gui/book_viewer/menubar.py:166
 msgid "Exit"
 msgstr "退出(&E)"
 
 #. Translators: the title of a file dialog to browse to a document
-#: bookworm/gui/book_viewer/menubar.py:199
+#: bookworm/gui/book_viewer/menubar.py:215
 msgid "Select a document"
-msgstr "选择书籍"
+msgstr "选择文档"
 
 #. Translators: the title of a dialog showing
 #. the progress of book export process
-#: bookworm/gui/book_viewer/menubar.py:254
+#: bookworm/gui/book_viewer/menubar.py:274
 msgid "Exporting Document"
-msgstr "导出书籍"
+msgstr "导出文档"
 
 #. Translators: the message of a dialog showing the progress of book export
-#: bookworm/gui/book_viewer/menubar.py:256
+#: bookworm/gui/book_viewer/menubar.py:276
 msgid "Converting document to plain text."
-msgstr "将书籍转换为纯文本格式。"
+msgstr "将文档转换为纯文本格式。"
 
 #. Translators: a message shown when the book is being exported
-#: bookworm/gui/book_viewer/menubar.py:271
+#: bookworm/gui/book_viewer/menubar.py:294
 msgid "Exporting Page {current} of {total}..."
 msgstr "正在导出第 {current} 页，共 {total} 页..."
 
 #. Translators: the title of the application preferences dialog
-#: bookworm/gui/book_viewer/menubar.py:292
+#: bookworm/gui/book_viewer/menubar.py:315
 msgid "{app_name} Preferences"
 msgstr "{app_name} 首选项"
 
-#. Translators: the label of an item in the application menubar
+#. Translators: content of a message
+#: bookworm/gui/book_viewer/menubar.py:326
+msgid "Are you sure you want to clear the documents cache?"
+msgstr "您确定要清除文档缓存吗？"
+
+#. Translators: title of a message box
+#: bookworm/gui/book_viewer/menubar.py:328
+msgid "Clear Documents Cache?"
+msgstr "清除文档缓存？"
+
+#. Translators: content of a message box
 #: bookworm/gui/book_viewer/menubar.py:340
-msgid "(No recent books)"
-msgstr "(无 最近书籍)"
+msgid "Documents cache has been cleared."
+msgstr "文档缓存已清除。"
 
-#: bookworm/gui/book_viewer/menubar.py:341
-msgid "No recent books"
-msgstr "没有最近阅读的书籍"
+#. Translators: content of a message in a message box
+#: bookworm/gui/book_viewer/menubar.py:349
+msgid "Clearing documents cache..."
+msgstr "正在清除文档缓存..."
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:378
+#: bookworm/gui/book_viewer/menubar.py:393
+msgid "(No recent books)"
+msgstr "(无最近的文档)"
+
+#: bookworm/gui/book_viewer/menubar.py:394
+msgid "No recent books"
+msgstr "没有最近阅读的文档"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:431
 msgid "Document &Info..."
-msgstr "书籍信息(&I)..."
+msgstr "文档信息(&I)..."
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:380
+#: bookworm/gui/book_viewer/menubar.py:433
 msgid "Show information about number of chapters, word count..etc."
 msgstr "显示有关章节数、字数等信息。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:385
+#: bookworm/gui/book_viewer/menubar.py:438
 msgid "&Element list...\tCtrl+F7"
 msgstr "元素列表...\\TCtrl+F7"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:387
+#: bookworm/gui/book_viewer/menubar.py:440
 msgid "Show a list of semantic elements."
 msgstr "显示元素列表。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:392
+#: bookworm/gui/book_viewer/menubar.py:445
 msgid "Change Reading &Mode...\tCtrl-Shift-M"
 msgstr "更改阅读模式(&M)...\tCtrl-Shift-M"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:394
+#: bookworm/gui/book_viewer/menubar.py:447
 msgid "Change the current reading mode."
 msgstr "更改当前阅读模式。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:399
-#: bookworm/gui/book_viewer/menubar.py:861
+#: bookworm/gui/book_viewer/menubar.py:452
+#: bookworm/gui/book_viewer/menubar.py:914
 msgid "&Render Page...\tCtrl-R"
 msgstr "渲染页面(&R)...\tCtrl-R"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:401
-#: bookworm/gui/book_viewer/menubar.py:862
+#: bookworm/gui/book_viewer/menubar.py:454
+#: bookworm/gui/book_viewer/menubar.py:915
 msgid "View a fully rendered version of this page."
 msgstr "查看本页的渲染版本"
 
-#: bookworm/gui/book_viewer/menubar.py:443
+#: bookworm/gui/book_viewer/menubar.py:496
 msgid "Rendered Page"
 msgstr "渲染页面"
 
-#: bookworm/gui/book_viewer/menubar.py:460
+#: bookworm/gui/book_viewer/menubar.py:513
 msgid "Available reading modes"
 msgstr "可用的阅读模式"
 
-#: bookworm/gui/book_viewer/menubar.py:461
+#: bookworm/gui/book_viewer/menubar.py:514
 msgid "Select Reading Mode "
 msgstr "选择阅读模式"
 
-#: bookworm/gui/book_viewer/menubar.py:482
+#: bookworm/gui/book_viewer/menubar.py:535
 msgid "Element List"
 msgstr "元素列表"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:509
-#: bookworm/gui/book_viewer/menubar.py:851
+#: bookworm/gui/book_viewer/menubar.py:562
+#: bookworm/gui/book_viewer/menubar.py:904
 msgid "&Find in Document...\tCtrl-F"
-msgstr "在书籍中查找(&F)...\tCtrl-F"
+msgstr "在文档中查找(&F)...\tCtrl-F"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:511
-#: bookworm/gui/book_viewer/menubar.py:852
+#: bookworm/gui/book_viewer/menubar.py:564
+#: bookworm/gui/book_viewer/menubar.py:905
 msgid "Search this document."
-msgstr "搜索本书籍"
+msgstr "搜索本文档"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:516
+#: bookworm/gui/book_viewer/menubar.py:569
 msgid "&Find &Next\tF3"
 msgstr "查找下一个(&F) \\TF3(&F)"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:518
+#: bookworm/gui/book_viewer/menubar.py:571
 msgid "Find next occurrence."
 msgstr "查找下一个匹配项。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:523
+#: bookworm/gui/book_viewer/menubar.py:576
 msgid "&Find &Previous\tShift-F3"
 msgstr "查找上一个(&F) \tShift-F3"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:525
+#: bookworm/gui/book_viewer/menubar.py:578
 msgid "Find previous occurrence."
 msgstr "查找上一个匹配项。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:530
-#: bookworm/gui/book_viewer/menubar.py:845
+#: bookworm/gui/book_viewer/menubar.py:583
+#: bookworm/gui/book_viewer/menubar.py:898
 msgid "&Go To Page...\tCtrl-G"
 msgstr "页码跳转(&G)"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:532
+#: bookworm/gui/book_viewer/menubar.py:585
 msgid "Go to page"
 msgstr "跳转到"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:537
+#: bookworm/gui/book_viewer/menubar.py:590
 msgid "&Go To Page By Label...\tCtrl-Shift-G"
 msgstr "标签跳转(&G)...\\tCtrl-Shift-G"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:539
+#: bookworm/gui/book_viewer/menubar.py:592
 msgid "Go to a page using its label"
 msgstr "使用标签跳转页面"
 
 #. Translators: the title of the go to page dialog
-#: bookworm/gui/book_viewer/menubar.py:564
+#: bookworm/gui/book_viewer/menubar.py:617
 msgid "Go To Page"
 msgstr "跳转页码"
 
-#: bookworm/gui/book_viewer/menubar.py:571
+#: bookworm/gui/book_viewer/menubar.py:624
 msgid "Go To Page By Label"
 msgstr "按标签跳转"
 
-#: bookworm/gui/book_viewer/menubar.py:571
+#: bookworm/gui/book_viewer/menubar.py:624
 msgid "Page Label"
 msgstr "页标签"
 
 #. Translators: the title of the search dialog
-#: bookworm/gui/book_viewer/menubar.py:579
+#: bookworm/gui/book_viewer/menubar.py:632
 msgid "Search Document"
-msgstr "搜索书籍"
+msgstr "搜索文档"
 
-#: bookworm/gui/book_viewer/menubar.py:605
+#: bookworm/gui/book_viewer/menubar.py:658
 msgid "Searching For '{term}'"
 msgstr "搜索“{term}”"
 
 #. Translators: message to announce the number of search results
 #. also used as the final title of the search results dialog
-#: bookworm/gui/book_viewer/menubar.py:620
+#: bookworm/gui/book_viewer/menubar.py:673
 msgid "Results | {total}"
 msgstr "结果{total}"
 
-#: bookworm/gui/book_viewer/menubar.py:654
+#: bookworm/gui/book_viewer/menubar.py:707
 msgid "Search Result"
 msgstr "搜索结果"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:692
+#: bookworm/gui/book_viewer/menubar.py:745
 msgid "&User guide...\tF1"
 msgstr "用户指南(&U)... \tF1"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:694
+#: bookworm/gui/book_viewer/menubar.py:747
 msgid "View Bookworm manuals"
 msgstr "查看Bookworm的用户指南"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:699
+#: bookworm/gui/book_viewer/menubar.py:752
 msgid "Bookworm &website..."
 msgstr "Bookworm 网站(&W)..."
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:701
+#: bookworm/gui/book_viewer/menubar.py:754
 msgid "Visit the official website of Bookworm"
 msgstr "访问Bookworm的官方网站"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:706
+#: bookworm/gui/book_viewer/menubar.py:759
 msgid "&License"
 msgstr "许可协议(&L)..."
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:708
+#: bookworm/gui/book_viewer/menubar.py:761
 msgid "View legal information about this program ."
 msgstr "查看有关本程序的法律许可信息。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:713
+#: bookworm/gui/book_viewer/menubar.py:766
 msgid "Con&tributors"
 msgstr "贡献者(&T)..."
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:715
+#: bookworm/gui/book_viewer/menubar.py:768
 msgid "View a list of notable contributors to the program."
 msgstr "查看本程序的重要贡献者列表。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:721
+#: bookworm/gui/book_viewer/menubar.py:774
 msgid "&Restart with debug-mode enabled"
 msgstr "重新启动并启用调试模式(&R)..."
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:723
+#: bookworm/gui/book_viewer/menubar.py:776
 msgid "Restart the program with debug mode enabled to show errors"
 msgstr "重新启动本程序，并启用调试模式以显示错误。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:733
+#: bookworm/gui/book_viewer/menubar.py:786
 msgid "&About Bookworm"
 msgstr "关于 Bookworm(&A)"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:735
+#: bookworm/gui/book_viewer/menubar.py:788
 msgid "Show general information about this program"
 msgstr "显示有关该程序的信息"
 
 #. Translators: the title of the about dialog
-#: bookworm/gui/book_viewer/menubar.py:768
+#: bookworm/gui/book_viewer/menubar.py:821
 msgid "About {app_name}"
 msgstr "关于 {app_name}"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:804
+#: bookworm/gui/book_viewer/menubar.py:857
 msgid "&Search"
 msgstr "搜索(&R)"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:806
+#: bookworm/gui/book_viewer/menubar.py:859
 msgid "&Document"
-msgstr "书籍(&D)"
+msgstr "文档(&D)"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:808
+#: bookworm/gui/book_viewer/menubar.py:861
 msgid "&Help"
 msgstr "帮助(&H)"
 
-#: bookworm/gui/book_viewer/menubar.py:846
+#: bookworm/gui/book_viewer/menubar.py:899
 msgid "Jump to a page"
 msgstr "跳转到页面"
 
-#: bookworm/gui/book_viewer/menubar.py:900
+#: bookworm/gui/book_viewer/menubar.py:953
 msgid "Supported document formats"
 msgstr "支持的文件格式"
 
@@ -2226,102 +2494,102 @@ msgstr "页 {}"
 msgid "Downloaded {downloaded} MB of {total} MB"
 msgstr "已下载 {downloaded} MB，共 {total} MB"
 
-#. Translators: the label of an item in the application menubar
 #. Translators: the label of a page in the settings dialog
-#: bookworm/ocr/__init__.py:51 bookworm/ocr/__init__.py:56
-#: bookworm/ocr/__init__.py:60
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/__init__.py:74 bookworm/ocr/__init__.py:93
+#: bookworm/ocr/__init__.py:96
 msgid "OCR"
 msgstr "OCR"
 
 #. Translators: the label of a group of controls in the reading page
-#: bookworm/ocr/ocr_dialogs.py:63 bookworm/ocr/ocr_menu.py:159
+#: bookworm/ocr/ocr_dialogs.py:63 bookworm/ocr/ocr_menu.py:214
 msgid "OCR Options"
 msgstr "识别选项"
 
 #. Translators: the title of a group of radio buttons in the OCR page
 #. in the application settings.
-#: bookworm/ocr/ocr_dialogs.py:69
+#: bookworm/ocr/ocr_dialogs.py:70
 msgid "Default OCR Engine"
 msgstr "默认 OCR 引擎"
 
 #. Translators: the label of a group of controls in the OCR page
 #. of the settings related to Tesseract OCR engine
-#: bookworm/ocr/ocr_dialogs.py:76
+#: bookworm/ocr/ocr_dialogs.py:77
 #: bookworm/ocr_engines/tesseract_ocr_engine/__init__.py:24
 #: bookworm/ocr_engines/tesseract_ocr_engine/alt_tess.py:28
 msgid "Tesseract OCR Engine"
 msgstr "Tesseract OCR 引擎"
 
-#: bookworm/ocr/ocr_dialogs.py:81
+#: bookworm/ocr/ocr_dialogs.py:82
 msgid "Download Tesseract OCR Engine"
 msgstr "下载 Tesseract OCR 引擎"
 
-#: bookworm/ocr/ocr_dialogs.py:82
+#: bookworm/ocr/ocr_dialogs.py:83
 msgid "Get a free, high-quality OCR engine that supports over 100 languages."
 msgstr "获取支持 100 多种语言的免费且高质量的 OCR 引擎。"
 
 #. Translators: label of a button
-#: bookworm/ocr/ocr_dialogs.py:92
+#: bookworm/ocr/ocr_dialogs.py:93
 msgid "Manage Tesseract OCR Languages"
 msgstr "管理 Tesseract OCR 语言"
 
 #. Translators: description of a button
-#: bookworm/ocr/ocr_dialogs.py:94
+#: bookworm/ocr/ocr_dialogs.py:95
 msgid "Add support for new languages, and /or remove installed languages."
 msgstr "添加对新语言的支持，和（或）删除已安装的语言。"
 
 #. Translators: label of a button
-#: bookworm/ocr/ocr_dialogs.py:100
+#: bookworm/ocr/ocr_dialogs.py:101
 msgid "Update Tesseract OCr Engine"
 msgstr "更新 Tesseract OCR 引擎"
 
 #. Translators: description of a button
-#: bookworm/ocr/ocr_dialogs.py:102
+#: bookworm/ocr/ocr_dialogs.py:103
 msgid "Check for and install updates for Tesseract OCR Engine"
 msgstr "检查并更新 Tesseract OCR 引擎"
 
 #. Translators: the label of a group of controls in the reading page
 #. of the settings related to image enhancement
-#: bookworm/ocr/ocr_dialogs.py:108
+#: bookworm/ocr/ocr_dialogs.py:109
 msgid "Image processing"
 msgstr "图像处理"
 
 #. Translators: the label of a checkbox
-#: bookworm/ocr/ocr_dialogs.py:113
+#: bookworm/ocr/ocr_dialogs.py:115
 msgid "Enable default image enhancement filters"
 msgstr "启用默认图像增强过滤器"
 
 #. Translators: title of a progress dialog
-#: bookworm/ocr/ocr_dialogs.py:135
+#: bookworm/ocr/ocr_dialogs.py:139
 msgid "Downloading Tesseract OCR Engine"
 msgstr "下载 Tesseract OCR 引擎"
 
 #. Translators: message of a progress dialog
 #. Translators: content of a progress dialog
-#: bookworm/ocr/ocr_dialogs.py:137 bookworm/ocr/ocr_dialogs.py:488
+#: bookworm/ocr/ocr_dialogs.py:141 bookworm/ocr/ocr_dialogs.py:548
 msgid "Getting download information..."
 msgstr "正在获取下载信息..."
 
-#: bookworm/ocr/ocr_dialogs.py:147
+#: bookworm/ocr/ocr_dialogs.py:151
 msgid "Manage Tesseract OCR Engine Languages"
 msgstr "管理 Tesseract OCR 引擎的语言"
 
-#: bookworm/ocr/ocr_dialogs.py:154
+#: bookworm/ocr/ocr_dialogs.py:158
 msgid "Restart Required"
 msgstr "需要重新启动"
 
-#: bookworm/ocr/ocr_dialogs.py:155
+#: bookworm/ocr/ocr_dialogs.py:159
 msgid ""
 "Bookworm will now restart to complete the installation of the Tesseract OCR "
 "Engine."
 msgstr "Bookworm 现在将重新启动以完成 Tesseract OCR 引擎的安装。"
 
 #. Translators: message of a dialog
-#: bookworm/ocr/ocr_dialogs.py:166
+#: bookworm/ocr/ocr_dialogs.py:170
 msgid "Checking for updates. Please wait..."
 msgstr "正在检查更新。请稍候..."
 
-#: bookworm/ocr/ocr_dialogs.py:174
+#: bookworm/ocr/ocr_dialogs.py:178
 msgid ""
 "A new version of Tesseract OCr engine is available for download.\n"
 "It is strongly recommended to update to the latest version for the best "
@@ -2332,131 +2600,149 @@ msgstr ""
 "强烈建议您更新到最新版本以获得最佳的识别效果。\\n\n"
 "您想更新到新版本吗？"
 
-#: bookworm/ocr/ocr_dialogs.py:177
+#: bookworm/ocr/ocr_dialogs.py:181
 msgid "Update Tesseract OCr Engine?"
 msgstr "是否更新 Tesseract OCr 引擎？"
 
 #. Translators: message of a dialog
-#: bookworm/ocr/ocr_dialogs.py:186
+#: bookworm/ocr/ocr_dialogs.py:190
 msgid "Removing old Tesseract version. Please wait..."
 msgstr "正在删除旧版 Tesseract 请稍等..."
 
 #. Translators: content of a message box
-#: bookworm/ocr/ocr_dialogs.py:192
+#: bookworm/ocr/ocr_dialogs.py:196
 msgid "Your version of Tesseract OCR engine is up to date."
 msgstr "您的 Tesseract OCR 引擎版本是最新的。"
 
 #. Translators: title of a message box
-#: bookworm/ocr/ocr_dialogs.py:194
+#: bookworm/ocr/ocr_dialogs.py:198
 msgid "No updates"
 msgstr "当前已是最新版"
 
-#: bookworm/ocr/ocr_dialogs.py:202
+#: bookworm/ocr/ocr_dialogs.py:206
 msgid "Failed to check for updates for Tesseract OCr engine."
 msgstr "检查 Tesseract OCr 引擎更新失败。"
 
-#. Translators: the label of a combobox
-#: bookworm/ocr/ocr_dialogs.py:228
-msgid "Recognition Language:"
-msgstr "识别语言："
+#. Translators: title of a group of controls
+#: bookworm/ocr/ocr_dialogs.py:239
+msgid "Recognition Language"
+msgstr "识别语言"
 
-#: bookworm/ocr/ocr_dialogs.py:233
+#. Translators: the label of a combobox
+#: bookworm/ocr/ocr_dialogs.py:241
+msgid "Primary recognition Language"
+msgstr "主要识别语言"
+
+#: bookworm/ocr/ocr_dialogs.py:248
+msgid "Add a secondary recognition language"
+msgstr "新增辅助识别语言"
+
+#: bookworm/ocr/ocr_dialogs.py:252
+msgid "Secondary recognition Language"
+msgstr "辅助识别语言："
+
+#: bookworm/ocr/ocr_dialogs.py:260
+#: bookworm/structured_text/structural_elements.py:68
+msgid "Image"
+msgstr "图片"
+
+#: bookworm/ocr/ocr_dialogs.py:261
 msgid "Supplied Image resolution::"
 msgstr "提供的图像分辨率："
 
-#: bookworm/ocr/ocr_dialogs.py:237
+#: bookworm/ocr/ocr_dialogs.py:265
 msgid "Enable image enhancements"
 msgstr "启用图像增强"
 
-#: bookworm/ocr/ocr_dialogs.py:242
+#: bookworm/ocr/ocr_dialogs.py:270
 msgid "Available image pre-processing filters:"
 msgstr "可用的图像预处理过滤器："
 
 #. Translators: the label of a checkbox
-#: bookworm/ocr/ocr_dialogs.py:257
+#: bookworm/ocr/ocr_dialogs.py:285
 msgid "&Save these options until I close the current book"
-msgstr "保存这些选项，直到我关闭当前书籍为止"
+msgstr "保存这些选项，直到我关闭当前文档为止"
 
-#: bookworm/ocr/ocr_dialogs.py:306
+#: bookworm/ocr/ocr_dialogs.py:366
 msgid "Increase image resolution"
 msgstr "提高图像分辨率"
 
-#: bookworm/ocr/ocr_dialogs.py:307
+#: bookworm/ocr/ocr_dialogs.py:367
 msgid "Binarization"
 msgstr "二值化"
 
-#: bookworm/ocr/ocr_dialogs.py:310
+#: bookworm/ocr/ocr_dialogs.py:370
 msgid "Split two-in-one scans to individual pages"
 msgstr "将二合一扫描拆分到单页面"
 
-#: bookworm/ocr/ocr_dialogs.py:313
+#: bookworm/ocr/ocr_dialogs.py:373
 msgid "Combine images"
 msgstr "图像合并"
 
-#: bookworm/ocr/ocr_dialogs.py:314
+#: bookworm/ocr/ocr_dialogs.py:374
 msgid "Blurring"
 msgstr "模糊"
 
-#: bookworm/ocr/ocr_dialogs.py:315
+#: bookworm/ocr/ocr_dialogs.py:375
 msgid "Deskewing"
 msgstr "去偏斜"
 
-#: bookworm/ocr/ocr_dialogs.py:316
+#: bookworm/ocr/ocr_dialogs.py:376
 msgid "Erosion"
 msgstr "腐蚀"
 
-#: bookworm/ocr/ocr_dialogs.py:317
+#: bookworm/ocr/ocr_dialogs.py:377
 msgid "Dilation"
 msgstr "膨胀"
 
-#: bookworm/ocr/ocr_dialogs.py:318
+#: bookworm/ocr/ocr_dialogs.py:378
 msgid "Sharpen image"
 msgstr "锐化图像"
 
-#: bookworm/ocr/ocr_dialogs.py:319
+#: bookworm/ocr/ocr_dialogs.py:379
 msgid "Invert colors"
 msgstr "颜色反转"
 
-#: bookworm/ocr/ocr_dialogs.py:322
+#: bookworm/ocr/ocr_dialogs.py:382
 msgid "Debug"
 msgstr "调试"
 
-#: bookworm/ocr/ocr_dialogs.py:341
+#: bookworm/ocr/ocr_dialogs.py:401
 msgid "Installed Languages"
 msgstr "已安装的语言"
 
-#: bookworm/ocr/ocr_dialogs.py:345
+#: bookworm/ocr/ocr_dialogs.py:405
 msgid "Downloadable Languages"
 msgstr "可供下载的语言"
 
 #. Translators: label of a list control containing bookmarks
-#: bookworm/ocr/ocr_dialogs.py:376
+#: bookworm/ocr/ocr_dialogs.py:436
 msgid "Tesseract Languages"
 msgstr "Tesseract 语言"
 
-#: bookworm/ocr/ocr_dialogs.py:389
+#: bookworm/ocr/ocr_dialogs.py:449
 msgid "Download &Best Model"
 msgstr "下载最佳模型(&B)"
 
-#: bookworm/ocr/ocr_dialogs.py:393
+#: bookworm/ocr/ocr_dialogs.py:453
 msgid "Download &Fast Model"
 msgstr "下载快速模型(&F)"
 
 #. Translators: the title of a column in the Tesseract language list
-#: bookworm/ocr/ocr_dialogs.py:435
+#: bookworm/ocr/ocr_dialogs.py:495
 msgid "Installed"
 msgstr "已安装"
 
-#: bookworm/ocr/ocr_dialogs.py:438
+#: bookworm/ocr/ocr_dialogs.py:498
 msgid "Yes"
 msgstr "是"
 
-#: bookworm/ocr/ocr_dialogs.py:438
+#: bookworm/ocr/ocr_dialogs.py:498
 msgid "No"
 msgstr "否"
 
 #. Translators: content of a messagebox
-#: bookworm/ocr/ocr_dialogs.py:468
+#: bookworm/ocr/ocr_dialogs.py:528
 msgid ""
 "A version of the selected language model already exists.\n"
 "Are you sure you want to replace it."
@@ -2465,12 +2751,12 @@ msgstr ""
 "您确定要更换吗？"
 
 #. Translators: title of a progress dialog
-#: bookworm/ocr/ocr_dialogs.py:486
+#: bookworm/ocr/ocr_dialogs.py:546
 msgid "Downloading Language"
 msgstr "下载语言"
 
 #. Translators: content of a messagebox
-#: bookworm/ocr/ocr_dialogs.py:511
+#: bookworm/ocr/ocr_dialogs.py:571
 msgid ""
 "Are you sure you want to remove language:\n"
 "{lang}?"
@@ -2479,21 +2765,21 @@ msgstr ""
 "{lang} 吗？"
 
 #. Translators: title of a messagebox
-#: bookworm/ocr/ocr_dialogs.py:536
+#: bookworm/ocr/ocr_dialogs.py:596
 msgid "Language Added"
 msgstr "已添加语言"
 
-#: bookworm/ocr/ocr_dialogs.py:537
+#: bookworm/ocr/ocr_dialogs.py:597
 msgid "The Language Model was downloaded successfully."
 msgstr "该语言模型已成功下载。"
 
 #. Translators: title of a message box
-#: bookworm/ocr/ocr_dialogs.py:545 bookworm/webservices/wikiworm.py:107
+#: bookworm/ocr/ocr_dialogs.py:605 bookworm/webservices/wikiworm.py:107
 msgid "Connection Error"
 msgstr "连接错误"
 
 #. Translators: content of a messagebox
-#: bookworm/ocr/ocr_dialogs.py:547
+#: bookworm/ocr/ocr_dialogs.py:607
 msgid ""
 "Failed to download language data.\n"
 "Please check your internet connection."
@@ -2502,7 +2788,7 @@ msgstr ""
 "请检查您的互联网连接。"
 
 #. Translators: content of a messagebox
-#: bookworm/ocr/ocr_dialogs.py:558
+#: bookworm/ocr/ocr_dialogs.py:618
 msgid ""
 "Failed to install language data.\n"
 "Please try again later."
@@ -2510,103 +2796,107 @@ msgstr ""
 "安装语言数据失败。\n"
 "请稍后再试。"
 
+#: bookworm/ocr/ocr_menu.py:91
+msgid "Recognition Result: {image_name}"
+msgstr "识别结果：{image_name}"
+
 #. Translators: the label of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:71
+#: bookworm/ocr/ocr_menu.py:126
 msgid "&Scan Current Page...\tF4"
 msgstr "扫描当前页(&S)...\tF4"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:73
+#: bookworm/ocr/ocr_menu.py:128
 msgid "Run OCR on the current page"
 msgstr "扫描当前页"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:78
+#: bookworm/ocr/ocr_menu.py:133
 msgid "&Automatic OCR\tCtrl-F4"
 msgstr "自动OCR \tCtrl-F4"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:80
+#: bookworm/ocr/ocr_menu.py:135
 msgid "Auto run  OCR when turning pages."
 msgstr "翻页时自动执行OCR。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:86
+#: bookworm/ocr/ocr_menu.py:141
 msgid "&Change OCR Options..."
 msgstr "更改OCR选项..."
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:88
+#: bookworm/ocr/ocr_menu.py:143
 msgid "Change OCR options"
 msgstr "更改OCR选项"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:93
+#: bookworm/ocr/ocr_menu.py:148
 msgid "Scan To &Text File..."
-msgstr "扫描到文本书籍(&T)..."
+msgstr "扫描到文本文档(&T)..."
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:95
+#: bookworm/ocr/ocr_menu.py:150
 msgid "Scan pages and save the text to a .txt file."
 msgstr "扫描页面并将文本保存至.txt文件。"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:100
+#: bookworm/ocr/ocr_menu.py:155
 msgid "Image To Text..."
 msgstr "图片转文字..."
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:102
+#: bookworm/ocr/ocr_menu.py:157
 msgid "Run OCR on an image."
 msgstr "在图像上运行OCR。"
 
 #. Translators: the label of the OCR menu in the application menubar
 #. Event handlers
 #. Translators: content of a message
-#: bookworm/ocr/ocr_menu.py:149
+#: bookworm/ocr/ocr_menu.py:204
 msgid ""
 "No language for OCR is present.\n"
 "Please checkout Bookworm user manual to learn how to add new languages."
 msgstr "没有可用于 OCR 的语言，请查看 Bookworm 用户指南以了解如何添加新语言"
 
 #. Translators: title for a message
-#: bookworm/ocr/ocr_menu.py:153
+#: bookworm/ocr/ocr_menu.py:208
 msgid "No Languages for OCR"
 msgstr "没有可供识别的语言"
 
-#: bookworm/ocr/ocr_menu.py:171
+#: bookworm/ocr/ocr_menu.py:227
 msgid "Canceled"
 msgstr "已取消(&C)"
 
-#: bookworm/ocr/ocr_menu.py:207
+#: bookworm/ocr/ocr_menu.py:263
 msgid "Running OCR, please wait..."
 msgstr "正在扫描，请稍候..."
 
-#: bookworm/ocr/ocr_menu.py:217
+#: bookworm/ocr/ocr_menu.py:273
 msgid "Automatic OCR is enabled"
 msgstr "自动OCR已启用"
 
-#: bookworm/ocr/ocr_menu.py:219
+#: bookworm/ocr/ocr_menu.py:275
 msgid "Automatic OCR is disabled"
 msgstr "自动OCR已停用"
 
 #. Translators: the title of a save file dialog asking the user for a filename
 #. to export notes to
-#: bookworm/ocr/ocr_menu.py:232
+#: bookworm/ocr/ocr_menu.py:288
 msgid "Save as"
 msgstr "另存为"
 
 #. Translators: the title of a progress dialog
-#: bookworm/ocr/ocr_menu.py:249
+#: bookworm/ocr/ocr_menu.py:305
 msgid "Scanning Pages"
 msgstr "扫描页面"
 
 #. Translators: the message of a progress dialog
-#: bookworm/ocr/ocr_menu.py:251
+#: bookworm/ocr/ocr_menu.py:307
 msgid "Preparing book"
-msgstr "准备书籍"
+msgstr "准备文档"
 
-#: bookworm/ocr/ocr_menu.py:270
+#: bookworm/ocr/ocr_menu.py:326
 msgid ""
 "Successfully processed {total} pages.\n"
 "Extracted text was written to: {file}"
@@ -2614,37 +2904,37 @@ msgstr ""
 "已成功处理 {total} 页。\n"
 "提取的文本被写入：{file}"
 
-#: bookworm/ocr/ocr_menu.py:273
+#: bookworm/ocr/ocr_menu.py:329
 msgid "OCR Completed"
 msgstr "OCR已完成"
 
-#: bookworm/ocr/ocr_menu.py:290
+#: bookworm/ocr/ocr_menu.py:346
 msgid "Portable Network Graphics"
 msgstr "PNG"
 
-#: bookworm/ocr/ocr_menu.py:291
+#: bookworm/ocr/ocr_menu.py:347
 msgid "JPEG images"
 msgstr "JPEG"
 
-#: bookworm/ocr/ocr_menu.py:292
+#: bookworm/ocr/ocr_menu.py:348
 msgid "Bitmap images"
 msgstr "BMP"
 
-#: bookworm/ocr/ocr_menu.py:293
+#: bookworm/ocr/ocr_menu.py:349
 msgid "Tiff graphics"
 msgstr "Tiff 图像"
 
-#: bookworm/ocr/ocr_menu.py:299
+#: bookworm/ocr/ocr_menu.py:355
 msgid "All supported image formats"
 msgstr "所有支持的图像格式"
 
 #. Translators: the title of a file dialog to browse to an image
-#: bookworm/ocr/ocr_menu.py:303
+#: bookworm/ocr/ocr_menu.py:359
 msgid "Choose image file"
 msgstr "选择图像文件"
 
 #. Translators: content of a message box
-#: bookworm/ocr/ocr_menu.py:318
+#: bookworm/ocr/ocr_menu.py:374
 msgid ""
 "Could not load image from\n"
 "{filename}.\n"
@@ -2654,19 +2944,15 @@ msgstr ""
 "请确保文件存在且其中包含的数据未损坏。"
 
 #. Translators: title of a message box
-#: bookworm/ocr/ocr_menu.py:323
+#: bookworm/ocr/ocr_menu.py:379
 msgid "Could not load image file"
 msgstr "无法加载图像文件"
 
-#: bookworm/ocr/ocr_menu.py:337
-msgid "OCR Results"
-msgstr "OCR结果"
-
-#: bookworm/ocr/ocr_menu.py:364
+#: bookworm/ocr/ocr_menu.py:425
 msgid "Scan finished."
 msgstr "扫描完成。"
 
-#: bookworm/ocr/ocr_menu.py:370
+#: bookworm/ocr/ocr_menu.py:431
 msgid "OCR canceled"
 msgstr "取消识别"
 
@@ -2718,10 +3004,6 @@ msgstr "引用"
 msgid "Table"
 msgstr "表格"
 
-#: bookworm/structured_text/structural_elements.py:68
-msgid "Image"
-msgstr "图片"
-
 #. Translators: the label of an item in the application menubar
 #: bookworm/text_to_speech/__init__.py:104
 msgid "S&peech"
@@ -2755,7 +3037,7 @@ msgstr "向前"
 
 #: bookworm/text_to_speech/__init__.py:212
 msgid "End of document."
-msgstr "书籍结束。"
+msgstr "文档结束。"
 
 #: bookworm/text_to_speech/__init__.py:232
 msgid "End of section: {chapter}."
@@ -2764,7 +3046,7 @@ msgstr "章节末尾: {chapter}。"
 #. Translators: spoken message at the end of the document
 #: bookworm/text_to_speech/__init__.py:265
 msgid "End of document"
-msgstr "书籍结束"
+msgstr "文档结束"
 
 #. Translators: the title of a message telling the user that no TTS voice found
 #: bookworm/text_to_speech/__init__.py:418
@@ -2872,7 +3154,7 @@ msgstr "读出章节结束"
 #. Translators: the label of a checkbox
 #: bookworm/text_to_speech/tts_gui.py:106
 msgid "Ask to switch to a voice that speaks the language of the current book"
-msgstr "切换到与当前书籍语言一致的语音"
+msgstr "切换到与当前文档语言一致的语音"
 
 #. Translators: the label of a checkbox
 #: bookworm/text_to_speech/tts_gui.py:113
@@ -3199,6 +3481,15 @@ msgstr "在 Bookworm 中打开(&B)"
 #: bookworm/webservices/wikiworm.py:168
 msgid "&Open in Browser"
 msgstr "在浏览器中打开(&O)"
+
+#~ msgid "Exclude named bookmarks when jumping between bookmarks"
+#~ msgstr "在书签之间跳转时忽略命名书签"
+
+#~ msgid "Book contents"
+#~ msgstr "文档内容"
+
+#~ msgid "OCR Results"
+#~ msgstr "OCR结果"
 
 #, fuzzy
 #~ msgid "Page {page} of {total} — {chapter}"
