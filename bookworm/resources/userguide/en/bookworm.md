@@ -62,8 +62,8 @@ The main window of Bookworm consists of the following two parts:
 * Shift + F2: go to the previous bookmark;
 * F8: go to the next comment;
 * Shift + F8: go to the previous comment;
-* F9: go to next quote;
-* Shift + F9: Go to the previous quote.
+* F9: go to next highlight;
+* Shift + F9: go to previous highlight.
 
 
 ### Bookmarks & Comments
