@@ -97,6 +97,19 @@ class DocumentUri:
     def base64_encode(self):
         return base64.urlsafe_b64encode(self.to_uri_string().encode("utf-8"))
 
+    @property
+    def fallback_uri(self):
+        if (furi := self.openner_args.get("fallback_uri")) is not None:
+            return self.from_uri_string(furi)
+
+    @fallback_uri.setter
+    def fallback_uri(self, value):
+        if isinstance(value, DocumentUri):
+            value = value.to_uri_string()
+        elif type(value) is not str:
+            raise ValueError(f"Invalid document URI: {value}")
+        self.openner_args['fallback_uri'] = value
+
     @classmethod
     def from_base64_encoded_string(cls, s):
         if isinstance(s, str):

@@ -76,6 +76,14 @@ class UriResolver:
         return self.document_cls.should_read_async()
 
     def read_document(self):
+        try:
+            return self._do_read_document()
+        except:
+            if (fallback_uri := self.uri.fallback_uri) is not None:
+                return UriResolver(uri=fallback_uri).read_document()
+            raise
+
+    def _do_read_document(self):
         document = self.document_cls(self.uri)
         try:
             document.read()
