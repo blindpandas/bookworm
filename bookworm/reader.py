@@ -52,6 +52,11 @@ class UnsupportedDocumentError(ReaderError):
     """File type/format is not supported."""
 
 
+class DecryptionRequired(Exception):
+    """Raised to signal to the view that the document requires a password to be decrypted ."""
+
+
+
 class UriResolver:
     """Retrieves a document given a uri."""
 
@@ -89,7 +94,7 @@ class UriResolver:
         try:
             document.read()
         except DocumentEncryptedError:
-            raise
+            raise DecryptionRequired
         except DocumentIOError as e:
             raise ResourceDoesNotExist("Failed to load document") from e
         except ChangeDocument as e:

@@ -16,7 +16,6 @@ from bookworm.resources import sounds, app_icons
 from bookworm.paths import app_path, fonts_path
 from bookworm.document import (
     DummyDocument,
-    DocumentEncryptedError,
     DocumentRestrictedError,
 )
 from bookworm.structured_text import Style, SEMANTIC_ELEMENT_OUTPUT_OPTIONS
@@ -26,6 +25,7 @@ from bookworm.reader import (
     ReaderError,
     ResourceDoesNotExist,
     UnsupportedDocumentError,
+    DecryptionRequired,
 )
 from bookworm.signals import (
     reader_book_loaded,
@@ -93,7 +93,7 @@ class ResourceLoader:
         else:
             AsyncSnakDialog(
                 task=partial(self.resolve_document, resolver),
-                done_callback=self.load,
+                done_callback=partial(self._document_read_callback, uri),
                 dismiss_callback=lambda: self._cancellation_token.request_cancellation()
                 or True,
                 message=_("Opening document, please wait..."),
@@ -104,7 +104,7 @@ class ResourceLoader:
         _last_exception = None
         try:
             return resolver.read_document()
-        except DocumentEncryptedError:
+        except DecryptionRequired:
             raise
         except ResourceDoesNotExist as e:
             _last_exception = e
@@ -176,11 +176,17 @@ class ResourceLoader:
                 if app.debug:
                     raise _last_exception
 
+    def _document_read_callback(self, uri, future):
+        try:
+            document = future.result()
+        except DecryptionRequired:
+            self.view.decrypt_document(uri)
+        else:
+            self.load(document)
+
     def load(self, document):
         if (document is None) or (self._cancellation_token.is_cancellation_requested()):
             return
-        if isinstance(document, Future):
-            document = document.result()
         self.view.load_document(document)
         if self.callback is not None:
             self.callback()
@@ -380,31 +386,34 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             ResourceLoader(
                 self, uri, callback=callback or self.default_book_loaded_callback
             )
-        except DocumentEncryptedError:
-            if uri.view_args.get("n_attempts"):
-                self.notify_user(
-                    # Translators: title of a message telling the user that they entered an incorrect
-                    # password for opening the book
-                    _("Incorrect Password"),
-                    # Translators: content of a message telling the user that they entered an incorrect
-                    # password for opening the book
-                    _(
-                        "The password you provided is incorrect.\n"
-                        "Please try again with the correct password."
-                    ),
-                    icon=wx.ICON_ERROR,
-                )
-            retval = self.get_password_from_user()
-            if retval is None:
-                return
-            else:
-                new_uri = uri.create_copy(
-                    view_args={
-                        "decryption_key": retval,
-                        "n_attempts": "1"
-                    }
-                )
-                return self.open_uri(new_uri, callback)
+        except DecryptionRequired:
+            self.decrypt_document(uri)
+
+    def decrypt_document(self, uri):
+        if uri.view_args.get("n_attempts"):
+            self.notify_user(
+                # Translators: title of a message telling the user that they entered an incorrect
+                # password for opening the book
+                _("Incorrect Password"),
+                # Translators: content of a message telling the user that they entered an incorrect
+                # password for opening the book
+                _(
+                    "The password you provided is incorrect.\n"
+                    "Please try again with the correct password."
+                ),
+                icon=wx.ICON_ERROR,
+            )
+        retval = self.get_password_from_user()
+        if retval is None:
+            return
+        else:
+            new_uri = uri.create_copy(
+                view_args={
+                    "decryption_key": retval,
+                    "n_attempts": "1"
+                }
+            )
+            return self.open_uri(new_uri)
 
     def open_document(self, document):
         self.unloadCurrentEbook()

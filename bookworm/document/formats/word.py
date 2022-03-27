@@ -1,11 +1,16 @@
 # coding: utf-8
 
 from __future__ import annotations
+import contextlib
 import os
 import subprocess
 import mammoth
-from docx import Document as DocxDocumentReader
+import msoffcrypto
+import msoffcrypto.exceptions
+from io import BytesIO
 from pathlib import Path
+from diskcache import Cache
+from docx import Document as DocxDocumentReader
 from selectolax.parser import HTMLParser
 from bookworm import app
 from bookworm.paths import home_data_path, app_path
@@ -18,7 +23,9 @@ from .. import (
     ChangeDocument,
     DocumentCapability as DC,
     DocumentError,
+    DocumentEncryptedError,
 )
+from .html import BaseHtmlDocument
 
 
 log = logger.getChild(__name__)
@@ -29,49 +36,75 @@ TAGS_TO_REMOVE = [
 ]
 
 
-class WordDocument(DummyDocument):
+class WordDocument(BaseHtmlDocument):
 
     format = "docx"
     # Translators: the name of a document file format
     name = _("Word Document")
     extensions = ("*.docx",)
-    capabilities = DC.ASYNC_READ
 
     def read(self):
-        docx_file_path = self.get_file_system_path()
-        converted_file = process_worker.submit(
-            self.get_converted_filename, docx_file_path
-        ).result()
-        raise ChangeDocument(
-            old_uri=self.uri,
-            new_uri=DocumentUri.from_filename(converted_file),
-            reason="Docx converted to html",
-        )
+        file_bytes = self.get_file_system_path().read_bytes()
+        data_buf = BytesIO(file_bytes)
+        is_encrypted_document = self.is_encrypted(data_buf)
+        if is_encrypted_document:
+            if (decryption_key := self.uri.view_args.get("decryption_key")) is not None:
+                self.try_decrypt(data_buf, decryption_key)
+            else:
+                raise DocumentEncryptedError(self)
+        self.__html_content = self._get_html_content_from_docx(data_buf, is_encrypted_document)
+        super().read()
 
-    @classmethod
-    def get_converted_filename(cls, filename):
-        storage_area = home_data_path("docx_as_html")
-        storage_area.mkdir(parents=True, exist_ok=True)
-        target_file = storage_area / f"{generate_file_md5(filename)}.html"
-        if not target_file.exists():
-            with open(filename, "rb") as docx:
-                result = mammoth.convert_to_html(docx, include_embedded_style_map=False)
-                html_string = cls.make_proper_html(result.value, filename)
-                target_file.write_text(html_string, encoding="utf-8")
-        return target_file
+    def get_html(self):
+        return self.__html_content
 
-    @classmethod
-    def make_proper_html(cls, html_string, docx_file_path):
+    def parse_html(self):
+        return self.parse_to_full_text()
+
+    def is_encrypted(self, data_buf):
+        data_buf.seek(0)
+        first_2000b = data_buf.read(2000).replace(b"\0", b" ")
+        return b"E n c r y p t e d P a c k a g e" in first_2000b
+
+    def try_decrypt(self, data_buf, decryption_key):
+        data_buf.seek(0)
+        msc_file = msoffcrypto.OfficeFile(data_buf)
+        msc_file.load_key(password=decryption_key)
+        try:
+            out_buf = BytesIO()
+            msc_file.decrypt(out_buf, True)
+        except msoffcrypto.exceptions.InvalidKeyError:
+            raise DocumentEncryptedError(self)
+        else:
+            with contextlib.closing(out_buf):
+                data_buf.seek(0)
+                data_buf.write(out_buf.getvalue())
+
+    def _get_html_content_from_docx(self, data_buf, is_encrypted_document):
+        data_buf.seek(0)
+        cache = Cache(self._get_cache_directory(), eviction_policy="least-frequently-used")
+        cache_key = self.uri.to_uri_string()
+        if cached_html_content := cache.get(cache_key):
+            return cached_html_content.decode("utf-8")
+        result = mammoth.convert_to_html(data_buf, include_embedded_style_map=False)
+        data_buf.seek(0)
+        html_content = self.make_proper_html(result.value, data_buf)
+        if not is_encrypted_document:
+            cache.set(cache_key, html_content.encode("utf-8"))
+        return html_content
+
+    def make_proper_html(self, html_string, data_buf):
         parsed = HTMLParser(html_string)
         parsed.body.unwrap_tags(TAGS_TO_UNWRAP)
         parsed.strip_tags(TAGS_TO_REMOVE)
         html_string = parsed.body.html
-        docx = DocxDocumentReader(docx_file_path)
+        docx = DocxDocumentReader(data_buf)
         props = docx.core_properties
         doc_title = props.title.strip()
         if not doc_title or doc_title.lower() == "word document":
-            doc_title = docx_file_path.stem.strip()
+            doc_title = self.get_file_system_path().stem.strip()
         doc_author = escape_html(props.author or "")
+        data_buf.close()
         return NEWLINE.join(
             [
                 "<!DOCTYPE html>",
@@ -85,6 +118,9 @@ class WordDocument(DummyDocument):
                 "</html>",
             ]
         )
+
+    def _get_cache_directory(self):
+        return os.fspath(home_data_path(".docx_to_html"))
 
 
 class Word97Document(DummyDocument):
