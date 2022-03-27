@@ -598,12 +598,6 @@ def freeze(c):
             hide=True,
         )
     print("App freezed.")
-    print("Cleaning up junk folders from the frozen executable directory.")
-    for dist_info_dir in (
-        dinfo for dinfo in c["build_folder"].glob("*.dist-info") if dinfo.is_dir()
-    ):
-        shutil.rmtree(os.fspath(dist_info_dir))
-
 
 @task
 @make_env
