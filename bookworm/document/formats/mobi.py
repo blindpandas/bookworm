@@ -15,7 +15,6 @@ from .. import (
     ChangeDocument,
     DocumentCapability as DC,
     DocumentError,
-    DocumentEncryptedError,
 )
 
 

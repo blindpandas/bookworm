@@ -14,7 +14,7 @@ from bookworm import speech
 from bookworm.concurrency import threaded_worker, CancellationToken
 from bookworm.resources import sounds, app_icons
 from bookworm.paths import app_path, fonts_path
-from bookworm.document import DummyDocument
+from bookworm.document import DummyDocument, DocumentRestrictedError
 from bookworm.structured_text import Style, SEMANTIC_ELEMENT_OUTPUT_OPTIONS
 from bookworm.reader import (
     EBookReader,
@@ -109,6 +109,17 @@ class ResourceLoader:
                 _("Document not found"),
                 # Translators: the content of an error message
                 _("Could not open Document.\nThe document does not exist."),
+                icon=wx.ICON_ERROR,
+            )
+        except DocumentRestrictedError as e:
+            _last_exception = e
+            log.exception("Failed to open document. The document is restricted by the author.", exc_info=True)
+            wx.CallAfter(
+                self.view.notify_user,
+                # Translators: the title of an error message
+                _("Document Restricted"),
+                # Translators: the content of an error message
+                _("Could not open Document.\nThe document is restricted by the publisher."),
                 icon=wx.ICON_ERROR,
             )
         except UnsupportedDocumentError as e:

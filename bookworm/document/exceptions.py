@@ -26,7 +26,11 @@ class DocumentIOError(DocumentError, IOError):
 
 
 class DocumentEncryptedError(DocumentError):
-    """Raised when the document is encrypted with DRM."""
+    """Raised when the document is encrypted with an encryption key."""
+
+
+class DocumentRestrictedError(DocumentError):
+    """Raised when the document is restricted with a restriction technology (e.g. Digital Rights Management (DRM))."""
 
 
 class PaginationError(DocumentError, IndexError):

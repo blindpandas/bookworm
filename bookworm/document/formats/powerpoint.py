@@ -18,7 +18,6 @@ from .. import (
     DocumentCapability as DC,
     TreeStackBuilder,
     DocumentError,
-    DocumentEncryptedError,
 )
 
 

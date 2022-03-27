@@ -27,6 +27,7 @@ from .exceptions import (
     ChangeDocument,
     DocumentIOError,
     DocumentEncryptedError,
+    DocumentRestrictedError,
     PaginationError,
 )
 from .uri import DocumentUri

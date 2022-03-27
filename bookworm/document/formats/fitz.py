@@ -22,7 +22,7 @@ from .. import (
     DocumentCapability as DC,
     ChangeDocument,
     DocumentError,
-    DocumentEncryptedError,
+    DocumentRestrictedError,
 )
 
 
@@ -83,7 +83,7 @@ class FitzDocument(BaseDocument):
         except RuntimeError as e:
             log.exception("Failed to open document", exc_info=True)
             if "drm" in e.args[0].lower():
-                raise DocumentEncryptedError("Document is encrypted with DRM") from e
+                raise DocumentRestrictedError("Document is encrypted with DRM") from e
             raise DocumentError("Could not open document") from e
 
     def close(self):
