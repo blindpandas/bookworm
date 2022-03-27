@@ -98,8 +98,9 @@ class FitzPdfDocument(FitzDocument):
 
     def read(self, filetype=None):
         super().read()
-        if not self.is_encrypted():
-            self.create_xpdf_document()
+        self.create_xpdf_document(
+            self.uri.view_args.get("decryption_key")
+        )
 
     def close(self):
         super().close()
@@ -125,12 +126,6 @@ class FitzPdfDocument(FitzDocument):
                 meta.creation_date = parsed_creation_date
                 meta.publication_year = ""
         return meta
-
-    def decrypt(self, password):
-        is_ok = bool(self._ebook.authenticate(password))
-        if is_ok:
-            self.create_xpdf_document(password=password)
-        return is_ok
 
     @staticmethod
     def _parse_pdf_creation_date(date_str: str) -> datetime:

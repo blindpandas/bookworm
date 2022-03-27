@@ -19,6 +19,7 @@ from bookworm.document import (
     DocumentCapability as DC,
     DocumentError,
     DocumentIOError,
+    DocumentEncryptedError,
     PaginationError,
 )
 from bookworm.signals import (
@@ -87,6 +88,8 @@ class UriResolver:
         document = self.document_cls(self.uri)
         try:
             document.read()
+        except DocumentEncryptedError:
+            raise
         except DocumentIOError as e:
             raise ResourceDoesNotExist("Failed to load document") from e
         except ChangeDocument as e:
@@ -125,8 +128,6 @@ class EBookReader:
         self.__state = {}
 
     def set_document(self, document):
-        if not self.decrypt_document(document):
-            return
         self.document = document
         self.current_book = self.document.metadata
         self.__state.setdefault("current_page_index", -1)
@@ -165,9 +166,6 @@ class EBookReader:
         self.view.set_title(self.get_view_title(include_author=True))
         self.view.set_text_direction(self.document.language.is_rtl)
         self.view.add_toc_tree(self.document.toc_tree)
-
-    def decrypt_document(self, document):
-        return bool(self.view.try_decrypt_document(document))
 
     def load(self, uri: DocumentUri):
         document = UriResolver(uri).read_document()

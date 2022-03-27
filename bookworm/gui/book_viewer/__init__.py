@@ -14,7 +14,11 @@ from bookworm import speech
 from bookworm.concurrency import threaded_worker, CancellationToken
 from bookworm.resources import sounds, app_icons
 from bookworm.paths import app_path, fonts_path
-from bookworm.document import DummyDocument, DocumentRestrictedError
+from bookworm.document import (
+    DummyDocument,
+    DocumentEncryptedError,
+    DocumentRestrictedError,
+)
 from bookworm.structured_text import Style, SEMANTIC_ELEMENT_OUTPUT_OPTIONS
 from bookworm.reader import (
     EBookReader,
@@ -100,6 +104,8 @@ class ResourceLoader:
         _last_exception = None
         try:
             return resolver.read_document()
+        except DocumentEncryptedError:
+            raise
         except ResourceDoesNotExist as e:
             _last_exception = e
             log.exception("Failed to open file. File does not exist", exc_info=True)
@@ -370,9 +376,35 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def open_uri(self, uri, callback=None):
         self.unloadCurrentEbook()
-        ResourceLoader(
-            self, uri, callback=callback or self.default_book_loaded_callback
-        )
+        try:
+            ResourceLoader(
+                self, uri, callback=callback or self.default_book_loaded_callback
+            )
+        except DocumentEncryptedError:
+            if uri.view_args.get("n_attempts"):
+                self.notify_user(
+                    # Translators: title of a message telling the user that they entered an incorrect
+                    # password for opening the book
+                    _("Incorrect Password"),
+                    # Translators: content of a message telling the user that they entered an incorrect
+                    # password for opening the book
+                    _(
+                        "The password you provided is incorrect.\n"
+                        "Please try again with the correct password."
+                    ),
+                    icon=wx.ICON_ERROR,
+                )
+            retval = self.get_password_from_user()
+            if retval is None:
+                return
+            else:
+                new_uri = uri.create_copy(
+                    view_args={
+                        "decryption_key": retval,
+                        "n_attempts": "1"
+                    }
+                )
+                return self.open_uri(new_uri, callback)
 
     def open_document(self, document):
         self.unloadCurrentEbook()
@@ -616,9 +648,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         # XXX need to do some work here to obtain appropriate margins
         return wx.Point(75, 75)
 
-    def try_decrypt_document(self, document):
-        if not document.is_encrypted():
-            return True
+    def get_password_from_user(self):
         password = wx.GetPasswordFromUser(
             # Translators: the content of a dialog asking the user
             # for the password to decrypt the current e-book
@@ -631,24 +661,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             _("Enter Password"),
             parent=self,
         )
-        if not password:
-            return False
-        result = document.decrypt(password)
-        if not result:
-            self.notify_user(
-                # Translators: title of a message telling the user that they entered an incorrect
-                # password for opening the book
-                _("Incorrect Password"),
-                # Translators: content of a message telling the user that they entered an incorrect
-                # password for opening the book
-                _(
-                    "The password you provided is incorrect.\n"
-                    "Please try again with the correct password."
-                ),
-                icon=wx.ICON_ERROR,
-            )
-            return self.try_decrypt_document(document)
-        return result
+        return password if password else None
 
     def highlight_range(
         self, start, end, foreground=wx.NullColour, background=wx.NullColour

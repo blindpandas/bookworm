@@ -22,6 +22,7 @@ from .. import (
     DocumentCapability as DC,
     ChangeDocument,
     DocumentError,
+    DocumentEncryptedError,
     DocumentRestrictedError,
 )
 
@@ -85,6 +86,14 @@ class FitzDocument(BaseDocument):
             if "drm" in e.args[0].lower():
                 raise DocumentRestrictedError("Document is encrypted with DRM") from e
             raise DocumentError("Could not open document") from e
+        if (
+            self._ebook.isEncrypted
+            and  (pwd := self.uri.view_args.get("decryption_key")) is not None
+            and self._ebook.authenticate(pwd)
+        ):
+            return
+        else:
+            raise DocumentEncryptedError(self)
 
     def close(self):
         if self._ebook is None:
@@ -92,12 +101,6 @@ class FitzDocument(BaseDocument):
         self._ebook.close()
         self._ebook = None
         super().close()
-
-    def is_encrypted(self):
-        return bool(self._ebook.isEncrypted)
-
-    def decrypt(self, password):
-        return bool(self._ebook.authenticate(password))
 
     @cached_property
     def toc_tree(self):

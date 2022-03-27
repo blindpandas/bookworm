@@ -134,14 +134,6 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
                 return page
         raise LookupError(f"Failed to find a page with the label {page_label}.")
 
-    def is_encrypted(self) -> bool:
-        """Does this document need password."""
-        return False
-
-    def decrypt(self, password):
-        """Decrypt this document using the provided password."""
-        raise NotImplementedError
-
     @property
     @abstractmethod
     def toc_tree(self) -> t.Iterable[Section]:
