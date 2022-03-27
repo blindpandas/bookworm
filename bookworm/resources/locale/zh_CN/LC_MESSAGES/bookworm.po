@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 'Bookworm'\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-03-24 13:27+0000\n"
-"PO-Revision-Date: 2022-03-24 22:36+0800\n"
+"POT-Creation-Date: 2022-03-26 02:05+0000\n"
+"PO-Revision-Date: 2022-03-27 07:56+0800\n"
 "Last-Translator: Musharraf Omer <ibnomer2011@hotmail.com>\n"
 "Language-Team: Cary-Rowen <manchen_0528@outlook.com>\n"
 "Language: zh_CN\n"
@@ -952,7 +952,7 @@ msgstr "导入文档...\tCtrl+O"
 #. an entire folder to the bookshelf
 #: bookworm/bookshelf/local_bookshelf/__init__.py:200
 msgid "Import documents from folder..."
-msgstr "从文件夹导入(&F)..."
+msgstr "从文件夹导入文档(&F)..."
 
 #. Translators: the label of a menu item in the bookshelf file menu to search
 #. documents contained in the bookshelf
@@ -977,7 +977,7 @@ msgstr "清除无效文档..."
 #. Translators: the title of a file dialog to browse to a document
 #: bookworm/bookshelf/local_bookshelf/__init__.py:222
 msgid "Import Documents To Bookshelf"
-msgstr "将文件导入书架"
+msgstr "将文档导入书架"
 
 #. Translators: the title of a dialog to edit the document's reading list or
 #. collection
@@ -1009,7 +1009,7 @@ msgstr "文档导入失败。请重试。"
 #. Translators: title of a dialog to import an entire folder to the bookshelf
 #: bookworm/bookshelf/local_bookshelf/__init__.py:299
 msgid "Import Documents From Folder"
-msgstr "从文件夹导入文件"
+msgstr "从文件夹导入文档"
 
 #. Translators: a message shown when importing an entire folder to the
 #. bookshelf
@@ -1081,7 +1081,7 @@ msgstr "存档文档？"
 #. Translators: a message shown when bundling documents added to bookshelf
 #: bookworm/bookshelf/local_bookshelf/__init__.py:417
 msgid "Bundling documents. Please wait..."
-msgstr "正在存档文件。请稍后..."
+msgstr "正在存档，请稍后..."
 
 #. Translators: content of a message when bundling of documents is successful
 #: bookworm/bookshelf/local_bookshelf/__init__.py:446
@@ -1107,7 +1107,8 @@ msgid ""
 "This action will clear invalid documents from your bookshelf.\n"
 "Invalid documents are the documents which no longer exist on your computer."
 msgstr ""
-"此操作将从您的书架中清除无效文档。\\n\n"
+"此操作将从您的书架中清除无效文档。\n"
+"\n"
 "无效文档是您的计算机上不再存在的文档。"
 
 #. Translators: title of a message to confirm the clearing of documents
@@ -1789,7 +1790,7 @@ msgstr "该文档无法在 Bookworm 中打开。"
 
 #: bookworm/gui/book_viewer/__init__.py:95
 msgid "Opening document, please wait..."
-msgstr "正在打开文件，请稍候..."
+msgstr "正在打开文档，请稍候..."
 
 #. Translators: the title of an error message
 #: bookworm/gui/book_viewer/__init__.py:109
@@ -1809,7 +1810,7 @@ msgstr ""
 #. when the format of the e-book is not supported
 #: bookworm/gui/book_viewer/__init__.py:121
 msgid "Unsupported Document Format"
-msgstr "不支持的文件格式"
+msgstr "不支持的文档格式"
 
 #. Translators: the content of a message shown
 #. when the format of the e-book is not supported
@@ -2080,23 +2081,19 @@ msgid ""
 "For further details, you can view the full licence from the help menu.\n"
 msgstr ""
 "{display_name}\n"
-"Version: {version}\n"
-"Website: {website}\n"
+"版本： {version}\n"
+"网站： {website}\n"
 "\n"
-"{display_name} is an advanced and accessible document reader that enables "
-"blind and visually impaired individuals to read documents in an easy, "
-"accessible, and hassle-free manor. It is being developed by {author} with "
-"some contributions from the community.\n"
+"{display_name} 是一款无障碍的文档阅读器，可让您以一种轻松且易于访问的方式来阅"
+"读PDF、EPUB、MOBI等众多格式的电子文档。 它由 {author} 和社区的一些贡献者共同"
+"开发。\n"
 "\n"
 "{copyright}\n"
-"{display_name} is free software; you can redistribute it and/or modify it "
-"under the terms of the GNU General Public License as published by the Free "
-"Software Foundation; either version 2 of the License, or (at your option) "
-"any later version.\n"
-"This program is distributed in the hope that it will be useful, but WITHOUT "
-"ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
-"FITNESS FOR A PARTICULAR PURPOSE.\n"
-"For further details, you can view the full licence from the help menu.\n"
+"{display_name} 是免费软件；您可以根据自由软件基金会发布的 GNU 通用公共许可协"
+"议的第 2 版，或（由您选择）任何更高版本，重新分发和/或修改它，分发此程序的目"
+"的是希望它有用，但不提供任何保证；甚至没有对适销性或特定用途适用性的默示保"
+"证。\n"
+"有关更多详细信息，您可以从帮助菜单中查看完整许可协议。\n"
 
 #: bookworm/gui/book_viewer/menubar.py:70
 msgid ""
@@ -2479,7 +2476,7 @@ msgstr "跳转到页面"
 
 #: bookworm/gui/book_viewer/menubar.py:953
 msgid "Supported document formats"
-msgstr "支持的文件格式"
+msgstr "支持的文档格式"
 
 #: bookworm/gui/book_viewer/render_view.py:87
 msgid "Zoom is at {factor} percent"
@@ -2596,8 +2593,10 @@ msgid ""
 "accuracy and performance.\n"
 "Would you like to update to the new version?"
 msgstr ""
-"新版本的 Tesseract OCr 引擎可供下载。\\n\n"
-"强烈建议您更新到最新版本以获得最佳的识别效果。\\n\n"
+"新版本的 Tesseract OCr 引擎可供下载。\n"
+"\n"
+"强烈建议您更新到最新版本以获得最佳的识别效果。\n"
+"\n"
 "您想更新到新版本吗？"
 
 #: bookworm/ocr/ocr_dialogs.py:181
@@ -2966,27 +2965,27 @@ msgstr "标题"
 
 #: bookworm/structured_text/structural_elements.py:58
 msgid "Heading level 1"
-msgstr "标题 1 级"
+msgstr "1 级标题"
 
 #: bookworm/structured_text/structural_elements.py:59
 msgid "Heading level 2"
-msgstr "标题 2 级"
+msgstr "2 级标题"
 
 #: bookworm/structured_text/structural_elements.py:60
 msgid "Heading level 3"
-msgstr "标题 3 级"
+msgstr "3 级标题"
 
 #: bookworm/structured_text/structural_elements.py:61
 msgid "Heading level 4"
-msgstr "标题 4 级"
+msgstr "4 级标题"
 
 #: bookworm/structured_text/structural_elements.py:62
 msgid "Heading level 5"
-msgstr "标题 5 级"
+msgstr "5 级标题"
 
 #: bookworm/structured_text/structural_elements.py:63
 msgid "Heading level 6"
-msgstr "标题 6 级"
+msgstr "6 级标题"
 
 #: bookworm/structured_text/structural_elements.py:64
 msgid "Link"
@@ -3428,7 +3427,7 @@ msgstr "从维基百科获取定义"
 
 #: bookworm/webservices/wikiworm.py:47
 msgid "Define using Wikipedia"
-msgstr "使用维基百科的定义"
+msgstr "在维基百科上查询"
 
 #: bookworm/webservices/wikiworm.py:48
 msgid "Define the selected text using Wikipedia"
