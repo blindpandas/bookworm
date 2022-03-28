@@ -86,14 +86,8 @@ class FitzDocument(BaseDocument):
             if "drm" in e.args[0].lower():
                 raise DocumentRestrictedError("Document is encrypted with DRM") from e
             raise DocumentError("Could not open document") from e
-        if (
-            self._ebook.isEncrypted
-            and  (pwd := self.uri.view_args.get("decryption_key")) is not None
-            and self._ebook.authenticate(pwd)
-        ):
-            return
-        else:
-            raise DocumentEncryptedError(self)
+        if self._ebook.isEncrypted:
+            self.decrypt_document()
 
     def close(self):
         if self._ebook is None:
@@ -168,6 +162,12 @@ class FitzDocument(BaseDocument):
     def get_cover_image(self):
         return self.get_page_image(0)
 
+    def decrypt_document(self):
+        if (decription_key := self.uri.view_args.get("decryption_key")) is not None:
+            if self._ebook.authenticate(decription_key):
+                return True
+        raise DocumentEncryptedError(self)
+    
 
 class FitzFB2Document(FitzDocument):
 
