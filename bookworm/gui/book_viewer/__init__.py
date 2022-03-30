@@ -422,7 +422,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def set_content(self, content):
         raw_content_length = len(content)
         self.contentTextCtrl.Clear()
-        self.contentTextCtrl.WriteText(content)
+        self.contentTextCtrl.SetValue(content)
         self.contentTextCtrl.SetInsertionPoint(0)
         if self._has_text_zoom:
             self.contentTextCtrl.SetFont(self.contentTextCtrl.Font.MakeSmaller())
