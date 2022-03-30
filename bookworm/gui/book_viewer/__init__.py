@@ -298,6 +298,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.CenterOnScreen(wx.BOTH)
 
     def finalize_gui_creation(self):
+        opendyslexic_font_filename = fonts_path(
+            "opendyslexic", "OpenDyslexic-Regular.ttf"
+        )
+        wx.Font.AddPrivateFont(str(opendyslexic_font_filename))
         self.set_content_view_font()
         self.add_tools()
         self.toolbar.Realize()
@@ -317,18 +321,20 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         reader_book_unloaded.send(self.reader)
 
     def set_content_view_font(self):
-        opendyslexic_font_filename = fonts_path(
-            "opendyslexic", "OpenDyslexic-Regular.ttf"
-        )
-        wx.Font.AddPrivateFont(str(opendyslexic_font_filename))
+        configured_text_style = self.get_content_view_text_style()
+        self.contentTextCtrl.SetStyle(0, self.contentTextCtrl.GetLastPosition(), configured_text_style)
+        self.contentTextCtrl.SetDefaultStyle(configured_text_style)
+
+    def get_content_view_text_style(self, *, font_size=None):
         finfo = wx.FontInfo().FaceName(config.conf["appearance"]["font_facename"])
         configured_font = wx.Font(finfo)
-        configured_font.SetPointSize(config.conf["appearance"]["font_point_size"])
+        font_point_size = font_size if font_size is not None else config.conf["appearance"]["font_point_size"]
+        configured_font.SetPointSize(font_point_size)
         if config.conf["appearance"]["use_bold_font"]:
             configured_font.SetWeight(wx.FONTWEIGHT_BOLD)
-        default_style = self.contentTextCtrl.GetDefaultStyle()
-        default_style.SetFont(configured_font)
-        self.contentTextCtrl.SetDefaultStyle(default_style)
+        base_text_style =  self.contentTextCtrl.GetDefaultStyle()
+        base_text_style.SetFont(configured_font)
+        return base_text_style
 
     def add_tools(self):
         tsize = (16, 16)
@@ -420,13 +426,21 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.reader.set_document(document)
 
     def set_content(self, content):
+        if self._has_text_zoom:
+            current_style = wx.TextAttr(self.contentTextCtrl.GetDefaultStyle())
+            self.contentTextCtrl.GetStyle(0, current_style)
+            current_font_size = current_style.Font.GetPointSize()
+        else:
+            current_font_size = None
         raw_content_length = len(content)
         self.contentTextCtrl.Clear()
         self.contentTextCtrl.SetValue(content)
+        self.contentTextCtrl.SetStyle(
+            0,
+            self.contentTextCtrl.GetLastPosition(),
+            self.get_content_view_text_style(font_size=current_font_size)
+        )
         self.contentTextCtrl.SetInsertionPoint(0)
-        if self._has_text_zoom:
-            self.contentTextCtrl.SetFont(self.contentTextCtrl.Font.MakeSmaller())
-            self.contentTextCtrl.SetFont(self.contentTextCtrl.Font.MakeLarger())
         if app.debug and raw_content_length != (
             textCtrlLength := self.contentTextCtrl.LastPosition
         ):
