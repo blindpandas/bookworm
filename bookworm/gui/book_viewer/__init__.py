@@ -37,6 +37,7 @@ from bookworm.gui.contentview_ctrl import ContentViewCtrl
 from bookworm.gui.components import TocTreeManager, AsyncSnakDialog
 from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
+from . import recents_manager
 from .menubar import MenubarProvider, BookRelatedMenuIds
 from .state import StateProvider
 from .navigation import NavigationProvider
@@ -87,25 +88,25 @@ class ResourceLoader:
             )
             return
         if not resolver.should_read_async():
-            doc = self.resolve_document(resolver)
-            if doc is not None:
-                self.load(doc)
+            doc = self.resolve_document(resolver.read_document, uri)
         else:
             AsyncSnakDialog(
-                task=partial(self.resolve_document, resolver),
-                done_callback=partial(self._document_read_callback, uri),
+                task=partial(resolver.read_document),
+                done_callback=lambda fut: self.resolve_document(fut.result, uri),
                 dismiss_callback=lambda: self._cancellation_token.request_cancellation()
                 or True,
                 message=_("Opening document, please wait..."),
                 parent=self.view,
             )
 
-    def resolve_document(self, resolver):
+    def resolve_document(self, resolve_doc_func, uri):
         _last_exception = None
         try:
-            return resolver.read_document()
+            doc = resolve_doc_func()
+            if doc is not None:
+                self.load(doc)
         except DecryptionRequired:
-            raise
+            self.view.decrypt_document(uri)
         except ResourceDoesNotExist as e:
             _last_exception = e
             log.exception("Failed to open file. File does not exist", exc_info=True)
@@ -158,7 +159,7 @@ class ResourceLoader:
             )
         except Exception as e:
             _last_exception = e
-            log.exception("Unsupported file format", exc_info=True)
+            log.exception("Unknown error occurred", exc_info=True)
             wx.CallAfter(
                 self.view.notify_user,
                 # Translators: the title of an error message
@@ -173,16 +174,19 @@ class ResourceLoader:
         finally:
             if _last_exception is not None:
                 wx.CallAfter(self.view.unloadCurrentEbook)
+                if uri.view_args['recent_document']:
+                    retval = wx.MessageBox(
+                        # Translators: content of a message
+                        _("Failed to open document.\nWould you like to remove its entry from the recent documents list?"),
+                        # Translators: title of a message box
+                        _("Remove from recents?"),
+                        style=wx.YES_NO | wx.ICON_WARNING
+                    )
+                    if retval == wx.YES:
+                        recents_manager.remove_from_recents(uri)
+                        self.view.fileMenu.populate_recent_file_list()
                 if app.debug:
                     raise _last_exception
-
-    def _document_read_callback(self, uri, future):
-        try:
-            document = future.result()
-        except DecryptionRequired:
-            self.view.decrypt_document(uri)
-        else:
-            self.load(document)
 
     def load(self, document):
         if (document is None) or (self._cancellation_token.is_cancellation_requested()):
@@ -388,12 +392,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def open_uri(self, uri, callback=None):
         self.unloadCurrentEbook()
-        try:
-            ResourceLoader(
-                self, uri, callback=callback or self.default_book_loaded_callback
-            )
-        except DecryptionRequired:
-            self.decrypt_document(uri)
+        ResourceLoader(
+            self, uri, callback=callback or self.default_book_loaded_callback
+        )
 
     def decrypt_document(self, uri):
         if uri.view_args.get("n_attempts"):

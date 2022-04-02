@@ -22,6 +22,13 @@ def add_to_recents(document):
     doc_info.record_open()
 
 
+def remove_from_recents(uri):
+    for doc in RecentDocument.query:
+        if uri.is_equal_without_openner_args(doc.uri):
+            RecentDocument.session.delete(doc)
+            RecentDocument.session.commit()
+
+
 def pin(document):
     get_document_unique(PinnedDocument, document).pin()
 
