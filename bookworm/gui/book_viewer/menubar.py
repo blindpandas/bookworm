@@ -302,7 +302,7 @@ class FileMenu(BaseMenu):
         item_uri = item_to_doc_map[item_id]
         if self.reader.ready and (item_uri == self.reader.document.uri):
             return
-        item_uri.view_args['recent_document'] = True
+        item_uri.view_args['from_list'] = True
         self.view.open_uri(item_uri)
 
     def onClearRecentFileList(self, event):

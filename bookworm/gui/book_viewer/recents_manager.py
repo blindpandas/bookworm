@@ -29,6 +29,13 @@ def remove_from_recents(uri):
             RecentDocument.session.commit()
 
 
+def remove_from_pinned(uri):
+    for doc in PinnedDocument.query:
+        if uri.is_equal_without_openner_args(doc.uri):
+            PinnedDocument.session.delete(doc)
+            PinnedDocument.session.commit()
+
+
 def pin(document):
     get_document_unique(PinnedDocument, document).pin()
 

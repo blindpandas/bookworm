@@ -174,17 +174,19 @@ class ResourceLoader:
         finally:
             if _last_exception is not None:
                 wx.CallAfter(self.view.unloadCurrentEbook)
-                if uri.view_args['recent_document']:
+                if uri.view_args['from_list']:
                     retval = wx.MessageBox(
                         # Translators: content of a message
-                        _("Failed to open document.\nWould you like to remove its entry from the recent documents list?"),
+                        _("Failed to open document.\nWould you like to remove its entry from the 'recent documents' and 'pinned documents' lists?"),
                         # Translators: title of a message box
-                        _("Remove from recents?"),
+                        _("Remove from lists?"),
                         style=wx.YES_NO | wx.ICON_WARNING
                     )
                     if retval == wx.YES:
                         recents_manager.remove_from_recents(uri)
+                        recents_manager.remove_from_pinned(uri)
                         self.view.fileMenu.populate_recent_file_list()
+                        self.view.fileMenu.populate_pinned_documents_list()
                 if app.debug:
                     raise _last_exception
 
