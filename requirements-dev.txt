@@ -4,8 +4,8 @@ black==22.1.0
 distro==1.5.0;sys_platform=="linux"
 jinja2==3.0.3
 packaging==21.0
-PyInstaller==4.10
-pyinstaller-hooks-contrib==2022.2
+PyInstaller==5.0
+pyinstaller-hooks-contrib==2022.4
 pytest==7.0.1
 pytest-xdist==2.5.0
 wheel==0.37.1
