@@ -7,7 +7,7 @@ from io import StringIO
 from operator import attrgetter
 from contextlib import suppress
 from concurrent.futures import ThreadPoolExecutor
-from chemical import it, ChemicalException
+from more_itertools import first_true
 from bookworm import typehints as t
 from bookworm import app
 from bookworm.i18n import LocaleInfo
@@ -140,11 +140,11 @@ class BaseOcrEngine(metaclass=ABCMeta):
     @classmethod
     def get_sorted_languages(cls):
         langs = cls.get_recognition_languages()
-        current_lang = None
-        with suppress(ChemicalException):
-            current_lang = it(langs).find(
-                lambda lang: lang.should_be_considered_equal_to(app.current_language)
-            )
+        current_lang = first_true(
+            langs,
+            pred=lambda lang: lang.should_be_considered_equal_to(app.current_language),
+            default=None
+        )
         if current_lang is not None:
             langs.remove(current_lang)
             langs.insert(0, current_lang)

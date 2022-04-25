@@ -6,7 +6,6 @@ import gettext
 from collections import OrderedDict
 from contextlib import suppress
 from pathlib import Path
-from chemical import it
 from bookworm import app
 from bookworm import paths
 from bookworm import config

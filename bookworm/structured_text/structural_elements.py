@@ -6,7 +6,6 @@ from __future__ import annotations
 import re
 import attr
 from itertools import chain
-from chemical import it, ChemicalException
 from enum import IntEnum, auto
 from bookworm import typehints as t
 from bookworm.utils import normalize_line_breaks

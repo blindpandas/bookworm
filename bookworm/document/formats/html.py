@@ -7,7 +7,6 @@ from contextlib import contextmanager
 from functools import cached_property
 from concurrent.futures import ProcessPoolExecutor
 from more_itertools import zip_offset, first as get_first_element
-from chemical import it
 from lxml import html as lxml_html
 from lxml import etree
 from yarl import URL

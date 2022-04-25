@@ -7,11 +7,11 @@ import threading
 import shutil
 import wx
 import webbrowser
+import more_itertools
 from operator import ge, le
 from contextlib import suppress
 from functools import partial
 from pathlib import Path
-from chemical import it
 from slugify import slugify
 from bookworm import config
 from bookworm import paths
@@ -695,18 +695,21 @@ class SearchMenu(BaseMenu):
             filter_func = lambda sr: (
                 ((sr.page == page) and (sr.position < sol)) or (sr.page < page)
             )
-        result_iter = it(self._latest_search_results).filter(filter_func)
+        result_iter = filter(filter_func, self._latest_search_results)
         try:
-            result = (result_iter if foreword else result_iter.rev()).next()
-        except StopIteration:
+            if foreword:
+                result = more_itertools.first(result_iter)
+            else:
+                result = more_itertools.last(result_iter)
+        except ValueError:
             sounds.navigation.play()
-            return
-        self.highlight_search_result(result.page, result.position)
-        reading_position_change.send(
-            self.view,
-            position=result.position,
-            tts_speech_prefix=_("Search Result"),
-        )
+        else:
+            self.highlight_search_result(result.page, result.position)
+            reading_position_change.send(
+                self.view,
+                position=result.position,
+                tts_speech_prefix=_("Search Result"),
+            )
 
     def onFindNext(self, event):
         self.go_to_search_result(foreword=True)
