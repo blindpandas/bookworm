@@ -19,6 +19,7 @@
 ## Resources
 
 * The official website: [getbookworm.com](https://getbookworm.com/)
+* Telegram group: [Bookworm Official group](https://t.me/+_qcuopCgPopkOGJi)
 * User guide: [Bookworm user guide](https://getbookworm.com/user-guide/)
 
 
@@ -82,6 +83,11 @@ As an example, to build Bookworm, issue the following command:
 invoke build
 ```
 * If you've found a bug, or you want to contribute your changes back to bookworm, please create an issue or submit a pull request. We welcome any contribution, no matter how small it is.
+
+
+### Telegram group
+
+You can discuss Bookworm, help others or make suggestions in the official Telegram group. Join it by visiting [this link](https://t.me/+_qcuopCgPopkOGJi)
 
 
 ## License
