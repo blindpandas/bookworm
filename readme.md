@@ -19,7 +19,7 @@
 ## Resources
 
 * The official website: [getbookworm.com](https://getbookworm.com/)
-* Telegram group: [Bookworm Official group](https://t.me/+_qcuopCgPopkOGJi)
+* Telegram group: [Bookworm Official group](https://t.me/bookworm_official)
 * User guide: [Bookworm user guide](https://getbookworm.com/user-guide/)
 
 
@@ -87,7 +87,7 @@ invoke build
 
 ### Telegram group
 
-You can discuss Bookworm, help others or make suggestions in the official Telegram group. Join it by visiting [this link](https://t.me/+_qcuopCgPopkOGJi)
+You can discuss Bookworm, help others or make suggestions in the official Telegram group. Join it by visiting [this link](https://t.me/bookworm_official)
 
 
 ## License
