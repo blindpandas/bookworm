@@ -63,8 +63,8 @@ The main window of Bookworm consists of the following two parts:
 * F8: go to the next comment;
 * Shift + F8: go to the previous comment;
 * F9: go to next highlight;
-* Shift + F9: go to previous highlight.
-
+* Shift + F9: go to previous highlight;
+* ctrl + enter: open any internal or external link if the document contains one. Internal links are links created by the document table of contents in some formats, external links are regular links opened by the browser. Depending on the link type, if the link is internal, i.e. the link to the table of contents, then pressing the above keyboard shortcut will move the focus to the desired table of contents, and if the link is external, it will open it in the default system browser.
 
 ### Bookmarks & Comments
 
