@@ -230,7 +230,7 @@ def copy_assets(c):
         / "bookworm.ico": PACKAGE_FOLDER,
     }
     for src, dst in files_to_copy.items():
-        c.run(f"cp {src} {dst}", hide="stdout")
+        shutil.copy(src, dst)
     ficos_src = PROJECT_ROOT / "fullsize_images" / "file_icons"
     ficos_dst = RESOURCES_FOLDER / "icons"
     ficos_dst.mkdir(parents=True, exist_ok=True)
@@ -254,10 +254,7 @@ def copy_wx_catalogs(c):
     app_langs = {fldr.name for fldr in dst.iterdir() if fldr.is_dir()}
     to_copy = wx_langs.intersection(app_langs)
     for lang in to_copy:
-        c.run(
-            f'cp "{src / lang / "LC_MESSAGES" / "wxstd.mo"}" "{dst / lang / "LC_MESSAGES"}"'
-        )
-
+        shutil.copy(f'{src}/{lang}/LC_MESSAGES/wxstd.mo', f'{dst}/{lang}/LC_MESSAGES')
 
 def get_pot_filename():
     name, version = [os.environ[k] for k in ["IAPP_NAME", "IAPP_VERSION"]]
@@ -386,17 +383,20 @@ def copy_deps(c):
     print("Copying vcredis 2015 ucrt support DLLs...")
     arch = os.environ["IAPP_ARCH"]
     dist_dir = os.environ["IAPP_FROZEN_DIRECTORY"]
-    dlls = (
-        f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\msvcp140.dll",
-        f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.OPENMP\\vcomp140.dll",
-        f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\vcruntime140.dll",
-        f"C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\DLLs\\{arch}\\*",
-    )
+    dlls = [
+        Path(f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\msvcp140.dll"),
+        Path(f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.OPENMP\\vcomp140.dll"),
+        Path(f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\vcruntime140.dll"),
+    ]
+    # We need all the DLLs in this subdirectory, so let's extend the list
+    dlls.extend(list(Path(f"C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\DLLs\\{arch}").glob('*')))
     for dll in dlls:
         try:
-            c.run(f'cp "{dll}" "{dist_dir}"', hide="stdout")
-        except UnexpectedExit:
-            print(f"Faild to copy  {dll} to {dist_dir}")
+            shutil.copy(dll, dist_dir)
+        except FileExistsError:
+            pass
+        except Exception as e:
+            print(f"Failed to copy  {dll} to {dist_dir}")
             continue
     print("Done copying vcredis 2015 ucrt DLLs.")
 
@@ -468,7 +468,7 @@ def copy_uwp_services_lib(c):
     uwp_services_path = PROJECT_ROOT / "includes" / "BookwormUWPServices"
     src = uwp_services_path / "bin" / build_config / "BookwormUWPServices.dll"
     dst = c["build_folder"]
-    c.run(f"cp {src} {dst}")
+    shutil.copy(src, dst)
 
 
 def _add_pip_install_args(cmd, context):
@@ -595,7 +595,7 @@ def freeze(c):
             os.environ["PYTHONOPTIMIZE"] = "2"
         c.run(
             f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}",
-            hide=True,
+            hide=False,
         )
     print("App freezed.")
 
@@ -606,7 +606,7 @@ def copy_executables(c):
         print("Copying antiword executable")
         build_folder = c["build_folder"]
         antiword_executable_dir = PROJECT_ROOT / "scripts" / "executables" / "antiword"
-        c.run(f"cp -r {antiword_executable_dir} {build_folder}")
+        shutil.copytree(antiword_executable_dir, build_folder, dirs_exist_ok=True)
     print("Done copying executables.")
 
 
