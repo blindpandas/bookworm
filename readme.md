@@ -20,6 +20,7 @@
 
 * The official website: [getbookworm.com](https://getbookworm.com/)
 * Telegram group: [Bookworm Official group](https://t.me/bookworm_official)
+* Telegram channel: [Bookworm news](https://t.me/bookworm_news)
 * User guide: [Bookworm user guide](https://getbookworm.com/user-guide/)
 
 
@@ -88,6 +89,10 @@ invoke build
 ### Telegram group
 
 You can discuss Bookworm, help others or make suggestions in the official Telegram group. Join it by visiting [this link](https://t.me/bookworm_official)
+
+### Telegram channel
+
+The [Telegram channel](https://t.me/bookworm_news) will be dedicated to publishing new features, changes and fixes will be posted. All discussions will continue in the main group and files will also be available for download from the main group.
 
 
 ## License
