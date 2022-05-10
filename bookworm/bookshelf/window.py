@@ -1,30 +1,26 @@
 # coding: utf-8
 
-import os
 import operator
-import wx
-import wx.lib.sized_controls as sc
+import os
 from enum import IntEnum, auto
 from functools import partial
-from bookworm import speech
-from bookworm.concurrency import threaded_worker
-from bookworm.image_io import ImageIO
-from bookworm.utils import fuzzy_search
-from bookworm.reader import EBookReader
-from bookworm.gui.components import AsyncSnakDialog
-from bookworm.gui.book_viewer.core_dialogs import DocumentInfoDialog
-from bookworm.resources import sounds
-from bookworm.paths import app_path, images_path
-from bookworm.bookshelf.provider import (
-    BookshelfProvider,
-    Source,
-    MetaSource,
-    ItemContainerSource,
-    BookshelfAction,
-    sources_updated,
-)
-from bookworm.logger import logger
 
+import wx
+import wx.lib.sized_controls as sc
+
+from bookworm import speech
+from bookworm.bookshelf.provider import (BookshelfAction, BookshelfProvider,
+                                         ItemContainerSource, MetaSource,
+                                         Source, sources_updated)
+from bookworm.concurrency import threaded_worker
+from bookworm.gui.book_viewer.core_dialogs import DocumentInfoDialog
+from bookworm.gui.components import AsyncSnakDialog
+from bookworm.image_io import ImageIO
+from bookworm.logger import logger
+from bookworm.paths import app_path, images_path
+from bookworm.reader import EBookReader
+from bookworm.resources import sounds
+from bookworm.utils import fuzzy_search
 
 log = logger.getChild(__name__)
 
@@ -544,7 +540,8 @@ class BookshelfWindow(sc.SizedFrame):
 
 
 def run_bookshelf_standalone():
-    from bookworm.bootstrap import BookwormApp, setupSubsystems, log_diagnostic_info
+    from bookworm.bootstrap import (BookwormApp, log_diagnostic_info,
+                                    setupSubsystems)
 
     app = BookwormApp()
 

@@ -1,18 +1,20 @@
 # coding: utf-8
 
-import System
-import sys
 import os
-from typing import Iterable
+import sys
 from dataclasses import dataclass
 from functools import wraps
-from bookworm import app
-from bookworm.utils import ignore
-from bookworm.platform_services.shell import get_ext_info
-from bookworm.logger import logger
-from . import shellapi
-from .win_registry import RegKey, RegistryValueKind
+from typing import Iterable
 
+import System
+
+from bookworm import app
+from bookworm.logger import logger
+from bookworm.platform_services.shell import get_ext_info
+from bookworm.utils import ignore
+
+from . import shellapi
+from .win_registry import RegistryValueKind, RegKey
 
 log = logger.getChild(__name__)
 

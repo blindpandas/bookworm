@@ -3,10 +3,13 @@
 """Provides value objects that are building blocks for an e-book."""
 
 from __future__ import annotations
-import attr
+
 from collections.abc import Container, Iterable, Sequence, Sized
-from weakref import ref
 from datetime import datetime
+from weakref import ref
+
+import attr
+
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
 from bookworm.structured_text import TextRange

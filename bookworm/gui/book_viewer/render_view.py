@@ -2,15 +2,16 @@
 
 import wx
 import wx.lib.scrolledpanel as scrolled
-from bookworm import speech
-from bookworm.image_io import ImageIO
-from bookworm.signals import reader_page_changed
-from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
-from bookworm.utils import gui_thread_safe
-from bookworm.logger import logger
-from bookworm.gui.components import ImageViewControl, Dialog
-from .navigation import NavigationProvider
 
+from bookworm import speech
+from bookworm.gui.components import Dialog, ImageViewControl
+from bookworm.image_io import ImageIO
+from bookworm.logger import logger
+from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
+from bookworm.signals import reader_page_changed
+from bookworm.utils import gui_thread_safe
+
+from .navigation import NavigationProvider
 
 log = logger.getChild(__name__)
 

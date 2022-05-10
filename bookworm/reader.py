@@ -3,35 +3,23 @@
 import os
 from contextlib import suppress
 from pathlib import Path
+
+from bookworm import app, config
 from bookworm import typehints as t
-from bookworm import app
-from bookworm import config
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.database import DocumentPositionInfo
-from bookworm.i18n import is_rtl
-from bookworm.document.uri import DocumentUri
+from bookworm.document import BaseDocument, BasePage, ChangeDocument
+from bookworm.document import DocumentCapability as DC
+from bookworm.document import (DocumentEncryptedError, DocumentError,
+                               DocumentIOError, PaginationError, Section)
 from bookworm.document.formats import *
-from bookworm.document import (
-    BaseDocument,
-    BasePage,
-    Section,
-    ChangeDocument,
-    DocumentCapability as DC,
-    DocumentError,
-    DocumentIOError,
-    DocumentEncryptedError,
-    PaginationError,
-)
-from bookworm.signals import (
-    reader_book_loaded,
-    reader_book_unloaded,
-    reader_page_changed,
-    reader_section_changed,
-    reading_position_change,
-)
-from bookworm.structured_text import TextStructureMetadata, SemanticElementType
+from bookworm.document.uri import DocumentUri
+from bookworm.i18n import is_rtl
 from bookworm.logger import logger
-
+from bookworm.signals import (reader_book_loaded, reader_book_unloaded,
+                              reader_page_changed, reader_section_changed,
+                              reading_position_change)
+from bookworm.structured_text import SemanticElementType, TextStructureMetadata
 
 log = logger.getChild(__name__)
 

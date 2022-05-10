@@ -1,21 +1,23 @@
 # coding: utf-8
 
 from __future__ import annotations
-import sys
-import os
-import threading
-import multiprocessing as mp
-import inspect
-import attr
-from traceback import format_exception
-from enum import IntEnum
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-from functools import wraps, partial
-from contextlib import suppress
-import bookworm.typehints as t
-from bookworm.signals import app_starting, app_shuttingdown
-from bookworm.logger import logger
 
+import inspect
+import multiprocessing as mp
+import os
+import sys
+import threading
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from contextlib import suppress
+from enum import IntEnum
+from functools import partial, wraps
+from traceback import format_exception
+
+import attr
+
+import bookworm.typehints as t
+from bookworm.logger import logger
+from bookworm.signals import app_shuttingdown, app_starting
 
 log = logger.getChild(__name__)
 

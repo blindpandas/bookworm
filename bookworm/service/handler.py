@@ -1,27 +1,22 @@
 # coding: utf-8
 
-from bookworm import app
-from bookworm import config
-from bookworm.signals import app_shuttingdown
+from bookworm import app, config
 from bookworm.logger import logger
-
+from bookworm.signals import app_shuttingdown
 
 log = logger.getChild(__name__)
 
 
+from bookworm.annotation import AnnotationService
+from bookworm.bookshelf import BookshelfService
+from bookworm.continuous_reading import ContReadingService
+from bookworm.epub_serve import EpubServeService
+from bookworm.ocr import OCRService, OCRSettingsService
 # Builtin services
 from bookworm.otau import OTAUService
-from bookworm.annotation import AnnotationService
-from bookworm.ocr import OCRSettingsService, OCRService
 from bookworm.text_to_speech import TextToSpeechService
-from bookworm.continuous_reading import ContReadingService
-from bookworm.bookshelf import BookshelfService
-from bookworm.epub_serve import EpubServeService
-from bookworm.webservices import (
-    WebservicesBaseService,
-    WikipediaService,
-    UrlOpenService,
-)
+from bookworm.webservices import (UrlOpenService, WebservicesBaseService,
+                                  WikipediaService)
 
 BUILTIN_SERVICES = (
     OTAUService,

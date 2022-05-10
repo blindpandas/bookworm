@@ -1,40 +1,32 @@
 # coding: utf-8
 
-import os
 import contextlib
-import urllib.parse
+import os
 import shutil
+import urllib.parse
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from functools import partial
+from pathlib import Path
+
+import more_itertools
 import peewee
 import requests
-import more_itertools
-from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-from functools import partial
-from bottle import request, abort
-from bookworm import typehints as t
-from bookworm import paths
-from bookworm import local_server
-from bookworm.runtime import IS_RUNNING_PORTABLE
-from bookworm.concurrency import threaded_worker
-from bookworm.utils import generate_file_md5
-from bookworm.document import BaseDocument, create_document
-from bookworm.document.uri import DocumentUri
-from bookworm.document.elements import DocumentInfo
-from bookworm.signals import app_shuttingdown, local_server_booting
-from bookworm.logger import logger
-from .models import (
-    DEFAULT_BOOKSHELF_DATABASE_FILE,
-    Document,
-    Page,
-    Category,
-    Format,
-    Author,
-    Tag,
-    DocumentFTSIndex,
-    DocumentAuthor,
-    DocumentTag,
-)
+from bottle import abort, request
 
+from bookworm import local_server, paths
+from bookworm import typehints as t
+from bookworm.concurrency import threaded_worker
+from bookworm.document import BaseDocument, create_document
+from bookworm.document.elements import DocumentInfo
+from bookworm.document.uri import DocumentUri
+from bookworm.logger import logger
+from bookworm.runtime import IS_RUNNING_PORTABLE
+from bookworm.signals import app_shuttingdown, local_server_booting
+from bookworm.utils import generate_file_md5
+
+from .models import (DEFAULT_BOOKSHELF_DATABASE_FILE, Author, Category,
+                     Document, DocumentAuthor, DocumentFTSIndex, DocumentTag,
+                     Format, Page, Tag)
 
 log = logger.getChild(__name__)
 ADD_TO_BOOKSHELF_URL_PREFIX = "/add-to-bookshelf"

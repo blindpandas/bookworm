@@ -1,16 +1,17 @@
 # coding: utf-8
 
-import sys
 import os
+import sys
 from pathlib import Path
-from bookworm import typehints as t
-from bookworm import app
-from bookworm.i18n import LocaleInfo
-from bookworm.paths import data_path
-from bookworm.ocr_engines import OcrRequest, OcrResult, BaseOcrEngine
-from bookworm.logger import logger
-from . import pytesseract
 
+from bookworm import app
+from bookworm import typehints as t
+from bookworm.i18n import LocaleInfo
+from bookworm.logger import logger
+from bookworm.ocr_engines import BaseOcrEngine, OcrRequest, OcrResult
+from bookworm.paths import data_path
+
+from . import pytesseract
 
 log = logger.getChild(__name__)
 

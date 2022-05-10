@@ -1,6 +1,7 @@
 import pytest
-from bookworm.document.uri import DocumentUri
+
 from bookworm.document import create_document
+from bookworm.document.uri import DocumentUri
 
 
 def test_epub_metadata(asset):

@@ -1,13 +1,15 @@
 # coding: utf-8
 
 from pathlib import Path
+
 from configobj import ConfigObj, ConfigObjError, flatten_errors
 from configobj.validate import Validator
-from bookworm import app
-from bookworm.paths import config_path
-from bookworm.logger import logger
-from .spec import config_spec
 
+from bookworm import app
+from bookworm.logger import logger
+from bookworm.paths import config_path
+
+from .spec import config_spec
 
 log = logger.getChild(__name__)
 

@@ -1,41 +1,34 @@
 # coding: utf-8
 
+import functools
 import os
 import threading
 import time
-import wx
-import functools
-from functools import cached_property
-from PIL import Image
 from copy import copy
-from pathlib import Path
 from enum import IntEnum
-from bookworm import app
-from bookworm import config
-from bookworm import speech
-from bookworm.image_io import ImageIO
-from bookworm.ocr_engines import OcrRequest
-from bookworm.signals import (
-    _signals,
-    reader_book_loaded,
-    reader_book_unloaded,
-    reader_page_changed,
-)
+from functools import cached_property
+from pathlib import Path
+
+import wx
+from PIL import Image
+
+from bookworm import app, config, speech
 from bookworm.concurrency import QueueProcess, call_threaded, threaded_worker
-from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
-from bookworm.resources import sounds
-from bookworm.gui.components import SimpleDialog, AsyncSnakDialog, RobustProgressDialog
-from bookworm.utils import gui_thread_safe
-from bookworm.document import (
-    SinglePageDocument,
-    VirtualDocument,
-    DocumentCapability as DC,
-    DocumentUri,
-    BookMetadata,
-    Section,
-    SINGLE_PAGE_DOCUMENT_PAGER,
-)
+from bookworm.document import SINGLE_PAGE_DOCUMENT_PAGER, BookMetadata
+from bookworm.document import DocumentCapability as DC
+from bookworm.document import (DocumentUri, Section, SinglePageDocument,
+                               VirtualDocument)
+from bookworm.gui.components import (AsyncSnakDialog, RobustProgressDialog,
+                                     SimpleDialog)
+from bookworm.gui.settings import ReconciliationStrategies, SettingsPanel
+from bookworm.image_io import ImageIO
 from bookworm.logger import logger
+from bookworm.ocr_engines import OcrRequest
+from bookworm.resources import sounds
+from bookworm.signals import (_signals, reader_book_loaded,
+                              reader_book_unloaded, reader_page_changed)
+from bookworm.utils import gui_thread_safe
+
 from .ocr_dialogs import OCROptionsDialog
 
 try:

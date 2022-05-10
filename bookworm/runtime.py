@@ -5,12 +5,10 @@
 
 import multiprocessing
 from enum import Enum, auto
-from bookworm import app
-from bookworm.platform_services.runtime import (
-    is_running_portable,
-    is_high_contrast_active,
-)
 
+from bookworm import app
+from bookworm.platform_services.runtime import (is_high_contrast_active,
+                                                is_running_portable)
 
 IS_RUNNING_PORTABLE = is_running_portable()
 

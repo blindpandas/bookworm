@@ -1,19 +1,18 @@
 # coding: utf-8
 
-import wx
 from enum import IntEnum
+
+import wx
+
 from bookworm import speech
 from bookworm.gui.settings import SettingsPanel
-from bookworm.structured_text import TextRange
 from bookworm.logger import logger
-from .annotator import Bookmarker, NoteTaker, Quoter
-from .annotation_dialogs import (
-    BookmarksViewer,
-    CommentsDialog,
-    QuotesDialog,
-    GenericAnnotationWithContentDialog,
-)
+from bookworm.structured_text import TextRange
 
+from .annotation_dialogs import (BookmarksViewer, CommentsDialog,
+                                 GenericAnnotationWithContentDialog,
+                                 QuotesDialog)
+from .annotator import Bookmarker, NoteTaker, Quoter
 
 log = logger.getChild(__name__)
 

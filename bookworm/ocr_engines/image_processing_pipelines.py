@@ -1,15 +1,17 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass, field
 from io import BytesIO
-from PIL import Image, ImageOps, ImageEnhance
+
 from lazy_import import lazy_module
+from PIL import Image, ImageEnhance, ImageOps
+
 from bookworm import typehints as t
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
-
 
 np = lazy_module("numpy")
 cv2 = lazy_module("cv2")

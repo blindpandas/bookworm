@@ -2,8 +2,8 @@
 
 import enum
 import itertools
-import wx
 
+import wx
 
 ID_GEN = itertools.count(start=14004, step=5)
 
