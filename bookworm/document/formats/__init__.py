@@ -12,3 +12,4 @@ from .word import WordDocument
 from .powerpoint import PowerpointPresentation
 from .odf import OdfTextDocument
 from .docbook import DocbookDocument
+from .archive import ArchivedDocument
