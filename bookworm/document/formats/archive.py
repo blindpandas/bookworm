@@ -8,7 +8,9 @@ from functools import cached_property
 from pathlib import Path, PurePosixPath
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
-from rarfile import RarFile, PasswordRequired as RarFilePasswordRequired
+from bookworm import app
+from bookworm.runtime import PackagingMode, CURRENT_PACKAGING_MODE
+from bookworm.paths import app_path
 from bookworm.logger import logger
 from .. import (
     DummyDocument,
@@ -23,6 +25,18 @@ from ..uri import DocumentUri
 
 log = logger.getChild(__name__)
 
+
+if not app.is_frozen:
+    unrar_dll_dir = Path.cwd() / "scripts" / "dlls" / "unrar_dll"
+else:
+    unrar_dll_dir = app_path("unrar_dll")
+unrar_dll = os.path.join(
+    unrar_dll_dir,
+    "UnRAR.dll" if app.arch == "x86" else "UnRAR64.dll"
+)
+os.environ["UNRAR_LIB_PATH"] = unrar_dll
+
+from unrar.rarfile import RarFile
 
 class ArchivedDocument(DummyDocument):
 
@@ -43,7 +57,7 @@ class ArchivedDocument(DummyDocument):
         arch_prefix, file_list = self.archive_namelist
         if not file_list:
             raise ArchiveContainsNoDocumentsError
-        elif (member := self.uri.openner_args.get('member')):
+        elif (member := self.uri.view_args.get('member')):
             self.open_member_as_document(member)
         elif len(file_list) == 1:
             self.open_member_as_document(file_list[0])
@@ -86,7 +100,7 @@ class ArchivedDocument(DummyDocument):
 
     def _open_archive(self, filename):
         if (handler := self.archive_handlers.get(filename.suffix.lower())):
-            return handler(filename, 'r')
+            return handler(os.fspath(filename), 'r')
         raise DocumentIOError(f"Unsupported archive format: {filename}")
 
     def extract_member(self, member_name, extraction_directory):
@@ -103,8 +117,6 @@ class ArchivedDocument(DummyDocument):
                 with self.archive.open(full_member_path.as_posix(), pwd=pwd) as infile:
                     for chunk in infile:
                         outfile.write(chunk)
-            except RarFilePasswordRequired:
-                raise DocumentEncryptedError(self)
             except RuntimeError as e:
                 if "password" in e.args[0]:
                     raise DocumentEncryptedError(self)

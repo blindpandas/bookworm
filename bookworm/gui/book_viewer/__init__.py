@@ -169,7 +169,7 @@ class ResourceLoader:
             if dlg.ShowModal() == wx.ID_OK:
                 member = dlg.GetStringSelection()
                 new_uri = uri.create_copy(
-                    openner_args={'member': member}
+                    view_args={'member': member}
                 )
                 self.view.open_uri(new_uri)
         except ReaderError as e:
