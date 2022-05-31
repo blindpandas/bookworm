@@ -17,6 +17,8 @@ from bookworm.paths import app_path, fonts_path
 from bookworm.document import (
     DummyDocument,
     DocumentRestrictedError,
+    ArchiveContainsNoDocumentsError,
+    ArchiveContainsMultipleDocuments,
 )
 from bookworm.structured_text import Style, SEMANTIC_ELEMENT_OUTPUT_OPTIONS
 from bookworm.reader import (
@@ -142,6 +144,34 @@ class ResourceLoader:
                 _("The format of the given document is not supported by Bookworm."),
                 icon=wx.ICON_WARNING,
             )
+        except ArchiveContainsNoDocumentsError as e:
+            _last_exception = e
+            log.exception("Archive contains no documents", exc_info=True)
+            wx.CallAfter(
+                self.view.notify_user,
+                # Translators: the title of an error message
+                _("Archive contains no documents"),
+                # Translators: the content of an error message
+                _(
+                    "Bookworm cannot open this archive file.\nThe archive contains no documents."
+                ),
+                icon=wx.ICON_ERROR,
+            )
+        except ArchiveContainsMultipleDocuments as e:
+            log.info("Archive contains multiple documents")
+            dlg = wx.SingleChoiceDialog(
+                self.view,
+                _("Documents"),
+                _("Multiple documents found"),
+                e.args[0],
+                wx.CHOICEDLG_STYLE,
+            )
+            if dlg.ShowModal() == wx.ID_OK:
+                member = dlg.GetStringSelection()
+                new_uri = uri.create_copy(
+                    view_args={'member': member}
+                )
+                self.view.open_uri(new_uri)
         except ReaderError as e:
             _last_exception = e
             log.exception("Unsupported file format", exc_info=True)

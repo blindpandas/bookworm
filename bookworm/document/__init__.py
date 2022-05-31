@@ -29,6 +29,8 @@ from .exceptions import (
     DocumentEncryptedError,
     DocumentRestrictedError,
     PaginationError,
+    ArchiveContainsNoDocumentsError,
+    ArchiveContainsMultipleDocuments,
 )
 from .uri import DocumentUri
 from .formats import *

@@ -21,6 +21,8 @@ from bookworm.document import (
     DocumentIOError,
     DocumentEncryptedError,
     PaginationError,
+    ArchiveContainsNoDocumentsError,
+    ArchiveContainsMultipleDocuments,
 )
 from bookworm.signals import (
     reader_book_loaded,
@@ -35,6 +37,10 @@ from bookworm.logger import logger
 
 log = logger.getChild(__name__)
 
+PASS_THROUGH__DOCUMENT_EXCEPTIONS = {
+    ArchiveContainsNoDocumentsError,
+    ArchiveContainsMultipleDocuments,
+}
 
 def get_document_format_info():
     return BaseDocument.document_classes
@@ -103,6 +109,8 @@ class UriResolver:
             )
             return UriResolver(uri=e.new_uri).read_document()
         except Exception as e:
+            if type(e) in PASS_THROUGH__DOCUMENT_EXCEPTIONS:
+                raise e
             raise ReaderError("Failed to open document") from e
         return document
 

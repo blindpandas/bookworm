@@ -1,6 +1,7 @@
 packages_to_install:
     pure_python:
         - "pyxpdf_data-1.1.0-py3-none-any.whl"
+        - "unrar-0.4-py3-none-any.whl"
     win32:
         pure_python:
         x64:

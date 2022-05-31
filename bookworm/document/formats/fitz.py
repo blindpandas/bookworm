@@ -174,7 +174,7 @@ class FitzFB2Document(FitzDocument):
     format = "fb2"
     # Translators: the name of a document file format
     name = _("Fiction Book (FB2)")
-    extensions = ("*.fb2", "*.fb2.zip", "*.fbz")
+    extensions = ("*.fb2",)
 
     def read(self):
         self.filename = self.get_file_system_path()
