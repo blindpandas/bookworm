@@ -174,7 +174,7 @@ class ResourceLoader:
         finally:
             if _last_exception is not None:
                 wx.CallAfter(self.view.unloadCurrentEbook)
-                if uri.view_args['from_list']:
+                if uri.view_args.get('from_list'):
                     retval = wx.MessageBox(
                         # Translators: content of a message
                         _("Failed to open document.\nWould you like to remove its entry from the 'recent documents' and 'pinned documents' lists?"),
