@@ -54,7 +54,7 @@ class ArchivedDocument(DummyDocument):
         self.archive = self._open_archive(self.get_file_system_path())
         self.decryption_key = self.uri.view_args.get("decryption_key")
         self._temp_extraction_directory = None
-        arch_prefix, file_list = self.archive_namelist
+        file_list = list(self.archive_namelist)
         if not file_list:
             raise ArchiveContainsNoDocumentsError
         elif (member := self.uri.view_args.get('member')):
@@ -73,22 +73,16 @@ class ArchivedDocument(DummyDocument):
     @cached_property
     def archive_namelist(self) -> tuple[str, list]:
         supported_exts = self.get_supported_file_extensions()
-        namelist = tuple(filter(
+        return tuple(filter(
             lambda fname: PurePosixPath(fname).suffix.lower() in supported_exts,
             self.archive.namelist()
         ))
-        if (prefix := os.path.commonprefix(namelist)):
-            return (
-                prefix,
-                [os.path.relpath(mem, prefix) for mem in namelist]
-            )
-        return ("", namelist)
 
     def open_member_as_document(self, member):
         self._temp_extraction_directory = TemporaryDirectory()
         extracted_file = self.extract_member(
             member,
-            self._temp_extraction_directory
+            self._temp_extraction_directory.name
         )
         new_uri = DocumentUri.from_filename(extracted_file)
         new_uri.view_args['add_to_recents'] = False
@@ -103,22 +97,21 @@ class ArchivedDocument(DummyDocument):
             return handler(os.fspath(filename), 'r')
         raise DocumentIOError(f"Unsupported archive format: {filename}")
 
-    def extract_member(self, member_name, extraction_directory):
-        full_member_path = Path(self.archive_namelist[0]).joinpath(Path(member_name))
-        target_filename = Path(extraction_directory.name).joinpath(full_member_path)
-        target_filename.parent.mkdir(parents=True, exist_ok=True)
+    def extract_member(self, member, extraction_directory):
+        log.info(f"{member=}")
         pwd = (
             self.decryption_key.encode("utf-8")
             if self.decryption_key is not None
             else None
         )
-        with open(target_filename, "wb") as outfile:
-            try:
-                with self.archive.open(full_member_path.as_posix(), pwd=pwd) as infile:
-                    for chunk in infile:
-                        outfile.write(chunk)
-            except RuntimeError as e:
-                if "password" in e.args[0]:
-                    raise DocumentEncryptedError(self)
-                raise
-        return target_filename
+        try:
+            self.archive.extract(member, path=extraction_directory, pwd=pwd)
+        except RuntimeError as e:
+            if "password" in e.args[0]:
+                raise DocumentEncryptedError(self)
+            raise
+        return next(
+            entry
+            for entry in Path(extraction_directory).rglob(member)
+            if entry.is_file()
+        )
