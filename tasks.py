@@ -611,7 +611,8 @@ def copy_executables(c):
         print("Copying antiword executable")
         build_folder = c["build_folder"]
         antiword_executable_dir = PROJECT_ROOT / "scripts" / "executables" / "antiword"
-        shutil.copytree(antiword_executable_dir, build_folder, dirs_exist_ok=True)
+        antiword_dst = build_folder / "antiword"
+        shutil.copytree(antiword_executable_dir, antiword_dst, dirs_exist_ok=True)
     print("Done copying executables.")
 
 
