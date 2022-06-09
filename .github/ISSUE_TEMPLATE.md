@@ -31,4 +31,4 @@ Note that some issues could be tricky to reproduce, they go away when you restar
 
 ## Does the issue still occur after restarting your PC?
 
-## Have you tried any other versions of Bookworm? If so, please report their behaviors.
+## Have you tried other versions of Bookworm? If so, please write which version and report their behavior.
