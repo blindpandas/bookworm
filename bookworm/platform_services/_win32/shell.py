@@ -66,7 +66,7 @@ def remove_association(ext, prog_id):
     )
 
 
-@ignore(System.Exception)
+@ignore(System.Exception, Exception)
 def shell_integrate(supported="*"):
     if not app.is_frozen:
         return log.warning(
@@ -79,12 +79,13 @@ def shell_integrate(supported="*"):
         associate_extension(ext, prog_id, sys.executable, desc, icon)
 
 
-@ignore(System.Exception)
+@ignore(System.Exception, Exception)
 def shell_disintegrate(supported="*"):
     if not app.is_frozen:
-        return log.warning(
+        log.warning(
             "File association is not available when running from source."
         )
+        return
     log.info(f"Unregistering file associations for extensions {supported}.")
     exe = os.path.split(sys.executable)[-1]
     with RegKey.LocalSoftware("Applications") as apps_key:

@@ -74,7 +74,7 @@ class FitzDocument(BaseDocument):
         return FitzPage(self, index)
 
     def __len__(self) -> int:
-        return self._ebook.pageCount
+        return self._ebook.page_count
 
     def read(self, filetype=None):
         self.filename = self.get_file_system_path()
@@ -86,7 +86,7 @@ class FitzDocument(BaseDocument):
             if "drm" in e.args[0].lower():
                 raise DocumentRestrictedError("Document is encrypted with DRM") from e
             raise DocumentError("Could not open document") from e
-        if self._ebook.isEncrypted:
+        if self._ebook.is_encrypted:
             self.decrypt_document()
 
     def close(self):
