@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 from io import StringIO
 from operator import attrgetter
 
+from chemical import ChemicalException, it
 from more_itertools import first_true
 
 from bookworm import app

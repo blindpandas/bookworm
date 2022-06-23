@@ -4,19 +4,18 @@ from bookworm import app, config
 from bookworm.logger import logger
 from bookworm.signals import app_shuttingdown
 
-log = logger.getChild(__name__)
-
-
 from bookworm.annotation import AnnotationService
 from bookworm.bookshelf import BookshelfService
 from bookworm.continuous_reading import ContReadingService
 from bookworm.epub_serve import EpubServeService
 from bookworm.ocr import OCRService, OCRSettingsService
-# Builtin services
+from bookworm.ocr import OCRService
 from bookworm.otau import OTAUService
 from bookworm.text_to_speech import TextToSpeechService
 from bookworm.webservices import (UrlOpenService, WebservicesBaseService,
                                   WikipediaService)
+
+log = logger.getChild(__name__)
 
 BUILTIN_SERVICES = (
     OTAUService,

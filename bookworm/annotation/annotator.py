@@ -4,6 +4,7 @@ from dataclasses import astuple, dataclass
 from enum import IntEnum, auto
 
 import sqlalchemy as sa
+from sqlalchemy.ext import baked
 
 from bookworm import config
 from bookworm.database.models import Book

@@ -9,6 +9,7 @@ from enum import IntEnum, auto
 from itertools import chain
 
 import attr
+from chemical import ChemicalException, it
 
 from bookworm import typehints as t
 from bookworm.utils import normalize_line_breaks

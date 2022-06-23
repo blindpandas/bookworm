@@ -13,6 +13,7 @@ from pathlib import Path
 
 import more_itertools
 import wx
+
 from slugify import slugify
 
 from bookworm import app, config, ocr, paths, speech
