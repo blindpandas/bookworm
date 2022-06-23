@@ -9,4 +9,3 @@ pyinstaller-hooks-contrib==2022.6
 pytest==7.1.2
 pytest-xdist==2.5.0
 wheel==0.37.1
-isort==5.10.1

@@ -1,17 +1,17 @@
 # coding: utf-8
 
 import time
-
 import wx
-from pydantic import BaseModel, HttpUrl, validator
-
-from bookworm import app, config
+from pydantic import validator, BaseModel, HttpUrl
 from bookworm import typehints as t
-from bookworm.concurrency import call_threaded
 from bookworm.http_tools import RemoteJsonResource
-from bookworm.logger import logger
-from bookworm.platform_services import updater
+from bookworm import app
+from bookworm import config
 from bookworm.service import BookwormService
+from bookworm.concurrency import call_threaded
+from bookworm.platform_services import updater
+from bookworm.logger import logger
+
 
 log = logger.getChild(__name__)
 # Update check interval (in seconds)

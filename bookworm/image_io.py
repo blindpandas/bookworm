@@ -1,16 +1,14 @@
 # coding: utf-8
 
 from __future__ import annotations
-
 import io
 import tempfile
-from dataclasses import dataclass
-
-import fitz
 import wx
+import fitz
+from dataclasses import dataclass
+from PIL import Image
+from PIL import ImageOps
 from lazy_import import lazy_module
-from PIL import Image, ImageOps
-
 from bookworm import typehints as t
 from bookworm.logger import logger
 

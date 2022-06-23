@@ -1,22 +1,22 @@
 # coding: utf-8
 
 from __future__ import annotations
-
 import os
 import shutil
-from pathlib import Path
-from tempfile import TemporaryDirectory
-
 import mobi
-
-from bookworm.document.uri import DocumentUri
-from bookworm.logger import logger
+from tempfile import TemporaryDirectory
+from pathlib import Path
 from bookworm.paths import home_data_path
+from bookworm.document.uri import DocumentUri
 from bookworm.utils import generate_file_md5, mute_stdout
+from bookworm.logger import logger
+from .. import (
+    DummyDocument,
+    ChangeDocument,
+    DocumentCapability as DC,
+    DocumentError,
+)
 
-from .. import ChangeDocument
-from .. import DocumentCapability as DC
-from .. import DocumentError, DummyDocument
 
 log = logger.getChild(__name__)
 CONTAINER_XML = """

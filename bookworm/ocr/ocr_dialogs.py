@@ -1,32 +1,44 @@
 # coding: utf-8
 
-from dataclasses import dataclass
-from functools import partial
-
 import wx
 import wx.lib.sized_controls as sc
+from dataclasses import dataclass
+from functools import partial
 from wx.adv import CommandLinkButton
-
-from bookworm import app, config
+from bookworm import app
+from bookworm import config
 from bookworm import typehints as t
-from bookworm.concurrency import threaded_worker
-from bookworm.gui.components import (AsyncSnakDialog, ColumnDefn,
-                                     ImmutableObjectListView,
-                                     RobustProgressDialog, SimpleDialog,
-                                     SnakDialog, make_sized_static_box)
-from bookworm.gui.settings import ReconciliationStrategies, SettingsPanel
 from bookworm.i18n import LocaleInfo
-from bookworm.logger import logger
-from bookworm.ocr_engines.image_processing_pipelines import (
-    BlurProcessingPipeline, ConcatImagesProcessingPipeline,
-    DebugProcessingPipeline, DeskewProcessingPipeline,
-    DilationProcessingPipeline, DPIProcessingPipeline,
-    ErosionProcessingPipeline, ImageProcessingPipeline,
-    InvertColourProcessingPipeline, SharpenColourProcessingPipeline,
-    ThresholdProcessingPipeline, TwoInOneScanProcessingPipeline)
-from bookworm.ocr_engines.tesseract_ocr_engine import TesseractOcrEngine
-from bookworm.platform_services._win32 import tesseract_download
+from bookworm.concurrency import threaded_worker
+from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
+from bookworm.gui.components import (
+    make_sized_static_box,
+    SimpleDialog,
+    RobustProgressDialog,
+    SnakDialog,
+    AsyncSnakDialog,
+    ImmutableObjectListView,
+    ColumnDefn,
+)
 from bookworm.utils import restart_application
+from bookworm.logger import logger
+from bookworm.platform_services._win32 import tesseract_download
+from bookworm.ocr_engines.tesseract_ocr_engine import TesseractOcrEngine
+from bookworm.ocr_engines.image_processing_pipelines import (
+    ImageProcessingPipeline,
+    DebugProcessingPipeline,
+    DPIProcessingPipeline,
+    ThresholdProcessingPipeline,
+    BlurProcessingPipeline,
+    TwoInOneScanProcessingPipeline,
+    DeskewProcessingPipeline,
+    InvertColourProcessingPipeline,
+    ErosionProcessingPipeline,
+    DilationProcessingPipeline,
+    ConcatImagesProcessingPipeline,
+    SharpenColourProcessingPipeline,
+)
+
 
 log = logger.getChild(__name__)
 

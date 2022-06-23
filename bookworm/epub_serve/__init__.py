@@ -1,22 +1,19 @@
 # coding: utf-8
 
 from __future__ import annotations
-
 import os
-import urllib.parse
-from functools import partial
-
-import requests
 import wx
-
+import requests
+from functools import partial
+import urllib.parse
 from bookworm import local_server
-from bookworm.document.formats import EpubDocument
-from bookworm.gui.components import AsyncSnakDialog
-from bookworm.logger import logger
 from bookworm.service import BookwormService
-from bookworm.signals import local_server_booting, reader_book_loaded
+from bookworm.signals import reader_book_loaded, local_server_booting
+from bookworm.gui.components import AsyncSnakDialog
+from bookworm.document.formats import EpubDocument
+from bookworm.logger import logger
+from .webapp import EpubServingApp, EPUB_SERVE_APP_PREFIX
 
-from .webapp import EPUB_SERVE_APP_PREFIX, EpubServingApp
 
 log = logger.getChild(__name__)
 

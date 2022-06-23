@@ -1,18 +1,15 @@
 # coding: utf-8
 
 import os
-import platform
-from concurrent.futures import ThreadPoolExecutor
-from io import StringIO
-
 import clr
-
+import platform
+from io import StringIO
+from concurrent.futures import ThreadPoolExecutor
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
-from bookworm.logger import logger
-from bookworm.ocr_engines import BaseOcrEngine, OcrRequest, OcrResult
+from bookworm.ocr_engines import OcrRequest, OcrResult, BaseOcrEngine
 from bookworm.utils import NEWLINE
-
+from bookworm.logger import logger
 from .runtime import UWP_SERVICES_AVAILABEL
 
 log = logger.getChild(__name__)

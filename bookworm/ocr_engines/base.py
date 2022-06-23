@@ -1,25 +1,21 @@
 # coding: utf-8
 
 from __future__ import annotations
-
 from abc import ABCMeta, abstractmethod
-from concurrent.futures import ThreadPoolExecutor
-from contextlib import suppress
 from dataclasses import dataclass, field
 from io import StringIO
 from operator import attrgetter
-
-from chemical import ChemicalException, it
+from contextlib import suppress
+from concurrent.futures import ThreadPoolExecutor
 from more_itertools import first_true
-
-from bookworm import app
 from bookworm import typehints as t
+from bookworm import app
 from bookworm.i18n import LocaleInfo
 from bookworm.image_io import ImageIO
-from bookworm.logger import logger
 from bookworm.utils import NEWLINE
-
+from bookworm.logger import logger
 from .image_processing_pipelines import ImageProcessingPipeline
+
 
 log = logger.getChild(__name__)
 

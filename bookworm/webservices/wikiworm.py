@@ -1,20 +1,17 @@
 # coding: utf-8
 
 import threading
-import webbrowser
-from functools import partial
-
-import wikipedia
 import wx
 import wx.lib.sized_controls as sc
+import webbrowser
+import wikipedia
 from wikipedia.exceptions import DisambiguationError
-
+from functools import partial
 from bookworm import app
 from bookworm.gui.components import AsyncSnakDialog, SimpleDialog
-from bookworm.logger import logger
-from bookworm.resources import sounds
 from bookworm.service import BookwormService
-from bookworm.speech import announce
+from bookworm.resources import sounds
+from bookworm.logger import logger
 
 log = logger.getChild(__name__)
 
@@ -84,9 +81,7 @@ class WikipediaService(BookwormService):
             language = self.view.reader.document.language
         else:
             language = app.current_language
-        announce(f'Language detected was {language.two_letter_language_code}', True)
-        # wikipedia.set_lang(language.two_letter_language_code)
-        wikipedia.set_lang('ka')
+        wikipedia.set_lang(language.two_letter_language_code)
         page = None
         try:
             if sure_exists:

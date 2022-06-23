@@ -1,11 +1,9 @@
 # coding: utf-8
 
 import typing
-
 from peewee import *
-from peewee import ColumnBase, EnclosedNodeList, NodeList
+from peewee import NodeList, EnclosedNodeList, ColumnBase
 from playhouse.apsw_ext import APSWDatabase, BooleanField, DateTimeField
-
 from bookworm.document.uri import DocumentUri
 from bookworm.image_io import ImageIO
 

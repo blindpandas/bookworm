@@ -1,15 +1,15 @@
 # coding: utf-8
 
-import ctypes
-import sys
-from pathlib import Path
-
 import clr
-from platform_utils import paths as paths_
 from System.Globalization import CultureInfo, CultureNotFoundException
 
+
+import sys
+import ctypes
+from pathlib import Path
+from platform_utils import paths as paths_
 from bookworm import app
-from bookworm.i18n.localeinfo import LocaleInfo
+from bookworm.i18n import LocaleInfo
 
 
 def get_user_locale():

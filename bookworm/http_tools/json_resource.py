@@ -1,13 +1,11 @@
 # coding: utf-8
 
 from __future__ import annotations
-
-from dataclasses import dataclass, field
-
 import requests
+from dataclasses import dataclass, field
 from pydantic import BaseModel, ValidationError
-
 from bookworm.logger import logger
+
 
 log = logger.getChild(__name__)
 

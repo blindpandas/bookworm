@@ -1,21 +1,30 @@
 # coding: utf-8
 
 import os
-from datetime import datetime
-
 import attr
 import ujson
+from datetime import datetime
 from peewee import *
-from playhouse.sqlite_ext import (AutoIncrementField, FTS5Model, JSONField,
-                                  RowIDField, SearchField)
-
+from playhouse.sqlite_ext import (
+    FTS5Model,
+    AutoIncrementField,
+    RowIDField,
+    JSONField,
+    SearchField,
+)
+from bookworm.paths import db_path
 from bookworm.document import DocumentInfo
 from bookworm.i18n import LocaleInfo
-from bookworm.paths import db_path
+from .database import (
+    AutoOptimizedAPSWDatabase,
+    AutoCalculatedField,
+    BooleanField,
+    DateTimeField,
+    DocumentUriField,
+    ImageField,
+    SqliteViewSchemaManager,
+)
 
-from .database import (AutoCalculatedField, AutoOptimizedAPSWDatabase,
-                       BooleanField, DateTimeField, DocumentUriField,
-                       ImageField, SqliteViewSchemaManager)
 
 BOOKWORM_BOOKSHELF_APP_ID = 10194273
 BOOKWORM_BOOKSHELF_SCHEMA_VERSION = 2

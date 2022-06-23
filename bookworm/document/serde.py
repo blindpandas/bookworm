@@ -3,8 +3,9 @@
 """Serialization/deserialization routines for  documents."""
 
 from bookworm import typehints as t
-from bookworm.document import Pager, Section, TreeStackBuilder
 from bookworm.structured_text import TextRange
+from bookworm.document import Section, Pager, TreeStackBuilder
+
 
 TocTree = t.NewType("TocTree", Section)
 

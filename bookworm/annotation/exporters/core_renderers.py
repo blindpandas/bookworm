@@ -1,9 +1,7 @@
 # coding: utf-8
 
 import os
-
 from bookworm.utils import escape_html
-
 from .base_renderer import TextRenderer
 
 

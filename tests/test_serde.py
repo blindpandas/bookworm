@@ -1,13 +1,11 @@
 # coding: utf-8
 
-import msgpack
 import pytest
 import ujson
-
+import msgpack
 from bookworm.document import create_document
-from bookworm.document.serde import dump_toc_tree, load_toc_tree
 from bookworm.document.uri import DocumentUri
-
+from bookworm.document.serde import dump_toc_tree, load_toc_tree
 
 def test_serde_toc_tree(asset):
     uri = DocumentUri.from_filename(asset("epub30-spec.epub"))

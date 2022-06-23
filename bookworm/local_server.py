@@ -1,26 +1,26 @@
 # coding: utf-8
 
 from __future__ import annotations
-
-import atexit
-import contextlib
-import errno
-import os
-import socket
 import sys
+import os
 import time
+import atexit
+import socket
+import errno
+import contextlib
+import waitress
 from hashlib import md5
 from multiprocessing.shared_memory import SharedMemory
-
-import waitress
 from bottle import Bottle
-
 from bookworm import app
-from bookworm.commandline_handler import (BaseSubcommandHandler,
-                                          register_subcommand,
-                                          run_subcommand_in_a_new_process)
-from bookworm.logger import logger
 from bookworm.signals import local_server_booting
+from bookworm.commandline_handler import (
+    BaseSubcommandHandler,
+    register_subcommand,
+    run_subcommand_in_a_new_process,
+)
+from bookworm.logger import logger
+
 
 log = logger.getChild(__name__)
 

@@ -1,33 +1,41 @@
 # coding: utf-8
 
-import multiprocessing
+import sys
 import os
 import platform
-import sys
-from functools import partial
-
+import multiprocessing
 import wx
-
+from functools import partial
 from bookworm import app as appinfo
-from bookworm.commandline_handler import (BaseSubcommandHandler,
-                                          handle_app_commandline_args,
-                                          register_subcommand)
+from bookworm.paths import logs_path
 from bookworm.config import setup_config
+from bookworm.i18n import setup_i18n
 from bookworm.database import init_database
-from bookworm.document.uri import DocumentUri
+from bookworm.signals import (
+    app_starting,
+    app_started,
+    app_shuttingdown,
+    app_window_shown,
+)
+from bookworm.runtime import (
+    PackagingMode,
+    IS_RUNNING_PORTABLE,
+    CURRENT_PACKAGING_MODE,
+    IS_IN_MAIN_PROCESS,
+)
+from bookworm.service.handler import ServiceHandler
 from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.gui.settings import show_file_association_dialog
-from bookworm.i18n import setup_i18n
+from bookworm.document.uri import DocumentUri
+from bookworm.platform_services.shell import shell_integrate, shell_disintegrate
+from bookworm.commandline_handler import (
+    BaseSubcommandHandler,
+    register_subcommand,
+    handle_app_commandline_args,
+)
 from bookworm.local_server import LocalServerSubcommand
-from bookworm.logger import configure_logger, logger
-from bookworm.paths import logs_path
-from bookworm.platform_services.shell import (shell_disintegrate,
-                                              shell_integrate)
-from bookworm.runtime import (CURRENT_PACKAGING_MODE, IS_IN_MAIN_PROCESS,
-                              IS_RUNNING_PORTABLE, PackagingMode)
-from bookworm.service.handler import ServiceHandler
-from bookworm.signals import (app_shuttingdown, app_started, app_starting,
-                              app_window_shown)
+from bookworm.logger import logger, configure_logger
+
 
 log = logger.getChild(__name__)
 

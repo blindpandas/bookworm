@@ -1,21 +1,28 @@
 # coding: utf-8
 
-from dataclasses import dataclass
-
 import wx
 import wx.lib.sized_controls as sc
-from platform_utils.clipboard import copy as copy_to_clipboard
-from platform_utils.clipboard import get_text as get_clipboard_text
-
-from bookworm.gui.components import (ColumnDefn, ImmutableObjectListView,
-                                     SimpleDialog, make_sized_static_box)
-from bookworm.logger import logger
-from bookworm.resources import sounds
+from dataclasses import dataclass
+from platform_utils.clipboard import (
+    copy as copy_to_clipboard,
+    get_text as get_clipboard_text,
+)
 from bookworm.utils import format_datetime
-
-from .annotator import (AnnotationFilterCriteria, AnnotationSortCriteria,
-                        NoteTaker)
+from bookworm.resources import sounds
+from bookworm.logger import logger
+from bookworm.gui.components import (
+    SimpleDialog,
+    ImmutableObjectListView,
+    ColumnDefn,
+    make_sized_static_box,
+)
+from .annotator import (
+    NoteTaker,
+    AnnotationFilterCriteria,
+    AnnotationSortCriteria,
+)
 from .exporters import ExportOptions, renderers
+
 
 log = logger.getChild(__name__)
 

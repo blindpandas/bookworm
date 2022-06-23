@@ -1,26 +1,26 @@
 # coding: utf-8
 
 from __future__ import annotations
-
-import contextlib
-import copy
 import os
+import copy
+import contextlib
 import subprocess
-from functools import cached_property
-from pathlib import Path
-
 import dateparser
 import lxml
-from more_itertools import first as get_first_element
-from more_itertools import flatten
-
+from functools import cached_property
+from pathlib import Path
+from more_itertools import flatten, first as get_first_element
 from bookworm import app
+from bookworm.paths import resources_path
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
-from bookworm.paths import resources_path
-
-from .. import BookMetadata, DocumentError, DocumentIOError
+from .. import (
+    BookMetadata,
+    DocumentError,
+    DocumentIOError,
+)
 from .html import BaseHtmlDocument
+
 
 log = logger.getChild(__name__)
 EXPIRE_TIMEOUT = 30 * 24 * 60 * 60

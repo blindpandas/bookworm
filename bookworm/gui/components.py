@@ -1,25 +1,23 @@
 # coding: utf-8
 
 from __future__ import annotations
-
-import contextlib
-import threading
 import time
-from concurrent.futures import Future
-from functools import reduce
-from itertools import chain
-
+import threading
+import contextlib
 import attr
 import wx
 import wx.lib.mixins.listctrl as listmix
 import wx.lib.sized_controls as sc
 from wx.lib.combotreebox import ComboTreeBox
-
+from functools import reduce
+from concurrent.futures import Future
+from itertools import chain
 import bookworm.typehints as t
 from bookworm.concurrency import threaded_worker
-from bookworm.logger import logger
 from bookworm.structured_text import TextRange
 from bookworm.vendor.repeating_timer import RepeatingTimer
+from bookworm.logger import logger
+
 
 log = logger.getChild(__name__)
 ID_SKIP = 32000

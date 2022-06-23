@@ -1,26 +1,32 @@
 # coding: utf-8
 
 from __future__ import annotations
-
-import atexit
-import mimetypes
 import os
+import atexit
 import threading
+import mimetypes
 import urllib.parse
 import zipfile
-from functools import cached_property, lru_cache
-from tempfile import TemporaryDirectory
-
 import apsw
-from bottle import (Bottle, HTTPError, abort, redirect, request, response,
-                    static_file, template)
+from tempfile import TemporaryDirectory
+from functools import lru_cache, cached_property
 from url_normalize import url_normalize
-
-from bookworm import paths
+from bottle import (
+    Bottle,
+    HTTPError,
+    template,
+    request,
+    response,
+    static_file,
+    redirect,
+    abort,
+)
 from bookworm import typehints as t
+from bookworm import paths
+from bookworm.utils import generate_sha1hash
 from bookworm.concurrency import threaded_worker
 from bookworm.logger import logger
-from bookworm.utils import generate_sha1hash
+
 
 log = logger.getChild(__name__)
 

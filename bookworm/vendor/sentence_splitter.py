@@ -1,12 +1,11 @@
 import os
 import warnings
+import regex
 from enum import Enum
 from pathlib import Path
 from typing import List
-
-import regex
-
 from bookworm.paths import app_path
+
 
 __all__ = (
     "SentenceSplitter",

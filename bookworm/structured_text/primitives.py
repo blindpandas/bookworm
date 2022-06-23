@@ -3,21 +3,19 @@
 """Provides primitives for structuring a blob of text."""
 
 from __future__ import annotations
-
-import bisect
 import math
+import bisect
 import operator
+import attr
 from collections.abc import Container
 from functools import cached_property
-
-import attr
 from more_itertools import locate
-
 from bookworm import typehints as t
-from bookworm.vendor.sentence_splitter import (SentenceSplitter,
-                                               SentenceSplitterException)
-from bookworm.vendor.sentence_splitter import \
-    supported_languages as splitter_supported_languages
+from bookworm.vendor.sentence_splitter import (
+    SentenceSplitter,
+    SentenceSplitterException,
+    supported_languages as splitter_supported_languages,
+)
 
 
 @attr.s(auto_attribs=True, slots=True, hash=False)

@@ -1,19 +1,27 @@
 # coding: utf-8
 
 import wx
-
-from bookworm import config, speech
-from bookworm.logger import logger
+from bookworm import config
+from bookworm import speech
+from bookworm.signals import (
+    reading_position_change,
+    reader_page_changed,
+    reader_book_loaded,
+    reader_book_unloaded,
+)
 from bookworm.resources import sounds
 from bookworm.service import BookwormService
-from bookworm.signals import (reader_book_loaded, reader_book_unloaded,
-                              reader_page_changed, reading_position_change)
 from bookworm.utils import gui_thread_safe
-
-from .annotation_gui import (ANNOTATIONS_KEYBOARD_SHORTCUTS, AnnotationMenu,
-                             AnnotationSettingsPanel, AnnotationsMenuIds)
-from .annotation_models import Note, Quote
+from bookworm.logger import logger
+from .annotation_gui import (
+    AnnotationSettingsPanel,
+    AnnotationMenu,
+    AnnotationsMenuIds,
+    ANNOTATIONS_KEYBOARD_SHORTCUTS,
+)
+from .annotation_models import Quote, Note
 from .annotator import Bookmarker, NoteTaker, Quoter
+
 
 log = logger.getChild(__name__)
 

@@ -1,9 +1,7 @@
 # coding: utf-8
 
 from __future__ import annotations
-
 import attr
-
 from bookworm import typehints as t
 from bookworm.utils import NEWLINE
 

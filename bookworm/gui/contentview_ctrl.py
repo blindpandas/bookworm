@@ -1,13 +1,12 @@
 # coding: utf-8
 
-from itertools import chain
-
 import wx
 import wx.lib.newevent
-
+from itertools import chain
 import bookworm.typehints as t
-from bookworm.logger import logger
 from bookworm.structured_text import SemanticElementType
+from bookworm.logger import logger
+
 
 log = logger.getChild(__name__)
 ContextMenuEvent, EVT_CONTEXTMENU_REQUESTED = wx.lib.newevent.NewCommandEvent()
