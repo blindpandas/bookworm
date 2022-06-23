@@ -253,7 +253,8 @@ def copy_wx_catalogs(c):
     app_langs = {fldr.name for fldr in dst.iterdir() if fldr.is_dir()}
     to_copy = wx_langs.intersection(app_langs)
     for lang in to_copy:
-        shutil.copy(f'{src}/{lang}/LC_MESSAGES/wxstd.mo', f'{dst}/{lang}/LC_MESSAGES')
+        shutil.copy(f"{src}/{lang}/LC_MESSAGES/wxstd.mo", f"{dst}/{lang}/LC_MESSAGES")
+
 
 def get_pot_filename():
     name, version = [os.environ[k] for k in ["IAPP_NAME", "IAPP_VERSION"]]
@@ -383,12 +384,24 @@ def copy_deps(c):
     arch = os.environ["IAPP_ARCH"]
     dist_dir = os.environ["IAPP_FROZEN_DIRECTORY"]
     dlls = [
-        Path(f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\msvcp140.dll"),
-        Path(f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.OPENMP\\vcomp140.dll"),
-        Path(f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\vcruntime140.dll"),
+        Path(
+            f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\msvcp140.dll"
+        ),
+        Path(
+            f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.OPENMP\\vcomp140.dll"
+        ),
+        Path(
+            f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\vcruntime140.dll"
+        ),
     ]
     # We need all the DLLs in this subdirectory, so let's extend the list
-    dlls.extend(list(Path(f"C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\DLLs\\{arch}").glob('*')))
+    dlls.extend(
+        list(
+            Path(
+                f"C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\DLLs\\{arch}"
+            ).glob("*")
+        )
+    )
     for dll in dlls:
         try:
             shutil.copy(dll, dist_dir)
@@ -402,7 +415,7 @@ def copy_deps(c):
     unrar_dst.mkdir(parents=True, exist_ok=True)
     for file in source_path.iterdir():
         shutil.copy(file, unrar_dst)
-    print('Done copying unrar DLLs')
+    print("Done copying unrar DLLs")
 
 
 @task
@@ -541,6 +554,7 @@ def install_bookworm(c):
     with c.cd(str(PROJECT_ROOT)):
         c.run("python -m pip uninstall bookworm -y -q")
         if "BK_DEVELOPMENT" in c:
+            c.run("pre-commit install")
             c.run("python -m pip install -e .")
         else:
             print("Building Bookworm wheel.")
@@ -603,6 +617,7 @@ def freeze(c):
             hide=False,
         )
     print("App freezed.")
+
 
 @task
 @make_env
