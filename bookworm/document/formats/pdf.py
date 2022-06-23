@@ -1,26 +1,19 @@
 # coding: utf-8
 
 from __future__ import annotations
-
 import gc
-from datetime import datetime
-from functools import cached_property, lru_cache
-
 import ftfy
 import regex
-from dateutil.tz import tzoffset, tzutc
-from pyxpdf import Config as XPdfConfig
-from pyxpdf import Document as XPdfDocument
-from pyxpdf.xpdf import TextControl as XPdfTextControl
-from pyxpdf.xpdf import TextOutput as XPdfTextOutput
+from functools import cached_property, lru_cache
+from datetime import datetime
+from dateutil.tz import tzutc, tzoffset
+from pyxpdf import Document as XPdfDocument, Config as XPdfConfig
+from pyxpdf.xpdf import TextOutput as XPdfTextOutput, TextControl as XPdfTextControl
 from pyxpdf_data import generate_xpdfrc
-
-from bookworm.logger import logger
 from bookworm.paths import data_path
 from bookworm.utils import format_datetime
-
-from .. import DocumentCapability as DC
-from .. import ReadingMode
+from bookworm.logger import logger
+from .. import ReadingMode, DocumentCapability as DC
 from .fitz import FitzDocument, FitzPage
 
 log = logger.getChild(__name__)

@@ -2,8 +2,9 @@
 
 """Type hints used by other modules."""
 
-from io import FileIO
-from os import PathLike
 from typing import *
+from os import PathLike
+from io import FileIO
+
 
 TranslatableStr = NewType("TranslatableStr", str)

@@ -6,11 +6,10 @@ The functions in this module are usually run in parallel using bookworm.concurre
 """
 
 from __future__ import annotations
-
+import regex as re
+import attr
 from io import StringIO
 
-import attr
-import regex as re
 
 NEWLINE = "\n"
 

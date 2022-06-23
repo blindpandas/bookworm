@@ -1,8 +1,9 @@
 # coding: utf-8
 
-import re
-import struct
 import sys
+import struct
+import re
+
 
 name = "bookworm"
 display_name = "Bookworm"

@@ -1,21 +1,19 @@
 # coding: utf-8
 
 from __future__ import annotations
-
-import contextlib
-import hashlib
-import os
 import sys
+import os
+import contextlib
 import uuid
-from functools import lru_cache, wraps
-from pathlib import Path
-
 import wx
-
-from bookworm import app
+import hashlib
+from functools import wraps, lru_cache
+from pathlib import Path
 from bookworm import typehints as t
+from bookworm import app
 from bookworm.concurrency import call_threaded
 from bookworm.logger import logger
+
 
 log = logger.getChild(__name__)
 

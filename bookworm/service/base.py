@@ -1,11 +1,10 @@
 # coding: utf-8
 
 from __future__ import annotations
-
 import wx
-
 from bookworm import typehints as t
 from bookworm.logger import logger
+
 
 log = logger.getChild(__name__)
 

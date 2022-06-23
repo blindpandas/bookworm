@@ -2,18 +2,25 @@
 
 from . import PLATFORM
 
+
 if PLATFORM == "win32":
-    from ._win32.runtime import (is_high_contrast_active, is_running_portable,
-                                 system_start_app)
+    from ._win32.runtime import (
+        system_start_app,
+        is_running_portable,
+        is_high_contrast_active,
+    )
 elif PLATFORM == "linux":
-    from ._linux.runtime import (is_high_contrast_active, is_running_portable,
-                                 system_start_app)
+    from ._linux.runtime import (
+        system_start_app,
+        is_running_portable,
+        is_high_contrast_active,
+    )
 
 
 if PLATFORM == "win32":
     from ._win32.runtime import SoundFile
 else:
-    from wx.adv import SOUND_ASYNC, Sound
+    from wx.adv import Sound, SOUND_ASYNC
 
     class SoundFile:
         """Represent a sound file."""

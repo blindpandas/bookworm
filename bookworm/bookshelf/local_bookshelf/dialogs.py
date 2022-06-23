@@ -1,22 +1,23 @@
 # coding: utf-8
 
 from __future__ import annotations
-
-import operator
 import os
-
+import operator
 import wx
-import wx.lib.filebrowsebutton as filebrowse
 import wx.lib.sized_controls as sc
-
+import wx.lib.filebrowsebutton as filebrowse
 from bookworm import speech
-from bookworm.gui.components import (ColumnDefn, ImmutableObjectListView,
-                                     SimpleDialog, make_sized_static_box)
-from bookworm.logger import logger
 from bookworm.reader import EBookReader
 from bookworm.resources import sounds
+from bookworm.gui.components import (
+    SimpleDialog,
+    ColumnDefn,
+    ImmutableObjectListView,
+    make_sized_static_box,
+)
+from bookworm.logger import logger
+from .models import Document, Page, Category, Tag, DocumentTag
 
-from .models import Category, Document, DocumentTag, Page, Tag
 
 log = logger.getChild(__name__)
 

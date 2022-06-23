@@ -1,7 +1,5 @@
 import pytest
-
 from bookworm.utils import remove_excess_blank_lines
-
 
 def test_remove_excess_blank_lines_without_effecting_structure():
     raw_text = (

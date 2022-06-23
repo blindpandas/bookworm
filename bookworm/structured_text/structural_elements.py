@@ -3,17 +3,12 @@
 """Provides elements that help to define the structure for a blob of text."""
 
 from __future__ import annotations
-
 import re
-from enum import IntEnum, auto
-from itertools import chain
-
 import attr
-from chemical import ChemicalException, it
-
+from itertools import chain
+from enum import IntEnum, auto
 from bookworm import typehints as t
 from bookworm.utils import normalize_line_breaks
-
 from .primitives import TextRange
 
 

@@ -1,19 +1,24 @@
 # coding: utf-8
 
 from __future__ import annotations
-
 import os
-from functools import cached_property
-
 import ftfy
-
+from functools import cached_property
+from bookworm.utils import (
+    TextContentDecoder,
+    normalize_line_breaks,
+    remove_excess_blank_lines,
+)
 from bookworm.logger import logger
-from bookworm.utils import (TextContentDecoder, normalize_line_breaks,
-                            remove_excess_blank_lines)
+from .. import (
+    SinglePageDocument,
+    Section,
+    Pager,
+    BookMetadata,
+    DocumentCapability as DC,
+    DocumentError,
+)
 
-from .. import BookMetadata
-from .. import DocumentCapability as DC
-from .. import DocumentError, Pager, Section, SinglePageDocument
 
 log = logger.getChild(__name__)
 MAX_NUM_CHARS = round(2e6)

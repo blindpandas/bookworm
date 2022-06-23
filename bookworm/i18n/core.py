@@ -1,20 +1,23 @@
 # coding: utf-8
 
-import gettext
-import locale as pylocale
 import os
+import locale as pylocale
+import gettext
 from collections import OrderedDict
 from contextlib import suppress
 from pathlib import Path
-
-from bookworm import app, config, paths
-from bookworm.logger import logger
-from bookworm.platform_services.user import get_user_locale
-from bookworm.platform_services.user import set_app_locale as _set_app_locale
+from bookworm import app
+from bookworm import paths
+from bookworm import config
+from bookworm.platform_services.user import (
+    get_user_locale,
+    set_app_locale as _set_app_locale,
+)
 from bookworm.signals import app_started
-
+from bookworm.logger import logger
 from .localeinfo import LocaleInfo
 from .wx_i18n import set_wx_locale
+
 
 log = logger.getChild(__name__)
 

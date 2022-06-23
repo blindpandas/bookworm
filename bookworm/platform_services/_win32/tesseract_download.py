@@ -1,21 +1,21 @@
 # coding: utf-8
 
-import shutil
 import sys
-from pathlib import Path
-from tempfile import TemporaryFile
-from urllib.parse import urljoin, urlsplit
-from zipfile import ZipFile
-
+import shutil
 import requests
 import wx
-
-from bookworm import app
+from pathlib import Path
+from urllib.parse import urljoin, urlsplit
+from tempfile import TemporaryFile
+from zipfile import ZipFile
 from bookworm import typehints as t
-from bookworm.http_tools import HttpResource, RemoteJsonResource
+from bookworm import app
+from bookworm.http_tools import RemoteJsonResource, HttpResource
+from bookworm.ocr_engines.tesseract_ocr_engine import (
+    TesseractOcrEngine,
+    get_tesseract_path,
+)
 from bookworm.logger import logger
-from bookworm.ocr_engines.tesseract_ocr_engine import (TesseractOcrEngine,
-                                                       get_tesseract_path)
 
 log = logger.getChild(__name__)
 

@@ -2,11 +2,10 @@
 
 """Make sure that runtime components are OK and run the app."""
 
-import logging
-import os
 import sys
+import os
+import logging
 from pathlib import Path
-
 from bookworm import app
 
 

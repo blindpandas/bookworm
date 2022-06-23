@@ -1,19 +1,20 @@
 # coding: utf-8
 
-from enum import IntEnum
-
 import wx
 import wx.lib.sized_controls as sc
-
+from enum import IntEnum
 from bookworm import speech
-from bookworm.gui.components import EnhancedSpinCtrl, SimpleDialog
-from bookworm.gui.settings import ReconciliationStrategies, SettingsPanel
-from bookworm.logger import logger
+from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
+from bookworm.gui.components import SimpleDialog, EnhancedSpinCtrl
 from bookworm.speechdriver import DummySpeechEngine
 from bookworm.speechdriver.enumerations import SynthState
+from bookworm.logger import logger
+from .tts_config import (
+    PARAGRAPH_PAUSE_MAX,
+    END_OF_PAGE_PAUSE_MAX,
+    END_OF_SECTION_PAUSE_MAX,
+)
 
-from .tts_config import (END_OF_PAGE_PAUSE_MAX, END_OF_SECTION_PAUSE_MAX,
-                         PARAGRAPH_PAUSE_MAX)
 
 log = logger.getChild(__name__)
 

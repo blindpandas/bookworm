@@ -5,12 +5,9 @@ Contains database schema upgrade rutines for bookworm
 """
 
 from __future__ import annotations
-
 from contextlib import suppress
-
 import sqlalchemy as sa
 from db_magic.schema_upgrades import perform_upgrade
-
 import bookworm.typehints as t
 from bookworm.logger import logger
 

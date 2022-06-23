@@ -2,12 +2,10 @@
 
 
 from dataclasses import dataclass
-
-from bookworm import app
 from bookworm import typehints as t
+from bookworm import app
 from bookworm.paths import app_path
 from bookworm.reader import get_document_format_info
-
 from . import PLATFORM
 
 
@@ -53,6 +51,6 @@ def get_ext_info(supported="*"):
 
 
 if PLATFORM == "win32":
-    from ._win32.shell import shell_disintegrate, shell_integrate
+    from ._win32.shell import shell_integrate, shell_disintegrate
 elif PLATFORM == "linux":
-    from ._linux.shell import shell_disintegrate, shell_integrate
+    from ._linux.shell import shell_integrate, shell_disintegrate

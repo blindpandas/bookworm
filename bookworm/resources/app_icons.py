@@ -2,8 +2,8 @@
 
 """Redirects attribute access to the appropriate image based on whether contrast mode is enabled or not."""
 
-from bookworm.resources import app_icons_data
 from bookworm.runtime import IS_HIGH_CONTRAST_ACTIVE
+from bookworm.resources import app_icons_data
 
 
 def __getattr__(name):

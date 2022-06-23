@@ -1,33 +1,43 @@
 # coding: utf-8
 
-from base64 import b85decode, b85encode
-from collections import deque
-from contextlib import contextmanager, suppress
-from functools import cached_property
-
-import msgpack
 import wx
-
+import msgpack
+from base64 import b85encode, b85decode
+from collections import deque
+from functools import cached_property
+from contextlib import contextmanager, suppress
 from bookworm import config
-from bookworm.logger import logger
 from bookworm.platform_services.speech_engines import TTS_ENGINES
-from bookworm.resources import app_icons, sounds
-from bookworm.service import BookwormService
-from bookworm.signals import (_signals, reader_book_loaded,
-                              reader_book_unloaded, reader_page_changed,
-                              reading_position_change)
-from bookworm.speechdriver import (DummySpeechEngine,
-                                   speech_engine_state_changed)
-from bookworm.speechdriver.enumerations import (EmphSpec, EngineEvent,
-                                                PauseSpec, SynthState)
-from bookworm.speechdriver.utterance import SpeechStyle, SpeechUtterance
+from bookworm.resources import sounds
 from bookworm.structured_text import TextInfo
+from bookworm.resources import app_icons
+from bookworm.speechdriver import DummySpeechEngine, speech_engine_state_changed
+from bookworm.speechdriver.utterance import SpeechUtterance, SpeechStyle
+from bookworm.speechdriver.enumerations import (
+    EngineEvent,
+    SynthState,
+    EmphSpec,
+    PauseSpec,
+)
 from bookworm.utils import gui_thread_safe
-
-from .tts_config import TTSConfigManager, tts_config_spec
-from .tts_gui import (SPEECH_KEYBOARD_SHORTCUTS, ReadingPanel, SpeechMenu,
-                      SpeechPanel, StatefulSpeechMenuIds,
-                      StatelessSpeechMenuIds)
+from bookworm.signals import (
+    _signals,
+    reader_book_loaded,
+    reader_book_unloaded,
+    reader_page_changed,
+    reading_position_change,
+)
+from bookworm.service import BookwormService
+from bookworm.logger import logger
+from .tts_config import tts_config_spec, TTSConfigManager
+from .tts_gui import (
+    ReadingPanel,
+    SpeechPanel,
+    SpeechMenu,
+    SPEECH_KEYBOARD_SHORTCUTS,
+    StatelessSpeechMenuIds,
+    StatefulSpeechMenuIds,
+)
 
 log = logger.getChild(__name__)
 

@@ -1,13 +1,11 @@
 # coding: utf-8
 
 import wx
-
-from bookworm.logger import logger
-from bookworm.signals import (app_shuttingdown, reader_book_loaded,
-                              reader_book_unloaded)
 from bookworm.utils import gui_thread_safe
-
+from bookworm.signals import reader_book_loaded, reader_book_unloaded, app_shuttingdown
+from bookworm.logger import logger
 from .menu_constants import BookRelatedMenuIds
+
 
 log = logger.getChild(__name__)
 

@@ -1,13 +1,11 @@
 # coding: utf-8
 
-from contextlib import contextmanager
-from pathlib import Path
-
 import System
 from System.Speech.Synthesis import PromptBuilder, PromptStyle
-
+from contextlib import contextmanager
+from pathlib import Path
+from bookworm.speechdriver.enumerations import SpeechElementKind, PauseSpec
 from bookworm.logger import logger
-from bookworm.speechdriver.enumerations import PauseSpec, SpeechElementKind
 
 log = logger.getChild(__name__)
 

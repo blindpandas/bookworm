@@ -1,7 +1,8 @@
 # coding: utf-8
 
-from bookworm.database import PinnedDocument, RecentDocument
+from bookworm.database import RecentDocument, PinnedDocument
 from bookworm.logger import logger
+
 
 log = logger.getChild(__name__)
 

@@ -1,22 +1,23 @@
 # coding: utf-8
 
 from __future__ import annotations
-
 import re
+import ftfy
 from functools import cached_property
 from itertools import chain
-
-import ftfy
-from inscriptis import Inscriptis
-from inscriptis.css_profiles import RELAXED_CSS_PROFILE, STRICT_CSS_PROFILE
-from inscriptis.model.config import ParserConfig
 from lxml import html as html_parser
 from selectolax.parser import HTMLParser
-
+from inscriptis import Inscriptis
+from inscriptis.model.config import ParserConfig
+from inscriptis.css_profiles import RELAXED_CSS_PROFILE, STRICT_CSS_PROFILE
 from bookworm import typehints as t
-from bookworm.logger import logger
-from bookworm.structured_text import SemanticElementType, Style
 from bookworm.utils import remove_excess_blank_lines
+from bookworm.logger import logger
+from bookworm.structured_text import (
+    Style,
+    SemanticElementType,
+)
+
 
 log = logger.getChild(__name__)
 INSCRIPTIS_PARSE_HTML_TREE = Inscriptis._parse_html_tree

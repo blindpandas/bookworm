@@ -1,16 +1,14 @@
 # coding: utf-8
 
 from __future__ import annotations
-
 import base64
 from pathlib import Path
-
 from yarl import URL
-
 from bookworm import typehints as t
 from bookworm.document.base import BaseDocument
 from bookworm.document.exceptions import UnsupportedDocumentFormatError
 from bookworm.logger import logger
+
 
 log = logger.getChild(__name__)
 BOOKWORM_URI_SCHEME = "bkw"

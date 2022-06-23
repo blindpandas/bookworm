@@ -4,14 +4,13 @@
 Database models for Annotations.
 """
 
-from datetime import datetime
-
 import sqlalchemy as sa
+from sqlalchemy.orm import synonym, relationship, deferred
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import deferred, relationship, synonym
-
-from bookworm.database import GetOrCreateMixin, db
+from datetime import datetime
+from bookworm.database import db
+from bookworm.database import GetOrCreateMixin
 
 
 class TaggedMixin:

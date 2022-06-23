@@ -2,14 +2,13 @@
 
 import logging
 import platform
-from functools import wraps
-from pathlib import Path
-
-from platform_utils import paths as path_finder
-
 import bookworm
+from pathlib import Path
+from platform_utils import paths as path_finder
+from functools import wraps
 from bookworm import app
 from bookworm.runtime import CURRENT_PACKAGING_MODE, PackagingMode
+
 
 log = logging.getLogger("bookworm.paths")
 

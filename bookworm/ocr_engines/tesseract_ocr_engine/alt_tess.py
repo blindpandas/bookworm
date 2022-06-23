@@ -1,21 +1,20 @@
 # coding: utf-8
 
-import ctypes
-import os
 import sys
+import os
+import ctypes
 from io import BytesIO, StringIO
 from pathlib import Path
-
-from more_itertools import chunked
 from PIL import Image
-
+from more_itertools import chunked
 from bookworm import app
 from bookworm import typehints as t
-from bookworm.i18n import LocaleInfo
-from bookworm.logger import logger
-from bookworm.ocr_engines import BaseOcrEngine, OcrRequest, OcrResult
-from bookworm.paths import data_path
 from bookworm.utils import NEWLINE
+from bookworm.i18n import LocaleInfo
+from bookworm.paths import data_path
+from bookworm.ocr_engines import OcrRequest, OcrResult, BaseOcrEngine
+from bookworm.logger import logger
+
 
 log = logger.getChild(__name__)
 

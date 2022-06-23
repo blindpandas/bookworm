@@ -1,21 +1,19 @@
 # coding: utf-8
 
 
-from enum import IntEnum
-
 import wx
-
+from enum import IntEnum
+from bookworm.concurrency import threaded_worker, call_threaded
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
-from bookworm.concurrency import call_threaded, threaded_worker
-from bookworm.document import DocumentIOError
-from bookworm.gui.settings import ReconciliationStrategies, SettingsPanel
-from bookworm.logger import logger
 from bookworm.signals import reader_book_loaded
-
-from .local_bookshelf.dialogs import EditDocumentClassificationDialog
-from .local_bookshelf.models import Document
-from .local_bookshelf.tasks import issue_add_document_request
+from bookworm.gui.settings import SettingsPanel, ReconciliationStrategies
+from bookworm.document import DocumentIOError
+from bookworm.logger import logger
 from .window import BookshelfWindow
+from .local_bookshelf.models import Document
+from .local_bookshelf.dialogs import EditDocumentClassificationDialog
+from .local_bookshelf.tasks import issue_add_document_request
+
 
 log = logger.getChild(__name__)
 

@@ -1,14 +1,13 @@
 # coding: utf-8
 
 from __future__ import annotations
-
-import asyncio
 import threading
+import asyncio
 from functools import wraps
-
 import bookworm.typehints as t
+from bookworm.signals import app_starting, app_shuttingdown
 from bookworm.logger import logger
-from bookworm.signals import app_shuttingdown, app_starting
+
 
 log = logger.getChild(__name__)
 
