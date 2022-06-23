@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import codecs
 from functools import lru_cache
 from io import BytesIO, StringIO

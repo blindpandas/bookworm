@@ -1,16 +1,14 @@
 # coding: utf-8
 
 from bookworm import app, config
-from bookworm.logger import logger
-from bookworm.signals import app_shuttingdown
-
 from bookworm.annotation import AnnotationService
 from bookworm.bookshelf import BookshelfService
 from bookworm.continuous_reading import ContReadingService
 from bookworm.epub_serve import EpubServeService
+from bookworm.logger import logger
 from bookworm.ocr import OCRService, OCRSettingsService
-from bookworm.ocr import OCRService
 from bookworm.otau import OTAUService
+from bookworm.signals import app_shuttingdown
 from bookworm.text_to_speech import TextToSpeechService
 from bookworm.webservices import (UrlOpenService, WebservicesBaseService,
                                   WikipediaService)
