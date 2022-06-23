@@ -2,10 +2,9 @@
 
 import logging
 from logging.handlers import RotatingFileHandler
-from bookworm import paths
-from bookworm import app
-from bookworm.runtime import IS_IN_MAIN_PROCESS
 
+from bookworm import app, paths
+from bookworm.runtime import IS_IN_MAIN_PROCESS
 
 APP_LOG_FILE = app.name
 ERROR_LOG_FILE = "error"

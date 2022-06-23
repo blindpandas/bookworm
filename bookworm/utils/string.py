@@ -1,16 +1,18 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import codecs
+from functools import lru_cache
+from io import BytesIO, StringIO
+from xml.sax.saxutils import escape
+
 import attr
 import chardet
 import regex
-from io import StringIO, BytesIO
-from functools import lru_cache
-from xml.sax.saxutils import escape
+
 from bookworm import typehints as t
 from bookworm.logger import logger
-
 
 try:
     from rapidfuzz.process import extract as fuzzy_matcher

@@ -1,13 +1,16 @@
 # coding: utf-8
 
+from dataclasses import astuple, dataclass
 from enum import IntEnum, auto
-from dataclasses import dataclass, astuple
-import sqlalchemy as sa
-from bookworm import config
-from bookworm.logger import logger
-from bookworm.database.models import Book
-from .annotation_models import Bookmark, Note, Quote
 
+import sqlalchemy as sa
+from sqlalchemy.ext import baked
+
+from bookworm import config
+from bookworm.database.models import Book
+from bookworm.logger import logger
+
+from .annotation_models import Bookmark, Note, Quote
 
 log = logger.getChild(__name__)
 # The bakery caches query objects to avoid recompiling them into strings in every call

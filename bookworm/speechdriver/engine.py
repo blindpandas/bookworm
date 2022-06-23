@@ -1,12 +1,13 @@
 # coding: utf-8
 
 from abc import ABCMeta, abstractmethod
-from dataclasses import field, dataclass
 from contextlib import suppress
+from dataclasses import dataclass, field
+
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
-from .utterance import SpeechUtterance
 
+from .utterance import SpeechUtterance
 
 log = logger.getChild(__name__)
 

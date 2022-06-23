@@ -1,17 +1,18 @@
 # coding: utf-8
 
 from __future__ import annotations
-import sys
+
 import argparse
 import subprocess
+import sys
 from abc import ABC, abstractmethod
 from pprint import pformat as pritty_format
-from bookworm import typehints as t
+
 from bookworm import app
+from bookworm import typehints as t
+from bookworm.logger import configure_logger, logger
 from bookworm.runtime import CURRENT_PACKAGING_MODE, PackagingMode
 from bookworm.signals import app_booting
-from bookworm.logger import logger, configure_logger
-
 
 log = logger.getChild(__name__)
 

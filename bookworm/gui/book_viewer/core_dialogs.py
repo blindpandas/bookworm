@@ -1,39 +1,32 @@
 # coding: utf-8
 
-import operator
 import enum
+import operator
 import threading
-import wx
-import wx.lib.sized_controls as sc
-import more_itertools
 from collections import namedtuple
 from itertools import chain
-from bookworm import config
-from bookworm.reader import EBookReader
-from bookworm.document.operations import SearchRequest
-from bookworm.paths import images_path
-from bookworm.utils import gui_thread_safe
-from bookworm.image_io import ImageIO
-from bookworm.structured_text import (
-    SemanticElementType,
-    HEADING_LEVELS,
-    SEMANTIC_ELEMENT_OUTPUT_OPTIONS,
-)
-from bookworm.gui.components import (
-    Dialog,
-    SimpleDialog,
-    DialogListCtrl,
-    ImageViewControl,
-    ImmutableObjectListView,
-    ColumnDefn,
-    EnhancedSpinCtrl,
-    PageRangeControl,
-    EnumRadioBox,
-    make_sized_static_box,
-)
-from bookworm.logger import logger
-from .navigation import NavigationProvider
 
+import more_itertools
+import wx
+import wx.lib.sized_controls as sc
+
+from bookworm import config
+from bookworm.document.operations import SearchRequest
+from bookworm.gui.components import (ColumnDefn, Dialog, DialogListCtrl,
+                                     EnhancedSpinCtrl, EnumRadioBox,
+                                     ImageViewControl, ImmutableObjectListView,
+                                     PageRangeControl, SimpleDialog,
+                                     make_sized_static_box)
+from bookworm.image_io import ImageIO
+from bookworm.logger import logger
+from bookworm.paths import images_path
+from bookworm.reader import EBookReader
+from bookworm.structured_text import (HEADING_LEVELS,
+                                      SEMANTIC_ELEMENT_OUTPUT_OPTIONS,
+                                      SemanticElementType)
+from bookworm.utils import gui_thread_safe
+
+from .navigation import NavigationProvider
 
 log = logger.getChild(__name__)
 

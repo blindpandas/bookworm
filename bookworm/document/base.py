@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import gc
 from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence, Iterable
@@ -9,21 +10,19 @@ from pathlib import Path
 from more_itertools import flatten
 from pycld2 import detect as detect_language, error as CLD2Error
 from bookworm import typehints as t
-from bookworm.i18n import LocaleInfo
 from bookworm.concurrency import QueueProcess, call_threaded
-from bookworm.structured_text import SemanticElementType, Style, TextRange
+from bookworm.i18n import LocaleInfo
 from bookworm.image_io import ImageIO
-from bookworm.utils import (
-    normalize_line_breaks,
-    remove_excess_blank_lines,
-    get_url_spans,
-)
 from bookworm.logger import logger
-from . import operations as doctools
-from .exceptions import DocumentIOError, PaginationError, UnsupportedDocumentFormatError
-from .elements import *
-from .features import DocumentCapability, ReadingMode
+from bookworm.structured_text import SemanticElementType, Style, TextRange
+from bookworm.utils import (get_url_spans, normalize_line_breaks,
+                            remove_excess_blank_lines)
 
+from . import operations as doctools
+from .elements import *
+from .exceptions import (DocumentIOError, PaginationError,
+                         UnsupportedDocumentFormatError)
+from .features import DocumentCapability, ReadingMode
 
 log = logger.getChild(__name__)
 PAGE_CACHE_CAPACITY = 300

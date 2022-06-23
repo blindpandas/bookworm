@@ -1,11 +1,8 @@
 # coding: utf-8
 
-from .primitives import TextRange, TextInfo
+from .primitives import TextInfo, TextRange
 from .string_builder import StringBuilder
-from .structural_elements import (
-    Style,
-    SemanticElementType,
-    TextStructureMetadata,
-    HEADING_LEVELS,
-    SEMANTIC_ELEMENT_OUTPUT_OPTIONS,
-)
+from .structural_elements import (HEADING_LEVELS,
+                                  SEMANTIC_ELEMENT_OUTPUT_OPTIONS,
+                                  SemanticElementType, Style,
+                                  TextStructureMetadata)

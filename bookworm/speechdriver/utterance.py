@@ -1,14 +1,17 @@
 # coding: utf-8
 
 from __future__ import annotations
-from typing import get_type_hints
-from enum import IntEnum
-from dataclasses import dataclass, field
+
 from contextlib import contextmanager
+from dataclasses import dataclass, field
+from enum import IntEnum
+from typing import get_type_hints
+
 from bookworm import typehints as t
 from bookworm.logger import logger
-from .enumerations import SpeechElementKind, EmphSpec, VolumeSpec, RateSpec, PauseSpec
 
+from .enumerations import (EmphSpec, PauseSpec, RateSpec, SpeechElementKind,
+                           VolumeSpec)
 
 log = logger.getChild(__name__)
 

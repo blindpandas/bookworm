@@ -34,6 +34,7 @@ from .exceptions import (
 )
 from .uri import DocumentUri
 from .formats import *
+from .uri import DocumentUri
 
 
 def create_document(uri, read=True):

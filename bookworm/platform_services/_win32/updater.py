@@ -1,29 +1,26 @@
 # coding: utf-8
 
-import sys
 import os
 import shutil
-import zipfile
+import sys
 import tempfile
-import wx
-import win32api
+import zipfile
 from functools import partial
 from hashlib import sha1
 from pathlib import Path
-from System.Diagnostics import Process
-from requests.exceptions import RequestException
-from bookworm import app
-from bookworm import config
-from bookworm import paths
-from bookworm.commandline_handler import (
-    BaseSubcommandHandler,
-    register_subcommand,
-)
-from bookworm.http_tools import HttpResource
-from bookworm.utils import generate_sha1hash
-from bookworm.gui.components import RobustProgressDialog, SnakDialog
-from bookworm.logger import logger
 
+import win32api
+import wx
+from requests.exceptions import RequestException
+from System.Diagnostics import Process
+
+from bookworm import app, config, paths
+from bookworm.commandline_handler import (BaseSubcommandHandler,
+                                          register_subcommand)
+from bookworm.gui.components import RobustProgressDialog, SnakDialog
+from bookworm.http_tools import HttpResource
+from bookworm.logger import logger
+from bookworm.utils import generate_sha1hash
 
 log = logger.getChild(__name__)
 

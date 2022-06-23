@@ -2,11 +2,14 @@
 
 import math
 import webbrowser
-import wx
-from contextlib import contextmanager
 from concurrent.futures import Future
+from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
+
+import wx
+
+from bookworm import app, config, speech
 from bookworm import typehints as t
 from bookworm import app
 from bookworm import config
@@ -36,14 +39,22 @@ from bookworm.signals import (
 )
 from bookworm.structured_text import TextRange
 from bookworm.gui.contentview_ctrl import ContentViewCtrl
-from bookworm.gui.components import TocTreeManager, AsyncSnakDialog
-from bookworm.utils import gui_thread_safe
 from bookworm.logger import logger
-from . import recents_manager
-from .menubar import MenubarProvider, BookRelatedMenuIds
-from .state import StateProvider
-from .navigation import NavigationProvider
+from bookworm.paths import app_path, fonts_path
+from bookworm.reader import (DecryptionRequired, EBookReader, ReaderError,
+                             ResourceDoesNotExist, UnsupportedDocumentError,
+                             UriResolver)
+from bookworm.resources import app_icons, sounds
+from bookworm.signals import (reader_book_loaded, reader_book_unloaded,
+                              reading_position_change)
+from bookworm.structured_text import (SEMANTIC_ELEMENT_OUTPUT_OPTIONS, Style,
+                                      TextRange)
+from bookworm.utils import gui_thread_safe
 
+from . import recents_manager
+from .menubar import BookRelatedMenuIds, MenubarProvider
+from .navigation import NavigationProvider
+from .state import StateProvider
 
 log = logger.getChild(__name__)
 

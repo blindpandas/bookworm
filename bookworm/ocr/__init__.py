@@ -3,21 +3,18 @@
 import more_itertools
 import wx
 from lru import LRU
+
 from bookworm import config
+from bookworm.logger import logger
+from bookworm.ocr_engines import GENERIC_OCR_ENGINES
+from bookworm.platform_services.ocr_provider import \
+    PLATFORM_SPECIFIC_OCR_ENGINES
 from bookworm.resources import sounds
 from bookworm.service import BookwormService
-from bookworm.ocr_engines import GENERIC_OCR_ENGINES
-from bookworm.platform_services.ocr_provider import PLATFORM_SPECIFIC_OCR_ENGINES
-from bookworm.logger import logger
-from .ocr_dialogs import OcrPanel
-from .ocr_menu import (
-    OCRMenuIds,
-    OCRMenu,
-    OCR_KEYBOARD_SHORTCUTS,
-    ocr_started,
-    ocr_ended,
-)
 
+from .ocr_dialogs import OcrPanel
+from .ocr_menu import (OCR_KEYBOARD_SHORTCUTS, OCRMenu, OCRMenuIds, ocr_ended,
+                       ocr_started)
 
 log = logger.getChild(__name__)
 OCR_ENGINES = GENERIC_OCR_ENGINES + PLATFORM_SPECIFIC_OCR_ENGINES
