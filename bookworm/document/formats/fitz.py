@@ -69,7 +69,7 @@ class FitzDocument(BaseDocument):
         return FitzPage(self, index)
 
     def __len__(self) -> int:
-        return self._ebook.pageCount
+        return self._ebook.page_count
 
     def read(self, filetype=None):
         self.filename = self.get_file_system_path()
@@ -81,7 +81,7 @@ class FitzDocument(BaseDocument):
             if "drm" in e.args[0].lower():
                 raise DocumentRestrictedError("Document is encrypted with DRM") from e
             raise DocumentError("Could not open document") from e
-        if self._ebook.isEncrypted:
+        if self._ebook.is_encrypted:
             self.decrypt_document()
 
     def close(self):
@@ -169,7 +169,7 @@ class FitzFB2Document(FitzDocument):
     format = "fb2"
     # Translators: the name of a document file format
     name = _("Fiction Book (FB2)")
-    extensions = ("*.fb2", "*.fb2.zip", "*.fbz")
+    extensions = ("*.fb2",)
 
     def read(self):
         self.filename = self.get_file_system_path()

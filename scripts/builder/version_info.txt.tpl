@@ -30,7 +30,7 @@ VSVersionInfo(
       StringTable(
         u'040904B0',
         [StringStruct(u'CompanyName', u'{{ app_author }}'),
-        StringStruct(u'FileDescription', u'{{ app_description }}'),
+        StringStruct(u'FileDescription', u'{{ app_name}}: {{ app_description }}'),
         StringStruct(u'FileVersion', u'{{ app_version }}'),
         StringStruct(u'LegalCopyright', u'{{ app_copyright }}'),
         StringStruct(u'OriginalFilename', u'{{ app_name }}.exe'),

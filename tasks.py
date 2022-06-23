@@ -392,12 +392,17 @@ def copy_deps(c):
     for dll in dlls:
         try:
             shutil.copy(dll, dist_dir)
-        except FileExistsError:
-            pass
         except Exception as e:
             print(f"Failed to copy  {dll} to {dist_dir}")
             continue
     print("Done copying vcredis 2015 ucrt DLLs.")
+    print("Copying Unrar DLLs")
+    source_path = PROJECT_ROOT / "scripts" / "dlls" / "unrar_dll"
+    unrar_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "unrar_dll"
+    unrar_dst.mkdir(parents=True, exist_ok=True)
+    for file in source_path.iterdir():
+        shutil.copy(file, unrar_dst)
+    print('Done copying unrar DLLs')
 
 
 @task
@@ -606,7 +611,8 @@ def copy_executables(c):
         print("Copying antiword executable")
         build_folder = c["build_folder"]
         antiword_executable_dir = PROJECT_ROOT / "scripts" / "executables" / "antiword"
-        shutil.copytree(antiword_executable_dir, build_folder, dirs_exist_ok=True)
+        antiword_dst = build_folder / "antiword"
+        shutil.copytree(antiword_executable_dir, antiword_dst, dirs_exist_ok=True)
     print("Done copying executables.")
 
 

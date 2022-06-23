@@ -13,8 +13,27 @@ from bookworm.document import DocumentCapability as DC
 from bookworm.document import (DocumentEncryptedError, DocumentError,
                                DocumentIOError, PaginationError, Section)
 from bookworm.document.formats import *
-from bookworm.document.uri import DocumentUri
-from bookworm.i18n import is_rtl
+from bookworm.document import (
+    BaseDocument,
+    BasePage,
+    Section,
+    ChangeDocument,
+    DocumentCapability as DC,
+    DocumentError,
+    DocumentIOError,
+    DocumentEncryptedError,
+    PaginationError,
+    ArchiveContainsNoDocumentsError,
+    ArchiveContainsMultipleDocuments,
+)
+from bookworm.signals import (
+    reader_book_loaded,
+    reader_book_unloaded,
+    reader_page_changed,
+    reader_section_changed,
+    reading_position_change,
+)
+from bookworm.structured_text import TextStructureMetadata, SemanticElementType
 from bookworm.logger import logger
 from bookworm.signals import (reader_book_loaded, reader_book_unloaded,
                               reader_page_changed, reader_section_changed,
@@ -23,6 +42,10 @@ from bookworm.structured_text import SemanticElementType, TextStructureMetadata
 
 log = logger.getChild(__name__)
 
+PASS_THROUGH__DOCUMENT_EXCEPTIONS = {
+    ArchiveContainsNoDocumentsError,
+    ArchiveContainsMultipleDocuments,
+}
 
 def get_document_format_info():
     return BaseDocument.document_classes
@@ -91,6 +114,8 @@ class UriResolver:
             )
             return UriResolver(uri=e.new_uri).read_document()
         except Exception as e:
+            if type(e) in PASS_THROUGH__DOCUMENT_EXCEPTIONS:
+                raise e
             raise ReaderError("Failed to open document") from e
         return document
 

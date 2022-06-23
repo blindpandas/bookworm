@@ -11,9 +11,33 @@ import wx
 
 from bookworm import app, config, speech
 from bookworm import typehints as t
-from bookworm.concurrency import CancellationToken, threaded_worker
-from bookworm.document import DocumentRestrictedError, DummyDocument
-from bookworm.gui.components import AsyncSnakDialog, TocTreeManager
+from bookworm import app
+from bookworm import config
+from bookworm import speech
+from bookworm.concurrency import threaded_worker, CancellationToken
+from bookworm.resources import sounds, app_icons
+from bookworm.paths import app_path, fonts_path
+from bookworm.document import (
+    DummyDocument,
+    DocumentRestrictedError,
+    ArchiveContainsNoDocumentsError,
+    ArchiveContainsMultipleDocuments,
+)
+from bookworm.structured_text import Style, SEMANTIC_ELEMENT_OUTPUT_OPTIONS
+from bookworm.reader import (
+    EBookReader,
+    UriResolver,
+    ReaderError,
+    ResourceDoesNotExist,
+    UnsupportedDocumentError,
+    DecryptionRequired,
+)
+from bookworm.signals import (
+    reader_book_loaded,
+    reader_book_unloaded,
+    reading_position_change,
+)
+from bookworm.structured_text import TextRange
 from bookworm.gui.contentview_ctrl import ContentViewCtrl
 from bookworm.logger import logger
 from bookworm.paths import app_path, fonts_path
@@ -131,6 +155,34 @@ class ResourceLoader:
                 _("The format of the given document is not supported by Bookworm."),
                 icon=wx.ICON_WARNING,
             )
+        except ArchiveContainsNoDocumentsError as e:
+            _last_exception = e
+            log.exception("Archive contains no documents", exc_info=True)
+            wx.CallAfter(
+                self.view.notify_user,
+                # Translators: the title of an error message
+                _("Archive contains no documents"),
+                # Translators: the content of an error message
+                _(
+                    "Bookworm cannot open this archive file.\nThe archive contains no documents."
+                ),
+                icon=wx.ICON_ERROR,
+            )
+        except ArchiveContainsMultipleDocuments as e:
+            log.info("Archive contains multiple documents")
+            dlg = wx.SingleChoiceDialog(
+                self.view,
+                _("Documents"),
+                _("Multiple documents found"),
+                e.args[0],
+                wx.CHOICEDLG_STYLE,
+            )
+            if dlg.ShowModal() == wx.ID_OK:
+                member = dlg.GetStringSelection()
+                new_uri = uri.create_copy(
+                    view_args={'member': member}
+                )
+                self.view.open_uri(new_uri)
         except ReaderError as e:
             _last_exception = e
             log.exception("Unsupported file format", exc_info=True)
@@ -163,7 +215,7 @@ class ResourceLoader:
         finally:
             if _last_exception is not None:
                 wx.CallAfter(self.view.unloadCurrentEbook)
-                if uri.view_args['from_list']:
+                if uri.view_args.get('from_list'):
                     retval = wx.MessageBox(
                         # Translators: content of a message
                         _("Failed to open document.\nWould you like to remove its entry from the 'recent documents' and 'pinned documents' lists?"),

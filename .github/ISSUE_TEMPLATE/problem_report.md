@@ -22,7 +22,7 @@ Steps to reproduce the behavior:
 
 A clear and concise description of what you expected to happen.
 
-## The File You've Opened
+## If the problem is related to a file, indicate the file you have opened
 
 Tell us what is the format of the file you've opened [e.g. PDF]. If possible, attach the file you have open in Bookworm when the problem happened.
 

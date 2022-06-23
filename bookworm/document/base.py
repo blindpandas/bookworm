@@ -4,13 +4,11 @@ from __future__ import annotations
 
 import gc
 from abc import ABCMeta, abstractmethod
-from collections.abc import Iterable, Sequence
-from functools import cached_property, lru_cache, wraps
+from collections.abc import Sequence, Iterable
+from functools import lru_cache, cached_property, wraps
 from pathlib import Path
-
-from pycld2 import detect as detect_language
-from pycld2 import error as CLD2Error
-
+from more_itertools import flatten
+from pycld2 import detect as detect_language, error as CLD2Error
 from bookworm import typehints as t
 from bookworm.concurrency import QueueProcess, call_threaded
 from bookworm.i18n import LocaleInfo
@@ -63,6 +61,15 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
     @classmethod
     def get_document_class_given_format(cls, format):
         return cls.document_classes.get(format.lower())
+
+    @classmethod
+    def get_supported_file_extensions(cls):
+        exts = flatten(
+            doc_cls.extensions
+            for doc_cls in cls.document_classes.values()
+            if doc_cls.extensions is not None
+        )
+        return frozenset(ext.lstrip("*") for ext in exts)
 
     def __init__(self, uri):
         self.uri = uri

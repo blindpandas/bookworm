@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-04-25 11:55+0000\n"
-"PO-Revision-Date: 2022-05-01 15:42+0400\n"
+"POT-Creation-Date: 2022-06-01 08:06+0000\n"
+"PO-Revision-Date: 2022-06-01 18:06+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -78,7 +78,7 @@ msgid "Update the application"
 msgstr "Обновить приложение"
 
 #. Translators: the title of the window when an e-book is open
-#: bookworm/reader.py:410
+#: bookworm/reader.py:418
 msgid "{title} — by {author}"
 msgstr "{title} — от {author}"
 
@@ -184,7 +184,7 @@ msgstr "Выделение"
 #: bookworm/annotation/annotation_dialogs.py:63
 #: bookworm/annotation/annotation_dialogs.py:270
 #: bookworm/bookshelf/local_bookshelf/dialogs.py:123
-#: bookworm/gui/book_viewer/__init__.py:269
+#: bookworm/gui/book_viewer/__init__.py:299
 msgid "Content"
 msgstr "Содержание"
 
@@ -1296,7 +1296,7 @@ msgstr "Выберите папку:"
 #. Translators: label of a text box for entering a search term
 #. Translators: the label of a button in the application toolbar
 #: bookworm/bookshelf/local_bookshelf/dialogs.py:113
-#: bookworm/gui/book_viewer/__init__.py:353
+#: bookworm/gui/book_viewer/__init__.py:383
 msgid "Search"
 msgstr "Поиск"
 
@@ -1391,6 +1391,11 @@ msgstr "Чистый текст"
 #: bookworm/document/features.py:59
 msgid "Full text"
 msgstr "Полный текст"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/archive.py:45
+msgid "Archive File"
+msgstr "Архивный файл"
 
 #. Translators: the name of a document file format
 #: bookworm/document/formats/docbook.py:34
@@ -1796,26 +1801,26 @@ msgstr "Вид"
 msgid "Apply"
 msgstr "Применить"
 
-#: bookworm/gui/book_viewer/__init__.py:83
+#: bookworm/gui/book_viewer/__init__.py:85
 msgid "Failed to open document"
 msgstr "Не удалось открыть документ"
 
-#: bookworm/gui/book_viewer/__init__.py:84
+#: bookworm/gui/book_viewer/__init__.py:86
 msgid "The document you are trying to open could not be opened in Bookworm."
 msgstr ""
 "Документ, который вы пытаетесь открыть, не может быть открыт в Bookworm."
 
-#: bookworm/gui/book_viewer/__init__.py:98
+#: bookworm/gui/book_viewer/__init__.py:100
 msgid "Opening document, please wait..."
 msgstr "Открытие документа, пожалуйста, подождите..."
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:116
+#: bookworm/gui/book_viewer/__init__.py:118
 msgid "Document not found"
 msgstr "Документ не найден"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:118
+#: bookworm/gui/book_viewer/__init__.py:120
 msgid ""
 "Could not open Document.\n"
 "The document does not exist."
@@ -1824,12 +1829,12 @@ msgstr ""
 "Документ не существует."
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:127
+#: bookworm/gui/book_viewer/__init__.py:129
 msgid "Document Restricted"
 msgstr "Документ ограничен"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:129
+#: bookworm/gui/book_viewer/__init__.py:131
 msgid ""
 "Could not open Document.\n"
 "The document is restricted by the publisher."
@@ -1839,23 +1844,45 @@ msgstr ""
 
 #. Translators: the title of a message shown
 #. when the format of the e-book is not supported
-#: bookworm/gui/book_viewer/__init__.py:139
+#: bookworm/gui/book_viewer/__init__.py:141
 msgid "Unsupported Document Format"
 msgstr "Неподдерживаемый формат документа"
 
 #. Translators: the content of a message shown
 #. when the format of the e-book is not supported
-#: bookworm/gui/book_viewer/__init__.py:142
+#: bookworm/gui/book_viewer/__init__.py:144
 msgid "The format of the given document is not supported by Bookworm."
 msgstr "Формат данного документа не поддерживается Bookworm."
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:151
+#: bookworm/gui/book_viewer/__init__.py:153
+msgid "Archive contains no documents"
+msgstr "В архиве нет документов"
+
+#. Translators: the content of an error message
+#: bookworm/gui/book_viewer/__init__.py:155
+msgid ""
+"Bookworm cannot open this archive file.\n"
+"The archive contains no documents."
+msgstr ""
+"Bookworm не может открыть этот файл архива.\n"
+"В архиве нет документов."
+
+#: bookworm/gui/book_viewer/__init__.py:164
+msgid "Documents"
+msgstr "Документы"
+
+#: bookworm/gui/book_viewer/__init__.py:165
+msgid "Multiple documents found"
+msgstr "Найдено несколько документов"
+
+#. Translators: the title of an error message
+#: bookworm/gui/book_viewer/__init__.py:181
 msgid "Error Opening Document"
 msgstr "Ошибка при открытии документа"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:153
+#: bookworm/gui/book_viewer/__init__.py:183
 msgid ""
 "Could not open file\n"
 ".Either the file  has been damaged during download, or it has been corrupted "
@@ -1866,12 +1893,12 @@ msgstr ""
 "другим образом."
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:166
+#: bookworm/gui/book_viewer/__init__.py:196
 msgid "Error Openning Document"
 msgstr "Ошибка при открытии документа"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:168
+#: bookworm/gui/book_viewer/__init__.py:198
 msgid ""
 "Could not open document.\n"
 "An unknown error occurred while loading the file."
@@ -1880,7 +1907,7 @@ msgstr ""
 "При загрузке файла произошла неизвестная ошибка."
 
 #. Translators: content of a message
-#: bookworm/gui/book_viewer/__init__.py:180
+#: bookworm/gui/book_viewer/__init__.py:210
 msgid ""
 "Failed to open document.\n"
 "Would you like to remove its entry from the 'recent documents' and 'pinned "
@@ -1891,53 +1918,53 @@ msgstr ""
 "'закрепленные документы'?"
 
 #. Translators: title of a message box
-#: bookworm/gui/book_viewer/__init__.py:182
+#: bookworm/gui/book_viewer/__init__.py:212
 msgid "Remove from lists?"
 msgstr "Удалить из списков?"
 
 #. Translators: the text of the status bar when no book is currently open.
 #. It is being used also as a label for the page content text area when no book
 #. is opened.
-#: bookworm/gui/book_viewer/__init__.py:242
+#: bookworm/gui/book_viewer/__init__.py:272
 msgid "Press (Ctrl + O) to open a document"
 msgstr "Нажмите (Ctrl + O), чтобы открыть документ"
 
 #. Translators: the label of the table-of-contents tree
-#: bookworm/gui/book_viewer/__init__.py:256
+#: bookworm/gui/book_viewer/__init__.py:286
 msgid "Table of Contents"
 msgstr "Оглавление"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:350
+#: bookworm/gui/book_viewer/__init__.py:380
 msgid "Open"
 msgstr "Открыть"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:355
+#: bookworm/gui/book_viewer/__init__.py:385
 msgid "Mode"
 msgstr "Режим"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:358
+#: bookworm/gui/book_viewer/__init__.py:388
 msgid "Big"
 msgstr "Большой"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:360
+#: bookworm/gui/book_viewer/__init__.py:390
 msgid "Small"
 msgstr "Небольшой"
 
 #. Translators: title of a message telling the user that they entered an
 #. incorrect
 #. password for opening the book
-#: bookworm/gui/book_viewer/__init__.py:406
+#: bookworm/gui/book_viewer/__init__.py:436
 msgid "Incorrect Password"
 msgstr "Неверный пароль"
 
 #. Translators: content of a message telling the user that they entered an
 #. incorrect
 #. password for opening the book
-#: bookworm/gui/book_viewer/__init__.py:409
+#: bookworm/gui/book_viewer/__init__.py:439
 msgid ""
 "The password you provided is incorrect.\n"
 "Please try again with the correct password."
@@ -1946,62 +1973,62 @@ msgstr ""
 "Пожалуйста, попробуйте еще раз с правильным паролем."
 
 #. Translators: spoken message when the document has been closed
-#: bookworm/gui/book_viewer/__init__.py:480
+#: bookworm/gui/book_viewer/__init__.py:510
 msgid "Document closed."
 msgstr "Документ закрыт."
 
 #. Translators: text of reading progress shown in the status bar
-#: bookworm/gui/book_viewer/__init__.py:516
+#: bookworm/gui/book_viewer/__init__.py:546
 msgid "{percentage} completed"
 msgstr "{percentage} завершено"
 
 #. Translators: label of content text control when the currently opened
 #. document is a single page document
-#: bookworm/gui/book_viewer/__init__.py:567
+#: bookworm/gui/book_viewer/__init__.py:597
 msgid "Document content"
 msgstr "Содержание документа"
 
 #. Translators: a message that is announced after navigating to a page
 #. Translators: the label of the page content text area
 #. Translators: a message to announce when navigating to another page
-#: bookworm/gui/book_viewer/__init__.py:570
-#: bookworm/gui/book_viewer/__init__.py:725
+#: bookworm/gui/book_viewer/__init__.py:600
+#: bookworm/gui/book_viewer/__init__.py:755
 #: bookworm/text_to_speech/__init__.py:177
 msgid "Page {page} of {total}"
 msgstr "Страница {page} из {total}"
 
-#: bookworm/gui/book_viewer/__init__.py:617
+#: bookworm/gui/book_viewer/__init__.py:647
 msgid "{text}: {item_type}"
 msgstr "{text}: {item_type}"
 
-#: bookworm/gui/book_viewer/__init__.py:634
+#: bookworm/gui/book_viewer/__init__.py:664
 msgid "No next {item}"
 msgstr "Нет следующего {item}"
 
-#: bookworm/gui/book_viewer/__init__.py:636
+#: bookworm/gui/book_viewer/__init__.py:666
 msgid "No previous {item}"
 msgstr "Нет предыдущего {item}"
 
 #. Translators: a message telling the user that the font size has been
 #. increased
-#: bookworm/gui/book_viewer/__init__.py:652
+#: bookworm/gui/book_viewer/__init__.py:682
 msgid "The font size has been Increased"
 msgstr "Размер шрифта увеличен"
 
 #. Translators: a message telling the user that the font size has been
 #. decreased
-#: bookworm/gui/book_viewer/__init__.py:658
+#: bookworm/gui/book_viewer/__init__.py:688
 msgid "The font size has been decreased"
 msgstr "Размер шрифта уменьшен"
 
 #. Translators: a message telling the user that the font size has been reset
-#: bookworm/gui/book_viewer/__init__.py:662
+#: bookworm/gui/book_viewer/__init__.py:692
 msgid "The font size has been reset"
 msgstr "Размер шрифта был сброшен"
 
 #. Translators: the content of a dialog asking the user
 #. for the password to decrypt the current e-book
-#: bookworm/gui/book_viewer/__init__.py:681
+#: bookworm/gui/book_viewer/__init__.py:711
 msgid ""
 "This document is encrypted with a password.\n"
 "You need to provide the password in order to access its content.\n"
@@ -2013,11 +2040,11 @@ msgstr ""
 
 #. Translators: the title of a dialog asking the user to enter a password to
 #. decrypt the e-book
-#: bookworm/gui/book_viewer/__init__.py:687
+#: bookworm/gui/book_viewer/__init__.py:717
 msgid "Enter Password"
 msgstr "Введите пароль"
 
-#: bookworm/gui/book_viewer/__init__.py:803
+#: bookworm/gui/book_viewer/__init__.py:833
 msgid "Opening page: {url}"
 msgstr "Открытие страницы: {url}"
 

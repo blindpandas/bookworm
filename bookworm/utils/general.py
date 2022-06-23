@@ -46,7 +46,7 @@ def ignore(*exceptions, retval=None):
                 if not any(isinstance(e, exc) for exc in exceptions):
                     raise
                 log.exception(
-                    f"Ignored exc {e} raised when executing function {func}",
+                    f"Ignored exc `{e}` raised when executing function {func}",
                     exc_info=True,
                 )
                 return retval

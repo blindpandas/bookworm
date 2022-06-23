@@ -39,3 +39,18 @@ class PaginationError(DocumentError, IndexError):
 
 class UnsupportedDocumentFormatError(DocumentError):
     """Raised when the document format is not supported."""
+
+
+class ArchiveContainsNoDocumentsError(DocumentError):
+    """Raised when the archive contains no documents."""
+
+
+class ArchiveContainsMultipleDocuments(DocumentError):
+    """Raised when the archive contains multiple documents."""
+
+    def __init__(self, document_list):
+        self.document_list = document_list
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}: [{self.args[0][0]!r},...]"
+    __str__ = __repr__
