@@ -1,14 +1,16 @@
 # coding: utf-8
 
+from contextlib import suppress
+
 import System
 from System.Globalization import CultureInfo
-from contextlib import suppress
+
 from bookworm.i18n import LocaleInfo
-from bookworm.platform_services._win32.runtime import reference_gac_assembly
-from bookworm.speechdriver.enumerations import EngineEvent, SynthState
-from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
-from bookworm.speechdriver.utterance import SpeechStyle
 from bookworm.logger import logger
+from bookworm.platform_services._win32.runtime import reference_gac_assembly
+from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
+from bookworm.speechdriver.enumerations import EngineEvent, SynthState
+from bookworm.speechdriver.utterance import SpeechStyle
 
 log = logger.getChild(__name__)
 
@@ -17,6 +19,7 @@ _sapi_available = False
 try:
     reference_gac_assembly("System.Speech\*\System.Speech.dll")
     from System.Speech import Synthesis
+
     from .sp_utterance import SapiSpeechUtterance
 
     _sapi_available = True

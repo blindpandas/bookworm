@@ -1,32 +1,31 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import contextlib
 import os
 import subprocess
+from io import BytesIO
+from pathlib import Path
+
 import mammoth
 import msoffcrypto
 import msoffcrypto.exceptions
-from io import BytesIO
-from pathlib import Path
 from diskcache import Cache
 from docx import Document as DocxDocumentReader
 from selectolax.parser import HTMLParser
+
 from bookworm import app
-from bookworm.paths import home_data_path, app_path
-from bookworm.concurrency import threaded_worker, process_worker
-from bookworm.utils import generate_file_md5, escape_html, NEWLINE
+from bookworm.concurrency import process_worker, threaded_worker
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
-from .. import (
-    DummyDocument,
-    ChangeDocument,
-    DocumentCapability as DC,
-    DocumentError,
-    DocumentEncryptedError,
-)
-from .html import BaseHtmlDocument
+from bookworm.paths import app_path, home_data_path
+from bookworm.utils import NEWLINE, escape_html, generate_file_md5
 
+from .. import ChangeDocument
+from .. import DocumentCapability as DC
+from .. import DocumentEncryptedError, DocumentError, DummyDocument
+from .html import BaseHtmlDocument
 
 log = logger.getChild(__name__)
 TAGS_TO_UNWRAP = []

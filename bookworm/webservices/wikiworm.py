@@ -1,17 +1,19 @@
 # coding: utf-8
 
 import threading
+import webbrowser
+from functools import partial
+
+import wikipedia
 import wx
 import wx.lib.sized_controls as sc
-import webbrowser
-import wikipedia
 from wikipedia.exceptions import DisambiguationError
-from functools import partial
+
 from bookworm import app
 from bookworm.gui.components import AsyncSnakDialog, SimpleDialog
-from bookworm.service import BookwormService
-from bookworm.resources import sounds
 from bookworm.logger import logger
+from bookworm.resources import sounds
+from bookworm.service import BookwormService
 
 log = logger.getChild(__name__)
 

@@ -1,27 +1,25 @@
 # coding: utf-8
 
 import sys
+from dataclasses import dataclass
+from enum import IntEnum, auto
+
 import wx
 import wx.lib.sized_controls as sc
-from enum import IntEnum, auto
-from dataclasses import dataclass
 from wx.adv import CommandLinkButton
-from bookworm import app
-from bookworm import config
-from bookworm.paths import app_path
-from bookworm.utils import restart_application
-from bookworm.i18n import get_available_locales, set_locale
-from bookworm.signals import app_started, config_updated
-from bookworm.runtime import IS_RUNNING_PORTABLE
-from bookworm.resources import app_icons
-from bookworm.platform_services.shell import (
-    shell_integrate,
-    shell_disintegrate,
-    get_ext_info,
-)
-from bookworm.logger import logger
-from .components import SimpleDialog, EnhancedSpinCtrl
 
+from bookworm import app, config
+from bookworm.i18n import get_available_locales, set_locale
+from bookworm.logger import logger
+from bookworm.paths import app_path
+from bookworm.platform_services.shell import (get_ext_info, shell_disintegrate,
+                                              shell_integrate)
+from bookworm.resources import app_icons
+from bookworm.runtime import IS_RUNNING_PORTABLE
+from bookworm.signals import app_started, config_updated
+from bookworm.utils import restart_application
+
+from .components import EnhancedSpinCtrl, SimpleDialog
 
 log = logger.getChild(__name__)
 

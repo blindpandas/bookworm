@@ -5,24 +5,24 @@ This file contains Bookworm's build system.
 It uses the `invoke` command runner to define and run commands.
 """
 
-import sys
+import itertools
+import json
 import os
 import platform
-import itertools
 import shutil
 import subprocess
-import json
-from io import BytesIO, StringIO
+import sys
+from contextlib import redirect_stdout
 from datetime import datetime
 from functools import wraps
-from contextlib import redirect_stdout
 from glob import glob
+from io import BytesIO, StringIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from zipfile import ZipFile, ZIP_LZMA
-from invoke import task, call
-from invoke.exceptions import UnexpectedExit
+from zipfile import ZIP_LZMA, ZipFile
 
+from invoke import call, task
+from invoke.exceptions import UnexpectedExit
 
 PROJECT_ROOT = Path.cwd()
 PACKAGE_FOLDER = PROJECT_ROOT / "bookworm"
@@ -42,8 +42,8 @@ GUIDE_HTML_TEMPLATE = """
 
 
 def invert_image(image_path):
-    from PIL import Image
     from fitz import Pixmap
+    from PIL import Image
 
     pix = Pixmap(image_path)
     pix.invert_irect(pix.irect)
@@ -117,8 +117,7 @@ def make_env(func):
 @task(name="icons")
 def make_icons(c):
     """Rescale images and embed them in a python module."""
-    from PIL import Image
-    from PIL import ImageOps
+    from PIL import Image, ImageOps
     from wx.tools.img2py import img2py
 
     TARGET_SIZE = (24, 24)
@@ -556,6 +555,7 @@ def install_bookworm(c):
 @make_env
 def make_version_info_file(c):
     from jinja2 import Environment, FileSystemLoader
+
     from bookworm import app
 
     print("Generating version info file...")

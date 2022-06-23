@@ -4,18 +4,16 @@
 Persistent stoarage using SQLlite3
 """
 
-import sqlite3
 import os
+import sqlite3
+
 import db_magic as db
-from bookworm.paths import db_path as get_db_path
+
 from bookworm.logger import logger
-from .models import (
-    GetOrCreateMixin,
-    Book,
-    RecentDocument,
-    PinnedDocument,
-    DocumentPositionInfo,
-)
+from bookworm.paths import db_path as get_db_path
+
+from .models import (Book, DocumentPositionInfo, GetOrCreateMixin,
+                     PinnedDocument, RecentDocument)
 from .schema import upgrade_database_schema
 
 log = logger.getChild(__name__)

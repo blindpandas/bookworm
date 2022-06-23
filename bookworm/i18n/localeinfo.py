@@ -1,13 +1,13 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import locale
+
 import babel.numbers
-from babel import UnknownLocaleError, Locale, parse_locale, default_locale
-from babel.dates import (
-    format_datetime as babel_format_datetime,
-    format_date as babel_format_date,
-)
+from babel import Locale, UnknownLocaleError, default_locale, parse_locale
+from babel.dates import format_date as babel_format_date
+from babel.dates import format_datetime as babel_format_datetime
 from languagecodes import iso_639_alpha2
 from tzlocal import get_localzone
 

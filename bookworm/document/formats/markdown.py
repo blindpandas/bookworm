@@ -1,12 +1,14 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import lxml
 from mistune import markdown
-from bookworm.utils import TextContentDecoder
-from bookworm.logger import logger
-from .html import BaseHtmlDocument
 
+from bookworm.logger import logger
+from bookworm.utils import TextContentDecoder
+
+from .html import BaseHtmlDocument
 
 log = logger.getChild(__name__)
 

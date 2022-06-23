@@ -1,5 +1,7 @@
-import pytest
 from pathlib import Path
+
+import pytest
+
 from bookworm.document.uri import DocumentUri
 
 

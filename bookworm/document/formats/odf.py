@@ -1,8 +1,10 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import sys
 from functools import lru_cache
+
 from odf import opendocument
 
 # Hack to fix some pyinstaller issues
@@ -12,30 +14,24 @@ sys.modules["opendocument"] = opendocument
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from lxml.html import fromstring as ParseHtml, tostring as SerializeHtml
+
 from bs4 import BeautifulSoup
+from lxml.html import fromstring as ParseHtml
+from lxml.html import tostring as SerializeHtml
 from odf.odf2xhtml import ODF2XHTML
+
 from bookworm import typehints as t
-from bookworm.paths import home_data_path
 from bookworm.concurrency import process_worker
-from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.utils import generate_file_md5, escape_html, NEWLINE
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
-from .. import (
-    BaseDocument,
-    BasePage,
-    DummyDocument,
-    BookMetadata,
-    Section,
-    Pager,
-    DocumentCapability as DC,
-    TreeStackBuilder,
-    ChangeDocument,
-    DocumentCapability as DC,
-    DocumentError,
-)
+from bookworm.paths import home_data_path
+from bookworm.structured_text.structured_html_parser import \
+    StructuredHtmlParser
+from bookworm.utils import NEWLINE, escape_html, generate_file_md5
 
+from .. import BaseDocument, BasePage, BookMetadata, ChangeDocument
+from .. import DocumentCapability as DC
+from .. import DocumentError, DummyDocument, Pager, Section, TreeStackBuilder
 
 log = logger.getChild(__name__)
 

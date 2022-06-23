@@ -1,11 +1,12 @@
 # coding: utf-8
 
 import wx
-from bookworm.service import BookwormService
-from bookworm.logger import logger
-from .wikiworm import WikipediaService
-from .url_open import UrlOpenService
 
+from bookworm.logger import logger
+from bookworm.service import BookwormService
+
+from .url_open import UrlOpenService
+from .wikiworm import WikipediaService
 
 log = logger.getChild(__name__)
 

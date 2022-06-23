@@ -1,26 +1,24 @@
 # coding: utf-8
 
 from __future__ import annotations
-import os
+
 import contextlib
+import os
 import uuid
 from functools import cached_property
 from pathlib import Path, PurePosixPath
-from zipfile import ZipFile
 from tempfile import TemporaryDirectory
+from zipfile import ZipFile
+
 from bookworm import app
-from bookworm.runtime import PackagingMode, CURRENT_PACKAGING_MODE
-from bookworm.paths import app_path
 from bookworm.logger import logger
-from .. import (
-    DummyDocument,
-    ChangeDocument,
-    DocumentCapability as DC,
-    DocumentIOError,
-    DocumentEncryptedError,
-    ArchiveContainsMultipleDocuments,
-    ArchiveContainsNoDocumentsError,
-)
+from bookworm.paths import app_path
+from bookworm.runtime import CURRENT_PACKAGING_MODE, PackagingMode
+
+from .. import (ArchiveContainsMultipleDocuments,
+                ArchiveContainsNoDocumentsError, ChangeDocument)
+from .. import DocumentCapability as DC
+from .. import DocumentEncryptedError, DocumentIOError, DummyDocument
 from ..uri import DocumentUri
 
 log = logger.getChild(__name__)
@@ -37,6 +35,7 @@ unrar_dll = os.path.join(
 os.environ["UNRAR_LIB_PATH"] = unrar_dll
 
 from unrar.rarfile import RarFile
+
 
 class ArchivedDocument(DummyDocument):
 

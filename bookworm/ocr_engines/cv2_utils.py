@@ -1,9 +1,10 @@
 # coding: utf-8
 
-import cv2
-import numpy as np
 import math
 import re
+
+import cv2
+import numpy as np
 
 
 # function to resize the image without distortion i.e resizing with ratios

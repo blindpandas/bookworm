@@ -1,14 +1,16 @@
 # coding: utf-8
 
-import System
-from System.Globalization import CultureInfo, CultureNotFoundException
 from contextlib import suppress
+
+import System
 from OcPromptBuilder import OcPromptBuilder
+from System.Globalization import CultureInfo, CultureNotFoundException
+
+from bookworm.logger import logger
 from bookworm.speechdriver.enumerations import SpeechElementKind
 from bookworm.speechdriver.utterance import SpeechElement, SpeechStyle
-from bookworm.logger import logger
-from ..sapi.sp_utterance import SapiSpeechUtterance
 
+from ..sapi.sp_utterance import SapiSpeechUtterance
 
 log = logger.getChild(__name__)
 

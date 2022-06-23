@@ -2,48 +2,37 @@
 
 import math
 import webbrowser
-import wx
-from contextlib import contextmanager
 from concurrent.futures import Future
+from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
-from bookworm import typehints as t
-from bookworm import app
-from bookworm import config
-from bookworm import speech
-from bookworm.concurrency import threaded_worker, CancellationToken
-from bookworm.resources import sounds, app_icons
-from bookworm.paths import app_path, fonts_path
-from bookworm.document import (
-    DummyDocument,
-    DocumentRestrictedError,
-    ArchiveContainsNoDocumentsError,
-    ArchiveContainsMultipleDocuments,
-)
-from bookworm.structured_text import Style, SEMANTIC_ELEMENT_OUTPUT_OPTIONS
-from bookworm.reader import (
-    EBookReader,
-    UriResolver,
-    ReaderError,
-    ResourceDoesNotExist,
-    UnsupportedDocumentError,
-    DecryptionRequired,
-)
-from bookworm.signals import (
-    reader_book_loaded,
-    reader_book_unloaded,
-    reading_position_change,
-)
-from bookworm.structured_text import TextRange
-from bookworm.gui.contentview_ctrl import ContentViewCtrl
-from bookworm.gui.components import TocTreeManager, AsyncSnakDialog
-from bookworm.utils import gui_thread_safe
-from bookworm.logger import logger
-from . import recents_manager
-from .menubar import MenubarProvider, BookRelatedMenuIds
-from .state import StateProvider
-from .navigation import NavigationProvider
 
+import wx
+
+from bookworm import app, config, speech
+from bookworm import typehints as t
+from bookworm.concurrency import CancellationToken, threaded_worker
+from bookworm.document import (ArchiveContainsMultipleDocuments,
+                               ArchiveContainsNoDocumentsError,
+                               DocumentRestrictedError, DummyDocument)
+from bookworm.gui.components import AsyncSnakDialog, TocTreeManager
+from bookworm.gui.contentview_ctrl import ContentViewCtrl
+from bookworm.logger import logger
+from bookworm.paths import app_path, fonts_path
+from bookworm.reader import (DecryptionRequired, EBookReader, ReaderError,
+                             ResourceDoesNotExist, UnsupportedDocumentError,
+                             UriResolver)
+from bookworm.resources import app_icons, sounds
+from bookworm.signals import (reader_book_loaded, reader_book_unloaded,
+                              reading_position_change)
+from bookworm.structured_text import (SEMANTIC_ELEMENT_OUTPUT_OPTIONS, Style,
+                                      TextRange)
+from bookworm.utils import gui_thread_safe
+
+from . import recents_manager
+from .menubar import BookRelatedMenuIds, MenubarProvider
+from .navigation import NavigationProvider
+from .state import StateProvider
 
 log = logger.getChild(__name__)
 
