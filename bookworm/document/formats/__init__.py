@@ -2,6 +2,7 @@
 
 from .archive import ArchivedDocument
 from .docbook import DocbookDocument
+
 # from .epub import EpubDocument
 from .epub import EpubDocument
 from .html import FileSystemHtmlDocument, WebHtmlDocument

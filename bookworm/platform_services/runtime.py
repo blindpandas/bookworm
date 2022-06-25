@@ -3,11 +3,17 @@
 from . import PLATFORM
 
 if PLATFORM == "win32":
-    from ._win32.runtime import (is_high_contrast_active, is_running_portable,
-                                 system_start_app)
+    from ._win32.runtime import (
+        is_high_contrast_active,
+        is_running_portable,
+        system_start_app,
+    )
 elif PLATFORM == "linux":
-    from ._linux.runtime import (is_high_contrast_active, is_running_portable,
-                                 system_start_app)
+    from ._linux.runtime import (
+        is_high_contrast_active,
+        is_running_portable,
+        system_start_app,
+    )
 
 
 if PLATFORM == "win32":

@@ -110,7 +110,7 @@ class DocumentUri:
             value = value.to_uri_string()
         elif type(value) is not str:
             raise ValueError(f"Invalid document URI: {value}")
-        self.openner_args['fallback_uri'] = value
+        self.openner_args["fallback_uri"] = value
 
     @classmethod
     def from_base64_encoded_string(cls, s):

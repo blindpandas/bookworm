@@ -146,7 +146,7 @@ class BaseOcrEngine(metaclass=ABCMeta):
         current_lang = first_true(
             langs,
             pred=lambda lang: lang.should_be_considered_equal_to(app.current_language),
-            default=None
+            default=None,
         )
         if current_lang is not None:
             langs.remove(current_lang)

@@ -12,8 +12,11 @@ from bookworm import app, config
 from bookworm.i18n import get_available_locales, set_locale
 from bookworm.logger import logger
 from bookworm.paths import app_path
-from bookworm.platform_services.shell import (get_ext_info, shell_disintegrate,
-                                              shell_integrate)
+from bookworm.platform_services.shell import (
+    get_ext_info,
+    shell_disintegrate,
+    shell_integrate,
+)
 from bookworm.resources import app_icons
 from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.signals import app_started, config_updated

@@ -42,7 +42,7 @@ class ViewerMenuIds(enum.IntEnum):
     contributors = next(ID_GEN)
     restart_with_debug = next(ID_GEN)
     about = next(ID_GEN)
-    clear_documents_cache  = next(ID_GEN)
+    clear_documents_cache = next(ID_GEN)
 
 
 KEYBOARD_SHORTCUTS = {

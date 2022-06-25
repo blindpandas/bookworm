@@ -10,20 +10,32 @@ from wx.adv import CommandLinkButton
 from bookworm import app, config
 from bookworm import typehints as t
 from bookworm.concurrency import threaded_worker
-from bookworm.gui.components import (AsyncSnakDialog, ColumnDefn,
-                                     ImmutableObjectListView,
-                                     RobustProgressDialog, SimpleDialog,
-                                     SnakDialog, make_sized_static_box)
+from bookworm.gui.components import (
+    AsyncSnakDialog,
+    ColumnDefn,
+    ImmutableObjectListView,
+    RobustProgressDialog,
+    SimpleDialog,
+    SnakDialog,
+    make_sized_static_box,
+)
 from bookworm.gui.settings import ReconciliationStrategies, SettingsPanel
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 from bookworm.ocr_engines.image_processing_pipelines import (
-    BlurProcessingPipeline, ConcatImagesProcessingPipeline,
-    DebugProcessingPipeline, DeskewProcessingPipeline,
-    DilationProcessingPipeline, DPIProcessingPipeline,
-    ErosionProcessingPipeline, ImageProcessingPipeline,
-    InvertColourProcessingPipeline, SharpenColourProcessingPipeline,
-    ThresholdProcessingPipeline, TwoInOneScanProcessingPipeline)
+    BlurProcessingPipeline,
+    ConcatImagesProcessingPipeline,
+    DebugProcessingPipeline,
+    DeskewProcessingPipeline,
+    DilationProcessingPipeline,
+    DPIProcessingPipeline,
+    ErosionProcessingPipeline,
+    ImageProcessingPipeline,
+    InvertColourProcessingPipeline,
+    SharpenColourProcessingPipeline,
+    ThresholdProcessingPipeline,
+    TwoInOneScanProcessingPipeline,
+)
 from bookworm.ocr_engines.tesseract_ocr_engine import TesseractOcrEngine
 from bookworm.platform_services._win32 import tesseract_download
 from bookworm.utils import restart_application

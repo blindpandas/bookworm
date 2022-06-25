@@ -9,9 +9,12 @@ from bookworm.gui.settings import SettingsPanel
 from bookworm.logger import logger
 from bookworm.structured_text import TextRange
 
-from .annotation_dialogs import (BookmarksViewer, CommentsDialog,
-                                 GenericAnnotationWithContentDialog,
-                                 QuotesDialog)
+from .annotation_dialogs import (
+    BookmarksViewer,
+    CommentsDialog,
+    GenericAnnotationWithContentDialog,
+    QuotesDialog,
+)
 from .annotator import Bookmarker, NoteTaker, Quoter
 
 log = logger.getChild(__name__)

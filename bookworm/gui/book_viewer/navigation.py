@@ -6,10 +6,13 @@ import wx
 
 from bookworm import config, speech
 from bookworm.document import PaginationError
-from bookworm.gui.contentview_ctrl import (EVT_CONTENT_NAVIGATION,
-                                           EVT_STRUCTURED_NAVIGATION,
-                                           NAV_BACKWORD_KEYS,
-                                           NAV_FOREWORD_KEYS, NAVIGATION_KEYS)
+from bookworm.gui.contentview_ctrl import (
+    EVT_CONTENT_NAVIGATION,
+    EVT_STRUCTURED_NAVIGATION,
+    NAV_BACKWORD_KEYS,
+    NAV_FOREWORD_KEYS,
+    NAVIGATION_KEYS,
+)
 from bookworm.logger import logger
 from bookworm.signals import reader_page_changed
 

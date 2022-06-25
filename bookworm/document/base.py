@@ -18,13 +18,15 @@ from bookworm.i18n import LocaleInfo
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
 from bookworm.structured_text import SemanticElementType, Style, TextRange
-from bookworm.utils import (get_url_spans, normalize_line_breaks,
-                            remove_excess_blank_lines)
+from bookworm.utils import (
+    get_url_spans,
+    normalize_line_breaks,
+    remove_excess_blank_lines,
+)
 
 from . import operations as doctools
 from .elements import *
-from .exceptions import (DocumentIOError, PaginationError,
-                         UnsupportedDocumentFormatError)
+from .exceptions import DocumentIOError, PaginationError, UnsupportedDocumentFormatError
 from .features import DocumentCapability, ReadingMode
 
 log = logger.getChild(__name__)

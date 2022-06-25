@@ -8,19 +8,32 @@ from bookworm import app, config
 from bookworm import typehints as t
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.database import DocumentPositionInfo
-from bookworm.document import (ArchiveContainsMultipleDocuments,
-                               ArchiveContainsNoDocumentsError, BaseDocument,
-                               BasePage, ChangeDocument)
+from bookworm.document import (
+    ArchiveContainsMultipleDocuments,
+    ArchiveContainsNoDocumentsError,
+    BaseDocument,
+    BasePage,
+    ChangeDocument,
+)
 from bookworm.document import DocumentCapability as DC
-from bookworm.document import (DocumentEncryptedError, DocumentError,
-                               DocumentIOError, PaginationError, Section)
+from bookworm.document import (
+    DocumentEncryptedError,
+    DocumentError,
+    DocumentIOError,
+    PaginationError,
+    Section,
+)
 from bookworm.document.formats import *
 from bookworm.document.uri import DocumentUri
 from bookworm.i18n import is_rtl
 from bookworm.logger import logger
-from bookworm.signals import (reader_book_loaded, reader_book_unloaded,
-                              reader_page_changed, reader_section_changed,
-                              reading_position_change)
+from bookworm.signals import (
+    reader_book_loaded,
+    reader_book_unloaded,
+    reader_page_changed,
+    reader_section_changed,
+    reading_position_change,
+)
 from bookworm.structured_text import SemanticElementType, TextStructureMetadata
 
 log = logger.getChild(__name__)
@@ -29,6 +42,7 @@ PASS_THROUGH__DOCUMENT_EXCEPTIONS = {
     ArchiveContainsNoDocumentsError,
     ArchiveContainsMultipleDocuments,
 }
+
 
 def get_document_format_info():
     return BaseDocument.document_classes
@@ -48,7 +62,6 @@ class UnsupportedDocumentError(ReaderError):
 
 class DecryptionRequired(Exception):
     """Raised to signal to the view that the document requires a password to be decrypted ."""
-
 
 
 class UriResolver:

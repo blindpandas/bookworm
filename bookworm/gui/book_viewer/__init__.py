@@ -12,21 +12,31 @@ import wx
 from bookworm import app, config, speech
 from bookworm import typehints as t
 from bookworm.concurrency import CancellationToken, threaded_worker
-from bookworm.document import (ArchiveContainsMultipleDocuments,
-                               ArchiveContainsNoDocumentsError,
-                               DocumentRestrictedError, DummyDocument)
+from bookworm.document import (
+    ArchiveContainsMultipleDocuments,
+    ArchiveContainsNoDocumentsError,
+    DocumentRestrictedError,
+    DummyDocument,
+)
 from bookworm.gui.components import AsyncSnakDialog, TocTreeManager
 from bookworm.gui.contentview_ctrl import ContentViewCtrl
 from bookworm.logger import logger
 from bookworm.paths import app_path, fonts_path
-from bookworm.reader import (DecryptionRequired, EBookReader, ReaderError,
-                             ResourceDoesNotExist, UnsupportedDocumentError,
-                             UriResolver)
+from bookworm.reader import (
+    DecryptionRequired,
+    EBookReader,
+    ReaderError,
+    ResourceDoesNotExist,
+    UnsupportedDocumentError,
+    UriResolver,
+)
 from bookworm.resources import app_icons, sounds
-from bookworm.signals import (reader_book_loaded, reader_book_unloaded,
-                              reading_position_change)
-from bookworm.structured_text import (SEMANTIC_ELEMENT_OUTPUT_OPTIONS, Style,
-                                      TextRange)
+from bookworm.signals import (
+    reader_book_loaded,
+    reader_book_unloaded,
+    reading_position_change,
+)
+from bookworm.structured_text import SEMANTIC_ELEMENT_OUTPUT_OPTIONS, Style, TextRange
 from bookworm.utils import gui_thread_safe
 
 from . import recents_manager
@@ -111,13 +121,18 @@ class ResourceLoader:
             )
         except DocumentRestrictedError as e:
             _last_exception = e
-            log.exception("Failed to open document. The document is restricted by the author.", exc_info=True)
+            log.exception(
+                "Failed to open document. The document is restricted by the author.",
+                exc_info=True,
+            )
             wx.CallAfter(
                 self.view.notify_user,
                 # Translators: the title of an error message
                 _("Document Restricted"),
                 # Translators: the content of an error message
-                _("Could not open Document.\nThe document is restricted by the publisher."),
+                _(
+                    "Could not open Document.\nThe document is restricted by the publisher."
+                ),
                 icon=wx.ICON_ERROR,
             )
         except UnsupportedDocumentError as e:
@@ -157,9 +172,7 @@ class ResourceLoader:
             )
             if dlg.ShowModal() == wx.ID_OK:
                 member = dlg.GetStringSelection()
-                new_uri = uri.create_copy(
-                    view_args={'member': member}
-                )
+                new_uri = uri.create_copy(view_args={"member": member})
                 self.view.open_uri(new_uri)
         except ReaderError as e:
             _last_exception = e
@@ -193,13 +206,15 @@ class ResourceLoader:
         finally:
             if _last_exception is not None:
                 wx.CallAfter(self.view.unloadCurrentEbook)
-                if uri.view_args.get('from_list'):
+                if uri.view_args.get("from_list"):
                     retval = wx.MessageBox(
                         # Translators: content of a message
-                        _("Failed to open document.\nWould you like to remove its entry from the 'recent documents' and 'pinned documents' lists?"),
+                        _(
+                            "Failed to open document.\nWould you like to remove its entry from the 'recent documents' and 'pinned documents' lists?"
+                        ),
                         # Translators: title of a message box
                         _("Remove from lists?"),
-                        style=wx.YES_NO | wx.ICON_WARNING
+                        style=wx.YES_NO | wx.ICON_WARNING,
                     )
                     if retval == wx.YES:
                         recents_manager.remove_from_recents(uri)
@@ -347,17 +362,23 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def set_content_view_font(self):
         configured_text_style = self.get_content_view_text_style()
-        self.contentTextCtrl.SetStyle(0, self.contentTextCtrl.GetLastPosition(), configured_text_style)
+        self.contentTextCtrl.SetStyle(
+            0, self.contentTextCtrl.GetLastPosition(), configured_text_style
+        )
         self.contentTextCtrl.SetDefaultStyle(configured_text_style)
 
     def get_content_view_text_style(self, *, font_size=None):
         finfo = wx.FontInfo().FaceName(config.conf["appearance"]["font_facename"])
         configured_font = wx.Font(finfo)
-        font_point_size = font_size if font_size is not None else config.conf["appearance"]["font_point_size"]
+        font_point_size = (
+            font_size
+            if font_size is not None
+            else config.conf["appearance"]["font_point_size"]
+        )
         configured_font.SetPointSize(font_point_size)
         if config.conf["appearance"]["use_bold_font"]:
             configured_font.SetWeight(wx.FONTWEIGHT_BOLD)
-        base_text_style =  self.contentTextCtrl.GetDefaultStyle()
+        base_text_style = self.contentTextCtrl.GetDefaultStyle()
         base_text_style.SetFont(configured_font)
         return base_text_style
 
@@ -436,10 +457,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             return
         else:
             new_uri = uri.create_copy(
-                view_args={
-                    "decryption_key": retval,
-                    "n_attempts": "1"
-                }
+                view_args={"decryption_key": retval, "n_attempts": "1"}
             )
             return self.open_uri(new_uri)
 
@@ -460,7 +478,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.contentTextCtrl.SetStyle(
             0,
             self.contentTextCtrl.GetLastPosition(),
-            self.get_content_view_text_style(font_size=current_font_size)
+            self.get_content_view_text_style(font_size=current_font_size),
         )
         self.contentTextCtrl.SetInsertionPoint(0)
         if app.debug and raw_content_length != (

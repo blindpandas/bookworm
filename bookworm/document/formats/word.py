@@ -51,7 +51,9 @@ class WordDocument(BaseHtmlDocument):
                 self.try_decrypt(data_buf, decryption_key)
             else:
                 raise DocumentEncryptedError(self)
-        self.__html_content = self._get_html_content_from_docx(data_buf, is_encrypted_document)
+        self.__html_content = self._get_html_content_from_docx(
+            data_buf, is_encrypted_document
+        )
         super().read()
 
     def get_html(self):
@@ -81,7 +83,9 @@ class WordDocument(BaseHtmlDocument):
 
     def _get_html_content_from_docx(self, data_buf, is_encrypted_document):
         data_buf.seek(0)
-        cache = Cache(self._get_cache_directory(), eviction_policy="least-frequently-used")
+        cache = Cache(
+            self._get_cache_directory(), eviction_policy="least-frequently-used"
+        )
         cache_key = self.uri.to_uri_string()
         if cached_html_content := cache.get(cache_key):
             return cached_html_content.decode("utf-8")

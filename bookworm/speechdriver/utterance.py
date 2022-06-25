@@ -10,8 +10,7 @@ from typing import get_type_hints
 from bookworm import typehints as t
 from bookworm.logger import logger
 
-from .enumerations import (EmphSpec, PauseSpec, RateSpec, SpeechElementKind,
-                           VolumeSpec)
+from .enumerations import EmphSpec, PauseSpec, RateSpec, SpeechElementKind, VolumeSpec
 
 log = logger.getChild(__name__)
 

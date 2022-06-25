@@ -26,14 +26,12 @@ from bookworm.image_io import ImageIO
 from bookworm.logger import logger
 from bookworm.paths import home_data_path
 from bookworm.structured_text import TextRange
-from bookworm.structured_text.structured_html_parser import \
-    StructuredHtmlParser
+from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 from bookworm.utils import format_datetime, is_external_url
 
 from .. import SINGLE_PAGE_DOCUMENT_PAGER, BookMetadata, ChangeDocument
 from .. import DocumentCapability as DC
-from .. import (DocumentError, LinkTarget, Section, SinglePageDocument,
-                TreeStackBuilder)
+from .. import DocumentError, LinkTarget, Section, SinglePageDocument, TreeStackBuilder
 
 log = logger.getChild(__name__)
 HTML_FILE_EXTS = {

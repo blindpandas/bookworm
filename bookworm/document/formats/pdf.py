@@ -105,9 +105,7 @@ class FitzPdfDocument(FitzDocument):
 
     def read(self, filetype=None):
         super().read()
-        self.create_xpdf_document(
-            self.uri.view_args.get("decryption_key")
-        )
+        self.create_xpdf_document(self.uri.view_args.get("decryption_key"))
 
     def close(self):
         super().close()

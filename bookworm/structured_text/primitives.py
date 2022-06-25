@@ -14,10 +14,13 @@ import attr
 from more_itertools import locate
 
 from bookworm import typehints as t
-from bookworm.vendor.sentence_splitter import (SentenceSplitter,
-                                               SentenceSplitterException)
-from bookworm.vendor.sentence_splitter import \
-    supported_languages as splitter_supported_languages
+from bookworm.vendor.sentence_splitter import (
+    SentenceSplitter,
+    SentenceSplitterException,
+)
+from bookworm.vendor.sentence_splitter import (
+    supported_languages as splitter_supported_languages,
+)
 
 
 @attr.s(auto_attribs=True, slots=True, hash=False)

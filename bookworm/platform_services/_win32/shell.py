@@ -84,9 +84,7 @@ def shell_integrate(supported="*"):
 @ignore(System.Exception, Exception)
 def shell_disintegrate(supported="*"):
     if not app.is_frozen:
-        log.warning(
-            "File association is not available when running from source."
-        )
+        log.warning("File association is not available when running from source.")
         return
     log.info(f"Unregistering file associations for extensions {supported}.")
     exe = os.path.split(sys.executable)[-1]

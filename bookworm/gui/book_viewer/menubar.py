@@ -22,11 +22,13 @@ from bookworm.document import READING_MODE_LABELS
 from bookworm.document import DocumentCapability as DC
 from bookworm.document import DocumentInfo, PaginationError
 from bookworm.document.uri import DocumentUri
-from bookworm.gui.book_viewer.core_dialogs import (DocumentInfoDialog,
-                                                   ElementListDialog,
-                                                   GoToPageDialog,
-                                                   SearchBookDialog,
-                                                   SearchResultsDialog)
+from bookworm.gui.book_viewer.core_dialogs import (
+    DocumentInfoDialog,
+    ElementListDialog,
+    GoToPageDialog,
+    SearchBookDialog,
+    SearchResultsDialog,
+)
 from bookworm.gui.components import AsyncSnakDialog, RobustProgressDialog
 from bookworm.gui.contentview_ctrl import EVT_CONTEXTMENU_REQUESTED
 from bookworm.gui.settings import PreferencesDialog
@@ -34,8 +36,12 @@ from bookworm.i18n import is_rtl
 from bookworm.logger import logger
 from bookworm.reader import EBookReader
 from bookworm.resources import sounds
-from bookworm.signals import (config_updated, reader_book_loaded,
-                              reader_book_unloaded, reading_position_change)
+from bookworm.signals import (
+    config_updated,
+    reader_book_loaded,
+    reader_book_unloaded,
+    reading_position_change,
+)
 from bookworm.utils import gui_thread_safe, restart_application
 
 from . import recents_manager
@@ -110,7 +116,9 @@ class FileMenu(BaseMenu):
             # Translators: the label of an item in the application menubar
             _("C&lear Documents Cache..."),
             # Translators: the help text of an item in the application menubar
-            _("Clear the document cache. Helps in fixing some issues with openning documents."),
+            _(
+                "Clear the document cache. Helps in fixing some issues with openning documents."
+            ),
         )
         self.AppendSeparator()
         self.AppendSubMenu(
@@ -169,7 +177,9 @@ class FileMenu(BaseMenu):
             wx.EVT_MENU, self.onCloseCurrentFile, id=BookRelatedMenuIds.closeCurrentFile
         )
         self.view.Bind(
-            wx.EVT_MENU, self.onClearDocumentCache, id=ViewerMenuIds.clear_documents_cache
+            wx.EVT_MENU,
+            self.onClearDocumentCache,
+            id=ViewerMenuIds.clear_documents_cache,
         )
         self.view.Bind(wx.EVT_MENU, self.onClearRecentFileList, id=wx.ID_CLEAR)
         self.view.Bind(wx.EVT_MENU, self.onPreferences, id=wx.ID_PREFERENCES)
@@ -291,7 +301,7 @@ class FileMenu(BaseMenu):
         item_uri = item_to_doc_map[item_id]
         if self.reader.ready and (item_uri == self.reader.document.uri):
             return
-        item_uri.view_args['from_list'] = True
+        item_uri.view_args["from_list"] = True
         self.view.open_uri(item_uri)
 
     def onClearRecentFileList(self, event):
@@ -316,28 +326,24 @@ class FileMenu(BaseMenu):
             _("Are you sure you want to clear the documents cache?"),
             # Translators: title of a message box
             _("Clear Documents Cache?"),
-            style=wx.YES_NO | wx.ICON_WARNING
+            style=wx.YES_NO | wx.ICON_WARNING,
         )
         if retval != wx.YES:
             return
-        task = partial(
-            shutil.rmtree,
-            paths.home_data_path(),
-            ignore_errors=True
-        )
+        task = partial(shutil.rmtree, paths.home_data_path(), ignore_errors=True)
         done_callback = lambda fut: wx.MessageBox(
             # Translators: content of a message box
             _("Documents cache has been cleared."),
             # Translators: title of a message box
             _("Success"),
-            style=wx.ICON_INFORMATION
+            style=wx.ICON_INFORMATION,
         )
         AsyncSnakDialog(
             task=task,
             done_callback=done_callback,
             # Translators: content of a message in a message box
             message=_("Clearing documents cache..."),
-            parent=self.view
+            parent=self.view,
         )
 
     def populate_pinned_documents_list(self):
