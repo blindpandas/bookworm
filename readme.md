@@ -56,7 +56,7 @@ python -m venv .env
 * Install "invoke" : invoke is the command runner we use to define and run the build process. Install it from pip using:
 ```bash
 pip install invoke
-``
+```
 * Then run the following command to prepare your development environment:
 ```shell
 invoke dev
