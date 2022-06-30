@@ -56,6 +56,9 @@ class TextContentDecoder:
     def __repr__(self):
         return f"<{self.__class__.__name__}: content_length: {len(self.content)}, prefered_encoding: {self.prefered_encoding}>"
 
+    def __len__(self) -> int:
+        return len(self.content)
+    
     @classmethod
     def from_filename(
         cls,

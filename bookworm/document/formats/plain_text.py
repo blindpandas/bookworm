@@ -35,6 +35,11 @@ class PlainTextDocument(SinglePageDocument):
         self.text = TextContentDecoder(content).get_utf8()
         super().read()
 
+    def __len__(self):
+        if self.text is None:
+            self.read()
+        return len(self.text)
+    
     def get_content(self):
         if len(self.text) > MAX_NUM_CHARS:
             return self.text
