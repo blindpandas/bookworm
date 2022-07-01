@@ -8,6 +8,7 @@ import time
 from concurrent.futures import Future
 from functools import reduce
 from itertools import chain
+from typing import Optional
 
 import attr
 import wx
@@ -169,9 +170,11 @@ class PageRangeControl(sc.SizedPanel):
             to_page = self.toPage.GetValue() - 1
         return from_page, to_page
 
-    def get_text_range(self):
-        if not self.is_single_page_document:
-            raise TypeError("Text ranges are not supported in single page documents")
+    def get_text_range(self) -> Optional[TextRange]:
+        if self.is_single_page_document:
+            if self.doc.format == "txt":
+                return TextRange(0, len(self.doc))
+            return None                
         if selected_item := self.sectionChoice.GetSelection():
             section = self.sectionChoice.GetClientData(selected_item)
             start_pos, stop_pos = section.text_range
