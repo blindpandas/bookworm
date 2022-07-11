@@ -96,7 +96,6 @@ class TTSConfigManager:
 # Specs
 tts_config_spec = {
     "reading": dict(
-        use_continuous_reading="boolean(default=True)",
         # 0: entire book, 1: current section, 2: current_page
         reading_mode="integer(default=0, min=0, max=2)",
         # 0: from cursor position, 1: from beginning of page

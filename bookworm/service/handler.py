@@ -9,7 +9,6 @@ log = logger.getChild(__name__)
 
 from bookworm.annotation import AnnotationService
 from bookworm.bookshelf import BookshelfService
-from bookworm.continuous_reading import ContReadingService
 from bookworm.epub_serve import EpubServeService
 from bookworm.ocr import OCRService, OCRSettingsService
 
@@ -30,7 +29,6 @@ BUILTIN_SERVICES = (
     OCRSettingsService,
     OCRService,
     BookshelfService,
-    ContReadingService,
     UrlOpenService,
     WikipediaService,
     EpubServeService,

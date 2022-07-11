@@ -16,6 +16,7 @@ config_spec = StringIO(
     speak_section_title = boolean(default=True)
     include_page_label = boolean(default=False)
     show_reading_progress_percentage = boolean(default=True)
+    use_continuous_reading = boolean(default=True)
 [history]
     recent_terms = list(default=list())
     last_folder = string(default="")

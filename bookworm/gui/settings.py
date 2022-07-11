@@ -276,6 +276,13 @@ class GeneralPanel(SettingsPanel):
         wx.CheckBox(
             miscBox,
             -1,
+            # Translators: the label of a checkbox to enable continuous reading
+            _("Try to support the screen reader's continuous reading mode by automatically turning pages (may not work in some cases)"),
+            name="general.use_continuous_reading",
+        )
+        wx.CheckBox(
+            miscBox,
+            -1,
             # Translators: the label of a checkbox
             _("Automatically check for updates"),
             name="general.auto_check_for_updates",

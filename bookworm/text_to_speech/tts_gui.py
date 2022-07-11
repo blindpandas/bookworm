@@ -49,15 +49,8 @@ class ReadingPanel(SettingsPanel):
     def addControls(self):
         # Translators: the label of a group of controls in the reading page
         generalReadingBox = self.make_static_box(_("Reading Options"))
-        wx.CheckBox(
-            generalReadingBox,
-            -1,
-            # Translators: the label of a checkbox to enable continuous reading
-            _("Use continuous reading mode"),
-            name="reading.use_continuous_reading",
-        )
         self.readingMode = wx.RadioBox(
-            self,
+            generalReadingBox,
             -1,
             # Translators: the title of a group of radio buttons in the reading page
             # in the application settings related to how to read.

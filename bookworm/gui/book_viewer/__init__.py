@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import math
+import time
 import webbrowser
 from concurrent.futures import Future
 from contextlib import contextmanager
@@ -19,7 +20,7 @@ from bookworm.document import (
     DummyDocument,
 )
 from bookworm.gui.components import AsyncSnakDialog, TocTreeManager
-from bookworm.gui.contentview_ctrl import ContentViewCtrl
+from bookworm.gui.contentview_ctrl import ContentViewCtrl, EVT_CARET
 from bookworm.logger import logger
 from bookworm.paths import app_path, fonts_path
 from bookworm.reader import (
@@ -257,6 +258,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
         # A timer to save the current position to the database
         self.userPositionTimer = wx.Timer(self)
+        self._last_page_turn_time = 0
 
         # Bind Events
         self.Bind(wx.EVT_TIMER, self.onUserPositionTimerTick, self.userPositionTimer)
@@ -267,6 +269,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         )
         self.Bind(
             wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(1), id=wx.ID_PREVIEW_ZOOM_IN
+        )
+        self.contentTextCtrl.Bind(
+            EVT_CARET,
+            self.onCaretMoved,
         )
 
         self.toc_tree_manager = TocTreeManager(self.tocTreeCtrl)
@@ -298,15 +304,16 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             | wx.TR_ROW_LINES,
             name="toc_tree",
         )
-        # Translators: the label of the text area which shows the
-        # content of the current page
-        self.contentTextCtrlLabel = wx.StaticText(panel, -1, _("Content"))
         self.contentTextCtrl = ContentViewCtrl(
             panel,
+            # Translators: the label of the text area which shows the
+            # content of the current page
+            label=_("Content"),
             size=(200, 160),
             name="content_view",
         )
         self.contentTextCtrl.SetMargins(self._get_text_view_margins())
+        self.contentTextCtrlLabel = self.contentTextCtrl.contentViewLabel
         self.readingProgressBar = wx.Gauge(
             panel, -1, style=wx.GA_HORIZONTAL | wx.GA_SMOOTH
         )
@@ -554,6 +561,15 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if existing_status := self.get_statusbar_text():
             status_text = f"{status_text} {chr(0x00B7)} {existing_status}"
         wx.CallAfter(self.set_status, status_text, statusbar_only=True)
+
+    def onCaretMoved(self, event):
+        if not self.reader.ready:
+            return
+        if config.conf["general"]["use_continuous_reading"] and event.Position == self.contentTextCtrl.GetLastPosition():
+            if (time.monotonic() - self._last_page_turn_time) <= .5:
+                return
+            self.reader.go_to_next()
+            self._last_page_turn_time = time.monotonic()
 
     def onUserPositionTimerTick(self, event):
         try:
