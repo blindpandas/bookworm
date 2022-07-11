@@ -20,7 +20,7 @@ from bookworm.document import (
     DummyDocument,
 )
 from bookworm.gui.components import AsyncSnakDialog, TocTreeManager
-from bookworm.gui.contentview_ctrl import ContentViewCtrl, EVT_CARET
+from bookworm.gui.contentview_ctrl import ContentViewCtrl
 from bookworm.logger import logger
 from bookworm.paths import app_path, fonts_path
 from bookworm.reader import (
@@ -270,9 +270,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.Bind(
             wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(1), id=wx.ID_PREVIEW_ZOOM_IN
         )
-        self.contentTextCtrl.Bind(
-            EVT_CARET,
+        self.Bind(
+            self.contentTextCtrl.EVT_CARET,
             self.onCaretMoved,
+            id=self.contentTextCtrl.GetId()
         )
 
         self.toc_tree_manager = TocTreeManager(self.tocTreeCtrl)
@@ -563,6 +564,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         wx.CallAfter(self.set_status, status_text, statusbar_only=True)
 
     def onCaretMoved(self, event):
+        event.Skip(True)
         if not self.reader.ready:
             return
         if config.conf["general"]["use_continuous_reading"] and event.Position == self.contentTextCtrl.GetLastPosition():

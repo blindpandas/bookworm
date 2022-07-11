@@ -47,6 +47,11 @@ class AnnotationService(BookwormService):
         self.view.contentTextCtrl.Bind(
             wx.EVT_KEY_UP, self.onKeyUp, self.view.contentTextCtrl
         )
+        self.view.Bind(
+            self.view.contentTextCtrl.EVT_CARET,
+            self.onCaretMoved,
+            id=self.view.contentTextCtrl.GetId()
+        )
         self.view.add_load_handler(
             lambda red: wx.CallAfter(self._check_is_virtual, red)
         )
@@ -199,6 +204,22 @@ class AnnotationService(BookwormService):
                 text_to_announce=_("Highlight"),
             )
             sounds.navigation.play()
+
+    def onCaretMoved(self, event):
+        event.Skip(True)
+        for highlight in Quoter(self.reader).get_for_page():
+            if highlight.start_pos <= event.Position <= highlight.end_pos:
+                sounds.highlight.play()
+                speech.announce("Highlighted", False)
+        pos_range  = range(*self.view.get_containing_line(event.Position))
+        for bookmark in Bookmarker(self.reader).get_for_page():
+            if bookmark.position in pos_range:
+                sounds.bookmark.play()
+                speech.announce("In bookmark", False)
+        for comment in NoteTaker(self.reader).get_for_page():
+            if comment.position in pos_range:
+                sounds.comment.play()
+                speech.announce("In comment", False)
 
     def get_annotation(self, annotator_cls, *, foreword):
         if not (annotator := self.__state.get(annotator_cls.__name__)):

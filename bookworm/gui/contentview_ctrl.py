@@ -35,7 +35,7 @@ IS_64_BIT = struct.calcsize("P") == 8
 EM_GETEVENTMASK = win32con.WM_USER + 59
 EM_SETEVENTMASK = win32con.WM_USER + 69
 
-CaretMoveEvent, EVT_CARET= wx.lib.newevent.NewEvent()
+CaretMoveEvent, _EVT_CARET= wx.lib.newevent.NewCommandEvent()
 ContextMenuEvent, EVT_CONTEXTMENU_REQUESTED = wx.lib.newevent.NewCommandEvent()
 ContentNavigationEvent, EVT_CONTENT_NAVIGATION = wx.lib.newevent.NewEvent()
 StructuredNavigationEvent, EVT_STRUCTURED_NAVIGATION = wx.lib.newevent.NewEvent()
@@ -103,7 +103,7 @@ class WNDProcPanel(WndProcHookMixin, sc.SizedPanel):
             event_time, new_pos = event_queue.get()
             if (new_pos == last_pos):
                 continue
-            wx.PostEvent(text_ctrl, CaretMoveEvent(Position=new_pos))
+            wx.PostEvent(text_ctrl.GetTopLevelParent(), CaretMoveEvent(id=text_ctrl.GetId(), Position=new_pos))
             last_pos = new_pos
 
     def onWM_NOTIFY(self, wParam, lParam):
@@ -129,6 +129,8 @@ class ContentViewCtrl(wx.TextCtrl):
     Provides a unified method to capture context menu requests in TextCtrl's.
     Also contains some hacks to work arounds wxWidget's limitations.
     """
+
+    EVT_CARET = _EVT_CARET
 
     def __init__(self, parent, *args, label="", **kwargs):
         panel = WNDProcPanel(self, parent, size=parent.GetSize())
