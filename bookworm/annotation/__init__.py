@@ -29,9 +29,10 @@ log = logger.getChild(__name__)
 ANNOTATION_CONFIG_SPEC = {
     "annotation": dict(
         use_visuals="boolean(default=True)",
-        play_sound_for_comments="boolean(default=True)",
         select_bookmarked_line_on_jumping="boolean(default=True)",
         speak_bookmarks_on_jumping="boolean(default=True)",
+        audable_indication_of_annotations_when_navigating_text="boolean(default=True)",
+        spoken_indication_of_annotations_when_navigating_text="boolean(default=True)",
     )
 }
 
@@ -207,19 +208,48 @@ class AnnotationService(BookwormService):
 
     def onCaretMoved(self, event):
         event.Skip(True)
-        for highlight in Quoter(self.reader).get_for_page():
-            if highlight.start_pos <= event.Position <= highlight.end_pos:
-                sounds.highlight.play()
-                speech.announce("Highlighted", False)
-        pos_range  = range(*self.view.get_containing_line(event.Position))
+        evtdata = {}
+        position = event.Position
+        start, end = self.view.get_containing_line(position)
+        pos_range  = range(start, end - 1)
         for bookmark in Bookmarker(self.reader).get_for_page():
             if bookmark.position in pos_range:
-                sounds.bookmark.play()
-                speech.announce("In bookmark", False)
+                evtdata["bookmark"] = True
+                break
+        for highlight in Quoter(self.reader).get_for_page():
+            if highlight.start_pos <= position <= (highlight.end_pos - 1):
+                evtdata["highlight"] = True
+                break
+            elif highlight.start_pos in pos_range:
+                evtdata["line_contains_highlight"] = True
+                break
         for comment in NoteTaker(self.reader).get_for_page():
             if comment.position in pos_range:
-                sounds.comment.play()
-                speech.announce("In comment", False)
+                evtdata["comment"] = True
+                break
+        wx.CallAfter(self._process_caret_move, evtdata)
+        
+    def _process_caret_move(self, evtdata):
+        if not any(evtdata.values()):
+            return
+        if config.conf["annotation"]["audable_indication_of_annotations_when_navigating_text"]:
+            sounds.navigation.play()
+        if config.conf["annotation"]["spoken_indication_of_annotations_when_navigating_text"]:
+            to_speak = []
+            if "bookmark" in evtdata:
+                # Translators: spoken message indicating the presence of an annotation when the user navigates the text
+                to_speak.append(_("Bookmarked"))
+            if "highlight" in evtdata:
+                # Translators: spoken message indicating the presence of an annotation when the user navigates the text
+                to_speak.append(_("Highlighted"))
+            elif "line_contains_highlight" in evtdata:
+                # Translators: spoken message indicating the presence of an annotation when the user navigates the text
+                to_speak.append(_("Line contains highlight"))
+            if "comment" in evtdata:
+                # Translators: spoken message indicating the presence of an annotation when the user navigates the text
+                to_speak.append(_("Has comment"))
+            speech.announce(" ".join(to_speak), False)
+
 
     def get_annotation(self, annotator_cls, *, foreword):
         if not (annotator := self.__state.get(annotator_cls.__name__)):

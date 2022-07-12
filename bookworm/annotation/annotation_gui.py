@@ -24,8 +24,24 @@ class AnnotationSettingsPanel(SettingsPanel):
     config_section = "annotation"
 
     def addControls(self):
-        # Translators: the title of a group of controls in the
-        UIBox = self.make_static_box(_("Annotation"))
+        # Translators: the title of a group of controls in the settings dialog
+        InteractionBox = self.make_static_box(_("When navigating text"))
+        wx.CheckBox(
+            InteractionBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Play a sound to indicate the presence of annotations"),
+            name="annotation.audable_indication_of_annotations_when_navigating_text",
+        )
+        wx.CheckBox(
+            InteractionBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Speak a message to indicate the presence of annotations"),
+            name="annotation.spoken_indication_of_annotations_when_navigating_text",
+        )
+        # Translators: the title of a group of controls in the settings dialog
+        UIBox = self.make_static_box(_("Miscellaneous settings"))
         wx.CheckBox(
             UIBox,
             -1,
@@ -46,13 +62,6 @@ class AnnotationSettingsPanel(SettingsPanel):
             # Translators: the label of a checkbox
             _("Use visual styles to indicate annotations"),
             name="annotation.use_visuals",
-        )
-        wx.CheckBox(
-            UIBox,
-            -1,
-            # Translators: the label of a checkbox
-            _("Use sounds to indicate the presence of comments"),
-            name="annotation.play_sound_for_comments",
         )
 
 
