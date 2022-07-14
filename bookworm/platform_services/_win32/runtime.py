@@ -17,7 +17,7 @@ from System.Windows.Forms import SystemInformation
 from bookworm import app
 
 from . import shellapi
-from .win_registry import Registry, RegKey
+from .win_registry import RegKey, RegRoots
 
 PLAYER_FLAGS = winsound.SND_ASYNC | winsound.SND_FILENAME
 UWP_SERVICES_AVAILABEL = False
@@ -78,13 +78,13 @@ def is_running_portable():
     if not app.is_frozen:
         return False
     unins_key = RegKey(
-        Registry.LocalMachine,
+        RegRoots.LocalMachine,
         path=rf"Software\Microsoft\Windows\CurrentVersion\Uninstall\{app.name}",
         writable=False,
     )
     with unins_key:
         if unins_key.exists:
-            unins_path_value = unins_key.GetValue("InstallLocation")
+            unins_path_value = unins_key.get_value("InstallLocation")
             if unins_path_value is None:
                 return True
             elif (

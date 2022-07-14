@@ -5,14 +5,17 @@ import shutil
 import sys
 import tempfile
 import zipfile
+from contextlib import suppress
 from functools import partial
 from hashlib import sha1
 from pathlib import Path
 
 import win32api
+import win32con
+import win32pdhutil
 import wx
 from requests.exceptions import RequestException
-from System.Diagnostics import Process
+
 
 from bookworm import app, config, paths
 from bookworm.commandline_handler import BaseSubcommandHandler, register_subcommand
@@ -41,13 +44,16 @@ class KillOtherInstancesSubcommand(BaseSubcommandHandler):
 def kill_other_running_instances():
     """Ensure that only this instance is running."""
     log.debug("Killing other running instances of the application.")
-    pid, exe_dir = os.getpid(), Path(sys.executable).resolve().parent
-    for proc in Process.GetProcessesByName(app.name):
-        if Path(proc.MainModule.FileName).resolve().parent != exe_dir:
-            continue
-        if proc.Id != os.getpid():
-            proc.Kill()
-            log.info(f"Killed other process with PID: {proc.Id}")
+    with suppress(Exception):
+        win32pdhutil.GetPerformanceAttributes("Process", "ID Process", app.name)
+    pids = win32pdhutil.FindPerformanceAttributesByName(app.name)
+    if (this_pid := win32api.GetCurrentProcessId()) in pids:
+        pids.remove(this_pid)
+    for pid in pids:
+        handle = win32api.OpenProcess(win32con.PROCESS_TERMINATE, 0, pid)
+        win32api.TerminateProcess(handle, 0)
+        win32api.CloseHandle(handle)
+        log.info(f"Killed other process with PID: {pid}")
 
 
 def extract_update_bundle(bundle):

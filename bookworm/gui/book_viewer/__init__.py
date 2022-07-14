@@ -256,12 +256,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             view=self,
         )
 
-        # A timer to save the current position to the database
-        self.userPositionTimer = wx.Timer(self)
+        # Used in continuous reading feature
         self._last_page_turn_time = 0
 
         # Bind Events
-        self.Bind(wx.EVT_TIMER, self.onUserPositionTimerTick, self.userPositionTimer)
         self.tocTreeCtrl.Bind(wx.EVT_SET_FOCUS, self.onTocTreeFocus, self.tocTreeCtrl)
         self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.onTOCItemClick, self.tocTreeCtrl)
         self.Bind(
@@ -426,7 +424,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             func(self.reader)
 
     def default_book_loaded_callback(self):
-        self.userPositionTimer.Start(1200)
         if self.contentTextCtrl.HasFocus():
             self.tocTreeCtrl.SetFocus()
 
@@ -509,7 +506,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             not isinstance(self.reader.document, DummyDocument)
             and self.reader.document is not None
         )
-        self.userPositionTimer.Stop()
         self.readingProgressBar.SetValue(0)
         self.reader.unload()
         self.clear_toc_tree()
@@ -567,20 +563,20 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         event.Skip(True)
         if not self.reader.ready:
             return
+        threaded_worker.submit(self._after_caret_moved)
         if config.conf["general"]["use_continuous_reading"] and event.Position == self.contentTextCtrl.GetLastPosition():
-            if (time.monotonic() - self._last_page_turn_time) <= .5:
+            if (time.monotonic() - self._last_page_turn_time) <= 0.75:
                 return
             self.reader.go_to_next()
             self._last_page_turn_time = time.monotonic()
-
-    def onUserPositionTimerTick(self, event):
+    
+    def _after_caret_moved(self):
         try:
-            threaded_worker.submit(self.reader.save_current_position)
+            self.reader.save_current_position()
         except:
             log.exception("Failed to save current position", exc_info=True)
         if (
-            self.reader.ready
-            and config.conf["general"]["show_reading_progress_percentage"]
+            config.conf["general"]["show_reading_progress_percentage"]
             and self.reader.document.is_single_page_document()
         ):
             self.update_reading_progress()
