@@ -18,6 +18,7 @@ from wx.lib.combotreebox import ComboTreeBox
 
 import bookworm.typehints as t
 from bookworm.concurrency import threaded_worker
+from bookworm.document import DocumentCapability as DC
 from bookworm.logger import logger
 from bookworm.structured_text import TextRange
 from bookworm.vendor.repeating_timer import RepeatingTimer
@@ -171,7 +172,7 @@ class PageRangeControl(sc.SizedPanel):
         return from_page, to_page
 
     def get_text_range(self) -> Optional[TextRange]:
-        if self.is_single_page_document:
+        if self.is_single_page_document and not DC.TOC_TREE in self.doc.capabilities:
             if self.doc.format == "txt":
                 return TextRange(0, len(self.doc))
             return None                
