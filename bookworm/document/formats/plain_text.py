@@ -29,7 +29,7 @@ class PlainTextDocument(SinglePageDocument):
     # Translators: the name of a document file format
     name = _("Plain Text File")
     extensions = ("*.txt",)
-    capabilities = DC.SINGLE_PAGE | DC.LINKS | DC.STRUCTURED_NAVIGATION
+    capabilities = (DC.SINGLE_PAGE | DC.LINKS | DC.STRUCTURED_NAVIGATION)
 
     def read(self):
         self.filename = self.get_file_system_path()
