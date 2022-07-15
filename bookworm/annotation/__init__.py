@@ -208,6 +208,8 @@ class AnnotationService(BookwormService):
 
     def onCaretMoved(self, event):
         event.Skip(True)
+        if not self.reader.ready:
+            return
         evtdata = {}
         position = event.Position
         start, end = self.view.get_containing_line(position)
