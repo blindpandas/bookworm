@@ -226,7 +226,7 @@ class GeneralPanel(SettingsPanel):
             -1,
             # Translators: the label of a checkbox
             _("Speak page number"),
-            name="general.speak_page_number",
+            name="general.speak_page_number_when_navigating_pages",
         )
         wx.CheckBox(
             UIBox,

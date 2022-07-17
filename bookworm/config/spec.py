@@ -12,7 +12,7 @@ config_spec = StringIO(
     auto_check_for_updates = boolean(default=True)
     last_update_check = float(default=0)
     play_pagination_sound = boolean(default=True)
-    speak_page_number = boolean(default=True)
+    speak_page_number_when_navigating_pages = boolean(default=False)
     speak_section_title = boolean(default=True)
     include_page_label = boolean(default=False)
     show_reading_progress_percentage = boolean(default=True)

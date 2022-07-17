@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import ctypes
 import struct
 import time
 from itertools import chain
@@ -34,6 +35,8 @@ log = logger.getChild(__name__)
 IS_64_BIT = struct.calcsize("P") == 8
 EM_GETEVENTMASK = win32con.WM_USER + 59
 EM_SETEVENTMASK = win32con.WM_USER + 69
+EM_AUTOURLDETECT = win32con.WM_USER + 91
+
 
 CaretMoveEvent, _EVT_CARET= wx.lib.newevent.NewCommandEvent()
 ContextMenuEvent, EVT_CONTEXTMENU_REQUESTED = wx.lib.newevent.NewCommandEvent()
@@ -134,7 +137,7 @@ class ContentViewCtrl(wx.TextCtrl):
 
     def __init__(self, parent, *args, label="", **kwargs):
         panel = WNDProcPanel(self, parent, size=parent.GetSize())
-        self.contentViewLabel = wx.StaticText(panel, -1, label)
+        self.controlLabel = wx.StaticText(panel, -1, label)
         super().__init__(
             panel,
             *args,
@@ -146,6 +149,23 @@ class ContentViewCtrl(wx.TextCtrl):
             **kwargs,
         )
         panel.init_caret_tracking()
+        # Disable automatic link detection
+        win32api.SendMessage(
+            self.GetHandle(),
+            EM_AUTOURLDETECT,
+            0,
+            None
+        )
+
+    def SetControlLabel(self, label_text: str) -> None:
+        self.controlLabel.SetLabel(label_text)
+        # Notify name change for the TextCtrl
+        ctypes.windll.user32.NotifyWinEvent(
+            win32con.EVENT_OBJECT_NAMECHANGE,
+            self.GetHandle(),
+            win32con.OBJID_CLIENT,
+            win32con.CHILDID_SELF
+        )
 
     def GetContainingLine(self, position):
         _, col, lino = self.PositionToXY(position)

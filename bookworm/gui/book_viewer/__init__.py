@@ -312,7 +312,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             name="content_view",
         )
         self.contentTextCtrl.SetMargins(self._get_text_view_margins())
-        self.contentTextCtrlLabel = self.contentTextCtrl.contentViewLabel
         self.readingProgressBar = wx.Gauge(
             panel, -1, style=wx.GA_HORIZONTAL | wx.GA_SMOOTH
         )
@@ -325,7 +324,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         rgtBottomSizer = wx.BoxSizer(wx.HORIZONTAL)
         lftSizer.Add(tocTreeLabel, 0, wx.ALL, 5)
         lftSizer.Add(self.tocTreeCtrl, 1, wx.ALL, 5)
-        rgtSizer.Add(self.contentTextCtrlLabel, 0, wx.EXPAND | wx.ALL, 5)
         rgtSizer.Add(self.contentTextCtrl, 1, wx.EXPAND | wx.ALL, 5)
         rgtBottomSizer.Add(self.readingProgressBar, 1, wx.EXPAND | wx.ALL, 1)
         rgtSizer.Add(rgtBottomSizer, 0, wx.ALL | wx.EXPAND, 4)
@@ -499,7 +497,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def set_status(self, text, statusbar_only=False, *args, **kwargs):
         super().SetStatusText(text, *args, **kwargs)
         if not statusbar_only:
-            self.contentTextCtrlLabel.SetLabel(text)
+            self.contentTextCtrl.SetControlLabel(text)
 
     def unloadCurrentEbook(self):
         true_unload_opt = (
@@ -536,7 +534,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             target_pos = self.get_containing_line(current.text_range.start + 1)[0]
             self.set_insertion_point(target_pos)
         if config.conf["general"]["speak_section_title"]:
-            speech.announce(current.title)
+            speech.announce(current.title, False)
         if is_single_page_doc:
             sounds.navigation.play()
 
@@ -615,8 +613,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if self.reader.document.is_single_page_document():
             # Translators: label of content text control when the currently opened
             # document is a single page document
-            self.contentTextCtrlLabel.SetLabel(_("Document content"))
-        if config.conf["general"]["speak_page_number"]:
+            self.contentTextCtrl.SetControlLabel(_("Document content"))
+        if config.conf["general"]["speak_page_number_when_navigating_pages"]:
             # Translators: a message that is announced after navigating to a page
             spoken_msg = _("Page {page} of {total}").format(
                 page=page.number, total=len(self.reader.document)
@@ -627,14 +625,14 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     @contextmanager
     def mute_page_and_section_speech(self):
-        opsc = config.conf["general"]["speak_page_number"]
+        opsc = config.conf["general"]["speak_page_number_when_navigating_pages"]
         ossc = config.conf["general"]["speak_section_title"]
         try:
-            config.conf["general"]["speak_page_number"] = False
+            config.conf["general"]["speak_page_number_when_navigating_pages"] = False
             config.conf["general"]["speak_section_title"] = False
             yield
         finally:
-            config.conf["general"]["speak_page_number"] = opsc
+            config.conf["general"]["speak_page_number_when_navigating_pages"] = opsc
             config.conf["general"]["speak_section_title"] = ossc
 
     def navigate_to_structural_element(self, element_type, forward):
