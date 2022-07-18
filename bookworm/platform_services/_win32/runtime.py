@@ -77,21 +77,18 @@ def reference_gac_assembly(glob_pattern: str):
 def is_running_portable():
     if not app.is_frozen:
         return False
-    unins_key = RegKey(
-        RegRoots.LocalMachine,
-        path=rf"Software\Microsoft\Windows\CurrentVersion\Uninstall\{app.name}",
-        writable=False,
-    )
-    with unins_key:
-        if unins_key.exists:
-            unins_path_value = unins_key.get_value("InstallLocation")
-            if unins_path_value is None:
-                return True
-            elif (
-                Path(unins_path_value).resolve()
-                == Path(sys.executable).parent.resolve()
-            ):
-                return False
+    try:
+        unins_key = RegKey(
+            RegRoots.LocalMachine,
+            path=rf"Software\Microsoft\Windows\CurrentVersion\Uninstall\{app.name}",
+            writable=False,
+        )
+    except OSError:
+        return True
+    else:
+        unins_path_value = unins_key.get_value("InstallLocation")
+        if Path(unins_path_value).resolve() == Path(sys.executable).parent.resolve():
+            return False
     return True
 
 
