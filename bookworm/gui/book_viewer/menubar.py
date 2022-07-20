@@ -574,6 +574,13 @@ class SearchMenu(BaseMenu):
             _("Find previous occurrence."),
         )
         self.Append(
+            BookRelatedMenuIds.goToLine,
+            # Translators: the label of an item in the application menubar
+            _("&Go To Line...\tCtrl-L"),
+            # Translators: the help text of an item in the application menubar
+            _("Go to a line within the current page"),
+        )
+        self.Append(
             BookRelatedMenuIds.goToPage,
             # Translators: the label of an item in the application menubar
             _("&Go To Page...\tCtrl-G"),
@@ -589,6 +596,7 @@ class SearchMenu(BaseMenu):
         )
         # Bind events
         self.view.Bind(wx.EVT_MENU, self.onGoToPage, id=BookRelatedMenuIds.goToPage)
+        self.view.Bind(wx.EVT_MENU, self.onGoToLine, id=BookRelatedMenuIds.goToLine)
         self.view.Bind(
             wx.EVT_MENU, self.onGoToPageByLabel, id=BookRelatedMenuIds.goToPageByLabel
         )
@@ -607,6 +615,24 @@ class SearchMenu(BaseMenu):
 
     def after_unloading_book(self, sender):
         self._reset_search_history()
+
+    def onGoToLine(self, event):
+        textCtrl = self.view.contentTextCtrl
+        if (idx_last_line := self.view.get_line_number(textCtrl.GetLastPosition())) == 0:
+            return wx.Bell()
+        last_line = idx_last_line + 1
+        current_line = self.view.get_line_number(self.view.get_insertion_point()) + 1
+        target_line = wx.GetNumberFromUser(
+            _("You are here: {current_line}\nYou can't go further than: {last_line}").format(current_line=current_line, last_line=last_line),
+            _("Line number"),
+            _("Jump to line"),
+            value=current_line,
+            min=1,
+            max=last_line
+        )
+        insertion_point = self.view.get_start_of_line(target_line - 1)
+        textCtrl.SetFocus()
+        self.view.set_insertion_point(insertion_point)
 
     def onGoToPage(self, event):
         # Translators: the title of the go to page dialog

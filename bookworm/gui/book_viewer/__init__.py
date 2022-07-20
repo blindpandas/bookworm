@@ -812,6 +812,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         __, __, line_number = self.contentTextCtrl.PositionToXY(pos)
         return line_number
 
+    def get_start_of_line(self, line_number):
+        return self.contentTextCtrl.XYToPosition(0, line_number)
+
     def select_text(self, fpos, tpos):
         self.contentTextCtrl.SetFocusFromKbd()
         self.contentTextCtrl.SetSelection(fpos, tpos)
