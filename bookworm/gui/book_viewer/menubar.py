@@ -576,9 +576,9 @@ class SearchMenu(BaseMenu):
         self.Append(
             BookRelatedMenuIds.goToLine,
             # Translators: the label of an item in the application menubar
-            _("&Go To Line...\tCtrl-L"),
+            _("&Jump to Line...\tCtrl-L"),
             # Translators: the help text of an item in the application menubar
-            _("Go to a line within the current page"),
+            _("Jump to a line within the current page or document"),
         )
         self.Append(
             BookRelatedMenuIds.goToPage,
