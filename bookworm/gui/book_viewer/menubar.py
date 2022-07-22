@@ -630,6 +630,8 @@ class SearchMenu(BaseMenu):
             min=1,
             max=last_line
         )
+        if target_line == wx.NOT_FOUND:
+            return
         insertion_point = self.view.get_start_of_line(target_line - 1)
         textCtrl.SetFocus()
         self.view.set_insertion_point(insertion_point)
