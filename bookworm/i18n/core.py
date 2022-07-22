@@ -9,8 +9,10 @@ from pathlib import Path
 
 from bookworm import app, config, paths
 from bookworm.logger import logger
-from bookworm.platform_services.user import get_user_locale
-from bookworm.platform_services.user import set_app_locale as _set_app_locale
+from bookworm.user import (
+    get_user_locale,
+    set_app_locale as _set_app_locale
+)
 from bookworm.signals import app_started
 
 from .localeinfo import LocaleInfo

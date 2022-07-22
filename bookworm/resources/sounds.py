@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from bookworm.paths import app_path
-from bookworm.platform_services.runtime import SoundFile
+from bookworm.runtime import SoundFile
 
 _sounds_cache = {}
 

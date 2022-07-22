@@ -8,7 +8,7 @@ from typing import Iterable
 
 from bookworm import app
 from bookworm.logger import logger
-from bookworm.platform_services.shell import get_ext_info
+from bookworm.shellinfo import get_ext_info
 from bookworm.utils import ignore
 
 from . import shellapi

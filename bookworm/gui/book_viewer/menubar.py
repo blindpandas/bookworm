@@ -30,7 +30,6 @@ from bookworm.gui.book_viewer.core_dialogs import (
     SearchResultsDialog,
 )
 from bookworm.gui.components import AsyncSnakDialog, RobustProgressDialog
-from bookworm.gui.contentview_ctrl import EVT_CONTEXTMENU_REQUESTED
 from bookworm.gui.settings import PreferencesDialog
 from bookworm.i18n import is_rtl
 from bookworm.logger import logger
@@ -867,7 +866,7 @@ class MenubarProvider:
         self.menuBar = wx.MenuBar()
         # Context menu
         self.contentTextCtrl.Bind(
-            EVT_CONTEXTMENU_REQUESTED,
+            self.contentTextCtrl.EVT_CONTEXTMENU_REQUESTED,
             self.onContentTextCtrlContextMenu,
             self.contentTextCtrl,
         )

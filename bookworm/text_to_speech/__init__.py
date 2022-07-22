@@ -10,7 +10,7 @@ import wx
 
 from bookworm import config
 from bookworm.logger import logger
-from bookworm.platform_services.speech_engines import TTS_ENGINES
+from bookworm.speech_engines import TTS_ENGINES
 from bookworm.resources import app_icons, sounds
 from bookworm.service import BookwormService
 from bookworm.signals import (

@@ -1,0 +1,19 @@
+[package]
+name = "bkw_richedit_opts"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "BkwRicheditOpts"
+crate-type = ["cdylib"]
+
+[dependencies]
+libc = "0.2.126"
+
+[dependencies.windows]
+version = "0.38.0"
+features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_UI_Controls_RichEdit",
+]

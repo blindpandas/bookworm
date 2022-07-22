@@ -23,7 +23,7 @@ from bookworm.i18n import setup_i18n
 from bookworm.local_server import LocalServerSubcommand
 from bookworm.logger import configure_logger, logger
 from bookworm.paths import logs_path
-from bookworm.platform_services.shell import shell_disintegrate, shell_integrate
+from bookworm.shell import shell_disintegrate, shell_integrate
 from bookworm.runtime import (
     CURRENT_PACKAGING_MODE,
     IS_IN_MAIN_PROCESS,
