@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-07-21 19:19+0000\n"
-"PO-Revision-Date: 2022-07-22 13:56+0400\n"
+"POT-Creation-Date: 2022-07-23 10:08+0000\n"
+"PO-Revision-Date: 2022-07-23 15:07+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -903,7 +903,7 @@ msgstr "&Выход"
 
 #. Translators: lable of the file menu in the menu bar
 #. Translators: the label of an item in the application menubar
-#: bookworm/bookshelf/window.py:500 bookworm/gui/book_viewer/menubar.py:880
+#: bookworm/bookshelf/window.py:500 bookworm/gui/book_viewer/menubar.py:882
 msgid "&File"
 msgstr "&Файл"
 
@@ -2407,13 +2407,13 @@ msgstr "Изменить текущий режим чтения."
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:448
-#: bookworm/gui/book_viewer/menubar.py:939
+#: bookworm/gui/book_viewer/menubar.py:941
 msgid "&Render Page...\tCtrl-R"
 msgstr "&Рендеринг страницы...\tCtrl-R"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:450
-#: bookworm/gui/book_viewer/menubar.py:940
+#: bookworm/gui/book_viewer/menubar.py:942
 msgid "View a fully rendered version of this page."
 msgstr "Посмотреть полностью отрендеренную версию этой страницы."
 
@@ -2435,13 +2435,13 @@ msgstr "Список элементов"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:558
-#: bookworm/gui/book_viewer/menubar.py:929
+#: bookworm/gui/book_viewer/menubar.py:931
 msgid "&Find in Document...\tCtrl-F"
 msgstr "&Найти в документе...\tCtrl-F"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:560
-#: bookworm/gui/book_viewer/menubar.py:930
+#: bookworm/gui/book_viewer/menubar.py:932
 msgid "Search this document."
 msgstr "Искать в этом документе."
 
@@ -2467,18 +2467,18 @@ msgstr "Найти предыдущее вхождение."
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:579
-#| msgid "&Go To Page...\tCtrl-G"
-msgid "&Go To Line...\tCtrl-L"
+#| msgid "&Go To Line...\tCtrl-L"
+msgid "&Jump to Line...\tCtrl-L"
 msgstr "&Перейти к строке...\tCtrl-L"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:581
-msgid "Go to a line within the current page"
-msgstr "Перейти к строке на текущей странице"
+msgid "Jump to a line within the current page or document"
+msgstr "Перейти к строке на текущей странице или в документе"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:586
-#: bookworm/gui/book_viewer/menubar.py:923
+#: bookworm/gui/book_viewer/menubar.py:925
 msgid "&Go To Page...\tCtrl-G"
 msgstr "&Перейти на страницу...\tCtrl-G"
 
@@ -2514,123 +2514,123 @@ msgid "Jump to line"
 msgstr "Перейти к строке"
 
 #. Translators: the title of the go to page dialog
-#: bookworm/gui/book_viewer/menubar.py:639
+#: bookworm/gui/book_viewer/menubar.py:641
 msgid "Go To Page"
 msgstr "Перейти на страницу"
 
-#: bookworm/gui/book_viewer/menubar.py:646
+#: bookworm/gui/book_viewer/menubar.py:648
 msgid "Go To Page By Label"
 msgstr "Перейти к странице по метке"
 
-#: bookworm/gui/book_viewer/menubar.py:646
+#: bookworm/gui/book_viewer/menubar.py:648
 msgid "Page Label"
 msgstr "Метка страницы"
 
 #. Translators: the title of the search dialog
-#: bookworm/gui/book_viewer/menubar.py:654
+#: bookworm/gui/book_viewer/menubar.py:656
 msgid "Search Document"
 msgstr "Поиск в документе"
 
-#: bookworm/gui/book_viewer/menubar.py:680
+#: bookworm/gui/book_viewer/menubar.py:682
 msgid "Searching For '{term}'"
 msgstr "Поиск '{term}'"
 
 #. Translators: message to announce the number of search results
 #. also used as the final title of the search results dialog
-#: bookworm/gui/book_viewer/menubar.py:695
+#: bookworm/gui/book_viewer/menubar.py:697
 msgid "Results | {total}"
 msgstr "Результаты | {total}"
 
-#: bookworm/gui/book_viewer/menubar.py:732
+#: bookworm/gui/book_viewer/menubar.py:734
 msgid "Search Result"
 msgstr "Результат поиска"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:770
+#: bookworm/gui/book_viewer/menubar.py:772
 msgid "&User guide...\tF1"
 msgstr "&Руководство пользователя...\tF1"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:772
+#: bookworm/gui/book_viewer/menubar.py:774
 msgid "View Bookworm manuals"
 msgstr "Посмотреть руководства Bookworm"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:777
+#: bookworm/gui/book_viewer/menubar.py:779
 msgid "Bookworm &website..."
 msgstr "&Сайт Bookworm..."
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:779
+#: bookworm/gui/book_viewer/menubar.py:781
 msgid "Visit the official website of Bookworm"
 msgstr "Посетить официальный сайт Bookworm"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:784
+#: bookworm/gui/book_viewer/menubar.py:786
 msgid "&License"
 msgstr "&Лицензия"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:786
+#: bookworm/gui/book_viewer/menubar.py:788
 msgid "View legal information about this program ."
 msgstr "Посмотреть юридическую информацию об этой программе."
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:791
+#: bookworm/gui/book_viewer/menubar.py:793
 msgid "Con&tributors"
 msgstr "&Участники"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:793
+#: bookworm/gui/book_viewer/menubar.py:795
 msgid "View a list of notable contributors to the program."
 msgstr "Просмотреть список известных участников программы."
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:799
+#: bookworm/gui/book_viewer/menubar.py:801
 msgid "&Restart with debug-mode enabled"
 msgstr "&Перезапустить программу с включенным режимом отладки"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:801
+#: bookworm/gui/book_viewer/menubar.py:803
 msgid "Restart the program with debug mode enabled to show errors"
 msgstr ""
 "Перезапустить программу с включенным режимом отладки для отображения ошибок"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:811
+#: bookworm/gui/book_viewer/menubar.py:813
 msgid "&About Bookworm"
 msgstr "&О Bookworm"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:813
+#: bookworm/gui/book_viewer/menubar.py:815
 msgid "Show general information about this program"
 msgstr "Показать основную информацию об этой программе"
 
 #. Translators: the title of the about dialog
-#: bookworm/gui/book_viewer/menubar.py:846
+#: bookworm/gui/book_viewer/menubar.py:848
 msgid "About {app_name}"
 msgstr "О {app_name}"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:882
+#: bookworm/gui/book_viewer/menubar.py:884
 msgid "&Search"
 msgstr "&Поиск"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:884
+#: bookworm/gui/book_viewer/menubar.py:886
 msgid "&Document"
 msgstr "&Документ"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:886
+#: bookworm/gui/book_viewer/menubar.py:888
 msgid "&Help"
 msgstr "&Справка"
 
-#: bookworm/gui/book_viewer/menubar.py:924
+#: bookworm/gui/book_viewer/menubar.py:926
 msgid "Jump to a page"
 msgstr "Перейти на страницу"
 
-#: bookworm/gui/book_viewer/menubar.py:978
+#: bookworm/gui/book_viewer/menubar.py:980
 msgid "Supported document formats"
 msgstr "Поддерживаемые форматы документов"
 
