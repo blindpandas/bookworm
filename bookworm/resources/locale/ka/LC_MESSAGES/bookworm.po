@@ -1,0 +1,3645 @@
+# Translations template for Bookworm.
+# Copyright (C) 2022 Blind Pandas
+# This file is distributed under the same license as the Bookworm project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Bookworm 2022.1b1\n"
+"Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
+"POT-Creation-Date: 2022-07-23 11:34+0000\n"
+"PO-Revision-Date: 2022-07-25 13:54+0400\n"
+"Last-Translator: Dragan Ratkovich\n"
+"Language-Team: \n"
+"Language: ka\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.10.3\n"
+"X-Generator: Poedit 3.1.1\n"
+
+#. Translators: the content of a message indicating a connection error
+#: bookworm/otau.py:76
+msgid "We couldn't access the internet right now. Please try again later."
+msgstr ""
+"ამჟამად ინტერნეტთან დაკავშირება ვერ შევძელით. გთხოვთ, სცადოთ მოგვიანებით."
+
+#. Translators: the title of a message indicating a connection error
+#: bookworm/otau.py:78
+msgid "Network Error"
+msgstr "ინტერნეტის შეცდომა"
+
+#. Translators: the content of a message indicating an error while updating the
+#. app
+#: bookworm/otau.py:88
+msgid ""
+"We have faced a technical problem while checking for updates. Please try "
+"again later."
+msgstr ""
+"განახლებების შემოწმებისას ტექნიკური პრობლემა შეგვექმნა. გთხოვთ, სცადოთ "
+"მოგვიანებით."
+
+#. Translators: the title of a message indicating an error while updating the
+#. app
+#: bookworm/otau.py:92
+msgid "Error Checking For Updates"
+msgstr "შეცდომა განახლებების შემოწმებისას"
+
+#. Translators: the content of a message indicating that there is no new
+#. version
+#: bookworm/otau.py:109
+msgid ""
+"Congratulations, you have already got the latest version of Bookworm.\n"
+"We are working day and night on making Bookworm better. The next version of "
+"Bookworm is on its way, so wait for it. Rest assured, we will notify you "
+"when it is released."
+msgstr ""
+"გილოცავთ, თქვენ უკვე მიიღეთ Bookworm-ის უახლესი ვერსია.\n"
+"ჩვენ დღე და ღამ ვმუშაობთ Bookworm-ის გაუმჯობესებაზე. Bookworm-ის შემდეგი "
+"ვერსია გზაშია, ასე რომ, დაელოდეთ. დარწმუნებული იყავით, როცა კი გამოვა, "
+"შეგატყობინებთ."
+
+#. Translators: the title of a message indicating that there is no new version
+#: bookworm/otau.py:116
+msgid "No Update"
+msgstr "არ არის განახლება"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/otau.py:141
+msgid "&Check for updates"
+msgstr "&განახლებების შემოწმება"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/otau.py:143
+msgid "Update the application"
+msgstr "აპლიკაციის განახლება"
+
+#. Translators: the title of the window when an e-book is open
+#: bookworm/reader.py:419
+msgid "{title} — by {author}"
+msgstr "{title} — {author}ის მიერ"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/__init__.py:69
+msgid "&Annotation"
+msgstr "&ანოტაცია"
+
+#: bookworm/annotation/__init__.py:77
+msgid "&Bookmark...\tCtrl-B"
+msgstr "&ჩანიშნა...\tCtrl-B"
+
+#: bookworm/annotation/__init__.py:78 bookworm/annotation/__init__.py:84
+msgid "Bookmark the current location"
+msgstr "ჩანიშნეთ მიმდინარე ადგილი"
+
+#: bookworm/annotation/__init__.py:83
+msgid "&Named Bookmark...\tCtrl-Shift-B"
+msgstr "&დასათაურებული ჩანიშნა...\tCtrl-Shift-B"
+
+#: bookworm/annotation/__init__.py:89
+msgid "Co&mment...\tCtrl-m"
+msgstr "კო&მენტარი...\tCtrl-m"
+
+#: bookworm/annotation/__init__.py:90
+msgid "Add a comment at the current location"
+msgstr "დაამატეთ კომენტარი მიმდინარე ადგილზე"
+
+#: bookworm/annotation/__init__.py:100
+msgid "Highlight Selection\tCtrl-Shift-H"
+msgstr "მონიშნეთ არჩევა\tCtrl-Shift-H"
+
+#: bookworm/annotation/__init__.py:101
+msgid "Highlight and save selected text."
+msgstr "მონიშნეთ და შეინახეთ არჩეული ტექსტი."
+
+#. Translators: the label of a button in the application toolbar
+#. Translators: spoken message when jumping to a bookmark
+#: bookworm/annotation/__init__.py:110 bookworm/annotation/__init__.py:147
+msgid "Bookmark"
+msgstr "სანიშნე"
+
+#. Translators: the label of a button in the application toolbar
+#: bookworm/annotation/__init__.py:112
+msgid "Comment"
+msgstr "კომენტარი"
+
+#. Translators: the label of a page in the settings dialog
+#. Translators: label for a aria region containing annotation
+#. used when exporting annotations to HTML
+#: bookworm/annotation/__init__.py:122
+#: bookworm/annotation/exporters/core_renderers.py:171
+msgid "Annotation"
+msgstr "ანოტაცია"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:135
+msgid "No next bookmark"
+msgstr "არ არის შემდეგი სანიშნე"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:138
+msgid "No previous bookmark"
+msgstr "არ არის წინა სანიშნე"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:165
+msgid "No next comment"
+msgstr "არ არის შემდეგი კომენტარი"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:168
+msgid "No previous comment"
+msgstr "არ არის წინა კომენტარი"
+
+#. Translators: spoken message when jumping to a comment
+#: bookworm/annotation/__init__.py:179
+msgid "Comment: {comment}"
+msgstr "კომენტარი: {comment}"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:192
+msgid "No next highlight"
+msgstr "არ არის შემდეგი მონიშვნა"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:195
+msgid "No previous highlight"
+msgstr "არ არის წინა მონიშვნა"
+
+#: bookworm/annotation/__init__.py:205
+msgid "Highlight"
+msgstr "მონიშვნა"
+
+#. Translators: spoken message indicating the presence of an annotation when
+#. the user navigates the text
+#: bookworm/annotation/__init__.py:243
+msgid "Bookmarked"
+msgstr "ჩანიშნულია"
+
+#. Translators: spoken message indicating the presence of an annotation when
+#. the user navigates the text
+#: bookworm/annotation/__init__.py:246
+msgid "Highlighted"
+msgstr "მონიშნულია"
+
+#. Translators: spoken message indicating the presence of an annotation when
+#. the user navigates the text
+#: bookworm/annotation/__init__.py:249
+msgid "Line contains highlight"
+msgstr "ხაზი შეიცავს მონიშვნას"
+
+#. Translators: spoken message indicating the presence of an annotation when
+#. the user navigates the text
+#: bookworm/annotation/__init__.py:252
+msgid "Has comment"
+msgstr "შეიცავს კომენტარს"
+
+#. Translators: label of an edit control in the dialog
+#. of viewing or editing a comment/highlight
+#. Translators: label of an edit control to filter annotations by content
+#. Translators: label of a check box that enables/disables searching document
+#. content when searching the bookshelf
+#. Translators: the label of the text area which shows the
+#. content of the current page
+#: bookworm/annotation/annotation_dialogs.py:59
+#: bookworm/annotation/annotation_dialogs.py:266
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:126
+#: bookworm/gui/book_viewer/__init__.py:310
+msgid "Content"
+msgstr "შიგთავსი"
+
+#. Translators: header of a group of controls in a dialog to view/edit
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:63
+msgid "Metadata"
+msgstr "მეტამონაცემები"
+
+#. Translators: label of an edit control in a dialog to view/edit
+#. comments/highlights
+#. Translators: label of an edit control that allows the user to edit the tag
+#. set of a comment/highlight
+#. Translators: written to output document when exporting a comment/highlight
+#: bookworm/annotation/annotation_dialogs.py:66
+#: bookworm/annotation/annotation_dialogs.py:522
+#: bookworm/annotation/exporters/core_renderers.py:201
+msgid "Tags"
+msgstr "ტეგები"
+
+#. Translators: label of an edit control in a dialog to view/edit
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:71
+msgid "Date Created"
+msgstr "შექმნის თარიღი"
+
+#. Translators: label of an edit control in a dialog to view/edit
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:77
+msgid "Last updated"
+msgstr "ბოლოს განახლდა"
+
+#. Translators: the label of a button to close a dialog
+#. Translators: the label of the cancel button in a dialog
+#. Translators: the label of the close button in a dialog
+#. Translators: the label of a button to close the dialog
+#: bookworm/annotation/annotation_dialogs.py:91
+#: bookworm/annotation/annotation_dialogs.py:148
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:177
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:245
+#: bookworm/gui/book_viewer/core_dialogs.py:407 bookworm/gui/settings.py:99
+#: bookworm/ocr/ocr_dialogs.py:420 bookworm/text_to_speech/tts_gui.py:323
+#: bookworm/webservices/wikiworm.py:179
+msgid "&Close"
+msgstr "&დახურვა"
+
+#. Translators: label for unnamed bookmarks shown
+#. when editing a single bookmark which has no name
+#: bookworm/annotation/annotation_dialogs.py:125
+msgid "[Unnamed Bookmark]"
+msgstr "[უსახელო სანიშნე]"
+
+#. Translators: label of a list control containing bookmarks
+#: bookworm/annotation/annotation_dialogs.py:130
+msgid "Saved Bookmarks"
+msgstr "შენახული სანიშნეები"
+
+#. Translators: text of a button to remove bookmarks
+#. Translators: text of a button to remove a language from Tesseract OCR Engine
+#. Translators: the label of a button to remove a voice profile
+#: bookworm/annotation/annotation_dialogs.py:133
+#: bookworm/ocr/ocr_dialogs.py:459 bookworm/text_to_speech/tts_gui.py:317
+msgid "&Remove"
+msgstr "&წაშლა"
+
+#. Translators: the title of a column in the bookmarks list
+#: bookworm/annotation/annotation_dialogs.py:157
+#: bookworm/gui/book_viewer/core_dialogs.py:265
+msgid "Name"
+msgstr "სახელი"
+
+#. Translators: the title of a column in the bookmarks list
+#. Translators: text of a toggle button to sort comments/highlights list
+#. Translators: header of a column in a list control in a dialog showing a list
+#. of search results of matching document pages
+#. Translators: the title of a column in the search results list
+#. Translators: the label of the image of a page in a dialog to render the
+#. current page
+#: bookworm/annotation/annotation_dialogs.py:164
+#: bookworm/annotation/annotation_dialogs.py:355
+#: bookworm/annotation/exporters/core_renderers.py:178
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:196
+#: bookworm/gui/book_viewer/core_dialogs.py:60
+#: bookworm/gui/book_viewer/render_view.py:32
+msgid "Page"
+msgstr "გვერდი"
+
+#. Translators: the title of a column in the bookmarks list
+#. Translators: label of an editable combobox to filter annotations by section
+#. Translators: the title of a column in the search results list
+#. showing the title of the chapter in which this occurrence was found
+#: bookworm/annotation/annotation_dialogs.py:172
+#: bookworm/annotation/annotation_dialogs.py:261
+#: bookworm/annotation/exporters/core_renderers.py:145
+#: bookworm/gui/book_viewer/core_dialogs.py:75
+msgid "Section"
+msgstr "განყოფილება"
+
+#. Translators: content of a message asking the user if they want to delete a
+#. bookmark
+#: bookworm/annotation/annotation_dialogs.py:219
+msgid ""
+"This action can not be reverted.\r\n"
+"Are you sure you want to remove this bookmark?"
+msgstr ""
+"ამ მოქმედების გაუქმება შეუძლებელია.\r\n"
+"დარწმუნებული ხართ, რომ გსურთ წაშალოთ ეს სანიშნე?"
+
+#. Translators: title of a message asking the user if they want to delete a
+#. bookmark
+#: bookworm/annotation/annotation_dialogs.py:223
+msgid "Remove Bookmark?"
+msgstr "წაიშალოს სანიშნე?"
+
+#. Translators: label of an editable combobox to filter annotations by book
+#. Translators: text of a toggle button to sort comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:250
+#: bookworm/annotation/annotation_dialogs.py:359
+#: bookworm/annotation/annotation_dialogs.py:555
+#: bookworm/annotation/exporters/core_renderers.py:143
+msgid "Book"
+msgstr "წიგნი"
+
+#. Translators: label of an editable combobox to filter annotations by tag
+#: bookworm/annotation/annotation_dialogs.py:255
+#: bookworm/annotation/exporters/core_renderers.py:147
+msgid "Tag"
+msgstr "ტეგი"
+
+#. Translators: text of a button to apply chosen filters in a dialog to view
+#. user's comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:271
+msgid "&Apply"
+msgstr "&დადასტურება"
+
+#. Translators: the title of a column in the comments/highlights list
+#. Translators: header of a group of controls in a dialog to view user's
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:338
+msgid "Filter By"
+msgstr "გაფილტრვა"
+
+#. Translators: header of a group of controls in a dialog to view user's
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:347
+msgid "Sort By"
+msgstr "დალაგება"
+
+#. Translators: text of a toggle button to sort comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:353
+msgid "Date"
+msgstr "თარიღი"
+
+#. Translators: text of a toggle button to sort comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:365
+msgid "Ascending"
+msgstr "აღმავალი"
+
+#. Translators: text of a button in a dialog to view comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:374
+msgid "&View..."
+msgstr "&ნახვა..."
+
+#. Translators: text of a button in a dialog to view comments/highlights
+#. Translators: the label of a button to edit a voice profile
+#: bookworm/annotation/annotation_dialogs.py:377
+#: bookworm/text_to_speech/tts_gui.py:315
+msgid "&Edit..."
+msgstr "შ&ეცვლა..."
+
+#. Translators: text of a button in a dialog to view comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:380
+msgid "&Delete..."
+msgstr "&წაშლა..."
+
+#. Translators: text of a button in a dialog to view comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:382
+msgid "E&xport..."
+msgstr "&ექსპორტი..."
+
+#. Translators: title of a dialog to view or edit a single comment/highlight
+#: bookworm/annotation/annotation_dialogs.py:454
+msgid "Editing"
+msgstr "რედაქტირება"
+
+#: bookworm/annotation/annotation_dialogs.py:454
+msgid "View"
+msgstr "ნახვა"
+
+#. Translators: content of a message asking the user if they want to delete a
+#. comment/highlight
+#: bookworm/annotation/annotation_dialogs.py:471
+msgid ""
+"This action can not be reverted.\r\n"
+"Are you sure you want to remove this item?"
+msgstr ""
+"ამ მოქმედების გაუქმება შეუძლებელია.\r\n"
+"დარწმუნებული ხართ, რომ გსურთ ამ ელემენტის წაშლა?"
+
+#. Translators: title of a message asking the user if they want to delete a
+#. bookmark
+#: bookworm/annotation/annotation_dialogs.py:475
+msgid "Delete Annotation?"
+msgstr "წაიშალოს ანოტაცია?"
+
+#. Translators: title of a dialog that allows the user to edit the tag set of a
+#. comment/highlight
+#: bookworm/annotation/annotation_dialogs.py:520
+msgid "Edit Tags"
+msgstr "ტეგების რედაქტირება"
+
+#. Translators: title of a dialog that allows the user to customize
+#. how comments/highlights are exported
+#: bookworm/annotation/annotation_dialogs.py:533
+msgid "Export Options"
+msgstr "ექსპორტის პარამეტრები"
+
+#. Translators: label of a checkbox in a dialog to set export options for
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:593
+msgid "Include book title"
+msgstr "წიგნის სათაური"
+
+#: bookworm/annotation/annotation_dialogs.py:598
+msgid "Include section title"
+msgstr "განყოფილების სათაური"
+
+#: bookworm/annotation/annotation_dialogs.py:604
+msgid "Include  page number"
+msgstr "გვერდის ნომერი"
+
+#. Translators: label of a checkbox in a dialog to set export options for
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:607
+msgid "Include tags"
+msgstr "ტეგები"
+
+#. Translators: label of a choice control in a dialog to set export options for
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:609
+msgid "Output format:"
+msgstr "გამომავალი ფორმატი:"
+
+#. Translators: label of an edit control in a dialog to set export options for
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:614
+msgid "Output File"
+msgstr "გამომავალი ფაილი"
+
+#. Translators: text of a button in a dialog to set export options for
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:619
+msgid "&Browse"
+msgstr "&დათვალიერება"
+
+#. Translators: label of a checkbox in a dialog to set export options for
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:624
+msgid "Open file after exporting"
+msgstr "ექსპორტის შემდეგ ფაილის გახსნა"
+
+#. Translators: the title of a save file dialog asking the user for a filename
+#. to export annotations to
+#. Translators: the title of a dialog to save the exported book
+#: bookworm/annotation/annotation_dialogs.py:651
+#: bookworm/gui/book_viewer/menubar.py:254
+msgid "Save As"
+msgstr "შენახვა როგორც"
+
+#. Translators: the title of a group of controls in the settings dialog
+#: bookworm/annotation/annotation_gui.py:28
+msgid "When navigating text"
+msgstr "ტექსტის ნავიგაციისას"
+
+#. Translators: the label of a checkbox
+#: bookworm/annotation/annotation_gui.py:33
+msgid "Play a sound to indicate the presence of annotations"
+msgstr "ხმოვანი მითითება ანოტაციის არსებობის შესახებ"
+
+#. Translators: the label of a checkbox
+#: bookworm/annotation/annotation_gui.py:40
+msgid "Speak a message to indicate the presence of annotations"
+msgstr "გახმოვანდეს შეტყობინება ანოტაციის არსებობის შესახებ"
+
+#. Translators: the title of a group of controls in the settings dialog
+#: bookworm/annotation/annotation_gui.py:44
+msgid "Miscellaneous settings"
+msgstr "სხვადასხვა პარამეტრები"
+
+#. Translators: the label of a checkbox
+#: bookworm/annotation/annotation_gui.py:49
+msgid "Speak the bookmark when jumping"
+msgstr "სანიშნზე გადასვლისას მისი გახმოვანება"
+
+#. Translators: the label of a checkbox
+#: bookworm/annotation/annotation_gui.py:56
+msgid "Select the bookmarked line when jumping"
+msgstr "სანიშნზე გადასვლისას ჩანიშნული ხაზის მონიშვნა"
+
+#. Translators: the label of a checkbox
+#: bookworm/annotation/annotation_gui.py:63
+msgid "Use visual styles to indicate annotations"
+msgstr "ვიზუალური სტილი ანოტაციების არსებობის შესახებ"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:102
+msgid "Add &Bookmark\tCtrl-B"
+msgstr "&სანიშნის დამატება\tCtrl-B"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:104
+msgid "Add a bookmark at the current position"
+msgstr "დაამატეთ სანიშნე მიმდინარე პოზიციაზე"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:109
+msgid "Add &Named Bookmark...\tCtrl-Shift-B"
+msgstr "დასათაურებული სა&ნიშნის დამატება...\tCtrl-Shift-B"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:111
+msgid "Add a named bookmark at the current position"
+msgstr "დაამატეთ დასათაურებული სანიშნე მიმდინარე პოზიციაზე"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:116
+msgid "Add Co&mment...\tCtrl-M"
+msgstr "&კომენტარის დამატება...\tCtrl-M"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:118
+msgid "Add a comment at the current position"
+msgstr "დაამატეთ კომენტარი მიმდინარე პოზიციაზე"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:123
+msgid "&Highlight Selection\tCtrl-H"
+msgstr "მონიშვნის &არჩევა\tCtrl-H"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:125
+msgid "Highlight selected text and save it."
+msgstr "მონიშნეთ არჩეული ტექსტი და შეინახეთ."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:130
+msgid "Saved &Bookmarks..."
+msgstr "შენახული სა&ნიშნეები..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:132
+msgid "View added bookmarks"
+msgstr "დამატებული სანიშნეების ნახვა"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:137
+msgid "Saved Co&mments..."
+msgstr "შენახული &კომენტარები..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:139
+msgid "View, edit, and remove comments."
+msgstr "კომენტარების ნახვა, რედაქტირება და წაშლა."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:144
+msgid "Saved &Highlights..."
+msgstr "შენახული &მონიშვნები..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:146
+msgid "View saved highlights."
+msgstr "შენახული მონიშვნების ნახვა."
+
+#: bookworm/annotation/annotation_gui.py:184
+msgid "Bookmark removed"
+msgstr "სანიშნე წაშლილია"
+
+#. Translators: spoken message
+#: bookworm/annotation/annotation_gui.py:187
+msgid "Bookmark Added"
+msgstr "სანიშნე დამატებულია"
+
+#. Translators: title of a dialog
+#: bookworm/annotation/annotation_gui.py:196
+msgid "Add Named Bookmark"
+msgstr "დასათაურებული სანიშნის დამატება"
+
+#. Translators: label of a text entry
+#: bookworm/annotation/annotation_gui.py:198
+msgid "Bookmark name:"
+msgstr "სანიშნის სახელი:"
+
+#. Translators: the title of a dialog to add a comment
+#: bookworm/annotation/annotation_gui.py:208
+msgid "New Comment"
+msgstr "ახალი კომენტარი"
+
+#. Translators: the label of an edit field to enter a comment
+#: bookworm/annotation/annotation_gui.py:210
+msgid "Comment:"
+msgstr "კომენტარი:"
+
+#. Translators: title of a dialog
+#: bookworm/annotation/annotation_gui.py:223
+msgid "Tag Comment"
+msgstr "კომენტარის ტეგირება"
+
+#. Translators: label of a text entry
+#: bookworm/annotation/annotation_gui.py:225
+#: bookworm/annotation/annotation_gui.py:272
+msgid "Tags:"
+msgstr "ტეგები:"
+
+#: bookworm/annotation/annotation_gui.py:237
+msgid "No selection"
+msgstr "არ არის მონიშვნა"
+
+#. Translators: spoken message
+#: bookworm/annotation/annotation_gui.py:245
+msgid "Highlight removed"
+msgstr "მონიშვნა წაშლილია"
+
+#. Translators: spoken message
+#: bookworm/annotation/annotation_gui.py:248
+msgid "Already highlighted"
+msgstr "უკვე მონიშნულია"
+
+#. Translators: spoken message
+#: bookworm/annotation/annotation_gui.py:255
+#: bookworm/annotation/annotation_gui.py:261
+msgid "Highlight extended"
+msgstr "მონიშვნა გაფართოებულია"
+
+#. Translators: spoken message
+#: bookworm/annotation/annotation_gui.py:264
+msgid "Selection highlighted"
+msgstr "არჩევა მონიშნულია"
+
+#. Translators: title of a dialog
+#: bookworm/annotation/annotation_gui.py:270
+msgid "Tag Highlight"
+msgstr "მონიშვნის ტეგირება"
+
+#. Translators: the title of a dialog to view bookmarks
+#: bookworm/annotation/annotation_gui.py:285
+msgid "Bookmarks | {book}"
+msgstr "| {book} სანიშნეები"
+
+#: bookworm/annotation/annotation_gui.py:295
+msgid "Comments"
+msgstr "კომენტარები"
+
+#: bookworm/annotation/annotation_gui.py:308
+msgid "Highlights"
+msgstr "მონიშვნები"
+
+#. Translators: written to output document when exporting a comment/highlight
+#. Translators: a name of a file format
+#. Translators: file type in a save as dialog
+#: bookworm/annotation/exporters/core_renderers.py:15
+#: bookworm/gui/book_viewer/menubar.py:258 bookworm/ocr/ocr_menu.py:287
+msgid "Plain Text"
+msgstr "ჩვეულებრივი ტექსტი"
+
+#: bookworm/annotation/exporters/core_renderers.py:27
+#: bookworm/annotation/exporters/core_renderers.py:90
+msgid "Section: {section_title}"
+msgstr "განყოფილება: {section_title}"
+
+#. Translators: written to output document when exporting files
+#: bookworm/annotation/exporters/core_renderers.py:32
+msgid "Tagged: {tag}"
+msgstr "ტეგირებულია: {tag}"
+
+#. Translators: written to the end of the plain-text file when exporting
+#. comments or highlights
+#: bookworm/annotation/exporters/core_renderers.py:42
+msgid "End of File"
+msgstr "ფაილის დასასრული"
+
+#: bookworm/annotation/exporters/core_renderers.py:52
+#: bookworm/annotation/exporters/core_renderers.py:113
+msgid "Page {number}"
+msgstr "გვერდი {number}"
+
+#. Translators: the name of a document file format
+#: bookworm/annotation/exporters/core_renderers.py:74
+msgid "Markdown"
+msgstr "Markdown"
+
+#: bookworm/annotation/exporters/core_renderers.py:94
+msgid "Tagged: {tags}"
+msgstr "ტეგირებულია: {tags}"
+
+#. Translators: written to output document when exporting a comment/highlight
+#: bookworm/annotation/exporters/core_renderers.py:126
+msgid "Tagged"
+msgstr "ტეგირებულია"
+
+#. Translators: the name of a document file format
+#: bookworm/annotation/exporters/core_renderers.py:137
+msgid "HTML"
+msgstr "HTML"
+
+#: bookworm/annotation/exporters/core_renderers.py:156
+msgid "Exported Annotations"
+msgstr "ექსპორტირებული ანოტაციები"
+
+#. Translators: label of a button to copy the annotation to the clipboard
+#. used when exporting annotations to HTML
+#: bookworm/annotation/exporters/core_renderers.py:186
+msgid "Copy to clipboard"
+msgstr "ბუფერში დაკოპირება"
+
+#. Translators: the label of a page in the settings dialog
+#: bookworm/bookshelf/__init__.py:56
+msgid "Bookshelf"
+msgstr "წიგნის თარო"
+
+#. Translators: the label of an item in the application menubar
+#. Translators: the label of the bookshelf sub menu found in the file menu of
+#. the application
+#: bookworm/bookshelf/__init__.py:66
+msgid "Boo&kshelf"
+msgstr "წიგნ&ის თარო"
+
+#. Translators: the label of a group of controls in the bookshelf page in the
+#. preferences dialog
+#. Translators: the name of a book shelf type.
+#. This bookshelf type is stored in a local database
+#: bookworm/bookshelf/local_bookshelf/__init__.py:68
+#: bookworm/bookshelf/viewer_integration.py:36
+msgid "Local Bookshelf"
+msgstr "ლოკალური წიგნის თარო"
+
+#. Translators: the label of a checkbox
+#: bookworm/bookshelf/viewer_integration.py:41
+msgid "Automatically add opened books to the local bookshelf"
+msgstr "გახსნილი წიგნების ავტომატურად ლოკალურ წიგნის თაროზე დამატება"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/bookshelf/viewer_integration.py:54
+msgid "&Open Bookshelf"
+msgstr "წიგნის თაროს &გახსნა"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/bookshelf/viewer_integration.py:56
+msgid "Open your bookshelf"
+msgstr "გახსენით თქვენი წიგნის თარო"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/bookshelf/viewer_integration.py:61
+msgid "&Add to local bookshelf..."
+msgstr "ლოკალურ წიგნის თაროზე &დამატება..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/bookshelf/viewer_integration.py:63
+msgid "Add the current book to the local bookshelf"
+msgstr "დაამატეთ მიმდინარე წიგნი ლოკალურ წიგნის თაროზე"
+
+#. Translators: content of a message indicating failure to add the current
+#. document to the bookshelf
+#: bookworm/bookshelf/viewer_integration.py:93
+msgid ""
+"You can not add this document to Bookshelf.\n"
+"The document should exist locally in your computer."
+msgstr ""
+"თქვენ არ შეგიძლიათ ამ დოკუმენტის წიგნების თაროზე დამატება.\n"
+"დოკუმენტი უნდა იყოს ლოკალურად თქვენს კომპიუტერში."
+
+#. Translators: title of a message indicating failure to add the current
+#. document to the bookshelf
+#: bookworm/bookshelf/viewer_integration.py:97
+msgid "Can not add document"
+msgstr "დოკუმენტის დამატება შეუძლებელია"
+
+#. Translators: title of a dialog to select reading list and collections for a
+#. document when adding it to the bookshelf
+#: bookworm/bookshelf/viewer_integration.py:104
+msgid "Reading list and collections"
+msgstr "საკითხავი სია და კრებულები"
+
+#: bookworm/bookshelf/window.py:56
+msgid "{name} ({count})"
+msgstr "{name} ({count})"
+
+#. Translators: label of a text box to filter documents in bookshelf
+#: bookworm/bookshelf/window.py:80
+msgid "Filter documents..."
+msgstr "დოკუმენტების გაფილტრვა..."
+
+#. Translators: label of the bookshelf document list. This label is shown when
+#. the documents are being loaded from the database
+#: bookworm/bookshelf/window.py:86
+msgid "Loading items"
+msgstr "ელემენტების ჩატვირთვა"
+
+#. Translators: content of a message shown when the bookshelf fails to load and
+#. show documents
+#: bookworm/bookshelf/window.py:196
+msgid ""
+"Failed to retrieve documents.\n"
+"Please try again."
+msgstr ""
+"დოკუმენტების მოძიება ვერ მოხერხდა.\n"
+"გთხოვთ, სცადეთ ხელახლა."
+
+#. Translators: title of a message indicating an error
+#. Translators: title of a message shown when importing documents to the
+#. bookshelf has failed
+#. Translators: title  of a message shown when importing documents from a
+#. folder to the bookshelf has failed
+#. Translators: title of a message shown when searching bookshelf has failed
+#. Translators: spoken message
+#. Translators: title of a list control colum showing errors encountered when
+#. bundling documents
+#. Translators: title of a messagebox
+#. Translators: the title of a message telling the user that an error has
+#. occurred
+#: bookworm/bookshelf/local_bookshelf/__init__.py:291
+#: bookworm/bookshelf/local_bookshelf/__init__.py:337
+#: bookworm/bookshelf/local_bookshelf/__init__.py:383
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:229
+#: bookworm/bookshelf/window.py:198 bookworm/ocr/ocr_dialogs.py:207
+#: bookworm/ocr/ocr_dialogs.py:616 bookworm/text_to_speech/tts_gui.py:421
+#: bookworm/webservices/wikiworm.py:119
+msgid "Error"
+msgstr "შეცდომა"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#. Translators: the label of the close button in a dialog
+#: bookworm/bookshelf/window.py:238
+#: bookworm/gui/book_viewer/core_dialogs.py:397
+msgid "&Open"
+msgstr "&გახსნა"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/window.py:243
+msgid "Open in &system viewer"
+msgstr "სისტემის &მნახველში გახსნა"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/window.py:248
+msgid "Edit &title"
+msgstr "&სათაურის რედაქტირება"
+
+#. Translators: spoken message when activating a document
+#. Translators: spoken message when no matching documents were found when
+#. filtering the document list
+#: bookworm/bookshelf/window.py:301
+msgid "No matching documents"
+msgstr "შესაბამისი დოკუმენტები არ არის"
+
+#. Translators: message shown when loading documents in the bookshelf
+#: bookworm/bookshelf/window.py:355 bookworm/bookshelf/window.py:367
+msgid "Retrieving items..."
+msgstr "ელემენტების მოძიება..."
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/window.py:392
+msgid "Document &info..."
+msgstr "დოკუმენტის &ინფორმაცია..."
+
+#. Translators: label of the combo box showing a list of bookshelf providers.
+#. Currently, only the Local Bookshelf provider is implemented. In the future,
+#. other providers may be added, such as Bookshare and Pocket.
+#: bookworm/bookshelf/window.py:423
+msgid "Provider"
+msgstr "მიმწოდებელი"
+
+#. Translators: label of the bookshelf tree that shows reading lists and
+#. collections and other categories
+#. Translators: label of the settings categories list box
+#: bookworm/bookshelf/window.py:430 bookworm/bookshelf/window.py:436
+#: bookworm/gui/settings.py:467
+msgid "Categories"
+msgstr "კატეგორიები"
+
+#. Translators: title of Bookshelf window
+#: bookworm/bookshelf/window.py:473
+msgid "Bookworm Bookshelf: {name}"
+msgstr "Bookworm წიგნის თარო: {name}"
+
+#. Translators: label of a menu item to exit the application
+#: bookworm/bookshelf/window.py:497
+msgid "&Exit"
+msgstr "&გამოსვლა"
+
+#. Translators: lable of the file menu in the menu bar
+#. Translators: the label of an item in the application menubar
+#: bookworm/bookshelf/window.py:500 bookworm/gui/book_viewer/menubar.py:882
+msgid "&File"
+msgstr "&ფაილი"
+
+#. Translators: the label of a menu item to remove a bookshelf reading list or
+#. collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:77
+msgid "Remove..."
+msgstr "წაშლა..."
+
+#. Translators: the label of a menu item to change the name of a bookshelf
+#. reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:82
+msgid "Edit name..."
+msgstr "სახელის რედაქტირება..."
+
+#. Translators: the label of a menu item to remove all documents under a
+#. specific bookshelf reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:87
+msgid "Clear documents..."
+msgstr "დოკუმენტების გასუფთავება..."
+
+#. Translators: the name of a category in the bookshelf for recently added
+#. documents
+#: bookworm/bookshelf/local_bookshelf/__init__.py:111
+msgid "Recently Added"
+msgstr "ბოლოს დამატებულები"
+
+#. Translators: the name of a category in the bookshelf for documents currently
+#. being read by the user
+#: bookworm/bookshelf/local_bookshelf/__init__.py:118
+msgid "Currently Reading"
+msgstr "ამჟამად ვკითხულობ"
+
+#. Translators: the name of a category in the bookshelf for documents the user
+#. wants to read
+#: bookworm/bookshelf/local_bookshelf/__init__.py:127
+msgid "Want to Read"
+msgstr "მსურს წავიკითხო"
+
+#. Translators: the name of a category in the bookshelf for documents favored
+#. by the user
+#: bookworm/bookshelf/local_bookshelf/__init__.py:136
+msgid "Favorites"
+msgstr "რჩეულები"
+
+#. Translators: the name of a category in the bookshelf which contains the
+#. user's reading lists
+#: bookworm/bookshelf/local_bookshelf/__init__.py:146
+msgid "Reading Lists"
+msgstr "საკითხავი სია"
+
+#. Translators: the name of a category in the bookshelf which contains the
+#. user's collections
+#. Translators: label of a text box for entering a document's collections
+#: bookworm/bookshelf/local_bookshelf/__init__.py:151
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:51
+msgid "Collections"
+msgstr "კრებულები"
+
+#. Translators: the name of a reading list in the bookshelf which contains
+#. documents that do not have any category assigned to them
+#. Translators: the label of a page in the settings dialog
+#: bookworm/bookshelf/local_bookshelf/__init__.py:159
+#: bookworm/gui/settings.py:437
+msgid "General"
+msgstr "ზოგადი"
+
+#. Translators: the label of a menu item in the bookshelf to add a new reading
+#. list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:168
+msgid "Add New..."
+msgstr "ახლის დამატება..."
+
+#. Translators: the name of a category in the bookshelf that lists the authors
+#. of the documents stored in the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:187
+#: bookworm/gui/book_viewer/core_dialogs.py:362
+msgid "Authors"
+msgstr "ავტორები"
+
+#. Translators: the label of a menu item in the bookshelf file menu to import
+#. documents to the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:198
+msgid "Import Documents...\tCtrl+O"
+msgstr "დოკუმენტების იმპორტი...\tCtrl+O"
+
+#. Translators: the label of a menu item in the bookshelf file menu to import
+#. an entire folder to the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:203
+msgid "Import documents from folder..."
+msgstr "დოკუმენტების იმპორტი ფოლდერიდან..."
+
+#. Translators: the label of a menu item in the bookshelf file menu to search
+#. documents contained in the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:207
+msgid "Search Bookshelf..."
+msgstr "წიგნის თაროზე ძიება..."
+
+#. Translators: the label of a menu item in the bookshelf file menu to copy the
+#. files added to the bookshelf to a private folder that blongs to Bookworm.
+#. This is important to make the bookshelf works with  portable copies, or if
+#. the user wants to move or rename added documents
+#: bookworm/bookshelf/local_bookshelf/__init__.py:210
+msgid "Bundle Documents..."
+msgstr "დოკუმენტების პაკეტირება..."
+
+#. Translators: the label of a menu item in the bookshelf file menu to clear
+#. documents that no longer exist in the file system
+#: bookworm/bookshelf/local_bookshelf/__init__.py:213
+msgid "Clear invalid documents..."
+msgstr "არასწორი დოკუმენტების გასუფთავება..."
+
+#. Translators: the title of a file dialog to browse to a document
+#: bookworm/bookshelf/local_bookshelf/__init__.py:225
+msgid "Import Documents To Bookshelf"
+msgstr "დოკუმენტების წიგნის თაროზე იმპორტი"
+
+#. Translators: the title of a dialog to edit the document's reading list or
+#. collection
+#. Translators: title of a dialog to change the reading list or collection for
+#. a document
+#: bookworm/bookshelf/local_bookshelf/__init__.py:241
+#: bookworm/bookshelf/local_bookshelf/__init__.py:641
+msgid "Edit reading list/collections"
+msgstr "საკითხავი სიის/კრებულების რედაქტირება"
+
+#. Translators: a message shown when Bookworm is importing documents to the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:258
+msgid "Importing document..."
+msgstr "დოკუმენტის იმპორტი..."
+
+#. Translators: a message shown when Bookworm is importing documents to the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:261
+msgid "Importing documents..."
+msgstr "მიმდინარეობს დოკუმენტების იმპორტი..."
+
+#. Translators: content of a message shown when importing documents to the
+#. bookshelf has failed
+#: bookworm/bookshelf/local_bookshelf/__init__.py:289
+msgid "Failed to import document. Please try again."
+msgstr "დოკუმენტის იმპორტი ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა."
+
+#. Translators: title of a dialog to import an entire folder to the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:302
+msgid "Import Documents From Folder"
+msgstr "დოკუმენტების იმპორტი ფოლდერიდან"
+
+#. Translators: a message shown when importing an entire folder to the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:316
+msgid "Importing documents from folder. Please wait..."
+msgstr "მიმდინარეობს ფოლდერიდან დოკუმენტების იმპორტი. გთხოვთ, დაელოდოთ..."
+
+#. Translators: content of a message shown when importing documents from a
+#. folder to the bookshelf is successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:325
+msgid "Documents imported from folder."
+msgstr "დოკუმენტები იმპორტირებულია ფოლდერიდან."
+
+#. Translators: title of a message shown when importing documents from a folder
+#. to the bookshelf is successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:327
+msgid "Operation Completed"
+msgstr "ოპერაცია შესრულებულია"
+
+#. Translators: content of a message shown when importing documents from a
+#. folder to the bookshelf has failed
+#: bookworm/bookshelf/local_bookshelf/__init__.py:335
+msgid "Failed to import documents from folder."
+msgstr "ფოლდერიდან დოკუმენტების იმპორტი ვერ მოხერხდა."
+
+#. Translators: title of a dialog to search bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:345
+msgid "Search Bookshelf"
+msgstr "წიგნის თაროზე ძიება"
+
+#. Translators: a message shown while searching bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:358
+msgid "Searching bookshelf..."
+msgstr "მიმდინარეობს ძებნა წიგნის თაროზე..."
+
+#. Translators: content of a message shown when searching bookshelf has failed
+#: bookworm/bookshelf/local_bookshelf/__init__.py:381
+msgid "Failed to search bookshelf,"
+msgstr "წიგნის თაროზე ძიება ვერ განხორციელდა,"
+
+#. Translators: title of a dialog that shows bookshelf search results. It
+#. searches documents by title and content, hence full-text
+#: bookworm/bookshelf/local_bookshelf/__init__.py:398
+msgid "Full Text Search Results"
+msgstr "სრული ტექსტის ძიების შედეგები"
+
+#. Translators: content of a message to confirm the bundling of documents added
+#. to bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:408
+msgid ""
+"This will create copies of all of the documents you have added to your Local "
+"Bookshelf.\n"
+"After this operation, you can open documents stored in your bookshelf, even "
+"if you have deleted or moved the original documents.\n"
+"\n"
+"Please note that this action will create duplicate copies of all of your "
+"added documents."
+msgstr ""
+"ეს შექმნის ყველა იმ დოკუმენტის ასლს, რომელიც დაამატეთ ლოკალურ წიგნის "
+"თაროზე.\n"
+"ამ ოპერაციის შემდეგ, შეგიძლიათ გახსნათ თქვენს წიგნების თაროზე შენახული "
+"დოკუმენტები, მაშინაც კი, თუ თქვენ წაშალეთ ან გადაიტანეთ ორიგინალი "
+"დოკუმენტები.\n"
+"\n"
+"გთხოვთ, გაითვალისწინოთ, რომ ეს მოქმედება შექმნის თქვენ მიერ ყველა დამატებული "
+"დოკუმენტის დუბლირებულ ასლს."
+
+#. Translators: title of a message to confirm the bundling of documents added
+#. to bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:412
+msgid "Bundle Documents?"
+msgstr "პაკეტირდეს დოკუმენტები?"
+
+#. Translators: a message shown when bundling documents added to bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:420
+msgid "Bundling documents. Please wait..."
+msgstr "მიმდინარეობს დოკუმენტების პაკეტირება. გთხოვთ, დაელოდოთ..."
+
+#. Translators: content of a message when bundling of documents is successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:449
+msgid "Bundled {num_documents} files."
+msgstr "პაკეტირებულია {num_documents} ფაილი."
+
+#. Translators: title of a message when bundling of documents is successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:451
+msgid "Done"
+msgstr "დასრულდა"
+
+#. Translators: title of a dialog that shows titles and paths of documents
+#. which have not been bundled successfully
+#: bookworm/bookshelf/local_bookshelf/__init__.py:459
+msgid "Bundle Results: {num_succesfull} successfull, {num_faild} faild"
+msgstr ""
+"პაკეტირების შედეგი წარმატებით {num_succesfull} ვერ მოხერხდა {num_faild}"
+
+#. Translators: content of a message to confirm the clearing of documents
+#. which have been added to bookshelf, but they have been moved, renamed, or
+#. deleted
+#: bookworm/bookshelf/local_bookshelf/__init__.py:471
+msgid ""
+"This action will clear invalid documents from your bookshelf.\n"
+"Invalid documents are the documents which no longer exist on your computer."
+msgstr ""
+"ეს მოქმედება გაასუფთავებს არასწორ დოკუმენტებს თქვენი წიგნების თაროდან.\n"
+"არასწორი დოკუმენტები მიეკუთვნება იმ დოკუმენტებს, რომლებიც აღარ არსებობს "
+"კომპიუტერში."
+
+#. Translators: title of a message to confirm the clearing of documents
+#. which have been added to bookshelf, but they have been moved, renamed, or
+#. deleted
+#: bookworm/bookshelf/local_bookshelf/__init__.py:476
+msgid "Clear Invalid Documents?"
+msgstr "გასუფთავდეს არასწორი დოკუმენტები?"
+
+#. Translators: label of a text box to change the name of a reading list or
+#. collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:491
+msgid "New name:"
+msgstr "ახალი სახელი:"
+
+#. Translators: title of a dialog to change the name of a reading list or
+#. collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:493
+msgid "Edit Name"
+msgstr "სახელის რედაქტირება"
+
+#. Translators: content of a message when changing the name of a reading list
+#. or collection was not successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:503
+msgid ""
+"The given name {name} already exists.\n"
+"Please choose another name."
+msgstr ""
+"მოცემული სახელი name {name} უკვე არსებობს.\n"
+"გთხოვთ, აირჩიოთ სხვა სახელი."
+
+#. Translators: title of a message when changing the name of a reading list or
+#. collection was not successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:507
+msgid "Duplicate name"
+msgstr "დუბლირებული სახელი"
+
+#. Translators: content of a message to confirm the removal of a reading list
+#. or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:517
+msgid ""
+"Are you sure you want to remove {name}?\n"
+"This will not remove document classified under {name}."
+msgstr ""
+"დარწმუნებული ხართ, რომ გსურთ წაშალოთ {name}?\n"
+"ეს არ წაშლის {name}-ის ქვეშ კლასიფიცირებულ დოკუმენტს."
+
+#. Translators: title of a message to confirm the removal of a reading list or
+#. collection
+#. Translators: title of a message box
+#. Translators: title of a messagebox
+#: bookworm/bookshelf/local_bookshelf/__init__.py:521
+#: bookworm/gui/components.py:609 bookworm/ocr/ocr_dialogs.py:533
+#: bookworm/ocr/ocr_dialogs.py:575
+msgid "Confirm"
+msgstr "დადასტურება"
+
+#. Translators: content of a message to confirm the removal of all documents
+#. classified under a specific reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:532
+msgid ""
+"Are you sure you want to clear all documents classified under {name}?\n"
+"This will remove those documents from your bookshelf."
+msgstr ""
+"დარწმუნებული ხართ, რომ გსურთ გაასუფთავოთ ყველა დოკუმენტი, რომელიც "
+"კლასიფიცირებულია {name}-ის ქვეშ?\n"
+"ეს წაშლის ამ დოკუმენტებს თქვენი წიგნების თაროდან."
+
+#. Translators: title of a message to confirm the removal of all documents
+#. classified under a specific reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:536
+msgid "Clear All Documents"
+msgstr "ყველა დოკუმენტის გასუფთავება"
+
+#. Translators: label of a text box for the name of a new reading list or
+#. collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:549
+msgid "Enter name:"
+msgstr "შეიყვანეთ სახელი:"
+
+#. Translators: title of a dialog  for adding a new reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:551
+msgid "Add New"
+msgstr "ახლის დამატება"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:576
+msgid "&Edit reading list / collections..."
+msgstr "საკითხავი სიის / კრებულების შ&ეცვლა..."
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:581
+msgid "Remove from &currently reading"
+msgstr "&ამჟამად ვკითხულობ-დან წაშლა"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:583
+msgid "Add to &currently reading"
+msgstr "&ამჟამად ვკითხულობ-ში დამატება"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:588
+msgid "Remove from &want to read"
+msgstr "&მსურს წავიკითხო-დან წაშლა"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:590
+msgid "Add to &want to read"
+msgstr "&მსურს წავიკითხო-ში დამატება"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:595
+msgid "Remove from &favorites"
+msgstr "&რჩეულებიდან წაშლა"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:597
+msgid "Add to &favorites"
+msgstr "&რჩეულებში დამატება"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:602
+msgid "&Remove from bookshelf"
+msgstr "წიგნის თაროდან &წაშლა"
+
+#. Translators: content of a message to confirm the removal of this document
+#. from bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:668
+msgid ""
+"Are you sure you want to remove this document from your bookshelf?\n"
+"Title: {title}\n"
+"This will remove the document from all tags and categories."
+msgstr ""
+"დარწმუნებული ხართ, რომ გსურთ ამ დოკუმენტის წაშლა თქვენი წიგნების თაროდან?\n"
+"სახელი: {title}\n"
+"ეს წაშლის დოკუმენტს ყველა ტეგიდან და კატეგორიიდან."
+
+#. Translators: title of a message to confirm the removal of this document from
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:672
+msgid "Remove From Bookshelf?"
+msgstr "წაიშალოს წიგნის თაროდან?"
+
+#. Translators: the name of a category under the Authors category. This
+#. category shows documents for which  author info is not available
+#: bookworm/bookshelf/local_bookshelf/__init__.py:704
+msgid "Unknown Author"
+msgstr "უცნობი ავტორი"
+
+#. Translators: label of a combo box for choosing a document's reading list
+#. Translators: label of a button
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:47
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:90
+msgid "Reading List"
+msgstr "საკითხავი სია"
+
+#. Translators: label of a check box
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:55
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:97
+msgid "Add to full-text search index"
+msgstr "სრული ტექსტის საძიებო ინდექსში დამატება"
+
+#. Translators: label of an edit control for entering the path to a folder to
+#. import to the bookshelf
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:84
+msgid "Select a folder:"
+msgstr "აირჩიეთ ფოლდერი:"
+
+#. Translators: label of a text box for entering a search term
+#. Translators: the label of a button in the application toolbar
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:116
+#: bookworm/gui/book_viewer/__init__.py:397
+msgid "Search"
+msgstr "ძიება"
+
+#. Translators: title of a group of controls to select which document field to
+#. search in when searching bookshelf
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:120
+msgid "Search Field"
+msgstr "საძიებო ველი"
+
+#. Translators: label of a check box that enables/disables searching document
+#. title when searching the bookshelf
+#. Translators: header of a column in a list control in a dialog showing a list
+#. of search results of matching document titles
+#. Translators: title of a list control colum showing the document titles  of
+#. documents not bundled due to errors when bundling documents
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:124
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:190
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:233
+#: bookworm/gui/book_viewer/core_dialogs.py:351
+msgid "Title"
+msgstr "სათაური"
+
+#. Translators: label of a list showing search results of documents with title
+#. matching the given  search query
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:158
+msgid "Title matches"
+msgstr "სათაური შეესაბამება"
+
+#. Translators: the label of a tab in a tabl control in a dialog showing a list
+#. of search results in the bookshelf
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:161
+msgid "Title Matches"
+msgstr "სათაური შეესაბამება"
+
+#. Translators: label of a list showing search results of content matching the
+#. given  search query
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:168
+msgid "Content matches"
+msgstr "შიგთავსი შეესაბამება"
+
+#. Translators: the label of a tab in a tabl control in a dialog showing a list
+#. of search results in the bookshelf
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:171
+msgid "Content Matches"
+msgstr "შიგთავსი შეესაბამება"
+
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:187
+msgid "Snippet"
+msgstr "ფრაგმენტი"
+
+#. Translators: title of a list control colum showing the file names of files
+#. not bundled due to errors when bundling documents
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:231
+msgid "File Name"
+msgstr "ფაილის სახელი"
+
+#. Translators: label of a list control showing file copy errors
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:236
+msgid "Errors"
+msgstr "შეცდომები"
+
+#. Translators: label shown in a list control indicating the failure to copy
+#. the document when bundling documents
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:239
+msgid "Failed to copy document"
+msgstr "დოკუმენტის კოპირება ვერ მოხერხდა"
+
+#: bookworm/document/features.py:53
+msgid "Default reading mode"
+msgstr "კითხვის ნაგულისხმევი რეჟიმი"
+
+#: bookworm/document/features.py:54
+msgid "Reading order"
+msgstr "კითხვის წესის შესაბამისი"
+
+#: bookworm/document/features.py:55
+msgid "Physical layout"
+msgstr "ფიზიკური განლაგება"
+
+#: bookworm/document/features.py:56
+msgid "Paginated"
+msgstr "ფურცირებული"
+
+#: bookworm/document/features.py:57
+msgid "Chapter by chapter"
+msgstr "თავებით"
+
+#: bookworm/document/features.py:58
+msgid "Clean text"
+msgstr "სუფთა ტექსტი"
+
+#: bookworm/document/features.py:59
+msgid "Full text"
+msgstr "სრული ტექსტი"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/archive.py:46
+msgid "Archive File"
+msgstr "დაარქივებული ფაილი"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/docbook.py:34
+msgid "Docbook Document"
+msgstr "Docbook დოკუმენტი"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/epub.py:47
+msgid "Electronic Publication (EPUB)"
+msgstr "ელექტრონული გამოცემა (EPUB)"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/fitz.py:176
+msgid "Fiction Book (FB2)"
+msgstr "მხატვრული წიგნი (FB2)"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/fitz.py:202
+msgid "XPS Document"
+msgstr "XPS დოკუმენტი"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/fitz.py:210
+msgid "Comic Book Archive"
+msgstr "კომიქსური წიგნების არქივი"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/html.py:189 bookworm/document/formats/html.py:255
+msgid "HTML Document"
+msgstr "HTML დოკუმენტი"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/markdown.py:20
+msgid "Markdown File"
+msgstr "Markdown ფაილი"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/mobi.py:40
+msgid "Kindle eBook"
+msgstr "Kindle eBook"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/odf.py:82
+msgid "Open Document Text"
+msgstr "Open Document Text"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/odf.py:128
+msgid "Open Document Presentation"
+msgstr "Open Document Presentation"
+
+#: bookworm/document/formats/odf.py:191
+#: bookworm/document/formats/powerpoint.py:156
+msgid "Slide {number}"
+msgstr "სლაიდი {number}"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pdf.py:73
+msgid "Portable Document (PDF)"
+msgstr "პორტაბელური დოკუმენტი (PDF)"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/plain_text.py:30
+msgid "Plain Text File"
+msgstr "უბრალო ტექსტური ფაილი"
+
+#: bookworm/document/formats/powerpoint.py:85
+msgid "Slide Notes"
+msgstr "სლაიდის შენიშვნები"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/powerpoint.py:116
+msgid "PowerPoint Presentation"
+msgstr "PowerPoint პრეზენტაცია"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/word.py:42
+msgid "Word Document"
+msgstr "Word დოკუმენტი"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/word.py:133
+msgid "Word 97 - 2003 Document"
+msgstr "Word 97 - 2003 დოკუმენტი"
+
+#: bookworm/epub_serve/__init__.py:43
+msgid "Open in &web Viewer"
+msgstr "&ვებ მნახველში გახსნა"
+
+#: bookworm/epub_serve/__init__.py:44
+msgid "Open the current EPUB book in the browser"
+msgstr "მიმდინარე EPUB წიგნის ბრაუზერში გახსნა"
+
+#: bookworm/epub_serve/__init__.py:61
+msgid "Openning in web viewer..."
+msgstr "იხსნება ვებ მნახველში..."
+
+#: bookworm/epub_serve/__init__.py:81
+msgid "Failed to launch web viewer"
+msgstr "ვერ მოხერხდა ვებ მნახველის გახსნა"
+
+#: bookworm/epub_serve/__init__.py:82
+msgid "An error occurred while opening the web viewer. Please try again."
+msgstr "ვებ მნახველის გახსნისას დაფიქსირდა შეცდომა. გთხოვთ, სცადოთ ხელახლა."
+
+#: bookworm/epub_serve/webapp.py:148
+msgid "404 Not Found"
+msgstr "404 ვერ მოიძებნა"
+
+#: bookworm/epub_serve/webapp.py:149
+msgid ""
+"The book you are trying to access does not exist or has been closed. Please "
+"make sure you opened the book from within Bookworm. All URLs are temporary "
+"and may not work after you close the page."
+msgstr ""
+"წიგნი, რომელზეც წვდომას ცდილობთ, არ არსებობს ან დახურულია. გთხოვთ, "
+"დარწმუნდეთ, რომ წიგნი Bookworm-იდან გახსენით. ყველა URL დროებითია და "
+"შეიძლება არ იმუშაოს გვერდის დახურვის შემდეგ."
+
+#: bookworm/epub_serve/webapp.py:188
+msgid "Failed to load content"
+msgstr "კონტენტის ჩატვირთვა ვერ მოხერხდა"
+
+#: bookworm/epub_serve/webapp.py:189
+msgid "Cannot retreive content. Probably the eBook has been closed."
+msgstr "შინაარსზე წვდომა შეუძლებელია. სავარაუდოდ, ელექტრონული წიგნი დაიხურა."
+
+#. Translators: the title of a group of controls in the search dialog
+#: bookworm/gui/components.py:104
+msgid "Search Range"
+msgstr "ძიების დიაპაზონი"
+
+#. Translators: the label of a radio button in the search dialog
+#: bookworm/gui/components.py:106
+msgid "Page Range"
+msgstr "გვერდის დიაპაზონი"
+
+#. Translators: the label of an edit field in the search dialog
+#. to enter the page from which the search will start
+#: bookworm/gui/components.py:112
+msgid "From:"
+msgstr "დან:"
+
+#. Translators: the label of an edit field in the search dialog
+#. to enter the page number at which the search will stop
+#: bookworm/gui/components.py:118
+msgid "To:"
+msgstr "მდე:"
+
+#. Translators: the label of a radio button in the search dialog
+#: bookworm/gui/components.py:123
+msgid "Specific section"
+msgstr "კონკრეტული განყოფილება"
+
+#. Translators: the label of a combobox in the search dialog
+#. to choose the section to which the search will be confined
+#: bookworm/gui/components.py:126
+msgid "Select section:"
+msgstr "აირჩიეთ განყოფილება:"
+
+#. Translators: the label of the OK button in a dialog
+#: bookworm/gui/components.py:276 bookworm/gui/components.py:317
+#: bookworm/gui/settings.py:491
+msgid "OK"
+msgstr "OK"
+
+#. Translators: the lable of the cancel button in a dialog
+#. Translators: the label of the cancel button in a dialog
+#: bookworm/gui/components.py:279 bookworm/gui/components.py:320
+#: bookworm/gui/settings.py:494
+msgid "Cancel"
+msgstr "გაუქმება"
+
+#. Translators: content of a message to confirm the closing of a progress
+#. dialog
+#: bookworm/gui/components.py:605
+msgid ""
+"This will cancel all the operations in progress.\n"
+"Are you sure you want to abort?"
+msgstr ""
+"ეს მოქმედება გააუქმებს ყველა მიმდინარე ოპერაციას.\n"
+"დარწმუნებული ხართ რომ გსურთ გაუქმება?"
+
+#. Translators: the title of the file associations dialog
+#: bookworm/gui/settings.py:40
+msgid "Bookworm File Associations"
+msgstr "Bookworm-ის ფაილების დაკავშირება"
+
+#: bookworm/gui/settings.py:52
+msgid ""
+"This dialog will help you to setup file associations.\n"
+"Associating files with Bookworm means that when you click on a file in "
+"windows explorer, it will be opened in Bookworm by default "
+msgstr ""
+"ეს დიალოგი დაგეხმარებათ, დააყენოთ ფაილების დაკავშირება.\n"
+"ფაილების Bookworm-თან დაკავშირება ნიშნავს რომ Windows-ის ფაილის მნახველში, "
+"ფაილზე დაჭერისას, იგი ნაგულისხმევად გაიხსნება Bookworm-ში "
+
+#. Translators: the main label of a button
+#: bookworm/gui/settings.py:65
+msgid "Associate all"
+msgstr "ყველას დაკავშირება"
+
+#. Translators: the note of a button
+#: bookworm/gui/settings.py:67
+msgid "Use Bookworm to open all supported document formats"
+msgstr ""
+"გამოიყენეთ Bookworm, ყველა მხარდაჭერილი დოკუმენტის ფორმატის გასახსნელად"
+
+#. Translators: the main label of a button
+#: bookworm/gui/settings.py:75
+msgid "Associate files of type {format}"
+msgstr "{format} ტიპის ფაილების დაკავშირება"
+
+#. Translators: the note of a button
+#: bookworm/gui/settings.py:77
+msgid "Associate files with {ext} extension so they always open in Bookworm"
+msgstr ""
+"დააკავშირეთ {ext} გაფართოების ფაილები, რათა ისინი ყოველთვის Bookworm-ით "
+"გაიხსნას"
+
+#. Translators: the main label of a button
+#: bookworm/gui/settings.py:90
+msgid "Dissociate all supported file types"
+msgstr "ყველა მხარდაჭერილი ტიპის ფაილზე დაკავშირების გაუქმება"
+
+#. Translators: the note of a button
+#: bookworm/gui/settings.py:92
+msgid "Remove previously associated file types"
+msgstr "ადრე დაკავშირებული ფაილის ტიპების წაშლა"
+
+#. Translators: the text of a message indicating successful file association
+#: bookworm/gui/settings.py:109
+msgid "Files of type {format} have been associated with Bookworm."
+msgstr "{format} ტიპის ფაილები დაკავშირებულია Bookworm-თან."
+
+#. Translators: the title of a message indicating successful file association
+#. Translators: the title of a message indicating successful removal of file
+#. association
+#. Translators: title of a message box
+#: bookworm/gui/book_viewer/menubar.py:338 bookworm/gui/settings.py:113
+#: bookworm/gui/settings.py:131
+msgid "Success"
+msgstr "წარმატებით"
+
+#. Translators: the text of a message indicating successful removal of file
+#. associations
+#: bookworm/gui/settings.py:122
+msgid "All supported file types have been set to open by default in Bookworm."
+msgstr ""
+"ყველა მხარდაჭერილი ფაილის ტიპი დაყენებულია ნაგულისხმევად Bookworm-ში "
+"გასახსნელად."
+
+#. Translators: the text of a message indicating successful removal of file
+#. associations
+#: bookworm/gui/settings.py:127
+msgid "All registered file associations have been removed."
+msgstr "ყველა რეგისტრირებული ფაილის დაკავშირება წაშლილია."
+
+#. Translators: the title of a group of controls in the
+#. general settings page related to the UI
+#: bookworm/gui/settings.py:212
+msgid "User Interface"
+msgstr "მომხმარებლის ინტერფეისი"
+
+#. Translators: the label of a combobox containing display languages.
+#: bookworm/gui/settings.py:214
+msgid "Display Language:"
+msgstr "ენა:"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:221
+msgid "Speak user interface messages"
+msgstr "მომხმარებლის ინტერფეისის შეტყობინებების გახმოვანება"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:228 bookworm/text_to_speech/tts_gui.py:87
+msgid "Speak page number"
+msgstr "გვერდის ნომრების გახმოვანება"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:235
+msgid "Speak section title"
+msgstr "განყოფილებების დასახელებების გახმოვანება"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:242
+msgid "Play pagination sound"
+msgstr "გადაფურცვლის ხმის ჩართვა"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:249
+msgid "Include page label in page title"
+msgstr "გვერდის ლეიბლების გვერდის სათაურებში ჩართვა"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:256
+msgid "Use file name instead of book title"
+msgstr "წიგნის სათაურის ნაცვლად ფაილის სახელის გამოყენება"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:263
+msgid "Show reading progress percentage"
+msgstr "კითხვის პროგრესის პროცენტის ჩვენება"
+
+#. Translators: the title of a group of controls shown in the
+#. general settings page related to miscellaneous settings
+#: bookworm/gui/settings.py:268
+msgid "Miscellaneous"
+msgstr "სხვადასხვა"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:273
+msgid "Open recently opened books from the last position"
+msgstr "ახლახან გახსნილი წიგნების უკანასკნელი პოზიციიდან გახსნა"
+
+#. Translators: the label of a checkbox to enable continuous reading
+#: bookworm/gui/settings.py:280
+msgid ""
+"Try to support the screen reader's continuous reading mode by automatically "
+"turning pages (may not work in some cases)"
+msgstr ""
+"ეკრანის წამკითხველის უწყვეტი კითხვის რეჟიმის მხარდაჭერა გვერდების ავტომატური "
+"გადაფურცვლით (ზოგიერთ შემთხვევაში, შესაძლოა არ იმუშაოს)"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:287
+msgid "Automatically check for updates"
+msgstr "განახლებების ავტომატური შემოწმება"
+
+#. Translators: the title of a group of controls shown in the
+#. general settings page related to file associations
+#: bookworm/gui/settings.py:293
+msgid "File Associations"
+msgstr "ფაილების ასოციაცია"
+
+#. Translators: the label of a button
+#: bookworm/gui/settings.py:298
+msgid "Manage File &Associations"
+msgstr "ფაილების &ასოციაციების მართვა"
+
+#. Translators: the content of a message asking the user to restart
+#: bookworm/gui/settings.py:318
+msgid ""
+"You have changed the display language of Bookworm.\n"
+"For this setting to fully take effect, you need to restart the application.\n"
+"Would you like to restart the application right now?"
+msgstr ""
+"თქვენ შეცვალეთ Bookworm-ის ენა.\n"
+"იმისათვის, რომ ეს პარამეტრი სრულად ამოქმედდეს, თქვენ უნდა გადატვირთოთ "
+"აპლიკაცია.\n"
+"გსურთ აპლიკაციის გადატვირთვა ახლა?"
+
+#. Translators: the title of a message telling the user
+#. that the display language have been changed
+#: bookworm/gui/settings.py:325
+msgid "Language Changed"
+msgstr "ენა შეიცვალა"
+
+#. Translators: the title of a group of controls in the
+#. appearance settings page related to the UI
+#: bookworm/gui/settings.py:347
+msgid "General Appearance"
+msgstr "ზოგადი იერი"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:352
+msgid "Maximize the application window upon startup"
+msgstr "გაშვებისთანავე აპლიკაციის ფანჯრის გაზრდა"
+
+#: bookworm/gui/settings.py:355
+msgid "Text Styling"
+msgstr "ტექსტის სტილი"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:360
+msgid "Apply text styling (when available)"
+msgstr "ტექსტის სტილის გამოყენება (როცა შესაძლებელია)"
+
+#. Translators: the title of a group of controls in the
+#. appearance settings page related to the UI
+#: bookworm/gui/settings.py:365
+msgid "Font"
+msgstr "შრიფტი"
+
+#. Translators: label of a combobox
+#: bookworm/gui/settings.py:367
+msgid "Font Face"
+msgstr "შრიფტის სახე"
+
+#. Translators: label of a checkbox
+#: bookworm/gui/settings.py:377
+msgid "Use Open-&dyslexic font"
+msgstr "Open-&dyslexic შრიფტის გამოყენება"
+
+#. Translators: label of an edit box
+#: bookworm/gui/settings.py:381
+msgid "Font Size"
+msgstr "შრიფტის ზომა"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:387
+msgid "Bold style"
+msgstr "სქელი სტილი"
+
+#. Translators: the label of a page in the settings dialog
+#: bookworm/gui/settings.py:439
+msgid "Appearance"
+msgstr "ვიზუალი"
+
+#. Translators: the label of the apply button in a dialog
+#: bookworm/gui/settings.py:496
+msgid "Apply"
+msgstr "დადასტურება"
+
+#: bookworm/gui/book_viewer/__init__.py:85
+msgid "Failed to open document"
+msgstr "დოკუმენტის გახსნა ვერ მოხერხდა"
+
+#: bookworm/gui/book_viewer/__init__.py:86
+msgid "The document you are trying to open could not be opened in Bookworm."
+msgstr "დოკუმენტი, რომლის გახსნასაც ცდილობთ, Bookworm-ში ვერ გაიხსნა."
+
+#: bookworm/gui/book_viewer/__init__.py:100
+msgid "Opening document, please wait..."
+msgstr "იხსნება დოკუმენტი, გთხოვთ, დაელოდოთ..."
+
+#. Translators: the title of an error message
+#: bookworm/gui/book_viewer/__init__.py:118
+msgid "Document not found"
+msgstr "დოკუმენტი ვერ მოიძებნა"
+
+#. Translators: the content of an error message
+#: bookworm/gui/book_viewer/__init__.py:120
+msgid ""
+"Could not open Document.\n"
+"The document does not exist."
+msgstr ""
+"დოკუმენტის გახსნა ვერ მოხერხდა.\n"
+"დოკუმენტი არ არსებობს."
+
+#. Translators: the title of an error message
+#: bookworm/gui/book_viewer/__init__.py:132
+msgid "Document Restricted"
+msgstr "დოკუმენტი შეზღუდულია"
+
+#. Translators: the content of an error message
+#: bookworm/gui/book_viewer/__init__.py:134
+msgid ""
+"Could not open Document.\n"
+"The document is restricted by the publisher."
+msgstr ""
+"დოკუმენტის გახსნა ვერ მოხერხდა.\n"
+"დოკუმენტი შეზღუდულია გამომცემლის მიერ."
+
+#. Translators: the title of a message shown
+#. when the format of the e-book is not supported
+#: bookworm/gui/book_viewer/__init__.py:146
+msgid "Unsupported Document Format"
+msgstr "მხარდაუჭერელი დოკუმენტის ფორმატი"
+
+#. Translators: the content of a message shown
+#. when the format of the e-book is not supported
+#: bookworm/gui/book_viewer/__init__.py:149
+msgid "The format of the given document is not supported by Bookworm."
+msgstr "მოცემული დოკუმენტის ფორმატი არ არის მხარდაჭერილი Bookworm-ის მიერ."
+
+#. Translators: the title of an error message
+#: bookworm/gui/book_viewer/__init__.py:158
+msgid "Archive contains no documents"
+msgstr "არქივი არ შეიცავს დოკუმენტს"
+
+#. Translators: the content of an error message
+#: bookworm/gui/book_viewer/__init__.py:160
+msgid ""
+"Bookworm cannot open this archive file.\n"
+"The archive contains no documents."
+msgstr ""
+"Bookworm-ს არ შეუძლია ამ დაარქივებული ფაილის გახსნა.\n"
+"არქივი არ შეიცავს დოკუმენტს."
+
+#: bookworm/gui/book_viewer/__init__.py:169
+msgid "Documents"
+msgstr "დოკუმენტები"
+
+#: bookworm/gui/book_viewer/__init__.py:170
+msgid "Multiple documents found"
+msgstr "ნაპოვნია რამდენიმე დოკუმენტი"
+
+#. Translators: the title of an error message
+#: bookworm/gui/book_viewer/__init__.py:184
+msgid "Error Opening Document"
+msgstr "შეცდომა დოკუმენტის გახსნისას"
+
+#. Translators: the content of an error message
+#: bookworm/gui/book_viewer/__init__.py:186
+msgid ""
+"Could not open file\n"
+".Either the file  has been damaged during download, or it has been corrupted "
+"in some other way."
+msgstr ""
+"ფაილის გახსნა ვერ მოხერხდა\n"
+".ფაილი დაზიანდა ჩამოტვირთვისას ან სხვა გზით."
+
+#. Translators: the title of an error message
+#: bookworm/gui/book_viewer/__init__.py:199
+msgid "Error Openning Document"
+msgstr "შეცდომა დოკუმენტის გახსნისას"
+
+#. Translators: the content of an error message
+#: bookworm/gui/book_viewer/__init__.py:201
+msgid ""
+"Could not open document.\n"
+"An unknown error occurred while loading the file."
+msgstr ""
+"დოკუმენტის გახსნა ვერ მოხერხდა.\n"
+"ფაილის ჩატვირთვისას დაფიქსირდა უცნობი შეცდომა."
+
+#. Translators: content of a message
+#: bookworm/gui/book_viewer/__init__.py:213
+msgid ""
+"Failed to open document.\n"
+"Would you like to remove its entry from the 'recent documents' and 'pinned "
+"documents' lists?"
+msgstr ""
+"დოკუმენტის გახსნა ვერ მოხერხდა.\n"
+"გსურთ მისი ჩანაწერის წაშლა 'ბოლოს გახსნილი დოკუმენტებისა' და 'მიმაგრებული "
+"დოკუმენტების' სიიდან?"
+
+#. Translators: title of a message box
+#: bookworm/gui/book_viewer/__init__.py:217
+msgid "Remove from lists?"
+msgstr "წაიშალოს სიებიდან?"
+
+#. Translators: the text of the status bar when no book is currently open.
+#. It is being used also as a label for the page content text area when no book
+#. is opened.
+#: bookworm/gui/book_viewer/__init__.py:281
+msgid "Press (Ctrl + O) to open a document"
+msgstr "დააჭირეთ (Ctrl + O)-ს დოკუმენტის გასახსნელად"
+
+#. Translators: the label of the table-of-contents tree
+#: bookworm/gui/book_viewer/__init__.py:295
+msgid "Table of Contents"
+msgstr "სარჩევი"
+
+#. Translators: the label of a button in the application toolbar
+#: bookworm/gui/book_viewer/__init__.py:394
+msgid "Open"
+msgstr "გახსნა"
+
+#. Translators: the label of a button in the application toolbar
+#: bookworm/gui/book_viewer/__init__.py:399
+msgid "Mode"
+msgstr "რეჟიმი"
+
+#. Translators: the label of a button in the application toolbar
+#: bookworm/gui/book_viewer/__init__.py:402
+msgid "Big"
+msgstr "დიდი"
+
+#. Translators: the label of a button in the application toolbar
+#: bookworm/gui/book_viewer/__init__.py:404
+msgid "Small"
+msgstr "მცირე"
+
+#. Translators: title of a message telling the user that they entered an
+#. incorrect
+#. password for opening the book
+#: bookworm/gui/book_viewer/__init__.py:449
+msgid "Incorrect Password"
+msgstr "არასწორი პაროლი"
+
+#. Translators: content of a message telling the user that they entered an
+#. incorrect
+#. password for opening the book
+#: bookworm/gui/book_viewer/__init__.py:452
+msgid ""
+"The password you provided is incorrect.\n"
+"Please try again with the correct password."
+msgstr ""
+"თქვენ მიერ მითითებული პაროლი არასწორია.\n"
+"გთხოვთ, სცადოთ ხელახლა სწორი პაროლით."
+
+#. Translators: spoken message when the document has been closed
+#: bookworm/gui/book_viewer/__init__.py:519
+msgid "Document closed."
+msgstr "დოკუმენტი დაიხურა."
+
+#. Translators: text of reading progress shown in the status bar
+#: bookworm/gui/book_viewer/__init__.py:555
+msgid "{percentage} completed"
+msgstr "შესრულებულია {percentage}"
+
+#. Translators: label of content text control when the currently opened
+#. document is a single page document
+#: bookworm/gui/book_viewer/__init__.py:616
+msgid "Document content"
+msgstr "დოკუმენტის შიგთავსი"
+
+#. Translators: a message that is announced after navigating to a page
+#. Translators: the label of the page content text area
+#. Translators: a message to announce when navigating to another page
+#: bookworm/gui/book_viewer/__init__.py:619
+#: bookworm/gui/book_viewer/__init__.py:774
+#: bookworm/text_to_speech/__init__.py:179
+msgid "Page {page} of {total}"
+msgstr "გვერდი {page} {total}დან"
+
+#: bookworm/gui/book_viewer/__init__.py:666
+msgid "{text}: {item_type}"
+msgstr "{text}: {item_type}"
+
+#: bookworm/gui/book_viewer/__init__.py:683
+msgid "No next {item}"
+msgstr "არ არის შემდეგი {item}"
+
+#: bookworm/gui/book_viewer/__init__.py:685
+msgid "No previous {item}"
+msgstr "არ არის წინა {item}"
+
+#. Translators: a message telling the user that the font size has been
+#. increased
+#: bookworm/gui/book_viewer/__init__.py:701
+msgid "The font size has been Increased"
+msgstr "შრიფტის ზომა გაზრდილია"
+
+#. Translators: a message telling the user that the font size has been
+#. decreased
+#: bookworm/gui/book_viewer/__init__.py:707
+msgid "The font size has been decreased"
+msgstr "შრიფტის ზომა შემცირებულია"
+
+#. Translators: a message telling the user that the font size has been reset
+#: bookworm/gui/book_viewer/__init__.py:711
+msgid "The font size has been reset"
+msgstr "შრიფტის ზომა დაყენებულია სტანდარტულზე"
+
+#. Translators: the content of a dialog asking the user
+#. for the password to decrypt the current e-book
+#: bookworm/gui/book_viewer/__init__.py:730
+msgid ""
+"This document is encrypted with a password.\n"
+"You need to provide the password in order to access its content.\n"
+"Please provide the password and press enter."
+msgstr ""
+"ეს დოკუმენტი დაცულია პაროლით.\n"
+"თქვენ უნდა მიუთითოთ პაროლი მის შიგთავსზე წვდომისთვის.\n"
+"გთხოვთ, მიუთითოთ პაროლი და დააჭიროთ enter-ს."
+
+#. Translators: the title of a dialog asking the user to enter a password to
+#. decrypt the e-book
+#: bookworm/gui/book_viewer/__init__.py:736
+msgid "Enter Password"
+msgstr "შეიყვანეთ პაროლი"
+
+#: bookworm/gui/book_viewer/__init__.py:855
+msgid "Opening page: {url}"
+msgstr "იხსნება გვერდი: {url}"
+
+#. Translators: the label of a list of search results
+#: bookworm/gui/book_viewer/core_dialogs.py:56
+msgid "Search Results"
+msgstr "ძიების შედეგი"
+
+#. Translators: the title of a column in the search results list showing
+#. an excerpt of the text of the search result
+#: bookworm/gui/book_viewer/core_dialogs.py:67
+msgid "Text"
+msgstr "ტექსტი"
+
+#. Translators: the label of a progress bar indicating the progress of the
+#. search process
+#: bookworm/gui/book_viewer/core_dialogs.py:83
+msgid "Search Progress:"
+msgstr "ძიების პროგრესი:"
+
+#. Translators: the label of a button to close the dialog
+#. Translators: the label of an edit field in the search dialog
+#: bookworm/gui/book_viewer/core_dialogs.py:157
+msgid "Search term:"
+msgstr "საძიებო ფრაზა:"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/book_viewer/core_dialogs.py:163
+msgid "Case sensitive"
+msgstr "რეგისტრის გათვალისწინება"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/book_viewer/core_dialogs.py:165
+msgid "Match whole word only"
+msgstr "მხოლოდ მთელი სიტყვის შესაბამისი"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/book_viewer/core_dialogs.py:167
+msgid "Regular expression"
+msgstr "რეგულარული გამოხატულება"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:216
+msgid "Page number, of {total}:"
+msgstr "გვერდის ნომერი, {total}დან:"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:260
+msgid "Elements"
+msgstr "ელემენტები"
+
+#. Translators: title of a dialog
+#: bookworm/gui/book_viewer/core_dialogs.py:336
+msgid "Document Info"
+msgstr "დოკუმენტის ინფორმაცია"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:365
+msgid "Author"
+msgstr "ავტორი"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:369
+msgid "Description"
+msgstr "აღწერა"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:378
+msgid "Number of Sections"
+msgstr "განყოფილებების რაოდენობა"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:382
+msgid "Number of Pages"
+msgstr "გვერდების რაოდენობა"
+
+#. Translators: the title of a column in the Tesseract language list
+#: bookworm/gui/book_viewer/core_dialogs.py:385 bookworm/ocr/ocr_dialogs.py:488
+msgid "Language"
+msgstr "ენა"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:388
+msgid "Publisher"
+msgstr "გამომცემელი"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:390
+msgid "Created at"
+msgstr "შექმნილია"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:393
+msgid "Publication Date"
+msgstr "გამოცემის თარიღი"
+
+#. Translators: the content of the about message
+#: bookworm/gui/book_viewer/menubar.py:53
+msgid ""
+"{display_name}\n"
+"Version: {version}\n"
+"Website: {website}\n"
+"\n"
+"{display_name} is an advanced and accessible document reader that enables "
+"blind and visually impaired individuals to read documents in an easy, "
+"accessible, and hassle-free manor. It is being developed by {author} with "
+"some contributions from the community.\n"
+"\n"
+"{copyright}\n"
+"{display_name} is free software; you can redistribute it and/or modify it "
+"under the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.\n"
+"This program is distributed in the hope that it will be useful, but WITHOUT "
+"ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
+"FITNESS FOR A PARTICULAR PURPOSE.\n"
+"For further details, you can view the full licence from the help menu.\n"
+msgstr ""
+"{display_name}\n"
+"ვერსია: {version}\n"
+"ვებგვერდი: {website}\n"
+"\n"
+"{display_name}, ეს არის მოწინავე და ხელმისაწვდომი დოკუმენტების წამკითხველი, "
+"რომელიც საშუალებას აძლევს უსინათლო და მცირემხედველ პირებს, წაიკითხონ "
+"დოკუმენტები ადვილად. იგი მუშავდება {author}ს მიერ, საზოგადოების გარკვეული "
+"წვლილით.\n"
+"\n"
+"{copyright}\n"
+"{display_name} არის უფასო პროგრამა; შეგიძლიათ ხელახლა გაავრცელოთ და/ან "
+"შეცვალოთ იგი GNU General Public ლიცენზიის პირობებით, რომელიც გამოქვეყნებულია "
+"თავისუფალი პროგრამული უზრუნველყოფის ფონდის მიერ; ლიცენზიის მეორე ვერსია, ან "
+"(თქვენი სურვილით) ნებისმიერი უფრო გვიანდელი ვერსია.\n"
+"ეს პროგრამა ვრცელდება იმ იმედით, რომ ის სასარგებლო იქნება, მაგრამ ყოველგვარი "
+"გარანტიის გარეშე; კომერციული ან კონკრეტული მიზნისთვის ვარგისიანობის "
+"ნაგულისხმევი გარანტიის გარეშეც კი.\n"
+"დამატებითი ინფორმაციისთვის, შეგიძლიათ ნახოთ სრული ლიცენზია დახმარების "
+"მენიუდან.\n"
+
+#: bookworm/gui/book_viewer/menubar.py:65
+msgid ""
+"This release of Bookworm is generously sponsored  by Capeds (www.capeds.net)."
+msgstr ""
+"Bookworm-ის ეს გამოშვება გულუხვად არის დაფინანსებული Capeds-ის მიერ (www."
+"capeds.net)."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:95
+msgid "Open...\tCtrl-O"
+msgstr "გახსნა...\tCtrl-O"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:97
+msgid "New Window...\tCtrl-N"
+msgstr "ახალი ფანჯარა...\tCtrl-N"
+
+#: bookworm/gui/book_viewer/menubar.py:101
+msgid "&Pin\tCtrl-P"
+msgstr "&მიმაგრება\tCtrl-P"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:104
+msgid "&Save As Plain Text..."
+msgstr "&უბრალო ტექსტურ ფაილად შენახვა..."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:109
+msgid "&Close Current Document\tCtrl-W"
+msgstr "მიმ&დინარე დოკუმენტის დახურვა\tCtrl-W"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:111
+msgid "Close the currently open document"
+msgstr "დახურეთ მიმდინარე დოკუმენტი"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:117
+msgid "C&lear Documents Cache..."
+msgstr "დოკუმენტების &ქეშის გასუფთავება..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:119
+msgid ""
+"Clear the document cache. Helps in fixing some issues with openning "
+"documents."
+msgstr ""
+"დოკუმენტების ქეშის გასუფთავება. აღმოფხვრის დოკუმენტების გახსნასთან "
+"დაკავშირებულ ზოგიერთ პრობლემას."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:127
+msgid "Pi&nned Documents"
+msgstr "&მიმაგრებული დოკუმენტები"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:129
+msgid "Opens a list of documents you pinned."
+msgstr "ხსნის თქვენ მიერ მიმაგრებული დოკუმენტების სიას."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:135
+#: bookworm/gui/book_viewer/menubar.py:149
+msgid "Clear list"
+msgstr "სიის გასუფთავება"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:137
+msgid "Clear the pinned documents list"
+msgstr "მიმაგრებული დოკუმენტების სიის გასუფთავება"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:142
+msgid "&Recently Opened"
+msgstr "&ბოლოს გახსნილები"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:144
+msgid "Opens a list of recently opened books."
+msgstr "ხსნის ბოლოს გახსნილი წიგნების სიას."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:151
+msgid "Clear the recent books list."
+msgstr "ბოლოს გახსნილი წიგნების სიის გასუფთავება."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:157
+msgid "&Preferences...\tCtrl-Shift-P"
+msgstr "&პარამეტრები...\tCtrl-Shift-P"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:159
+msgid "Configure application"
+msgstr "აპლიკაციის კონფიგურაცია"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:163
+msgid "Exit"
+msgstr "გამოსვლა"
+
+#. Translators: the title of a file dialog to browse to a document
+#: bookworm/gui/book_viewer/menubar.py:214
+msgid "Select a document"
+msgstr "აირჩიეთ დოკუმენტი"
+
+#. Translators: the title of a dialog showing
+#. the progress of book export process
+#: bookworm/gui/book_viewer/menubar.py:273
+msgid "Exporting Document"
+msgstr "მიმდინარეობს დოკუმენტის ექსპორტი"
+
+#. Translators: the message of a dialog showing the progress of book export
+#: bookworm/gui/book_viewer/menubar.py:275
+msgid "Converting document to plain text."
+msgstr "მიმდინარეობს დოკუმენტის უბრალო ტექსტურ ფაილში გადაყვანა."
+
+#. Translators: a message shown when the book is being exported
+#: bookworm/gui/book_viewer/menubar.py:293
+msgid "Exporting Page {current} of {total}..."
+msgstr "მიმდინარეობს {current} გვერდის ექსპორტი {total}დან..."
+
+#. Translators: the title of the application preferences dialog
+#: bookworm/gui/book_viewer/menubar.py:315
+msgid "{app_name} Preferences"
+msgstr "{app_name}-ის პარამეტრები"
+
+#. Translators: content of a message
+#: bookworm/gui/book_viewer/menubar.py:326
+msgid "Are you sure you want to clear the documents cache?"
+msgstr "დარწმუნებული ხართ რომ გსურთ დოკუმენტების ქეშის გასუფთავება?"
+
+#. Translators: title of a message box
+#: bookworm/gui/book_viewer/menubar.py:328
+msgid "Clear Documents Cache?"
+msgstr "გასუფთავდეს დოკუმენტების ქეში?"
+
+#. Translators: content of a message box
+#: bookworm/gui/book_viewer/menubar.py:336
+msgid "Documents cache has been cleared."
+msgstr "დოკუმენტების ქეში გასუფთავებულია."
+
+#. Translators: content of a message in a message box
+#: bookworm/gui/book_viewer/menubar.py:345
+msgid "Clearing documents cache..."
+msgstr "მიმდინარეობს დოკუმენტების ქეშის გასუფთავება..."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:389
+msgid "(No recent books)"
+msgstr "(ბოლოს გახსნილი წიგნები არ არის)"
+
+#: bookworm/gui/book_viewer/menubar.py:390
+msgid "No recent books"
+msgstr "ბოლოს გახსნილი წიგნები არ არის"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:427
+msgid "Document &Info..."
+msgstr "დოკუმენტის &ინფორმაცია..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:429
+msgid "Show information about number of chapters, word count..etc."
+msgstr "თავებისა და სიტყვების რაოდენობის შესახებ ინფორმაციის ჩვენება."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:434
+msgid "&Element list...\tCtrl+F7"
+msgstr "&ელემენტების სია...\tCtrl+F7"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:436
+msgid "Show a list of semantic elements."
+msgstr "სემანტიკური ელემენტების სიის ჩვენება."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:441
+msgid "Change Reading &Mode...\tCtrl-Shift-M"
+msgstr "კითხვის &რეჟიმის შეცვლა...\tCtrl-Shift-M"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:443
+msgid "Change the current reading mode."
+msgstr "მიმდინარე კითხვის რეჟიმის შეცვლა."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:448
+#: bookworm/gui/book_viewer/menubar.py:941
+msgid "&Render Page...\tCtrl-R"
+msgstr "გვერდის &ვიზუალიზება...\tCtrl-R"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:450
+#: bookworm/gui/book_viewer/menubar.py:942
+msgid "View a fully rendered version of this page."
+msgstr "გვერდის სრულიად ვიზუალიზებული ვერსიის ნახვა."
+
+#: bookworm/gui/book_viewer/menubar.py:492
+msgid "Rendered Page"
+msgstr "ვიზუალიზებული გვერდი"
+
+#: bookworm/gui/book_viewer/menubar.py:509
+msgid "Available reading modes"
+msgstr "ხელმისაწვდომი კითხვის რეჟიმები"
+
+#: bookworm/gui/book_viewer/menubar.py:510
+msgid "Select Reading Mode "
+msgstr "აირჩიეთ კითხვის რეჟიმი "
+
+#: bookworm/gui/book_viewer/menubar.py:531
+msgid "Element List"
+msgstr "ელემენტების სია"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:558
+#: bookworm/gui/book_viewer/menubar.py:931
+msgid "&Find in Document...\tCtrl-F"
+msgstr "&დოკუმენტში ძიება...\tCtrl-F"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:560
+#: bookworm/gui/book_viewer/menubar.py:932
+msgid "Search this document."
+msgstr "ამ დოკუმენტში ძიება."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:565
+msgid "&Find &Next\tF3"
+msgstr "შ&ემდეგის მოძებნა\tF3"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:567
+msgid "Find next occurrence."
+msgstr "შემდგომი გამოვლინების მოძებნა."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:572
+msgid "&Find &Previous\tShift-F3"
+msgstr "&წინას &მოძებნა\tShift-F3"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:574
+msgid "Find previous occurrence."
+msgstr "წინა გამოვლინების ძიება."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:579
+msgid "&Jump to Line...\tCtrl-L"
+msgstr "&ხაზზე გადასვლა...\tCtrl-L"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:581
+msgid "Jump to a line within the current page or document"
+msgstr "დოკუმენტში ან გვერდზე ხაზზე გადასვლა"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:586
+#: bookworm/gui/book_viewer/menubar.py:925
+msgid "&Go To Page...\tCtrl-G"
+msgstr "&გვერდზე გადასვლა...\tCtrl-G"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:588
+msgid "Go to page"
+msgstr "გვერდზე გადასვლა"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:593
+msgid "&Go To Page By Label...\tCtrl-Shift-G"
+msgstr "გვერდზე გადასვლა &ლეიბლის მიხედვით...\tCtrl-Shift-G"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:595
+msgid "Go to a page using its label"
+msgstr "გადადით გვერდზე მისი ლეიბლის გამოყენებით"
+
+#: bookworm/gui/book_viewer/menubar.py:626
+msgid ""
+"You are here: {current_line}\n"
+"You can't go further than: {last_line}"
+msgstr ""
+"თქვენ ხართ: {current_line} ხაზზე\n"
+"თქვენ ვერ შეძლებთ: {last_line}ს ზევით გადასვლას"
+
+#: bookworm/gui/book_viewer/menubar.py:627
+msgid "Line number"
+msgstr "ხაზის ნომერი"
+
+#: bookworm/gui/book_viewer/menubar.py:628
+msgid "Jump to line"
+msgstr "ხაზზე გადასვლა"
+
+#. Translators: the title of the go to page dialog
+#: bookworm/gui/book_viewer/menubar.py:641
+msgid "Go To Page"
+msgstr "გვერდზე გადასვლა"
+
+#: bookworm/gui/book_viewer/menubar.py:648
+msgid "Go To Page By Label"
+msgstr "გვერდზე გადასვლა ლეიბლის მიხედვით"
+
+#: bookworm/gui/book_viewer/menubar.py:648
+msgid "Page Label"
+msgstr "გვერდის ლეიბლი"
+
+#. Translators: the title of the search dialog
+#: bookworm/gui/book_viewer/menubar.py:656
+msgid "Search Document"
+msgstr "დოკუმენტში ძიება"
+
+#: bookworm/gui/book_viewer/menubar.py:682
+msgid "Searching For '{term}'"
+msgstr "'{term}' იძებნება"
+
+#. Translators: message to announce the number of search results
+#. also used as the final title of the search results dialog
+#: bookworm/gui/book_viewer/menubar.py:697
+msgid "Results | {total}"
+msgstr "შედეგი | {total}"
+
+#: bookworm/gui/book_viewer/menubar.py:734
+msgid "Search Result"
+msgstr "ძიების შედეგი"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:772
+msgid "&User guide...\tF1"
+msgstr "მომხმარებლის &სახელმძღვანელო...\tF1"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:774
+msgid "View Bookworm manuals"
+msgstr "Bookworm-ის სახელმძღვანელოს ნახვა"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:779
+msgid "Bookworm &website..."
+msgstr "Bookworm-ის &ვებგვერდი..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:781
+msgid "Visit the official website of Bookworm"
+msgstr "ეწვიეთ Bookworm-ის ოფიციალურ ვებგვერდს"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:786
+msgid "&License"
+msgstr "&ლიცენზია"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:788
+msgid "View legal information about this program ."
+msgstr "ამ პროგრამის შესახებ ლეგალური ინფორმაციის ნახვა."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:793
+msgid "Con&tributors"
+msgstr "და&მმუშავებლები"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:795
+msgid "View a list of notable contributors to the program."
+msgstr "პროგრამის მნიშვნელოვანი დამმუშავებელთა სიის ნახვა."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:801
+msgid "&Restart with debug-mode enabled"
+msgstr "გადატვირთვა გამართ&ვის რეჟიმის ჩართვით"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:803
+msgid "Restart the program with debug mode enabled to show errors"
+msgstr "შეცდომების გამოსაჩენად, პროგრამის გამართვის რეჟიმში გადატვირთვა"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:813
+msgid "&About Bookworm"
+msgstr "&Bookworm-ის შესახებ"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:815
+msgid "Show general information about this program"
+msgstr "ამ პროგრამის შესახებ ზოგადი ინფორმაციის ჩვენება"
+
+#. Translators: the title of the about dialog
+#: bookworm/gui/book_viewer/menubar.py:848
+msgid "About {app_name}"
+msgstr "{app_name}-ის შესახებ"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:884
+msgid "&Search"
+msgstr "ძ&იება"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:886
+msgid "&Document"
+msgstr "&დოკუმენტი"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:888
+msgid "&Help"
+msgstr "&დახმარება"
+
+#: bookworm/gui/book_viewer/menubar.py:926
+msgid "Jump to a page"
+msgstr "გვერდზე გადასვლა"
+
+#: bookworm/gui/book_viewer/menubar.py:980
+msgid "Supported document formats"
+msgstr "მხარდაჭერილი დოკუმენტის ფორმატები"
+
+#: bookworm/gui/book_viewer/render_view.py:88
+msgid "Zoom is at {factor} percent"
+msgstr "მასშტაბირება {factor} პროცენტია"
+
+#: bookworm/gui/book_viewer/render_view.py:100
+msgid "Page {}"
+msgstr "გვერდი {}"
+
+#. Translators: content of a message in a progress dialog
+#: bookworm/http_tools/http_resource.py:43
+msgid "Downloaded {downloaded} MB of {total} MB"
+msgstr "ჩამოტვირთულია {downloaded} მეგაბაიტი {total}მეგაბაიტიდან"
+
+#. Translators: the label of a page in the settings dialog
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/__init__.py:75 bookworm/ocr/__init__.py:94
+#: bookworm/ocr/__init__.py:97
+msgid "OCR"
+msgstr "სიმბოლოების ოპტიკური ამოცნობა"
+
+#. Translators: the label of a group of controls in the reading page
+#: bookworm/ocr/ocr_dialogs.py:63 bookworm/ocr/ocr_menu.py:209
+msgid "OCR Options"
+msgstr "სიმბოლოების ოპტიკური ამოცნობის პარამეტრები"
+
+#. Translators: the title of a group of radio buttons in the OCR page
+#. in the application settings.
+#: bookworm/ocr/ocr_dialogs.py:70
+msgid "Default OCR Engine"
+msgstr "სიმბოლოების ოპტიკური ამოცნობის ნაგულისხმევი ძრავა"
+
+#. Translators: the label of a group of controls in the OCR page
+#. of the settings related to Tesseract OCR engine
+#: bookworm/ocr/ocr_dialogs.py:77
+#: bookworm/ocr_engines/tesseract_ocr_engine/__init__.py:25
+#: bookworm/ocr_engines/tesseract_ocr_engine/alt_tess.py:29
+msgid "Tesseract OCR Engine"
+msgstr "Tesseract OCR ძრავა"
+
+#: bookworm/ocr/ocr_dialogs.py:82
+msgid "Download Tesseract OCR Engine"
+msgstr "Tesseract OCR ძრავის ჩამოტვირთვა"
+
+#: bookworm/ocr/ocr_dialogs.py:83
+msgid "Get a free, high-quality OCR engine that supports over 100 languages."
+msgstr ""
+"მიიღეთ უფასო, მაღალი ხარისხის სიმბოლოების ოპტიკური ამომცნობი ძრავა, რომელსაც "
+"100-ზე მეტი ენის მხარდაჭერა გააჩნია."
+
+#. Translators: label of a button
+#: bookworm/ocr/ocr_dialogs.py:93
+msgid "Manage Tesseract OCR Languages"
+msgstr "Tesseract OCR-ის ენების მართვა"
+
+#. Translators: description of a button
+#: bookworm/ocr/ocr_dialogs.py:95
+msgid "Add support for new languages, and /or remove installed languages."
+msgstr "დაამატეთ ახალი ენის მხარდაჭერა და/ან წაშალეთ დაინსტალირებული ენები."
+
+#. Translators: label of a button
+#: bookworm/ocr/ocr_dialogs.py:101
+msgid "Update Tesseract OCr Engine"
+msgstr "Tesseract OCr ძრავის განახლება"
+
+#. Translators: description of a button
+#: bookworm/ocr/ocr_dialogs.py:103
+msgid "Check for and install updates for Tesseract OCR Engine"
+msgstr "შეამოწმეთ და დააინსტალირეთ განახლებები Tesseract OCR ძრავისთვის"
+
+#. Translators: the label of a group of controls in the reading page
+#. of the settings related to image enhancement
+#: bookworm/ocr/ocr_dialogs.py:109
+msgid "Image processing"
+msgstr "სურათის დამუშავება"
+
+#. Translators: the label of a checkbox
+#: bookworm/ocr/ocr_dialogs.py:115
+msgid "Enable default image enhancement filters"
+msgstr "სურათის დამუშავების ნაგულისხმევი ფილტრების ჩართვა"
+
+#. Translators: title of a progress dialog
+#: bookworm/ocr/ocr_dialogs.py:139
+msgid "Downloading Tesseract OCR Engine"
+msgstr "მიმდინარეობს Tesseract OCR ძრავის ჩამოტვირთვა"
+
+#. Translators: message of a progress dialog
+#. Translators: content of a progress dialog
+#: bookworm/ocr/ocr_dialogs.py:141 bookworm/ocr/ocr_dialogs.py:548
+msgid "Getting download information..."
+msgstr "მიმდინარეობს ჩამოტვირთვის ინფორმაციის მიღება..."
+
+#: bookworm/ocr/ocr_dialogs.py:151
+msgid "Manage Tesseract OCR Engine Languages"
+msgstr "Tesseract OCR ძრავის ენების მართვა"
+
+#: bookworm/ocr/ocr_dialogs.py:158
+msgid "Restart Required"
+msgstr "საჭიროა გადატვირთვა"
+
+#: bookworm/ocr/ocr_dialogs.py:159
+msgid ""
+"Bookworm will now restart to complete the installation of the Tesseract OCR "
+"Engine."
+msgstr ""
+"Bookworm-ი გადაიტვირთება, რათა დასრულდეს Tesseract OCR ძრავის დაყენება."
+
+#. Translators: message of a dialog
+#: bookworm/ocr/ocr_dialogs.py:170
+msgid "Checking for updates. Please wait..."
+msgstr "მიმდინარეობს განახლებების შემოწმება. გთხოვთ, დაელოდოთ..."
+
+#: bookworm/ocr/ocr_dialogs.py:178
+msgid ""
+"A new version of Tesseract OCr engine is available for download.\n"
+"It is strongly recommended to update to the latest version for the best "
+"accuracy and performance.\n"
+"Would you like to update to the new version?"
+msgstr ""
+"ხელმისაწვდომია Tesseract OCr ძრავის ახალი ვერსია ჩამოსატვირთად.\n"
+"რეკომენდირებულია უახლეს ვერსიაზე განახლება უკეთესი სიზუსტისა და "
+"შესრულებისთვის.\n"
+"გსურთ რომ განაახლოთ ახალ ვერსიაზე?"
+
+#: bookworm/ocr/ocr_dialogs.py:181
+msgid "Update Tesseract OCr Engine?"
+msgstr "განახლდეს Tesseract OCr ძრავა?"
+
+#. Translators: message of a dialog
+#: bookworm/ocr/ocr_dialogs.py:190
+msgid "Removing old Tesseract version. Please wait..."
+msgstr "მიმდინარეობს Tesseract-ის ძველი ვერსიის წაშლა. გთხოვთ, დაელოდოთ..."
+
+#. Translators: content of a message box
+#: bookworm/ocr/ocr_dialogs.py:196
+msgid "Your version of Tesseract OCR engine is up to date."
+msgstr "თქვენი Tesseract OCR ძრავის ვერსია განახლებულია."
+
+#. Translators: title of a message box
+#: bookworm/ocr/ocr_dialogs.py:198
+msgid "No updates"
+msgstr "არ არის განახლება"
+
+#: bookworm/ocr/ocr_dialogs.py:206
+msgid "Failed to check for updates for Tesseract OCr engine."
+msgstr "Tesseract OCr ძრავისთვის განახლებების შემოწმება ვერ მოხერხდა."
+
+#. Translators: title of a group of controls
+#: bookworm/ocr/ocr_dialogs.py:239
+msgid "Recognition Language"
+msgstr "ამოცნობის ენა"
+
+#. Translators: the label of a combobox
+#: bookworm/ocr/ocr_dialogs.py:241
+msgid "Primary recognition Language"
+msgstr "ამოცნობის მთავარი ენა"
+
+#: bookworm/ocr/ocr_dialogs.py:248
+msgid "Add a secondary recognition language"
+msgstr "ამოცნობისთვის მეორე ენის დამატება"
+
+#: bookworm/ocr/ocr_dialogs.py:252
+msgid "Secondary recognition Language"
+msgstr "ამოცნობის მეორე ენა"
+
+#: bookworm/ocr/ocr_dialogs.py:260
+#: bookworm/structured_text/structural_elements.py:71
+msgid "Image"
+msgstr "სურათი"
+
+#: bookworm/ocr/ocr_dialogs.py:261
+msgid "Supplied Image resolution::"
+msgstr "სურათის მოწოდებული გარჩევადობა::"
+
+#: bookworm/ocr/ocr_dialogs.py:265
+msgid "Enable image enhancements"
+msgstr "სურათის გაუმჯობესების ჩართვა"
+
+#: bookworm/ocr/ocr_dialogs.py:270
+msgid "Available image pre-processing filters:"
+msgstr "სურათის წინასწარი დამუშავების ხელმისაწვდომი ფილტრები:"
+
+#. Translators: the label of a checkbox
+#: bookworm/ocr/ocr_dialogs.py:285
+msgid "&Save these options until I close the current book"
+msgstr "შეინახე ეს პარამეტრები, &ანამ არ დავხურავ მიმდინარე წიგნს"
+
+#: bookworm/ocr/ocr_dialogs.py:366
+msgid "Increase image resolution"
+msgstr "სურათის გარჩევადობის გაზრდა"
+
+#: bookworm/ocr/ocr_dialogs.py:367
+msgid "Binarization"
+msgstr "ბინარიზაცია"
+
+#: bookworm/ocr/ocr_dialogs.py:370
+msgid "Split two-in-one scans to individual pages"
+msgstr "ორი ერთში დასკანერების ცალკეულ გვერდებზე გამოყოფა"
+
+#: bookworm/ocr/ocr_dialogs.py:373
+msgid "Combine images"
+msgstr "სურათების გაერთიანება"
+
+#: bookworm/ocr/ocr_dialogs.py:374
+msgid "Blurring"
+msgstr "დაბინდვა"
+
+#: bookworm/ocr/ocr_dialogs.py:375
+msgid "Deskewing"
+msgstr "დახრილობა"
+
+#: bookworm/ocr/ocr_dialogs.py:376
+msgid "Erosion"
+msgstr "ეროზია"
+
+#: bookworm/ocr/ocr_dialogs.py:377
+msgid "Dilation"
+msgstr "გაფართოება"
+
+#: bookworm/ocr/ocr_dialogs.py:378
+msgid "Sharpen image"
+msgstr "სურათის სიმკვეთრის გაზრდა"
+
+#: bookworm/ocr/ocr_dialogs.py:379
+msgid "Invert colors"
+msgstr "ფერების ინვერსია"
+
+#: bookworm/ocr/ocr_dialogs.py:382
+msgid "Debug"
+msgstr "გამართვა"
+
+#: bookworm/ocr/ocr_dialogs.py:401
+msgid "Installed Languages"
+msgstr "დაყენებული ენები"
+
+#: bookworm/ocr/ocr_dialogs.py:405
+msgid "Downloadable Languages"
+msgstr "ჩამოტვირთვადი ენები"
+
+#. Translators: label of a list control containing bookmarks
+#: bookworm/ocr/ocr_dialogs.py:436
+msgid "Tesseract Languages"
+msgstr "Tesseract-ის ენები"
+
+#: bookworm/ocr/ocr_dialogs.py:449
+msgid "Download &Best Model"
+msgstr "&საუკეთესო მოდელის ჩამოტვირთვა"
+
+#: bookworm/ocr/ocr_dialogs.py:453
+msgid "Download &Fast Model"
+msgstr "ს&წრაფი მოდელის ჩამოტვირთვა"
+
+#. Translators: the title of a column in the Tesseract language list
+#: bookworm/ocr/ocr_dialogs.py:495
+msgid "Installed"
+msgstr "დაყენებულია"
+
+#: bookworm/ocr/ocr_dialogs.py:498
+msgid "Yes"
+msgstr "კი"
+
+#: bookworm/ocr/ocr_dialogs.py:498
+msgid "No"
+msgstr "არა"
+
+#. Translators: content of a messagebox
+#: bookworm/ocr/ocr_dialogs.py:528
+msgid ""
+"A version of the selected language model already exists.\n"
+"Are you sure you want to replace it."
+msgstr ""
+"არჩეული ენის მოდელის ვერსია უკვე არსებობს.\n"
+"დარწმუნებული ხართ რომ გსურთ მისი შეცვლა."
+
+#. Translators: title of a progress dialog
+#: bookworm/ocr/ocr_dialogs.py:546
+msgid "Downloading Language"
+msgstr "მიმდინარეობს ენის ჩამოტვირთვა"
+
+#. Translators: content of a messagebox
+#: bookworm/ocr/ocr_dialogs.py:571
+msgid ""
+"Are you sure you want to remove language:\n"
+"{lang}?"
+msgstr ""
+"დარწმუნებული ხართ რომ გსურთ წაშალოთ :\n"
+"{lang} ენა?"
+
+#. Translators: title of a messagebox
+#: bookworm/ocr/ocr_dialogs.py:596
+msgid "Language Added"
+msgstr "ენა დამატებულია"
+
+#: bookworm/ocr/ocr_dialogs.py:597
+msgid "The Language Model was downloaded successfully."
+msgstr "ენის მოდელი წარმატებით ჩამოიტვირთა."
+
+#. Translators: title of a message box
+#: bookworm/ocr/ocr_dialogs.py:605 bookworm/webservices/wikiworm.py:109
+msgid "Connection Error"
+msgstr "კავშირის შეცდომა"
+
+#. Translators: content of a messagebox
+#: bookworm/ocr/ocr_dialogs.py:607
+msgid ""
+"Failed to download language data.\n"
+"Please check your internet connection."
+msgstr ""
+"ენის მონაცემების ჩამოტვირთვა ვერ მოხერხდა.\n"
+"გთხოვთ, შეამოწმოთ ინტერნეტთან კავშირი."
+
+#. Translators: content of a messagebox
+#: bookworm/ocr/ocr_dialogs.py:618
+msgid ""
+"Failed to install language data.\n"
+"Please try again later."
+msgstr ""
+"ენის მონაცემების დაყენება ვერ მოხერხდა.\n"
+"გთხოვთ, სცადოთ მოგვიანებით."
+
+#: bookworm/ocr/ocr_menu.py:86
+msgid "Recognition Result: {image_name}"
+msgstr "ამოცნობის შედეგი: {image_name}"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:121
+msgid "&Scan Current Page...\tF4"
+msgstr "მიმდინარე გვერდის &დასკანერება...\tF4"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:123
+msgid "Run OCR on the current page"
+msgstr "სიმბოლოების ოპტიკური ამოცნობის მიმდინარე გვერდზე გაშვება"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:128
+msgid "&Automatic OCR\tCtrl-F4"
+msgstr "სიმბოლოების &ავტომატური ოპტიკური ამოცნობა\tCtrl-F4"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:130
+msgid "Auto run  OCR when turning pages."
+msgstr ""
+"გვერდის გადაფურცვლისას სიმბოლოების ოპტიკური ამომცნობის ავტომატურად გაშვება."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:136
+msgid "&Change OCR Options..."
+msgstr "სიმბოლოების ოპტიკური ამოცნობის პარამეტრების შე&ცვლა..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:138
+msgid "Change OCR options"
+msgstr "სიმბოლოების ოპტიკური ამოცნობის პარამეტრების შეცვლა"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:143
+msgid "Scan To &Text File..."
+msgstr "ტექსტურ &ფაილში დასკანერება..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:145
+msgid "Scan pages and save the text to a .txt file."
+msgstr "გვერდების დასკანერება და მათი .txt ფაილში შენახვა."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:150
+msgid "Image To Text..."
+msgstr "სურათის ტექსტში გადაყვანა..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:152
+msgid "Run OCR on an image."
+msgstr "სიმბოლოების ოპტიკური ამომცნობის სურათზე გაშვება."
+
+#. Translators: the label of the OCR menu in the application menubar
+#. Event handlers
+#. Translators: content of a message
+#: bookworm/ocr/ocr_menu.py:199
+msgid ""
+"No language for OCR is present.\n"
+"Please checkout Bookworm user manual to learn how to add new languages."
+msgstr ""
+"სიმბოლოების ოპტიკური ამომცნობისთვის ენა წარმოდგენილი არ არის.\n"
+"გთხოვთ, გადახედოთ Bookworm-ის მომხმარებლის სახელმძღვანელოს, რათა ისწავლოთ "
+"ახალი ენების დამატება."
+
+#. Translators: title for a message
+#: bookworm/ocr/ocr_menu.py:203
+msgid "No Languages for OCR"
+msgstr "სიმბოლოების ოპტიკური ამომცნობისთვის ენა არ არის"
+
+#: bookworm/ocr/ocr_menu.py:222
+msgid "Canceled"
+msgstr "გაუქმებულია"
+
+#: bookworm/ocr/ocr_menu.py:258
+msgid "Running OCR, please wait..."
+msgstr "მიმდინარეობს სიმბოლოების ოპტიკური ამოცნობა, გთხოვთ, დაელოდოთ..."
+
+#: bookworm/ocr/ocr_menu.py:268
+msgid "Automatic OCR is enabled"
+msgstr "სიმბოლოების ავტომატური ოპტიკური ამოცნობა ჩართულია"
+
+#: bookworm/ocr/ocr_menu.py:270
+msgid "Automatic OCR is disabled"
+msgstr "სიმბოლოების ავტომატური ოპტიკური ამოცნობა გამორთულია"
+
+#. Translators: the title of a save file dialog asking the user for a filename
+#. to export notes to
+#: bookworm/ocr/ocr_menu.py:283
+msgid "Save as"
+msgstr "შენახვა როგორც"
+
+#. Translators: the title of a progress dialog
+#: bookworm/ocr/ocr_menu.py:300
+msgid "Scanning Pages"
+msgstr "მიმდინარეობს გვერდების დასკანერება"
+
+#. Translators: the message of a progress dialog
+#: bookworm/ocr/ocr_menu.py:302
+msgid "Preparing book"
+msgstr "მიმდინარეობს წიგნის დამზადება"
+
+#: bookworm/ocr/ocr_menu.py:321
+msgid ""
+"Successfully processed {total} pages.\n"
+"Extracted text was written to: {file}"
+msgstr ""
+"{total} გვერდი წარმატებით დამუშავდა.\n"
+"ამოღებული ტექსტი ჩაიწერა {file}ში"
+
+#: bookworm/ocr/ocr_menu.py:324
+msgid "OCR Completed"
+msgstr "სიმბოლოების ოპტიკური ამოცნობა დასრულდა"
+
+#: bookworm/ocr/ocr_menu.py:341
+msgid "Portable Network Graphics"
+msgstr "პორტაბელური ქსელის გრაფიკა"
+
+#: bookworm/ocr/ocr_menu.py:342
+msgid "JPEG images"
+msgstr "JPEG სურათები"
+
+#: bookworm/ocr/ocr_menu.py:343
+msgid "Bitmap images"
+msgstr "Bitmap სურათები"
+
+#: bookworm/ocr/ocr_menu.py:344
+msgid "Tiff graphics"
+msgstr "Tiff გრაფიკა"
+
+#: bookworm/ocr/ocr_menu.py:350
+msgid "All supported image formats"
+msgstr "ყველა მხარდაჭერილი სურათის ფორმატი"
+
+#. Translators: the title of a file dialog to browse to an image
+#: bookworm/ocr/ocr_menu.py:354
+msgid "Choose image file"
+msgstr "აირჩიეთ სურათის ფაილი"
+
+#. Translators: content of a message box
+#: bookworm/ocr/ocr_menu.py:369
+msgid ""
+"Could not load image from\n"
+"{filename}.\n"
+"Please make sure the file exists and the data contained in is not corrupted."
+msgstr ""
+"ვერ მოხერხდა სურათის ჩატვირთვა\n"
+"{filename}დან.\n"
+"გთხოვთ, დარწმუნდეთ, რომ ფაილი არსებობს და მასში არსებული მონაცემები არ არის "
+"დაზიანებული."
+
+#. Translators: title of a message box
+#: bookworm/ocr/ocr_menu.py:374
+msgid "Could not load image file"
+msgstr "ვერ მოხერხდა სურათის ფაილის ჩატვირთვა"
+
+#: bookworm/ocr/ocr_menu.py:420
+msgid "Scan finished."
+msgstr "დასკანერება დასრულებულია."
+
+#: bookworm/ocr/ocr_menu.py:426
+msgid "OCR canceled"
+msgstr "სიმბოლოების ოპტიკური ამოცნობა გაუქმებულია"
+
+#: bookworm/speechdriver/__init__.py:16
+msgid "No Speech"
+msgstr "არ არის ხმა"
+
+#: bookworm/structured_text/structural_elements.py:60
+msgid "Heading"
+msgstr "სათაური"
+
+#: bookworm/structured_text/structural_elements.py:61
+msgid "Heading level 1"
+msgstr "სათაური 1 დონით"
+
+#: bookworm/structured_text/structural_elements.py:62
+msgid "Heading level 2"
+msgstr "სათაური 2 დონით"
+
+#: bookworm/structured_text/structural_elements.py:63
+msgid "Heading level 3"
+msgstr "სათაური 3 დონით"
+
+#: bookworm/structured_text/structural_elements.py:64
+msgid "Heading level 4"
+msgstr "სათაური 4 დონით"
+
+#: bookworm/structured_text/structural_elements.py:65
+msgid "Heading level 5"
+msgstr "სათაური 5 დონით"
+
+#: bookworm/structured_text/structural_elements.py:66
+msgid "Heading level 6"
+msgstr "სათაური 6 დონით"
+
+#: bookworm/structured_text/structural_elements.py:67
+msgid "Link"
+msgstr "ბმული"
+
+#: bookworm/structured_text/structural_elements.py:68
+msgid "List"
+msgstr "სია"
+
+#: bookworm/structured_text/structural_elements.py:69
+msgid "Quote"
+msgstr "ციტატა"
+
+#: bookworm/structured_text/structural_elements.py:70
+msgid "Table"
+msgstr "ცხრილი"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/__init__.py:106
+msgid "S&peech"
+msgstr "მ&ეტყველება"
+
+#. Translators: the label of a page in the settings dialog
+#: bookworm/text_to_speech/__init__.py:111
+msgid "Reading"
+msgstr "წაკითხვა"
+
+#. Translators: the label of a page in the settings dialog
+#. Translators: the label of a group of controls in the
+#. speech settings page related to voice selection
+#: bookworm/text_to_speech/__init__.py:113
+#: bookworm/text_to_speech/__init__.py:124
+#: bookworm/text_to_speech/tts_gui.py:140
+msgid "Voice"
+msgstr "ხმა"
+
+#: bookworm/text_to_speech/__init__.py:121
+msgid "Back"
+msgstr "უკან"
+
+#: bookworm/text_to_speech/__init__.py:122
+msgid "Play"
+msgstr "მოსმენა"
+
+#: bookworm/text_to_speech/__init__.py:123
+msgid "Forward"
+msgstr "წინ გადახვევა"
+
+#: bookworm/text_to_speech/__init__.py:214
+msgid "End of document."
+msgstr "დოკუმენტის დასასრული."
+
+#: bookworm/text_to_speech/__init__.py:234
+msgid "End of section: {chapter}."
+msgstr "{chapter} განყოფილების დასასრული."
+
+#. Translators: spoken message at the end of the document
+#: bookworm/text_to_speech/__init__.py:267
+msgid "End of document"
+msgstr "დოკუმენტის დასასრული"
+
+#. Translators: the title of a message telling the user that no TTS voice found
+#: bookworm/text_to_speech/__init__.py:420
+msgid "No TTS Voices"
+msgstr "არ არის TTS ხმა"
+
+#. Translators: a message telling the user that no TTS voice found
+#: bookworm/text_to_speech/__init__.py:422
+msgid ""
+"A valid Text-to-speech voice was not found for the current speech engine.\n"
+"Text-to-speech functionality will be disabled."
+msgstr ""
+"მიმდინარე მეტყველების ძრავისთვის შესაბამისი ტექსტის მეტყველებაში გარდასაქმნი "
+"ხმა ვერ მოიძებნა.\n"
+"ტექსტის მეტყველებაში გადაყვანის ფუნქცია გამოირთვება."
+
+#. Translators: a message telling the user that the TTS voice has been changed
+#: bookworm/text_to_speech/__init__.py:440
+msgid ""
+"Bookworm has noticed that the currently configured Text-to-speech voice "
+"speaks a language different from that of this book.\n"
+"Do you want to temporary switch to another voice that speaks a language "
+"similar to the language  of the currently opened document?"
+msgstr ""
+"Bookworm-მა შენიშნა რომ ტექსტის მეტყველებაში გარდაქმნის ამჟამად "
+"კონფიგურირებული ხმის ენა განსხვავდება წიგნის ენისგან.\n"
+"გსურთ დროებით გადართოთ სხვა ხმაზე, რომელიც შეესაბამება გახსნილი დოკუმენტის "
+"ენას?"
+
+#. Translators: the title of a message telling the user that the TTS voice has
+#. been changed
+#: bookworm/text_to_speech/__init__.py:447
+msgid "Incompatible TTS Voice Detected"
+msgstr "აღმოჩენილია შეუთავსებელი TTS ხმა"
+
+#. Translators: the name of a built-in voice profile
+#: bookworm/text_to_speech/tts_config.py:124
+msgid "Human-like"
+msgstr "როგორც ადამიანი"
+
+#. Translators: the name of a built-in voice profile
+#: bookworm/text_to_speech/tts_config.py:135
+msgid "Deep Reading"
+msgstr "ღრმა წაკითხვა"
+
+#. Translators: the name of a built-in voice profile
+#: bookworm/text_to_speech/tts_config.py:146
+msgid "Express"
+msgstr "ემოციური"
+
+#. Translators: the label of a group of controls in the reading page
+#: bookworm/text_to_speech/tts_gui.py:51
+msgid "Reading Options"
+msgstr "წაკითხვის პარამეტრები"
+
+#. Translators: the title of a group of radio buttons in the reading page
+#. in the application settings related to how to read.
+#: bookworm/text_to_speech/tts_gui.py:57
+msgid "When Pressing Play:"
+msgstr "მოსმენაზე დაჭერისას:"
+
+#. Translators: the label of a radio button
+#: bookworm/text_to_speech/tts_gui.py:62
+msgid "Read the entire book"
+msgstr "მთლიანი წიგნის წაკითხვა"
+
+#. Translators: the label of a radio button
+#: bookworm/text_to_speech/tts_gui.py:64
+msgid "Read the current section"
+msgstr "მიმდინარე განყოფილების წაკითხვა"
+
+#. Translators: the label of a radio button
+#: bookworm/text_to_speech/tts_gui.py:66
+msgid "Read the current page"
+msgstr "მიმდინარე გვერდის წაკითხვა"
+
+#. Translators: the title of a group of radio buttons in the reading page
+#. in the application settings related to where to start reading from.
+#: bookworm/text_to_speech/tts_gui.py:74
+msgid "Start reading from:"
+msgstr "კითხვის დაწყება:"
+
+#. Translators: the label of a radio button
+#: bookworm/text_to_speech/tts_gui.py:78
+msgid "Cursor position"
+msgstr "კურსორის პოზიციიდან"
+
+#: bookworm/text_to_speech/tts_gui.py:78
+msgid "Beginning of page"
+msgstr "გვერდის დასაწყისიდან"
+
+#. Translators: the label of a group of controls in the reading page
+#. of the settings related to behavior during reading  aloud
+#: bookworm/text_to_speech/tts_gui.py:82
+msgid "During Reading Aloud"
+msgstr "ხმამაღლა წაკითხვის დროს"
+
+#. Translators: the label of a checkbox
+#: bookworm/text_to_speech/tts_gui.py:94
+msgid "Announce the end of sections"
+msgstr "განყოფილებების დასრულების გახმოვანება"
+
+#. Translators: the label of a checkbox
+#: bookworm/text_to_speech/tts_gui.py:101
+msgid "Ask to switch to a voice that speaks the language of the current book"
+msgstr "მიმდინარე წიგნისთვის შესაბამისი ენის ხმაზე გადართვის შეკითხვა"
+
+#. Translators: the label of a checkbox
+#: bookworm/text_to_speech/tts_gui.py:108
+msgid "Highlight spoken text"
+msgstr "წარმოთქმული ტექსტის მონიშვნა"
+
+#. Translators: the label of a checkbox
+#: bookworm/text_to_speech/tts_gui.py:115
+msgid "Select spoken text"
+msgstr "წარმოთქმული ტექსტის არჩევა"
+
+#. Translators: the label of a combobox containing a list of tts engines
+#: bookworm/text_to_speech/tts_gui.py:143
+msgid "Speech Engine:"
+msgstr "მეტყველების ძრავა:"
+
+#. Translators: the label of a button that opens a dialog to change the speech
+#. engine
+#: bookworm/text_to_speech/tts_gui.py:148
+msgid "Change..."
+msgstr "შეცვლა..."
+
+#. Translators: the label of a combobox containing a list of tts voices
+#: bookworm/text_to_speech/tts_gui.py:151
+msgid "Select Voice:"
+msgstr "აირჩიეთ ხმა:"
+
+#. Translators: the label of the speech rate slider
+#: bookworm/text_to_speech/tts_gui.py:154
+msgid "Speech Rate:"
+msgstr "მეტყველების სიჩქარე:"
+
+#. Translators: the label of the speech volume slider
+#: bookworm/text_to_speech/tts_gui.py:160
+msgid "Speech Volume:"
+msgstr "მეტყველების ხმის სიმაღლე:"
+
+#. Translators: the label of a group of controls in the speech
+#. settings page related to speech pauses
+#: bookworm/text_to_speech/tts_gui.py:167
+msgid "Pauses"
+msgstr "პაუზები"
+
+#. Translators: the label of an edit field
+#: bookworm/text_to_speech/tts_gui.py:170
+msgid "Additional Pause At Sentence End (Ms)"
+msgstr "დამატებითი პაუზა წინადადების ბოლოს (მილიწამებში)"
+
+#. Translators: the label of an edit field
+#: bookworm/text_to_speech/tts_gui.py:175
+msgid "Additional Pause At Paragraph End (Ms)"
+msgstr "დამატებითი პაუზა პარაგრაფის ბოლოს (მილიწამებში)"
+
+#. Translators: the label of an edit field
+#: bookworm/text_to_speech/tts_gui.py:180
+msgid "End of Page Pause (ms)"
+msgstr "პაუზა გვერდის დასასრულისას (მილიწამებში)"
+
+#. Translators: the label of an edit field
+#: bookworm/text_to_speech/tts_gui.py:189
+msgid "End of Section Pause (ms)"
+msgstr "პაუზა განყოფილების დასასრულისას (მილიწამებში)"
+
+#: bookworm/text_to_speech/tts_gui.py:233
+msgid "Speech Engine"
+msgstr "მეტყველების ძრავა"
+
+#. Translators: the title of a dialog to edit a voice profile
+#: bookworm/text_to_speech/tts_gui.py:280
+msgid "Voice Profile: {profile}"
+msgstr "ხმის პროფილი: {profile}"
+
+#. Translators: the label of a combobox to select a voice profile
+#: bookworm/text_to_speech/tts_gui.py:307
+msgid "Select Voice Profile:"
+msgstr "აირჩიეთ ხმის პროფილი:"
+
+#. Translators: the label of a button to activate a voice profile
+#: bookworm/text_to_speech/tts_gui.py:313
+msgid "&Activate"
+msgstr "&გააქტიურება"
+
+#. Translators: the label of a button to create a new voice profile
+#: bookworm/text_to_speech/tts_gui.py:319
+msgid "&New Profile..."
+msgstr "ა&ხალი პროფილი..."
+
+#. Translators: the entry of the active voice profile in the voice profiles
+#. list
+#: bookworm/text_to_speech/tts_gui.py:353
+msgid "{profile} (active)"
+msgstr "{profile} (აქტიურია)"
+
+#. Translators: the label of an edit field to enter the voice profile name
+#: bookworm/text_to_speech/tts_gui.py:403
+msgid "Profile Name:"
+msgstr "პროფილის სახელი:"
+
+#. Translators: the title of a dialog to enter the name of a new voice profile
+#: bookworm/text_to_speech/tts_gui.py:405
+msgid "New Voice Profile"
+msgstr "ხმის ახალი პროფილი"
+
+#. Translators: the content of a message notifying the user
+#. user of the existence of a voice profile with the same name
+#: bookworm/text_to_speech/tts_gui.py:417
+msgid ""
+"A voice profile with the same name already exists. Please select another "
+"name."
+msgstr "ამ სახელით ხმის პროფილი უკვე არსებობს. გთხოვთ, აირჩიოთ სხვა სახელი."
+
+#. Translators: the content of a message telling the user that the voice
+#. profile he is removing is the active one
+#: bookworm/text_to_speech/tts_gui.py:443
+msgid ""
+"Voice profile {profile} is the active profile.\n"
+"Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
+"menu item from the speech menu."
+msgstr ""
+"{profile} ხმის პროფილი ამჟამად აქტიური პროფილია.\n"
+"გთხოვთ, თავდაპირველად გამორთოთ იგი მეტყველების მენიუდან, 'ხმის აქტიური "
+"პროფილის გამორთვაზე` დაჭერით."
+
+#. Translators: the title of a message telling the user that
+#. it is not possible to remove this voice profile
+#: bookworm/text_to_speech/tts_gui.py:450
+msgid "Cannot Remove Profile"
+msgstr "პროფილის წაშლა შეუძლებელია"
+
+#. Translators: the title of a message to confirm the removal of the voice
+#. profile
+#: bookworm/text_to_speech/tts_gui.py:456
+msgid ""
+"Are you sure you want to remove voice profile {profile}?\n"
+"This cannot be undone."
+msgstr ""
+"დარწმუნებული ხართ რომ გსურთ {profile} ხმის პროფილის წაშლა?\n"
+"ამ მოქმედების გაუქმება შეუძლებელია."
+
+#. Translators: the title of a message to confirm the removal of a voice
+#. profile
+#: bookworm/text_to_speech/tts_gui.py:461
+msgid "Remove Voice Profile?"
+msgstr "წაიშალოს ხმის პროფილი?"
+
+#. Translators: the label of a combobox
+#: bookworm/text_to_speech/tts_gui.py:484
+msgid "Select Speech Engine:"
+msgstr "აირჩიეთ მეტყველების ძრავა:"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:513
+msgid "&Play\tF5"
+msgstr "&მოსმენა\tF5"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:515
+msgid "Start reading aloud"
+msgstr "ხმამაღლა წაკითხვის დაწყება"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:520
+msgid "Pa&use/Resume\tF6"
+msgstr "შ&ეჩერება/გაგრძელება\tF6"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:522
+msgid "Pause/Resume reading aloud"
+msgstr "ხმამაღლა წაკითხვის შეჩერება/გაგრძელება"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:527
+msgid "&Stop\tF7"
+msgstr "გ&აჩერება\tF7"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:529
+msgid "Stop reading aloud"
+msgstr "ხმამაღლა წაკითხვის შეჩერება"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:534
+msgid "&Rewind\tAlt-LeftArrow"
+msgstr "&უკან გადახვევა\tAlt-LeftArrow"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:536
+msgid "Skip to previous paragraph"
+msgstr "წინა პარაგრაფზე გადასვლა"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:541
+msgid "&Fast Forward\tAlt-RightArrow"
+msgstr "&წინ გადახვევა\tAlt-RightArrow"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:543
+msgid "Skip to next paragraph"
+msgstr "შემდეგ პარაგრაფზე გადასვლა"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:548
+msgid "&Voice Profiles\tCtrl-Shift-V"
+msgstr "ხ&მის პროფილები\tCtrl-Shift-V"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:550
+msgid "Manage voice profiles."
+msgstr "ხმის პროფილების მართვა."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:555
+msgid "&Deactivate Active Voice Profile"
+msgstr "აქ&ტიური ხმის პროფილის გამორთვა"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:557
+msgid "Deactivate the active voice profile."
+msgstr "ხმის აქტიური პროფილის გამორთვა."
+
+#. Translators: a message that is announced when the speech is paused
+#: bookworm/text_to_speech/tts_gui.py:619
+msgid "Paused"
+msgstr "შეჩერებულია"
+
+#. Translators: a message that is announced when the speech is resumed
+#: bookworm/text_to_speech/tts_gui.py:623
+msgid "Resumed"
+msgstr "გაგრძელებულია"
+
+#. Translators: a message that is announced when the speech is stopped
+#: bookworm/text_to_speech/tts_gui.py:633
+msgid "Stopped"
+msgstr "გაჩერებულია"
+
+#. Translators: the title of the voice profiles dialog
+#: bookworm/text_to_speech/tts_gui.py:638
+msgid "Voice Profiles"
+msgstr "ხმის პროფილები"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/webservices/__init__.py:23
+msgid "&Web Services"
+msgstr "&ვებ სერვისები"
+
+#: bookworm/webservices/url_open.py:34
+msgid "&Open URL\tCtrl+U"
+msgstr "&URL მისამართის გახსნა\tCtrl+U"
+
+#: bookworm/webservices/url_open.py:36
+msgid "&Open URL From Clipboard\tCtrl+Shift+U"
+msgstr "URL მისამართის გაცვლის ბუ&ფერიდან გახსნა\tCtrl+Shift+U"
+
+#. Translators: title of a dialog for entering a URL
+#: bookworm/webservices/url_open.py:49
+msgid "Enter URL"
+msgstr "შეიყვანეთ URL მისამართი"
+
+#. Translators: label of a textbox in a dialog for entering a URL
+#: bookworm/webservices/url_open.py:51
+msgid "URL"
+msgstr "URL მისამართი"
+
+#: bookworm/webservices/wikiworm.py:36
+msgid "&Wikipedia quick search"
+msgstr "ს&წრაფი ძებნა ვიკიპედიაში"
+
+#: bookworm/webservices/wikiworm.py:37
+msgid "Get a quick definition from Wikipedia"
+msgstr "მიიღეთ სწრაფი განმარტება ვიკიპედიიდან"
+
+#: bookworm/webservices/wikiworm.py:49
+msgid "Define using Wikipedia"
+msgstr "ვიკიპედიით განსაზღვრა"
+
+#: bookworm/webservices/wikiworm.py:50
+msgid "Define the selected text using Wikipedia"
+msgstr "განსაზღვრეთ არჩეული ტექსტი ვიკიპედიის გამოყენებით"
+
+#: bookworm/webservices/wikiworm.py:64
+msgid "Wikipedia Quick Search"
+msgstr "სწრაფი ძებნა ვიკიპედიაში"
+
+#: bookworm/webservices/wikiworm.py:65
+msgid "Enter term"
+msgstr "შეიყვანეთ საძიებო ფრაზა"
+
+#: bookworm/webservices/wikiworm.py:77
+msgid "Retrieving information, please wait..."
+msgstr "მიმდინარეობს ინფორმაციის მიღება, გთხოვთ, დაელოდოთ..."
+
+#: bookworm/webservices/wikiworm.py:110
+msgid ""
+"Could not connect to Wikipedia at the moment.\\Please make sure that you're "
+"connected to the internet or try again later."
+msgstr ""
+"ამჟამად ვიკიპედიასთან დაკავშირება ვერ მოხერხდა.\\გთხოვთ, დარწმუნდეთ, რომ "
+"დაკავშირებული ხართ ინტერნეტთან ან სცადეთ მოგვიანებით."
+
+#: bookworm/webservices/wikiworm.py:120
+msgid "Could not get the definition from Wikipedia."
+msgstr "ვერ მოხერხდა ვიკიპედიიდან განმარტების მიღება."
+
+#: bookworm/webservices/wikiworm.py:127
+msgid "Matches"
+msgstr "შესატყვისები"
+
+#: bookworm/webservices/wikiworm.py:128
+msgid "Multiple Matches Found"
+msgstr "ნაპოვნია რამდენიმე შესატყვისი"
+
+#: bookworm/webservices/wikiworm.py:151
+msgid "{term} — Wikipedia"
+msgstr "{term} — ვიკიპედია"
+
+#. Translators: label of an edit control in the dialog
+#. of viewing or editing a comment/highlight
+#: bookworm/webservices/wikiworm.py:158
+msgid "Summary"
+msgstr "მოკლე მიმოხილვა"
+
+#: bookworm/webservices/wikiworm.py:169
+msgid "Open in &Bookworm"
+msgstr "&Bookworm-ში გახსნა"
+
+#: bookworm/webservices/wikiworm.py:170
+msgid "&Open in Browser"
+msgstr "&ბრაუზერში გახსნა"
