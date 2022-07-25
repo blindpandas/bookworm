@@ -15,6 +15,7 @@ people and organizations for making invaluable contributions to Bookworm:
 * Paul Iyobo - repository maintainer
 * Shaban Mamedov - contributor
 * Simone Dalmaso - Italian language translator
+* Translation team of Dragan Ratkovich - Interface translators into Georgian
 * Zvonimir Stanečić - Croatian language translator
 
 2. Organizations:
