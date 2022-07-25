@@ -177,7 +177,7 @@ def download_tesseract_engine(progress_dlg):
                     tesseract_directory.mkdir(parents=True, exist_ok=True)
                     zfile.extractall(path=tesseract_directory)
         wx.GetApp().mainFrame.notify_user(
-            # Translators: title of a messagebox
+            # Translators: title of a message box
             _("Success"),
             # Translators: content of a messagebox
             _("Tesseract engine downloaded successfully"),

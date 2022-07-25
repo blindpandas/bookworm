@@ -148,6 +148,7 @@ class OcrPanel(SettingsPanel):
 
     def onDownloadTesseractLanguages(self, event):
         TesseractLanguageManager(
+            # Translators: title of a dialog to manage Tesseract OCR engine languages
             title=_("Manage Tesseract OCR Engine Languages"), parent=self
         ).ShowModal()
 
@@ -155,7 +156,9 @@ class OcrPanel(SettingsPanel):
         progress_dlg.Dismiss()
         if future.result() is True:
             wx.GetApp().mainFrame.notify_user(
+                # Translators: title of a message box
                 _("Restart Required"),
+                # Translators: content of a message box
                 _(
                     "Bookworm will now restart to complete the installation of the Tesseract OCR Engine."
                 ),
@@ -175,9 +178,11 @@ class OcrPanel(SettingsPanel):
         try:
             if is_update_available := future.result():
                 retval = wx.MessageBox(
+                    # Translators: content of a message box
                     _(
                         "A new version of Tesseract OCr engine is available for download.\nIt is strongly recommended to update to the latest version for the best accuracy and performance.\nWould you like to update to the new version?"
                     ),
+                    # Translators: title of a message box
                     _("Update Tesseract OCr Engine?"),
                     style=wx.YES_NO | wx.ICON_EXCLAMATION,
                 )
@@ -203,7 +208,9 @@ class OcrPanel(SettingsPanel):
                 "Failed to check for updates for tesseract OCR engine", exc_info=True
             )
             wx.MessageBox(
+                # Translators: content of a message box
                 _("Failed to check for updates for Tesseract OCr engine."),
+                # Translators: title of a message box
                 _("Error"),
                 style=wx.ICON_ERROR,
             )
@@ -594,6 +601,7 @@ class TesseractLanguagePanel(sc.SizedPanel):
                 wx.GetApp().mainFrame.notify_user(
                     # Translators: title of a messagebox
                     _("Language Added"),
+                    # Translators: content of a message box
                     _("The Language Model was downloaded successfully."),
                     parent=self,
                 )
@@ -603,7 +611,7 @@ class TesseractLanguagePanel(sc.SizedPanel):
             wx.GetApp().mainFrame.notify_user(
                 # Translators: title of a message box
                 _("Connection Error"),
-                # Translators: content of a messagebox
+                # Translators: content of a message box
                 _(
                     "Failed to download language data.\nPlease check your internet connection."
                 ),
