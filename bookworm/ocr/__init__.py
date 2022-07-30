@@ -7,7 +7,7 @@ from lru import LRU
 from bookworm import config
 from bookworm.logger import logger
 from bookworm.ocr_engines import GENERIC_OCR_ENGINES
-from bookworm.platform_services.ocr_provider import PLATFORM_SPECIFIC_OCR_ENGINES
+from bookworm.ocr_provider import PLATFORM_SPECIFIC_OCR_ENGINES
 from bookworm.resources import sounds
 from bookworm.service import BookwormService
 

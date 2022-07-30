@@ -37,7 +37,7 @@ from bookworm.ocr_engines.image_processing_pipelines import (
     TwoInOneScanProcessingPipeline,
 )
 from bookworm.ocr_engines.tesseract_ocr_engine import TesseractOcrEngine
-from bookworm.platform_services._win32 import tesseract_download
+from bookworm.platforms.win32 import tesseract_download
 from bookworm.utils import restart_application
 
 log = logger.getChild(__name__)

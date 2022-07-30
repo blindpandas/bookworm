@@ -7,7 +7,7 @@ from System.Globalization import CultureInfo
 
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
-from bookworm.platform_services._win32.runtime import reference_gac_assembly
+from bookworm.platforms.win32.runtime import reference_gac_assembly
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.speechdriver.enumerations import EngineEvent, SynthState
 from bookworm.speechdriver.utterance import SpeechStyle

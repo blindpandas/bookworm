@@ -10,7 +10,7 @@ from bookworm import typehints as t
 from bookworm.concurrency import call_threaded
 from bookworm.http_tools import RemoteJsonResource
 from bookworm.logger import logger
-from bookworm.platform_services import updater
+from bookworm import updater
 from bookworm.service import BookwormService
 
 log = logger.getChild(__name__)

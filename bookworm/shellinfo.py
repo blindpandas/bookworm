@@ -8,8 +8,6 @@ from bookworm import typehints as t
 from bookworm.paths import app_path
 from bookworm.reader import get_document_format_info
 
-from . import PLATFORM
-
 
 @dataclass
 class SupportedFileFormat:
@@ -50,9 +48,3 @@ def get_ext_info(supported="*"):
                     cls.format, ext, cls.name
                 ).astuple()
     return doctypes
-
-
-if PLATFORM == "win32":
-    from ._win32.shell import shell_disintegrate, shell_integrate
-elif PLATFORM == "linux":
-    from ._linux.shell import shell_disintegrate, shell_integrate

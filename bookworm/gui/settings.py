@@ -12,8 +12,8 @@ from bookworm import app, config
 from bookworm.i18n import get_available_locales, set_locale
 from bookworm.logger import logger
 from bookworm.paths import app_path
-from bookworm.platform_services.shell import (
-    get_ext_info,
+from bookworm.shellinfo import get_ext_info
+from bookworm.shell import (
     shell_disintegrate,
     shell_integrate,
 )

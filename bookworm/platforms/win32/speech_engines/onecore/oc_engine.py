@@ -10,7 +10,7 @@ import System
 from bookworm import app
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
-from bookworm.platform_services._win32.runtime import (
+from bookworm.platforms.win32.runtime import (
     UWP_SERVICES_AVAILABEL,
     reference_gac_assembly,
 )
