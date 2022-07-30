@@ -273,6 +273,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.onCaretMoved,
             id=self.contentTextCtrl.GetId()
         )
+        self.Bind(
+            wx.EVT_SLIDER,
+            self.onSliderValueChanged,
+            id=self.readingProgressSlider.GetId()
+        )
 
         self.toc_tree_manager = TocTreeManager(self.tocTreeCtrl)
         # Set status bar text
@@ -312,9 +317,14 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             name="content_view",
         )
         self.contentTextCtrl.SetMargins(self._get_text_view_margins())
-        self.readingProgressBar = wx.Gauge(
-            panel, -1, style=wx.GA_HORIZONTAL | wx.GA_SMOOTH
+        # Translators: label for the reading progress slider
+        readingProgressLabel = wx.StaticText(panel, -1, _("Reading progress percentage"))
+        self.readingProgressSlider = wx.Slider(
+            panel,
+            -1,
+            style=wx.SL_HORIZONTAL #| wx.SL_LABELS
         )
+        self.readingProgressSlider.SetTick(5)
 
         # Use a sizer to layout the controls, stacked horizontally and with
         # a 10 pixel border around each
@@ -325,7 +335,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         lftSizer.Add(tocTreeLabel, 0, wx.ALL, 5)
         lftSizer.Add(self.tocTreeCtrl, 1, wx.ALL, 5)
         rgtSizer.Add(self.contentTextCtrl, 1, wx.EXPAND | wx.ALL, 3)
-        rgtBottomSizer.Add(self.readingProgressBar, 1, wx.EXPAND | wx.ALL, 1)
+        rgtBottomSizer.Add(readingProgressLabel, 1, wx.ALL, 1)
+        rgtBottomSizer.Add(self.readingProgressSlider, 1, wx.EXPAND | wx.ALL, 1)
         rgtSizer.Add(rgtBottomSizer, 0, wx.ALL | wx.EXPAND, 4)
         mainSizer.Add(lftSizer, 0, wx.ALL | wx.EXPAND, 10)
         mainSizer.Add(rgtSizer, 1, wx.ALL | wx.EXPAND, 10)
@@ -504,7 +515,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             not isinstance(self.reader.document, DummyDocument)
             and self.reader.document is not None
         )
-        self.readingProgressBar.SetValue(0)
+        self.readingProgressSlider.SetValue(0)
         self.reader.unload()
         self.clear_toc_tree()
         self.set_title(app.display_name)
@@ -547,7 +558,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         else:
             current_ratio = (self.reader.current_page + 1) / len(self.reader.document)
         percentage_ratio = math.ceil(current_ratio * 100)
-        wx.CallAfter(self.readingProgressBar.SetValue, percentage_ratio)
+        wx.CallAfter(self.readingProgressSlider.SetValue, percentage_ratio)
         percentage_display = app.current_language.format_percentage(
             percentage_ratio / 100
         )
@@ -714,6 +725,20 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if announce:
             speech.announce(msg)
 
+    def onSliderValueChanged(self, event):
+        target_nav_percentage = event.GetSelection()
+        if self.reader.document.is_single_page_document():
+            pos_percentage = math.floor(self.contentTextCtrl.GetLastPosition() * (target_nav_percentage / 100))
+            target_pos = self.get_start_of_line(self.get_line_number(pos_percentage))
+            self.set_insertion_point(target_pos, set_focus_to_text_ctrl=False)
+        else:
+            page_count = len(self.reader.document)
+            target_page = min(
+                math.floor(page_count * (target_nav_percentage / 100)),
+                page_count - 1
+            )
+            self.reader.go_to_page(target_page, set_focus_to_text_ctrl=False)
+
     def setFrameIcon(self):
         icon_file = app_path(f"{app.name}.ico")
         if icon_file.exists():
@@ -819,10 +844,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.contentTextCtrl.SetFocusFromKbd()
         self.contentTextCtrl.SetSelection(fpos, tpos)
 
-    def set_insertion_point(self, to):
-        self.contentTextCtrl.SetFocusFromKbd()
+    def set_insertion_point(self, to, set_focus_to_text_ctrl=True):
         self.contentTextCtrl.ShowPosition(to)
         self.contentTextCtrl.SetInsertionPoint(to)
+        if set_focus_to_text_ctrl:
+            self.contentTextCtrl.SetFocusFromKbd()
 
     def apply_text_styles(self, style_info):
         default_style = self.contentTextCtrl.GetDefaultStyle()

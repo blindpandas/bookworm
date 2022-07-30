@@ -255,9 +255,9 @@ class EBookReader:
         """Return the current page."""
         return self.document.get_page(self.current_page)
 
-    def go_to_page(self, page_number: int, pos: int = 0) -> bool:
+    def go_to_page(self, page_number: int, pos: int = 0, set_focus_to_text_ctrl: bool=True) -> bool:
         self.current_page = page_number
-        self.view.set_insertion_point(pos)
+        self.view.set_insertion_point(pos, set_focus_to_text_ctrl)
 
     def go_to_page_by_label(self, page_label):
         try:

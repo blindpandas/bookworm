@@ -24,6 +24,7 @@ class StateProvider:
         self.tocTreeCtrl.Enable(enable_tree)
         focus_ctrl = self.tocTreeCtrl if enable_tree else self.contentTextCtrl
         focus_ctrl.SetFocus()
+        self.readingProgressSlider.Enable(enable)
         stateful_menu_ids = []
         stateful_menu_ids.extend([v.value for v in BookRelatedMenuIds])
         stateful_menu_ids.extend(wx.GetApp().service_handler.get_stateful_menu_ids())
