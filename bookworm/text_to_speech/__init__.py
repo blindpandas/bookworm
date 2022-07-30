@@ -265,7 +265,7 @@ class TextToSpeechService(BookwormService):
         if self.reader.document.is_single_page_document():
             # Translators: spoken message at the end of the document
             utterance.add_text(_("End of document"))
-        self.view.set_insertion_point(start_pos)
+        #self.view.set_insertion_point(start_pos)
         self.engine.speak(self.utterance_queue.pop())
 
     def add_text_utterances(self, text_info):

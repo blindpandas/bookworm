@@ -729,8 +729,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         target_nav_percentage = event.GetSelection()
         if self.reader.document.is_single_page_document():
             pos_percentage = math.floor(self.contentTextCtrl.GetLastPosition() * (target_nav_percentage / 100))
-            target_pos = self.get_start_of_line(self.get_line_number(pos_percentage))
-            self.set_insertion_point(target_pos, set_focus_to_text_ctrl=False)
+            target_position = self.get_start_of_line(self.get_line_number(pos_percentage))
+            self.set_insertion_point(target_position, set_focus_to_text_ctrl=False)
         else:
             page_count = len(self.reader.document)
             target_page = min(
@@ -738,6 +738,16 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 page_count - 1
             )
             self.reader.go_to_page(target_page, set_focus_to_text_ctrl=False)
+            target_position = 0
+        percentage_display = app.current_language.format_percentage(
+            target_nav_percentage / 100
+        )
+        reading_position_change.send(
+            self,
+            position=target_position,
+            text_to_announce="",
+            tts_speech_prefix=_("Reading progress: {percentage}").format(percentage=percentage_display)
+        )
 
     def setFrameIcon(self):
         icon_file = app_path(f"{app.name}.ico")
