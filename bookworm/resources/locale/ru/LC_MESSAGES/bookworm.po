@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-07-30 10:28+0000\n"
-"PO-Revision-Date: 2022-07-30 18:54+0400\n"
+"POT-Creation-Date: 2022-07-30 20:12+0000\n"
+"PO-Revision-Date: 2022-07-31 11:16+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -209,7 +209,7 @@ msgstr "Есть комментарий"
 #: bookworm/annotation/annotation_dialogs.py:59
 #: bookworm/annotation/annotation_dialogs.py:266
 #: bookworm/bookshelf/local_bookshelf/dialogs.py:126
-#: bookworm/gui/book_viewer/__init__.py:310
+#: bookworm/gui/book_viewer/__init__.py:315
 msgid "Content"
 msgstr "Содержание"
 
@@ -1338,7 +1338,7 @@ msgstr "Выберите папку:"
 #. Translators: label of a text box for entering a search term
 #. Translators: the label of a button in the application toolbar
 #: bookworm/bookshelf/local_bookshelf/dialogs.py:116
-#: bookworm/gui/book_viewer/__init__.py:397
+#: bookworm/gui/book_viewer/__init__.py:408
 msgid "Search"
 msgstr "Поиск"
 
@@ -1977,46 +1977,52 @@ msgstr "Удалить из списков?"
 #. Translators: the text of the status bar when no book is currently open.
 #. It is being used also as a label for the page content text area when no book
 #. is opened.
-#: bookworm/gui/book_viewer/__init__.py:281
+#: bookworm/gui/book_viewer/__init__.py:286
 msgid "Press (Ctrl + O) to open a document"
 msgstr "Нажмите (Ctrl + O), чтобы открыть документ"
 
 #. Translators: the label of the table-of-contents tree
-#: bookworm/gui/book_viewer/__init__.py:295
+#: bookworm/gui/book_viewer/__init__.py:300
 msgid "Table of Contents"
 msgstr "Оглавление"
 
+#. Translators: label for the reading progress slider
+#: bookworm/gui/book_viewer/__init__.py:321
+#| msgid "Show reading progress percentage"
+msgid "Reading progress percentage"
+msgstr "Процент прогресса чтения"
+
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:394
+#: bookworm/gui/book_viewer/__init__.py:405
 msgid "Open"
 msgstr "Открыть"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:399
+#: bookworm/gui/book_viewer/__init__.py:410
 msgid "Mode"
 msgstr "Режим"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:402
+#: bookworm/gui/book_viewer/__init__.py:413
 msgid "Big"
 msgstr "Большой"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:404
+#: bookworm/gui/book_viewer/__init__.py:415
 msgid "Small"
 msgstr "Небольшой"
 
 #. Translators: title of a message telling the user that they entered an
 #. incorrect
 #. password for opening the book
-#: bookworm/gui/book_viewer/__init__.py:449
+#: bookworm/gui/book_viewer/__init__.py:460
 msgid "Incorrect Password"
 msgstr "Неверный пароль"
 
 #. Translators: content of a message telling the user that they entered an
 #. incorrect
 #. password for opening the book
-#: bookworm/gui/book_viewer/__init__.py:452
+#: bookworm/gui/book_viewer/__init__.py:463
 msgid ""
 "The password you provided is incorrect.\n"
 "Please try again with the correct password."
@@ -2025,62 +2031,67 @@ msgstr ""
 "Пожалуйста, попробуйте еще раз с правильным паролем."
 
 #. Translators: spoken message when the document has been closed
-#: bookworm/gui/book_viewer/__init__.py:519
+#: bookworm/gui/book_viewer/__init__.py:530
 msgid "Document closed."
 msgstr "Документ закрыт."
 
 #. Translators: text of reading progress shown in the status bar
-#: bookworm/gui/book_viewer/__init__.py:555
+#: bookworm/gui/book_viewer/__init__.py:566
 msgid "{percentage} completed"
 msgstr "{percentage} завершено"
 
 #. Translators: label of content text control when the currently opened
 #. document is a single page document
-#: bookworm/gui/book_viewer/__init__.py:616
+#: bookworm/gui/book_viewer/__init__.py:627
 msgid "Document content"
 msgstr "Содержание документа"
 
 #. Translators: a message that is announced after navigating to a page
 #. Translators: the label of the page content text area
 #. Translators: a message to announce when navigating to another page
-#: bookworm/gui/book_viewer/__init__.py:619
-#: bookworm/gui/book_viewer/__init__.py:774
+#: bookworm/gui/book_viewer/__init__.py:630
+#: bookworm/gui/book_viewer/__init__.py:809
 #: bookworm/text_to_speech/__init__.py:179
 msgid "Page {page} of {total}"
 msgstr "Страница {page} из {total}"
 
-#: bookworm/gui/book_viewer/__init__.py:666
+#: bookworm/gui/book_viewer/__init__.py:677
 msgid "{text}: {item_type}"
 msgstr "{text}: {item_type}"
 
-#: bookworm/gui/book_viewer/__init__.py:683
+#: bookworm/gui/book_viewer/__init__.py:694
 msgid "No next {item}"
 msgstr "Нет следующего {item}"
 
-#: bookworm/gui/book_viewer/__init__.py:685
+#: bookworm/gui/book_viewer/__init__.py:696
 msgid "No previous {item}"
 msgstr "Нет предыдущего {item}"
 
 #. Translators: a message telling the user that the font size has been
 #. increased
-#: bookworm/gui/book_viewer/__init__.py:701
+#: bookworm/gui/book_viewer/__init__.py:712
 msgid "The font size has been Increased"
 msgstr "Размер шрифта увеличен"
 
 #. Translators: a message telling the user that the font size has been
 #. decreased
-#: bookworm/gui/book_viewer/__init__.py:707
+#: bookworm/gui/book_viewer/__init__.py:718
 msgid "The font size has been decreased"
 msgstr "Размер шрифта уменьшен"
 
 #. Translators: a message telling the user that the font size has been reset
-#: bookworm/gui/book_viewer/__init__.py:711
+#: bookworm/gui/book_viewer/__init__.py:722
 msgid "The font size has been reset"
 msgstr "Размер шрифта был сброшен"
 
+#: bookworm/gui/book_viewer/__init__.py:749
+#| msgid "Show reading progress percentage"
+msgid "Reading progress: {percentage}"
+msgstr "Ход чтения: {percentage}"
+
 #. Translators: the content of a dialog asking the user
 #. for the password to decrypt the current e-book
-#: bookworm/gui/book_viewer/__init__.py:730
+#: bookworm/gui/book_viewer/__init__.py:765
 msgid ""
 "This document is encrypted with a password.\n"
 "You need to provide the password in order to access its content.\n"
@@ -2092,11 +2103,11 @@ msgstr ""
 
 #. Translators: the title of a dialog asking the user to enter a password to
 #. decrypt the e-book
-#: bookworm/gui/book_viewer/__init__.py:736
+#: bookworm/gui/book_viewer/__init__.py:771
 msgid "Enter Password"
 msgstr "Введите пароль"
 
-#: bookworm/gui/book_viewer/__init__.py:855
+#: bookworm/gui/book_viewer/__init__.py:891
 msgid "Opening page: {url}"
 msgstr "Открытие страницы: {url}"
 
@@ -3164,14 +3175,10 @@ msgstr "Извлечение файла..."
 
 #. Translators: content of a messagebox
 #: bookworm/platforms/win32/tesseract_download.py:183
-#| msgid "The Language Model was downloaded successfully."
 msgid "Tesseract engine downloaded successfully"
 msgstr "Движок Tesseract загружен успешно"
 
 #: bookworm/platforms/win32/tesseract_download.py:191
-#| msgid ""
-#| "Failed to download language data.\n"
-#| "Please check your internet connection."
 msgid ""
 "Could not download Tesseract OCR Engine.\n"
 "Please check your internet and try again."
@@ -3180,9 +3187,6 @@ msgstr ""
 "Пожалуйста, проверьте свой интернет и повторите попытку."
 
 #: bookworm/platforms/win32/tesseract_download.py:202
-#| msgid ""
-#| "Failed to install language data.\n"
-#| "Please try again later."
 msgid ""
 "Could not install the Tesseract OCR engine.\n"
 "Please try again."
@@ -3218,16 +3222,12 @@ msgstr "Загрузка обновления"
 #. Translators: a message indicating the progress of downloading an update
 #. bundle
 #: bookworm/platforms/win32/updater.py:94
-#| msgid "Downloading Language"
 msgid "Downloading update bundle"
 msgstr "Загрузка пакета обновлений"
 
 #. Translators: the content of a message indicating a failure in downloading an
 #. update
 #: bookworm/platforms/win32/updater.py:114
-#| msgid ""
-#| "Could not connect to Wikipedia at the moment.\\Please make sure that "
-#| "you're connected to the internet or try again later."
 msgid ""
 "A network error was occured when trying to download the update.\n"
 "Make sure you are connected to the internet, or try again at a later time."
@@ -3263,7 +3263,6 @@ msgstr ""
 "Пожалуйста, проверьте журналы для получения дополнительной информации."
 
 #: bookworm/platforms/win32/updater.py:158
-#| msgid "Error Checking For Updates"
 msgid "Error installing update"
 msgstr "Ошибка установки обновления"
 
@@ -3283,7 +3282,6 @@ msgstr ""
 #. Translators: the title of a message indicating successful download of the
 #. update bundle
 #: bookworm/platforms/win32/updater.py:173
-#| msgid "Operation Completed"
 msgid "Download Completed"
 msgstr "Загрузка завершена"
 
