@@ -301,7 +301,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.tocTreeCtrl = wx.TreeCtrl(
             panel,
             size=(280, 160),
-            style=wx.TR_TWIST_BUTTONS
+            style=wx.TR_HAS_BUTTONS
+            | wx.TR_TWIST_BUTTONS
             | wx.TR_LINES_AT_ROOT
             | wx.TR_FULL_ROW_HIGHLIGHT
             | wx.TR_SINGLE
