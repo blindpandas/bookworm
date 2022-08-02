@@ -5,7 +5,7 @@ distro==1.5.0;sys_platform=="linux"
 isort==5.10.1
 jinja2==3.1.2
 packaging==21.0
-PyInstaller==5.2
+PyInstaller==5.3
 pyinstaller-hooks-contrib==2022.8
 pytest==7.1.2
 pytest-xdist==2.5.0
