@@ -886,6 +886,11 @@ class MenubarProvider:
             # Translators: the label of an item in the application menubar
             (100, self.helpMenu, _("&Help")),
         ]
+        self.Bind(
+            wx.EVT_MENU,
+            lambda e: self.tocTreeCtrl.SetFocus(),
+            id=FOCUS_TABLE_OF_CONTENTS
+        )
 
     def doAddMenus(self):
         self.__menus.sort(key=lambda item: item[0])

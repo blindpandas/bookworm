@@ -46,7 +46,11 @@ class ViewerMenuIds(enum.IntEnum):
     clear_documents_cache = next(ID_GEN)
 
 
+FOCUS_TABLE_OF_CONTENTS = next(ID_GEN)
+
+
 KEYBOARD_SHORTCUTS = {
+    FOCUS_TABLE_OF_CONTENTS: "Ctrl+T",
     wx.ID_OPEN: "Ctrl-O",
     wx.ID_NEW: "Ctrl-N",
     BookRelatedMenuIds.pin_document: "Ctrl-P",
