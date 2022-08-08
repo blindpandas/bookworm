@@ -122,6 +122,9 @@ class EpubDocument(SinglePageDocument):
     def get_document_style_info(self):
         return self.structure.styled_elements
 
+    def get_document_table_markup(self, table_index):
+        return self.structure.get_table_markup(table_index)
+
     def resolve_link(self, link_range) -> LinkTarget:
         href = urllib_parse.unquote(self.structure.link_targets[link_range])
         if is_external_url(href):

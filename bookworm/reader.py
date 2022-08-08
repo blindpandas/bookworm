@@ -367,6 +367,15 @@ class EBookReader:
         ):
             if position in link_range:
                 self.navigate_to_link_by_range(link_range)
+        try:
+            for (idx, tbl_range) in enumerate(self.iter_semantic_ranges_for_elements_of_type(
+                SemanticElementType.TABLE
+            )):
+                if position in range(*tbl_range):
+                    # Translators: title of a message dialog that shows a table as html document
+                    self.view.show_html_dialog(self.get_current_page_object().get_table_markup(idx), title=_("Table View"))
+        except NotImplementedError:
+            pass
 
     @staticmethod
     def _get_semantic_element_from_page(page, element_type, forward, anchor):
