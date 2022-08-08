@@ -197,6 +197,7 @@ class BaseHtmlDocument(SinglePageDocument):
             extracted_text_and_info = StructuredHtmlParser.from_string(html)
         else:
             extracted_text_and_info = StructuredHtmlParser(html)
+        self.structure = extracted_text_and_info
         self._semantic_structure = extracted_text_and_info.semantic_elements
         self._style_info = extracted_text_and_info.styled_elements
         self.link_targets = extracted_text_and_info.link_targets
@@ -246,6 +247,9 @@ class BaseHtmlDocument(SinglePageDocument):
         stack = TreeStackBuilder(root)
         yield stack, root
         self._outline = root
+
+    def get_document_table_markup(self, table_index):
+        return self.structure.get_table_markup(table_index)
 
 
 class FileSystemHtmlDocument(BaseHtmlDocument):

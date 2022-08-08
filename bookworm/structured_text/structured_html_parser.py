@@ -102,6 +102,7 @@ class StructuredHtmlParser(Inscriptis):
         "link_range_to_target",
         "anchors",
         "styled_elements",
+        "_table_elements",
     ]
 
     @staticmethod
@@ -113,10 +114,6 @@ class StructuredHtmlParser(Inscriptis):
             fix_line_breaks=True,
             max_decode_length=MAX_DECODE_LENGTH,
         )
-        if len(html_string) > 10000:
-            parsed = HTMLParser(html_string)
-            # parsed.unwrap_tags(TAGS_TO_STRIP)
-            html_string = parsed.html
         return remove_excess_blank_lines(html_string)
 
     def __init__(self, *args, **kwargs):
@@ -124,6 +121,7 @@ class StructuredHtmlParser(Inscriptis):
         self.anchors = {}
         self.html_id_ranges = {}
         self.styled_elements = {}
+        self._table_elements = []
         kwargs.setdefault("config", INSCRIPTIS_CONFIG)
         super().__init__(*args, **kwargs)
 
@@ -145,6 +143,8 @@ class StructuredHtmlParser(Inscriptis):
             element_range = (start_index, end_index)
             self.anchors[anch] = element_range
             self.html_id_ranges[anch] = element_range
+        if tree.tag == 'table':
+            self._table_elements.append(tree)
 
     @classmethod
     def preprocess_html_string(cls, html_string):
@@ -179,3 +179,8 @@ class StructuredHtmlParser(Inscriptis):
     @cached_property
     def link_targets(self):
         return self.link_range_to_target
+
+    def get_table_markup(self, table_index):
+        parsed = HTMLParser(html_parser.tostring(self._table_elements[table_index], encoding='unicode'))
+        parsed.unwrap_tags(['a',])
+        return parsed.html

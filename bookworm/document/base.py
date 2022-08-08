@@ -363,6 +363,9 @@ class SinglePage(BasePage):
     def get_semantic_structure(self):
         return self.document.get_document_semantic_structure()
 
+    def get_table_markup(self, table_index):
+        return self.document.get_document_table_markup(table_index)
+
     def get_style_info(self):
         return self.document.get_document_style_info()
 
@@ -401,6 +404,9 @@ class SinglePageDocument(BaseDocument):
         raise NotImplementedError
 
     def get_document_style_info(self):
+        raise NotImplementedError
+
+    def get_document_table_markup(self, table_index):
         raise NotImplementedError
 
     def resolve_link(self, text_range):

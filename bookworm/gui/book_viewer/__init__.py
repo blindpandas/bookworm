@@ -21,6 +21,7 @@ from bookworm.document import (
 )
 from bookworm.gui.components import AsyncSnakDialog, TocTreeManager
 from bookworm.gui.contentview_ctrl import ContentViewCtrl
+from bookworm.gui.browseable_message import browseable_message
 from bookworm.logger import logger
 from bookworm.paths import app_path, fonts_path
 from bookworm.reader import (
@@ -842,6 +843,13 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def notify_invalid_action(self):
         wx.Bell()
+
+    def show_html_dialog(self, markup, title):
+        browseable_message(
+            markup,
+            title=title,
+            is_html=True
+        )
 
     def get_line_number(self, pos=None):
         pos = pos or self.contentTextCtrl.InsertionPoint
