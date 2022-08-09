@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-07-30 20:12+0000\n"
-"PO-Revision-Date: 2022-07-31 11:15+0400\n"
+"POT-Creation-Date: 2022-08-08 21:22+0000\n"
+"PO-Revision-Date: 2022-08-09 19:33+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: Translation team of Dragan Ratkovich\n"
 "Language: ka\n"
@@ -77,8 +77,13 @@ msgstr "&განახლებების შემოწმება"
 msgid "Update the application"
 msgstr "აპლიკაციის განახლება"
 
+#. Translators: title of a message dialog that shows a table as html document
+#: bookworm/reader.py:376
+msgid "Table View"
+msgstr "ცხრილის ნახვა"
+
 #. Translators: the title of the window when an e-book is open
-#: bookworm/reader.py:419
+#: bookworm/reader.py:428
 msgid "{title} — by {author}"
 msgstr "{author} – {title}"
 
@@ -207,7 +212,7 @@ msgstr "შეიცავს კომენტარს"
 #: bookworm/annotation/annotation_dialogs.py:59
 #: bookworm/annotation/annotation_dialogs.py:266
 #: bookworm/bookshelf/local_bookshelf/dialogs.py:126
-#: bookworm/gui/book_viewer/__init__.py:315
+#: bookworm/gui/book_viewer/__init__.py:317
 msgid "Content"
 msgstr "შიგთავსი"
 
@@ -1338,7 +1343,7 @@ msgstr "აირჩიეთ ფოლდერი:"
 #. Translators: label of a text box for entering a search term
 #. Translators: the label of a button in the application toolbar
 #: bookworm/bookshelf/local_bookshelf/dialogs.py:116
-#: bookworm/gui/book_viewer/__init__.py:408
+#: bookworm/gui/book_viewer/__init__.py:410
 msgid "Search"
 msgstr "ძიება"
 
@@ -1465,7 +1470,7 @@ msgid "Comic Book Archive"
 msgstr "კომიქსური წიგნების არქივი"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/html.py:189 bookworm/document/formats/html.py:255
+#: bookworm/document/formats/html.py:189 bookworm/document/formats/html.py:259
 msgid "HTML Document"
 msgstr "HTML დოკუმენტი"
 
@@ -1564,6 +1569,12 @@ msgstr "კონტენტის ჩატვირთვა ვერ მო
 #: bookworm/epub_serve/webapp.py:189
 msgid "Cannot retreive content. Probably the eBook has been closed."
 msgstr "შინაარსზე წვდომა შეუძლებელია. სავარაუდოდ, ელექტრონული წიგნი დაიხურა."
+
+#. Translators: The title for the dialog used to present general messages in
+#. browse mode.
+#: bookworm/gui/browseable_message.py:47
+msgid "Message"
+msgstr "შეტყობინება"
 
 #. Translators: the title of a group of controls in the search dialog
 #: bookworm/gui/components.py:104
@@ -1854,25 +1865,25 @@ msgstr "ვიზუალი"
 msgid "Apply"
 msgstr "დადასტურება"
 
-#: bookworm/gui/book_viewer/__init__.py:85
+#: bookworm/gui/book_viewer/__init__.py:86
 msgid "Failed to open document"
 msgstr "დოკუმენტის გახსნა ვერ მოხერხდა"
 
-#: bookworm/gui/book_viewer/__init__.py:86
+#: bookworm/gui/book_viewer/__init__.py:87
 msgid "The document you are trying to open could not be opened in Bookworm."
 msgstr "დოკუმენტი, რომლის გახსნასაც ცდილობთ, Bookworm-ში ვერ გაიხსნა."
 
-#: bookworm/gui/book_viewer/__init__.py:100
+#: bookworm/gui/book_viewer/__init__.py:101
 msgid "Opening document, please wait..."
 msgstr "იხსნება დოკუმენტი, გთხოვთ, დაელოდოთ..."
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:118
+#: bookworm/gui/book_viewer/__init__.py:119
 msgid "Document not found"
 msgstr "დოკუმენტი ვერ მოიძებნა"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:120
+#: bookworm/gui/book_viewer/__init__.py:121
 msgid ""
 "Could not open Document.\n"
 "The document does not exist."
@@ -1881,12 +1892,12 @@ msgstr ""
 "დოკუმენტი არ არსებობს."
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:132
+#: bookworm/gui/book_viewer/__init__.py:133
 msgid "Document Restricted"
 msgstr "დოკუმენტი შეზღუდულია"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:134
+#: bookworm/gui/book_viewer/__init__.py:135
 msgid ""
 "Could not open Document.\n"
 "The document is restricted by the publisher."
@@ -1896,23 +1907,23 @@ msgstr ""
 
 #. Translators: the title of a message shown
 #. when the format of the e-book is not supported
-#: bookworm/gui/book_viewer/__init__.py:146
+#: bookworm/gui/book_viewer/__init__.py:147
 msgid "Unsupported Document Format"
 msgstr "მხარდაუჭერელი დოკუმენტის ფორმატი"
 
 #. Translators: the content of a message shown
 #. when the format of the e-book is not supported
-#: bookworm/gui/book_viewer/__init__.py:149
+#: bookworm/gui/book_viewer/__init__.py:150
 msgid "The format of the given document is not supported by Bookworm."
 msgstr "მოცემული დოკუმენტის ფორმატი არ არის მხარდაჭერილი Bookworm-ის მიერ."
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:158
+#: bookworm/gui/book_viewer/__init__.py:159
 msgid "Archive contains no documents"
 msgstr "არქივი არ შეიცავს დოკუმენტს"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:160
+#: bookworm/gui/book_viewer/__init__.py:161
 msgid ""
 "Bookworm cannot open this archive file.\n"
 "The archive contains no documents."
@@ -1920,21 +1931,21 @@ msgstr ""
 "Bookworm-ს არ შეუძლია ამ დაარქივებული ფაილის გახსნა.\n"
 "არქივი არ შეიცავს დოკუმენტს."
 
-#: bookworm/gui/book_viewer/__init__.py:169
+#: bookworm/gui/book_viewer/__init__.py:170
 msgid "Documents"
 msgstr "დოკუმენტები"
 
-#: bookworm/gui/book_viewer/__init__.py:170
+#: bookworm/gui/book_viewer/__init__.py:171
 msgid "Multiple documents found"
 msgstr "ნაპოვნია რამდენიმე დოკუმენტი"
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:184
+#: bookworm/gui/book_viewer/__init__.py:185
 msgid "Error Opening Document"
 msgstr "შეცდომა დოკუმენტის გახსნისას"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:186
+#: bookworm/gui/book_viewer/__init__.py:187
 msgid ""
 "Could not open file\n"
 ".Either the file  has been damaged during download, or it has been corrupted "
@@ -1944,12 +1955,12 @@ msgstr ""
 ".ფაილი დაზიანდა ჩამოტვირთვისას ან სხვა გზით."
 
 #. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:199
+#: bookworm/gui/book_viewer/__init__.py:200
 msgid "Error Openning Document"
 msgstr "შეცდომა დოკუმენტის გახსნისას"
 
 #. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:201
+#: bookworm/gui/book_viewer/__init__.py:202
 msgid ""
 "Could not open document.\n"
 "An unknown error occurred while loading the file."
@@ -1958,7 +1969,7 @@ msgstr ""
 "ფაილის ჩატვირთვისას დაფიქსირდა უცნობი შეცდომა."
 
 #. Translators: content of a message
-#: bookworm/gui/book_viewer/__init__.py:213
+#: bookworm/gui/book_viewer/__init__.py:214
 msgid ""
 "Failed to open document.\n"
 "Would you like to remove its entry from the 'recent documents' and 'pinned "
@@ -1969,58 +1980,58 @@ msgstr ""
 "დოკუმენტების' სიიდან?"
 
 #. Translators: title of a message box
-#: bookworm/gui/book_viewer/__init__.py:217
+#: bookworm/gui/book_viewer/__init__.py:218
 msgid "Remove from lists?"
 msgstr "წაიშალოს სიებიდან?"
 
 #. Translators: the text of the status bar when no book is currently open.
 #. It is being used also as a label for the page content text area when no book
 #. is opened.
-#: bookworm/gui/book_viewer/__init__.py:286
+#: bookworm/gui/book_viewer/__init__.py:287
 msgid "Press (Ctrl + O) to open a document"
 msgstr "დააჭირეთ (Ctrl + O)-ს დოკუმენტის გასახსნელად"
 
 #. Translators: the label of the table-of-contents tree
-#: bookworm/gui/book_viewer/__init__.py:300
+#: bookworm/gui/book_viewer/__init__.py:301
 msgid "Table of Contents"
 msgstr "სარჩევი"
 
 #. Translators: label for the reading progress slider
-#: bookworm/gui/book_viewer/__init__.py:321
+#: bookworm/gui/book_viewer/__init__.py:323
 msgid "Reading progress percentage"
 msgstr "კითხვის პროგრესის პროცენტი"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:405
+#: bookworm/gui/book_viewer/__init__.py:407
 msgid "Open"
 msgstr "გახსნა"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:410
+#: bookworm/gui/book_viewer/__init__.py:412
 msgid "Mode"
 msgstr "რეჟიმი"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:413
+#: bookworm/gui/book_viewer/__init__.py:415
 msgid "Big"
 msgstr "დიდი"
 
 #. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:415
+#: bookworm/gui/book_viewer/__init__.py:417
 msgid "Small"
 msgstr "მცირე"
 
 #. Translators: title of a message telling the user that they entered an
 #. incorrect
 #. password for opening the book
-#: bookworm/gui/book_viewer/__init__.py:460
+#: bookworm/gui/book_viewer/__init__.py:462
 msgid "Incorrect Password"
 msgstr "არასწორი პაროლი"
 
 #. Translators: content of a message telling the user that they entered an
 #. incorrect
 #. password for opening the book
-#: bookworm/gui/book_viewer/__init__.py:463
+#: bookworm/gui/book_viewer/__init__.py:465
 msgid ""
 "The password you provided is incorrect.\n"
 "Please try again with the correct password."
@@ -2029,67 +2040,66 @@ msgstr ""
 "გთხოვთ, სცადოთ ხელახლა სწორი პაროლით."
 
 #. Translators: spoken message when the document has been closed
-#: bookworm/gui/book_viewer/__init__.py:530
+#: bookworm/gui/book_viewer/__init__.py:532
 msgid "Document closed."
 msgstr "დოკუმენტი დახურულია."
 
 #. Translators: text of reading progress shown in the status bar
-#: bookworm/gui/book_viewer/__init__.py:566
+#: bookworm/gui/book_viewer/__init__.py:568
 msgid "{percentage} completed"
 msgstr "შესრულებულია {percentage}"
 
 #. Translators: label of content text control when the currently opened
 #. document is a single page document
-#: bookworm/gui/book_viewer/__init__.py:627
+#: bookworm/gui/book_viewer/__init__.py:629
 msgid "Document content"
 msgstr "დოკუმენტის შიგთავსი"
 
 #. Translators: a message that is announced after navigating to a page
 #. Translators: the label of the page content text area
 #. Translators: a message to announce when navigating to another page
-#: bookworm/gui/book_viewer/__init__.py:630
-#: bookworm/gui/book_viewer/__init__.py:809
+#: bookworm/gui/book_viewer/__init__.py:632
+#: bookworm/gui/book_viewer/__init__.py:811
 #: bookworm/text_to_speech/__init__.py:179
 msgid "Page {page} of {total}"
 msgstr "გვერდი {page} {total}დან"
 
-#: bookworm/gui/book_viewer/__init__.py:677
+#: bookworm/gui/book_viewer/__init__.py:679
 msgid "{text}: {item_type}"
 msgstr "{text}: {item_type}"
 
-#: bookworm/gui/book_viewer/__init__.py:694
+#: bookworm/gui/book_viewer/__init__.py:696
 msgid "No next {item}"
 msgstr "არ არის შემდეგი {item}"
 
-#: bookworm/gui/book_viewer/__init__.py:696
+#: bookworm/gui/book_viewer/__init__.py:698
 msgid "No previous {item}"
 msgstr "არ არის წინა {item}"
 
 #. Translators: a message telling the user that the font size has been
 #. increased
-#: bookworm/gui/book_viewer/__init__.py:712
+#: bookworm/gui/book_viewer/__init__.py:714
 msgid "The font size has been Increased"
 msgstr "შრიფტის ზომა გაზრდილია"
 
 #. Translators: a message telling the user that the font size has been
 #. decreased
-#: bookworm/gui/book_viewer/__init__.py:718
+#: bookworm/gui/book_viewer/__init__.py:720
 msgid "The font size has been decreased"
 msgstr "შრიფტის ზომა შემცირებულია"
 
 #. Translators: a message telling the user that the font size has been reset
-#: bookworm/gui/book_viewer/__init__.py:722
+#: bookworm/gui/book_viewer/__init__.py:724
 msgid "The font size has been reset"
 msgstr "შრიფტის ზომა დაყენებულია სტანდარტულზე"
 
-#: bookworm/gui/book_viewer/__init__.py:749
-#| msgid "Show reading progress percentage"
+#: bookworm/gui/book_viewer/__init__.py:751
 msgid "Reading progress: {percentage}"
 msgstr "კითხვის პროგრესი: {percentage}"
 
 #. Translators: the content of a dialog asking the user
 #. for the password to decrypt the current e-book
-#: bookworm/gui/book_viewer/__init__.py:765
+#: bookworm/gui/book_viewer/__init__.py:767
 msgid ""
 "This document is encrypted with a password.\n"
 "You need to provide the password in order to access its content.\n"
@@ -2101,11 +2111,11 @@ msgstr ""
 
 #. Translators: the title of a dialog asking the user to enter a password to
 #. decrypt the e-book
-#: bookworm/gui/book_viewer/__init__.py:771
+#: bookworm/gui/book_viewer/__init__.py:773
 msgid "Enter Password"
 msgstr "შეიყვანეთ პაროლი"
 
-#: bookworm/gui/book_viewer/__init__.py:891
+#: bookworm/gui/book_viewer/__init__.py:900
 msgid "Opening page: {url}"
 msgstr "იხსნება გვერდი: {url}"
 
@@ -2423,13 +2433,13 @@ msgstr "მიმდინარე კითხვის რეჟიმის 
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:447
-#: bookworm/gui/book_viewer/menubar.py:940
+#: bookworm/gui/book_viewer/menubar.py:945
 msgid "&Render Page...\tCtrl-R"
 msgstr "გვერდის &ვიზუალიზება...\tCtrl-R"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:449
-#: bookworm/gui/book_viewer/menubar.py:941
+#: bookworm/gui/book_viewer/menubar.py:946
 msgid "View a fully rendered version of this page."
 msgstr "გვერდის სრულიად ვიზუალიზებული ვერსიის ნახვა."
 
@@ -2451,13 +2461,13 @@ msgstr "ელემენტების სია"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:557
-#: bookworm/gui/book_viewer/menubar.py:930
+#: bookworm/gui/book_viewer/menubar.py:935
 msgid "&Find in Document...\tCtrl-F"
 msgstr "&დოკუმენტში ძიება...\tCtrl-F"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:559
-#: bookworm/gui/book_viewer/menubar.py:931
+#: bookworm/gui/book_viewer/menubar.py:936
 msgid "Search this document."
 msgstr "ამ დოკუმენტში ძიება."
 
@@ -2493,7 +2503,7 @@ msgstr "დოკუმენტში ან გვერდზე ხაზზ
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:585
-#: bookworm/gui/book_viewer/menubar.py:924
+#: bookworm/gui/book_viewer/menubar.py:929
 msgid "&Go To Page...\tCtrl-G"
 msgstr "&გვერდზე გადასვლა...\tCtrl-G"
 
@@ -2640,11 +2650,11 @@ msgstr "&დოკუმენტი"
 msgid "&Help"
 msgstr "&დახმარება"
 
-#: bookworm/gui/book_viewer/menubar.py:925
+#: bookworm/gui/book_viewer/menubar.py:930
 msgid "Jump to a page"
 msgstr "გვერდზე გადასვლა"
 
-#: bookworm/gui/book_viewer/menubar.py:979
+#: bookworm/gui/book_viewer/menubar.py:984
 msgid "Supported document formats"
 msgstr "მხარდაჭერილი დოკუმენტის ფორმატები"
 
