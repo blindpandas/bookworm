@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-08-08 21:22+0000\n"
-"PO-Revision-Date: 2022-08-09 19:35+0400\n"
+"POT-Creation-Date: 2022-08-10 21:59+0000\n"
+"PO-Revision-Date: 2022-08-11 10:43+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -257,7 +257,7 @@ msgstr "Последнее обновление"
 #: bookworm/bookshelf/local_bookshelf/dialogs.py:245
 #: bookworm/gui/book_viewer/core_dialogs.py:407 bookworm/gui/settings.py:99
 #: bookworm/ocr/ocr_dialogs.py:427 bookworm/text_to_speech/tts_gui.py:323
-#: bookworm/webservices/wikiworm.py:179
+#: bookworm/webservices/wikiworm.py:209
 msgid "&Close"
 msgstr "&Закрыть"
 
@@ -842,8 +842,8 @@ msgstr ""
 #: bookworm/bookshelf/local_bookshelf/dialogs.py:229
 #: bookworm/bookshelf/window.py:198 bookworm/ocr/ocr_dialogs.py:214
 #: bookworm/ocr/ocr_dialogs.py:624
-#: bookworm/platforms/win32/tesseract_download.py:201
-#: bookworm/text_to_speech/tts_gui.py:421 bookworm/webservices/wikiworm.py:119
+#: bookworm/platforms/win32/tesseract_download.py:96
+#: bookworm/text_to_speech/tts_gui.py:421 bookworm/webservices/wikiworm.py:164
 msgid "Error"
 msgstr "Ошибка"
 
@@ -1692,7 +1692,7 @@ msgstr "Файлы типа {format} были связаны с Bookworm."
 #. Translators: title of a message box
 #: bookworm/gui/book_viewer/menubar.py:337 bookworm/gui/settings.py:113
 #: bookworm/gui/settings.py:131
-#: bookworm/platforms/win32/tesseract_download.py:181
+#: bookworm/platforms/win32/tesseract_download.py:76
 msgid "Success"
 msgstr "Успешно"
 
@@ -2966,8 +2966,8 @@ msgstr "Языковая модель успешно загружена."
 #. Translators: title of a message box
 #. Translators: title of a messagebox
 #: bookworm/ocr/ocr_dialogs.py:613
-#: bookworm/platforms/win32/tesseract_download.py:190
-#: bookworm/webservices/wikiworm.py:109
+#: bookworm/platforms/win32/tesseract_download.py:85
+#: bookworm/webservices/wikiworm.py:133
 msgid "Connection Error"
 msgstr "Ошибка подключения"
 
@@ -3178,16 +3178,16 @@ msgstr "Доступно обновление"
 msgid "Windows 10 OCR"
 msgstr "Windows 10 OCR"
 
-#: bookworm/platforms/win32/tesseract_download.py:175
+#: bookworm/platforms/win32/tesseract_download.py:70
 msgid "Extracting file..."
 msgstr "Извлечение файла..."
 
 #. Translators: content of a messagebox
-#: bookworm/platforms/win32/tesseract_download.py:183
+#: bookworm/platforms/win32/tesseract_download.py:78
 msgid "Tesseract engine downloaded successfully"
 msgstr "Движок Tesseract загружен успешно"
 
-#: bookworm/platforms/win32/tesseract_download.py:191
+#: bookworm/platforms/win32/tesseract_download.py:86
 msgid ""
 "Could not download Tesseract OCR Engine.\n"
 "Please check your internet and try again."
@@ -3195,7 +3195,7 @@ msgstr ""
 "Не удалось загрузить Tesseract OCR Engine.\n"
 "Пожалуйста, проверьте свой интернет и повторите попытку."
 
-#: bookworm/platforms/win32/tesseract_download.py:202
+#: bookworm/platforms/win32/tesseract_download.py:97
 msgid ""
 "Could not install the Tesseract OCR engine.\n"
 "Please try again."
@@ -3763,35 +3763,27 @@ msgstr "Введите URL"
 msgid "URL"
 msgstr "URL-адрес"
 
-#: bookworm/webservices/wikiworm.py:36
+#: bookworm/webservices/wikiworm.py:57
 msgid "&Wikipedia quick search"
 msgstr "Быстрый поиск в &Википедии"
 
-#: bookworm/webservices/wikiworm.py:37
+#: bookworm/webservices/wikiworm.py:58
 msgid "Get a quick definition from Wikipedia"
 msgstr "Получите краткое определение из Википедии"
 
-#: bookworm/webservices/wikiworm.py:49
+#: bookworm/webservices/wikiworm.py:70
 msgid "Define using Wikipedia"
 msgstr "Определить с помощью Википедии"
 
-#: bookworm/webservices/wikiworm.py:50
+#: bookworm/webservices/wikiworm.py:71
 msgid "Define the selected text using Wikipedia"
 msgstr "Определить выделенный текст с помощью Википедии"
 
-#: bookworm/webservices/wikiworm.py:64
-msgid "Wikipedia Quick Search"
-msgstr "Быстрый поиск в Википедии"
-
-#: bookworm/webservices/wikiworm.py:65
-msgid "Enter term"
-msgstr "Введите поисковый запрос"
-
-#: bookworm/webservices/wikiworm.py:77
+#: bookworm/webservices/wikiworm.py:102
 msgid "Retrieving information, please wait..."
 msgstr "Получение информации, пожалуйста, подождите..."
 
-#: bookworm/webservices/wikiworm.py:110
+#: bookworm/webservices/wikiworm.py:134
 msgid ""
 "Could not connect to Wikipedia at the moment.\\Please make sure that you're "
 "connected to the internet or try again later."
@@ -3799,35 +3791,61 @@ msgstr ""
 "Не удалось подключиться к Википедии в данный момент.\\Убедитесь, что вы "
 "подключены к Интернету, или повторите попытку позже."
 
-#: bookworm/webservices/wikiworm.py:120
-msgid "Could not get the definition from Wikipedia."
-msgstr "Не удалось получить определение из Википедии."
+#. Translators: title of a message box
+#: bookworm/webservices/wikiworm.py:143
+msgid "Page not found"
+msgstr "Страница не найдена"
 
-#: bookworm/webservices/wikiworm.py:127
+#. Translators: content of a message box
+#: bookworm/webservices/wikiworm.py:145
+msgid "Could not find a Wikipedia page for the given term.."
+msgstr "Не удалось найти страницу Википедии для данного термина."
+
+#: bookworm/webservices/wikiworm.py:151
 msgid "Matches"
 msgstr "Совпадений"
 
-#: bookworm/webservices/wikiworm.py:128
+#: bookworm/webservices/wikiworm.py:152
 msgid "Multiple Matches Found"
 msgstr "Найдено несколько совпадений"
 
-#: bookworm/webservices/wikiworm.py:151
+#: bookworm/webservices/wikiworm.py:165
+msgid "Failed to get term definition from Wikipedia."
+msgstr "Не удалось получить определение термина из Википедии."
+
+#: bookworm/webservices/wikiworm.py:182
 msgid "{term} — Wikipedia"
 msgstr "{term} Википедия"
 
-#. Translators: label of an edit control in the dialog
-#. of viewing or editing a comment/highlight
-#: bookworm/webservices/wikiworm.py:158
+#. Translators: label of a read only edit control showing Wikipedia article
+#. summary
+#: bookworm/webservices/wikiworm.py:188
 msgid "Summary"
 msgstr "Краткое содержание"
 
-#: bookworm/webservices/wikiworm.py:169
+#: bookworm/webservices/wikiworm.py:199
 msgid "Open in &Bookworm"
 msgstr "Открыть в &Bookworm"
 
-#: bookworm/webservices/wikiworm.py:170
+#: bookworm/webservices/wikiworm.py:200
 msgid "&Open in Browser"
 msgstr "Открыть в &браузере"
+
+#. Translators: the title of a dialog to search for a term in Wikipedia
+#: bookworm/webservices/wikiworm.py:233
+msgid "Wikipedia Quick Search"
+msgstr "Быстрый поиск в Википедии"
+
+#. Translators: label of an edit control in the search Wikipedia dialog
+#: bookworm/webservices/wikiworm.py:239
+msgid "Enter term"
+msgstr "Введите поисковый запрос"
+
+#. Translators: label of a combobox  that shows a list of languages to search
+#. in Wikipedia
+#: bookworm/webservices/wikiworm.py:245
+msgid "Choose Wikipedia language"
+msgstr "Выберите язык Википедии"
 
 #~ msgid "Use continuous reading mode"
 #~ msgstr "Использовать режим непрерывного чтения"
