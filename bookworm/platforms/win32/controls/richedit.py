@@ -52,7 +52,7 @@ class WNDProcPanel(WndProcHookMixin, ContentViewCtrlPanel):
         text_ctrl_id = text_ctrl.GetId()
         last_pos = None
         while True:
-            event_time, new_pos = event_queue.get()
+            new_pos = event_queue.get()
             # Drop the earliest event since it rarely causes SegFault
             if last_pos is None:
                 time.sleep(1)
@@ -65,7 +65,7 @@ class WNDProcPanel(WndProcHookMixin, ContentViewCtrlPanel):
 
     def onWM_NOTIFY(self, wParam, lParam):
         if (sel_loc := self._dll.Bkw_GetNewSelPos(ctypes.c_ssize_t(lParam))) >= 0:
-            self._event_queue.put_nowait((time.monotonic(), sel_loc))
+            self._event_queue.put_nowait(sel_loc)
         return True
 
 
