@@ -75,7 +75,14 @@ class ContentViewCtrlMixin(wx.TextCtrl):
             style=self.TEXTCTRL_STYLE,
             **kwargs,
         )
-
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        vsizer = wx.BoxSizer(wx.VERTICAL)
+        vsizer.Add(self.controlLabel)
+        vsizer.Add(self, 1, wx.EXPAND | wx.ALL, 5)
+        sizer.Add(vsizer, 1, wx.EXPAND | wx.ALL)
+        self.panel.SetSizer(sizer)
+        sizer.Fit(self.panel)
+        
     def SetControlLabel(self, label_text: str) -> None:
         self.controlLabel.SetLabel(label_text)
 

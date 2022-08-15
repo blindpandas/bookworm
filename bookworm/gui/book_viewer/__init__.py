@@ -336,7 +336,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         rgtBottomSizer = wx.BoxSizer(wx.HORIZONTAL)
         lftSizer.Add(tocTreeLabel, 0, wx.ALL, 5)
         lftSizer.Add(self.tocTreeCtrl, 1, wx.ALL, 5)
-        rgtSizer.Add(self.contentTextCtrl, 1, wx.EXPAND | wx.ALL, 3)
+        rgtSizer.Add(self.contentTextCtrl.panel, 1, wx.EXPAND | wx.ALL, 3)
         rgtBottomSizer.Add(readingProgressLabel, 1, wx.ALL, 1)
         rgtBottomSizer.Add(self.readingProgressSlider, 1, wx.EXPAND | wx.ALL, 1)
         rgtSizer.Add(rgtBottomSizer, 0, wx.ALL | wx.EXPAND, 4)
