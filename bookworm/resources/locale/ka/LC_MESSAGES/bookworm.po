@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2022-08-10 21:59+0000\n"
-"PO-Revision-Date: 2022-08-11 10:42+0400\n"
+"PO-Revision-Date: 2022-08-27 10:18+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: Translation team of Dragan Ratkovich\n"
 "Language: ka\n"
@@ -30,7 +30,7 @@ msgstr ""
 #. update
 #: bookworm/otau.py:78 bookworm/platforms/win32/updater.py:120
 msgid "Network Error"
-msgstr "ინტერნეტის შეცდომა"
+msgstr "ქსელის შეცდომა"
 
 #. Translators: the content of a message indicating an error while updating the
 #. app
@@ -3799,7 +3799,7 @@ msgstr "გვერდი ვერ მოიძებნა"
 #. Translators: content of a message box
 #: bookworm/webservices/wikiworm.py:145
 msgid "Could not find a Wikipedia page for the given term.."
-msgstr "მოცემული ტერმინისთვის ვერ მოხერხდა ვიკიპედიის გვერდის პოვნა"
+msgstr "მოცემული ტერმინისთვის ვერ მოხერხდა ვიკიპედიის გვერდის პოვნა."
 
 #: bookworm/webservices/wikiworm.py:151
 msgid "Matches"
