@@ -9,8 +9,8 @@ from functools import cached_property, lru_cache, wraps
 from pathlib import Path
 
 from more_itertools import flatten
-from pycld2 import detect as detect_language
-from pycld2 import error as CLD2Error
+from selectolax.parser import HTMLParser
+import pywhatlang
 
 from bookworm import typehints as t
 from bookworm.concurrency import QueueProcess, call_threaded
@@ -217,20 +217,19 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         return DocumentCapability.GRAPHICAL_RENDERING in self.capabilities
 
     @staticmethod
-    def get_language(samples, is_html=False, hint_language: str = None) -> LocaleInfo:
+    def get_language(samples, is_html=False, hint_language: str = 'en') -> LocaleInfo:
         """Return the language of this document.
-        By default we use a heuristic based on Google's CLD2.
+        By default we use a heuristic based on whatlang.
         """
+        if is_html:
+            samples = HTMLParser(samples).text()
         try:
-            (success, _, ((_, lang, _, _), *_)) = detect_language(
-                utf8Bytes=samples, isPlainText=not is_html, hintLanguage=hint_language
-            )
-        except CLD2Error as e:
+            lang_code, confidence , is_reliable = pywhatlang.detect_lang(samples)
+        except:
             log.error(f"Failed to recognize document language", exc_info=True)
-            success = False
-        if success:
-            return LocaleInfo(lang)
-        return LocaleInfo("en")
+        else:
+            return LocaleInfo(lang_code).parent
+        return LocaleInfo(hint_language)
 
     def export_to_text(self, target_filename: t.PathLike):
         return QueueProcess(
@@ -388,7 +387,7 @@ class SinglePageDocument(BaseDocument):
 
     @cached_property
     def language(self) -> str:
-        return self.get_language(samples=self.get_content()[:1000])
+        return self.get_language(samples=self.get_content()[:2000], is_html=False)
 
     def get_section_at_position(self, pos):
         """Return the section at the given position."""
