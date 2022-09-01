@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2022-08-10 21:59+0000\n"
-"PO-Revision-Date: 2022-08-11 10:43+0400\n"
+"PO-Revision-Date: 2022-09-01 17:25+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -82,7 +82,7 @@ msgstr "Обновить приложение"
 #. Translators: title of a message dialog that shows a table as html document
 #: bookworm/reader.py:376
 msgid "Table View"
-msgstr "Посмотреть таблицу"
+msgstr "Табличный вид"
 
 #. Translators: the title of the window when an e-book is open
 #: bookworm/reader.py:428
