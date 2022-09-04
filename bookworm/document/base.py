@@ -60,7 +60,7 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
     @classmethod
     def __init_subclass__(cls, *args, **kwargs):
         super().__init_subclass__(*args, **kwargs)
-        if cls.format is not None:
+        if (cls.format is not None) and cls.check():
             cls.document_classes[cls.format.lower()] = cls
 
     @classmethod
@@ -75,6 +75,11 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
             if doc_cls.extensions is not None
         )
         return frozenset(ext.lstrip("*") for ext in exts)
+
+    @classmethod
+    def check(cls):
+        """Return True if this document format is supported based on the user's environment."""
+        return True
 
     def __init__(self, uri):
         self.uri = uri

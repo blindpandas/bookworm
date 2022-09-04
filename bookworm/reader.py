@@ -67,7 +67,7 @@ class DecryptionRequired(Exception):
 class UriResolver:
     """Retrieves a document given a uri."""
 
-    def __init__(self, uri):
+    def __init__(self, uri, num_fallbacks=0):
         if isinstance(uri, str):
             try:
                 self.uri = DocumentUri.from_uri_string(uri)
@@ -75,6 +75,7 @@ class UriResolver:
                 raise ReaderError(f"Failed to parse document uri {self.uri}") from e
         else:
             self.uri = uri
+        self.num_fallbacks = num_fallbacks
         doc_format_info = get_document_format_info()
         if (doc_format := self.uri.format) not in doc_format_info:
             raise UnsupportedDocumentError(
@@ -93,7 +94,8 @@ class UriResolver:
             return self._do_read_document()
         except:
             if (fallback_uri := self.uri.fallback_uri) is not None:
-                return UriResolver(uri=fallback_uri).read_document()
+                if self.num_fallbacks < 4:
+                    return UriResolver(uri=fallback_uri, num_fallbacks=self.num_fallbacks + 1).read_document()
             raise
 
     def _do_read_document(self):

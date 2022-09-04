@@ -13,3 +13,5 @@ from .pdf import FitzPdfDocument
 from .plain_text import PlainTextDocument
 from .powerpoint import PowerpointPresentation
 from .word import WordDocument
+from .rtf import RtfDocument
+from .fb2 import FB2Document, FitzFB2Document

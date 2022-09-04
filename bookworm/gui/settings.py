@@ -3,6 +3,7 @@
 import sys
 from dataclasses import dataclass
 from enum import IntEnum, auto
+from functools import partial
 
 import wx
 import wx.lib.sized_controls as sc
@@ -18,13 +19,21 @@ from bookworm.shell import (
     shell_integrate,
 )
 from bookworm.resources import app_icons
-from bookworm.runtime import IS_RUNNING_PORTABLE
+from bookworm import runtime 
 from bookworm.signals import app_started, config_updated
 from bookworm.utils import restart_application
+from bookworm.concurrency import threaded_worker
+from bookworm import pandoc
+from bookworm.platforms import PLATFORM
 
-from .components import EnhancedSpinCtrl, SimpleDialog
+
+from .components import EnhancedSpinCtrl, SimpleDialog, RobustProgressDialog, AsyncSnakDialog
 
 log = logger.getChild(__name__)
+
+
+if PLATFORM == 'win32':
+    from bookworm.platforms.win32 import pandoc_download
 
 
 class ReconciliationStrategies(IntEnum):
@@ -154,7 +163,7 @@ def show_file_association_dialog():
 
 @app_started.connect
 def _on_app_first_run(sender):
-    if not app.is_frozen or IS_RUNNING_PORTABLE:
+    if not app.is_frozen or runtime.IS_RUNNING_PORTABLE:
         return
     ndoctypes = len(get_ext_info())
     confval = config.conf["history"]["set_file_assoc"]
@@ -287,7 +296,7 @@ class GeneralPanel(SettingsPanel):
             _("Automatically check for updates"),
             name="general.auto_check_for_updates",
         )
-        if not IS_RUNNING_PORTABLE:
+        if not runtime.IS_RUNNING_PORTABLE:
             # Translators: the title of a group of controls shown in the
             # general settings page related to file associations
             assocBox = self.make_static_box(_("File Associations"))
@@ -428,6 +437,133 @@ class AppearancePanel(SettingsPanel):
         )
 
 
+class AdvancedSettingsPanel(SettingsPanel):
+    config_section = "advanced"
+
+    def addControls(self):
+        pandocBox = self.make_static_box("Pandoc")
+        if not pandoc.is_pandoc_installed():
+            getPandocBtn = CommandLinkButton(
+                pandocBox,
+                -1,
+                # Translators: label of a button
+                _("Download Pandoc: The universal document converter"),
+                # Translators: description of a button
+                _("Add support for additional document formats including RTF and Word 2003 documents."),
+            )
+            self.Bind(wx.EVT_BUTTON, self.onDownloadPandoc, getPandocBtn)
+        else:
+            updatePandocBtn = CommandLinkButton(
+                pandocBox,
+                -1,
+                # Translators: label of a button
+                _("Update Pandoc (the universal document converter)"),
+                # Translators: description of a button
+                _("Update Pandoc to the latest version to improve performance and conversion quality."),
+            )
+            self.Bind(wx.EVT_BUTTON, self.onUpdatePandoc, updatePandocBtn)
+        # Translators: the title of a group of controls in the
+        # advanced settings page
+        advancedBox = self.make_static_box("Reset Settings ")
+        resetSettingsBtn = CommandLinkButton(
+            advancedBox,
+            -1,
+            # Translators: label of a button
+            _("Reset Settings"),
+            # Translators: description of a button
+            _("Reset Bookworm's settings to their defaults"),
+        )
+        self.Bind(wx.EVT_BUTTON, self.onResetSettings, resetSettingsBtn)
+
+    def onDownloadPandoc(self, event):
+        progress_dlg = RobustProgressDialog(
+            self,
+            # Translators: title of a progress dialog
+            _("Downloading Pandoc"),
+            # Translators: message of a progress dialog
+            _("Getting download information..."),
+            maxvalue=100,
+            can_abort=True,
+        )
+        threaded_worker.submit(
+            pandoc_download.download_pandoc, progress_dlg
+        ).add_done_callback(partial(self._after_pandoc_install, progress_dlg))
+
+    def onUpdatePandoc(self, event):
+        AsyncSnakDialog(
+            task=pandoc_download.is_new_pandoc_version_available,
+            done_callback=self._on_pandoc_version_data,
+            # Translators: message of a dialog
+            message=_("Checking for updates. Please wait..."),
+            parent=wx.GetTopLevelParent(self),
+        )
+
+    def onResetSettings(self, event):
+        if wx.MessageBox(
+            # Translators: content of a message box
+            _("You will lose  all of your custom settings.\nAre you sure you want to restore all settings to their default values?"),
+            # Translators: title of a message box
+            _("Reset Settings?"),
+            style=wx.YES_NO | wx.ICON_WARNING
+        ) == wx.YES:
+            config.conf.config.restore_defaults()
+            wx.GetTopLevelParent(self).Close()
+
+    def _after_pandoc_install(self, progress_dlg, future):
+        progress_dlg.Dismiss()
+        if future.result() is True:
+            wx.GetApp().mainFrame.notify_user(
+                # Translators: title of a message box
+                _("Restart Required"),
+                # Translators: content of a message box
+                _(
+                    "Bookworm will now restart to complete the installation of Pandoc."
+                ),
+            )
+            wx.CallAfter(restart_application)
+
+    def _on_pandoc_version_data(self, future):
+        try:
+            if is_update_available := future.result():
+                retval = wx.MessageBox(
+                    # Translators: content of a message box
+                    _(
+                        "A new version of Pandoc is available for download.\nIt is strongly recommended to update to the latest version for the best performance and conversion quality.\nWould you like to update to the new version?"
+                    ),
+                    # Translators: title of a message box
+                    _("Update Pandoc?"),
+                    style=wx.YES_NO | wx.ICON_EXCLAMATION,
+                )
+                if retval != wx.YES:
+                    return
+                AsyncSnakDialog(
+                    task=pandoc_download.remove_pandoc,
+                    done_callback=lambda fut: self.onDownloadPandoc(None),
+                    # Translators: message of a dialog
+                    message=_("Removing old Pandoc version. Please wait..."),
+                    parent=wx.GetTopLevelParent(self),
+                )
+            else:
+                wx.MessageBox(
+                    # Translators: content of a message box
+                    _("Your version of Pandoc is up to date."),
+                    # Translators: title of a message box
+                    _("No updates"),
+                    style=wx.ICON_INFORMATION,
+                )
+        except:
+            log.exception(
+                "Failed to check for updates for Pandoc", exc_info=True
+            )
+            wx.MessageBox(
+                # Translators: content of a message box
+                _("Failed to check for updates. Please check your internet connection."),
+                # Translators: title of a message box
+                _("Error"),
+                style=wx.ICON_ERROR,
+            )
+
+
 class PreferencesDialog(SimpleDialog):
     """Preferences dialog."""
 
@@ -437,6 +573,8 @@ class PreferencesDialog(SimpleDialog):
             (0, "general", GeneralPanel, _("General")),
             # Translators: the label of a page in the settings dialog
             (1, "appearance", AppearancePanel, _("Appearance")),
+            # Translators: the label of a page in the settings dialog
+            (1000, "advanced", AdvancedSettingsPanel, _("Advanced")),
         ]
         page_info.extend(wx.GetApp().service_handler.get_settings_panels())
         page_info.sort()
