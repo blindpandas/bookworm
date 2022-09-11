@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: BookwormPROJECT VERSION\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2022-09-10 21:00+0000\n"
-"PO-Revision-Date: 2022-09-11 00:38+0300\n"
+"PO-Revision-Date: 2022-09-11 14:21+0300\n"
 "Last-Translator: Umut KORKMAZ <umutkork@gmail.com>\n"
 "Language-Team: Umut KORKMAZ <umutkork@gmail.com>\n"
 "Language: tr_TR\n"
@@ -1867,7 +1867,7 @@ msgid ""
 "documents."
 msgstr ""
 "RTF ve Word 2003 belgeleri dahil olmak üzere ek belge biçimleri için destek "
-"ekle."
+"ekler."
 
 #. Translators: label of a button
 #: bookworm/gui/settings.py:460
@@ -1919,14 +1919,14 @@ msgid ""
 "You will lose  all of your custom settings.\n"
 "Are you sure you want to restore all settings to their default values?"
 msgstr ""
-"You will lose  all of your custom settings.\n"
+"Tüm özel ayarlarınızı kaybedeceksiniz.\n"
 "Tüm ayarları varsayılan değerlerine geri yüklemek istediğinizden emin "
 "misiniz?"
 
 #. Translators: title of a message box
 #: bookworm/gui/settings.py:506
 msgid "Reset Settings?"
-msgstr "Ayarlar Sıfırlansın mı?"
+msgstr "Ayarlar sıfırlansın mı?"
 
 #. Translators: title of a message box
 #: bookworm/gui/settings.py:517 bookworm/ocr/ocr_dialogs.py:160
