@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2022-09-10 21:00+0000\n"
-"PO-Revision-Date: 2022-09-11 10:12+0400\n"
+"PO-Revision-Date: 2022-09-12 11:27+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -3050,7 +3050,7 @@ msgid ""
 "Are you sure you want to replace it."
 msgstr ""
 "Версия выбранной языковой модели уже существует.\n"
-"Вы уверены, что хотите заменить его."
+"Вы уверены, что хотите заменить его?"
 
 #. Translators: title of a progress dialog
 #: bookworm/ocr/ocr_dialogs.py:553
