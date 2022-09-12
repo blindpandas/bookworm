@@ -28,7 +28,7 @@ from .. import ChangeDocument
 from .. import DocumentCapability as DC
 from .. import DocumentEncryptedError, DocumentError, DummyDocument
 from .html import BaseHtmlDocument
-from .docbook import DocbookDocument
+from .pandoc import DocbookDocument
 
 log = logger.getChild(__name__)
 TAGS_TO_UNWRAP = []

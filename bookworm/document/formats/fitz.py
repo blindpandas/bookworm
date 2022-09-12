@@ -57,7 +57,6 @@ class FitzDocument(BaseDocument):
     """The backend of this document type is Fitz (AKA MuPDF)."""
 
     format = None
-    # Translators: the name of a document file format
     name = None
     extensions = ()
     capabilities = (
