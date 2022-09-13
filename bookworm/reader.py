@@ -3,6 +3,7 @@
 import os
 from contextlib import suppress
 from pathlib import Path
+from selectolax.parser import HTMLParser
 
 from bookworm import app, config
 from bookworm import typehints as t
@@ -374,8 +375,8 @@ class EBookReader:
                 SemanticElementType.TABLE
             )):
                 if position in range(*tbl_range):
-                    # Translators: title of a message dialog that shows a table as html document
-                    self.view.show_html_dialog(self.get_current_page_object().get_table_markup(idx), title=_("Table View"))
+                    table_markup = self.get_current_page_object().get_table_markup(idx)
+                    self._show_table(table_markup)
         except NotImplementedError:
             pass
 
@@ -441,3 +442,10 @@ class EBookReader:
             ],
             hidden=False,
         )
+
+    def _show_table(self, table_markup):
+        # Translators: title of a message dialog that shows a table as html document
+        title = _("Table View")
+        if (table_caption := HTMLParser(table_markup).css_first("caption")) is not None:
+            title = f"{table_caption.text()} · {title}"
+        self.view.show_html_dialog(table_markup, title=title)

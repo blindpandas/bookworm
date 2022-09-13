@@ -974,9 +974,9 @@ class MenubarProvider:
             if not doc_cls.__internal__
         ]
         for cls in visible_doc_cls:
-            for ext in cls.extensions:
-                rv.append("{name} ({ext})|{ext}|".format(name=_(cls.name), ext=ext))
-                all_exts.append(ext)
+            exts = ";".join(cls.extensions)
+            rv.append("{name}|{exts}|".format(name=_(cls.name), exts=exts))
+            all_exts.extend(exts)
         rv[-1] = rv[-1].rstrip("|")
         allfiles = ";".join(all_exts)
         allfiles_display = " ".join(e for e in all_exts)
