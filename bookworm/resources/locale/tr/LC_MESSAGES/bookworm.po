@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: BookwormPROJECT VERSION\n"
+"Project-Id-Version: Bookworm\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-09-10 21:00+0000\n"
-"PO-Revision-Date: 2022-09-11 14:21+0300\n"
+"POT-Creation-Date: 2022-09-13 09:51+0000\n"
+"PO-Revision-Date: 2022-09-13 13:15+0300\n"
 "Last-Translator: Umut KORKMAZ <umutkork@gmail.com>\n"
 "Language-Team: Umut KORKMAZ <umutkork@gmail.com>\n"
 "Language: tr_TR\n"
@@ -73,15 +73,15 @@ msgstr "&Güncellemeleri Denetle"
 msgid "Update the application"
 msgstr "Uygulamayı güncelle"
 
-#. Translators: title of a message dialog that shows a table as html document
-#: bookworm/reader.py:378
-msgid "Table View"
-msgstr "Table View"
-
 #. Translators: the title of the window when an e-book is open
-#: bookworm/reader.py:430
+#: bookworm/reader.py:431
 msgid "{title} — by {author}"
 msgstr "{title} — {author} tarafından"
+
+#. Translators: title of a message dialog that shows a table as html document
+#: bookworm/reader.py:448
+msgid "Table View"
+msgstr "Table View"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/__init__.py:69
@@ -1439,11 +1439,6 @@ msgid "Archive File"
 msgstr "Arşiv Dosyası"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/docbook.py:20
-msgid "Docbook Document"
-msgstr "Docbook Belgesi"
-
-#. Translators: the name of a document file format
 #: bookworm/document/formats/epub.py:47
 msgid "Electronic Publication (EPUB)"
 msgstr "Elektronik Yayın (EPUB)"
@@ -1454,12 +1449,12 @@ msgid "Fiction Book (FB2)"
 msgstr "Kurgu Kitabı (FB2)"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/fitz.py:176
+#: bookworm/document/formats/fitz.py:175
 msgid "XPS Document"
 msgstr "XPS Belgesi"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/fitz.py:184
+#: bookworm/document/formats/fitz.py:183
 msgid "Comic Book Archive"
 msgstr "Çizgi Roman Arşivi"
 
@@ -1494,6 +1489,36 @@ msgid "Slide {number}"
 msgstr "{number} slayt"
 
 #. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:37
+msgid "Rich Text Document"
+msgstr "Zengin Metin Belgesi"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:46
+msgid "Docbook Document"
+msgstr "Docbook Belgesi"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:55
+msgid "Jupyter notebook"
+msgstr "Jupyter not defteri"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:64
+msgid "LaTeX Document"
+msgstr "LaTeX Belgesi"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:73
+msgid "Text2Tags Document"
+msgstr "Text2Tags Belgesi"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:82
+msgid "Unix manual page"
+msgstr "Unix kullanım kılavuzu sayfası"
+
+#. Translators: the name of a document file format
 #: bookworm/document/formats/pdf.py:73
 msgid "Portable Document (PDF)"
 msgstr "Taşınabilir Belge (PDF)"
@@ -1511,12 +1536,6 @@ msgstr "Slayt Notları"
 #: bookworm/document/formats/powerpoint.py:116
 msgid "PowerPoint Presentation"
 msgstr "PowerPoint Sunumu"
-
-#. Translators: the name of a document file format
-#: bookworm/document/formats/rtf.py:20
-#| msgid "Search Document"
-msgid "Rich Text Document"
-msgstr "Zengin Metin Belgesi"
 
 #. Translators: the name of a document file format
 #: bookworm/document/formats/word.py:45
@@ -1897,7 +1916,6 @@ msgstr "Bookworm'un ayarlarını varsayılanlarına sıfırlayın"
 
 #. Translators: title of a progress dialog
 #: bookworm/gui/settings.py:482
-#| msgid "Downloading Language"
 msgid "Downloading Pandoc"
 msgstr "Pandoc İndiriliyor"
 
@@ -1935,20 +1953,12 @@ msgstr "Yeniden başlatma gerekli"
 
 #. Translators: content of a message box
 #: bookworm/gui/settings.py:519
-#| msgid ""
-#| "Bookworm will now restart to complete the installation of the Tesseract "
-#| "OCR Engine."
 msgid "Bookworm will now restart to complete the installation of Pandoc."
 msgstr ""
 "Bookworm, Pandoc kurulumunu tamamlamak için şimdi yeniden başlatılacak."
 
 #. Translators: content of a message box
 #: bookworm/gui/settings.py:530
-#| msgid ""
-#| "A new version of Tesseract OCr engine is available for download.\n"
-#| "It is strongly recommended to update to the latest version for the best "
-#| "accuracy and performance.\n"
-#| "Would you like to update to the new version?"
 msgid ""
 "A new version of Pandoc is available for download.\n"
 "It is strongly recommended to update to the latest version for the best "
@@ -1967,13 +1977,11 @@ msgstr "Pandoc güncellensin mi?"
 
 #. Translators: message of a dialog
 #: bookworm/gui/settings.py:543
-#| msgid "Removing old Tesseract version. Please wait..."
 msgid "Removing old Pandoc version. Please wait..."
 msgstr "Pandoc'un eski sürümü kaldırılıyor, lütfen bekleyin."
 
 #. Translators: content of a message box
 #: bookworm/gui/settings.py:549
-#| msgid "Your version of Tesseract OCR engine is up to date."
 msgid "Your version of Pandoc is up to date."
 msgstr "Pandoc sürümünüz güncel."
 
@@ -1984,9 +1992,6 @@ msgstr "Güncelleme mevcut değil"
 
 #. Translators: content of a message box
 #: bookworm/gui/settings.py:560
-#| msgid ""
-#| "Failed to download language data.\n"
-#| "Please check your internet connection."
 msgid "Failed to check for updates. Please check your internet connection."
 msgstr ""
 "Güncellemeler denetlenemedi. Lütfen internet bağlantınızı kontrol edin."
@@ -1998,7 +2003,6 @@ msgstr "Görsel"
 
 #. Translators: the label of a page in the settings dialog
 #: bookworm/gui/settings.py:577
-#| msgid "Canceled"
 msgid "Advanced"
 msgstr "Gelişmiş"
 
@@ -3056,7 +3060,7 @@ msgstr "Yok"
 #: bookworm/ocr/ocr_dialogs.py:535
 msgid ""
 "A version of the selected language model already exists.\n"
-"Are you sure you want to replace it."
+"Are you sure you want to replace it?"
 msgstr ""
 "Seçilen dil modelinin bir sürümü zaten mevcut.\n"
 "Değiştirmek istediğinizden emin misiniz?"
@@ -3309,14 +3313,10 @@ msgstr "Dosya ayıklanıyor..."
 
 #. Translators: content of a messagebox
 #: bookworm/platforms/win32/pandoc_download.py:49
-#| msgid "Tesseract engine downloaded successfully"
 msgid "Pandoc downloaded successfully"
 msgstr "Pandoc başarıyla indirildi"
 
 #: bookworm/platforms/win32/pandoc_download.py:57
-#| msgid ""
-#| "Could not download Tesseract OCR Engine.\n"
-#| "Please check your internet and try again."
 msgid ""
 "Could not download Pandoc.\n"
 "Please check your internet connection and try again."
@@ -3325,9 +3325,6 @@ msgstr ""
 "Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin."
 
 #: bookworm/platforms/win32/pandoc_download.py:68
-#| msgid ""
-#| "Could not install the Tesseract OCR engine.\n"
-#| "Please try again."
 msgid ""
 "Could not add Pandoc.\n"
 "Please try again."
