@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-09-10 21:00+0000\n"
-"PO-Revision-Date: 2022-09-12 11:26+0400\n"
+"POT-Creation-Date: 2022-09-13 07:02+0000\n"
+"PO-Revision-Date: 2022-09-13 13:24+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: Translation team of Dragan Ratkovich\n"
 "Language: ka\n"
@@ -77,15 +77,15 @@ msgstr "&განახლებების შემოწმება"
 msgid "Update the application"
 msgstr "აპლიკაციის განახლება"
 
-#. Translators: title of a message dialog that shows a table as html document
-#: bookworm/reader.py:378
-msgid "Table View"
-msgstr "ცხრილის ნახვა"
-
 #. Translators: the title of the window when an e-book is open
-#: bookworm/reader.py:430
+#: bookworm/reader.py:431
 msgid "{title} — by {author}"
 msgstr "{author} – {title}"
+
+#. Translators: title of a message dialog that shows a table as html document
+#: bookworm/reader.py:448
+msgid "Table View"
+msgstr "ცხრილის ნახვა"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/__init__.py:69
@@ -1446,11 +1446,6 @@ msgid "Archive File"
 msgstr "დაარქივებული ფაილი"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/docbook.py:20
-msgid "Docbook Document"
-msgstr "Docbook დოკუმენტი"
-
-#. Translators: the name of a document file format
 #: bookworm/document/formats/epub.py:47
 msgid "Electronic Publication (EPUB)"
 msgstr "ელექტრონული გამოცემა (EPUB)"
@@ -1461,12 +1456,12 @@ msgid "Fiction Book (FB2)"
 msgstr "მხატვრული წიგნი (FB2)"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/fitz.py:176
+#: bookworm/document/formats/fitz.py:175
 msgid "XPS Document"
 msgstr "XPS დოკუმენტი"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/fitz.py:184
+#: bookworm/document/formats/fitz.py:183
 msgid "Comic Book Archive"
 msgstr "კომიქსური წიგნების არქივი"
 
@@ -1501,6 +1496,38 @@ msgid "Slide {number}"
 msgstr "სლაიდი {number}"
 
 #. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:37
+msgid "Rich Text Document"
+msgstr "Rich Text Document"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:46
+msgid "Docbook Document"
+msgstr "Docbook დოკუმენტი"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:55
+msgid "Jupyter notebook"
+msgstr "Jupyter notebook"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:64
+#| msgid "XPS Document"
+msgid "LaTeX Document"
+msgstr "LaTeX დოკუმენტი"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:73
+#| msgid "Rich Text Document"
+msgid "Text2Tags Document"
+msgstr "Text2Tags დოკუმენტი"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:82
+msgid "Unix manual page"
+msgstr "Unix სახელმძღვანელო გვერდი"
+
+#. Translators: the name of a document file format
 #: bookworm/document/formats/pdf.py:73
 msgid "Portable Document (PDF)"
 msgstr "პორტაბელური დოკუმენტი (PDF)"
@@ -1518,11 +1545,6 @@ msgstr "სლაიდის შენიშვნები"
 #: bookworm/document/formats/powerpoint.py:116
 msgid "PowerPoint Presentation"
 msgstr "PowerPoint პრეზენტაცია"
-
-#. Translators: the name of a document file format
-#: bookworm/document/formats/rtf.py:20
-msgid "Rich Text Document"
-msgstr "Rich Text Document"
 
 #. Translators: the name of a document file format
 #: bookworm/document/formats/word.py:45
@@ -3040,9 +3062,12 @@ msgstr "არა"
 
 #. Translators: content of a messagebox
 #: bookworm/ocr/ocr_dialogs.py:535
+#| msgid ""
+#| "A version of the selected language model already exists.\n"
+#| "Are you sure you want to replace it."
 msgid ""
 "A version of the selected language model already exists.\n"
-"Are you sure you want to replace it."
+"Are you sure you want to replace it?"
 msgstr ""
 "არჩეული ენის მოდელის ვერსია უკვე არსებობს.\n"
 "დარწმუნებული ხართ, რომ გსურთ მისი შეცვლა?"
