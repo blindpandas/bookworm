@@ -534,7 +534,7 @@ class TesseractLanguagePanel(sc.SizedPanel):
                 # Translators: content of a messagebox
                 _(
                     "A version of the selected language model already exists.\n"
-                    "Are you sure you want to replace it."
+                    "Are you sure you want to replace it?"
                 ),
                 # Translators: title of a message box
                 _("Confirm"),
