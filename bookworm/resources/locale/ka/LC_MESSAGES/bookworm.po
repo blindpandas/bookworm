@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-09-13 07:02+0000\n"
-"PO-Revision-Date: 2022-09-13 17:38+0400\n"
+"POT-Creation-Date: 2022-09-14 13:59+0000\n"
+"PO-Revision-Date: 2022-09-14 18:04+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: Translation team of Dragan Ratkovich\n"
 "Language: ka\n"
@@ -1511,13 +1511,11 @@ msgstr "Jupyter notebook"
 
 #. Translators: the name of a document file format
 #: bookworm/document/formats/pandoc.py:64
-#| msgid "XPS Document"
 msgid "LaTeX Document"
 msgstr "LaTeX დოკუმენტი"
 
 #. Translators: the name of a document file format
 #: bookworm/document/formats/pandoc.py:73
-#| msgid "Rich Text Document"
 msgid "Text2Tags Document"
 msgstr "Text2Tags დოკუმენტი"
 
@@ -2625,8 +2623,8 @@ msgstr "ამ დოკუმენტში ძიება."
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:564
-msgid "&Find &Next\tF3"
-msgstr "შ&ემდეგის მოძებნა\tF3"
+msgid "Find &Next\tF3"
+msgstr "შ&ემდეგის ძიება\tF3"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:566
@@ -2636,7 +2634,7 @@ msgstr "შემდგომი გამოვლინების მოძ�
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:571
 msgid "&Find &Previous\tShift-F3"
-msgstr "&წინას &მოძებნა\tShift-F3"
+msgstr "&წინას ძიება\tShift-F3"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:573
@@ -3062,9 +3060,6 @@ msgstr "არა"
 
 #. Translators: content of a messagebox
 #: bookworm/ocr/ocr_dialogs.py:535
-#| msgid ""
-#| "A version of the selected language model already exists.\n"
-#| "Are you sure you want to replace it."
 msgid ""
 "A version of the selected language model already exists.\n"
 "Are you sure you want to replace it?"

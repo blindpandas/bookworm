@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-09-13 07:02+0000\n"
-"PO-Revision-Date: 2022-09-13 13:25+0400\n"
+"POT-Creation-Date: 2022-09-14 13:59+0000\n"
+"PO-Revision-Date: 2022-09-14 18:05+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -2624,8 +2624,8 @@ msgstr "Искать в этом документе."
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:564
-msgid "&Find &Next\tF3"
-msgstr "&Найти &следующий\tF3"
+msgid "Find &Next\tF3"
+msgstr "Найти &следующий\tF3"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:566
@@ -2635,7 +2635,7 @@ msgstr "Найдите следующее вхождение."
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:571
 msgid "&Find &Previous\tShift-F3"
-msgstr "&Найти &предыдущий\tShift-F3"
+msgstr "Найти &предыдущий\tShift-F3"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:573
@@ -3063,9 +3063,6 @@ msgstr "Нет"
 
 #. Translators: content of a messagebox
 #: bookworm/ocr/ocr_dialogs.py:535
-#| msgid ""
-#| "A version of the selected language model already exists.\n"
-#| "Are you sure you want to replace it."
 msgid ""
 "A version of the selected language model already exists.\n"
 "Are you sure you want to replace it?"
