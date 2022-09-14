@@ -561,14 +561,14 @@ class SearchMenu(BaseMenu):
         self.Append(
             BookRelatedMenuIds.findNext,
             # Translators: the label of an item in the application menubar
-            _("&Find &Next\tF3"),
+            _("Find &Next\tF3"),
             # Translators: the help text of an item in the application menubar
             _("Find next occurrence."),
         )
         self.Append(
             BookRelatedMenuIds.findPrev,
             # Translators: the label of an item in the application menubar
-            _("&Find &Previous\tShift-F3"),
+            _("Find &Previous\tShift-F3"),
             # Translators: the help text of an item in the application menubar
             _("Find previous occurrence."),
         )

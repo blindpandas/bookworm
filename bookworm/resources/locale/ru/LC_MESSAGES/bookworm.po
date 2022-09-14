@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-09-10 21:00+0000\n"
-"PO-Revision-Date: 2022-09-12 11:27+0400\n"
+"POT-Creation-Date: 2022-09-14 14:32+0000\n"
+"PO-Revision-Date: 2022-09-14 18:35+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -79,15 +79,15 @@ msgstr "Проверить наличие &обновлений"
 msgid "Update the application"
 msgstr "Обновить приложение"
 
-#. Translators: title of a message dialog that shows a table as html document
-#: bookworm/reader.py:378
-msgid "Table View"
-msgstr "Табличный вид"
-
 #. Translators: the title of the window when an e-book is open
-#: bookworm/reader.py:430
+#: bookworm/reader.py:431
 msgid "{title} — by {author}"
 msgstr "{title} — от {author}"
+
+#. Translators: title of a message dialog that shows a table as html document
+#: bookworm/reader.py:448
+msgid "Table View"
+msgstr "Табличный вид"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/__init__.py:69
@@ -1446,11 +1446,6 @@ msgid "Archive File"
 msgstr "Архивный файл"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/docbook.py:20
-msgid "Docbook Document"
-msgstr "Документ Docbook"
-
-#. Translators: the name of a document file format
 #: bookworm/document/formats/epub.py:47
 msgid "Electronic Publication (EPUB)"
 msgstr "Электронная публикация (EPUB)"
@@ -1461,12 +1456,12 @@ msgid "Fiction Book (FB2)"
 msgstr "Fiction Book (FB2)"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/fitz.py:176
+#: bookworm/document/formats/fitz.py:175
 msgid "XPS Document"
 msgstr "Документ XPS"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/fitz.py:184
+#: bookworm/document/formats/fitz.py:183
 msgid "Comic Book Archive"
 msgstr "Comic Book Archive"
 
@@ -1501,6 +1496,36 @@ msgid "Slide {number}"
 msgstr "Слайд {number}"
 
 #. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:37
+msgid "Rich Text Document"
+msgstr "Rich Text Document"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:46
+msgid "Docbook Document"
+msgstr "Документ Docbook"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:55
+msgid "Jupyter notebook"
+msgstr "Jupyter notebook"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:64
+msgid "LaTeX Document"
+msgstr "Документ LaTeX"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:73
+msgid "Text2Tags Document"
+msgstr "Документ Text2Tags"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:82
+msgid "Unix manual page"
+msgstr "Страница руководства Unix"
+
+#. Translators: the name of a document file format
 #: bookworm/document/formats/pdf.py:73
 msgid "Portable Document (PDF)"
 msgstr "Портативный документ (PDF)"
@@ -1518,11 +1543,6 @@ msgstr "Примечания к слайду"
 #: bookworm/document/formats/powerpoint.py:116
 msgid "PowerPoint Presentation"
 msgstr "Презентация PowerPoint"
-
-#. Translators: the name of a document file format
-#: bookworm/document/formats/rtf.py:20
-msgid "Rich Text Document"
-msgstr "Rich Text Document"
 
 #. Translators: the name of a document file format
 #: bookworm/document/formats/word.py:45
@@ -1961,13 +1981,11 @@ msgstr "Обновить Pandoc?"
 
 #. Translators: message of a dialog
 #: bookworm/gui/settings.py:543
-#| msgid "Removing old Tesseract version. Please wait..."
 msgid "Removing old Pandoc version. Please wait..."
 msgstr "Удаление старой версии Pandoc. Пожалуйста подождите..."
 
 #. Translators: content of a message box
 #: bookworm/gui/settings.py:549
-#| msgid "Your version of Tesseract OCR engine is up to date."
 msgid "Your version of Pandoc is up to date."
 msgstr "Ваша версия Pandoc обновлена."
 
@@ -2606,8 +2624,8 @@ msgstr "Искать в этом документе."
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:564
-msgid "&Find &Next\tF3"
-msgstr "&Найти &следующий\tF3"
+msgid "Find &Next\tF3"
+msgstr "Найти &следующий\tF3"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:566
@@ -2616,8 +2634,9 @@ msgstr "Найдите следующее вхождение."
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:571
-msgid "&Find &Previous\tShift-F3"
-msgstr "&Найти &предыдущий\tShift-F3"
+#| msgid "&Find &Previous\tShift-F3"
+msgid "Find &Previous\tShift-F3"
+msgstr "Найти &предыдущий\tShift-F3"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:573
@@ -3047,7 +3066,7 @@ msgstr "Нет"
 #: bookworm/ocr/ocr_dialogs.py:535
 msgid ""
 "A version of the selected language model already exists.\n"
-"Are you sure you want to replace it."
+"Are you sure you want to replace it?"
 msgstr ""
 "Версия выбранной языковой модели уже существует.\n"
 "Вы уверены, что хотите заменить его?"
@@ -3303,9 +3322,6 @@ msgid "Pandoc downloaded successfully"
 msgstr "Pandoc успешно скачан"
 
 #: bookworm/platforms/win32/pandoc_download.py:57
-#| msgid ""
-#| "Could not download Tesseract OCR Engine.\n"
-#| "Please check your internet and try again."
 msgid ""
 "Could not download Pandoc.\n"
 "Please check your internet connection and try again."
@@ -3314,9 +3330,6 @@ msgstr ""
 "Проверьте подключение к Интернету и повторите попытку."
 
 #: bookworm/platforms/win32/pandoc_download.py:68
-#| msgid ""
-#| "Could not install the Tesseract OCR engine.\n"
-#| "Please try again."
 msgid ""
 "Could not add Pandoc.\n"
 "Please try again."
