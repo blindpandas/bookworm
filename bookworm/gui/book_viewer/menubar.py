@@ -976,7 +976,7 @@ class MenubarProvider:
         for cls in visible_doc_cls:
             exts = ";".join(cls.extensions)
             rv.append("{name}|{exts}|".format(name=_(cls.name), exts=exts))
-            all_exts.extend(exts)
+            all_exts.extend(cls.extensions)
         rv[-1] = rv[-1].rstrip("|")
         allfiles = ";".join(all_exts)
         allfiles_display = " ".join(e for e in all_exts)
