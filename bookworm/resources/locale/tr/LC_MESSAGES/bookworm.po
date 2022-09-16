@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-09-13 09:51+0000\n"
-"PO-Revision-Date: 2022-09-13 13:15+0300\n"
+"POT-Creation-Date: 2022-09-14 15:00+0000\n"
+"PO-Revision-Date: 2022-09-14 18:37+0300\n"
 "Last-Translator: Umut KORKMAZ <umutkork@gmail.com>\n"
 "Language-Team: Umut KORKMAZ <umutkork@gmail.com>\n"
 "Language: tr_TR\n"
@@ -2619,8 +2619,9 @@ msgstr "Bu belgeyi ara."
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:564
-msgid "&Find &Next\tF3"
-msgstr "&Bul &Sonraki\tF3"
+#| msgid "&Find &Next\tF3"
+msgid "Find &Next\tF3"
+msgstr "&Sonrakini Bul\tF3"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:566
@@ -2629,8 +2630,9 @@ msgstr "Sonrakini bul."
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:571
-msgid "&Find &Previous\tShift-F3"
-msgstr "&Bul &Önceki\tShift-F3"
+#| msgid "&Find &Previous\tShift-F3"
+msgid "Find &Previous\tShift-F3"
+msgstr "&Öncekini Bul\tShift-F3"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:573
