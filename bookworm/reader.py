@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import string
 from contextlib import suppress
 from pathlib import Path
 from selectolax.parser import HTMLParser
@@ -447,5 +448,6 @@ class EBookReader:
         # Translators: title of a message dialog that shows a table as html document
         title = _("Table View")
         if (table_caption := HTMLParser(table_markup).css_first("caption")) is not None:
-            title = f"{table_caption.text()} · {title}"
+            caption_text = table_caption.text().strip(string.whitespace).replace("\n", " ")
+            title = f"{caption_text} · {title}"
         self.view.show_html_dialog(table_markup, title=title)
