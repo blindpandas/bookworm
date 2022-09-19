@@ -9,14 +9,9 @@ import wx
 import wx.lib.sized_controls as sc
 
 from bookworm import speech
-from bookworm.bookshelf.provider import (
-    BookshelfAction,
-    BookshelfProvider,
-    ItemContainerSource,
-    MetaSource,
-    Source,
-    sources_updated,
-)
+from bookworm.bookshelf.provider import (BookshelfAction, BookshelfProvider,
+                                         ItemContainerSource, MetaSource,
+                                         Source, sources_updated)
 from bookworm.concurrency import threaded_worker
 from bookworm.gui.book_viewer.core_dialogs import DocumentInfoDialog
 from bookworm.gui.components import AsyncSnakDialog
@@ -545,7 +540,8 @@ class BookshelfWindow(sc.SizedFrame):
 
 
 def run_bookshelf_standalone():
-    from bookworm.bootstrap import BookwormApp, log_diagnostic_info, setupSubsystems
+    from bookworm.bootstrap import (BookwormApp, log_diagnostic_info,
+                                    setupSubsystems)
 
     app = BookwormApp()
 

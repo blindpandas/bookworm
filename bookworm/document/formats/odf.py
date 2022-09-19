@@ -25,7 +25,8 @@ from bookworm.concurrency import process_worker
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
 from bookworm.paths import home_data_path
-from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
+from bookworm.structured_text.structured_html_parser import \
+    StructuredHtmlParser
 from bookworm.utils import NEWLINE, escape_html, generate_file_md5
 
 from .. import BaseDocument, BasePage, BookMetadata, ChangeDocument

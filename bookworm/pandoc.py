@@ -1,16 +1,16 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 import functools
-import platform
 import os
+import platform
 import shutil
 import subprocess
 
 from bookworm import app
-from bookworm.platforms import PLATFORM
 from bookworm.paths import data_path
-
+from bookworm.platforms import PLATFORM
 
 DEFAULT_PANDOC_ARGS = (
     "-s",
@@ -19,11 +19,9 @@ DEFAULT_PANDOC_ARGS = (
     "-RTS",
 )
 
+
 def is_pandoc_supported():
-    return all([
-        PLATFORM == "win32",
-        platform.machine() == "AMD64"
-    ])
+    return all([PLATFORM == "win32", platform.machine() == "AMD64"])
 
 
 def get_pandoc_path():
@@ -31,7 +29,9 @@ def get_pandoc_path():
 
 
 def is_pandoc_installed():
-    return is_pandoc_supported() and shutil.which("pandoc", path=os.fspath(get_pandoc_path()))
+    return is_pandoc_supported() and shutil.which(
+        "pandoc", path=os.fspath(get_pandoc_path())
+    )
 
 
 @functools.cache
@@ -49,7 +49,7 @@ def call_pandoc(args, popen_kwargs=None):
         capture_output=True,
         creationflags=subprocess.CREATE_NO_WINDOW,
         startupinfo=startupinfo,
-        **popen_kwargs
+        **popen_kwargs,
     )
     ret.check_returncode()
     return ret.stdout
@@ -79,4 +79,6 @@ def convert(from_format, to_format, input_file=None, output_file=None, input_dat
 
 
 def get_version():
-    return call_pandoc(["--version"]).decode("utf-8").split("\n")[0].split(" ")[-1].strip()
+    return (
+        call_pandoc(["--version"]).decode("utf-8").split("\n")[0].split(" ")[-1].strip()
+    )

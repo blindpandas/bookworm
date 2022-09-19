@@ -1,20 +1,22 @@
 # coding: utf-8
 
 import ctypes
-import time
-
 import queue
 import threading
+import time
 from pathlib import Path
+
 import win32api
 import win32con
 import wx
 
 import bookworm.typehints as t
 from bookworm import app
-from bookworm.paths import app_path
-from bookworm.gui.text_ctrl_mixin import ContentViewCtrlMixin, ContentViewCtrlPanel
+from bookworm.gui.text_ctrl_mixin import (ContentViewCtrlMixin,
+                                          ContentViewCtrlPanel)
 from bookworm.logger import logger
+from bookworm.paths import app_path
+
 from .wnd_proc_hook import WndProcHookMixin
 
 log = logger.getChild(__name__)
@@ -23,7 +25,14 @@ log = logger.getChild(__name__)
 if app.is_frozen:
     BKWRICHEDITOPTS_DLL = app_path("BkwRicheditOpts.dll")
 else:
-    BKWRICHEDITOPTS_DLL = Path.cwd() / "scripts" / "dlls" / "richeditopts" / app.arch / "BkwRicheditOpts.dll"
+    BKWRICHEDITOPTS_DLL = (
+        Path.cwd()
+        / "scripts"
+        / "dlls"
+        / "richeditopts"
+        / app.arch
+        / "BkwRicheditOpts.dll"
+    )
 
 
 class WNDProcPanel(WndProcHookMixin, ContentViewCtrlPanel):
@@ -41,8 +50,15 @@ class WNDProcPanel(WndProcHookMixin, ContentViewCtrlPanel):
 
     def init_caret_tracking(self):
         self._dll.Bkw_InitCaretTracking(self.text_ctrl.GetHandle())
-        self.addMsgHandler(win32con.WM_NOTIFY , "WM_NOTIFY", self.onWM_NOTIFY)
-        t = threading.Thread(target=self._tracking_thread, args=(self.text_ctrl, self._event_queue,), daemon=True)
+        self.addMsgHandler(win32con.WM_NOTIFY, "WM_NOTIFY", self.onWM_NOTIFY)
+        t = threading.Thread(
+            target=self._tracking_thread,
+            args=(
+                self.text_ctrl,
+                self._event_queue,
+            ),
+            daemon=True,
+        )
         t.start()
 
     @staticmethod
@@ -58,7 +74,7 @@ class WNDProcPanel(WndProcHookMixin, ContentViewCtrlPanel):
                 time.sleep(1)
                 last_pos = -1
                 continue
-            if (new_pos == last_pos):
+            if new_pos == last_pos:
                 continue
             wx.PostEvent(parent, CaretMoveEvent(id=text_ctrl_id, Position=new_pos))
             last_pos = new_pos
@@ -85,5 +101,5 @@ class ContentViewCtrl(ContentViewCtrlMixin):
             win32con.EVENT_OBJECT_NAMECHANGE,
             self.GetHandle(),
             win32con.OBJID_CLIENT,
-            win32con.CHILDID_SELF
+            win32con.CHILDID_SELF,
         )

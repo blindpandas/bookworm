@@ -8,9 +8,9 @@ from collections.abc import Iterable, Sequence
 from functools import cached_property, lru_cache, wraps
 from pathlib import Path
 
+import pywhatlang
 from more_itertools import flatten
 from selectolax.parser import HTMLParser
-import pywhatlang
 
 from bookworm import typehints as t
 from bookworm.concurrency import QueueProcess, call_threaded
@@ -18,15 +18,13 @@ from bookworm.i18n import LocaleInfo
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
 from bookworm.structured_text import SemanticElementType, Style, TextRange
-from bookworm.utils import (
-    get_url_spans,
-    normalize_line_breaks,
-    remove_excess_blank_lines,
-)
+from bookworm.utils import (get_url_spans, normalize_line_breaks,
+                            remove_excess_blank_lines)
 
 from . import operations as doctools
 from .elements import *
-from .exceptions import DocumentIOError, PaginationError, UnsupportedDocumentFormatError
+from .exceptions import (DocumentIOError, PaginationError,
+                         UnsupportedDocumentFormatError)
 from .features import DocumentCapability, ReadingMode
 
 log = logger.getChild(__name__)
@@ -222,14 +220,14 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         return DocumentCapability.GRAPHICAL_RENDERING in self.capabilities
 
     @staticmethod
-    def get_language(samples, is_html=False, hint_language: str = 'en') -> LocaleInfo:
+    def get_language(samples, is_html=False, hint_language: str = "en") -> LocaleInfo:
         """Return the language of this document.
         By default we use a heuristic based on whatlang.
         """
         if is_html:
             samples = HTMLParser(samples).text()
         try:
-            lang_code, confidence , is_reliable = pywhatlang.detect_lang(samples)
+            lang_code, confidence, is_reliable = pywhatlang.detect_lang(samples)
         except:
             log.error(f"Failed to recognize document language", exc_info=True)
         else:

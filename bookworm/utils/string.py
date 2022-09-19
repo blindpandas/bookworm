@@ -58,7 +58,7 @@ class TextContentDecoder:
 
     def __len__(self) -> int:
         return len(self.content)
-    
+
     @classmethod
     def from_filename(
         cls,

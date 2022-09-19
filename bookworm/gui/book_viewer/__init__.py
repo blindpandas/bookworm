@@ -13,32 +13,22 @@ import wx
 from bookworm import app, config, speech
 from bookworm import typehints as t
 from bookworm.concurrency import CancellationToken, threaded_worker
-from bookworm.document import (
-    ArchiveContainsMultipleDocuments,
-    ArchiveContainsNoDocumentsError,
-    DocumentRestrictedError,
-    DummyDocument,
-)
+from bookworm.document import (ArchiveContainsMultipleDocuments,
+                               ArchiveContainsNoDocumentsError,
+                               DocumentRestrictedError, DummyDocument)
+from bookworm.gui.browseable_message import browseable_message
 from bookworm.gui.components import AsyncSnakDialog, TocTreeManager
 from bookworm.gui.contentview_ctrl import ContentViewCtrl
-from bookworm.gui.browseable_message import browseable_message
 from bookworm.logger import logger
 from bookworm.paths import app_path, fonts_path
-from bookworm.reader import (
-    DecryptionRequired,
-    EBookReader,
-    ReaderError,
-    ResourceDoesNotExist,
-    UnsupportedDocumentError,
-    UriResolver,
-)
+from bookworm.reader import (DecryptionRequired, EBookReader, ReaderError,
+                             ResourceDoesNotExist, UnsupportedDocumentError,
+                             UriResolver)
 from bookworm.resources import app_icons, sounds
-from bookworm.signals import (
-    reader_book_loaded,
-    reader_book_unloaded,
-    reading_position_change,
-)
-from bookworm.structured_text import SEMANTIC_ELEMENT_OUTPUT_OPTIONS, Style, TextRange
+from bookworm.signals import (reader_book_loaded, reader_book_unloaded,
+                              reading_position_change)
+from bookworm.structured_text import (SEMANTIC_ELEMENT_OUTPUT_OPTIONS, Style,
+                                      TextRange)
 from bookworm.utils import gui_thread_safe
 
 from . import recents_manager
@@ -272,12 +262,12 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.Bind(
             self.contentTextCtrl.EVT_CARET,
             self.onCaretMoved,
-            id=self.contentTextCtrl.GetId()
+            id=self.contentTextCtrl.GetId(),
         )
         self.Bind(
             wx.EVT_SLIDER,
             self.onSliderValueChanged,
-            id=self.readingProgressSlider.GetId()
+            id=self.readingProgressSlider.GetId(),
         )
 
         self.toc_tree_manager = TocTreeManager(self.tocTreeCtrl)
@@ -320,11 +310,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         )
         self.contentTextCtrl.SetMargins(self._get_text_view_margins())
         # Translators: label for the reading progress slider
-        readingProgressLabel = wx.StaticText(panel, -1, _("Reading progress percentage"))
+        readingProgressLabel = wx.StaticText(
+            panel, -1, _("Reading progress percentage")
+        )
         self.readingProgressSlider = wx.Slider(
-            panel,
-            -1,
-            style=wx.SL_HORIZONTAL #| wx.SL_LABELS
+            panel, -1, style=wx.SL_HORIZONTAL  # | wx.SL_LABELS
         )
         self.readingProgressSlider.SetTick(5)
 
@@ -575,12 +565,15 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if not self.reader.ready:
             return
         threaded_worker.submit(self._after_caret_moved)
-        if config.conf["general"]["use_continuous_reading"] and event.Position == self.contentTextCtrl.GetLastPosition():
+        if (
+            config.conf["general"]["use_continuous_reading"]
+            and event.Position == self.contentTextCtrl.GetLastPosition()
+        ):
             if (time.monotonic() - self._last_page_turn_time) <= 0.75:
                 return
             self.reader.go_to_next()
             self._last_page_turn_time = time.monotonic()
-    
+
     def _after_caret_moved(self):
         try:
             self.reader.save_current_position()
@@ -730,14 +723,17 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def onSliderValueChanged(self, event):
         target_nav_percentage = event.GetSelection()
         if self.reader.document.is_single_page_document():
-            pos_percentage = math.floor(self.contentTextCtrl.GetLastPosition() * (target_nav_percentage / 100))
-            target_position = self.get_start_of_line(self.get_line_number(pos_percentage))
+            pos_percentage = math.floor(
+                self.contentTextCtrl.GetLastPosition() * (target_nav_percentage / 100)
+            )
+            target_position = self.get_start_of_line(
+                self.get_line_number(pos_percentage)
+            )
             self.set_insertion_point(target_position, set_focus_to_text_ctrl=False)
         else:
             page_count = len(self.reader.document)
             target_page = min(
-                math.floor(page_count * (target_nav_percentage / 100)),
-                page_count - 1
+                math.floor(page_count * (target_nav_percentage / 100)), page_count - 1
             )
             self.reader.go_to_page(target_page, set_focus_to_text_ctrl=False)
             target_position = 0
@@ -748,7 +744,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self,
             position=target_position,
             text_to_announce="",
-            tts_speech_prefix=_("Reading progress: {percentage}").format(percentage=percentage_display)
+            tts_speech_prefix=_("Reading progress: {percentage}").format(
+                percentage=percentage_display
+            ),
         )
 
     def setFrameIcon(self):
@@ -845,11 +843,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         wx.Bell()
 
     def show_html_dialog(self, markup, title):
-        browseable_message(
-            markup,
-            title=title,
-            is_html=True
-        )
+        browseable_message(markup, title=title, is_html=True)
 
     def get_line_number(self, pos=None):
         pos = pos or self.contentTextCtrl.InsertionPoint

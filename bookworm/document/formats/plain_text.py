@@ -8,11 +8,8 @@ from functools import cached_property
 import ftfy
 
 from bookworm.logger import logger
-from bookworm.utils import (
-    TextContentDecoder,
-    normalize_line_breaks,
-    remove_excess_blank_lines,
-)
+from bookworm.utils import (TextContentDecoder, normalize_line_breaks,
+                            remove_excess_blank_lines)
 
 from .. import BookMetadata
 from .. import DocumentCapability as DC
@@ -29,7 +26,7 @@ class PlainTextDocument(SinglePageDocument):
     # Translators: the name of a document file format
     name = _("Plain Text File")
     extensions = ("*.txt",)
-    capabilities = (DC.SINGLE_PAGE | DC.LINKS | DC.STRUCTURED_NAVIGATION)
+    capabilities = DC.SINGLE_PAGE | DC.LINKS | DC.STRUCTURED_NAVIGATION
 
     def read(self):
         self.filename = self.get_file_system_path()
@@ -42,7 +39,7 @@ class PlainTextDocument(SinglePageDocument):
         if self.text is None:
             self.read()
         return len(self.text)
-    
+
     def get_content(self):
         if len(self.text) > MAX_NUM_CHARS:
             return self.text

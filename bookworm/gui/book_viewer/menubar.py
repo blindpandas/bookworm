@@ -22,25 +22,19 @@ from bookworm.document import READING_MODE_LABELS
 from bookworm.document import DocumentCapability as DC
 from bookworm.document import DocumentInfo, PaginationError
 from bookworm.document.uri import DocumentUri
-from bookworm.gui.book_viewer.core_dialogs import (
-    DocumentInfoDialog,
-    ElementListDialog,
-    GoToPageDialog,
-    SearchBookDialog,
-    SearchResultsDialog,
-)
+from bookworm.gui.book_viewer.core_dialogs import (DocumentInfoDialog,
+                                                   ElementListDialog,
+                                                   GoToPageDialog,
+                                                   SearchBookDialog,
+                                                   SearchResultsDialog)
 from bookworm.gui.components import AsyncSnakDialog, RobustProgressDialog
 from bookworm.gui.settings import PreferencesDialog
 from bookworm.i18n import is_rtl
 from bookworm.logger import logger
 from bookworm.reader import EBookReader
 from bookworm.resources import sounds
-from bookworm.signals import (
-    config_updated,
-    reader_book_loaded,
-    reader_book_unloaded,
-    reading_position_change,
-)
+from bookworm.signals import (config_updated, reader_book_loaded,
+                              reader_book_unloaded, reading_position_change)
 from bookworm.utils import gui_thread_safe, restart_application
 
 from . import recents_manager
@@ -617,17 +611,21 @@ class SearchMenu(BaseMenu):
 
     def onGoToLine(self, event):
         textCtrl = self.view.contentTextCtrl
-        if (idx_last_line := self.view.get_line_number(textCtrl.GetLastPosition())) == 0:
+        if (
+            idx_last_line := self.view.get_line_number(textCtrl.GetLastPosition())
+        ) == 0:
             return wx.Bell()
         last_line = idx_last_line + 1
         current_line = self.view.get_line_number(self.view.get_insertion_point()) + 1
         target_line = wx.GetNumberFromUser(
-            _("You are here: {current_line}\nYou can't go further than: {last_line}").format(current_line=current_line, last_line=last_line),
+            _(
+                "You are here: {current_line}\nYou can't go further than: {last_line}"
+            ).format(current_line=current_line, last_line=last_line),
             _("Line number"),
             _("Jump to line"),
             value=current_line,
             min=1,
-            max=last_line
+            max=last_line,
         )
         if target_line == wx.NOT_FOUND:
             return
@@ -889,7 +887,7 @@ class MenubarProvider:
         self.Bind(
             wx.EVT_MENU,
             lambda e: self.tocTreeCtrl.SetFocus(),
-            id=FOCUS_TABLE_OF_CONTENTS
+            id=FOCUS_TABLE_OF_CONTENTS,
         )
 
     def doAddMenus(self):

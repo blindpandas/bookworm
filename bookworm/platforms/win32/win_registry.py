@@ -7,8 +7,8 @@ import winreg
 from dataclasses import dataclass
 from enum import Enum
 from functools import cached_property
-from bookworm import typehints as t
 
+from bookworm import typehints as t
 
 
 class RegValueType(Enum):
@@ -66,7 +66,9 @@ class RegKey:
             if self.ensure_created:
                 self.create()
             else:
-                raise FileNotFoundError(f"Registry key not found: root={self.root}, path={self.path}")
+                raise FileNotFoundError(
+                    f"Registry key not found: root={self.root}, path={self.path}"
+                )
         self.create()
 
     def __del__(self):
@@ -108,14 +110,22 @@ class RegKey:
         return winreg.QueryValueEx(self.key, valuename)[0]
 
     def set_value(self, valuename, valuedata, valuetype=RegValueType.STRING):
-        winreg.SetValueEx(self.key, valuename, 0, RegValueType(valuetype)._as_winreg_regtype(), valuedata)
+        winreg.SetValueEx(
+            self.key,
+            valuename,
+            0,
+            RegValueType(valuetype)._as_winreg_regtype(),
+            valuedata,
+        )
 
     def delete_value(self, valuename):
         winreg.DeleteValue(self.key, valuename)
 
     def is_subkey(self, other):
-        return os.path.join(str(other.root), other.path).strip("\\").startswith(
-            os.path.join(str(self.root), self.path).strip("\\")
+        return (
+            os.path.join(str(other.root), other.path)
+            .strip("\\")
+            .startswith(os.path.join(str(self.root), self.path).strip("\\"))
         )
 
     def delete_subkey(self, subkey):
@@ -148,9 +158,7 @@ class RegKey:
         while True:
             try:
                 yield RegKey(
-                    root=self,
-                    path=winreg.EnumKey(self.key, index),
-                    writable=writable
+                    root=self, path=winreg.EnumKey(self.key, index), writable=writable
                 )
             except OSError:
                 break

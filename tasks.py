@@ -416,10 +416,19 @@ def copy_deps(c):
     for file in source_path.iterdir():
         shutil.copy(file, unrar_dst)
     print("Done copying unrar DLLs")
-    richeditopts_dll_src = PROJECT_ROOT / "scripts" / "dlls" / "richeditopts" / os.environ["IAPP_ARCH"] / "BkwRicheditOpts.dll"
-    richeditopts_dll_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "BkwRicheditOpts.dll"
+    richeditopts_dll_src = (
+        PROJECT_ROOT
+        / "scripts"
+        / "dlls"
+        / "richeditopts"
+        / os.environ["IAPP_ARCH"]
+        / "BkwRicheditOpts.dll"
+    )
+    richeditopts_dll_dst = (
+        Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "BkwRicheditOpts.dll"
+    )
     if not richeditopts_dll_src.exists():
-        if shutil.which('cargo') is None:
+        if shutil.which("cargo") is None:
             raise RuntimeError(
                 "The `BkwRicheditOpts.dll` was not found, and you do not have rust toolchain installed. "
                 "Please install rust or otherwise provide pre-built DLLs in the designated path."
@@ -431,19 +440,20 @@ def copy_deps(c):
 
 def _build_BkwRicheditOpts_dll(c):
     richeditopts_dll_src = PROJECT_ROOT / "scripts" / "dlls" / "richeditopts"
-    targets = {
-        "x86": "i686-pc-windows-msvc",
-        "x64": "x86_64-pc-windows-msvc"
-    }
+    targets = {"x86": "i686-pc-windows-msvc", "x64": "x86_64-pc-windows-msvc"}
     richeditopts_code_src = PROJECT_ROOT / "includes" / "bkw_rich_edit_opts"
     for arch, target in targets.items():
         with c.cd(str(richeditopts_code_src)):
             c.run(f"cargo build --release --target={target}")
-            arch_richeditopts_src = richeditopts_dll_src / arch 
+            arch_richeditopts_src = richeditopts_dll_src / arch
             arch_richeditopts_src.mkdir(parents=True, exist_ok=True)
             shutil.copy(
-                richeditopts_code_src / "target" / target / "release" / "BkwRicheditOpts.dll",
-                arch_richeditopts_src / "BkwRicheditOpts.dll"
+                richeditopts_code_src
+                / "target"
+                / target
+                / "release"
+                / "BkwRicheditOpts.dll",
+                arch_richeditopts_src / "BkwRicheditOpts.dll",
             )
             print("Done copying `BkwRicheditOpts.dll`")
 

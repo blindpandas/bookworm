@@ -4,18 +4,16 @@
 from __future__ import annotations
 
 from bookworm import config
-from bookworm.commandline_handler import BaseSubcommandHandler, register_subcommand
+from bookworm.commandline_handler import (BaseSubcommandHandler,
+                                          register_subcommand)
 from bookworm.concurrency import threaded_worker
 from bookworm.logger import logger
 from bookworm.service import BookwormService
 from bookworm.signals import reader_book_loaded
 
 from .local_bookshelf.tasks import issue_add_document_request
-from .viewer_integration import (
-    BookshelfMenu,
-    BookshelfSettingsPanel,
-    StatefulBookshelfMenuIds,
-)
+from .viewer_integration import (BookshelfMenu, BookshelfSettingsPanel,
+                                 StatefulBookshelfMenuIds)
 from .window import run_bookshelf_standalone
 
 log = logger.getChild(__name__)

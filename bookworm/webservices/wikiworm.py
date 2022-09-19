@@ -2,7 +2,7 @@
 
 import threading
 import webbrowser
-from functools import partial, lru_cache
+from functools import lru_cache, partial
 
 import wx
 import wx.lib.sized_controls as sc
@@ -11,10 +11,10 @@ from mediawiki import MediaWiki
 from mediawiki.exceptions import DisambiguationError, PageError
 
 from bookworm import app
-from bookworm.paths import resources_path
-from bookworm.i18n import LocaleInfo
 from bookworm.gui.components import AsyncSnakDialog, SimpleDialog
+from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
+from bookworm.paths import resources_path
 from bookworm.resources import sounds
 from bookworm.service import BookwormService
 
@@ -95,7 +95,10 @@ class WikipediaService(BookwormService):
     def init_wikipedia_search(self, term, language, sure_exists=False):
         AsyncSnakDialog(
             task=partial(
-                self.define_term_using_wikipedia, term, language, sure_exists=sure_exists
+                self.define_term_using_wikipedia,
+                term,
+                language,
+                sure_exists=sure_exists,
             ),
             done_callback=self.view_wikipedia_definition,
             dismiss_callback=lambda: self._cancel_query.set() or True,
@@ -103,21 +106,20 @@ class WikipediaService(BookwormService):
             parent=self.view,
         )
 
-    def define_term_using_wikipedia(self, term: str, language, sure_exists=False) -> str:
+    def define_term_using_wikipedia(
+        self, term: str, language, sure_exists=False
+    ) -> str:
         wiki = MediaWiki(lang=language)
         try:
             page = wiki.page(title=term, auto_suggest=True, preload=True)
         except DisambiguationError as e:
             raise MultipleMatches(e.options, language)
         except PageError:
-            search_results = [
-                title
-                for (title, __, ___) in wiki.opensearch(term)
-            ]
+            search_results = [title for (title, __, ___) in wiki.opensearch(term)]
             if search_results:
                 raise MultipleMatches(search_results, language)
             else:
-                 raise NoMatches(f"No results for the term `{term}`")
+                raise NoMatches(f"No results for the term `{term}`")
         else:
             return page.title, page.summary, page.url
 
@@ -137,7 +139,9 @@ class WikipediaService(BookwormService):
                 icon=wx.ICON_WARNING,
             )
         except NoMatches:
-            log.exception("Failed to find a page for the given term in Wikipedia", exc_info=True)
+            log.exception(
+                "Failed to find a page for the given term in Wikipedia", exc_info=True
+            )
             self.view.notify_user(
                 # Translators: title of a message box
                 _("Page not found"),
@@ -155,7 +159,9 @@ class WikipediaService(BookwormService):
             )
             if dlg.ShowModal() == wx.ID_OK:
                 term = dlg.GetStringSelection()
-                return self.init_wikipedia_search(term, language=e.language, sure_exists=True)
+                return self.init_wikipedia_search(
+                    term, language=e.language, sure_exists=True
+                )
             else:
                 return
         except:
@@ -217,17 +223,16 @@ class ViewWikipediaDefinition(SimpleDialog):
         )
 
 
-
 class SearchWikipediaDialog(SimpleDialog):
-
     def __init__(self, term="", chosen_language=None):
         self.term = term
         self.chosen_language = chosen_language
-        self.supported_languages = bidict({
-            lang: LocaleInfo(lang).description
-            for lang in get_wikipedia_languages()
-        })
-        self.supported_languages_display = list(sorted(self.supported_languages.values()))
+        self.supported_languages = bidict(
+            {lang: LocaleInfo(lang).description for lang in get_wikipedia_languages()}
+        )
+        self.supported_languages_display = list(
+            sorted(self.supported_languages.values())
+        )
         super().__init__(
             # Translators: the title of a dialog to search for a term in Wikipedia
             title=_("Wikipedia Quick Search"),
@@ -241,17 +246,25 @@ class SearchWikipediaDialog(SimpleDialog):
         self.termEntry.SetSizerProps(expand=True)
         if self.term:
             self.termEntry.SetValue(self.term)
-        # Translators: label of a combobox  that shows a list of languages to search in Wikipedia 
+        # Translators: label of a combobox  that shows a list of languages to search in Wikipedia
         wx.StaticText(parent, -1, _("Choose Wikipedia language"))
-        self.languageChoice = wx.Choice(parent, choices=self.supported_languages_display)
+        self.languageChoice = wx.Choice(
+            parent, choices=self.supported_languages_display
+        )
         if self.chosen_language is not None:
-            self.languageChoice.SetStringSelection(self.chosen_language.parent.description)
-        if  self.languageChoice.GetSelection() == wx.NOT_FOUND:
+            self.languageChoice.SetStringSelection(
+                self.chosen_language.parent.description
+            )
+        if self.languageChoice.GetSelection() == wx.NOT_FOUND:
             self.languageChoice.SetStringSelection(LocaleInfo("en").description)
 
     def ShowModal(self):
-        if super().ShowModal() == wx.ID_OK and (termValue := self.termEntry.GetValue().strip()):
+        if super().ShowModal() == wx.ID_OK and (
+            termValue := self.termEntry.GetValue().strip()
+        ):
             return (
                 termValue,
-                self.supported_languages.inverse[self.languageChoice.GetStringSelection()]
+                self.supported_languages.inverse[
+                    self.languageChoice.GetStringSelection()
+                ],
             )

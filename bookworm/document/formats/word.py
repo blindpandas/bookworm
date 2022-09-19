@@ -137,7 +137,6 @@ class Word97Document(DummyDocument):
     extensions = ("*.doc",)
     capabilities = DC.ASYNC_READ
 
-
     @classmethod
     def check(cls):
         return DocbookDocument.check()
@@ -165,10 +164,7 @@ class Word97Document(DummyDocument):
     def convert_to_docbook(cls, filename):
         with tempfile.TemporaryDirectory() as tempdir:
             document_copy = os.path.join(tempdir, "document.doc")
-            shutil.copy(
-                filename,
-                document_copy
-            )
+            shutil.copy(filename, document_copy)
             args = [cls.get_antiword_executable_path(), "-x", "db", document_copy]
             creationflags = subprocess.CREATE_NO_WINDOW
             startupinfo = subprocess.STARTUPINFO()

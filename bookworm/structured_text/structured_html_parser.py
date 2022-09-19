@@ -143,7 +143,7 @@ class StructuredHtmlParser(Inscriptis):
             element_range = (start_index, end_index)
             self.anchors[anch] = element_range
             self.html_id_ranges[anch] = element_range
-        if tree.tag == 'table':
+        if tree.tag == "table":
             self._table_elements.append(tree)
 
     @classmethod
@@ -181,6 +181,12 @@ class StructuredHtmlParser(Inscriptis):
         return self.link_range_to_target
 
     def get_table_markup(self, table_index):
-        parsed = HTMLParser(html_parser.tostring(self._table_elements[table_index], encoding='unicode'))
-        parsed.unwrap_tags(['a',])
+        parsed = HTMLParser(
+            html_parser.tostring(self._table_elements[table_index], encoding="unicode")
+        )
+        parsed.unwrap_tags(
+            [
+                "a",
+            ]
+        )
         return parsed.html

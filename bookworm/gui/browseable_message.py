@@ -6,14 +6,13 @@
 # For more details see: https://www.gnu.org/licenses/gpl-2.0.html
 
 import os
-import wx
-from ctypes import windll, byref, POINTER, addressof, c_size_t
-from comtypes import IUnknown
-from comtypes import automation
+from ctypes import POINTER, addressof, byref, c_size_t, windll
 from html import escape
+
+import wx
+from comtypes import IUnknown, automation
+
 from bookworm.paths import resources_path
-
-
 
 # From urlmon.h
 URL_MK_UNIFORM = 1

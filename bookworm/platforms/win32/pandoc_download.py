@@ -8,12 +8,10 @@ from zipfile import ZipFile
 import requests
 import wx
 
-from bookworm import app
+from bookworm import app, pandoc
 from bookworm import typehints as t
-from bookworm import pandoc
 from bookworm.http_tools import HttpResource, RemoteJsonResource
 from bookworm.logger import logger
-
 
 log = logger.getChild(__name__)
 
@@ -60,9 +58,7 @@ def download_pandoc(progress_dlg):
             icon=wx.ICON_ERROR,
         )
     except:
-        log.exception(
-            "An error occurred while adding Pandoc", exc_info=True
-        )
+        log.exception("An error occurred while adding Pandoc", exc_info=True)
         wx.GetApp().mainFrame.notify_user(
             _("Error"),
             _("Could not add Pandoc.\nPlease try again."),

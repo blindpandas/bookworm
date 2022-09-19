@@ -1,20 +1,17 @@
 # coding: utf-8
 
 
+import ctypes
+import logging
+import sys
+from ctypes.wintypes import BOOL, DWORD, LPCVOID, LPCWSTR, LPWSTR
+
 import clr
 from System.Globalization import CultureInfo, CultureNotFoundException
-
-
-
-import sys
-import ctypes
-from ctypes.wintypes import BOOL, DWORD, LPCVOID, LPWSTR, LPCWSTR
-import logging
 
 from bookworm import app
 from bookworm import typehints as t
 from bookworm.i18n.localeinfo import LocaleInfo
-
 
 # https://msdn.microsoft.com/en-us/library/windows/desktop/dd318124%28v=vs.85%29.aspx
 MUI_LANGUAGE_ID = 4
@@ -99,10 +96,9 @@ def set_app_locale(localeinfo):
     buf = ctypes.create_unicode_buffer("ar-SD", size=len(ulangs) + 2)
     num_langs = ctypes.c_ulong(len(langs))
     if not SetThreadPreferredUILanguages(
-        MUI_LANGUAGE_NAME,
-        ctypes.byref(buf),
-        ctypes.byref(num_langs)
+        MUI_LANGUAGE_NAME, ctypes.byref(buf), ctypes.byref(num_langs)
     ):
         import logging
+
         logger = logging.getLogger(__name__)
         logger.warning(f"Could not set default thread locale to {ietf_tag}")

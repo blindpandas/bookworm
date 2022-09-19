@@ -9,19 +9,14 @@ from enum import Enum, auto
 from bookworm import app
 from bookworm.platforms import PLATFORM
 
-
 if PLATFORM == "win32":
-    from bookworm.platforms.win32.runtime import (
-        is_high_contrast_active,
-        is_running_portable,
-        system_start_app,
-    )
+    from bookworm.platforms.win32.runtime import (is_high_contrast_active,
+                                                  is_running_portable,
+                                                  system_start_app)
 elif PLATFORM == "linux":
-    from bookworm.platforms.linux.runtime import (
-        is_high_contrast_active,
-        is_running_portable,
-        system_start_app,
-    )
+    from bookworm.platforms.linux.runtime import (is_high_contrast_active,
+                                                  is_running_portable,
+                                                  system_start_app)
 
 IS_RUNNING_PORTABLE = is_running_portable()
 
@@ -71,6 +66,3 @@ else:
 
         def play(self):
             self.sound.Play(SOUND_ASYNC)
-
-
-

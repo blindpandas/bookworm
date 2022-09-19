@@ -175,7 +175,7 @@ class PageRangeControl(sc.SizedPanel):
         if self.is_single_page_document and not DC.TOC_TREE in self.doc.capabilities:
             if self.doc.format == "txt":
                 return TextRange(0, len(self.doc))
-            return None                
+            return None
         if selected_item := self.sectionChoice.GetSelection():
             section = self.sectionChoice.GetClientData(selected_item)
             start_pos, stop_pos = section.text_range

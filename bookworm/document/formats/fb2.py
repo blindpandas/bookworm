@@ -1,7 +1,9 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 from functools import cache
+
 from bookworm import pandoc
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
@@ -11,7 +13,6 @@ from .. import DocumentCapability as DC
 from .. import DocumentEncryptedError, DocumentError, DummyDocument
 from .fitz import FitzDocument
 from .pandoc import BasePandocDocument
-
 
 log = logger.getChild(__name__)
 

@@ -7,10 +7,10 @@ from pydantic import BaseModel, HttpUrl, validator
 
 from bookworm import app, config
 from bookworm import typehints as t
+from bookworm import updater
 from bookworm.concurrency import call_threaded
 from bookworm.http_tools import RemoteJsonResource
 from bookworm.logger import logger
-from bookworm import updater
 from bookworm.service import BookwormService
 
 log = logger.getChild(__name__)

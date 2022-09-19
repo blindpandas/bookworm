@@ -3,7 +3,8 @@
 import wx
 
 from bookworm.logger import logger
-from bookworm.signals import app_shuttingdown, reader_book_loaded, reader_book_unloaded
+from bookworm.signals import (app_shuttingdown, reader_book_loaded,
+                              reader_book_unloaded)
 from bookworm.utils import gui_thread_safe
 
 from .menu_constants import BookRelatedMenuIds

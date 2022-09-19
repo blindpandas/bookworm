@@ -1,9 +1,12 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 from functools import cache
+
 from bookworm import pandoc
 from bookworm.logger import logger
+
 from .html import BaseHtmlDocument
 
 log = logger.getChild(__name__)
@@ -24,9 +27,8 @@ class BasePandocDocument(BaseHtmlDocument):
         return pandoc.convert(
             from_format=self.format,
             to_format="html",
-            input_file=self.get_file_system_path()
+            input_file=self.get_file_system_path(),
         ).decode("utf-8")
-
 
 
 class RtfDocument(BasePandocDocument):
@@ -80,4 +82,4 @@ class ManPageDocument(BasePandocDocument):
     format = "man"
     # Translators: the name of a document file format
     name = _("Unix manual page")
-    extensions = list(f"*.{i}" for i in range (1, 9))
+    extensions = list(f"*.{i}" for i in range(1, 9))

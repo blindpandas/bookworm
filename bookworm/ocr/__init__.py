@@ -12,13 +12,8 @@ from bookworm.resources import sounds
 from bookworm.service import BookwormService
 
 from .ocr_dialogs import OcrPanel
-from .ocr_menu import (
-    OCR_KEYBOARD_SHORTCUTS,
-    OCRMenu,
-    OCRMenuIds,
-    ocr_ended,
-    ocr_started,
-)
+from .ocr_menu import (OCR_KEYBOARD_SHORTCUTS, OCRMenu, OCRMenuIds, ocr_ended,
+                       ocr_started)
 
 log = logger.getChild(__name__)
 OCR_ENGINES = GENERIC_OCR_ENGINES + PLATFORM_SPECIFIC_OCR_ENGINES

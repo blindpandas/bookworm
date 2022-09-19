@@ -19,13 +19,8 @@ from bookworm.utils import recursively_iterdir
 
 from .. import BaseDocument, BasePage, BookMetadata, ChangeDocument
 from .. import DocumentCapability as DC
-from .. import (
-    DocumentEncryptedError,
-    DocumentError,
-    DocumentRestrictedError,
-    Pager,
-    Section,
-)
+from .. import (DocumentEncryptedError, DocumentError, DocumentRestrictedError,
+                Pager, Section)
 
 log = logger.getChild(__name__)
 fitz.Tools().mupdf_display_errors(False)

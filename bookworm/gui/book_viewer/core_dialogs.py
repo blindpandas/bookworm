@@ -12,27 +12,18 @@ import wx.lib.sized_controls as sc
 
 from bookworm import config
 from bookworm.document.operations import SearchRequest
-from bookworm.gui.components import (
-    ColumnDefn,
-    Dialog,
-    DialogListCtrl,
-    EnhancedSpinCtrl,
-    EnumRadioBox,
-    ImageViewControl,
-    ImmutableObjectListView,
-    PageRangeControl,
-    SimpleDialog,
-    make_sized_static_box,
-)
+from bookworm.gui.components import (ColumnDefn, Dialog, DialogListCtrl,
+                                     EnhancedSpinCtrl, EnumRadioBox,
+                                     ImageViewControl, ImmutableObjectListView,
+                                     PageRangeControl, SimpleDialog,
+                                     make_sized_static_box)
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
 from bookworm.paths import images_path
 from bookworm.reader import EBookReader
-from bookworm.structured_text import (
-    HEADING_LEVELS,
-    SEMANTIC_ELEMENT_OUTPUT_OPTIONS,
-    SemanticElementType,
-)
+from bookworm.structured_text import (HEADING_LEVELS,
+                                      SEMANTIC_ELEMENT_OUTPUT_OPTIONS,
+                                      SemanticElementType)
 from bookworm.utils import gui_thread_safe
 
 from .navigation import NavigationProvider

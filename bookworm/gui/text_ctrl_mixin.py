@@ -7,9 +7,7 @@ import bookworm.typehints as t
 from bookworm.logger import logger
 from bookworm.structured_text import SemanticElementType
 
-
 log = logger.getChild(__name__)
-
 
 
 NAV_FOREWORD_KEYS = {
@@ -42,7 +40,6 @@ SEMANTIC_KEY_MAP = {ord(k): v for k, v in SEMANTIC_MAP.items()}
 
 
 class ContentViewCtrlPanel(wx.Panel):
-
     def __init__(self, text_ctrl, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text_ctrl = text_ctrl
@@ -55,16 +52,11 @@ class ContentViewCtrlMixin(wx.TextCtrl):
     """
 
     ContainingPanel = ContentViewCtrlPanel
-    CaretMoveEvent, EVT_CARET= wx.lib.newevent.NewCommandEvent()
+    CaretMoveEvent, EVT_CARET = wx.lib.newevent.NewCommandEvent()
     ContextMenuEvent, EVT_CONTEXTMENU_REQUESTED = wx.lib.newevent.NewCommandEvent()
     ContentNavigationEvent, EVT_CONTENT_NAVIGATION = wx.lib.newevent.NewEvent()
     StructuredNavigationEvent, EVT_STRUCTURED_NAVIGATION = wx.lib.newevent.NewEvent()
-    TEXTCTRL_STYLE = (
-        wx.TE_READONLY
-        | wx.TE_MULTILINE
-        | wx.TE_RICH2
-        | wx.TE_NOHIDESEL
-    )
+    TEXTCTRL_STYLE = wx.TE_READONLY | wx.TE_MULTILINE | wx.TE_RICH2 | wx.TE_NOHIDESEL
 
     def __init__(self, parent, *args, label="", **kwargs):
         self.panel = self.ContainingPanel(self, parent, size=parent.GetSize())
@@ -82,7 +74,7 @@ class ContentViewCtrlMixin(wx.TextCtrl):
         sizer.Add(vsizer, 1, wx.EXPAND | wx.ALL)
         self.panel.SetSizer(sizer)
         sizer.Fit(self.panel)
-        
+
     def SetControlLabel(self, label_text: str) -> None:
         self.controlLabel.SetLabel(label_text)
 
@@ -111,7 +103,9 @@ class ContentViewCtrlMixin(wx.TextCtrl):
             and event.GetKeyCode() in NAVIGATION_KEYS
         ):
             if evtType == wx.EVT_CHAR_HOOK.typeId:
-                wx.QueueEvent(self, self.ContentNavigationEvent(KeyCode=event.GetKeyCode()))
+                wx.QueueEvent(
+                    self, self.ContentNavigationEvent(KeyCode=event.GetKeyCode())
+                )
             return True
         elif (
             evtType == wx.EVT_CHAR_HOOK.typeId

@@ -4,38 +4,26 @@ import os
 import string
 from contextlib import suppress
 from pathlib import Path
+
 from selectolax.parser import HTMLParser
 
 from bookworm import app, config
 from bookworm import typehints as t
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.database import DocumentPositionInfo
-from bookworm.document import (
-    ArchiveContainsMultipleDocuments,
-    ArchiveContainsNoDocumentsError,
-    BaseDocument,
-    BasePage,
-    ChangeDocument,
-)
+from bookworm.document import (ArchiveContainsMultipleDocuments,
+                               ArchiveContainsNoDocumentsError, BaseDocument,
+                               BasePage, ChangeDocument)
 from bookworm.document import DocumentCapability as DC
-from bookworm.document import (
-    DocumentEncryptedError,
-    DocumentError,
-    DocumentIOError,
-    PaginationError,
-    Section,
-)
+from bookworm.document import (DocumentEncryptedError, DocumentError,
+                               DocumentIOError, PaginationError, Section)
 from bookworm.document.formats import *
 from bookworm.document.uri import DocumentUri
 from bookworm.i18n import is_rtl
 from bookworm.logger import logger
-from bookworm.signals import (
-    reader_book_loaded,
-    reader_book_unloaded,
-    reader_page_changed,
-    reader_section_changed,
-    reading_position_change,
-)
+from bookworm.signals import (reader_book_loaded, reader_book_unloaded,
+                              reader_page_changed, reader_section_changed,
+                              reading_position_change)
 from bookworm.structured_text import SemanticElementType, TextStructureMetadata
 
 log = logger.getChild(__name__)
@@ -97,7 +85,9 @@ class UriResolver:
         except:
             if (fallback_uri := self.uri.fallback_uri) is not None:
                 if self.num_fallbacks < 4:
-                    return UriResolver(uri=fallback_uri, num_fallbacks=self.num_fallbacks + 1).read_document()
+                    return UriResolver(
+                        uri=fallback_uri, num_fallbacks=self.num_fallbacks + 1
+                    ).read_document()
             raise
 
     def _do_read_document(self):
@@ -259,7 +249,9 @@ class EBookReader:
         """Return the current page."""
         return self.document.get_page(self.current_page)
 
-    def go_to_page(self, page_number: int, pos: int = 0, set_focus_to_text_ctrl: bool=True) -> bool:
+    def go_to_page(
+        self, page_number: int, pos: int = 0, set_focus_to_text_ctrl: bool = True
+    ) -> bool:
         self.current_page = page_number
         self.view.set_insertion_point(pos, set_focus_to_text_ctrl)
 
@@ -372,9 +364,11 @@ class EBookReader:
             if position in link_range:
                 self.navigate_to_link_by_range(link_range)
         try:
-            for (idx, tbl_range) in enumerate(self.iter_semantic_ranges_for_elements_of_type(
-                SemanticElementType.TABLE
-            )):
+            for (idx, tbl_range) in enumerate(
+                self.iter_semantic_ranges_for_elements_of_type(
+                    SemanticElementType.TABLE
+                )
+            ):
                 if position in range(*tbl_range):
                     table_markup = self.get_current_page_object().get_table_markup(idx)
                     self._show_table(table_markup)
@@ -448,6 +442,8 @@ class EBookReader:
         # Translators: title of a message dialog that shows a table as html document
         title = _("Table View")
         if (table_caption := HTMLParser(table_markup).css_first("caption")) is not None:
-            caption_text = table_caption.text().strip(string.whitespace).replace("\n", " ")
+            caption_text = (
+                table_caption.text().strip(string.whitespace).replace("\n", " ")
+            )
             title = f"{caption_text} · {title}"
         self.view.show_html_dialog(table_markup, title=title)

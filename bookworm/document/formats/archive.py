@@ -15,11 +15,8 @@ from bookworm.logger import logger
 from bookworm.paths import app_path
 from bookworm.runtime import CURRENT_PACKAGING_MODE, PackagingMode
 
-from .. import (
-    ArchiveContainsMultipleDocuments,
-    ArchiveContainsNoDocumentsError,
-    ChangeDocument,
-)
+from .. import (ArchiveContainsMultipleDocuments,
+                ArchiveContainsNoDocumentsError, ChangeDocument)
 from .. import DocumentCapability as DC
 from .. import DocumentEncryptedError, DocumentIOError, DummyDocument
 from ..uri import DocumentUri

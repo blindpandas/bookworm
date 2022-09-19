@@ -10,12 +10,11 @@ import System
 from bookworm import app
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
-from bookworm.platforms.win32.runtime import (
-    UWP_SERVICES_AVAILABEL,
-    reference_gac_assembly,
-)
+from bookworm.platforms.win32.runtime import (UWP_SERVICES_AVAILABEL,
+                                              reference_gac_assembly)
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
-from bookworm.speechdriver.enumerations import EngineEvent, RateSpec, SynthState
+from bookworm.speechdriver.enumerations import (EngineEvent, RateSpec,
+                                                SynthState)
 
 log = logger.getChild(__name__)
 

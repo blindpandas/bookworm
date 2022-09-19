@@ -12,7 +12,7 @@ from bookworm.shellinfo import get_ext_info
 from bookworm.utils import ignore
 
 from . import shellapi
-from .win_registry import RegValueType, RegKey
+from .win_registry import RegKey, RegValueType
 
 log = logger.getChild(__name__)
 
@@ -24,7 +24,6 @@ def add_shell_command(key, executable):
     key.create_subkey(r"shell\Open\Command").set_value(
         "", f'"{executable}" "launcher" "%1"'
     )
-
 
 
 def shell_notify_association_changed():
@@ -76,8 +75,6 @@ def remove_association(ext, prog_id):
         log.warning(f"Faild to remove the default ext key for ext {ext}")
 
 
-
-
 @ignore(Exception)
 def shell_integrate(supported="*"):
     if not app.is_frozen:
@@ -100,7 +97,7 @@ def shell_disintegrate(supported="*"):
     log.info(f"Unregistering file associations for extensions {supported}.")
     exe = os.path.split(EXECUTABLE)[-1]
     try:
-        exekey = RegKey.LocalSoftware(fr"Applications\{exe}", writable=True)
+        exekey = RegKey.LocalSoftware(rf"Applications\{exe}", writable=True)
     except OSError:
         log.warning(f"Could not open Applications key")
     else:

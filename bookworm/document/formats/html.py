@@ -16,32 +16,17 @@ from yarl import URL
 
 from bookworm.http_tools import HttpResource
 from bookworm.logger import logger
-from bookworm.structured_text import (
-    HEADING_LEVELS,
-    SemanticElementType,
-    Style,
-    TextRange,
-)
-from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.utils import (
-    NEWLINE,
-    TextContentDecoder,
-    escape_html,
-    is_external_url,
-    remove_excess_blank_lines,
-)
+from bookworm.structured_text import (HEADING_LEVELS, SemanticElementType,
+                                      Style, TextRange)
+from bookworm.structured_text.structured_html_parser import \
+    StructuredHtmlParser
+from bookworm.utils import (NEWLINE, TextContentDecoder, escape_html,
+                            is_external_url, remove_excess_blank_lines)
 
 from .. import SINGLE_PAGE_DOCUMENT_PAGER, BookMetadata, ChangeDocument
 from .. import DocumentCapability as DC
-from .. import (
-    DocumentError,
-    DocumentIOError,
-    LinkTarget,
-    ReadingMode,
-    Section,
-    SinglePageDocument,
-    TreeStackBuilder,
-)
+from .. import (DocumentError, DocumentIOError, LinkTarget, ReadingMode,
+                Section, SinglePageDocument, TreeStackBuilder)
 
 log = logger.getChild(__name__)
 # Default cache timeout

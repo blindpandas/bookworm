@@ -9,30 +9,25 @@ import wx
 import wx.lib.sized_controls as sc
 from wx.adv import CommandLinkButton
 
-from bookworm import app, config
+from bookworm import app, config, pandoc, runtime
+from bookworm.concurrency import threaded_worker
 from bookworm.i18n import get_available_locales, set_locale
 from bookworm.logger import logger
 from bookworm.paths import app_path
-from bookworm.shellinfo import get_ext_info
-from bookworm.shell import (
-    shell_disintegrate,
-    shell_integrate,
-)
+from bookworm.platforms import PLATFORM
 from bookworm.resources import app_icons
-from bookworm import runtime 
+from bookworm.shell import shell_disintegrate, shell_integrate
+from bookworm.shellinfo import get_ext_info
 from bookworm.signals import app_started, config_updated
 from bookworm.utils import restart_application
-from bookworm.concurrency import threaded_worker
-from bookworm import pandoc
-from bookworm.platforms import PLATFORM
 
-
-from .components import EnhancedSpinCtrl, SimpleDialog, RobustProgressDialog, AsyncSnakDialog
+from .components import (AsyncSnakDialog, EnhancedSpinCtrl,
+                         RobustProgressDialog, SimpleDialog)
 
 log = logger.getChild(__name__)
 
 
-if PLATFORM == 'win32':
+if PLATFORM == "win32":
     from bookworm.platforms.win32 import pandoc_download
 
 
@@ -286,7 +281,9 @@ class GeneralPanel(SettingsPanel):
             miscBox,
             -1,
             # Translators: the label of a checkbox to enable continuous reading
-            _("Try to support the screen reader's continuous reading mode by automatically turning pages (may not work in some cases)"),
+            _(
+                "Try to support the screen reader's continuous reading mode by automatically turning pages (may not work in some cases)"
+            ),
             name="general.use_continuous_reading",
         )
         wx.CheckBox(
@@ -449,7 +446,9 @@ class AdvancedSettingsPanel(SettingsPanel):
                 # Translators: label of a button
                 _("Download Pandoc: The universal document converter"),
                 # Translators: description of a button
-                _("Add support for additional document formats including RTF and Word 2003 documents."),
+                _(
+                    "Add support for additional document formats including RTF and Word 2003 documents."
+                ),
             )
             self.Bind(wx.EVT_BUTTON, self.onDownloadPandoc, getPandocBtn)
         else:
@@ -459,7 +458,9 @@ class AdvancedSettingsPanel(SettingsPanel):
                 # Translators: label of a button
                 _("Update Pandoc (the universal document converter)"),
                 # Translators: description of a button
-                _("Update Pandoc to the latest version to improve performance and conversion quality."),
+                _(
+                    "Update Pandoc to the latest version to improve performance and conversion quality."
+                ),
             )
             self.Bind(wx.EVT_BUTTON, self.onUpdatePandoc, updatePandocBtn)
         # Translators: the title of a group of controls in the
@@ -499,13 +500,18 @@ class AdvancedSettingsPanel(SettingsPanel):
         )
 
     def onResetSettings(self, event):
-        if wx.MessageBox(
-            # Translators: content of a message box
-            _("You will lose  all of your custom settings.\nAre you sure you want to restore all settings to their default values?"),
-            # Translators: title of a message box
-            _("Reset Settings?"),
-            style=wx.YES_NO | wx.ICON_WARNING
-        ) == wx.YES:
+        if (
+            wx.MessageBox(
+                # Translators: content of a message box
+                _(
+                    "You will lose  all of your custom settings.\nAre you sure you want to restore all settings to their default values?"
+                ),
+                # Translators: title of a message box
+                _("Reset Settings?"),
+                style=wx.YES_NO | wx.ICON_WARNING,
+            )
+            == wx.YES
+        ):
             config.conf.config.restore_defaults()
             wx.GetTopLevelParent(self).Close()
 
@@ -516,9 +522,7 @@ class AdvancedSettingsPanel(SettingsPanel):
                 # Translators: title of a message box
                 _("Restart Required"),
                 # Translators: content of a message box
-                _(
-                    "Bookworm will now restart to complete the installation of Pandoc."
-                ),
+                _("Bookworm will now restart to complete the installation of Pandoc."),
             )
             wx.CallAfter(restart_application)
 
@@ -552,12 +556,12 @@ class AdvancedSettingsPanel(SettingsPanel):
                     style=wx.ICON_INFORMATION,
                 )
         except:
-            log.exception(
-                "Failed to check for updates for Pandoc", exc_info=True
-            )
+            log.exception("Failed to check for updates for Pandoc", exc_info=True)
             wx.MessageBox(
                 # Translators: content of a message box
-                _("Failed to check for updates. Please check your internet connection."),
+                _(
+                    "Failed to check for updates. Please check your internet connection."
+                ),
                 # Translators: title of a message box
                 _("Error"),
                 style=wx.ICON_ERROR,
