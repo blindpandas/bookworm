@@ -465,7 +465,7 @@ class AdvancedSettingsPanel(SettingsPanel):
             self.Bind(wx.EVT_BUTTON, self.onUpdatePandoc, updatePandocBtn)
         # Translators: the title of a group of controls in the
         # advanced settings page
-        advancedBox = self.make_static_box("Reset Settings ")
+        advancedBox = self.make_static_box(_("Reset Settings"))
         resetSettingsBtn = CommandLinkButton(
             advancedBox,
             -1,
