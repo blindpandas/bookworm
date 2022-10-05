@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-03-20 09:44+0000\n"
-"PO-Revision-Date: 2022-03-20 13:34+0200\n"
+"POT-Creation-Date: 2022-09-25 14:01+0200\n"
+"PO-Revision-Date: 2022-09-25 15:49+0200\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: fi_FI <janikinnunen340@gmail.com>\n"
 "Language: fi\n"
@@ -18,232 +18,176 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.6.11\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: ..\\..\\..\\..\n"
 
-#. Translators: the content of a message indicating a connection error
-#: bookworm/otau.py:76
-msgid "We couldn't access the internet right now. Please try again later."
-msgstr "Internet-yhteys ei ole käytettävissä. Yritä myöhemmin uudelleen."
-
-#. Translators: the title of a message indicating a connection error
-#: bookworm/otau.py:78
-msgid "Network Error"
-msgstr "Verkkovirhe"
-
-#. Translators: the content of a message indicating an error while updating the
-#. app
-#: bookworm/otau.py:88
-msgid ""
-"We have faced a technical problem while checking for updates. Please try "
-"again later."
-msgstr ""
-"Päivityksiä tarkistettaessa ilmeni tekninen ongelma. Yritä myöhemmin "
-"uudelleen."
-
-#. Translators: the title of a message indicating an error while updating the
-#. app
-#: bookworm/otau.py:92
-msgid "Error Checking For Updates"
-msgstr "Virhe päivityksiä tarkistettaessa"
-
-#. Translators: the content of a message indicating that there is no new
-#. version
-#: bookworm/otau.py:109
-msgid ""
-"Congratulations, you have already got the latest version of Bookworm.\n"
-"We are working day and night on making Bookworm better. The next version of "
-"Bookworm is on its way, so wait for it. Rest assured, we will notify you "
-"when it is released."
-msgstr ""
-"Onneksi olkoon, sinulla on jo viimeisin versio.\n"
-"Bookwormia parannellaan yötä päivää. Seuraava versio on jo tulossa. Voit "
-"olla varma, että saat ilmoituksen, kun se julkaistaan."
-
-#. Translators: the title of a message indicating that there is no new version
-#: bookworm/otau.py:116
-msgid "No Update"
-msgstr "Ei päivitystä"
-
-#. Translators: the label of an item in the application menubar
-#: bookworm/otau.py:141
-msgid "&Check for updates"
-msgstr "&Tarkista päivitykset"
-
-#. Translators: the help text of an item in the application menubar
-#: bookworm/otau.py:143
-msgid "Update the application"
-msgstr "Päivitä sovellus"
-
-#. Translators: the title of the window when an e-book is open
-#: bookworm/reader.py:399
-msgid "{title} — by {author}"
-msgstr "{title} — {author}"
-
-#. Translators: the label of an item in the application menubar
-#: bookworm/annotation/__init__.py:63
+#: ..\..\..\../annotation/__init__.py:61
 msgid "&Annotation"
 msgstr "&Merkintä"
 
-#: bookworm/annotation/__init__.py:71
+#: ..\..\..\../annotation/__init__.py:69
 msgid "&Bookmark...\tCtrl-B"
 msgstr "&Kirjanmerkki...\tCtrl+B"
 
-#: bookworm/annotation/__init__.py:72 bookworm/annotation/__init__.py:78
+#: ..\..\..\../annotation/__init__.py:70 ..\..\..\../annotation/__init__.py:76
 msgid "Bookmark the current location"
 msgstr "Lisää kirjanmerkki nykyiseen kohtaan."
 
-#: bookworm/annotation/__init__.py:77
+#: ..\..\..\../annotation/__init__.py:75
 msgid "&Named Bookmark...\tCtrl-Shift-B"
 msgstr "&Nimetty kirjanmerkki...\tCtrl+Vaihto+B"
 
-#: bookworm/annotation/__init__.py:83
+#: ..\..\..\../annotation/__init__.py:81
 msgid "Co&mment...\tCtrl-m"
 msgstr "Ko&mmentti...\tCtrl+M"
 
-#: bookworm/annotation/__init__.py:84
+#: ..\..\..\../annotation/__init__.py:82
 msgid "Add a comment at the current location"
 msgstr "Lisää kommentti nykyiseen kohtaan."
 
-#: bookworm/annotation/__init__.py:94
+#: ..\..\..\../annotation/__init__.py:92
 msgid "Highlight Selection\tCtrl-Shift-H"
 msgstr "Korosta valinta\tCtrl+Vaihto+H"
 
-#: bookworm/annotation/__init__.py:95
+#: ..\..\..\../annotation/__init__.py:93
 msgid "Highlight and save selected text."
 msgstr "Korosta ja tallenna valittu teksti."
 
-#. Translators: the label of a button in the application toolbar
-#. Translators: spoken message when jumping to a bookmark
-#: bookworm/annotation/__init__.py:104 bookworm/annotation/__init__.py:138
+#: ..\..\..\../annotation/__init__.py:102
+#: ..\..\..\../annotation/__init__.py:139
 msgid "Bookmark"
 msgstr "Kirjanmerkki"
 
-#. Translators: the label of a button in the application toolbar
-#: bookworm/annotation/__init__.py:106
+#: ..\..\..\../annotation/__init__.py:104
 msgid "Comment"
 msgstr "Kommentti"
 
-#. Translators: the label of a page in the settings dialog
-#. Translators: the title of a group of controls in the
-#. Translators: label for a aria region containing annotation
-#. used when exporting annotations to HTML
-#: bookworm/annotation/__init__.py:116
-#: bookworm/annotation/annotation_gui.py:26
-#: bookworm/annotation/exporters/core_renderers.py:169
+#: ..\..\..\../annotation/__init__.py:114
+#: ..\..\..\../annotation/exporters/core_renderers.py:171
 msgid "Annotation"
 msgstr "Merkintä"
 
-#. Translators: label of an edit control in the dialog
-#. of viewing or editing a comment/highlight
-#. Translators: label of an edit control to filter annotations by content
-#. Translators: label of a check box that enables/disables searching document
-#. content when searching the bookshelf
-#. Translators: the label of the text area which shows the
-#. content of the current page
-#: bookworm/annotation/annotation_dialogs.py:63
-#: bookworm/annotation/annotation_dialogs.py:270
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:123
-#: bookworm/gui/book_viewer/__init__.py:240
+#: ..\..\..\../annotation/__init__.py:127
+msgid "No next bookmark"
+msgstr "Ei seuraavaa kirjanmerkkiä"
+
+#: ..\..\..\../annotation/__init__.py:130
+msgid "No previous bookmark"
+msgstr "Ei edellistä kirjanmerkkiä"
+
+#: ..\..\..\../annotation/__init__.py:157
+msgid "No next comment"
+msgstr "Ei seuraavaa kommenttia"
+
+#: ..\..\..\../annotation/__init__.py:160
+msgid "No previous comment"
+msgstr "Ei edellistä kommenttia"
+
+#: ..\..\..\../annotation/__init__.py:171
+#, python-brace-format
+msgid "Comment: {comment}"
+msgstr "Kommentti: {comment}"
+
+#: ..\..\..\../annotation/__init__.py:184
+msgid "No next highlight"
+msgstr "Ei seuraavaa korostusta"
+
+#: ..\..\..\../annotation/__init__.py:187
+msgid "No previous highlight"
+msgstr "Ei edellistä korostusta"
+
+#: ..\..\..\../annotation/__init__.py:197
+msgid "Highlight"
+msgstr "Korostus"
+
+#: ..\..\..\../annotation/__init__.py:239
+msgid "Bookmarked"
+msgstr "Kirjanmerkki lisätty"
+
+#: ..\..\..\../annotation/__init__.py:242
+msgid "Highlighted"
+msgstr "Korostus lisätty"
+
+#: ..\..\..\../annotation/__init__.py:245
+msgid "Line contains highlight"
+msgstr "Rivi sisältää korostuksen"
+
+#: ..\..\..\../annotation/__init__.py:248
+msgid "Has comment"
+msgstr "Sisältää kommentin"
+
+#: ..\..\..\../annotation/annotation_dialogs.py:56
+#: ..\..\..\../annotation/annotation_dialogs.py:263
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:122
+#: ..\..\..\../gui/book_viewer/__init__.py:307
 msgid "Content"
 msgstr "Sisältö"
 
-#. Translators: header of a group of controls in a dialog to view/edit
-#. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:67
+#: ..\..\..\../annotation/annotation_dialogs.py:60
 msgid "Metadata"
 msgstr "Metatiedot"
 
-#. Translators: label of an edit control in a dialog to view/edit
-#. comments/highlights
-#. Translators: label of an edit control that allows the user to edit the tag
-#. set of a comment/highlight
-#. Translators: written to output document when exporting a comment/highlight
-#: bookworm/annotation/annotation_dialogs.py:70
-#: bookworm/annotation/annotation_dialogs.py:526
-#: bookworm/annotation/exporters/core_renderers.py:199
+#: ..\..\..\../annotation/annotation_dialogs.py:63
+#: ..\..\..\../annotation/annotation_dialogs.py:519
+#: ..\..\..\../annotation/exporters/core_renderers.py:201
 msgid "Tags"
 msgstr "Tunnisteet"
 
-#. Translators: label of an edit control in a dialog to view/edit
-#. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:75
+#: ..\..\..\../annotation/annotation_dialogs.py:68
 msgid "Date Created"
 msgstr "Luontipäivämäärä"
 
-#. Translators: label of an edit control in a dialog to view/edit
-#. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:81
+#: ..\..\..\../annotation/annotation_dialogs.py:74
 msgid "Last updated"
 msgstr "Päivitetty viimeksi"
 
-#. Translators: the label of a button to close a dialog
-#. Translators: the label of the cancel button in a dialog
-#. Translators: the label of the close button in a dialog
-#. Translators: the label of a button to close the dialog
-#: bookworm/annotation/annotation_dialogs.py:95
-#: bookworm/annotation/annotation_dialogs.py:152
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:174
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:242
-#: bookworm/gui/book_viewer/core_dialogs.py:405 bookworm/gui/settings.py:98
-#: bookworm/ocr/ocr_dialogs.py:420 bookworm/text_to_speech/tts_gui.py:328
-#: bookworm/webservices/wikiworm.py:177
+#: ..\..\..\../annotation/annotation_dialogs.py:88
+#: ..\..\..\../annotation/annotation_dialogs.py:145
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:173
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:241
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:398
+#: ..\..\..\../gui/settings.py:103 ..\..\..\../ocr/ocr_dialogs.py:416
+#: ..\..\..\../text_to_speech/tts_gui.py:320
+#: ..\..\..\../webservices/wikiworm.py:215
 msgid "&Close"
 msgstr "&Sulje"
 
-#. Translators: label for unnamed bookmarks shown
-#. when editing a single bookmark which has no name
-#: bookworm/annotation/annotation_dialogs.py:129
+#: ..\..\..\../annotation/annotation_dialogs.py:122
 msgid "[Unnamed Bookmark]"
 msgstr "[Nimetön kirjanmerkki]"
 
-#. Translators: label of a list control containing bookmarks
-#: bookworm/annotation/annotation_dialogs.py:134
+#: ..\..\..\../annotation/annotation_dialogs.py:127
 msgid "Saved Bookmarks"
 msgstr "Tallennetut kirjanmerkit"
 
-#. Translators: text of a button to remove bookmarks
-#. Translators: text of a button to remove a language from Tesseract OCR Engine
-#. Translators: the label of a button to remove a voice profile
-#: bookworm/annotation/annotation_dialogs.py:137
-#: bookworm/ocr/ocr_dialogs.py:459 bookworm/text_to_speech/tts_gui.py:322
+#: ..\..\..\../annotation/annotation_dialogs.py:130
+#: ..\..\..\../ocr/ocr_dialogs.py:455
+#: ..\..\..\../text_to_speech/tts_gui.py:314
 msgid "&Remove"
 msgstr "&Poista"
 
-#. Translators: the title of a column in the bookmarks list
-#: bookworm/annotation/annotation_dialogs.py:161
-#: bookworm/gui/book_viewer/core_dialogs.py:263
+#: ..\..\..\../annotation/annotation_dialogs.py:154
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:256
 msgid "Name"
 msgstr "Nimi"
 
-#. Translators: the title of a column in the bookmarks list
-#. Translators: text of a toggle button to sort comments/highlights list
-#. Translators: header of a column in a list control in a dialog showing a list
-#. of search results of matching document pages
-#. Translators: the title of a column in the search results list
-#. Translators: the label of the image of a page in a dialog to render the
-#. current page
-#: bookworm/annotation/annotation_dialogs.py:168
-#: bookworm/annotation/annotation_dialogs.py:359
-#: bookworm/annotation/exporters/core_renderers.py:176
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:193
-#: bookworm/gui/book_viewer/core_dialogs.py:58
-#: bookworm/gui/book_viewer/render_view.py:31
+#: ..\..\..\../annotation/annotation_dialogs.py:161
+#: ..\..\..\../annotation/annotation_dialogs.py:352
+#: ..\..\..\../annotation/exporters/core_renderers.py:178
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:192
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:51
+#: ..\..\..\../gui/book_viewer/render_view.py:32
 msgid "Page"
 msgstr "Sivu"
 
-#. Translators: the title of a column in the bookmarks list
-#. Translators: label of an editable combobox to filter annotations by section
-#. Translators: the title of a column in the search results list
-#. showing the title of the chapter in which this occurrence was found
-#: bookworm/annotation/annotation_dialogs.py:176
-#: bookworm/annotation/annotation_dialogs.py:265
-#: bookworm/annotation/exporters/core_renderers.py:143
-#: bookworm/gui/book_viewer/core_dialogs.py:73
+#: ..\..\..\../annotation/annotation_dialogs.py:169
+#: ..\..\..\../annotation/annotation_dialogs.py:258
+#: ..\..\..\../annotation/exporters/core_renderers.py:145
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:66
 msgid "Section"
 msgstr "Luku"
 
-#. Translators: content of a message asking the user if they want to delete a
-#. bookmark
-#: bookworm/annotation/annotation_dialogs.py:223
+#: ..\..\..\../annotation/annotation_dialogs.py:217
 msgid ""
 "This action can not be reverted.\r\n"
 "Are you sure you want to remove this bookmark?"
@@ -251,90 +195,68 @@ msgstr ""
 "Tätä toimintoa ei voi kumota.\r\n"
 "Haluatko varmasti poistaa tämän kirjanmerkin?"
 
-#. Translators: title of a message asking the user if they want to delete a
-#. bookmark
-#: bookworm/annotation/annotation_dialogs.py:227
+#: ..\..\..\../annotation/annotation_dialogs.py:220
 msgid "Remove Bookmark?"
 msgstr "Poistetaanko kirjanmerkki?"
 
-#. Translators: label of an editable combobox to filter annotations by book
-#. Translators: text of a toggle button to sort comments/highlights list
-#: bookworm/annotation/annotation_dialogs.py:254
-#: bookworm/annotation/annotation_dialogs.py:363
-#: bookworm/annotation/annotation_dialogs.py:559
-#: bookworm/annotation/exporters/core_renderers.py:141
+#: ..\..\..\../annotation/annotation_dialogs.py:247
+#: ..\..\..\../annotation/annotation_dialogs.py:356
+#: ..\..\..\../annotation/annotation_dialogs.py:552
+#: ..\..\..\../annotation/exporters/core_renderers.py:143
 msgid "Book"
 msgstr "Kirja"
 
-#. Translators: label of an editable combobox to filter annotations by tag
-#: bookworm/annotation/annotation_dialogs.py:259
-#: bookworm/annotation/exporters/core_renderers.py:145
+#: ..\..\..\../annotation/annotation_dialogs.py:252
+#: ..\..\..\../annotation/exporters/core_renderers.py:147
 msgid "Tag"
 msgstr "Tunniste"
 
-#. Translators: text of a button to apply chosen filters in a dialog to view
-#. user's comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:275
+#: ..\..\..\../annotation/annotation_dialogs.py:268
 msgid "&Apply"
 msgstr "&Käytä"
 
-#. Translators: the title of a column in the comments/highlights list
-#. Translators: header of a group of controls in a dialog to view user's
-#. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:342
+#: ..\..\..\../annotation/annotation_dialogs.py:335
 msgid "Filter By"
 msgstr "Suodatusperuste"
 
-#. Translators: header of a group of controls in a dialog to view user's
-#. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:351
+#: ..\..\..\../annotation/annotation_dialogs.py:344
 msgid "Sort By"
 msgstr "Lajitteluperuste"
 
-#. Translators: text of a toggle button to sort comments/highlights list
-#: bookworm/annotation/annotation_dialogs.py:357
+#: ..\..\..\../annotation/annotation_dialogs.py:350
 msgid "Date"
 msgstr "Päivämäärä"
 
-#. Translators: text of a toggle button to sort comments/highlights list
-#: bookworm/annotation/annotation_dialogs.py:369
+#: ..\..\..\../annotation/annotation_dialogs.py:362
 msgid "Ascending"
 msgstr "Nouseva"
 
-#. Translators: text of a button in a dialog to view comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:378
+#: ..\..\..\../annotation/annotation_dialogs.py:371
 msgid "&View..."
 msgstr "&Näytä..."
 
-#. Translators: text of a button in a dialog to view comments/highlights
-#. Translators: the label of a button to edit a voice profile
-#: bookworm/annotation/annotation_dialogs.py:381
-#: bookworm/text_to_speech/tts_gui.py:320
+#: ..\..\..\../annotation/annotation_dialogs.py:374
+#: ..\..\..\../text_to_speech/tts_gui.py:312
 msgid "&Edit..."
 msgstr "&Muokkaa..."
 
-#. Translators: text of a button in a dialog to view comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:384
+#: ..\..\..\../annotation/annotation_dialogs.py:377
 msgid "&Delete..."
 msgstr "&Poista..."
 
-#. Translators: text of a button in a dialog to view comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:386
+#: ..\..\..\../annotation/annotation_dialogs.py:379
 msgid "E&xport..."
 msgstr "V&ie..."
 
-#. Translators: title of a dialog to view or edit a single comment/highlight
-#: bookworm/annotation/annotation_dialogs.py:458
+#: ..\..\..\../annotation/annotation_dialogs.py:451
 msgid "Editing"
 msgstr "Muokataan"
 
-#: bookworm/annotation/annotation_dialogs.py:458
+#: ..\..\..\../annotation/annotation_dialogs.py:451
 msgid "View"
 msgstr "Näytä"
 
-#. Translators: content of a message asking the user if they want to delete a
-#. comment/highlight
-#: bookworm/annotation/annotation_dialogs.py:475
+#: ..\..\..\../annotation/annotation_dialogs.py:469
 msgid ""
 "This action can not be reverted.\r\n"
 "Are you sure you want to remove this item?"
@@ -342,691 +264,416 @@ msgstr ""
 "Tätä toimintoa ei voi kumota.\r\n"
 "Haluatko varmasti poistaa tämän kohteen?"
 
-#. Translators: title of a message asking the user if they want to delete a
-#. bookmark
-#: bookworm/annotation/annotation_dialogs.py:479
+#: ..\..\..\../annotation/annotation_dialogs.py:472
 msgid "Delete Annotation?"
 msgstr "Poistetaanko merkintä?"
 
-#. Translators: title of a dialog that allows the user to edit the tag set of a
-#. comment/highlight
-#: bookworm/annotation/annotation_dialogs.py:524
+#: ..\..\..\../annotation/annotation_dialogs.py:517
 msgid "Edit Tags"
 msgstr "Muokkaa tunnisteita"
 
-#. Translators: title of a dialog that allows the user to customize
-#. how comments/highlights are exported
-#: bookworm/annotation/annotation_dialogs.py:537
+#: ..\..\..\../annotation/annotation_dialogs.py:530
 msgid "Export Options"
 msgstr "Viennin asetukset"
 
-#. Translators: label of a checkbox in a dialog to set export options for
-#. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:597
+#: ..\..\..\../annotation/annotation_dialogs.py:590
 msgid "Include book title"
 msgstr "Sisällytä kirjan nimi"
 
-#: bookworm/annotation/annotation_dialogs.py:602
+#: ..\..\..\../annotation/annotation_dialogs.py:595
 msgid "Include section title"
 msgstr "Sisällytä luvun otsikko"
 
-#: bookworm/annotation/annotation_dialogs.py:608
+#: ..\..\..\../annotation/annotation_dialogs.py:601
 msgid "Include  page number"
 msgstr "Sisällytä sivunumero"
 
-#. Translators: label of a checkbox in a dialog to set export options for
-#. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:611
+#: ..\..\..\../annotation/annotation_dialogs.py:604
 msgid "Include tags"
 msgstr "Sisällytä tunnisteet"
 
-#. Translators: label of a choice control in a dialog to set export options for
-#. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:613
+#: ..\..\..\../annotation/annotation_dialogs.py:606
 msgid "Output format:"
 msgstr "Kohdemuoto:"
 
-#. Translators: label of an edit control in a dialog to set export options for
-#. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:618
+#: ..\..\..\../annotation/annotation_dialogs.py:611
 msgid "Output File"
 msgstr "Kohdetiedosto"
 
-#. Translators: text of a button in a dialog to set export options for
-#. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:623
+#: ..\..\..\../annotation/annotation_dialogs.py:616
 msgid "&Browse"
 msgstr "&Selaa"
 
-#. Translators: label of a checkbox in a dialog to set export options for
-#. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:628
+#: ..\..\..\../annotation/annotation_dialogs.py:621
 msgid "Open file after exporting"
 msgstr "Avaa tiedosto viennin jälkeen"
 
-#. Translators: the title of a save file dialog asking the user for a filename
-#. to export annotations to
-#. Translators: the title of a dialog to save the exported book
-#: bookworm/annotation/annotation_dialogs.py:655
-#: bookworm/gui/book_viewer/menubar.py:243
+#: ..\..\..\../annotation/annotation_dialogs.py:648
+#: ..\..\..\../gui/book_viewer/menubar.py:247
 msgid "Save As"
 msgstr "Tallenna nimellä"
 
-#. Translators: the label of a checkbox
-#: bookworm/annotation/annotation_gui.py:31
-msgid "Exclude named bookmarks when jumping between bookmarks"
-msgstr ""
-"Älä huomioi nimettyjä kirjanmerkkejä kirjanmerkkien välillä siirryttäessä"
+#: ..\..\..\../annotation/annotation_gui.py:25
+msgid "When navigating text"
+msgstr "Tekstissä liikuttaessa"
 
-#. Translators: the label of a checkbox
-#: bookworm/annotation/annotation_gui.py:38
+#: ..\..\..\../annotation/annotation_gui.py:30
+msgid "Play a sound to indicate the presence of annotations"
+msgstr "Ilmaise merkinnät äänimerkillä"
+
+#: ..\..\..\../annotation/annotation_gui.py:37
+msgid "Speak a message to indicate the presence of annotations"
+msgstr "Ilmaise merkinnät puheella"
+
+#: ..\..\..\../annotation/annotation_gui.py:41
+msgid "Miscellaneous settings"
+msgstr "Sekalaiset asetukset"
+
+#: ..\..\..\../annotation/annotation_gui.py:46
 msgid "Speak the bookmark when jumping"
 msgstr "Puhu kirjanmerkki siirryttäessä"
 
-#. Translators: the label of a checkbox
-#: bookworm/annotation/annotation_gui.py:45
+#: ..\..\..\../annotation/annotation_gui.py:53
 msgid "Select the bookmarked line when jumping"
 msgstr "Valitse kirjanmerkiksi lisätty rivi siirryttäessä"
 
-#. Translators: the label of a checkbox
-#: bookworm/annotation/annotation_gui.py:52
+#: ..\..\..\../annotation/annotation_gui.py:60
 msgid "Use visual styles to indicate annotations"
-msgstr "Ilmaise selitteet visuaalisilla tyyleillä"
+msgstr "Ilmaise merkinnät visuaalisilla tyyleillä"
 
-#. Translators: the label of a checkbox
-#: bookworm/annotation/annotation_gui.py:59
-msgid "Use sounds to indicate the presence of comments"
-msgstr "Ilmaise kommentit äänillä"
-
-#. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:98
+#: ..\..\..\../annotation/annotation_gui.py:99
 msgid "Add &Bookmark\tCtrl-B"
 msgstr "Lisää &kirjanmerkki\tCtrl+B"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:100
+#: ..\..\..\../annotation/annotation_gui.py:101
 msgid "Add a bookmark at the current position"
 msgstr "Lisää kirjanmerkki nykyiseen kohtaan."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:105
+#: ..\..\..\../annotation/annotation_gui.py:106
 msgid "Add &Named Bookmark...\tCtrl-Shift-B"
 msgstr "Lisää &nimetty kirjanmerkki...\tCtrl+Vaihto+B"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:107
+#: ..\..\..\../annotation/annotation_gui.py:108
 msgid "Add a named bookmark at the current position"
 msgstr "Lisää nimetty kirjanmerkki nykyiseen kohtaan."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:112
+#: ..\..\..\../annotation/annotation_gui.py:113
 msgid "Add Co&mment...\tCtrl-M"
 msgstr "Lisää ko&mmentti...\tCtrl+M"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:114
+#: ..\..\..\../annotation/annotation_gui.py:115
 msgid "Add a comment at the current position"
 msgstr "Lisää kommentti nykyiseen kohtaan."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:119
+#: ..\..\..\../annotation/annotation_gui.py:120
 msgid "&Highlight Selection\tCtrl-H"
 msgstr "&Korosta valinta\tCtrl+H"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:121
+#: ..\..\..\../annotation/annotation_gui.py:122
 msgid "Highlight selected text and save it."
 msgstr "Korosta valittu teksti ja tallenna se."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:126
+#: ..\..\..\../annotation/annotation_gui.py:127
 msgid "Saved &Bookmarks..."
 msgstr "Tallennetut &kirjanmerkit..."
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:128
+#: ..\..\..\../annotation/annotation_gui.py:129
 msgid "View added bookmarks"
 msgstr "Näytä lisätyt kirjanmerkit."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:133
+#: ..\..\..\../annotation/annotation_gui.py:134
 msgid "Saved Co&mments..."
 msgstr "Tallennetut ko&mmentit..."
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:135
+#: ..\..\..\../annotation/annotation_gui.py:136
 msgid "View, edit, and remove comments."
 msgstr "Näytä, muokkaa ja poista kommentteja."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:140
+#: ..\..\..\../annotation/annotation_gui.py:141
 msgid "Saved &Highlights..."
 msgstr "Tallennetut &korostukset..."
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/annotation/annotation_gui.py:142
+#: ..\..\..\../annotation/annotation_gui.py:143
 msgid "View saved highlights."
 msgstr "Näytä tallennetut korostukset."
 
-#: bookworm/annotation/annotation_gui.py:180
+#: ..\..\..\../annotation/annotation_gui.py:181
 msgid "Bookmark removed"
 msgstr "Kirjanmerkki poistettu"
 
-#. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:183
+#: ..\..\..\../annotation/annotation_gui.py:184
 msgid "Bookmark Added"
 msgstr "Kirjanmerkki lisätty"
 
-#. Translators: title of a dialog
-#: bookworm/annotation/annotation_gui.py:192
+#: ..\..\..\../annotation/annotation_gui.py:193
 msgid "Add Named Bookmark"
 msgstr "Lisää nimetty kirjanmerkki"
 
-#. Translators: label of a text entry
-#: bookworm/annotation/annotation_gui.py:194
+#: ..\..\..\../annotation/annotation_gui.py:195
 msgid "Bookmark name:"
 msgstr "Kirjanmerkin nimi:"
 
-#. Translators: the title of a dialog to add a comment
-#: bookworm/annotation/annotation_gui.py:204
+#: ..\..\..\../annotation/annotation_gui.py:205
 msgid "New Comment"
 msgstr "Uusi kommentti"
 
-#. Translators: the label of an edit field to enter a comment
-#: bookworm/annotation/annotation_gui.py:206
+#: ..\..\..\../annotation/annotation_gui.py:207
 msgid "Comment:"
 msgstr "Kommentti:"
 
-#. Translators: title of a dialog
-#: bookworm/annotation/annotation_gui.py:219
+#: ..\..\..\../annotation/annotation_gui.py:220
 msgid "Tag Comment"
 msgstr "Merkitse kommentti tunnisteella"
 
-#. Translators: label of a text entry
-#: bookworm/annotation/annotation_gui.py:221
-#: bookworm/annotation/annotation_gui.py:268
+#: ..\..\..\../annotation/annotation_gui.py:222
+#: ..\..\..\../annotation/annotation_gui.py:269
 msgid "Tags:"
 msgstr "Tunnisteet:"
 
-#: bookworm/annotation/annotation_gui.py:233
+#: ..\..\..\../annotation/annotation_gui.py:234
 msgid "No selection"
 msgstr "Ei valintaa"
 
-#. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:241
+#: ..\..\..\../annotation/annotation_gui.py:242
 msgid "Highlight removed"
 msgstr "Korostus poistettu"
 
-#. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:244
+#: ..\..\..\../annotation/annotation_gui.py:245
 msgid "Already highlighted"
 msgstr "On jo korostettu"
 
-#. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:251
-#: bookworm/annotation/annotation_gui.py:257
+#: ..\..\..\../annotation/annotation_gui.py:252
+#: ..\..\..\../annotation/annotation_gui.py:258
 msgid "Highlight extended"
 msgstr "Korostus laajennettu"
 
-#. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:260
+#: ..\..\..\../annotation/annotation_gui.py:261
 msgid "Selection highlighted"
 msgstr "Valinta korostettu"
 
-#. Translators: title of a dialog
-#: bookworm/annotation/annotation_gui.py:266
+#: ..\..\..\../annotation/annotation_gui.py:267
 msgid "Tag Highlight"
 msgstr "Merkitse korostus tunnisteella"
 
-#. Translators: the title of a dialog to view bookmarks
-#: bookworm/annotation/annotation_gui.py:281
+#: ..\..\..\../annotation/annotation_gui.py:282
+#, python-brace-format
 msgid "Bookmarks | {book}"
 msgstr "Kirjanmerkit | {book}"
 
-#: bookworm/annotation/annotation_gui.py:291
+#: ..\..\..\../annotation/annotation_gui.py:292
 msgid "Comments"
 msgstr "Kommentit"
 
-#: bookworm/annotation/annotation_gui.py:304
+#: ..\..\..\../annotation/annotation_gui.py:305
 msgid "Highlights"
 msgstr "Korostukset"
 
-#. Translators: written to output document when exporting a comment/highlight
-#. Translators: a name of a file format
-#. Translators: file type in a save as dialog
-#: bookworm/annotation/exporters/core_renderers.py:13
-#: bookworm/gui/book_viewer/menubar.py:247 bookworm/ocr/ocr_menu.py:292
+#: ..\..\..\../annotation/exporters/core_renderers.py:15
+#: ..\..\..\../gui/book_viewer/menubar.py:251 ..\..\..\../ocr/ocr_menu.py:285
 msgid "Plain Text"
 msgstr "Vain teksti"
 
-#: bookworm/annotation/exporters/core_renderers.py:25
-#: bookworm/annotation/exporters/core_renderers.py:88
+#: ..\..\..\../annotation/exporters/core_renderers.py:27
+#: ..\..\..\../annotation/exporters/core_renderers.py:90
+#, python-brace-format
 msgid "Section: {section_title}"
 msgstr "Luku: {section_title}"
 
-#. Translators: written to output document when exporting files
-#: bookworm/annotation/exporters/core_renderers.py:30
+#: ..\..\..\../annotation/exporters/core_renderers.py:32
+#, python-brace-format
 msgid "Tagged: {tag}"
 msgstr "Merkitty tunnisteella: {tag}"
 
-#. Translators: written to the end of the plain-text file when exporting
-#. comments or highlights
-#: bookworm/annotation/exporters/core_renderers.py:40
+#: ..\..\..\../annotation/exporters/core_renderers.py:42
 msgid "End of File"
 msgstr "Tiedoston loppu"
 
-#: bookworm/annotation/exporters/core_renderers.py:50
-#: bookworm/annotation/exporters/core_renderers.py:111
+#: ..\..\..\../annotation/exporters/core_renderers.py:52
+#: ..\..\..\../annotation/exporters/core_renderers.py:113
+#, python-brace-format
 msgid "Page {number}"
 msgstr "Sivu {number}"
 
-#. Translators: the name of a document file format
-#: bookworm/annotation/exporters/core_renderers.py:72
+#: ..\..\..\../annotation/exporters/core_renderers.py:74
 msgid "Markdown"
 msgstr "Markdown"
 
-#: bookworm/annotation/exporters/core_renderers.py:92
+#: ..\..\..\../annotation/exporters/core_renderers.py:94
+#, python-brace-format
 msgid "Tagged: {tags}"
 msgstr "Merkitty tunnisteilla: {tags}"
 
-#. Translators: written to output document when exporting a comment/highlight
-#: bookworm/annotation/exporters/core_renderers.py:124
+#: ..\..\..\../annotation/exporters/core_renderers.py:126
 msgid "Tagged"
 msgstr "Merkitty tunnisteella"
 
-#. Translators: the name of a document file format
-#: bookworm/annotation/exporters/core_renderers.py:135
+#: ..\..\..\../annotation/exporters/core_renderers.py:137
 msgid "HTML"
 msgstr "HTML"
 
-#: bookworm/annotation/exporters/core_renderers.py:154
+#: ..\..\..\../annotation/exporters/core_renderers.py:156
 msgid "Exported Annotations"
 msgstr "Viedyt merkinnät"
 
-#. Translators: label of a button to copy the annotation to the clipboard
-#. used when exporting annotations to HTML
-#: bookworm/annotation/exporters/core_renderers.py:184
+#: ..\..\..\../annotation/exporters/core_renderers.py:186
 msgid "Copy to clipboard"
 msgstr "Kopioi leikepöydälle"
 
-#. Translators: the label of a page in the settings dialog
-#: bookworm/bookshelf/__init__.py:58
+#: ..\..\..\../bookshelf/__init__.py:54
 msgid "Bookshelf"
 msgstr "Kirjahylly"
 
-#. Translators: the label of an item in the application menubar
-#. Translators: the label of the bookshelf sub menu found in the file menu of
-#. the application
-#: bookworm/bookshelf/__init__.py:68
+#: ..\..\..\../bookshelf/__init__.py:64
 msgid "Boo&kshelf"
 msgstr "&Kirjahylly"
 
-#. Translators: the label of a group of controls in the bookshelf page in the
-#. preferences dialog
-#. Translators: the name of a book shelf type.
-#. This bookshelf type is stored in a local database
-#: bookworm/bookshelf/local_bookshelf/__init__.py:65
-#: bookworm/bookshelf/viewer_integration.py:34
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:48
+#: ..\..\..\../bookshelf/viewer_integration.py:36
 msgid "Local Bookshelf"
 msgstr "Paikallinen kirjahylly"
 
-#. Translators: the label of a checkbox
-#: bookworm/bookshelf/viewer_integration.py:39
-msgid "Automatically add opened books to the local bookshelf"
-msgstr "Lisää avatut kirjat automaattisesti paikalliseen kirjahyllyyn"
-
-#. Translators: the label of an item in the application menubar
-#: bookworm/bookshelf/viewer_integration.py:52
-msgid "&Open Bookshelf"
-msgstr "&Avaa kirjahylly"
-
-#. Translators: the help text of an item in the application menubar
-#: bookworm/bookshelf/viewer_integration.py:54
-msgid "Open your bookshelf"
-msgstr "Avaa kirjahylly"
-
-#. Translators: the label of an item in the application menubar
-#: bookworm/bookshelf/viewer_integration.py:59
-msgid "&Add to local bookshelf..."
-msgstr "Lisää p&aikalliseen kirjahyllyyn..."
-
-#. Translators: the help text of an item in the application menubar
-#: bookworm/bookshelf/viewer_integration.py:61
-msgid "Add the current book to the local bookshelf"
-msgstr "Lisää nykyinen kirja paikalliseen kirjahyllyyn"
-
-#. Translators: content of a message indicating failure to add the current
-#. document to the bookshelf
-#: bookworm/bookshelf/viewer_integration.py:91
-msgid ""
-"You can not add this document to Bookshelf.\n"
-"The document should exist locally in your computer."
-msgstr ""
-"Tätä asiakirjaa ei voi lisätä kirjahyllyyn.\n"
-"Asiakirjan on oltava tietokoneella paikallisesti."
-
-#. Translators: title of a message indicating failure to add the current
-#. document to the bookshelf
-#: bookworm/bookshelf/viewer_integration.py:95
-msgid "Can not add document"
-msgstr "Asiakirjaa ei voi lisätä"
-
-#. Translators: title of a dialog to select reading list and collections for a
-#. document when adding it to the bookshelf
-#: bookworm/bookshelf/viewer_integration.py:102
-msgid "Reading list and collections"
-msgstr "Lukulista ja kokoelmat"
-
-#: bookworm/bookshelf/window.py:55
-msgid "{name} ({count})"
-msgstr "{name} ({count})"
-
-#. Translators: label of a text box to filter documents in bookshelf
-#: bookworm/bookshelf/window.py:79
-msgid "Filter documents..."
-msgstr "Suodata asiakirjoja..."
-
-#. Translators: label of the bookshelf document list. This label is shown when
-#. the documents are being loaded from the database
-#: bookworm/bookshelf/window.py:85
-msgid "Loading items"
-msgstr "Ladataan kohteita"
-
-#. Translators: content of a message shown when the bookshelf fails to load and
-#. show documents
-#: bookworm/bookshelf/window.py:195
-msgid ""
-"Failed to retrieve documents.\n"
-"Please try again."
-msgstr ""
-"Asiakirjojen hakeminen epäonnistui.\n"
-"Ole hyvä ja yritä uudelleen."
-
-#. Translators: title of a message indicating an error
-#. Translators: title of a message shown when importing documents to the
-#. bookshelf has failed
-#. Translators: title  of a message shown when importing documents from a
-#. folder to the bookshelf has failed
-#. Translators: title of a message shown when searching bookshelf has failed
-#. Translators: spoken message
-#. Translators: title of a list control colum showing errors encountered when
-#. bundling documents
-#. Translators: title of a messagebox
-#. Translators: the title of a message telling the user that an error has
-#. occurred
-#: bookworm/bookshelf/local_bookshelf/__init__.py:288
-#: bookworm/bookshelf/local_bookshelf/__init__.py:334
-#: bookworm/bookshelf/local_bookshelf/__init__.py:380
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:226
-#: bookworm/bookshelf/window.py:197 bookworm/ocr/ocr_dialogs.py:207
-#: bookworm/ocr/ocr_dialogs.py:616 bookworm/text_to_speech/tts_gui.py:426
-#: bookworm/webservices/wikiworm.py:117
-msgid "Error"
-msgstr "Virhe"
-
-#. Translators: label of an item in the context menu of a document in the
-#. bookshelf
-#. Translators: the label of the close button in a dialog
-#: bookworm/bookshelf/window.py:237
-#: bookworm/gui/book_viewer/core_dialogs.py:395
-msgid "&Open"
-msgstr "&Avaa"
-
-#. Translators: label of an item in the context menu of a document in the
-#. bookshelf
-#: bookworm/bookshelf/window.py:242
-msgid "Open in &system viewer"
-msgstr "Avaa &järjestelmän katseluohjelmassa"
-
-#. Translators: label of an item in the context menu of a document in the
-#. bookshelf
-#: bookworm/bookshelf/window.py:247
-msgid "Edit &title"
-msgstr "Muokkaa &nimekettä"
-
-#. Translators: spoken message when activating a document
-#. Translators: spoken message when no matching documents were found when
-#. filtering the document list
-#: bookworm/bookshelf/window.py:300
-msgid "No matching documents"
-msgstr "Ei vastaavia asiakirjoja"
-
-#. Translators: message shown when loading documents in the bookshelf
-#: bookworm/bookshelf/window.py:354 bookworm/bookshelf/window.py:366
-msgid "Retrieving items..."
-msgstr "Haetaan kohteita..."
-
-#. Translators: label of an item in the context menu of a document in the
-#. bookshelf
-#: bookworm/bookshelf/window.py:391
-msgid "Document &info..."
-msgstr "Asiakirjan t&iedot..."
-
-#. Translators: label of the combo box showing a list of bookshelf providers.
-#. Currently, only the Local Bookshelf provider is implemented. In the future,
-#. other providers may be added, such as Bookshare and Pocket.
-#: bookworm/bookshelf/window.py:422
-msgid "Provider"
-msgstr "Tarjoaja"
-
-#. Translators: label of the bookshelf tree that shows reading lists and
-#. collections and other categories
-#. Translators: label of the settings categories list box
-#: bookworm/bookshelf/window.py:429 bookworm/bookshelf/window.py:435
-#: bookworm/gui/settings.py:459
-msgid "Categories"
-msgstr "Kategoriat"
-
-#. Translators: title of Bookshelf window
-#: bookworm/bookshelf/window.py:472
-msgid "Bookworm Bookshelf: {name}"
-msgstr "Bookwormin kirjahylly: {name}"
-
-#. Translators: label of a menu item to exit the application
-#: bookworm/bookshelf/window.py:496
-msgid "&Exit"
-msgstr "&Lopeta"
-
-#. Translators: lable of the file menu in the menu bar
-#. Translators: the label of an item in the application menubar
-#: bookworm/bookshelf/window.py:499 bookworm/gui/book_viewer/menubar.py:813
-msgid "&File"
-msgstr "&Tiedosto"
-
-#. Translators: the label of a menu item to remove a bookshelf reading list or
-#. collection
-#: bookworm/bookshelf/local_bookshelf/__init__.py:74
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:57
 msgid "Remove..."
 msgstr "Poista..."
 
-#. Translators: the label of a menu item to change the name of a bookshelf
-#. reading list or collection
-#: bookworm/bookshelf/local_bookshelf/__init__.py:79
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:62
 msgid "Edit name..."
 msgstr "Muokkaa nimeä..."
 
-#. Translators: the label of a menu item to remove all documents under a
-#. specific bookshelf reading list or collection
-#: bookworm/bookshelf/local_bookshelf/__init__.py:84
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:67
 msgid "Clear documents..."
 msgstr "Poista asiakirjoja..."
 
-#. Translators: the name of a category in the bookshelf for recently added
-#. documents
-#: bookworm/bookshelf/local_bookshelf/__init__.py:108
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:91
 msgid "Recently Added"
 msgstr "&Viimeksi lisätyt"
 
-#. Translators: the name of a category in the bookshelf for documents currently
-#. being read by the user
-#: bookworm/bookshelf/local_bookshelf/__init__.py:115
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:98
 msgid "Currently Reading"
 msgstr "Luen tällä hetkellä"
 
-#. Translators: the name of a category in the bookshelf for documents the user
-#. wants to read
-#: bookworm/bookshelf/local_bookshelf/__init__.py:124
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:107
 msgid "Want to Read"
 msgstr "Haluan lukea"
 
-#. Translators: the name of a category in the bookshelf for documents favored
-#. by the user
-#: bookworm/bookshelf/local_bookshelf/__init__.py:133
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:116
 msgid "Favorites"
 msgstr "Suosikit"
 
-#. Translators: the name of a category in the bookshelf which contains the
-#. user's reading lists
-#: bookworm/bookshelf/local_bookshelf/__init__.py:143
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:126
 msgid "Reading Lists"
 msgstr "Lukulistat"
 
-#. Translators: the name of a category in the bookshelf which contains the
-#. user's collections
-#. Translators: label of a text box for entering a document's collections
-#: bookworm/bookshelf/local_bookshelf/__init__.py:148
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:48
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:131
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:47
 msgid "Collections"
 msgstr "Kokoelmat"
 
-#. Translators: the name of a reading list in the bookshelf which contains
-#. documents that do not have any category assigned to them
-#. Translators: the label of a page in the settings dialog
-#: bookworm/bookshelf/local_bookshelf/__init__.py:156
-#: bookworm/gui/settings.py:429
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:139
+#: ..\..\..\../gui/settings.py:577
 msgid "General"
 msgstr "Yleiset"
 
-#. Translators: the label of a menu item in the bookshelf to add a new reading
-#. list or collection
-#: bookworm/bookshelf/local_bookshelf/__init__.py:165
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:148
 msgid "Add New..."
 msgstr "Lisää uusi..."
 
-#. Translators: the name of a category in the bookshelf that lists the authors
-#. of the documents stored in the bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:184
-#: bookworm/gui/book_viewer/core_dialogs.py:360
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:167
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:353
 msgid "Authors"
 msgstr "Tekijät"
 
-#. Translators: the label of a menu item in the bookshelf file menu to import
-#. documents to the bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:195
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:178
 msgid "Import Documents...\tCtrl+O"
 msgstr "Tuo asiakirjoja...\tCtrl+O"
 
-#. Translators: the label of a menu item in the bookshelf file menu to import
-#. an entire folder to the bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:200
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:183
 msgid "Import documents from folder..."
 msgstr "Tuo asiakirjoja kansiosta..."
 
-#. Translators: the label of a menu item in the bookshelf file menu to search
-#. documents contained in the bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:204
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:187
 msgid "Search Bookshelf..."
 msgstr "Hae kirjahyllystä..."
 
-#. Translators: the label of a menu item in the bookshelf file menu to copy the
-#. files added to the bookshelf to a private folder that blongs to Bookworm.
-#. This is important to make the bookshelf works with  portable copies, or if
-#. the user wants to move or rename added documents
-#: bookworm/bookshelf/local_bookshelf/__init__.py:207
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:190
 msgid "Bundle Documents..."
 msgstr "Niputa asiakirjoja..."
 
-#. Translators: the label of a menu item in the bookshelf file menu to clear
-#. documents that no longer exist in the file system
-#: bookworm/bookshelf/local_bookshelf/__init__.py:210
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:193
 msgid "Clear invalid documents..."
 msgstr "Poista virheelliset asiakirjat..."
 
-#. Translators: the title of a file dialog to browse to a document
-#: bookworm/bookshelf/local_bookshelf/__init__.py:222
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:205
 msgid "Import Documents To Bookshelf"
 msgstr "Tuo asiakirjoja kirjahyllyyn"
 
-#. Translators: the title of a dialog to edit the document's reading list or
-#. collection
-#. Translators: title of a dialog to change the reading list or collection for
-#. a document
-#: bookworm/bookshelf/local_bookshelf/__init__.py:238
-#: bookworm/bookshelf/local_bookshelf/__init__.py:638
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:221
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:621
 msgid "Edit reading list/collections"
 msgstr "Muokkaa lukulistaa/kokoelmia"
 
-#. Translators: a message shown when Bookworm is importing documents to the
-#. bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:255
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:238
 msgid "Importing document..."
 msgstr "Tuodaan asiakirjaa..."
 
-#. Translators: a message shown when Bookworm is importing documents to the
-#. bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:258
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:241
 msgid "Importing documents..."
 msgstr "Tuodaan asiakirjoja..."
 
-#. Translators: content of a message shown when importing documents to the
-#. bookshelf has failed
-#: bookworm/bookshelf/local_bookshelf/__init__.py:286
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:269
 msgid "Failed to import document. Please try again."
 msgstr "Asiakirjan tuonti epäonnistui. Yritä uudelleen."
 
-#. Translators: title of a dialog to import an entire folder to the bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:299
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:271
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:317
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:363
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:225
+#: ..\..\..\../bookshelf/window.py:193 ..\..\..\../gui/settings.py:566
+#: ..\..\..\../ocr/ocr_dialogs.py:203 ..\..\..\../ocr/ocr_dialogs.py:613
+#: ..\..\..\../platforms/win32/pandoc_download.py:63
+#: ..\..\..\../platforms/win32/tesseract_download.py:94
+#: ..\..\..\../text_to_speech/tts_gui.py:418
+#: ..\..\..\../webservices/wikiworm.py:170
+msgid "Error"
+msgstr "Virhe"
+
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:282
 msgid "Import Documents From Folder"
 msgstr "Tuo asiakirjoja kansiosta"
 
-#. Translators: a message shown when importing an entire folder to the
-#. bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:313
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:296
 msgid "Importing documents from folder. Please wait..."
 msgstr "Odota, kun asiakirjoja tuodaan kansiosta..."
 
-#. Translators: content of a message shown when importing documents from a
-#. folder to the bookshelf is successful
-#: bookworm/bookshelf/local_bookshelf/__init__.py:322
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:305
 msgid "Documents imported from folder."
 msgstr "Asiakirjat tuotu kansiosta."
 
-#. Translators: title of a message shown when importing documents from a folder
-#. to the bookshelf is successful
-#: bookworm/bookshelf/local_bookshelf/__init__.py:324
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:307
 msgid "Operation Completed"
 msgstr "Toiminto suoritettu"
 
-#. Translators: content of a message shown when importing documents from a
-#. folder to the bookshelf has failed
-#: bookworm/bookshelf/local_bookshelf/__init__.py:332
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:315
 msgid "Failed to import documents from folder."
 msgstr "Asiakirjojen tuonti kansiosta epäonnistui."
 
-#. Translators: title of a dialog to search bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:342
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:325
 msgid "Search Bookshelf"
 msgstr "Hae kirjahyllystä"
 
-#. Translators: a message shown while searching bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:355
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:338
 msgid "Searching bookshelf..."
 msgstr "Haetaan kirjahyllystä..."
 
-#. Translators: content of a message shown when searching bookshelf has failed
-#: bookworm/bookshelf/local_bookshelf/__init__.py:378
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:361
 msgid "Failed to search bookshelf,"
 msgstr "Kirjahyllystä hakeminen epäonnistui,"
 
-#. Translators: title of a dialog that shows bookshelf search results. It
-#. searches documents by title and content, hence full-text
-#: bookworm/bookshelf/local_bookshelf/__init__.py:395
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:378
 msgid "Full Text Search Results"
 msgstr "Koko tekstin hakutulokset"
 
-#. Translators: content of a message to confirm the bundling of documents added
-#. to bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:405
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:389
 msgid ""
 "This will create copies of all of the documents you have added to your Local "
 "Bookshelf.\n"
@@ -1044,38 +691,30 @@ msgstr ""
 "Huomaa, että tämä toiminto luo kaksoiskappaleet kaikista lisäämistäsi "
 "asiakirjoista."
 
-#. Translators: title of a message to confirm the bundling of documents added
-#. to bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:409
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:392
 msgid "Bundle Documents?"
 msgstr "Niputetaanko asiakirjat?"
 
-#. Translators: a message shown when bundling documents added to bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:417
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:400
 msgid "Bundling documents. Please wait..."
 msgstr "Odota, kun asiakirjoja niputetaan..."
 
-#. Translators: content of a message when bundling of documents is successful
-#: bookworm/bookshelf/local_bookshelf/__init__.py:446
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:429
+#, python-brace-format
 msgid "Bundled {num_documents} files."
 msgstr "Niputettu {num_documents} tiedostoa."
 
-#. Translators: title of a message when bundling of documents is successful
-#: bookworm/bookshelf/local_bookshelf/__init__.py:448
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:431
 msgid "Done"
 msgstr "Valmis"
 
-#. Translators: title of a dialog that shows titles and paths of documents
-#. which have not been bundled successfully
-#: bookworm/bookshelf/local_bookshelf/__init__.py:456
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:440
+#, python-brace-format
 msgid "Bundle Results: {num_succesfull} successfull, {num_faild} faild"
 msgstr ""
 "Niputuksen tulokset: {num_succesfull} onnistui, {num_faild} epäonnistui"
 
-#. Translators: content of a message to confirm the clearing of documents
-#. which have been added to bookshelf, but they have been moved, renamed, or
-#. deleted
-#: bookworm/bookshelf/local_bookshelf/__init__.py:468
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:452
 msgid ""
 "This action will clear invalid documents from your bookshelf.\n"
 "Invalid documents are the documents which no longer exist on your computer."
@@ -1083,28 +722,20 @@ msgstr ""
 "Tämä toiminto poistaa virheelliset asiakirjat kirjahyllystä.\n"
 "Virheelliset asiakirjat ovat sellaisia, joita ei enää ole tietokoneellasi."
 
-#. Translators: title of a message to confirm the clearing of documents
-#. which have been added to bookshelf, but they have been moved, renamed, or
-#. deleted
-#: bookworm/bookshelf/local_bookshelf/__init__.py:473
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:456
 msgid "Clear Invalid Documents?"
 msgstr "Poista virheelliset asiakirjat?"
 
-#. Translators: label of a text box to change the name of a reading list or
-#. collection
-#: bookworm/bookshelf/local_bookshelf/__init__.py:488
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:471
 msgid "New name:"
 msgstr "Uusi nimi:"
 
-#. Translators: title of a dialog to change the name of a reading list or
-#. collection
-#: bookworm/bookshelf/local_bookshelf/__init__.py:490
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:473
 msgid "Edit Name"
 msgstr "Muokkaa nimeä"
 
-#. Translators: content of a message when changing the name of a reading list
-#. or collection was not successful
-#: bookworm/bookshelf/local_bookshelf/__init__.py:500
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:484
+#, python-brace-format
 msgid ""
 "The given name {name} already exists.\n"
 "Please choose another name."
@@ -1112,15 +743,12 @@ msgstr ""
 "Antamasi nimi {name} on jo olemassa.\n"
 "Valitse toinen nimi."
 
-#. Translators: title of a message when changing the name of a reading list or
-#. collection was not successful
-#: bookworm/bookshelf/local_bookshelf/__init__.py:504
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:487
 msgid "Duplicate name"
 msgstr "Päällekkäinen nimi"
 
-#. Translators: content of a message to confirm the removal of a reading list
-#. or collection
-#: bookworm/bookshelf/local_bookshelf/__init__.py:514
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:498
+#, python-brace-format
 msgid ""
 "Are you sure you want to remove {name}?\n"
 "This will not remove document classified under {name}."
@@ -1128,19 +756,14 @@ msgstr ""
 "Haluatko varmasti poistaa asiakirjan {name}?\n"
 "Tämä ei poista nimellä {name} luokiteltua asiakirjaa."
 
-#. Translators: title of a message to confirm the removal of a reading list or
-#. collection
-#. Translators: title of a message box
-#. Translators: title of a messagebox
-#: bookworm/bookshelf/local_bookshelf/__init__.py:518
-#: bookworm/gui/components.py:603 bookworm/ocr/ocr_dialogs.py:533
-#: bookworm/ocr/ocr_dialogs.py:575
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:501
+#: ..\..\..\../gui/components.py:609 ..\..\..\../ocr/ocr_dialogs.py:529
+#: ..\..\..\../ocr/ocr_dialogs.py:571
 msgid "Confirm"
 msgstr "Vahvista"
 
-#. Translators: content of a message to confirm the removal of all documents
-#. classified under a specific reading list or collection
-#: bookworm/bookshelf/local_bookshelf/__init__.py:529
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:513
+#, python-brace-format
 msgid ""
 "Are you sure you want to clear all documents classified under {name}?\n"
 "This will remove those documents from your bookshelf."
@@ -1148,74 +771,52 @@ msgstr ""
 "Haluatko varmasti poistaa kaikki nimellä {name} luokitellut asiakirjat?\n"
 "Tämä poistaa kyseiset asiakirjat kirjahyllystä."
 
-#. Translators: title of a message to confirm the removal of all documents
-#. classified under a specific reading list or collection
-#: bookworm/bookshelf/local_bookshelf/__init__.py:533
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:516
 msgid "Clear All Documents"
 msgstr "Poista kaikki asiakirjat"
 
-#. Translators: label of a text box for the name of a new reading list or
-#. collection
-#: bookworm/bookshelf/local_bookshelf/__init__.py:546
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:529
 msgid "Enter name:"
 msgstr "Kirjoita nimi:"
 
-#. Translators: title of a dialog  for adding a new reading list or collection
-#: bookworm/bookshelf/local_bookshelf/__init__.py:548
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:531
 msgid "Add New"
 msgstr "Lisää uusi"
 
-#. Translators: label of an item in the context menu of a document in the
-#. bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:573
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:556
 msgid "&Edit reading list / collections..."
 msgstr "&Muokkaa lukulistaa/kokoelmia..."
 
-#. Translators: label of an item in the context menu of a document in the
-#. bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:578
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:561
 msgid "Remove from &currently reading"
 msgstr "Poista &luen tällä hetkellä -listalta"
 
-#. Translators: label of an item in the context menu of a document in the
-#. bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:580
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:563
 msgid "Add to &currently reading"
 msgstr "Lisää l&uen tällä hetkellä -listalle"
 
-#. Translators: label of an item in the context menu of a document in the
-#. bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:585
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:568
 msgid "Remove from &want to read"
 msgstr "Poista &haluan lukea -listalta"
 
-#. Translators: label of an item in the context menu of a document in the
-#. bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:587
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:570
 msgid "Add to &want to read"
 msgstr "Lisää h&aaluan lukea -listalle"
 
-#. Translators: label of an item in the context menu of a document in the
-#. bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:592
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:575
 msgid "Remove from &favorites"
 msgstr "Poista &suosikeista"
 
-#. Translators: label of an item in the context menu of a document in the
-#. bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:594
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:577
 msgid "Add to &favorites"
 msgstr "Lisää &suosikkeihin"
 
-#. Translators: label of an item in the context menu of a document in the
-#. bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:599
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:582
 msgid "&Remove from bookshelf"
 msgstr "&Poista kirjahyllystä"
 
-#. Translators: content of a message to confirm the removal of this document
-#. from bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:665
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:649
+#, python-brace-format
 msgid ""
 "Are you sure you want to remove this document from your bookshelf?\n"
 "Title: {title}\n"
@@ -1225,250 +826,330 @@ msgstr ""
 "Title: {title}\n"
 "Tämä poistaa asiakirjan kaikista tunnisteista ja kategorioista."
 
-#. Translators: title of a message to confirm the removal of this document from
-#. bookshelf
-#: bookworm/bookshelf/local_bookshelf/__init__.py:669
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:652
 msgid "Remove From Bookshelf?"
 msgstr "Poistetaanko kirjahyllystä?"
 
-#. Translators: the name of a category under the Authors category. This
-#. category shows documents for which  author info is not available
-#: bookworm/bookshelf/local_bookshelf/__init__.py:701
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:684
 msgid "Unknown Author"
 msgstr "Tuntematon tekijä"
 
-#. Translators: label of a combo box for choosing a document's reading list
-#. Translators: label of a button
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:44
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:87
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:43
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:86
 msgid "Reading List"
 msgstr "Lukulista"
 
-#. Translators: label of a check box
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:52
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:94
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:51
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:93
 msgid "Add to full-text search index"
 msgstr "Lisää kokotekstin hakuindeksiin"
 
-#. Translators: label of an edit control for entering the path to a folder to
-#. import to the bookshelf
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:81
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:80
 msgid "Select a folder:"
 msgstr "Valitse kansio:"
 
-#. Translators: label of a text box for entering a search term
-#. Translators: the label of a button in the application toolbar
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:113
-#: bookworm/gui/book_viewer/__init__.py:318
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:112
+#: ..\..\..\../gui/book_viewer/__init__.py:400
 msgid "Search"
 msgstr "Hae"
 
-#. Translators: title of a group of controls to select which document field to
-#. search in when searching bookshelf
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:117
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:116
 msgid "Search Field"
 msgstr "Hakukenttä"
 
-#. Translators: label of a check box that enables/disables searching document
-#. title when searching the bookshelf
-#. Translators: header of a column in a list control in a dialog showing a list
-#. of search results of matching document titles
-#. Translators: title of a list control colum showing the document titles  of
-#. documents not bundled due to errors when bundling documents
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:121
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:187
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:230
-#: bookworm/gui/book_viewer/core_dialogs.py:349
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:120
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:186
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:229
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:342
 msgid "Title"
 msgstr "Nimeke"
 
-#. Translators: label of a list showing search results of documents with title
-#. matching the given  search query
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:155
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:154
 msgid "Title matches"
 msgstr "Nimekeosumat"
 
-#. Translators: the label of a tab in a tabl control in a dialog showing a list
-#. of search results in the bookshelf
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:158
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:157
 msgid "Title Matches"
 msgstr "Nimeke täsmää"
 
-#. Translators: label of a list showing search results of content matching the
-#. given  search query
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:165
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:164
 msgid "Content matches"
 msgstr "Sisältöosumat"
 
-#. Translators: the label of a tab in a tabl control in a dialog showing a list
-#. of search results in the bookshelf
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:168
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:167
 msgid "Content Matches"
 msgstr "Sisältöosumat"
 
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:184
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:183
 msgid "Snippet"
 msgstr "Katkelma"
 
-#. Translators: title of a list control colum showing the file names of files
-#. not bundled due to errors when bundling documents
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:228
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:227
 msgid "File Name"
 msgstr "Tiedostonimi"
 
-#. Translators: label of a list control showing file copy errors
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:233
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:232
 msgid "Errors"
 msgstr "Virheet"
 
-#. Translators: label shown in a list control indicating the failure to copy
-#. the document when bundling documents
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:236
+#: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:235
 msgid "Failed to copy document"
 msgstr "Asiakirjan kopiointi epäonnistui"
 
-#: bookworm/document/features.py:53
+#: ..\..\..\../bookshelf/viewer_integration.py:41
+msgid "Automatically add opened books to the local bookshelf"
+msgstr "Lisää avatut kirjat automaattisesti paikalliseen kirjahyllyyn"
+
+#: ..\..\..\../bookshelf/viewer_integration.py:54
+msgid "&Open Bookshelf"
+msgstr "&Avaa kirjahylly"
+
+#: ..\..\..\../bookshelf/viewer_integration.py:56
+msgid "Open your bookshelf"
+msgstr "Avaa kirjahylly"
+
+#: ..\..\..\../bookshelf/viewer_integration.py:61
+msgid "&Add to local bookshelf..."
+msgstr "Lisää p&aikalliseen kirjahyllyyn..."
+
+#: ..\..\..\../bookshelf/viewer_integration.py:63
+msgid "Add the current book to the local bookshelf"
+msgstr "Lisää nykyinen kirja paikalliseen kirjahyllyyn"
+
+#: ..\..\..\../bookshelf/viewer_integration.py:94
+msgid ""
+"You can not add this document to Bookshelf.\n"
+"The document should exist locally in your computer."
+msgstr ""
+"Tätä asiakirjaa ei voi lisätä kirjahyllyyn.\n"
+"Asiakirjan on oltava tietokoneella paikallisesti."
+
+#: ..\..\..\../bookshelf/viewer_integration.py:97
+msgid "Can not add document"
+msgstr "Asiakirjaa ei voi lisätä"
+
+#: ..\..\..\../bookshelf/viewer_integration.py:104
+msgid "Reading list and collections"
+msgstr "Lukulista ja kokoelmat"
+
+#: ..\..\..\../bookshelf/window.py:51
+#, python-brace-format
+msgid "{name} ({count})"
+msgstr "{name} ({count})"
+
+#: ..\..\..\../bookshelf/window.py:75
+msgid "Filter documents..."
+msgstr "Suodata asiakirjoja..."
+
+#: ..\..\..\../bookshelf/window.py:81
+msgid "Loading items"
+msgstr "Ladataan kohteita"
+
+#: ..\..\..\../bookshelf/window.py:191
+msgid ""
+"Failed to retrieve documents.\n"
+"Please try again."
+msgstr ""
+"Asiakirjojen hakeminen epäonnistui.\n"
+"Ole hyvä ja yritä uudelleen."
+
+#: ..\..\..\../bookshelf/window.py:233
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:388
+msgid "&Open"
+msgstr "&Avaa"
+
+#: ..\..\..\../bookshelf/window.py:238
+msgid "Open in &system viewer"
+msgstr "Avaa &järjestelmän katseluohjelmassa"
+
+#: ..\..\..\../bookshelf/window.py:243
+msgid "Edit &title"
+msgstr "Muokkaa &nimekettä"
+
+#: ..\..\..\../bookshelf/window.py:296
+msgid "No matching documents"
+msgstr "Ei vastaavia asiakirjoja"
+
+#: ..\..\..\../bookshelf/window.py:350 ..\..\..\../bookshelf/window.py:362
+msgid "Retrieving items..."
+msgstr "Haetaan kohteita..."
+
+#: ..\..\..\../bookshelf/window.py:387
+msgid "Document &info..."
+msgstr "Asiakirjan t&iedot..."
+
+#: ..\..\..\../bookshelf/window.py:418
+msgid "Provider"
+msgstr "Tarjoaja"
+
+#: ..\..\..\../bookshelf/window.py:425 ..\..\..\../bookshelf/window.py:431
+#: ..\..\..\../gui/settings.py:609
+msgid "Categories"
+msgstr "Kategoriat"
+
+#: ..\..\..\../bookshelf/window.py:468
+#, python-brace-format
+msgid "Bookworm Bookshelf: {name}"
+msgstr "Bookwormin kirjahylly: {name}"
+
+#: ..\..\..\../bookshelf/window.py:492
+msgid "&Exit"
+msgstr "&Lopeta"
+
+#: ..\..\..\../bookshelf/window.py:495
+#: ..\..\..\../gui/book_viewer/menubar.py:879
+msgid "&File"
+msgstr "&Tiedosto"
+
+#: ..\..\..\../document/features.py:53
 msgid "Default reading mode"
 msgstr "Lukemisen oletustila"
 
-#: bookworm/document/features.py:54
+#: ..\..\..\../document/features.py:54
 msgid "Reading order"
 msgstr "Lukemisjärjestys"
 
-#: bookworm/document/features.py:55
+#: ..\..\..\../document/features.py:55
 msgid "Physical layout"
 msgstr "Fyysinen asettelu"
 
-#: bookworm/document/features.py:56
+#: ..\..\..\../document/features.py:56
 msgid "Paginated"
 msgstr "Sivutettu"
 
-#: bookworm/document/features.py:57
+#: ..\..\..\../document/features.py:57
 msgid "Chapter by chapter"
 msgstr "Luku kerrallaan"
 
-#: bookworm/document/features.py:58
+#: ..\..\..\../document/features.py:58
 msgid "Clean text"
 msgstr "Puhdas teksti"
 
-#: bookworm/document/features.py:59
+#: ..\..\..\../document/features.py:59
 msgid "Full text"
 msgstr "Koko teksti"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/_legacy_epub.py:185
-#: bookworm/document/formats/epub.py:52
+#: ..\..\..\../document/formats/archive.py:43
+msgid "Archive File"
+msgstr "Pakattu tiedosto"
+
+#: ..\..\..\../document/formats/epub.py:49
 msgid "Electronic Publication (EPUB)"
 msgstr "Elektroninen julkaisu (ePub)"
 
-#: bookworm/document/formats/_legacy_epub.py:279
-msgid "Book contents"
-msgstr "Kirjan sisältö"
-
-#. Translators: the name of a document file format
-#: bookworm/document/formats/docbook.py:34
-msgid "Docbook Document"
-msgstr "Docbook-asiakirja"
-
-#. Translators: the name of a document file format
-#: bookworm/document/formats/fitz.py:173
+#: ..\..\..\../document/formats/fb2.py:24
+#: ..\..\..\../document/formats/fb2.py:36
 msgid "Fiction Book (FB2)"
 msgstr "Fiction Book (FB2)"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/fitz.py:199
+#: ..\..\..\../document/formats/fitz.py:170
 msgid "XPS Document"
 msgstr "XPS-asiakirja"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/fitz.py:207
+#: ..\..\..\../document/formats/fitz.py:178
 msgid "Comic Book Archive"
 msgstr "Comic Book -arkisto"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/html.py:188 bookworm/document/formats/html.py:254
+#: ..\..\..\../document/formats/html.py:174
+#: ..\..\..\../document/formats/html.py:244
 msgid "HTML Document"
 msgstr "HTML-asiakirja"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/markdown.py:18
+#: ..\..\..\../document/formats/markdown.py:20
 msgid "Markdown File"
 msgstr "Markdown-tiedosto"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/mobi.py:41
+#: ..\..\..\../document/formats/mobi.py:40
 msgid "Kindle eBook"
 msgstr "Kindle-e-kirja"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/odf.py:88
+#: ..\..\..\../document/formats/odf.py:83
 msgid "Open Document Text"
 msgstr "Open Document Text"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/odf.py:134
+#: ..\..\..\../document/formats/odf.py:129
 msgid "Open Document Presentation"
 msgstr "Open Document Presentation"
 
-#: bookworm/document/formats/odf.py:197
-#: bookworm/document/formats/powerpoint.py:162
+#: ..\..\..\../document/formats/odf.py:192
+#: ..\..\..\../document/formats/powerpoint.py:156
+#, python-brace-format
 msgid "Slide {number}"
 msgstr "Dia {number}"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/pdf.py:66
+#: ..\..\..\../document/formats/pandoc.py:39
+msgid "Rich Text Document"
+msgstr "Rich Text -asiakirja"
+
+#: ..\..\..\../document/formats/pandoc.py:48
+msgid "Docbook Document"
+msgstr "Docbook-asiakirja"
+
+#: ..\..\..\../document/formats/pandoc.py:57
+msgid "Jupyter notebook"
+msgstr "Jupyter-muistikirja"
+
+#: ..\..\..\../document/formats/pandoc.py:66
+msgid "LaTeX Document"
+msgstr "LaTeX-asiakirja"
+
+#: ..\..\..\../document/formats/pandoc.py:75
+msgid "Text2Tags Document"
+msgstr "Text2Tags-asiakirja"
+
+#: ..\..\..\../document/formats/pandoc.py:84
+msgid "Unix manual page"
+msgstr "Unix-käsikirjan sivu"
+
+#: ..\..\..\../document/formats/pdf.py:73
 msgid "Portable Document (PDF)"
 msgstr "Siirrettävä asiakirja (PDF)"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/plain_text.py:32
+#: ..\..\..\../document/formats/plain_text.py:27
 msgid "Plain Text File"
 msgstr "Vain teksti -tiedosto"
 
-#: bookworm/document/formats/powerpoint.py:91
+#: ..\..\..\../document/formats/powerpoint.py:85
 msgid "Slide Notes"
 msgstr "Dian muistiinpanot"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/powerpoint.py:122
+#: ..\..\..\../document/formats/powerpoint.py:116
 msgid "PowerPoint Presentation"
 msgstr "PowerPoint-esitys"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/word.py:39
+#: ..\..\..\../document/formats/word.py:45
 msgid "Word Document"
 msgstr "Word-asiakirja"
 
-#. Translators: the name of a document file format
-#: bookworm/document/formats/word.py:97
+#: ..\..\..\../document/formats/word.py:136
 msgid "Word 97 - 2003 Document"
 msgstr "Word 97-2003 -asiakirja"
 
-#: bookworm/epub_serve/__init__.py:40
+#: ..\..\..\../epub_serve/__init__.py:43
 msgid "Open in &web Viewer"
 msgstr "Avaa &verkkoselaimessa"
 
-#: bookworm/epub_serve/__init__.py:41
+#: ..\..\..\../epub_serve/__init__.py:44
 msgid "Open the current EPUB book in the browser"
 msgstr "Avaa nykyinen ePub-kirja selaimessa"
 
-#: bookworm/epub_serve/__init__.py:58
+#: ..\..\..\../epub_serve/__init__.py:61
 msgid "Openning in web viewer..."
 msgstr "Avataan selaimessa..."
 
-#: bookworm/epub_serve/__init__.py:78
+#: ..\..\..\../epub_serve/__init__.py:81
 msgid "Failed to launch web viewer"
 msgstr "Selaimen avaaminen epäonnistui"
 
-#: bookworm/epub_serve/__init__.py:79
+#: ..\..\..\../epub_serve/__init__.py:82
 msgid "An error occurred while opening the web viewer. Please try again."
 msgstr "Selainta avattaessa tapahtui virhe. Ole hyvä ja yritä uudelleen."
 
-#: bookworm/epub_serve/webapp.py:146
+#: ..\..\..\../epub_serve/webapp.py:140
 msgid "404 Not Found"
 msgstr "404 - sivua ei löydy"
 
-#: bookworm/epub_serve/webapp.py:147
+#: ..\..\..\../epub_serve/webapp.py:142
 msgid ""
 "The book you are trying to access does not exist or has been closed. Please "
 "make sure you opened the book from within Bookworm. All URLs are temporary "
@@ -1478,306 +1159,31 @@ msgstr ""
 "kirjan Bookwormista. Kaikki URL-osoitteet ovat tilapäisiä eivätkä "
 "välttämättä toimi sivun sulkemisen jälkeen."
 
-#: bookworm/epub_serve/webapp.py:186
+#: ..\..\..\../epub_serve/webapp.py:180
 msgid "Failed to load content"
 msgstr "Sisällön lataaminen epäonnistui"
 
-#: bookworm/epub_serve/webapp.py:187
+#: ..\..\..\../epub_serve/webapp.py:182
 msgid "Cannot retreive content. Probably the eBook has been closed."
 msgstr "Sisältöä ei voi hakea. E-kirja on luultavasti suljettu."
 
-#. Translators: the title of a group of controls in the search dialog
-#: bookworm/gui/components.py:100
-msgid "Search Range"
-msgstr "Hakualue"
-
-#. Translators: the label of a radio button in the search dialog
-#: bookworm/gui/components.py:102
-msgid "Page Range"
-msgstr "Sivut väliltä"
-
-#. Translators: the label of an edit field in the search dialog
-#. to enter the page from which the search will start
-#: bookworm/gui/components.py:108
-msgid "From:"
-msgstr "Mistä:"
-
-#. Translators: the label of an edit field in the search dialog
-#. to enter the page number at which the search will stop
-#: bookworm/gui/components.py:114
-msgid "To:"
-msgstr "Mihin:"
-
-#. Translators: the label of a radio button in the search dialog
-#: bookworm/gui/components.py:119
-msgid "Specific section"
-msgstr "Tietty luku"
-
-#. Translators: the label of a combobox in the search dialog
-#. to choose the section to which the search will be confined
-#: bookworm/gui/components.py:122
-msgid "Select section:"
-msgstr "Valitse luku:"
-
-#. Translators: the label of the OK button in a dialog
-#: bookworm/gui/components.py:270 bookworm/gui/components.py:311
-#: bookworm/gui/settings.py:483
-msgid "OK"
-msgstr "OK"
-
-#. Translators: the lable of the cancel button in a dialog
-#. Translators: the label of the cancel button in a dialog
-#: bookworm/gui/components.py:273 bookworm/gui/components.py:314
-#: bookworm/gui/settings.py:486
-msgid "Cancel"
-msgstr "Peruuta"
-
-#. Translators: content of a message to confirm the closing of a progress
-#. dialog
-#: bookworm/gui/components.py:599
-msgid ""
-"This will cancel all the operations in progress.\n"
-"Are you sure you want to abort?"
-msgstr ""
-"Tämä peruuttaa kaikki käynnissä olevat toiminnot.\n"
-"Haluatko varmasti keskeyttää?"
-
-#. Translators: the title of the file associations dialog
-#: bookworm/gui/settings.py:39
-msgid "Bookworm File Associations"
-msgstr "Bookwormin tiedostokytkennät"
-
-#: bookworm/gui/settings.py:51
-msgid ""
-"This dialog will help you to setup file associations.\n"
-"Associating files with Bookworm means that when you click on a file in "
-"windows explorer, it will be opened in Bookworm by default "
-msgstr ""
-"Tässä valintaikkunassa voit määrittää tiedostokytkennät.\n"
-"Tiedostojen kytkeminen Bookwormiin tarkoittaa, että kun klikkaat tiedostoa "
-"Windowsin Resurssienhallinnassa, se avataan oletusarvoisesti Bookwormissa."
-
-#. Translators: the main label of a button
-#: bookworm/gui/settings.py:64
-msgid "Associate all"
-msgstr "Kytke kaikki"
-
-#. Translators: the note of a button
-#: bookworm/gui/settings.py:66
-msgid "Use Bookworm to open all supported document formats"
-msgstr "Käytä Bookwormia kaikkien tuettujen asiakirjojen avaamiseen."
-
-#. Translators: the main label of a button
-#: bookworm/gui/settings.py:74
-msgid "Associate files of type {format}"
-msgstr "Kytke tiedostot, joiden tyyppi on {format}"
-
-#. Translators: the note of a button
-#: bookworm/gui/settings.py:76
-msgid "Associate files with {ext} extension so they always open in Bookworm"
-msgstr "Kytke {ext}-päätteiset tiedostot avautumaan aina Bookwormissa."
-
-#. Translators: the main label of a button
-#: bookworm/gui/settings.py:89
-msgid "Dissociate all supported file types"
-msgstr "Poista kaikkien tuettujen tiedostotyyppien kytkennät"
-
-#. Translators: the note of a button
-#: bookworm/gui/settings.py:91
-msgid "Remove previously associated file types"
-msgstr "Poista aiemmin kytketyt tiedostotyypit"
-
-#. Translators: the text of a message indicating successful file association
-#: bookworm/gui/settings.py:108
-msgid "Files of type {format} have been associated with Bookworm."
-msgstr "Tyypin {format} tiedostot on kytketty Bookwormiin."
-
-#. Translators: the title of a message indicating successful file association
-#. Translators: the title of a message indicating successful removal of file
-#. association
-#: bookworm/gui/settings.py:112 bookworm/gui/settings.py:130
-msgid "Success"
-msgstr "Onnistui"
-
-#. Translators: the text of a message indicating successful removal of file
-#. associations
-#: bookworm/gui/settings.py:121
-msgid "All supported file types have been set to open by default in Bookworm."
-msgstr ""
-"Kaikki tuetut tiedostotyypit on määritetty avautumaan oletusarvoisesti "
-"Bookwormissa."
-
-#. Translators: the text of a message indicating successful removal of file
-#. associations
-#: bookworm/gui/settings.py:126
-msgid "All registered file associations have been removed."
-msgstr "Kaikki rekisteröidyt tiedostokytkennät on poistettu."
-
-#. Translators: the title of a group of controls in the
-#. general settings page related to the UI
-#: bookworm/gui/settings.py:211
-msgid "User Interface"
-msgstr "Käyttöliittymä"
-
-#. Translators: the label of a combobox containing display languages.
-#: bookworm/gui/settings.py:213
-msgid "Display Language:"
-msgstr "Näyttökieli:"
-
-#. Translators: the label of a checkbox
-#: bookworm/gui/settings.py:220
-msgid "Speak user interface messages"
-msgstr "Puhu käyttöliittymän ilmoitukset"
-
-#. Translators: the label of a checkbox
-#: bookworm/gui/settings.py:227 bookworm/text_to_speech/tts_gui.py:92
-msgid "Speak page number"
-msgstr "Puhu sivunumero"
-
-#. Translators: the label of a checkbox
-#: bookworm/gui/settings.py:234
-msgid "Speak section title"
-msgstr "Puhu luvun otsikko"
-
-#. Translators: the label of a checkbox
-#: bookworm/gui/settings.py:241
-msgid "Play pagination sound"
-msgstr "Soita sivunvaihdon ääni"
-
-#. Translators: the label of a checkbox
-#: bookworm/gui/settings.py:248
-msgid "Include page label in page title"
-msgstr "Lisää sivun tunniste sivun otsikkoon"
-
-#. Translators: the label of a checkbox
-#: bookworm/gui/settings.py:255
-msgid "Use file name instead of book title"
-msgstr "Käytä tiedostonimeä kirjan nimen sijaan"
-
-#. Translators: the label of a checkbox
-#: bookworm/gui/settings.py:262
-msgid "Show reading progress percentage"
-msgstr "Näytä lukemisen edistymisprosentti"
-
-#. Translators: the title of a group of controls shown in the
-#. general settings page related to miscellaneous settings
-#: bookworm/gui/settings.py:267
-msgid "Miscellaneous"
-msgstr "Sekalaiset"
-
-#. Translators: the label of a checkbox
-#: bookworm/gui/settings.py:272
-msgid "Open recently opened books from the last position"
-msgstr "Avaa äskettäin avatut kirjat edellisestä lukukohdasta"
-
-#. Translators: the label of a checkbox
-#: bookworm/gui/settings.py:279
-msgid "Automatically check for updates"
-msgstr "Tarkista päivitykset automaattisesti"
-
-#. Translators: the title of a group of controls shown in the
-#. general settings page related to file associations
-#: bookworm/gui/settings.py:285
-msgid "File Associations"
-msgstr "Tiedostokytkennät"
-
-#. Translators: the label of a button
-#: bookworm/gui/settings.py:290
-msgid "Manage File &Associations"
-msgstr "Tiedosto&kytkentöjen hallinta"
-
-#. Translators: the content of a message asking the user to restart
-#: bookworm/gui/settings.py:310
-msgid ""
-"You have changed the display language of Bookworm.\n"
-"For this setting to fully take effect, you need to restart the application.\n"
-"Would you like to restart the application right now?"
-msgstr ""
-"Olet vaihtanut Bookwormin näyttökieltä.\n"
-"Sovellus on käynnistettävä uudelleen, jotta asetus tulee voimaan.\n"
-"Haluatko käynnistää sovelluksen uudelleen nyt?"
-
-#. Translators: the title of a message telling the user
-#. that the display language have been changed
-#: bookworm/gui/settings.py:317
-msgid "Language Changed"
-msgstr "Kieli vaihdettu"
-
-#. Translators: the title of a group of controls in the
-#. appearance settings page related to the UI
-#: bookworm/gui/settings.py:339
-msgid "General Appearance"
-msgstr "Yleinen ulkonäkö"
-
-#. Translators: the label of a checkbox
-#: bookworm/gui/settings.py:344
-msgid "Maximize the application window upon startup"
-msgstr "Suurenna sovellusikkuna käynnistettäessä"
-
-#: bookworm/gui/settings.py:347
-msgid "Text Styling"
-msgstr "Tekstin tyyli"
-
-#. Translators: the label of a checkbox
-#: bookworm/gui/settings.py:352
-msgid "Apply text styling (when available)"
-msgstr "Käytä tekstityylejä (kun käytettävissä)"
-
-#. Translators: the title of a group of controls in the
-#. appearance settings page related to the UI
-#: bookworm/gui/settings.py:357
-msgid "Font"
-msgstr "Fontti"
-
-#. Translators: label of a combobox
-#: bookworm/gui/settings.py:359
-msgid "Font Face"
-msgstr "Fontin tyyli "
-
-#. Translators: label of a checkbox
-#: bookworm/gui/settings.py:369
-msgid "Use Open-&dyslexic font"
-msgstr "Käytä Open-&dyslexic-fonttia"
-
-#. Translators: label of an edit box
-#: bookworm/gui/settings.py:373
-msgid "Font Size"
-msgstr "Fonttikoko"
-
-#. Translators: the label of a checkbox
-#: bookworm/gui/settings.py:379
-msgid "Bold style"
-msgstr "Lihavoitu tyyli"
-
-#. Translators: the label of a page in the settings dialog
-#: bookworm/gui/settings.py:431
-msgid "Appearance"
-msgstr "Ulkoasu"
-
-#. Translators: the label of the apply button in a dialog
-#: bookworm/gui/settings.py:488
-msgid "Apply"
-msgstr "Käytä"
-
-#: bookworm/gui/book_viewer/__init__.py:78
+#: ..\..\..\../gui/book_viewer/__init__.py:76
 msgid "Failed to open document"
 msgstr "Asiakirjan avaaminen ei onnistu"
 
-#: bookworm/gui/book_viewer/__init__.py:79
+#: ..\..\..\../gui/book_viewer/__init__.py:78
 msgid "The document you are trying to open could not be opened in Bookworm."
 msgstr "Asiakirjaa, jota yrität avata, ei voitu avata Bookwormissa."
 
-#: bookworm/gui/book_viewer/__init__.py:95
+#: ..\..\..\../gui/book_viewer/__init__.py:91
 msgid "Opening document, please wait..."
 msgstr "Odota, kun asiakirjaa avataan..."
 
-#. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:109
+#: ..\..\..\../gui/book_viewer/__init__.py:109
 msgid "Document not found"
 msgstr "Asiakirjaa ei löydy"
 
-#. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:111
+#: ..\..\..\../gui/book_viewer/__init__.py:111
 msgid ""
 "Could not open Document.\n"
 "The document does not exist."
@@ -1785,25 +1191,51 @@ msgstr ""
 "Asiakirjaa ei voitu avata.\n"
 "tiedostoa ei ole."
 
-#. Translators: the title of a message shown
-#. when the format of the e-book is not supported
-#: bookworm/gui/book_viewer/__init__.py:121
+#: ..\..\..\../gui/book_viewer/__init__.py:123
+msgid "Document Restricted"
+msgstr "Rajoitettu asiakirja"
+
+#: ..\..\..\../gui/book_viewer/__init__.py:126
+msgid ""
+"Could not open Document.\n"
+"The document is restricted by the publisher."
+msgstr ""
+"Asiakirjaa ei voitu avata.\n"
+"Julkaisija on rajoittanut asiakirjan avaamista."
+
+#: ..\..\..\../gui/book_viewer/__init__.py:137
 msgid "Unsupported Document Format"
 msgstr "Asiakirjan muotoa ei tueta"
 
-#. Translators: the content of a message shown
-#. when the format of the e-book is not supported
-#: bookworm/gui/book_viewer/__init__.py:124
+#: ..\..\..\../gui/book_viewer/__init__.py:140
 msgid "The format of the given document is not supported by Bookworm."
 msgstr "Bookworm ei tue tätä asiakirjamuotoa."
 
-#. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:133
+#: ..\..\..\../gui/book_viewer/__init__.py:149
+msgid "Archive contains no documents"
+msgstr "Pakattu tiedosto ei sisällä asiakirjoja"
+
+#: ..\..\..\../gui/book_viewer/__init__.py:152
+msgid ""
+"Bookworm cannot open this archive file.\n"
+"The archive contains no documents."
+msgstr ""
+"Bookworm ei voi avata tätä pakattua tiedostoa.\n"
+"Pakkaus ei sisällä asiakirjoja."
+
+#: ..\..\..\../gui/book_viewer/__init__.py:160
+msgid "Documents"
+msgstr "Asiakirjat"
+
+#: ..\..\..\../gui/book_viewer/__init__.py:161
+msgid "Multiple documents found"
+msgstr "Useita asiakirjoja löytyi"
+
+#: ..\..\..\../gui/book_viewer/__init__.py:175
 msgid "Error Opening Document"
 msgstr "Virhe avattaessa asiakirjaa"
 
-#. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:135
+#: ..\..\..\../gui/book_viewer/__init__.py:178
 msgid ""
 "Could not open file\n"
 ".Either the file  has been damaged during download, or it has been corrupted "
@@ -1813,13 +1245,11 @@ msgstr ""
 "Tiedosto on joko vahingoittunut lataamisen aikana tai se on vioittunut "
 "jollakin muulla tavalla."
 
-#. Translators: the title of an error message
-#: bookworm/gui/book_viewer/__init__.py:148
+#: ..\..\..\../gui/book_viewer/__init__.py:190
 msgid "Error Openning Document"
 msgstr "Virhe avattaessa asiakirjaa"
 
-#. Translators: the content of an error message
-#: bookworm/gui/book_viewer/__init__.py:150
+#: ..\..\..\../gui/book_viewer/__init__.py:193
 msgid ""
 "Could not open document.\n"
 "An unknown error occurred while loading the file."
@@ -1827,95 +1257,113 @@ msgstr ""
 "Asiakirjaa ei voitu avata.\n"
 "Tiedostoa ladattaessa tapahtui tuntematon virhe."
 
-#. Translators: the text of the status bar when no book is currently open.
-#. It is being used also as a label for the page content text area when no book
-#. is opened.
-#: bookworm/gui/book_viewer/__init__.py:213
+#: ..\..\..\../gui/book_viewer/__init__.py:205
+msgid ""
+"Failed to open document.\n"
+"Would you like to remove its entry from the 'recent documents' and 'pinned "
+"documents' lists?"
+msgstr ""
+"Asiakirjan avaaminen epäonnistui.\n"
+"Haluatko poistaa sen äskettäin avattujen ja kiinnitettyjen asiakirjojen "
+"luetteloista?"
+
+#: ..\..\..\../gui/book_viewer/__init__.py:208
+msgid "Remove from lists?"
+msgstr "Poistetaanko luetteloista?"
+
+#: ..\..\..\../gui/book_viewer/__init__.py:277
 msgid "Press (Ctrl + O) to open a document"
 msgstr "Avaa asiakirja painamalla Ctrl+O"
 
-#. Translators: the label of the table-of-contents tree
-#: bookworm/gui/book_viewer/__init__.py:227
+#: ..\..\..\../gui/book_viewer/__init__.py:291
 msgid "Table of Contents"
 msgstr "Sisällysluettelo"
 
-#. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:315
+#: ..\..\..\../gui/book_viewer/__init__.py:314
+msgid "Reading progress percentage"
+msgstr "Lukemisen edistymisprosentti"
+
+#: ..\..\..\../gui/book_viewer/__init__.py:397
 msgid "Open"
 msgstr "Avaa"
 
-#. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:320
+#: ..\..\..\../gui/book_viewer/__init__.py:402
 msgid "Mode"
 msgstr "Tila"
 
-#. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:323
+#: ..\..\..\../gui/book_viewer/__init__.py:405
 msgid "Big"
 msgstr "Suuri"
 
-#. Translators: the label of a button in the application toolbar
-#: bookworm/gui/book_viewer/__init__.py:325
+#: ..\..\..\../gui/book_viewer/__init__.py:407
 msgid "Small"
 msgstr "Pieni"
 
-#. Translators: spoken message when the document has been closed
-#: bookworm/gui/book_viewer/__init__.py:411
+#: ..\..\..\../gui/book_viewer/__init__.py:452
+msgid "Incorrect Password"
+msgstr "Väärä salasana"
+
+#: ..\..\..\../gui/book_viewer/__init__.py:456
+msgid ""
+"The password you provided is incorrect.\n"
+"Please try again with the correct password."
+msgstr ""
+"Antamasi salasana on väärä.\n"
+"Yritä uudelleen kirjoittamalla oikea salasana."
+
+#: ..\..\..\../gui/book_viewer/__init__.py:522
 msgid "Document closed."
 msgstr "Asiakirja suljettu."
 
-#. Translators: text of reading progress shown in the status bar
-#: bookworm/gui/book_viewer/__init__.py:447
+#: ..\..\..\../gui/book_viewer/__init__.py:558
+#, python-brace-format
 msgid "{percentage} completed"
 msgstr "{percentage} luettu"
 
-#. Translators: label of content text control when the currently opened
-#. document is a single page document
-#: bookworm/gui/book_viewer/__init__.py:498
+#: ..\..\..\../gui/book_viewer/__init__.py:622
 msgid "Document content"
 msgstr "Asiakirjan sisältö"
 
-#. Translators: a message that is announced after navigating to a page
-#. Translators: the label of the page content text area
-#. Translators: a message to announce when navigating to another page
-#: bookworm/gui/book_viewer/__init__.py:501
-#: bookworm/gui/book_viewer/__init__.py:675
-#: bookworm/text_to_speech/__init__.py:177
+#: ..\..\..\../gui/book_viewer/__init__.py:625
+#: ..\..\..\../gui/book_viewer/__init__.py:809
+#: ..\..\..\../text_to_speech/__init__.py:167
+#, python-brace-format
 msgid "Page {page} of {total}"
 msgstr "Sivu {page} / {total}"
 
-#: bookworm/gui/book_viewer/__init__.py:548
+#: ..\..\..\../gui/book_viewer/__init__.py:672
+#, python-brace-format
 msgid "{text}: {item_type}"
 msgstr "{text}: {item_type}"
 
-#: bookworm/gui/book_viewer/__init__.py:565
+#: ..\..\..\../gui/book_viewer/__init__.py:689
+#, python-brace-format
 msgid "No next {item}"
 msgstr "Ei seuraavaa {item}"
 
-#: bookworm/gui/book_viewer/__init__.py:567
+#: ..\..\..\../gui/book_viewer/__init__.py:691
+#, python-brace-format
 msgid "No previous {item}"
 msgstr "Ei edellistä {item}"
 
-#. Translators: a message telling the user that the font size has been
-#. increased
-#: bookworm/gui/book_viewer/__init__.py:583
+#: ..\..\..\../gui/book_viewer/__init__.py:707
 msgid "The font size has been Increased"
 msgstr "Fonttikokoa on suurennettu"
 
-#. Translators: a message telling the user that the font size has been
-#. decreased
-#: bookworm/gui/book_viewer/__init__.py:589
+#: ..\..\..\../gui/book_viewer/__init__.py:713
 msgid "The font size has been decreased"
 msgstr "Fonttikokoa on pienennetty"
 
-#. Translators: a message telling the user that the font size has been reset
-#: bookworm/gui/book_viewer/__init__.py:593
+#: ..\..\..\../gui/book_viewer/__init__.py:717
 msgid "The font size has been reset"
 msgstr "Fonttikoko on nollattu"
 
-#. Translators: the content of a dialog asking the user
-#. for the password to decrypt the current e-book
-#: bookworm/gui/book_viewer/__init__.py:614
+#: ..\..\..\../gui/book_viewer/__init__.py:747
+#, python-brace-format
+msgid "Reading progress: {percentage}"
+msgstr "Lukemisen edistyminen: {percentage}"
+
+#: ..\..\..\../gui/book_viewer/__init__.py:766
 msgid ""
 "This document is encrypted with a password.\n"
 "You need to provide the password in order to access its content.\n"
@@ -1925,121 +1373,91 @@ msgstr ""
 "Tarvitset salasanan sen lukemiseen.\n"
 "Kirjoita salasana ja paina Enteriä."
 
-#. Translators: the title of a dialog asking the user to enter a password to
-#. decrypt the e-book
-#: bookworm/gui/book_viewer/__init__.py:620
+#: ..\..\..\../gui/book_viewer/__init__.py:771
 msgid "Enter Password"
 msgstr "Kirjoita salasana"
 
-#. Translators: title of a message telling the user that they entered an
-#. incorrect
-#. password for opening the book
-#: bookworm/gui/book_viewer/__init__.py:630
-msgid "Incorrect Password"
-msgstr "Väärä salasana"
-
-#. Translators: content of a message telling the user that they entered an
-#. incorrect
-#. password for opening the book
-#: bookworm/gui/book_viewer/__init__.py:633
-msgid ""
-"The password you provided is incorrect.\n"
-"Please try again with the correct password."
-msgstr ""
-"Antamasi salasana on väärä.\n"
-"Yritä uudelleen kirjoittamalla oikea salasana."
-
-#: bookworm/gui/book_viewer/__init__.py:750
+#: ..\..\..\../gui/book_viewer/__init__.py:894
+#, python-brace-format
 msgid "Opening page: {url}"
 msgstr "Avataan sivua: {url}"
 
-#. Translators: the label of a list of search results
-#: bookworm/gui/book_viewer/core_dialogs.py:54
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:47
 msgid "Search Results"
 msgstr "Hakutulokset"
 
-#. Translators: the title of a column in the search results list showing
-#. an excerpt of the text of the search result
-#: bookworm/gui/book_viewer/core_dialogs.py:65
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:58
 msgid "Text"
 msgstr "Teksti"
 
-#. Translators: the label of a progress bar indicating the progress of the
-#. search process
-#: bookworm/gui/book_viewer/core_dialogs.py:81
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:74
 msgid "Search Progress:"
 msgstr "Haun edistyminen:"
 
-#. Translators: the label of a button to close the dialog
-#. Translators: the label of an edit field in the search dialog
-#: bookworm/gui/book_viewer/core_dialogs.py:155
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:148
 msgid "Search term:"
 msgstr "Hakuehto:"
 
-#. Translators: the label of a checkbox
-#: bookworm/gui/book_viewer/core_dialogs.py:161
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:154
 msgid "Case sensitive"
 msgstr "Sama kirjainkoko"
 
-#. Translators: the label of a checkbox
-#: bookworm/gui/book_viewer/core_dialogs.py:163
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:156
 msgid "Match whole word only"
 msgstr "Vain kokonaiset sanat"
 
-#. Translators: the label of a checkbox
-#: bookworm/gui/book_viewer/core_dialogs.py:165
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:158
 msgid "Regular expression"
 msgstr "Sääntölauseke"
 
-#: bookworm/gui/book_viewer/core_dialogs.py:214
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:207
+#, python-brace-format
 msgid "Page number, of {total}:"
 msgstr "Sivu (yhteensä {total}):"
 
-#: bookworm/gui/book_viewer/core_dialogs.py:258
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:251
 msgid "Elements"
 msgstr "Elementit"
 
-#. Translators: title of a dialog
-#: bookworm/gui/book_viewer/core_dialogs.py:334
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:327
 msgid "Document Info"
 msgstr "Asiakirjan tiedot"
 
-#: bookworm/gui/book_viewer/core_dialogs.py:363
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:356
 msgid "Author"
 msgstr "Tekijä"
 
-#: bookworm/gui/book_viewer/core_dialogs.py:367
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:360
 msgid "Description"
 msgstr "Kuvaus"
 
-#: bookworm/gui/book_viewer/core_dialogs.py:376
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:369
 msgid "Number of Sections"
 msgstr "Lukujen määrä"
 
-#: bookworm/gui/book_viewer/core_dialogs.py:380
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:373
 msgid "Number of Pages"
 msgstr "Sivumäärä"
 
-#. Translators: the title of a column in the Tesseract language list
-#: bookworm/gui/book_viewer/core_dialogs.py:383
-#: bookworm/ocr/ocr_dialogs.py:488
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:376
+#: ..\..\..\../ocr/ocr_dialogs.py:484
 msgid "Language"
 msgstr "Kieli"
 
-#: bookworm/gui/book_viewer/core_dialogs.py:386
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:379
 msgid "Publisher"
 msgstr "Julkaisija"
 
-#: bookworm/gui/book_viewer/core_dialogs.py:388
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:381
 msgid "Created at"
 msgstr "Luotu"
 
-#: bookworm/gui/book_viewer/core_dialogs.py:391
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:384
 msgid "Publication Date"
 msgstr "Julkaisupäivämäärä"
 
-#. Translators: the content of the about message
-#: bookworm/gui/book_viewer/menubar.py:57
+#: ..\..\..\../gui/book_viewer/menubar.py:47
+#, python-brace-format
 msgid ""
 "{display_name}\n"
 "Version: {version}\n"
@@ -2078,458 +1496,765 @@ msgstr ""
 "SOVELTUVUUDESTA TIETTYYN TARKOITUKSEEN.\n"
 "Saat lisätietoja tarkastelemalla koko lisenssiä Ohje-valikosta.\n"
 
-#: bookworm/gui/book_viewer/menubar.py:69
+#: ..\..\..\../gui/book_viewer/menubar.py:59
 msgid ""
 "This release of Bookworm is generously sponsored  by Capeds (www.capeds.net)."
 msgstr "Bookwormin julkaisua sponsoroi Capeds (www.capeds.net)."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:99
+#: ..\..\..\../gui/book_viewer/menubar.py:88
 msgid "Open...\tCtrl-O"
 msgstr "Avaa...\tCtrl+O"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:101
+#: ..\..\..\../gui/book_viewer/menubar.py:90
 msgid "New Window...\tCtrl-N"
 msgstr "Uusi ikkuna...\tCtrl+N"
 
-#: bookworm/gui/book_viewer/menubar.py:105
+#: ..\..\..\../gui/book_viewer/menubar.py:94
 msgid "&Pin\tCtrl-P"
 msgstr "&Kiinnitä\tCtrl+P"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:108
+#: ..\..\..\../gui/book_viewer/menubar.py:97
 msgid "&Save As Plain Text..."
 msgstr "&Tallenna vain tekstinä..."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:113
+#: ..\..\..\../gui/book_viewer/menubar.py:102
 msgid "&Close Current Document\tCtrl-W"
 msgstr "&Sulje nykyinen asiakirja\tCtrl+W"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:115
+#: ..\..\..\../gui/book_viewer/menubar.py:104
 msgid "Close the currently open document"
 msgstr "Sulje tällä hetkellä avoinna oleva asiakirja."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:121
+#: ..\..\..\../gui/book_viewer/menubar.py:110
+msgid "C&lear Documents Cache..."
+msgstr "T&yhjennä asiakirjavälimuisti..."
+
+#: ..\..\..\../gui/book_viewer/menubar.py:113
+msgid ""
+"Clear the document cache. Helps in fixing some issues with openning "
+"documents."
+msgstr ""
+"Tyhjennä asiakirjavälimuisti. Auttaa korjaamaan asiakirjojen avaamisessa "
+"ilmeneviä ongelmia."
+
+#: ..\..\..\../gui/book_viewer/menubar.py:120
 msgid "Pi&nned Documents"
 msgstr "Kii&nnitetyt asiakirjat"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:123
+#: ..\..\..\../gui/book_viewer/menubar.py:122
 msgid "Opens a list of documents you pinned."
 msgstr "Näyttää listan kiinnittämistäsi asiakirjoista."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:129
-#: bookworm/gui/book_viewer/menubar.py:143
+#: ..\..\..\../gui/book_viewer/menubar.py:128
+#: ..\..\..\../gui/book_viewer/menubar.py:142
 msgid "Clear list"
 msgstr "Tyhjennä lista"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:131
+#: ..\..\..\../gui/book_viewer/menubar.py:130
 msgid "Clear the pinned documents list"
 msgstr "Tyhjennä kiinnitettyjen asiakirjojen lista."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:136
+#: ..\..\..\../gui/book_viewer/menubar.py:135
 msgid "&Recently Opened"
 msgstr "&Äskettäin avatut"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:138
+#: ..\..\..\../gui/book_viewer/menubar.py:137
 msgid "Opens a list of recently opened books."
 msgstr "Näyttää listan äskettäin avatuista kirjoista."
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:145
+#: ..\..\..\../gui/book_viewer/menubar.py:144
 msgid "Clear the recent books list."
 msgstr "Tyhjentää äskettäin avattujen kirjojen listan."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:151
+#: ..\..\..\../gui/book_viewer/menubar.py:150
 msgid "&Preferences...\tCtrl-Shift-P"
 msgstr "&Asetukset...\tCtrl+Vaihto+P"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:153
+#: ..\..\..\../gui/book_viewer/menubar.py:152
 msgid "Configure application"
 msgstr "Muuta sovelluksen asetuksia."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:157
+#: ..\..\..\../gui/book_viewer/menubar.py:156
 msgid "Exit"
 msgstr "Lopeta"
 
-#. Translators: the title of a file dialog to browse to a document
-#: bookworm/gui/book_viewer/menubar.py:203
+#: ..\..\..\../gui/book_viewer/menubar.py:207
 msgid "Select a document"
 msgstr "Valitse asiakirja"
 
-#. Translators: the title of a dialog showing
-#. the progress of book export process
-#: bookworm/gui/book_viewer/menubar.py:262
+#: ..\..\..\../gui/book_viewer/menubar.py:266
 msgid "Exporting Document"
 msgstr "Viedään asiakirjaa"
 
-#. Translators: the message of a dialog showing the progress of book export
-#: bookworm/gui/book_viewer/menubar.py:264
+#: ..\..\..\../gui/book_viewer/menubar.py:268
 msgid "Converting document to plain text."
 msgstr "Muunnetaan asiakirjaa vain teksti -muotoon."
 
-#. Translators: a message shown when the book is being exported
-#: bookworm/gui/book_viewer/menubar.py:282
+#: ..\..\..\../gui/book_viewer/menubar.py:286
+#, python-brace-format
 msgid "Exporting Page {current} of {total}..."
 msgstr "Viedään sivua {current} / {total}..."
 
-#. Translators: the title of the application preferences dialog
-#: bookworm/gui/book_viewer/menubar.py:303
+#: ..\..\..\../gui/book_viewer/menubar.py:308
+#, python-brace-format
 msgid "{app_name} Preferences"
 msgstr "{app_name}in asetukset"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:351
+#: ..\..\..\../gui/book_viewer/menubar.py:319
+msgid "Are you sure you want to clear the documents cache?"
+msgstr "Haluatko varmasti tyhjentää asiakirjavälimuistin?"
+
+#: ..\..\..\../gui/book_viewer/menubar.py:321
+msgid "Clear Documents Cache?"
+msgstr "Tyhjennetäänkö asiakirjavälimuisti?"
+
+#: ..\..\..\../gui/book_viewer/menubar.py:329
+msgid "Documents cache has been cleared."
+msgstr "Asiakirjavälimuisti on tyhjennetty."
+
+#: ..\..\..\../gui/book_viewer/menubar.py:331 ..\..\..\../gui/settings.py:117
+#: ..\..\..\../gui/settings.py:135
+#: ..\..\..\../platforms/win32/pandoc_download.py:45
+#: ..\..\..\../platforms/win32/tesseract_download.py:74
+msgid "Success"
+msgstr "Onnistui"
+
+#: ..\..\..\../gui/book_viewer/menubar.py:338
+msgid "Clearing documents cache..."
+msgstr "Tyhjennetään asiakirjavälimuistia..."
+
+#: ..\..\..\../gui/book_viewer/menubar.py:382
 msgid "(No recent books)"
 msgstr "(Ei äskettäin avattuja kirjoja)"
 
-#: bookworm/gui/book_viewer/menubar.py:352
+#: ..\..\..\../gui/book_viewer/menubar.py:383
 msgid "No recent books"
 msgstr "Ei äskettäin avattuja kirjoja"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:389
+#: ..\..\..\../gui/book_viewer/menubar.py:420
 msgid "Document &Info..."
 msgstr "Asiakirjan t&iedot..."
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:391
+#: ..\..\..\../gui/book_viewer/menubar.py:422
 msgid "Show information about number of chapters, word count..etc."
 msgstr "Näytä kirjan tiedot, kuten lukujen ja sanojen määrä jne."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:396
+#: ..\..\..\../gui/book_viewer/menubar.py:427
 msgid "&Element list...\tCtrl+F7"
 msgstr "&Elementtilista...\tCtrl+F7"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:398
+#: ..\..\..\../gui/book_viewer/menubar.py:429
 msgid "Show a list of semantic elements."
 msgstr "Näytä semanttisten elementtien lista."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:403
+#: ..\..\..\../gui/book_viewer/menubar.py:434
 msgid "Change Reading &Mode...\tCtrl-Shift-M"
 msgstr "Muuta lukut&ilaa...\tCtrl+Vaihto+M"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:405
+#: ..\..\..\../gui/book_viewer/menubar.py:436
 msgid "Change the current reading mode."
 msgstr "Muuta nykyistä lukutilaa."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:410
-#: bookworm/gui/book_viewer/menubar.py:872
+#: ..\..\..\../gui/book_viewer/menubar.py:441
+#: ..\..\..\../gui/book_viewer/menubar.py:943
 msgid "&Render Page...\tCtrl-R"
 msgstr "&Renderöi sivu...\tCtrl+R"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:412
-#: bookworm/gui/book_viewer/menubar.py:873
+#: ..\..\..\../gui/book_viewer/menubar.py:443
+#: ..\..\..\../gui/book_viewer/menubar.py:944
 msgid "View a fully rendered version of this page."
 msgstr "Näytä tämän sivun täysin renderöity versio."
 
-#: bookworm/gui/book_viewer/menubar.py:454
+#: ..\..\..\../gui/book_viewer/menubar.py:485
 msgid "Rendered Page"
 msgstr "Renderöity sivu"
 
-#: bookworm/gui/book_viewer/menubar.py:471
+#: ..\..\..\../gui/book_viewer/menubar.py:502
 msgid "Available reading modes"
 msgstr "Käytettävissä olevat lukutilat"
 
-#: bookworm/gui/book_viewer/menubar.py:472
+#: ..\..\..\../gui/book_viewer/menubar.py:503
 msgid "Select Reading Mode "
 msgstr "Valitse lukutila"
 
-#: bookworm/gui/book_viewer/menubar.py:493
+#: ..\..\..\../gui/book_viewer/menubar.py:524
 msgid "Element List"
 msgstr "Elementtilista"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:520
-#: bookworm/gui/book_viewer/menubar.py:862
+#: ..\..\..\../gui/book_viewer/menubar.py:551
+#: ..\..\..\../gui/book_viewer/menubar.py:933
 msgid "&Find in Document...\tCtrl-F"
 msgstr "&Etsi asiakirjasta...\tCtrl+F"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:522
-#: bookworm/gui/book_viewer/menubar.py:863
+#: ..\..\..\../gui/book_viewer/menubar.py:553
+#: ..\..\..\../gui/book_viewer/menubar.py:934
 msgid "Search this document."
 msgstr "Hae tästä asiakirjasta."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:527
-msgid "&Find &Next\tF3"
+#: ..\..\..\../gui/book_viewer/menubar.py:558
+msgid "Find &Next\tF3"
 msgstr "Etsi &seuraava\tF3"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:529
+#: ..\..\..\../gui/book_viewer/menubar.py:560
 msgid "Find next occurrence."
 msgstr "Etsi seuraava esiintymä."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:534
-msgid "&Find &Previous\tShift-F3"
+#: ..\..\..\../gui/book_viewer/menubar.py:565
+msgid "Find &Previous\tShift-F3"
 msgstr "Etsi e&dellinen\tVaihto+F3"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:536
+#: ..\..\..\../gui/book_viewer/menubar.py:567
 msgid "Find previous occurrence."
 msgstr "Etsi edellinen esiintymä."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:541
-#: bookworm/gui/book_viewer/menubar.py:856
+#: ..\..\..\../gui/book_viewer/menubar.py:572
+msgid "&Jump to Line...\tCtrl-L"
+msgstr "S&iirry riville...\tCtrl+L"
+
+#: ..\..\..\../gui/book_viewer/menubar.py:574
+msgid "Jump to a line within the current page or document"
+msgstr "Jump to a line within the current page or document"
+
+#: ..\..\..\../gui/book_viewer/menubar.py:579
+#: ..\..\..\../gui/book_viewer/menubar.py:927
 msgid "&Go To Page...\tCtrl-G"
 msgstr "S&iirry sivulle...\tCtrl+G"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:543
+#: ..\..\..\../gui/book_viewer/menubar.py:581
 msgid "Go to page"
 msgstr "Siirry sivulle"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:548
+#: ..\..\..\../gui/book_viewer/menubar.py:586
 msgid "&Go To Page By Label...\tCtrl-Shift-G"
 msgstr "Siirry sivulle t&unnisteen perusteella...\tCtrl+Vaihto+G"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:550
+#: ..\..\..\../gui/book_viewer/menubar.py:588
 msgid "Go to a page using its label"
 msgstr "Siirry sivulle sen tunnistetta käyttäen"
 
-#. Translators: the title of the go to page dialog
-#: bookworm/gui/book_viewer/menubar.py:575
+#: ..\..\..\../gui/book_viewer/menubar.py:622
+#, python-brace-format
+msgid ""
+"You are here: {current_line}\n"
+"You can't go further than: {last_line}"
+msgstr ""
+"Olet tässä: {current_line}\n"
+"Et voi siirtyä edemmäs kuin: {last_line}"
+
+#: ..\..\..\../gui/book_viewer/menubar.py:624
+msgid "Line number"
+msgstr "Rivinumero"
+
+#: ..\..\..\../gui/book_viewer/menubar.py:625
+msgid "Jump to line"
+msgstr "Siirry riville"
+
+#: ..\..\..\../gui/book_viewer/menubar.py:638
 msgid "Go To Page"
 msgstr "Siirry sivulle"
 
-#: bookworm/gui/book_viewer/menubar.py:582
+#: ..\..\..\../gui/book_viewer/menubar.py:645
 msgid "Go To Page By Label"
 msgstr "Siirry sivulle tunnisteen perusteella"
 
-#: bookworm/gui/book_viewer/menubar.py:582
+#: ..\..\..\../gui/book_viewer/menubar.py:645
 msgid "Page Label"
 msgstr "Sivun tunniste"
 
-#. Translators: the title of the search dialog
-#: bookworm/gui/book_viewer/menubar.py:590
+#: ..\..\..\../gui/book_viewer/menubar.py:653
 msgid "Search Document"
 msgstr "Hae asiakirjasta"
 
-#: bookworm/gui/book_viewer/menubar.py:616
+#: ..\..\..\../gui/book_viewer/menubar.py:679
+#, python-brace-format
 msgid "Searching For '{term}'"
 msgstr "Haetaan '{term}'"
 
-#. Translators: message to announce the number of search results
-#. also used as the final title of the search results dialog
-#: bookworm/gui/book_viewer/menubar.py:631
+#: ..\..\..\../gui/book_viewer/menubar.py:694
+#, python-brace-format
 msgid "Results | {total}"
 msgstr "Tulokset | {total}"
 
-#: bookworm/gui/book_viewer/menubar.py:665
+#: ..\..\..\../gui/book_viewer/menubar.py:731
 msgid "Search Result"
 msgstr "Hakutulos"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:703
+#: ..\..\..\../gui/book_viewer/menubar.py:769
 msgid "&User guide...\tF1"
 msgstr "&Käyttöopas...\tF1"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:705
+#: ..\..\..\../gui/book_viewer/menubar.py:771
 msgid "View Bookworm manuals"
 msgstr "Näytä Bookwormin käyttöohje"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:710
+#: ..\..\..\../gui/book_viewer/menubar.py:776
 msgid "Bookworm &website..."
 msgstr "Bookwormin v&erkkosivusto..."
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:712
+#: ..\..\..\../gui/book_viewer/menubar.py:778
 msgid "Visit the official website of Bookworm"
 msgstr "Käy Bookwormin virallisella verkkosivustolla"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:717
+#: ..\..\..\../gui/book_viewer/menubar.py:783
 msgid "&License"
 msgstr "&Lisenssi"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:719
+#: ..\..\..\../gui/book_viewer/menubar.py:785
 msgid "View legal information about this program ."
 msgstr "Näytä tämän ohjelman oikeudelliset tiedot."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:724
+#: ..\..\..\../gui/book_viewer/menubar.py:790
 msgid "Con&tributors"
 msgstr "&Osallistujat"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:726
+#: ..\..\..\../gui/book_viewer/menubar.py:792
 msgid "View a list of notable contributors to the program."
 msgstr "Näytä lista merkittävästi ohjelman kehitykseen osallistuneista."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:732
+#: ..\..\..\../gui/book_viewer/menubar.py:798
 msgid "&Restart with debug-mode enabled"
 msgstr "&Käynnistä uudelleen virheenkorjaustilassa"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:734
+#: ..\..\..\../gui/book_viewer/menubar.py:800
 msgid "Restart the program with debug mode enabled to show errors"
 msgstr ""
 "Käynnistä ohjelma uudelleen virheenkorjaustilassa bugien etsimistä varten"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:744
+#: ..\..\..\../gui/book_viewer/menubar.py:810
 msgid "&About Bookworm"
 msgstr "T&ietoa Bookwormista"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:746
+#: ..\..\..\../gui/book_viewer/menubar.py:812
 msgid "Show general information about this program"
 msgstr "Näytä tämän ohjelman yleiset tiedot"
 
-#. Translators: the title of the about dialog
-#: bookworm/gui/book_viewer/menubar.py:779
+#: ..\..\..\../gui/book_viewer/menubar.py:845
+#, python-brace-format
 msgid "About {app_name}"
 msgstr "Tietoa {app_name}ista"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:815
+#: ..\..\..\../gui/book_viewer/menubar.py:881
 msgid "&Search"
 msgstr "&Haku"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:817
+#: ..\..\..\../gui/book_viewer/menubar.py:883
 msgid "&Document"
 msgstr "&Asiakirja"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/gui/book_viewer/menubar.py:819
+#: ..\..\..\../gui/book_viewer/menubar.py:885
 msgid "&Help"
 msgstr "&Ohje"
 
-#: bookworm/gui/book_viewer/menubar.py:857
+#: ..\..\..\../gui/book_viewer/menubar.py:928
 msgid "Jump to a page"
 msgstr "Siirry sivulle"
 
-#: bookworm/gui/book_viewer/menubar.py:911
+#: ..\..\..\../gui/book_viewer/menubar.py:982
 msgid "Supported document formats"
 msgstr "Tuetut asiakirjamuodot"
 
-#: bookworm/gui/book_viewer/render_view.py:87
+#: ..\..\..\../gui/book_viewer/render_view.py:88
+#, python-brace-format
 msgid "Zoom is at {factor} percent"
 msgstr "Zoomaus on {factor} prosenttia"
 
-#: bookworm/gui/book_viewer/render_view.py:99
+#: ..\..\..\../gui/book_viewer/render_view.py:100
 msgid "Page {}"
 msgstr "Sivu {}"
 
-#. Translators: content of a message in a progress dialog
-#: bookworm/http_tools/http_resource.py:41
+#: ..\..\..\../gui/browseable_message.py:46
+msgid "Message"
+msgstr "Ilmoitus"
+
+#: ..\..\..\../gui/components.py:104
+msgid "Search Range"
+msgstr "Hakualue"
+
+#: ..\..\..\../gui/components.py:106
+msgid "Page Range"
+msgstr "Sivut väliltä"
+
+#: ..\..\..\../gui/components.py:112
+msgid "From:"
+msgstr "Mistä:"
+
+#: ..\..\..\../gui/components.py:118
+msgid "To:"
+msgstr "Mihin:"
+
+#: ..\..\..\../gui/components.py:123
+msgid "Specific section"
+msgstr "Tietty luku"
+
+#: ..\..\..\../gui/components.py:126
+msgid "Select section:"
+msgstr "Valitse luku:"
+
+#: ..\..\..\../gui/components.py:276 ..\..\..\../gui/components.py:317
+#: ..\..\..\../gui/settings.py:633
+msgid "OK"
+msgstr "OK"
+
+#: ..\..\..\../gui/components.py:279 ..\..\..\../gui/components.py:320
+#: ..\..\..\../gui/settings.py:636
+msgid "Cancel"
+msgstr "Peruuta"
+
+#: ..\..\..\../gui/components.py:606
+msgid ""
+"This will cancel all the operations in progress.\n"
+"Are you sure you want to abort?"
+msgstr ""
+"Tämä peruuttaa kaikki käynnissä olevat toiminnot.\n"
+"Haluatko varmasti keskeyttää?"
+
+#: ..\..\..\../gui/settings.py:44
+msgid "Bookworm File Associations"
+msgstr "Bookwormin tiedostokytkennät"
+
+#: ..\..\..\../gui/settings.py:57
+msgid ""
+"This dialog will help you to setup file associations.\n"
+"Associating files with Bookworm means that when you click on a file in "
+"windows explorer, it will be opened in Bookworm by default "
+msgstr ""
+"Tässä valintaikkunassa voit määrittää tiedostokytkennät.\n"
+"Tiedostojen kytkeminen Bookwormiin tarkoittaa, että kun klikkaat tiedostoa "
+"Windowsin Resurssienhallinnassa, se avataan oletusarvoisesti Bookwormissa."
+
+#: ..\..\..\../gui/settings.py:69
+msgid "Associate all"
+msgstr "Kytke kaikki"
+
+#: ..\..\..\../gui/settings.py:71
+msgid "Use Bookworm to open all supported document formats"
+msgstr "Käytä Bookwormia kaikkien tuettujen asiakirjojen avaamiseen."
+
+#: ..\..\..\../gui/settings.py:79
+#, python-brace-format
+msgid "Associate files of type {format}"
+msgstr "Kytke tiedostot, joiden tyyppi on {format}"
+
+#: ..\..\..\../gui/settings.py:82
+#, python-brace-format
+msgid "Associate files with {ext} extension so they always open in Bookworm"
+msgstr "Kytke {ext}-päätteiset tiedostot avautumaan aina Bookwormissa."
+
+#: ..\..\..\../gui/settings.py:94
+msgid "Dissociate all supported file types"
+msgstr "Poista kaikkien tuettujen tiedostotyyppien kytkennät"
+
+#: ..\..\..\../gui/settings.py:96
+msgid "Remove previously associated file types"
+msgstr "Poista aiemmin kytketyt tiedostotyypit"
+
+#: ..\..\..\../gui/settings.py:113
+#, python-brace-format
+msgid "Files of type {format} have been associated with Bookworm."
+msgstr "Tyypin {format} tiedostot on kytketty Bookwormiin."
+
+#: ..\..\..\../gui/settings.py:127
+msgid "All supported file types have been set to open by default in Bookworm."
+msgstr ""
+"Kaikki tuetut tiedostotyypit on määritetty avautumaan oletusarvoisesti "
+"Bookwormissa."
+
+#: ..\..\..\../gui/settings.py:131
+msgid "All registered file associations have been removed."
+msgstr "Kaikki rekisteröidyt tiedostokytkennät on poistettu."
+
+#: ..\..\..\../gui/settings.py:216
+msgid "User Interface"
+msgstr "Käyttöliittymä"
+
+#: ..\..\..\../gui/settings.py:218
+msgid "Display Language:"
+msgstr "Näyttökieli:"
+
+#: ..\..\..\../gui/settings.py:225
+msgid "Speak user interface messages"
+msgstr "Puhu käyttöliittymän ilmoitukset"
+
+#: ..\..\..\../gui/settings.py:232 ..\..\..\../text_to_speech/tts_gui.py:84
+msgid "Speak page number"
+msgstr "Puhu sivunumero"
+
+#: ..\..\..\../gui/settings.py:239
+msgid "Speak section title"
+msgstr "Puhu luvun otsikko"
+
+#: ..\..\..\../gui/settings.py:246
+msgid "Play pagination sound"
+msgstr "Soita sivunvaihdon ääni"
+
+#: ..\..\..\../gui/settings.py:253
+msgid "Include page label in page title"
+msgstr "Lisää sivun tunniste sivun otsikkoon"
+
+#: ..\..\..\../gui/settings.py:260
+msgid "Use file name instead of book title"
+msgstr "Käytä tiedostonimeä kirjan nimen sijaan"
+
+#: ..\..\..\../gui/settings.py:267
+msgid "Show reading progress percentage"
+msgstr "Näytä lukemisen edistymisprosentti"
+
+#: ..\..\..\../gui/settings.py:272
+msgid "Miscellaneous"
+msgstr "Sekalaiset"
+
+#: ..\..\..\../gui/settings.py:277
+msgid "Open recently opened books from the last position"
+msgstr "Avaa äskettäin avatut kirjat edellisestä lukukohdasta"
+
+#: ..\..\..\../gui/settings.py:285
+msgid ""
+"Try to support the screen reader's continuous reading mode by automatically "
+"turning pages (may not work in some cases)"
+msgstr ""
+"Yritä tukea ruudunlukijan jatkuvan luvun tilaa kääntämällä sivuja "
+"automaattisesti (ei välttämättä toimi kaikissa tapauksissa)"
+
+#: ..\..\..\../gui/settings.py:293
+msgid "Automatically check for updates"
+msgstr "Tarkista päivitykset automaattisesti"
+
+#: ..\..\..\../gui/settings.py:299
+msgid "File Associations"
+msgstr "Tiedostokytkennät"
+
+#: ..\..\..\../gui/settings.py:304
+msgid "Manage File &Associations"
+msgstr "Tiedosto&kytkentöjen hallinta"
+
+#: ..\..\..\../gui/settings.py:325
+msgid ""
+"You have changed the display language of Bookworm.\n"
+"For this setting to fully take effect, you need to restart the application.\n"
+"Would you like to restart the application right now?"
+msgstr ""
+"Olet vaihtanut Bookwormin näyttökieltä.\n"
+"Sovellus on käynnistettävä uudelleen, jotta asetus tulee voimaan.\n"
+"Haluatko käynnistää sovelluksen uudelleen nyt?"
+
+#: ..\..\..\../gui/settings.py:331
+msgid "Language Changed"
+msgstr "Kieli vaihdettu"
+
+#: ..\..\..\../gui/settings.py:353
+msgid "General Appearance"
+msgstr "Yleinen ulkonäkö"
+
+#: ..\..\..\../gui/settings.py:358
+msgid "Maximize the application window upon startup"
+msgstr "Suurenna sovellusikkuna käynnistettäessä"
+
+#: ..\..\..\../gui/settings.py:361
+msgid "Text Styling"
+msgstr "Tekstin tyyli"
+
+#: ..\..\..\../gui/settings.py:366
+msgid "Apply text styling (when available)"
+msgstr "Käytä tekstityylejä (kun käytettävissä)"
+
+#: ..\..\..\../gui/settings.py:371
+msgid "Font"
+msgstr "Fontti"
+
+#: ..\..\..\../gui/settings.py:373
+msgid "Font Face"
+msgstr "Fontin tyyli "
+
+#: ..\..\..\../gui/settings.py:383
+msgid "Use Open-&dyslexic font"
+msgstr "Käytä Open-&dyslexic-fonttia"
+
+#: ..\..\..\../gui/settings.py:387
+msgid "Font Size"
+msgstr "Fonttikoko"
+
+#: ..\..\..\../gui/settings.py:393
+msgid "Bold style"
+msgstr "Lihavoitu tyyli"
+
+#: ..\..\..\../gui/settings.py:447
+msgid "Download Pandoc: The universal document converter"
+msgstr "Lataa Pandoc: yleinen asiakirjamuunnin"
+
+#: ..\..\..\../gui/settings.py:450
+msgid ""
+"Add support for additional document formats including RTF and Word 2003 "
+"documents."
+msgstr ""
+"Lisää tuki  useammille asiakirjamuodoille, mukaan lukien RTF ja Word 2003."
+
+#: ..\..\..\../gui/settings.py:459
+msgid "Update Pandoc (the universal document converter)"
+msgstr "Päivitä Pandoc (yleinen asiakirjamuunnin)"
+
+#: ..\..\..\../gui/settings.py:462
+msgid ""
+"Update Pandoc to the latest version to improve performance and conversion "
+"quality."
+msgstr ""
+"Päivitä Pandoc viimeisimpään versioon suorituskyvyn ja muunnoslaadun "
+"parantamiseksi."
+
+#: ..\..\..\../gui/settings.py:473
+msgid "Reset Settings"
+msgstr "Nollaa asetukset"
+
+#: ..\..\..\../gui/settings.py:475
+msgid "Reset Bookworm's settings to their defaults"
+msgstr "Nollaa Bookwormin asetukset oletusarvoihinsa"
+
+#: ..\..\..\../gui/settings.py:483
+msgid "Downloading Pandoc"
+msgstr "Ladataan Pandoc"
+
+#: ..\..\..\../gui/settings.py:485 ..\..\..\../ocr/ocr_dialogs.py:129
+#: ..\..\..\../ocr/ocr_dialogs.py:544
+msgid "Getting download information..."
+msgstr "Haetaan lataustietoja..."
+
+#: ..\..\..\../gui/settings.py:498 ..\..\..\../ocr/ocr_dialogs.py:162
+msgid "Checking for updates. Please wait..."
+msgstr "Odota, kun päivityksiä tarkistetaan..."
+
+#: ..\..\..\../gui/settings.py:507
+msgid ""
+"You will lose  all of your custom settings.\n"
+"Are you sure you want to restore all settings to their default values?"
+msgstr ""
+"Menetät kaikki muokkaamasi asetukset.\n"
+"Haluatko varmasti palauttaa kaikki asetukset oletusarvoihinsa?"
+
+#: ..\..\..\../gui/settings.py:510
+msgid "Reset Settings?"
+msgstr "Nollataanko asetukset?"
+
+#: ..\..\..\../gui/settings.py:523 ..\..\..\../ocr/ocr_dialogs.py:149
+msgid "Restart Required"
+msgstr "Uudelleenkäynnistys tarvitaan"
+
+#: ..\..\..\../gui/settings.py:525
+msgid "Bookworm will now restart to complete the installation of Pandoc."
+msgstr ""
+"Bookworm käynnistyy nyt uudelleen suorittaakseen loppuun Pandocin asennuksen."
+
+#: ..\..\..\../gui/settings.py:535
+msgid ""
+"A new version of Pandoc is available for download.\n"
+"It is strongly recommended to update to the latest version for the best "
+"performance and conversion quality.\n"
+"Would you like to update to the new version?"
+msgstr ""
+"Pandocin uusi versio on ladattavissa.\n"
+"Päivittäminen on erittäin suositeltavaa parhaan suorituskyvyn ja "
+"muunnoslaadun saavuttamiseksi.\n"
+"Haluatko päivittää uuteen versioon?"
+
+#: ..\..\..\../gui/settings.py:538
+msgid "Update Pandoc?"
+msgstr "Päivitetäänkö Pandoc?"
+
+#: ..\..\..\../gui/settings.py:547
+msgid "Removing old Pandoc version. Please wait..."
+msgstr "Odota, kun vanhaa Pandoc-versiota poistetaan..."
+
+#: ..\..\..\../gui/settings.py:553
+msgid "Your version of Pandoc is up to date."
+msgstr "Pandocin versio on ajan tasalla."
+
+#: ..\..\..\../gui/settings.py:555 ..\..\..\../ocr/ocr_dialogs.py:192
+msgid "No updates"
+msgstr "Ei päivityksiä"
+
+#: ..\..\..\../gui/settings.py:563
+msgid "Failed to check for updates. Please check your internet connection."
+msgstr ""
+"Päivitysten tarkistaminen epäonnistui. Tarkista internet-yhteytesi toimivuus."
+
+#: ..\..\..\../gui/settings.py:579
+msgid "Appearance"
+msgstr "Ulkoasu"
+
+#: ..\..\..\../gui/settings.py:581
+msgid "Advanced"
+msgstr "Lisäasetukset"
+
+#: ..\..\..\../gui/settings.py:638
+msgid "Apply"
+msgstr "Käytä"
+
+#: ..\..\..\../http_tools/http_resource.py:43
+#: ..\..\..\../platforms/win32/updater.py:196
+#, python-brace-format
 msgid "Downloaded {downloaded} MB of {total} MB"
 msgstr "Ladattu {downloaded} Mt / {total} Mt"
 
-#. Translators: the label of a page in the settings dialog
-#. Translators: the label of an item in the application menubar
-#: bookworm/ocr/__init__.py:74 bookworm/ocr/__init__.py:93
-#: bookworm/ocr/__init__.py:96
+#: ..\..\..\../ocr/__init__.py:70 ..\..\..\../ocr/__init__.py:89
+#: ..\..\..\../ocr/__init__.py:92
 msgid "OCR"
 msgstr "Tekstintunnistus"
 
-#. Translators: the label of a group of controls in the reading page
-#: bookworm/ocr/ocr_dialogs.py:63 bookworm/ocr/ocr_menu.py:214
+#: ..\..\..\../ocr/ocr_dialogs.py:51 ..\..\..\../ocr/ocr_menu.py:207
 msgid "OCR Options"
 msgstr "Tekstintunnistuksen asetukset"
 
-#. Translators: the title of a group of radio buttons in the OCR page
-#. in the application settings.
-#: bookworm/ocr/ocr_dialogs.py:70
+#: ..\..\..\../ocr/ocr_dialogs.py:58
 msgid "Default OCR Engine"
 msgstr "Tekstintunnistuksen oletusmoottori"
 
-#. Translators: the label of a group of controls in the OCR page
-#. of the settings related to Tesseract OCR engine
-#: bookworm/ocr/ocr_dialogs.py:77
-#: bookworm/ocr_engines/tesseract_ocr_engine/__init__.py:24
-#: bookworm/ocr_engines/tesseract_ocr_engine/alt_tess.py:28
+#: ..\..\..\../ocr/ocr_dialogs.py:65
+#: ..\..\..\../ocr_engines/tesseract_ocr_engine/__init__.py:25
+#: ..\..\..\../ocr_engines/tesseract_ocr_engine/alt_tess.py:29
 msgid "Tesseract OCR Engine"
 msgstr "Tesseract"
 
-#: bookworm/ocr/ocr_dialogs.py:82
+#: ..\..\..\../ocr/ocr_dialogs.py:70
 msgid "Download Tesseract OCR Engine"
 msgstr "Lataa Tesseract-tekstintunnistusmoottori"
 
-#: bookworm/ocr/ocr_dialogs.py:83
+#: ..\..\..\../ocr/ocr_dialogs.py:72
 msgid "Get a free, high-quality OCR engine that supports over 100 languages."
 msgstr ""
 "Hanki ilmainen ja korkealaatuinen tekstintunnistusmoottori, joka tukee yli "
 "100 kieltä."
 
-#. Translators: label of a button
-#: bookworm/ocr/ocr_dialogs.py:93
+#: ..\..\..\../ocr/ocr_dialogs.py:81
 msgid "Manage Tesseract OCR Languages"
 msgstr "Hallitse Tesseractin tekstintunnistuskieliä"
 
-#. Translators: description of a button
-#: bookworm/ocr/ocr_dialogs.py:95
+#: ..\..\..\../ocr/ocr_dialogs.py:83
 msgid "Add support for new languages, and /or remove installed languages."
 msgstr "Lisää tuki uusille kielille ja/tai poista asennettuja kieliä."
 
-#. Translators: label of a button
-#: bookworm/ocr/ocr_dialogs.py:101
+#: ..\..\..\../ocr/ocr_dialogs.py:89
 msgid "Update Tesseract OCr Engine"
 msgstr "Päivitä Tesseract-tekstintunnistusmoottori"
 
-#. Translators: description of a button
-#: bookworm/ocr/ocr_dialogs.py:103
+#: ..\..\..\../ocr/ocr_dialogs.py:91
 msgid "Check for and install updates for Tesseract OCR Engine"
 msgstr "Tarkista ja asenna Tesseract-tekstintunnistusmoottorin päivitykset"
 
-#. Translators: the label of a group of controls in the reading page
-#. of the settings related to image enhancement
-#: bookworm/ocr/ocr_dialogs.py:109
+#: ..\..\..\../ocr/ocr_dialogs.py:97
 msgid "Image processing"
 msgstr "Kuvan käsittely"
 
-#. Translators: the label of a checkbox
-#: bookworm/ocr/ocr_dialogs.py:115
+#: ..\..\..\../ocr/ocr_dialogs.py:103
 msgid "Enable default image enhancement filters"
 msgstr "Ota käyttöön oletusarvoiset kuvanparannussuodattimet"
 
-#. Translators: title of a progress dialog
-#: bookworm/ocr/ocr_dialogs.py:139
+#: ..\..\..\../ocr/ocr_dialogs.py:127
 msgid "Downloading Tesseract OCR Engine"
 msgstr "Ladataan Tesseract-tekstintunnistusmoottoria"
 
-#. Translators: message of a progress dialog
-#. Translators: content of a progress dialog
-#: bookworm/ocr/ocr_dialogs.py:141 bookworm/ocr/ocr_dialogs.py:548
-msgid "Getting download information..."
-msgstr "Haetaan lataustietoja..."
-
-#: bookworm/ocr/ocr_dialogs.py:151
+#: ..\..\..\../ocr/ocr_dialogs.py:140
 msgid "Manage Tesseract OCR Engine Languages"
 msgstr "Hallitse Tesseract-tekstintunnistusmoottorin kieliä"
 
-#: bookworm/ocr/ocr_dialogs.py:158
-msgid "Restart Required"
-msgstr "Uudelleenkäynnistys tarvitaan"
-
-#: bookworm/ocr/ocr_dialogs.py:159
+#: ..\..\..\../ocr/ocr_dialogs.py:152
 msgid ""
 "Bookworm will now restart to complete the installation of the Tesseract OCR "
 "Engine."
@@ -2537,12 +2262,7 @@ msgstr ""
 "Bookworm käynnistyy nyt uudelleen suorittaakseen loppuun Tesseract-"
 "tekstintunnistusmoottorin asennuksen."
 
-#. Translators: message of a dialog
-#: bookworm/ocr/ocr_dialogs.py:170
-msgid "Checking for updates. Please wait..."
-msgstr "Odota, kun päivityksiä tarkistetaan..."
-
-#: bookworm/ocr/ocr_dialogs.py:178
+#: ..\..\..\../ocr/ocr_dialogs.py:172
 msgid ""
 "A new version of Tesseract OCr engine is available for download.\n"
 "It is strongly recommended to update to the latest version for the best "
@@ -2554,164 +2274,150 @@ msgstr ""
 "saavuttamiseksi.\n"
 "Haluatko päivittää uuteen versioon?"
 
-#: bookworm/ocr/ocr_dialogs.py:181
+#: ..\..\..\../ocr/ocr_dialogs.py:175
 msgid "Update Tesseract OCr Engine?"
 msgstr "Päivitä Tesseract-tekstintunnistusmoottori?"
 
-#. Translators: message of a dialog
-#: bookworm/ocr/ocr_dialogs.py:190
+#: ..\..\..\../ocr/ocr_dialogs.py:184
 msgid "Removing old Tesseract version. Please wait..."
 msgstr "Odota, kun vanhaa Tesseract-versiota poistetaan..."
 
-#. Translators: content of a message box
-#: bookworm/ocr/ocr_dialogs.py:196
+#: ..\..\..\../ocr/ocr_dialogs.py:190
 msgid "Your version of Tesseract OCR engine is up to date."
 msgstr "Tesseract-tekstintunnistusmoottorin versio on ajan tasalla."
 
-#. Translators: title of a message box
-#: bookworm/ocr/ocr_dialogs.py:198
-msgid "No updates"
-msgstr "Ei päivityksiä"
-
-#: bookworm/ocr/ocr_dialogs.py:206
+#: ..\..\..\../ocr/ocr_dialogs.py:201
 msgid "Failed to check for updates for Tesseract OCr engine."
 msgstr ""
 "Tesseract-tekstintunnistusmoottorin päivitysten tarkistaminen epäonnistui."
 
-#. Translators: title of a group of controls
-#: bookworm/ocr/ocr_dialogs.py:239
+#: ..\..\..\../ocr/ocr_dialogs.py:235
 msgid "Recognition Language"
 msgstr "Tunnistuskieli"
 
-#. Translators: the label of a combobox
-#: bookworm/ocr/ocr_dialogs.py:241
+#: ..\..\..\../ocr/ocr_dialogs.py:237
 msgid "Primary recognition Language"
 msgstr "Ensisijainen tunnistuskieli"
 
-#: bookworm/ocr/ocr_dialogs.py:248
+#: ..\..\..\../ocr/ocr_dialogs.py:244
 msgid "Add a secondary recognition language"
 msgstr "Lisää toissijainen tunnistuskieli"
 
-#: bookworm/ocr/ocr_dialogs.py:252
+#: ..\..\..\../ocr/ocr_dialogs.py:248
 msgid "Secondary recognition Language"
 msgstr "Toissijainen tunnistuskieli"
 
-#: bookworm/ocr/ocr_dialogs.py:260
-#: bookworm/structured_text/structural_elements.py:68
+#: ..\..\..\../ocr/ocr_dialogs.py:256
+#: ..\..\..\../structured_text/structural_elements.py:71
 msgid "Image"
 msgstr "Kuva"
 
-#: bookworm/ocr/ocr_dialogs.py:261
+#: ..\..\..\../ocr/ocr_dialogs.py:257
 msgid "Supplied Image resolution::"
 msgstr "Saatu kuvan resoluutio:"
 
-#: bookworm/ocr/ocr_dialogs.py:265
+#: ..\..\..\../ocr/ocr_dialogs.py:261
 msgid "Enable image enhancements"
 msgstr "Ota käyttöön kuvanparannukset"
 
-#: bookworm/ocr/ocr_dialogs.py:270
+#: ..\..\..\../ocr/ocr_dialogs.py:266
 msgid "Available image pre-processing filters:"
 msgstr "Käytettävissä olevat kuvan esikäsittelysuodattimet:"
 
-#. Translators: the label of a checkbox
-#: bookworm/ocr/ocr_dialogs.py:285
+#: ..\..\..\../ocr/ocr_dialogs.py:281
 msgid "&Save these options until I close the current book"
 msgstr "T&allenna nämä asetukset nykyisen kirjan sulkemiseen saakka"
 
-#: bookworm/ocr/ocr_dialogs.py:366
+#: ..\..\..\../ocr/ocr_dialogs.py:362
 msgid "Increase image resolution"
 msgstr "Suurenna kuvan resoluutiota"
 
-#: bookworm/ocr/ocr_dialogs.py:367
+#: ..\..\..\../ocr/ocr_dialogs.py:363
 msgid "Binarization"
 msgstr "Binarisointi"
 
-#: bookworm/ocr/ocr_dialogs.py:370
+#: ..\..\..\../ocr/ocr_dialogs.py:366
 msgid "Split two-in-one scans to individual pages"
 msgstr "Jaa  vastakkaiset sivut yksittäisiksi"
 
-#: bookworm/ocr/ocr_dialogs.py:373
+#: ..\..\..\../ocr/ocr_dialogs.py:369
 msgid "Combine images"
 msgstr "Yhdistä kuvat"
 
-#: bookworm/ocr/ocr_dialogs.py:374
+#: ..\..\..\../ocr/ocr_dialogs.py:370
 msgid "Blurring"
 msgstr "Sumennus"
 
-#: bookworm/ocr/ocr_dialogs.py:375
+#: ..\..\..\../ocr/ocr_dialogs.py:371
 msgid "Deskewing"
 msgstr "Suoristus"
 
-#: bookworm/ocr/ocr_dialogs.py:376
+#: ..\..\..\../ocr/ocr_dialogs.py:372
 msgid "Erosion"
 msgstr "Eroosio"
 
-#: bookworm/ocr/ocr_dialogs.py:377
+#: ..\..\..\../ocr/ocr_dialogs.py:373
 msgid "Dilation"
 msgstr "Laajennus"
 
-#: bookworm/ocr/ocr_dialogs.py:378
+#: ..\..\..\../ocr/ocr_dialogs.py:374
 msgid "Sharpen image"
 msgstr "Terävöitä kuva"
 
-#: bookworm/ocr/ocr_dialogs.py:379
+#: ..\..\..\../ocr/ocr_dialogs.py:375
 msgid "Invert colors"
 msgstr "Käänteiset värit"
 
-#: bookworm/ocr/ocr_dialogs.py:382
+#: ..\..\..\../ocr/ocr_dialogs.py:378
 msgid "Debug"
 msgstr "Virheenkorjaus"
 
-#: bookworm/ocr/ocr_dialogs.py:401
+#: ..\..\..\../ocr/ocr_dialogs.py:397
 msgid "Installed Languages"
 msgstr "Asennetut kielet"
 
-#: bookworm/ocr/ocr_dialogs.py:405
+#: ..\..\..\../ocr/ocr_dialogs.py:401
 msgid "Downloadable Languages"
 msgstr "Ladattavat kielet"
 
-#. Translators: label of a list control containing bookmarks
-#: bookworm/ocr/ocr_dialogs.py:436
+#: ..\..\..\../ocr/ocr_dialogs.py:432
 msgid "Tesseract Languages"
 msgstr "Tesseractin kielet"
 
-#: bookworm/ocr/ocr_dialogs.py:449
+#: ..\..\..\../ocr/ocr_dialogs.py:445
 msgid "Download &Best Model"
 msgstr "Lataa &paras malli"
 
-#: bookworm/ocr/ocr_dialogs.py:453
+#: ..\..\..\../ocr/ocr_dialogs.py:449
 msgid "Download &Fast Model"
 msgstr "Lataa &nopea malli"
 
-#. Translators: the title of a column in the Tesseract language list
-#: bookworm/ocr/ocr_dialogs.py:495
+#: ..\..\..\../ocr/ocr_dialogs.py:491
 msgid "Installed"
 msgstr "Asennettu"
 
-#: bookworm/ocr/ocr_dialogs.py:498
+#: ..\..\..\../ocr/ocr_dialogs.py:494
 msgid "Yes"
 msgstr "Kyllä"
 
-#: bookworm/ocr/ocr_dialogs.py:498
+#: ..\..\..\../ocr/ocr_dialogs.py:494
 msgid "No"
 msgstr "Ei"
 
-#. Translators: content of a messagebox
-#: bookworm/ocr/ocr_dialogs.py:528
+#: ..\..\..\../ocr/ocr_dialogs.py:525
 msgid ""
 "A version of the selected language model already exists.\n"
-"Are you sure you want to replace it."
+"Are you sure you want to replace it?"
 msgstr ""
 "Valitun kielimallin versio on jo olemassa.\n"
 "Haluatko varmasti korvata sen?"
 
-#. Translators: title of a progress dialog
-#: bookworm/ocr/ocr_dialogs.py:546
+#: ..\..\..\../ocr/ocr_dialogs.py:542
 msgid "Downloading Language"
 msgstr "Ladataan kieltä"
 
-#. Translators: content of a messagebox
-#: bookworm/ocr/ocr_dialogs.py:571
+#: ..\..\..\../ocr/ocr_dialogs.py:567
+#, python-brace-format
 msgid ""
 "Are you sure you want to remove language:\n"
 "{lang}?"
@@ -2719,22 +2425,22 @@ msgstr ""
 "Haluatko varmasti poistaa kielen:\n"
 "{lang}?"
 
-#. Translators: title of a messagebox
-#: bookworm/ocr/ocr_dialogs.py:596
+#: ..\..\..\../ocr/ocr_dialogs.py:592
 msgid "Language Added"
 msgstr "Kieli lisätty"
 
-#: bookworm/ocr/ocr_dialogs.py:597
+#: ..\..\..\../ocr/ocr_dialogs.py:594
 msgid "The Language Model was downloaded successfully."
 msgstr "Kielimallin lataus onnistui."
 
-#. Translators: title of a message box
-#: bookworm/ocr/ocr_dialogs.py:605 bookworm/webservices/wikiworm.py:107
+#: ..\..\..\../ocr/ocr_dialogs.py:602
+#: ..\..\..\../platforms/win32/pandoc_download.py:54
+#: ..\..\..\../platforms/win32/tesseract_download.py:83
+#: ..\..\..\../webservices/wikiworm.py:135
 msgid "Connection Error"
 msgstr "Yhteysvirhe"
 
-#. Translators: content of a messagebox
-#: bookworm/ocr/ocr_dialogs.py:607
+#: ..\..\..\../ocr/ocr_dialogs.py:605
 msgid ""
 "Failed to download language data.\n"
 "Please check your internet connection."
@@ -2742,8 +2448,7 @@ msgstr ""
 "Kielidatan lataaminen epäonnistui.\n"
 "Tarkista internet-yhteytesi."
 
-#. Translators: content of a messagebox
-#: bookworm/ocr/ocr_dialogs.py:618
+#: ..\..\..\../ocr/ocr_dialogs.py:615
 msgid ""
 "Failed to install language data.\n"
 "Please try again later."
@@ -2751,64 +2456,52 @@ msgstr ""
 "Kielidatan asentaminen epäonnistui.\n"
 "Yritä myöhemmin uudelleen."
 
-#: bookworm/ocr/ocr_menu.py:91
+#: ..\..\..\../ocr/ocr_menu.py:84
+#, python-brace-format
 msgid "Recognition Result: {image_name}"
 msgstr "Tunnistuksen tulos: {image_name}"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:126
+#: ..\..\..\../ocr/ocr_menu.py:119
 msgid "&Scan Current Page...\tF4"
 msgstr "&Skannaa nykyinen sivu...\tF4"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:128
+#: ..\..\..\../ocr/ocr_menu.py:121
 msgid "Run OCR on the current page"
 msgstr "Suorita tekstintunnistus nykyiselle sivulle"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:133
+#: ..\..\..\../ocr/ocr_menu.py:126
 msgid "&Automatic OCR\tCtrl-F4"
 msgstr "&Automaattinen tekstintunnistus\tCtrl+F4"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:135
+#: ..\..\..\../ocr/ocr_menu.py:128
 msgid "Auto run  OCR when turning pages."
 msgstr "Suorita tekstintunnistus automaattisesti sivua käännettäessä."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:141
+#: ..\..\..\../ocr/ocr_menu.py:134
 msgid "&Change OCR Options..."
 msgstr "Muuta tekstintunnistuksen asetuksia..."
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:143
+#: ..\..\..\../ocr/ocr_menu.py:136
 msgid "Change OCR options"
 msgstr "Muuta tekstintunnistuksen asetuksia"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:148
+#: ..\..\..\../ocr/ocr_menu.py:141
 msgid "Scan To &Text File..."
 msgstr "Skannaa &tekstitiedostoon..."
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:150
+#: ..\..\..\../ocr/ocr_menu.py:143
 msgid "Scan pages and save the text to a .txt file."
 msgstr "Skannaa sivuja ja tallenna teksti .txt-tiedostoon."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:155
+#: ..\..\..\../ocr/ocr_menu.py:148
 msgid "Image To Text..."
 msgstr "Kuva tekstiksi..."
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/ocr/ocr_menu.py:157
+#: ..\..\..\../ocr/ocr_menu.py:150
 msgid "Run OCR on an image."
 msgstr "Suorita tekstintunnistus kuvalle."
 
-#. Translators: the label of the OCR menu in the application menubar
-#. Event handlers
-#. Translators: content of a message
-#: bookworm/ocr/ocr_menu.py:204
+#: ..\..\..\../ocr/ocr_menu.py:198
 msgid ""
 "No language for OCR is present.\n"
 "Please checkout Bookworm user manual to learn how to add new languages."
@@ -2816,44 +2509,40 @@ msgstr ""
 "Tekstintunnistuksen kieltä ei ole.\n"
 "Katso Bookwormin käyttöoppaasta, miten tekstintunnistuksen kieliä lisätään."
 
-#. Translators: title for a message
-#: bookworm/ocr/ocr_menu.py:208
+#: ..\..\..\../ocr/ocr_menu.py:201
 msgid "No Languages for OCR"
 msgstr "Tekstintunnistuksen kieliä ei ole"
 
-#: bookworm/ocr/ocr_menu.py:227
+#: ..\..\..\../ocr/ocr_menu.py:220
 msgid "Canceled"
 msgstr "Peruutettu"
 
-#: bookworm/ocr/ocr_menu.py:263
+#: ..\..\..\../ocr/ocr_menu.py:256
 msgid "Running OCR, please wait..."
 msgstr "Odota, kun tekstintunnistusta suoritetaan..."
 
-#: bookworm/ocr/ocr_menu.py:273
+#: ..\..\..\../ocr/ocr_menu.py:266
 msgid "Automatic OCR is enabled"
 msgstr "Automaattinen tekstintunnistus on käytössä"
 
-#: bookworm/ocr/ocr_menu.py:275
+#: ..\..\..\../ocr/ocr_menu.py:268
 msgid "Automatic OCR is disabled"
 msgstr "Automaattinen tekstintunnistus ei ole käytössä"
 
-#. Translators: the title of a save file dialog asking the user for a filename
-#. to export notes to
-#: bookworm/ocr/ocr_menu.py:288
+#: ..\..\..\../ocr/ocr_menu.py:281
 msgid "Save as"
 msgstr "Tallenna nimellä"
 
-#. Translators: the title of a progress dialog
-#: bookworm/ocr/ocr_menu.py:305
+#: ..\..\..\../ocr/ocr_menu.py:298
 msgid "Scanning Pages"
 msgstr "Skannataan sivuja"
 
-#. Translators: the message of a progress dialog
-#: bookworm/ocr/ocr_menu.py:307
+#: ..\..\..\../ocr/ocr_menu.py:300
 msgid "Preparing book"
 msgstr "Valmistellaan kirjaa"
 
-#: bookworm/ocr/ocr_menu.py:326
+#: ..\..\..\../ocr/ocr_menu.py:320
+#, python-brace-format
 msgid ""
 "Successfully processed {total} pages.\n"
 "Extracted text was written to: {file}"
@@ -2861,37 +2550,36 @@ msgstr ""
 "{total} sivua käsitelty onnistuneesti.\n"
 "Purettu teksti tallennettiin tiedostoon: {file}"
 
-#: bookworm/ocr/ocr_menu.py:329
+#: ..\..\..\../ocr/ocr_menu.py:322
 msgid "OCR Completed"
 msgstr "Tekstintunnistus suoritettu"
 
-#: bookworm/ocr/ocr_menu.py:346
+#: ..\..\..\../ocr/ocr_menu.py:339
 msgid "Portable Network Graphics"
 msgstr "Portable Network Graphics"
 
-#: bookworm/ocr/ocr_menu.py:347
+#: ..\..\..\../ocr/ocr_menu.py:340
 msgid "JPEG images"
 msgstr "JPEG-kuvat"
 
-#: bookworm/ocr/ocr_menu.py:348
+#: ..\..\..\../ocr/ocr_menu.py:341
 msgid "Bitmap images"
 msgstr "Bittikarttakuvat"
 
-#: bookworm/ocr/ocr_menu.py:349
+#: ..\..\..\../ocr/ocr_menu.py:342
 msgid "Tiff graphics"
 msgstr "Tiff-kuvat"
 
-#: bookworm/ocr/ocr_menu.py:355
+#: ..\..\..\../ocr/ocr_menu.py:348
 msgid "All supported image formats"
 msgstr "Kaikki tuetut kuvamuodot"
 
-#. Translators: the title of a file dialog to browse to an image
-#: bookworm/ocr/ocr_menu.py:359
+#: ..\..\..\../ocr/ocr_menu.py:352
 msgid "Choose image file"
 msgstr "Valitse kuvatiedosto"
 
-#. Translators: content of a message box
-#: bookworm/ocr/ocr_menu.py:374
+#: ..\..\..\../ocr/ocr_menu.py:368
+#, python-brace-format
 msgid ""
 "Could not load image from\n"
 "{filename}.\n"
@@ -2901,118 +2589,314 @@ msgstr ""
 "{filename}.\n"
 "Varmista, että tiedosto on olemassa ja ettei se ole vahingoittunut."
 
-#. Translators: title of a message box
-#: bookworm/ocr/ocr_menu.py:379
+#: ..\..\..\../ocr/ocr_menu.py:372
 msgid "Could not load image file"
 msgstr "Kuvatiedostoa ei voitu ladata"
 
-#: bookworm/ocr/ocr_menu.py:425
+#: ..\..\..\../ocr/ocr_menu.py:418
 msgid "Scan finished."
 msgstr "Skannaus valmis."
 
-#: bookworm/ocr/ocr_menu.py:431
+#: ..\..\..\../ocr/ocr_menu.py:424
 msgid "OCR canceled"
 msgstr "Tekstintunnistus peruutettu"
 
-#: bookworm/speechdriver/__init__.py:16
+#: ..\..\..\../otau.py:76
+msgid "We couldn't access the internet right now. Please try again later."
+msgstr "Internet-yhteys ei ole käytettävissä. Yritä myöhemmin uudelleen."
+
+#: ..\..\..\../otau.py:78 ..\..\..\../platforms/win32/updater.py:120
+msgid "Network Error"
+msgstr "Verkkovirhe"
+
+#: ..\..\..\../otau.py:89
+msgid ""
+"We have faced a technical problem while checking for updates. Please try "
+"again later."
+msgstr ""
+"Päivityksiä tarkistettaessa ilmeni tekninen ongelma. Yritä myöhemmin "
+"uudelleen."
+
+#: ..\..\..\../otau.py:92
+msgid "Error Checking For Updates"
+msgstr "Virhe päivityksiä tarkistettaessa"
+
+#: ..\..\..\../otau.py:110
+msgid ""
+"Congratulations, you have already got the latest version of Bookworm.\n"
+"We are working day and night on making Bookworm better. The next version of "
+"Bookworm is on its way, so wait for it. Rest assured, we will notify you "
+"when it is released."
+msgstr ""
+"Onneksi olkoon, sinulla on jo viimeisin versio.\n"
+"Bookwormia parannellaan yötä päivää. Seuraava versio on jo tulossa. Voit "
+"olla varma, että saat ilmoituksen, kun se julkaistaan."
+
+#: ..\..\..\../otau.py:116
+msgid "No Update"
+msgstr "Ei päivitystä"
+
+#: ..\..\..\../otau.py:141
+msgid "&Check for updates"
+msgstr "&Tarkista päivitykset"
+
+#: ..\..\..\../otau.py:143
+msgid "Update the application"
+msgstr "Päivitä sovellus"
+
+#: ..\..\..\../platforms/linux/updater.py:15
+#, python-brace-format
+msgid ""
+"A new update for Bookworm is available.\n"
+"\tInstalled Version: {current}\n"
+"\tNew Version: {new}\n"
+"Please check Bookworm's documentation to learn how to update your version of "
+"Bookworm"
+msgstr ""
+"Uusi Bookwormin versio on saatavilla.\n"
+"\tAsennettu versio: {current}\n"
+"\tUusi versio: {new}\n"
+"Tarkista Bookwormin dokumentaatiosta, miten päivitys tehdään."
+
+#: ..\..\..\../platforms/linux/updater.py:22
+msgid "Update Available"
+msgstr "Päivitys saatavilla"
+
+#: ..\..\..\../platforms/win32/docr_engine.py:33
+msgid "Windows 10 OCR"
+msgstr "Windows 10:n tekstintunnistus"
+
+#: ..\..\..\../platforms/win32/pandoc_download.py:39
+#: ..\..\..\../platforms/win32/tesseract_download.py:68
+msgid "Extracting file..."
+msgstr "Puretaan tiedostoa..."
+
+#: ..\..\..\../platforms/win32/pandoc_download.py:47
+msgid "Pandoc downloaded successfully"
+msgstr "Pandoc ladattu onnistuneesti"
+
+#: ..\..\..\../platforms/win32/pandoc_download.py:56
+msgid ""
+"Could not download Pandoc.\n"
+"Please check your internet connection and try again."
+msgstr ""
+"Pandocinn lataaminen epäonnistui.\n"
+"Tarkista internet-yhteytesi toimivuus ja yritä sitten uudelleen."
+
+#: ..\..\..\../platforms/win32/pandoc_download.py:64
+msgid ""
+"Could not add Pandoc.\n"
+"Please try again."
+msgstr ""
+"Pandocia ei voitu lisätä.\n"
+"Ole hyvä ja yritä uudelleen."
+
+#: ..\..\..\../platforms/win32/speech_engines/onecore/oc_engine.py:37
+msgid "One-core Synthesizer"
+msgstr "OneCore-syntetisaattori"
+
+#: ..\..\..\../platforms/win32/speech_engines/sapi/sp_engine.py:34
+msgid "Microsoft Speech API Version 5"
+msgstr "Microsoft Speech API:n versio 5"
+
+#: ..\..\..\../platforms/win32/tesseract_download.py:76
+msgid "Tesseract engine downloaded successfully"
+msgstr "Tesseract-tekstintunnistusmoottori ladattu onnistuneesti"
+
+#: ..\..\..\../platforms/win32/tesseract_download.py:85
+msgid ""
+"Could not download Tesseract OCR Engine.\n"
+"Please check your internet and try again."
+msgstr ""
+"Tesseract-tekstintunnistusmoottoria ei voitu ladata.\n"
+"Tarkista internet-yhteytesi toimivuus ja yritä sitten uudelleen."
+
+#: ..\..\..\../platforms/win32/tesseract_download.py:95
+msgid ""
+"Could not install the Tesseract OCR engine.\n"
+"Please try again."
+msgstr ""
+"Tesseract-tekstintunnistusmoottoria ei voitu asentaa.\n"
+"Yritä myöhemmin uudelleen."
+
+#: ..\..\..\../platforms/win32/updater.py:76
+#, python-brace-format
+msgid ""
+"A new update for Bookworm has been released.\n"
+"Would you like to download and install it?\n"
+"Installed Version: {current}\n"
+"New Version: {new}\n"
+msgstr ""
+"Uusi Bookworm-päivitys on julkaistu.\n"
+"Haluatko ladata ja asentaa sen?\n"
+"Asennettu versio: {current}\n"
+"Uusi versio: {new}\n"
+
+#: ..\..\..\../platforms/win32/updater.py:82
+msgid "Bookworm Update"
+msgstr "Bookwormin päivitys"
+
+#: ..\..\..\../platforms/win32/updater.py:92
+msgid "Downloading Update"
+msgstr "Ladataan päivitystä"
+
+#: ..\..\..\../platforms/win32/updater.py:94
+msgid "Downloading update bundle"
+msgstr "Ladataan päivityspakettia"
+
+#: ..\..\..\../platforms/win32/updater.py:115
+msgid ""
+"A network error was occured when trying to download the update.\n"
+"Make sure you are connected to the internet, or try again at a later time."
+msgstr ""
+"Päivitystä ladattaessa tapahtui verkkovirhe.\n"
+"Varmista, että olet yhteydessä internetiin, tai yritä myöhemmin uudelleen."
+
+#: ..\..\..\../platforms/win32/updater.py:135
+msgid ""
+"The update file has been downloaded, but it has been corrupted during "
+"download.\n"
+"Would you like to download the update file again?"
+msgstr ""
+"Päivitystiedosto on ladattu, mutta se on vahingoittunut latauksen aikana.\n"
+"Haluatko ladata sen uudelleen?"
+
+#: ..\..\..\../platforms/win32/updater.py:139
+msgid "Download Error"
+msgstr "Latausvirhe"
+
+#: ..\..\..\../platforms/win32/updater.py:150
+msgid "Extracting update bundle..."
+msgstr "Puretaan päivityspakettia..."
+
+#: ..\..\..\../platforms/win32/updater.py:156
+msgid ""
+"A problem has occured when installing the update.\n"
+"Please check the logs for more info."
+msgstr ""
+"Päivitystä asennettaessa ilmeni ongelma.\n"
+"Katso lisätietoja lokista."
+
+#: ..\..\..\../platforms/win32/updater.py:158
+msgid "Error installing update"
+msgstr "Virhe asennettaessa päivitystä"
+
+#: ..\..\..\../platforms/win32/updater.py:168
+msgid ""
+"The update has been downloaded successfully, and it is ready to be "
+"installed.\n"
+"The application will be restarted in order to complete the update process.\n"
+"Click the OK button to continue."
+msgstr ""
+"Päivitys on ladattu onnistuneesti, ja se on valmiina asennettavaksi.\n"
+"Sovellus käynnistetään uudelleen, jotta päivitys voidaan suorittaa loppuun.\n"
+"Jatka napsauttamalla OK-painiketta."
+
+#: ..\..\..\../platforms/win32/updater.py:173
+msgid "Download Completed"
+msgstr "Lataus suoritettu"
+
+#: ..\..\..\../reader.py:426
+#, python-brace-format
+msgid "{title} — by {author}"
+msgstr "{title} — {author}"
+
+#: ..\..\..\../reader.py:443
+msgid "Table View"
+msgstr "Taulukkonäkymä"
+
+#: ..\..\..\../speechdriver/__init__.py:16
 msgid "No Speech"
 msgstr "Ei puhetta"
 
-#: bookworm/structured_text/structural_elements.py:57
+#: ..\..\..\../structured_text/structural_elements.py:60
 msgid "Heading"
 msgstr "Otsikko"
 
-#: bookworm/structured_text/structural_elements.py:58
+#: ..\..\..\../structured_text/structural_elements.py:61
 msgid "Heading level 1"
 msgstr "Otsikkotaso 1"
 
-#: bookworm/structured_text/structural_elements.py:59
+#: ..\..\..\../structured_text/structural_elements.py:62
 msgid "Heading level 2"
 msgstr "Otsikkotaso 2"
 
-#: bookworm/structured_text/structural_elements.py:60
+#: ..\..\..\../structured_text/structural_elements.py:63
 msgid "Heading level 3"
 msgstr "Otsikkotaso 3"
 
-#: bookworm/structured_text/structural_elements.py:61
+#: ..\..\..\../structured_text/structural_elements.py:64
 msgid "Heading level 4"
 msgstr "Otsikkotaso 4"
 
-#: bookworm/structured_text/structural_elements.py:62
+#: ..\..\..\../structured_text/structural_elements.py:65
 msgid "Heading level 5"
 msgstr "Otsikkotaso 5"
 
-#: bookworm/structured_text/structural_elements.py:63
+#: ..\..\..\../structured_text/structural_elements.py:66
 msgid "Heading level 6"
 msgstr "Otsikkotaso 6"
 
-#: bookworm/structured_text/structural_elements.py:64
+#: ..\..\..\../structured_text/structural_elements.py:67
 msgid "Link"
 msgstr "Linkki"
 
-#: bookworm/structured_text/structural_elements.py:65
+#: ..\..\..\../structured_text/structural_elements.py:68
 msgid "List"
 msgstr "Luettelo"
 
-#: bookworm/structured_text/structural_elements.py:66
+#: ..\..\..\../structured_text/structural_elements.py:69
 msgid "Quote"
 msgstr "Lainaus"
 
-#: bookworm/structured_text/structural_elements.py:67
+#: ..\..\..\../structured_text/structural_elements.py:70
 msgid "Table"
 msgstr "Taulukko"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/text_to_speech/__init__.py:104
+#: ..\..\..\../text_to_speech/__init__.py:94
 msgid "S&peech"
 msgstr "P&uhe"
 
-#. Translators: the label of a page in the settings dialog
-#: bookworm/text_to_speech/__init__.py:109
+#: ..\..\..\../text_to_speech/__init__.py:99
 msgid "Reading"
 msgstr "Lukeminen"
 
-#. Translators: the label of a page in the settings dialog
-#. Translators: the label of a group of controls in the
-#. speech settings page related to voice selection
-#: bookworm/text_to_speech/__init__.py:111
-#: bookworm/text_to_speech/__init__.py:122
-#: bookworm/text_to_speech/tts_gui.py:145
+#: ..\..\..\../text_to_speech/__init__.py:101
+#: ..\..\..\../text_to_speech/__init__.py:112
+#: ..\..\..\../text_to_speech/tts_gui.py:137
 msgid "Voice"
 msgstr "Ääni"
 
-#: bookworm/text_to_speech/__init__.py:119
+#: ..\..\..\../text_to_speech/__init__.py:109
 msgid "Back"
 msgstr "Edellinen"
 
-#: bookworm/text_to_speech/__init__.py:120
+#: ..\..\..\../text_to_speech/__init__.py:110
 msgid "Play"
 msgstr "Toista"
 
-#: bookworm/text_to_speech/__init__.py:121
+#: ..\..\..\../text_to_speech/__init__.py:111
 msgid "Forward"
 msgstr "Seuraava"
 
-#: bookworm/text_to_speech/__init__.py:212
+#: ..\..\..\../text_to_speech/__init__.py:202
 msgid "End of document."
 msgstr "Asiakirjan loppu."
 
-#: bookworm/text_to_speech/__init__.py:232
+#: ..\..\..\../text_to_speech/__init__.py:222
+#, python-brace-format
 msgid "End of section: {chapter}."
 msgstr "Luvun {chapter} loppu."
 
-#. Translators: spoken message at the end of the document
-#: bookworm/text_to_speech/__init__.py:265
+#: ..\..\..\../text_to_speech/__init__.py:255
 msgid "End of document"
 msgstr "Asiakirjan loppu"
 
-#. Translators: the title of a message telling the user that no TTS voice found
-#: bookworm/text_to_speech/__init__.py:418
+#: ..\..\..\../text_to_speech/__init__.py:408
 msgid "No TTS Voices"
 msgstr "Teksti puheeksi -ääniä ei ole"
 
-#. Translators: a message telling the user that no TTS voice found
-#: bookworm/text_to_speech/__init__.py:420
+#: ..\..\..\../text_to_speech/__init__.py:411
 msgid ""
 "A valid Text-to-speech voice was not found for the current speech engine.\n"
 "Text-to-speech functionality will be disabled."
@@ -3020,8 +2904,7 @@ msgstr ""
 "Nykyiselle puhemoottorille ei löytynyt kelvollista teksti puheeksi -ääntä.\n"
 "Teksti puheeksi -toiminto poistetaan käytöstä."
 
-#. Translators: a message telling the user that the TTS voice has been changed
-#: bookworm/text_to_speech/__init__.py:438
+#: ..\..\..\../text_to_speech/__init__.py:429
 msgid ""
 "Bookworm has noticed that the currently configured Text-to-speech voice "
 "speaks a language different from that of this book.\n"
@@ -3033,202 +2916,156 @@ msgstr ""
 "Haluatko vaihtaa tilapäisesti toiseen ääneen, joka puhuu nykyisen asiakirjan "
 "kieltä?"
 
-#. Translators: the title of a message telling the user that the TTS voice has
-#. been changed
-#: bookworm/text_to_speech/__init__.py:445
+#: ..\..\..\../text_to_speech/__init__.py:435
 msgid "Incompatible TTS Voice Detected"
 msgstr "Yhteensopimaton teksti puheeksi -ääni havaittu"
 
-#. Translators: the name of a built-in voice profile
-#: bookworm/text_to_speech/tts_config.py:124
+#: ..\..\..\../text_to_speech/tts_config.py:124
 msgid "Human-like"
 msgstr "Ihmismäinen"
 
-#. Translators: the name of a built-in voice profile
-#: bookworm/text_to_speech/tts_config.py:135
+#: ..\..\..\../text_to_speech/tts_config.py:135
 msgid "Deep Reading"
 msgstr "Syväluku"
 
-#. Translators: the name of a built-in voice profile
-#: bookworm/text_to_speech/tts_config.py:146
+#: ..\..\..\../text_to_speech/tts_config.py:146
 msgid "Express"
 msgstr "Pikaluku"
 
-#. Translators: the label of a group of controls in the reading page
-#: bookworm/text_to_speech/tts_gui.py:49
+#: ..\..\..\../text_to_speech/tts_gui.py:48
 msgid "Reading Options"
 msgstr "Lukemisen asetukset"
 
-#. Translators: the label of a checkbox to enable continuous reading
-#: bookworm/text_to_speech/tts_gui.py:54
-msgid "Use continuous reading mode"
-msgstr "Käytä jatkuvaa lukua"
-
-#. Translators: the title of a group of radio buttons in the reading page
-#. in the application settings related to how to read.
-#: bookworm/text_to_speech/tts_gui.py:62
+#: ..\..\..\../text_to_speech/tts_gui.py:54
 msgid "When Pressing Play:"
 msgstr "Kun Toista-painiketta painetaan:"
 
-#. Translators: the label of a radio button
-#: bookworm/text_to_speech/tts_gui.py:67
+#: ..\..\..\../text_to_speech/tts_gui.py:59
 msgid "Read the entire book"
 msgstr "Lue koko kirja"
 
-#. Translators: the label of a radio button
-#: bookworm/text_to_speech/tts_gui.py:69
+#: ..\..\..\../text_to_speech/tts_gui.py:61
 msgid "Read the current section"
 msgstr "Lue nykyinen luku"
 
-#. Translators: the label of a radio button
-#: bookworm/text_to_speech/tts_gui.py:71
+#: ..\..\..\../text_to_speech/tts_gui.py:63
 msgid "Read the current page"
 msgstr "Lue nykyinen sivu"
 
-#. Translators: the title of a group of radio buttons in the reading page
-#. in the application settings related to where to start reading from.
-#: bookworm/text_to_speech/tts_gui.py:79
+#: ..\..\..\../text_to_speech/tts_gui.py:71
 msgid "Start reading from:"
 msgstr "Aloita lukeminen:"
 
-#. Translators: the label of a radio button
-#: bookworm/text_to_speech/tts_gui.py:83
+#: ..\..\..\../text_to_speech/tts_gui.py:75
 msgid "Cursor position"
 msgstr "Kohdistimen sijainnista"
 
-#: bookworm/text_to_speech/tts_gui.py:83
+#: ..\..\..\../text_to_speech/tts_gui.py:75
 msgid "Beginning of page"
 msgstr "Sivun alusta"
 
-#. Translators: the label of a group of controls in the reading page
-#. of the settings related to behavior during reading  aloud
-#: bookworm/text_to_speech/tts_gui.py:87
+#: ..\..\..\../text_to_speech/tts_gui.py:79
 msgid "During Reading Aloud"
 msgstr "Ääneeen luettaessa"
 
-#. Translators: the label of a checkbox
-#: bookworm/text_to_speech/tts_gui.py:99
+#: ..\..\..\../text_to_speech/tts_gui.py:91
 msgid "Announce the end of sections"
 msgstr "Ilmoita lukujen loppumisesta"
 
-#. Translators: the label of a checkbox
-#: bookworm/text_to_speech/tts_gui.py:106
+#: ..\..\..\../text_to_speech/tts_gui.py:98
 msgid "Ask to switch to a voice that speaks the language of the current book"
 msgstr "Pyydä vaihtamaan ääneen, joka puhuu nykyisen kirjan kieltä"
 
-#. Translators: the label of a checkbox
-#: bookworm/text_to_speech/tts_gui.py:113
+#: ..\..\..\../text_to_speech/tts_gui.py:105
 msgid "Highlight spoken text"
 msgstr "Korosta puhuttu teksti"
 
-#. Translators: the label of a checkbox
-#: bookworm/text_to_speech/tts_gui.py:120
+#: ..\..\..\../text_to_speech/tts_gui.py:112
 msgid "Select spoken text"
 msgstr "Valitse puhuttu teksti"
 
-#. Translators: the label of a combobox containing a list of tts engines
-#: bookworm/text_to_speech/tts_gui.py:148
+#: ..\..\..\../text_to_speech/tts_gui.py:140
 msgid "Speech Engine:"
 msgstr "Puhemoottori:"
 
-#. Translators: the label of a button that opens a dialog to change the speech
-#. engine
-#: bookworm/text_to_speech/tts_gui.py:153
+#: ..\..\..\../text_to_speech/tts_gui.py:145
 msgid "Change..."
 msgstr "Muuta..."
 
-#. Translators: the label of a combobox containing a list of tts voices
-#: bookworm/text_to_speech/tts_gui.py:156
+#: ..\..\..\../text_to_speech/tts_gui.py:148
 msgid "Select Voice:"
 msgstr "Valitse ääni:"
 
-#. Translators: the label of the speech rate slider
-#: bookworm/text_to_speech/tts_gui.py:159
+#: ..\..\..\../text_to_speech/tts_gui.py:151
 msgid "Speech Rate:"
 msgstr "Puhenopeus:"
 
-#. Translators: the label of the speech volume slider
-#: bookworm/text_to_speech/tts_gui.py:165
+#: ..\..\..\../text_to_speech/tts_gui.py:157
 msgid "Speech Volume:"
 msgstr "Puheen voimakkuus:"
 
-#. Translators: the label of a group of controls in the speech
-#. settings page related to speech pauses
-#: bookworm/text_to_speech/tts_gui.py:172
+#: ..\..\..\../text_to_speech/tts_gui.py:164
 msgid "Pauses"
 msgstr "Tauot"
 
-#. Translators: the label of an edit field
-#: bookworm/text_to_speech/tts_gui.py:175
+#: ..\..\..\../text_to_speech/tts_gui.py:167
 msgid "Additional Pause At Sentence End (Ms)"
 msgstr "Lisätauko virkkeen lopussa (Ms)"
 
-#. Translators: the label of an edit field
-#: bookworm/text_to_speech/tts_gui.py:180
+#: ..\..\..\../text_to_speech/tts_gui.py:172
 msgid "Additional Pause At Paragraph End (Ms)"
 msgstr "Lisätauko kappaleen lopussa (Ms)"
 
-#. Translators: the label of an edit field
-#: bookworm/text_to_speech/tts_gui.py:185
+#: ..\..\..\../text_to_speech/tts_gui.py:177
 msgid "End of Page Pause (ms)"
 msgstr "Tauko sivun lopussa (ms)"
 
-#. Translators: the label of an edit field
-#: bookworm/text_to_speech/tts_gui.py:194
+#: ..\..\..\../text_to_speech/tts_gui.py:186
 msgid "End of Section Pause (ms)"
 msgstr "Tauko luvun lopussa (ms)"
 
-#: bookworm/text_to_speech/tts_gui.py:238
+#: ..\..\..\../text_to_speech/tts_gui.py:230
 msgid "Speech Engine"
 msgstr "Puhemoottori"
 
-#. Translators: the title of a dialog to edit a voice profile
-#: bookworm/text_to_speech/tts_gui.py:285
+#: ..\..\..\../text_to_speech/tts_gui.py:277
+#, python-brace-format
 msgid "Voice Profile: {profile}"
 msgstr "Ääniprofiili: {profile}"
 
-#. Translators: the label of a combobox to select a voice profile
-#: bookworm/text_to_speech/tts_gui.py:312
+#: ..\..\..\../text_to_speech/tts_gui.py:304
 msgid "Select Voice Profile:"
 msgstr "Valitse ääniprofiili:"
 
-#. Translators: the label of a button to activate a voice profile
-#: bookworm/text_to_speech/tts_gui.py:318
+#: ..\..\..\../text_to_speech/tts_gui.py:310
 msgid "&Activate"
 msgstr "&Ota käyttöön"
 
-#. Translators: the label of a button to create a new voice profile
-#: bookworm/text_to_speech/tts_gui.py:324
+#: ..\..\..\../text_to_speech/tts_gui.py:316
 msgid "&New Profile..."
 msgstr "&Uusi profiili..."
 
-#. Translators: the entry of the active voice profile in the voice profiles
-#. list
-#: bookworm/text_to_speech/tts_gui.py:358
+#: ..\..\..\../text_to_speech/tts_gui.py:350
+#, python-brace-format
 msgid "{profile} (active)"
 msgstr "{profile} (käytössä)"
 
-#. Translators: the label of an edit field to enter the voice profile name
-#: bookworm/text_to_speech/tts_gui.py:408
+#: ..\..\..\../text_to_speech/tts_gui.py:400
 msgid "Profile Name:"
 msgstr "Profiilin nimi:"
 
-#. Translators: the title of a dialog to enter the name of a new voice profile
-#: bookworm/text_to_speech/tts_gui.py:410
+#: ..\..\..\../text_to_speech/tts_gui.py:402
 msgid "New Voice Profile"
 msgstr "Uusi ääniprofiili"
 
-#. Translators: the content of a message notifying the user
-#. user of the existence of a voice profile with the same name
-#: bookworm/text_to_speech/tts_gui.py:422
+#: ..\..\..\../text_to_speech/tts_gui.py:415
 msgid ""
 "A voice profile with the same name already exists. Please select another "
 "name."
 msgstr "Samanniminen ääniprofiili on jo olemassa. Valitse toinen nimi."
 
-#. Translators: the content of a message telling the user that the voice
-#. profile he is removing is the active one
-#: bookworm/text_to_speech/tts_gui.py:448
+#: ..\..\..\../text_to_speech/tts_gui.py:441
+#, python-brace-format
 msgid ""
 "Voice profile {profile} is the active profile.\n"
 "Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
@@ -3238,15 +3075,12 @@ msgstr ""
 "Poista se ensin käytöstä valitsemalla Puhe-valikosta Poista käytöstä "
 "nykyinen ääniprofiili."
 
-#. Translators: the title of a message telling the user that
-#. it is not possible to remove this voice profile
-#: bookworm/text_to_speech/tts_gui.py:455
+#: ..\..\..\../text_to_speech/tts_gui.py:447
 msgid "Cannot Remove Profile"
 msgstr "Profiilia ei voi poistaa"
 
-#. Translators: the title of a message to confirm the removal of the voice
-#. profile
-#: bookworm/text_to_speech/tts_gui.py:461
+#: ..\..\..\../text_to_speech/tts_gui.py:454
+#, python-brace-format
 msgid ""
 "Are you sure you want to remove voice profile {profile}?\n"
 "This cannot be undone."
@@ -3254,159 +3088,127 @@ msgstr ""
 "Haluatko varmasti poistaa ääniprofiilin {profile}?\n"
 "Poistoa ei voi peruuttaa."
 
-#. Translators: the title of a message to confirm the removal of a voice
-#. profile
-#: bookworm/text_to_speech/tts_gui.py:466
+#: ..\..\..\../text_to_speech/tts_gui.py:458
 msgid "Remove Voice Profile?"
 msgstr "Poistetaanko ääniprofiili?"
 
-#. Translators: the label of a combobox
-#: bookworm/text_to_speech/tts_gui.py:489
+#: ..\..\..\../text_to_speech/tts_gui.py:481
 msgid "Select Speech Engine:"
 msgstr "Valitse puhemoottori:"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:518
+#: ..\..\..\../text_to_speech/tts_gui.py:510
 msgid "&Play\tF5"
 msgstr "&Toista\tF5"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:520
+#: ..\..\..\../text_to_speech/tts_gui.py:512
 msgid "Start reading aloud"
 msgstr "Aloita ääneen lukeminen"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:525
+#: ..\..\..\../text_to_speech/tts_gui.py:517
 msgid "Pa&use/Resume\tF6"
 msgstr "Keske&ytä/jatka\tF6"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:527
+#: ..\..\..\../text_to_speech/tts_gui.py:519
 msgid "Pause/Resume reading aloud"
 msgstr "Keskeytä/jatka ääneen lukemista"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:532
+#: ..\..\..\../text_to_speech/tts_gui.py:524
 msgid "&Stop\tF7"
 msgstr "&Pysäytä\tF7"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:534
+#: ..\..\..\../text_to_speech/tts_gui.py:526
 msgid "Stop reading aloud"
 msgstr "Pysäytä ääneen lukeminen"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:539
+#: ..\..\..\../text_to_speech/tts_gui.py:531
 msgid "&Rewind\tAlt-LeftArrow"
 msgstr "Kelaa t&aaksepäin\tAlt+Vasen nuoli"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:541
+#: ..\..\..\../text_to_speech/tts_gui.py:533
 msgid "Skip to previous paragraph"
 msgstr "Siirry edelliseen kappaleeseen"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:546
+#: ..\..\..\../text_to_speech/tts_gui.py:538
 msgid "&Fast Forward\tAlt-RightArrow"
 msgstr "Kelaa &eteenpäin\tAlt+Oikea nuoli"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:548
+#: ..\..\..\../text_to_speech/tts_gui.py:540
 msgid "Skip to next paragraph"
 msgstr "Siirry seuraavaan kappaleeseen"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:553
+#: ..\..\..\../text_to_speech/tts_gui.py:545
 msgid "&Voice Profiles\tCtrl-Shift-V"
 msgstr "&Ääniprofiilit\tCtrl+Vaihto+V"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:555
+#: ..\..\..\../text_to_speech/tts_gui.py:547
 msgid "Manage voice profiles."
 msgstr "Hallitse ääniprofiileja."
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:560
+#: ..\..\..\../text_to_speech/tts_gui.py:552
 msgid "&Deactivate Active Voice Profile"
 msgstr "P&oista käytöstä nykyinen ääniprofiili"
 
-#. Translators: the help text of an item in the application menubar
-#: bookworm/text_to_speech/tts_gui.py:562
+#: ..\..\..\../text_to_speech/tts_gui.py:554
 msgid "Deactivate the active voice profile."
 msgstr "Poista käytöstä nykyinen ääniprofiili."
 
-#. Translators: a message that is announced when the speech is paused
-#: bookworm/text_to_speech/tts_gui.py:624
+#: ..\..\..\../text_to_speech/tts_gui.py:616
 msgid "Paused"
 msgstr "Keskeytetty"
 
-#. Translators: a message that is announced when the speech is resumed
-#: bookworm/text_to_speech/tts_gui.py:628
+#: ..\..\..\../text_to_speech/tts_gui.py:620
 msgid "Resumed"
 msgstr "Jatketaan"
 
-#. Translators: a message that is announced when the speech is stopped
-#: bookworm/text_to_speech/tts_gui.py:638
+#: ..\..\..\../text_to_speech/tts_gui.py:630
 msgid "Stopped"
 msgstr "Pysäytetty"
 
-#. Translators: the title of the voice profiles dialog
-#: bookworm/text_to_speech/tts_gui.py:643
+#: ..\..\..\../text_to_speech/tts_gui.py:635
 msgid "Voice Profiles"
 msgstr "Ääniprofiilit"
 
-#. Translators: the label of an item in the application menubar
-#: bookworm/webservices/__init__.py:22
+#: ..\..\..\../webservices/__init__.py:23
 msgid "&Web Services"
 msgstr "&Verkkopalvelut"
 
-#: bookworm/webservices/url_open.py:32
+#: ..\..\..\../webservices/url_open.py:34
 msgid "&Open URL\tCtrl+U"
 msgstr "&Avaa URL\tCtrl+U"
 
-#: bookworm/webservices/url_open.py:34
+#: ..\..\..\../webservices/url_open.py:36
 msgid "&Open URL From Clipboard\tCtrl+Shift+U"
 msgstr "A&vaa URL leikepöydältä\tCtrl+Vaihto+U"
 
-#. Translators: title of a dialog for entering a URL
-#: bookworm/webservices/url_open.py:47
+#: ..\..\..\../webservices/url_open.py:49
 msgid "Enter URL"
 msgstr "Kirjoita URL"
 
-#. Translators: label of a textbox in a dialog for entering a URL
-#: bookworm/webservices/url_open.py:49
+#: ..\..\..\../webservices/url_open.py:51
 msgid "URL"
 msgstr "URL"
 
-#: bookworm/webservices/wikiworm.py:34
+#: ..\..\..\../webservices/wikiworm.py:57
 msgid "&Wikipedia quick search"
 msgstr "&Wikipedia-pikahaku"
 
-#: bookworm/webservices/wikiworm.py:35
+#: ..\..\..\../webservices/wikiworm.py:58
 msgid "Get a quick definition from Wikipedia"
 msgstr "Hae pikamääritelmä Wikipediasta"
 
-#: bookworm/webservices/wikiworm.py:47
+#: ..\..\..\../webservices/wikiworm.py:70
 msgid "Define using Wikipedia"
 msgstr "Hae määritelmä Wikipediaa käyttäen"
 
-#: bookworm/webservices/wikiworm.py:48
+#: ..\..\..\../webservices/wikiworm.py:71
 msgid "Define the selected text using Wikipedia"
 msgstr "Hae valitun tekstin määritelmä Wikipediaa käyttäen"
 
-#: bookworm/webservices/wikiworm.py:62
-msgid "Wikipedia Quick Search"
-msgstr "Wikipedia-pikahaku"
-
-#: bookworm/webservices/wikiworm.py:63
-msgid "Enter term"
-msgstr "Syötä hakuehto"
-
-#: bookworm/webservices/wikiworm.py:75
+#: ..\..\..\../webservices/wikiworm.py:105
 msgid "Retrieving information, please wait..."
 msgstr "Odota, kun tietoja haetaan..."
 
-#: bookworm/webservices/wikiworm.py:108
+#: ..\..\..\../webservices/wikiworm.py:137
 msgid ""
 "Could not connect to Wikipedia at the moment.\\Please make sure that you're "
 "connected to the internet or try again later."
@@ -3414,35 +3216,64 @@ msgstr ""
 "Wikipediaan ei tällä hetkellä saada yhteyttä.\\Varmista, että olet "
 "yhteydessä internetiin tai yritä myöhemmin uudelleen."
 
-#: bookworm/webservices/wikiworm.py:118
-msgid "Could not get the definition from Wikipedia."
-msgstr "Määritelmää ei voitu hakea Wikipediasta."
+#: ..\..\..\../webservices/wikiworm.py:147
+msgid "Page not found"
+msgstr "Sivua ei löydy"
 
-#: bookworm/webservices/wikiworm.py:125
+#: ..\..\..\../webservices/wikiworm.py:149
+msgid "Could not find a Wikipedia page for the given term.."
+msgstr "Annetulla hakusanalla ei löytynyt Wikipedia-sivua."
+
+#: ..\..\..\../webservices/wikiworm.py:155
 msgid "Matches"
 msgstr "Osumat"
 
-#: bookworm/webservices/wikiworm.py:126
+#: ..\..\..\../webservices/wikiworm.py:156
 msgid "Multiple Matches Found"
 msgstr "Useita osumia löytyi"
 
-#: bookworm/webservices/wikiworm.py:149
+#: ..\..\..\../webservices/wikiworm.py:171
+msgid "Failed to get term definition from Wikipedia."
+msgstr "Hakusanan määritelmää ei voitu hakea Wikipediasta."
+
+#: ..\..\..\../webservices/wikiworm.py:188
+#, python-brace-format
 msgid "{term} — Wikipedia"
 msgstr "{term} — Wikipedia"
 
-#. Translators: label of an edit control in the dialog
-#. of viewing or editing a comment/highlight
-#: bookworm/webservices/wikiworm.py:156
+#: ..\..\..\../webservices/wikiworm.py:194
 msgid "Summary"
 msgstr "Yhteenveto"
 
-#: bookworm/webservices/wikiworm.py:167
+#: ..\..\..\../webservices/wikiworm.py:205
 msgid "Open in &Bookworm"
 msgstr "Avaa &Bookwormissa"
 
-#: bookworm/webservices/wikiworm.py:168
+#: ..\..\..\../webservices/wikiworm.py:206
 msgid "&Open in Browser"
 msgstr "&Avaa selaimessa"
+
+#: ..\..\..\../webservices/wikiworm.py:238
+msgid "Wikipedia Quick Search"
+msgstr "Wikipedia-pikahaku"
+
+#: ..\..\..\../webservices/wikiworm.py:244
+msgid "Enter term"
+msgstr "Syötä hakuehto"
+
+#: ..\..\..\../webservices/wikiworm.py:250
+msgid "Choose Wikipedia language"
+msgstr "Valitse Wikipedian kieli"
+
+#~ msgid "Exclude named bookmarks when jumping between bookmarks"
+#~ msgstr ""
+#~ "Älä huomioi nimettyjä kirjanmerkkejä kirjanmerkkien välillä siirryttäessä"
+
+#~ msgid "Book contents"
+#~ msgstr "Kirjan sisältö"
+
+#~ msgid "Use continuous reading mode"
+#~ msgstr "Käytä jatkuvaa lukua"
 
 #~ msgid "OCR Results"
 #~ msgstr "Tekstintunnistuksen tulokset"
