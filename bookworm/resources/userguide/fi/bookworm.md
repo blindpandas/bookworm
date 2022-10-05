@@ -58,7 +58,13 @@ Bookwormin pääikkuna koostuu seuraavista kahdesta osasta:
 * Alt+End: siirtää nykyisen luvun viimeiselle sivulle
 * Alt+Page down: siirtää seuraavaan lukuun
 * Alt+Page up: siirtää edelliseen lukuun
-
+* F2: siirry seuraavaan kirjanmerkkiin
+* Vaihto+F2: siirry edelliseen kirjanmerkkiin
+* F8: siirry seuraavaan kommenttiin
+* Vaihto+F8: siirry edelliseen kommenttiin
+* F9: siirry seuraavaan korostukseen
+* Vaihto+F9: siirry edelliseen korostukseen
+* Ctrl+Enter: avaa mikä tahansa asiakirjan sisältämä sisäinen tai ulkoinen linkki. Sisäiset linkit ovat joidenkin asiakirjamuotojen sisällysluettelon luomia, ulkoiset tavallisia, selaimessa avattavia. Linkin tyypistä riippuen suoritetaan jompi kumpi seuraavista toiminnoista. Jos linkki on sisäinen eli osa sisällysluetteloa, silloin yllä olevan näppäinkomennon painaminen siirtää kohdistuksen haluttuun asiakirjan kohtaan. Jos linkki on ulkoinen, näppäinkomento avaa sen järjestelmän oletusselaimessa.
 
 ### Kirjanmerkit ja kommentit
 
@@ -131,6 +137,7 @@ Näiden asetusten avulla Bookwormissa voi hienosäätää puheasetusten lisäksi
 * Valitse puhuttu teksti: Jos tämä asetus on käytössä, senhetkinen puhuttu teksti valitaan. Näin voit esim. painaa Ctrl+C kopioidaksesi puhutun kappaleen.
 
 
+
 ### Jatkuvan luvun tila
 
 Bookwormin sisäänrakennettujen teksti puheeksi -ominaisuuksien lisäksi voit hyödyntää ruudunlukijan jatkuvan luvun toimintoa. Bookworm tukee tätä toimintoa jatkuvan luvun tilansa avulla. Tämä tila on oletusarvoisesti käytössä, ja voit poistaa sen käytöstä sovellusasetusten Lukeminen-sivulta. Kun jatkuvan luvun tila on käytössä, sivuja käännetään automaattisesti ruudunlukijan edetessä asiakirjassa.
@@ -139,6 +146,7 @@ Huomaa, että ominaisuuden tämänhetkisen toteutustavan takia odotettavissa on 
 
 * Jatkuva luku keskeytyy tyhjälle sivulle siirryttäessä. Jos siirryit tyhjälle sivulle, siirry vain ei-tyhjälle sivulle ja ota ruudunlukijan jatkuvan luvun toiminto uudelleen käyttöön siinä.
 * Kohdistimen siirtäminen sivun viimeisen merkin kohdalle vaihtaa välittömästi seuraavalle sivulle.
+
 
 
 ### Nykyisen sivun täysin renderöidyn version katselu
