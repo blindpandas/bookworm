@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2022-09-14 14:32+0000\n"
-"PO-Revision-Date: 2022-09-25 13:17+0400\n"
+"PO-Revision-Date: 2022-10-14 18:47+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: Translation team of Dragan Ratkovich\n"
 "Language: ka\n"
@@ -98,7 +98,7 @@ msgstr "ჩ&ანიშნა...\tCtrl-B"
 
 #: bookworm/annotation/__init__.py:78 bookworm/annotation/__init__.py:84
 msgid "Bookmark the current location"
-msgstr "ჩანიშნეთ მიმდინარე ადგილი"
+msgstr "მიმდინარე ადგილის ჩანიშვნა"
 
 #: bookworm/annotation/__init__.py:83
 msgid "&Named Bookmark...\tCtrl-Shift-B"
@@ -110,7 +110,7 @@ msgstr "კო&მენტარი...\tCtrl-m"
 
 #: bookworm/annotation/__init__.py:90
 msgid "Add a comment at the current location"
-msgstr "დაამატეთ კომენტარი მიმდინარე ადგილზე"
+msgstr "მიმდინარე ადგილზე კომენტარის დამატება"
 
 #: bookworm/annotation/__init__.py:100
 msgid "Highlight Selection\tCtrl-Shift-H"
@@ -118,7 +118,7 @@ msgstr "მონიშნეთ არჩევა\tCtrl-Shift-H"
 
 #: bookworm/annotation/__init__.py:101
 msgid "Highlight and save selected text."
-msgstr "მონიშნეთ და შეინახეთ არჩეული ტექსტი."
+msgstr "არჩეული ტექსტის მონიშვნა და შენახვა"
 
 #. Translators: the label of a button in the application toolbar
 #. Translators: spoken message when jumping to a bookmark
@@ -243,7 +243,7 @@ msgstr "შექმნის თარიღი"
 #. comments/highlights
 #: bookworm/annotation/annotation_dialogs.py:77
 msgid "Last updated"
-msgstr "ბოლოს განახლდა"
+msgstr "ბოლო განახლების თარიღი"
 
 #. Translators: the label of a button to close a dialog
 #. Translators: the label of the cancel button in a dialog
@@ -525,7 +525,7 @@ msgstr "&სანიშნის დამატება\tCtrl-B"
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:104
 msgid "Add a bookmark at the current position"
-msgstr "დაამატეთ სანიშნე მიმდინარე პოზიციაზე"
+msgstr "მიმდინარე პოზიციაზე სანიშნის დამატება"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:109
@@ -535,7 +535,7 @@ msgstr "დასათაურებული სა&ნიშნის და
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:111
 msgid "Add a named bookmark at the current position"
-msgstr "დაამატეთ დასათაურებული სანიშნე მიმდინარე პოზიციაზე"
+msgstr "მიმდინარე პოზიციაზე დასათაურებული სანიშნის დამატება"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:116
@@ -545,7 +545,7 @@ msgstr "&კომენტარის დამატება...\tCtrl-M"
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:118
 msgid "Add a comment at the current position"
-msgstr "დაამატეთ კომენტარი მიმდინარე პოზიციაზე"
+msgstr "მიმდინარე პოზიციაზე კომენტარის დამატება"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:123
@@ -555,7 +555,7 @@ msgstr "მონიშვნის &არჩევა\tCtrl-H"
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:125
 msgid "Highlight selected text and save it."
-msgstr "მონიშნეთ არჩეული ტექსტი და შეინახეთ."
+msgstr "არჩეული ტექსტის მონიშვნა და შენახვა"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:130
