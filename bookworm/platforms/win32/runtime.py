@@ -1,9 +1,7 @@
 # coding: utf-8
 
-
 import clr
-
-clr.AddReference("System.Windows.Forms")
+from ctypes import windll, wintypes, byref
 import sys
 import winsound
 from functools import lru_cache
@@ -11,34 +9,16 @@ from pathlib import Path
 from subprocess import list2cmdline
 
 import winpaths
-from platform_utils.paths import app_path
-from System.Windows.Forms import SystemInformation
-
 from bookworm import app
 
 from . import shellapi
 from .win_registry import RegKey, RegRoots
 
+
+SPI_GETHIGHCONTRAST = 0x0042
 PLAYER_FLAGS = winsound.SND_ASYNC | winsound.SND_FILENAME
 UWP_SERVICES_AVAILABEL = False
-try:
-    _app_path = Path(app_path())
-    _uwp_services_dll = _app_path / "BookwormUWPServices.dll"
-    if not app.is_frozen:
-        _uwp_services_dll = (
-            Path.cwd()
-            / "includes"
-            / "BookwormUWPServices"
-            / "bin"
-            / "Debug"
-            / "BookwormUWPServices.dll"
-        )
-    clr.AddReference(str(_uwp_services_dll))
-    UWP_SERVICES_AVAILABEL = True
-    del _uwp_services_dll
-except Exception as e:
-    if "--debug" in sys.argv:
-        print(f"Failed to load BookwormUWPServices.dll. {e}")
+
 
 
 class SoundFile:
@@ -93,4 +73,6 @@ def is_running_portable():
 
 
 def is_high_contrast_active():
-    return SystemInformation.HighContrast
+    val = wintypes.BOOL()
+    windll.user32.SystemParametersInfoW(SPI_GETHIGHCONTRAST, 0, byref(val), 0)
+    return bool(val.value)
