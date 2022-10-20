@@ -3,9 +3,8 @@
 from contextlib import suppress
 
 import System
-from OcPromptBuilder import OcPromptBuilder
 from System.Globalization import CultureInfo, CultureNotFoundException
-
+import neosynth
 from bookworm.logger import logger
 from bookworm.speechdriver.enumerations import SpeechElementKind
 from bookworm.speechdriver.utterance import SpeechElement, SpeechStyle
@@ -51,7 +50,7 @@ class OcSpeechUtterance(SapiSpeechUtterance):
         voice = self.synth().voice
         voice_utterance = SapiSpeechUtterance()
         options = dict(voice=voice)
-        if not self.synth().synth.IsProsodySupported:
+        if not self.synth().synth.is_prosody_supported():
             options["rate"] = self.synth().rate_to_spec()
         with voice_utterance.set_style(SpeechStyle(**options)):
             voice_utterance.append_utterance(self)
@@ -64,12 +63,12 @@ class OcSpeechUtterance(SapiSpeechUtterance):
         self._speech_sequence.append(SpeechElement(SpeechElementKind.ssml, ssml))
 
     def to_oc_prompt(self):
-        oc_prompt = OcPromptBuilder()
+        utterance = neosynth.SpeechUtterance()
         if not self.prompt.IsEmpty:
             self._take_stock()
         for element in self._speech_sequence:
             if element.kind is SpeechElementKind.ssml:
-                oc_prompt.AddSsml(element.content)
+                utterance.add_ssml(element.content)
             elif element.kind is SpeechElementKind.bookmark:
-                oc_prompt.AddBookmark(element.content)
-        return oc_prompt
+                utterance.add_bookmark(element.content)
+        return utterance

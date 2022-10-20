@@ -22,14 +22,6 @@ install:
   # Python stdout encoding 
   - set PYTHONIOENCODING=utf-8
 
-before_build:
-  - cd %APPVEYOR_BUILD_FOLDER%
-  # Build required dlls
-  - cd includes\BookwormUWPServices
-  - nuget restore
-  - msbuild /t:Build /p:Configuration=Release
-  - cd %APPVEYOR_BUILD_FOLDER%
-
 
 build_script:
   # 32-bit version

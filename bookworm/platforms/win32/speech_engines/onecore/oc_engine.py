@@ -4,31 +4,39 @@ import platform
 from pathlib import Path
 from weakref import ref
 
-import clr
-import System
-
+import neosynth
 from bookworm import app
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
-from bookworm.platforms.win32.runtime import (UWP_SERVICES_AVAILABEL,
-                                              reference_gac_assembly)
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.speechdriver.enumerations import (EngineEvent, RateSpec,
                                                 SynthState)
+from .oc_utterance import OcSpeechUtterance
+
 
 log = logger.getChild(__name__)
+NeosynthStateToSynthState = {
+    neosynth.SynthState.Ready: SynthState.ready,
+    neosynth.SynthState.Paused: SynthState.paused,
+    neosynth.SynthState.Busy: SynthState.busy,
+}
 
-_oc_available = False
-try:
-    if UWP_SERVICES_AVAILABEL:
-        from OcSpeechEngine import OcSpeechEngine as _OnecoreEngine
 
-        reference_gac_assembly("System.Speech\*\System.Speech.dll")
-        from .oc_utterance import OcSpeechUtterance
+class EventSink:
 
-        _oc_available = True
-except Exception as e:
-    log.error(f"Could not load the onecore speech engine", exc_info=True)
+    def __init__(self, synth):
+        self.synth = synth
+
+    def on_state_changed(self, state):
+        handlers = self.synth.event_handlers.get(EngineEvent.state_changed, ())
+        for handler in handlers:
+            handler(self, NeosynthStateToSynthState[state])
+
+    def on_bookmark_reached(self, bookmark):
+        handlers = self.synth.event_handlers.get(EngineEvent.bookmark_reached, ())
+        for handler in handlers:
+            handler(self, bookmark)
+
 
 
 class OcSpeechEngine(BaseSpeechEngine):
@@ -39,54 +47,47 @@ class OcSpeechEngine(BaseSpeechEngine):
 
     def __init__(self):
         super().__init__()
-        self.synth = _OnecoreEngine()
+        self.event_sink = EventSink(self)
+        self.synth = neosynth.Neosynth(self.event_sink)
+        self.event_handlers = {}
         self.__rate = 50
-        self.synth.BookmarkReached += self._on_bookmark_reached
-        self.synth.StateChanged += self._on_state_changed
-        self.__event_handlers = {}
 
     @classmethod
     def check(self):
-        return platform.version().startswith("10") and _oc_available
+        return platform.version().startswith("10")
 
     def close(self):
-        try:
-            self.synth.BookmarkReached -= self._on_bookmark_reached
-            self.synth.StateChanged -= self._on_state_changed
-        finally:
-            self.synth.Close()
-            self.synth.Finalize()
+        super().close()
+        self.event_handlers.clear()
+        self.event_sink.synth = None
+        self.event_sink = None
 
     def get_voices(self):
         rv = []
-        for voice in self.synth.GetVoices():
+        for voice in neosynth.Neosynth.get_voices():
             rv.append(
                 VoiceInfo(
-                    id=voice.Id,
-                    name=voice.Name,
-                    desc=voice.Description,
-                    language=LocaleInfo(voice.Language),
-                    data={"voice_obj": voice},
+                    id=voice.id,
+                    name=voice.name,
+                    desc=voice.name,
+                    language=LocaleInfo(voice.language),
                 )
             )
         return rv
 
     @property
     def state(self):
-        return SynthState(self.synth.State)
+        return NeosynthStateToSynthState[self.synth.get_state()]
 
     @property
     def voice(self):
         for voice in self.get_voices():
-            if voice.id == self.synth.Voice.Id:
+            if voice.id == self.synth.get_voice().id:
                 return voice
 
     @voice.setter
     def voice(self, value):
-        try:
-            self.synth.Voice = value.data["voice_obj"]
-        except System.InvalidOperationException:
-            raise ValueError(f"Can not set voice to  {value}.")
+        self.synth.set_voice_str(value.id)
 
     def rate_to_spec(self):
         if 0 <= self._rate <= 20:
@@ -100,13 +101,16 @@ class OcSpeechEngine(BaseSpeechEngine):
 
     @property
     def rate(self):
-        return self.synth.Rate if self.synth.IsProsodySupported else self.__rate
+        try:
+            return self.synth.get_rate()
+        except RuntimeError:
+            return self.__rate
 
     @rate.setter
     def rate(self, value):
         if 0 <= value <= 100:
-            if self.synth.IsProsodySupported:
-                self.synth.Rate = value
+            if self.synth.is_prosody_supported():
+                self.synth.set_rate(value)
             else:
                 self.__rate = value
         else:
@@ -114,17 +118,17 @@ class OcSpeechEngine(BaseSpeechEngine):
 
     @property
     def volume(self):
-        return int(self.synth.Volume)
+        return int(self.synth.get_volume())
 
     @volume.setter
     def volume(self, value):
         try:
-            self.synth.Volume = float(value)
+            self.synth.set_volume(float(value))
         except:
             raise ValueError("The provided volume level is out of range")
 
     def speak_utterance(self, utterance):
-        self.synth.SpeakAsync(utterance)
+        self.synth.speak(utterance)
 
     def preprocess_utterance(self, utterance):
         oc_utterance = OcSpeechUtterance(ref(self))
@@ -132,25 +136,16 @@ class OcSpeechEngine(BaseSpeechEngine):
         return oc_utterance.to_oc_prompt()
 
     def stop(self):
-        self.synth.CancelSpeech()
+        self.synth.stop()
 
     def pause(self):
-        self.synth.Pause()
+        self.synth.pause()
 
     def resume(self):
-        self.synth.Resume()
+        self.synth.resume()
 
     def bind(self, event, handler):
         if event not in (EngineEvent.bookmark_reached, EngineEvent.state_changed):
             raise NotImplementedError
-        self.__event_handlers.setdefault(event, []).append(handler)
+        self.event_handlers.setdefault(event, []).append(handler)
 
-    def _on_bookmark_reached(self, sender, arg):
-        handlers = self.__event_handlers.get(EngineEvent.bookmark_reached, ())
-        for handler in handlers:
-            handler(self, arg)
-
-    def _on_state_changed(self, sender, arg):
-        handlers = self.__event_handlers.get(EngineEvent.state_changed, ())
-        for handler in handlers:
-            handler(self, SynthState(arg))

@@ -516,18 +516,6 @@ def update_version_info(c):
     print("Updated version information")
 
 
-@task(name="libs")
-@make_env
-def copy_uwp_services_lib(c):
-    if sys.platform != "win32":
-        return print("Not Windows.")
-    build_config = "Release" if "APPVEYOR_BUILD_FOLDER" in os.environ else "Debug"
-    uwp_services_path = PROJECT_ROOT / "includes" / "BookwormUWPServices"
-    src = uwp_services_path / "bin" / build_config / "BookwormUWPServices.dll"
-    dst = c["build_folder"]
-    shutil.copy(src, dst)
-
-
 def _add_pip_install_args(cmd, context):
     return "{cmd} --timeout {timeout} --retries {retries}".format(
         cmd=cmd,
@@ -636,7 +624,6 @@ def make_version_info_file(c):
     ),
     post=(
         copy_deps,
-        copy_uwp_services_lib,
     ),
 )
 @make_env

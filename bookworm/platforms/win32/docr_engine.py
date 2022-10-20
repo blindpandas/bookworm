@@ -13,17 +13,14 @@ from bookworm.logger import logger
 from bookworm.ocr_engines import BaseOcrEngine, OcrRequest, OcrResult
 from bookworm.utils import NEWLINE
 
-from .runtime import UWP_SERVICES_AVAILABEL
 
 log = logger.getChild(__name__)
 
 
 _ocr_available = False
 try:
-    if UWP_SERVICES_AVAILABEL:
-        from docrpy import DocrEngine as Win10DocrEngine
-
-        _ocr_available = True
+    from docrpy import DocrEngine as Win10DocrEngine
+    _ocr_available = True
 except Exception as e:
     log.error(f"Could not load the OCR functionality: {e}")
 
