@@ -17,7 +17,6 @@ from .win_registry import RegKey, RegRoots
 
 SPI_GETHIGHCONTRAST = 0x0042
 PLAYER_FLAGS = winsound.SND_ASYNC | winsound.SND_FILENAME
-UWP_SERVICES_AVAILABEL = False
 
 
 
