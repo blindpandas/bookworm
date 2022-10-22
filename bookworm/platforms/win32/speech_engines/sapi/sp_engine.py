@@ -14,11 +14,13 @@ from .sp_utterance import SapiSpeechUtterance
 
 from enum import IntEnum
 from collections import OrderedDict
-import comtypes.client
-from comtypes import COMError
+import locale
 import winreg
 import weakref
 
+import comtypes.client
+import more_itertools
+from comtypes import COMError
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
@@ -37,6 +39,14 @@ class SPAudioState(IntEnum):
     Stopped = 1
     Paused = 2
     Running = 3
+
+    def as_synth_state(self) -> SynthState:
+        if self in (SPAudioState.Closed, SPAudioState.Stopped):
+            return SynthState.ready
+        elif self is SPAudioState.Running:
+            return SynthState.busy
+        elif self is SPAudioState.Paused:
+            return SynthState.paused
 
 
 class SpeechVoiceSpeakFlags(IntEnum):
@@ -69,7 +79,7 @@ class SapiEventSink(object):
             )
         else:
             for handler in synth.event_handlers.get(EngineEvent.state_changed, ()):
-                handler(SynthState.busy)
+                handler(synth, SynthState.busy)
 
     def Bookmark(self, streamNum, pos, bookmark, bookmarkId):
         synth = self.synthRef()
@@ -79,7 +89,7 @@ class SapiEventSink(object):
             )
         else:
             for handler in synth.event_handlers.get(EngineEvent.bookmark_reached, ()):
-                handler(bookmark)
+                handler(synth, bookmark)
 
     def EndStream(self, streamNum, pos):
         synth = self.synthRef()
@@ -87,7 +97,7 @@ class SapiEventSink(object):
             log.warning("Called stream end method on EndStream while the synthesizer is dead")
         else:
             for handler in synth.event_handlers.get(EngineEvent.state_changed, ()):
-                handler(SynthState.ready)
+                handler(synth, SynthState.ready)
 
 
 
@@ -108,14 +118,14 @@ class SapiSpeechEngine(BaseSpeechEngine):
             return False
 
     def __init__(self):
-        super().__init__()
+        self.__state = SynthState.ready
         self.event_handlers = {}
-        self._tts_audio_stream = None
         self._pitch = 50
         self.tts = comtypes.client.CreateObject(self.COM_CLASS)
         self._events_connection = comtypes.client.GetEvents(
             self.tts, SapiEventSink(weakref.ref(self))
         )
+        # You can handle sentence and word boundry info here
         self.tts.EventInterests = (
             SpeechVoiceEvents.StartInputStream
             | SpeechVoiceEvents.Bookmark
@@ -135,7 +145,7 @@ class SapiSpeechEngine(BaseSpeechEngine):
                 id = v[i].Id
                 name = v[i].GetDescription()
                 try:
-                    language = v[i].getattribute("language").split(";")[0]
+                    language=locale.windows_locale[int(v[i].getattribute('language').split(';')[0],16)]
                 except KeyError:
                     language = "en"
             except COMError:
@@ -149,6 +159,13 @@ class SapiSpeechEngine(BaseSpeechEngine):
         return retval
 
     @property
+    def state(self):
+        return self._get_running_state()
+
+    def _get_running_state(self):
+        SPAudioState(self.tts.Status.RunningState).as_synth_state()
+
+    @property
     def voice(self):
         return more_itertools.first_true(
             voices := self.get_voices(),
@@ -158,7 +175,7 @@ class SapiSpeechEngine(BaseSpeechEngine):
 
     @voice.setter
     def voice(self, value):
-        tokens = self.get_voice_token()
+        tokens = self._get_voice_tokens()
         for i in range(len(tokens)):
             voice = tokens[i]
             if value.id == voice.Id:
@@ -210,12 +227,10 @@ class SapiSpeechEngine(BaseSpeechEngine):
     def pause(self):
         self.tts.Pause()
         for handler in synth.event_handlers.get(EngineEvent.state_changed, ()):
-            handler(SynthState.paused)
+            handler(self, SynthState.paused)
 
     def resume(self):
         self.tts.Resume()
-        for handler in synth.event_handlers.get(EngineEvent.state_changed, ()):
-            handler(SynthState.busy)
 
     def preprocess_utterance(self, utterance):
         sp_utterance = SapiSpeechUtterance()
