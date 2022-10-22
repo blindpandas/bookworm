@@ -4,13 +4,9 @@ packages_to_install:
     win32:
         pure_python:
         x64:
-            - "pywhatlang-0.1.0-cp39-abi3-win_amd64.whl"
-            - "neosynth-0.5.0-cp39-abi3-win_amd64.whl"
             - "pyxpdf-0.2.3-cp39-cp39-win_amd64.whl"
             - "pythonnet-2.5.2-cp39-cp39-win_amd64.whl"
         x86:
-            - "pywhatlang-0.1.0-cp39-abi3-win32.whl"
-            - "neosynth-0.5.0-cp39-abi3-win32.whl"
             - "pyxpdf-0.2.3-cp39-cp39-win32.whl"
             - "pythonnet-2.5.2-cp39-cp39-win32.whl"
 folders_to_clean:
