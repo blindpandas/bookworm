@@ -27,7 +27,7 @@ from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.speechdriver.enumerations import EngineEvent, SynthState
 from bookworm.speechdriver.utterance import SpeechStyle
 from bookworm.logger import logger
-
+from .COM_interfaces.SpeechLib import ISpAudio
 
 
 log = logger.getChild(__name__)
@@ -78,8 +78,7 @@ class SapiEventSink(object):
                 "Called StartStream method on SapiSink while the synthesizer is dead"
             )
         else:
-            for handler in synth.event_handlers.get(EngineEvent.state_changed, ()):
-                handler(synth, SynthState.busy)
+            synth._set_state(SynthState.busy)
 
     def Bookmark(self, streamNum, pos, bookmark, bookmarkId):
         synth = self.synthRef()
@@ -96,9 +95,7 @@ class SapiEventSink(object):
         if synth is None:
             log.warning("Called stream end method on EndStream while the synthesizer is dead")
         else:
-            for handler in synth.event_handlers.get(EngineEvent.state_changed, ()):
-                handler(synth, SynthState.ready)
-
+            synth._set_state(SynthState.ready)
 
 
 class SapiSpeechEngine(BaseSpeechEngine):
@@ -120,17 +117,9 @@ class SapiSpeechEngine(BaseSpeechEngine):
     def __init__(self):
         self.__state = SynthState.ready
         self.event_handlers = {}
+        self._voice_token = None
         self._pitch = 50
-        self.tts = comtypes.client.CreateObject(self.COM_CLASS)
-        self._events_connection = comtypes.client.GetEvents(
-            self.tts, SapiEventSink(weakref.ref(self))
-        )
-        # You can handle sentence and word boundry info here
-        self.tts.EventInterests = (
-            SpeechVoiceEvents.StartInputStream
-            | SpeechVoiceEvents.Bookmark
-            | SpeechVoiceEvents.EndInputStream
-        )
+        self._init_tts()
 
     def close(self):
         self._events_connection = None
@@ -160,10 +149,7 @@ class SapiSpeechEngine(BaseSpeechEngine):
 
     @property
     def state(self):
-        return self._get_running_state()
-
-    def _get_running_state(self):
-        SPAudioState(self.tts.Status.RunningState).as_synth_state()
+        return self.__state
 
     @property
     def voice(self):
@@ -179,8 +165,9 @@ class SapiSpeechEngine(BaseSpeechEngine):
         for i in range(len(tokens)):
             voice = tokens[i]
             if value.id == voice.Id:
-                self.tts.voice = voice
+                self._voice_token = voice
                 break
+        self._init_tts()
 
     @property
     def rate(self):
@@ -206,6 +193,11 @@ class SapiSpeechEngine(BaseSpeechEngine):
     def pitch(self, value):
         self._pitch = value
 
+    def preprocess_utterance(self, utterance):
+        sp_utterance = SapiSpeechUtterance()
+        sp_utterance.populate_from_speech_utterance(utterance)
+        return sp_utterance
+
     def speak_utterance(self, utterance):
         # We need to wrap the whole utterance in another
         # one that sets the voice. Because The Speak()
@@ -220,22 +212,22 @@ class SapiSpeechEngine(BaseSpeechEngine):
         self.tts.Speak(voice_utterance.prompt.ToXml(), flags)
 
     def stop(self):
+        if self.state is SynthState.paused:
+            self.resume()
         self.tts.Speak(
-            None, SpeechVoiceSpeakFlags.Async | SpeechVoiceSpeakFlags.PurgeBeforeSpeak
+            "", SpeechVoiceSpeakFlags.Async | SpeechVoiceSpeakFlags.PurgeBeforeSpeak
         )
+        self._set_state(SynthState.ready)
 
     def pause(self):
-        self.tts.Pause()
-        for handler in synth.event_handlers.get(EngineEvent.state_changed, ()):
-            handler(self, SynthState.paused)
+        if self.state is SynthState.busy:
+            self._pause_switch(True)
+            self._set_state(SynthState.paused)
 
     def resume(self):
-        self.tts.Resume()
-
-    def preprocess_utterance(self, utterance):
-        sp_utterance = SapiSpeechUtterance()
-        sp_utterance.populate_from_speech_utterance(utterance)
-        return sp_utterance
+        if self.state is SynthState.paused:
+            self._pause_switch(False)
+            self._set_state(SynthState.busy)
 
     def bind(self, event, handler):
         """Bind a member of `EngineEvents` enum to a handler."""
@@ -243,8 +235,31 @@ class SapiSpeechEngine(BaseSpeechEngine):
             raise NotImplementedError
         self.event_handlers.setdefault(event, []).append(handler)
 
+    def _set_state(self, new_state: SynthState):
+        self.__state = new_state
+        for handler in self.event_handlers.get(EngineEvent.state_changed, ()):
+            handler(self, new_state)
+
+    def _init_tts(self):
+        self.tts = comtypes.client.CreateObject(self.COM_CLASS)
+        if self._voice_token:
+            self.tts.voice = self._voice_token
+        self._events_connection = comtypes.client.GetEvents(
+            self.tts, SapiEventSink(weakref.ref(self))
+        )
+        # You can handle sentence and word boundry info here
+        self.tts.EventInterests = (
+            SpeechVoiceEvents.StartInputStream
+            | SpeechVoiceEvents.Bookmark
+            | SpeechVoiceEvents.EndInputStream
+        )
+        try:
+            self.tts_audio_stream =self.tts.audioOutputStream.QueryInterface(ISpAudio)
+        except COMError:
+            log.warning("SAPI5 voice does not support ISPAudio") 
+            self.tts_audio_stream=None
+
     def _get_voice_tokens(self):
-        """Provides a collection of sapi5 voice tokens. Can be overridden by subclasses if tokens should be looked for in some other registry location."""
         return self.tts.getVoices()
 
     def _percentToRate(self, percent):
@@ -252,3 +267,18 @@ class SapiSpeechEngine(BaseSpeechEngine):
 
     def _percentToPitch(self, percent):
         return percent // 2 - 25
+
+    def _pause_switch(self, switch: bool):
+        if self.tts_audio_stream:
+            oldState = self.tts_audio_stream.GetStatus().State
+            if switch and oldState == SPAudioState.Running:
+                # pausing
+                self.tts_audio_stream.setState(SPAudioState.Paused, 0)
+            elif not switch and oldState == SPAudioState.Paused:
+                # unpausing
+                self.tts_audio_stream.setState(SPAudioState.Running, 0)
+        else:
+            if switch:
+                self.tts.Pause()
+            else:
+                self.tts.Resume()
