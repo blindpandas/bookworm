@@ -2,8 +2,8 @@
 
 """Constants for controlling speech."""
 
+import functools
 from enum import IntEnum, auto
-from functools import cached_property
 
 
 class EngineEvent(IntEnum):
@@ -40,15 +40,22 @@ class EmphSpec(IntEnum):
     null = 3
     reduced = 4
 
-    @cached_property
-    def ssml_string_map(self):
+
+    @property
+    def ssml_identifier(self):
+        return self.ssml_string_map()[self]
+
+    @functools.cache
+    @staticmethod
+    def ssml_string_map():
         return {
-            self.not_set: "",
-            self.null: "none",
-            self.strong: "strong",
-            self.moderate: "moderate",
-            self.reduced: "reduced"
+            EmphSpec.not_set: "",
+            EmphSpec.null: "none",
+            EmphSpec.strong: "strong",
+            EmphSpec.moderate: "moderate",
+            EmphSpec.reduced: "reduced"
         }
+
 
 class VolumeSpec(IntEnum):
     not_set = 0
@@ -60,19 +67,23 @@ class VolumeSpec(IntEnum):
     extra_loud = 6
     default = 7
 
-    @cached_property
-    def ssml_string_map(self):
-        return {
-            self.not_set: "",
-            self.silent: "silent",
-            self.extra_soft: "x-soft",
-            self.soft: "soft",
-            self.medium: "medium",
-            self.loud: "loud",
-            self.extra_loud: "x-loud",
-            self.default: "default"
-        }
+    @property
+    def ssml_identifier(self):
+        return self.ssml_string_map()[self]
 
+    @functools.cache
+    @staticmethod
+    def ssml_string_map():
+        return {
+            VolumeSpec.not_set: "",
+            VolumeSpec.silent: "silent",
+            VolumeSpec.extra_soft: "x-soft",
+            VolumeSpec.soft: "soft",
+            VolumeSpec.medium: "medium",
+            VolumeSpec.loud: "loud",
+            VolumeSpec.extra_loud: "x-loud",
+            VolumeSpec.default: "default"
+        }
 
 
 class RateSpec(IntEnum):
@@ -83,15 +94,20 @@ class RateSpec(IntEnum):
     slow = 4
     extra_slow = 5
 
-    @cached_property
-    def ssml_string_map(self):
+    @property
+    def ssml_identifier(self):
+        return self.ssml_string_map()[self]
+
+    @functools.cache
+    @staticmethod
+    def ssml_string_map():
         return {
-            self.not_set: "",
-            self.extra_fast: "x-fast",
-            self.fast: "fast",
-            self.medium: "medium",
-            self.extra_slow: "x-slow",
-            self.slow: "slow"
+            RateSpec.not_set: "",
+            RateSpec.extra_fast: "x-fast",
+            RateSpec.fast: "fast",
+            RateSpec.medium: "medium",
+            RateSpec.extra_slow: "x-slow",
+            RateSpec.slow: "slow"
         }
 
 
@@ -103,13 +119,18 @@ class PauseSpec(IntEnum):
     large = 4
     extra_large = 5
 
-    @cached_property
-    def ssml_string_map(self):
+    @property
+    def ssml_identifier(self):
+        return self.ssml_string_map()[self]
+
+    @functools.cache
+    @staticmethod
+    def ssml_string_map():
         return {
-            self.null: "none",
-            self.extra_small: "x-weak",
-            self.small: "weak",
-            self.medium: "medium",
-            self.large: "strong",
-            self.extra_large: "x-strong"
+            PauseSpec.null: "none",
+            PauseSpec.extra_small: "x-weak",
+            PauseSpec.small: "weak",
+            PauseSpec.medium: "medium",
+            PauseSpec.large: "strong",
+            PauseSpec.extra_large: "x-strong"
         }
