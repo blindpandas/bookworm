@@ -5,7 +5,6 @@ import platform
 from concurrent.futures import ThreadPoolExecutor
 from io import StringIO
 
-import clr
 
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo

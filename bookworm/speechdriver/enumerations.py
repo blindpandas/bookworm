@@ -6,6 +6,10 @@ import functools
 from enum import IntEnum, auto
 
 
+# A marker type for SSML identifier values
+SsmlIdentifier = type("SsmlIdentifier", (), {})
+
+
 class EngineEvent(IntEnum):
     bookmark_reached = auto()
     state_changed = auto()
@@ -31,9 +35,16 @@ class SpeechElementKind(IntEnum):
     end_paragraph = auto()
     start_style = auto()
     end_style = auto()
+    # Decompose style
+    start_voice = auto()
+    end_voice = auto()
+    start_emph = auto()
+    end_emph = auto()
+    start_prosody = auto()
+    end_prosody = auto()
 
 
-class EmphSpec(IntEnum):
+class EmphSpec(SsmlIdentifier, IntEnum):
     not_set = 0
     strong = 1
     moderate = 2
@@ -45,8 +56,8 @@ class EmphSpec(IntEnum):
     def ssml_identifier(self):
         return self.ssml_string_map()[self]
 
-    @functools.cache
     @staticmethod
+    @functools.cache
     def ssml_string_map():
         return {
             EmphSpec.not_set: "",
@@ -57,7 +68,7 @@ class EmphSpec(IntEnum):
         }
 
 
-class VolumeSpec(IntEnum):
+class VolumeSpec(SsmlIdentifier, IntEnum):
     not_set = 0
     silent = 1
     extra_soft = 2
@@ -71,8 +82,8 @@ class VolumeSpec(IntEnum):
     def ssml_identifier(self):
         return self.ssml_string_map()[self]
 
-    @functools.cache
     @staticmethod
+    @functools.cache
     def ssml_string_map():
         return {
             VolumeSpec.not_set: "",
@@ -86,7 +97,7 @@ class VolumeSpec(IntEnum):
         }
 
 
-class RateSpec(IntEnum):
+class RateSpec(SsmlIdentifier, IntEnum):
     not_set = 0
     extra_fast = 1
     fast = 2
@@ -98,8 +109,8 @@ class RateSpec(IntEnum):
     def ssml_identifier(self):
         return self.ssml_string_map()[self]
 
-    @functools.cache
     @staticmethod
+    @functools.cache
     def ssml_string_map():
         return {
             RateSpec.not_set: "",
@@ -111,7 +122,7 @@ class RateSpec(IntEnum):
         }
 
 
-class PauseSpec(IntEnum):
+class PauseSpec(SsmlIdentifier, IntEnum):
     null = 0
     extra_small = 1
     small = 2
@@ -123,8 +134,8 @@ class PauseSpec(IntEnum):
     def ssml_identifier(self):
         return self.ssml_string_map()[self]
 
-    @functools.cache
     @staticmethod
+    @functools.cache
     def ssml_string_map():
         return {
             PauseSpec.null: "none",

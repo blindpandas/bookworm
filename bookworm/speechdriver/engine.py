@@ -104,6 +104,16 @@ class BaseSpeechEngine(metaclass=ABCMeta):
 
     @property
     @abstractmethod
+    def pitch(self):
+        """Get the current voice pitch."""
+
+    @pitch.setter
+    @abstractmethod
+    def pitch(self):
+        """Set the current voice pitch."""
+
+    @property
+    @abstractmethod
     def rate(self):
         """Get the current speech rate."""
 

@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import clr
 from ctypes import windll, wintypes, byref
 import sys
 import winsound
@@ -36,21 +35,6 @@ class SoundFile:
 
 def system_start_app(executable, args):
     shellapi.ShellExecute(None, None, executable, list2cmdline(args), None, 1)
-
-
-@lru_cache(maxsize=10)
-def reference_gac_assembly(glob_pattern: str):
-    """
-    Locate an assembly from the GAC and reference it.
-
-    Recent versions of Pythonnet does not auto discover certain .NET framework
-    assemblies, so add what we need from the global Assembly Cache (GAC).
-    """
-    gac_home = "Microsoft.NET\\assembly\\GAC_MSIL\\"
-    assemblies = tuple(Path(winpaths.get_windows(), gac_home).rglob(glob_pattern))
-    if not assemblies:
-        raise OSError(f"Could not find assembily: {glob_pattern}")
-    clr.AddReference(str(assemblies[0]))
 
 
 def is_running_portable():
