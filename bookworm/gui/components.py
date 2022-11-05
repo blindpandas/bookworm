@@ -176,6 +176,10 @@ class PageRangeControl(sc.SizedPanel):
             if self.doc.format == "txt":
                 return TextRange(0, len(self.doc))
             return None
+        # #170: Search results were not showing for documents which had no TOC.
+        # if there is only 1 section we assume that it is the full document and return its text range
+        if len(self.doc) == 1:
+            return self.doc.toc_tree.text_range
         if selected_item := self.sectionChoice.GetSelection():
             section = self.sectionChoice.GetClientData(selected_item)
             start_pos, stop_pos = section.text_range
