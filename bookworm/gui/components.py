@@ -172,12 +172,9 @@ class PageRangeControl(sc.SizedPanel):
         return from_page, to_page
 
     def get_text_range(self) -> Optional[TextRange]:
-        if self.is_single_page_document and not DC.TOC_TREE in self.doc.capabilities:
-            if self.doc.format == "txt":
-                return TextRange(0, len(self.doc))
-            return None
         # #170: Search results were not showing for documents which had no TOC.
         # if there is only 1 section we assume that it is the full document and return its text range
+        # This actually turns out to fix #195 as well which was most likely a regression from the change that fixed the search results for text documents
         if len(self.doc) == 1:
             return self.doc.toc_tree.text_range
         if selected_item := self.sectionChoice.GetSelection():
