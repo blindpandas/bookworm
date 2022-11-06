@@ -1,12 +1,11 @@
 # coding: utf-8
 
 
-
-from enum import IntEnum
-from collections import OrderedDict
 import locale
 import winreg
 import weakref
+from enum import IntEnum
+from collections import OrderedDict
 
 import comtypes.client
 import more_itertools
@@ -17,7 +16,9 @@ from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.speechdriver.enumerations import EngineEvent, SynthState
 from bookworm.speechdriver.utterance import SpeechUtterance, SpeechStyle
 from bookworm.logger import logger
+from ..utils import process_audio_bookmark
 from .COM_interfaces.SpeechLib import ISpAudio
+from .element_converter import sapi_speech_converter
 
 
 log = logger.getChild(__name__)
@@ -54,15 +55,16 @@ class SpeechVoiceEvents(IntEnum):
 
 
 class SapiEventSink(object):
-    """Handles SAPI event notifications.
+    """
+    Handles SAPI event notifications.
     See https://msdn.microsoft.com/en-us/library/ms723587(v=vs.85).aspx
     """
 
-    def __init__(self, synthRef: weakref.ReferenceType):
-        self.synthRef = synthRef
+    def __init__(self, synthref: weakref.ReferenceType):
+        self.synthref = synthref
 
     def StartStream(self, streamNum, pos):
-        synth = self.synthRef()
+        synth = self.synthref()
         if synth is None:
             log.warning(
                 "Called StartStream method on SapiSink while the synthesizer is dead"
@@ -71,17 +73,18 @@ class SapiEventSink(object):
             synth._set_state(SynthState.busy)
 
     def Bookmark(self, streamNum, pos, bookmark, bookmarkId):
-        synth = self.synthRef()
+        synth = self.synthref()
         if synth is None:
             log.warning(
                 "Called Bookmark method on SapiSink while the synthesizer is dead"
             )
-        else:
+            return
+        if not process_audio_bookmark(bookmark):
             for handler in synth.event_handlers.get(EngineEvent.bookmark_reached, ()):
                 handler(synth, bookmark)
 
     def EndStream(self, streamNum, pos):
-        synth = self.synthRef()
+        synth = self.synthref()
         if synth is None:
             log.warning("Called stream end method on EndStream while the synthesizer is dead")
         else:
@@ -108,7 +111,7 @@ class SapiSpeechEngine(BaseSpeechEngine):
         self.__state = SynthState.ready
         self.event_handlers = {}
         self._voice_token = None
-        self._pitch = 50
+        self.__pitch = 50
         self._init_tts()
 
     def close(self):
@@ -165,7 +168,7 @@ class SapiSpeechEngine(BaseSpeechEngine):
 
     @rate.setter
     def rate(self, value):
-        self.tts.Rate = self._percentToRate(value)
+        self.tts.Rate = sapi_speech_converter._percentToRate(value)
 
     @property
     def volume(self):
@@ -177,27 +180,28 @@ class SapiSpeechEngine(BaseSpeechEngine):
 
     @property
     def pitch(self):
-        return self._pitch
+        return self.__pitch
 
     @pitch.setter 
     def pitch(self, value):
-        self._pitch = value
+        self.__pitch = value
 
     def preprocess_utterance(self, utterance):
         voice_utterance = SpeechUtterance()
         style = SpeechStyle(
-            voice=self.voice,
-            pitch=self._percentToPitch(self._pitch)
+            pitch=self.pitch
         )
         with voice_utterance.set_style(style):
             voice_utterance.add(utterance)
+        # SAPI5 does not raise bookmark events if the bookmark is the last element of the content 
+        # thus, add a little scilence to force raising that bookmark event
+        voice_utterance.add_pause(5)
         return voice_utterance
 
     def speak_utterance(self, utterance):
-        ssml = utterance.compile_to_ssml(self.voice.language)
-        log.info(ssml)
+        sapi_xml = sapi_speech_converter.convert(utterance, localeinfo=None)
         flags = SpeechVoiceSpeakFlags.IsXML | SpeechVoiceSpeakFlags.Async
-        self.tts.Speak(ssml, flags)
+        self.tts.Speak(sapi_xml, flags)
 
     def stop(self):
         if self.state is SynthState.paused:
@@ -249,12 +253,6 @@ class SapiSpeechEngine(BaseSpeechEngine):
 
     def _get_voice_tokens(self):
         return self.tts.getVoices()
-
-    def _percentToRate(self, percent):
-        return (percent - 50) // 5
-
-    def _percentToPitch(self, percent):
-        return percent // 2 - 25
 
     def _pause_switch(self, switch: bool):
         if self.tts_audio_stream:

@@ -3,13 +3,26 @@
 from abc import ABCMeta, abstractmethod
 from contextlib import suppress
 from dataclasses import dataclass, field
-
+from enum import IntEnum, auto
+ 
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 
 from .utterance import SpeechUtterance
 
 log = logger.getChild(__name__)
+
+
+class EngineEvent(IntEnum):
+    bookmark_reached = auto()
+    state_changed = auto()
+    speech_progress = auto()
+
+
+class SynthState(IntEnum):
+    ready = 0
+    busy = 1
+    paused = 2
 
 
 @dataclass(order=True)
@@ -38,6 +51,7 @@ class BaseSpeechEngine(metaclass=ABCMeta):
     """The name of this speech engine."""
     display_name = None
     default_rate = 50
+    default_pitch = 50
     default_volume = 75
 
     def __init__(self):
@@ -70,6 +84,13 @@ class BaseSpeechEngine(metaclass=ABCMeta):
                 self.rate = self.default_rate
         except ValueError:
             self.rate = self.default_rate
+        try:
+            if engine_config["pitch"] != -1:
+                self.pitch = engine_config["pitch"]
+            else:
+                self.pitch = self.default_pitch
+        except ValueError:
+            self.pitch = self.default_pitch
         try:
             if engine_config["volume"] != -1:
                 self.volume = engine_config["volume"]
@@ -109,7 +130,7 @@ class BaseSpeechEngine(metaclass=ABCMeta):
 
     @pitch.setter
     @abstractmethod
-    def pitch(self):
+    def pitch(self, value):
         """Set the current voice pitch."""
 
     @property

@@ -5,61 +5,23 @@ from __future__ import annotations
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from enum import IntEnum
+from pathlib import Path
 from typing import get_type_hints
 
 from bookworm import typehints as t
 from bookworm.logger import logger
 
-from .ssml_gen import utterance_to_ssml
-from .enumerations import (EmphSpec, PauseSpec, RateSpec, SpeechElementKind,
-                           VolumeSpec)
+from .element import SpeechStyle, SpeechElement
+from .element.enums import (
+    EmphSpec,
+    PauseSpec,
+    RateSpec,
+    SpeechElementKind,
+    VolumeSpec
+)
+
 
 log = logger.getChild(__name__)
-
-
-@dataclass
-class SpeechStyle:
-    """Voice settings for a single utterance."""
-
-    voice: object = None
-    """VoiceInfo object."""
-
-    emph: EmphSpec = None
-    """Speech emphasis."""
-
-    pitch: int = None
-    """Speech pitch."""
-
-    rate: t.Union[RateSpec, str] = None
-    """Speech rate."""
-
-    volume: t.Union[VolumeSpec, str] = None
-    """Voice volume."""
-
-    def __post_init__(self):
-        self.__close_decompose = []
-
-    def end_style_decompose(self):
-        return self.__close_decompose
-
-    def start_style_decompose(self):
-        if self.voice:
-            self.__close_decompose.append(SpeechElement(SpeechElementKind.end_voice, None))
-            yield SpeechElement(SpeechElementKind.start_voice, self.voice)
-        if self.emph:
-            self.__close_decompose.append(SpeechElement(SpeechElementKind.end_emph, None))
-            yield SpeechElement(SpeechElementKind.start_emph, self.emph)
-        if self.pitch or self.rate or self.volume:
-            self.__close_decompose.append(SpeechElement(SpeechElementKind.end_prosody, None))
-            yield SpeechElement(SpeechElementKind.start_prosody, (self.pitch, self.rate, self.volume))
-
-
-@dataclass(frozen=True)
-class SpeechElement:
-    kind: SpeechElementKind
-    content: t.Any
-    # A template for SSML content
-    EMPTY_SSML = '<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en"></speak>'
 
 
 @dataclass(order=True, frozen=True)
@@ -110,9 +72,11 @@ class SpeechUtterance:
         """
         self.speech_sequence.append(SpeechElement(SpeechElementKind.pause, duration))
 
-    def add_audio(self, filename):
+    def add_audio(self, file_uri_or_path):
         """Append a wave audio file to the speech stream."""
-        self.speech_sequence.append(SpeechElement(SpeechElementKind.audio, filename))
+        if "://" not in file_uri_or_path:
+            file_uri_or_path = Path(file_uri_or_path).as_uri()
+        self.speech_sequence.append(SpeechElement(SpeechElementKind.audio, file_uri_or_path))
 
     def _is_valid_operand(self, other):
         return isinstance(other, self.__class__)
@@ -124,10 +88,6 @@ class SpeechUtterance:
                 f"Could not join utterance of type '{type(utterance)}' to utterance of type '{type(self)}'"
             )
         self.speech_sequence.extend(utterance.speech_sequence)
-
-    def compile_to_ssml(self, localeinfo):
-        """Compiles this utterance to SSML."""
-        return utterance_to_ssml(self, localeinfo)
 
     def __iter__(self):
         return iter(self.speech_sequence)

@@ -1,17 +1,21 @@
 # coding: utf-8
 
 import platform
+import weakref
 from pathlib import Path
 from weakref import ref
 
+import more_itertools
 import neosynth
+
 from bookworm import app
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
-from bookworm.speechdriver.enumerations import (EngineEvent, RateSpec,
-                                                SynthState)
-from .oc_utterance import OcSpeechUtterance
+from bookworm.speechdriver.enumerations import (EngineEvent, RateSpec, SynthState)
+from bookworm.speechdriver.element.converter.ssml import SsmlSpeechConverter
+from .utils import process_audio_bookmark, create_audio_bookmark_name
+
 
 
 log = logger.getChild(__name__)
@@ -20,22 +24,49 @@ NeosynthStateToSynthState = {
     neosynth.SynthState.Paused: SynthState.paused,
     neosynth.SynthState.Busy: SynthState.busy,
 }
+RATE_MAP = {
+    RateSpec.extra_slow: range(0, 10),
+    RateSpec.slow: range(10, 15),
+    RateSpec.medium: range(15, 25),
+    RateSpec.fast: range(25, 40),
+    RateSpec.extra_fast: range(40, 100),
+}
+
+
+class NeosynthSsmlSpeechConverter(SsmlSpeechConverter):
+    """Onecore synthesizer does not support the audio element."""
+
+    def audio(self, content):
+        return self.bookmark(create_audio_bookmark_name(content))
 
 
 class EventSink:
 
-    def __init__(self, synth):
-        self.synth = synth
+    def __init__(self, synthref):
+        self.synthref = synthref
 
     def on_state_changed(self, state):
-        handlers = self.synth.event_handlers.get(EngineEvent.state_changed, ())
+        if (synth := self.synthref()) is None:
+            log.warning(
+                "Called on_state_changed method on OneCoreSynth while the synthesizer is dead"
+            )
+            return
+        handlers = synth.event_handlers.get(EngineEvent.state_changed, ())
         for handler in handlers:
             handler(self, NeosynthStateToSynthState[state])
 
     def on_bookmark_reached(self, bookmark):
-        handlers = self.synth.event_handlers.get(EngineEvent.bookmark_reached, ())
-        for handler in handlers:
-            handler(self, bookmark)
+        if (synth := self.synthref()) is None:
+            log.warning(
+                "Called on_state_changed method on OneCoreSynth while the synthesizer is dead"
+            )
+            return
+        if not process_audio_bookmark(bookmark):
+            for handler in synth.event_handlers.get(EngineEvent.bookmark_reached, ()):
+                handler(self, bookmark)
+
+    def log(self, message, level):
+        log.log(level, message)
 
 
 
@@ -44,13 +75,15 @@ class OcSpeechEngine(BaseSpeechEngine):
     name = "onecore"
     display_name = _("One-core Synthesizer")
     default_rate = 20
+    speech_converter = NeosynthSsmlSpeechConverter()
 
     def __init__(self):
         super().__init__()
-        self.event_sink = EventSink(self)
+        self.event_sink = EventSink(weakref.ref(self))
         self.synth = neosynth.Neosynth(self.event_sink)
         self.event_handlers = {}
-        self.__rate = 50
+        self.__rate = RateSpec.medium
+        self.__pitch = 50
 
     @classmethod
     def check(self):
@@ -59,7 +92,6 @@ class OcSpeechEngine(BaseSpeechEngine):
     def close(self):
         super().close()
         self.event_handlers.clear()
-        self.event_sink.synth = None
         self.event_sink = None
 
     def get_voices(self):
@@ -89,22 +121,21 @@ class OcSpeechEngine(BaseSpeechEngine):
     def voice(self, value):
         self.synth.set_voice_str(value.id)
 
-    def rate_to_spec(self):
-        if 0 <= self._rate <= 20:
-            return RateSpec.extra_slow
-        elif 21 <= self._rate <= 40:
-            return RateSpec.slow
-        elif 41 <= self._rate <= 60:
-            return RateSpec.medium
-        elif 61 <= self._rate <= 100:
-            return RateSpec.fast
+    @property
+    def pitch(self):
+        return int(self.synth.get_pitch())
+
+    @pitch.setter
+    def pitch(self, value):
+        self.synth.set_pitch(value)
 
     @property
     def rate(self):
         try:
             return self.synth.get_rate()
         except RuntimeError:
-            return self.__rate
+            rate_range = RATE_MAP[self.__rate]
+            return round((rate_range.start + rate_range.stop) / 2)
 
     @rate.setter
     def rate(self, value):
@@ -112,7 +143,10 @@ class OcSpeechEngine(BaseSpeechEngine):
             if self.synth.is_prosody_supported():
                 self.synth.set_rate(value)
             else:
-                self.__rate = value
+                self.__rate = more_itertools.first(
+                    (k for (k, v) in RATE_MAP.items() if value in v),
+                    default=RateSpec.medium
+                )
         else:
             raise ValueError("The provided rate is out of range")
 
@@ -128,12 +162,8 @@ class OcSpeechEngine(BaseSpeechEngine):
             raise ValueError("The provided volume level is out of range")
 
     def speak_utterance(self, utterance):
-        self.synth.speak(utterance)
-
-    def preprocess_utterance(self, utterance):
-        oc_utterance = OcSpeechUtterance(ref(self))
-        oc_utterance.populate_from_speech_utterance(utterance)
-        return oc_utterance.to_oc_prompt()
+        ssml = self.speech_converter.convert(utterance)
+        self.synth.speak_ssml(ssml)
 
     def stop(self):
         self.synth.stop()
@@ -148,4 +178,3 @@ class OcSpeechEngine(BaseSpeechEngine):
         if event not in (EngineEvent.bookmark_reached, EngineEvent.state_changed):
             raise NotImplementedError
         self.event_handlers.setdefault(event, []).append(handler)
-

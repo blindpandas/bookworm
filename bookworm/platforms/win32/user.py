@@ -6,9 +6,6 @@ import logging
 import sys
 from ctypes.wintypes import BOOL, DWORD, LPCVOID, LPCWSTR, LPWSTR
 
-import clr
-from System.Globalization import CultureInfo, CultureNotFoundException
-
 from bookworm import app
 from bookworm import typehints as t
 from bookworm.i18n.localeinfo import LocaleInfo
