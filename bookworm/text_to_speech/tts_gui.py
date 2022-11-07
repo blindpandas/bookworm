@@ -153,6 +153,12 @@ class SpeechPanel(SettingsPanel):
             engineSettingsPanel, -1, minValue=0, maxValue=100, name="speech.rate"
         )
         self.rateSlider.SetPageSize(5)
+        # Translators: the label of the voice pitch slider
+        wx.StaticText(engineSettingsPanel, -1, _("Pitch:"))
+        self.pitchSlider = wx.Slider(
+            engineSettingsPanel, -1, minValue=0, maxValue=100, name="speech.pitch"
+        )
+        self.pitchSlider.SetPageSize(5)
         # Translators: the label of the speech volume slider
         wx.StaticText(engineSettingsPanel, -1, _("Speech Volume:"))
         self.volumeSlider = wx.Slider(
@@ -258,6 +264,8 @@ class SpeechPanel(SettingsPanel):
             self.rateSlider.Value = self.current_engine.default_rate
         if self.config.get("volume") == -1:
             self.volumeSlider.Value = self.current_engine.default_volume
+        if self.config.get("pitch") == -1:
+            self.volumeSlider.Value = self.current_engine.default_pitch
 
     def process_config_save(self):
         active_profile = self.service.config_manager.active_profile

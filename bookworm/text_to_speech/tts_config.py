@@ -110,6 +110,7 @@ tts_config_spec = {
         engine="string(default='sapi')",
         voice="string(default='')",
         rate="integer(default=-1, min=-1, max=100)",
+        pitch="integer(default=-1, min=-1, max=100)",
         volume="integer(default=-1, min=-1, max=100)",
         sentence_pause=f"integer(default=0, min=0, max={PARAGRAPH_PAUSE_MAX})",
         paragraph_pause=f"integer(default=300, min=0, max={PARAGRAPH_PAUSE_MAX})",

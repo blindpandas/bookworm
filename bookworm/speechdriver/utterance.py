@@ -5,53 +5,23 @@ from __future__ import annotations
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from enum import IntEnum
+from pathlib import Path
 from typing import get_type_hints
 
 from bookworm import typehints as t
 from bookworm.logger import logger
 
-from .enumerations import (EmphSpec, PauseSpec, RateSpec, SpeechElementKind,
-                           VolumeSpec)
+from .element import SpeechStyle, SpeechElement
+from .element.enums import (
+    EmphSpec,
+    PauseSpec,
+    RateSpec,
+    SpeechElementKind,
+    VolumeSpec
+)
+
 
 log = logger.getChild(__name__)
-
-
-@dataclass(frozen=True)
-class SpeechStyle:
-    """Voice settings for a single utterance."""
-
-    voice: object = None
-    """VoiceInfo object."""
-
-    emph: EmphSpec = None
-    """Speech emphasis."""
-
-    rate: RateSpec = None
-    """Speech rate."""
-
-    volume: VolumeSpec = None
-    """Voice volume."""
-
-    def __post_init__(self):
-        field_info = (
-            (field_name, field_type)
-            for field_name, field_type in get_type_hints(
-                self, globalns=globals(), localns=locals()
-            ).items()
-            if not issubclass(field_type, IntEnum)
-        )
-        for varname, vartype in field_info:
-            varvalue = getattr(self, varname)
-            if varvalue is not None and not isinstance(varvalue, vartype):
-                raise TypeError(f"{varname} must be of type {vartype}")
-
-
-@dataclass(frozen=True)
-class SpeechElement:
-    kind: SpeechElementKind
-    content: t.Any
-    # A template for SSML content
-    EMPTY_SSML = '<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en"></speak>'
 
 
 @dataclass(order=True, frozen=True)
@@ -89,13 +59,11 @@ class SpeechUtterance:
     @contextmanager
     def set_style(self, style):
         """Temperary set the speech style."""
-        self.speech_sequence.append(SpeechElement(SpeechElementKind.start_style, style))
+        self.speech_sequence.extend(style.start_style_decompose())
         try:
             yield
         finally:
-            self.speech_sequence.append(
-                SpeechElement(SpeechElementKind.end_style, style)
-            )
+            self.speech_sequence.extend(style.end_style_decompose())
 
     def add_pause(self, duration):
         """Append silence to the speech stream.
@@ -104,9 +72,11 @@ class SpeechUtterance:
         """
         self.speech_sequence.append(SpeechElement(SpeechElementKind.pause, duration))
 
-    def add_audio(self, filename):
+    def add_audio(self, file_uri_or_path):
         """Append a wave audio file to the speech stream."""
-        self.speech_sequence.append(SpeechElement(SpeechElementKind.audio, filename))
+        if "://" not in file_uri_or_path:
+            file_uri_or_path = Path(file_uri_or_path).as_uri()
+        self.speech_sequence.append(SpeechElement(SpeechElementKind.audio, file_uri_or_path))
 
     def _is_valid_operand(self, other):
         return isinstance(other, self.__class__)
@@ -118,6 +88,12 @@ class SpeechUtterance:
                 f"Could not join utterance of type '{type(utterance)}' to utterance of type '{type(self)}'"
             )
         self.speech_sequence.extend(utterance.speech_sequence)
+
+    def __iter__(self):
+        return iter(self.speech_sequence)
+
+    def __len__(self):
+        return len(self.speech_sequence)
 
     def __iadd__(self, other):
         self.add(other)

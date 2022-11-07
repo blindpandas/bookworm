@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from base64 import b85decode, b85encode
+from base64 import b64decode, b64encode
 from collections import deque
 from contextlib import contextmanager, suppress
 from functools import cached_property
@@ -124,10 +124,10 @@ class TextToSpeechService(BookwormService):
 
     def encode_bookmark(self, data):
         payload = msgpack.dumps(data)
-        return b85encode(payload).decode("ascii")
+        return b64encode(payload).decode("ascii")
 
     def decode_bookmark(self, payload):
-        data = b85decode(payload.encode("ascii"))
+        data = b64decode(payload.encode("ascii"))
         return msgpack.loads(data)
 
     @contextmanager
