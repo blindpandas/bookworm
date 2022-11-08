@@ -17,7 +17,6 @@ from bookworm.speechdriver.enumerations import EngineEvent, SynthState
 from bookworm.speechdriver.utterance import SpeechUtterance, SpeechStyle
 from bookworm.logger import logger
 from ..utils import process_audio_bookmark
-from .COM_interfaces.SpeechLib import ISpAudio
 from .element_converter import sapi_speech_converter
 
 
@@ -246,6 +245,7 @@ class SapiSpeechEngine(BaseSpeechEngine):
             | SpeechVoiceEvents.EndInputStream
         )
         try:
+            from .COM_interfaces.SpeechLib import ISpAudio
             self.tts_audio_stream =self.tts.audioOutputStream.QueryInterface(ISpAudio)
         except COMError:
             log.warning("SAPI5 voice does not support ISPAudio") 
