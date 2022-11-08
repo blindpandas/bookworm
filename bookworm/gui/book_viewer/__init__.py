@@ -13,22 +13,32 @@ import wx
 from bookworm import app, config, speech
 from bookworm import typehints as t
 from bookworm.concurrency import CancellationToken, threaded_worker
-from bookworm.document import (ArchiveContainsMultipleDocuments,
-                               ArchiveContainsNoDocumentsError,
-                               DocumentRestrictedError, DummyDocument)
+from bookworm.document import (
+    ArchiveContainsMultipleDocuments,
+    ArchiveContainsNoDocumentsError,
+    DocumentRestrictedError,
+    DummyDocument,
+)
 from bookworm.gui.browseable_message import browseable_message
 from bookworm.gui.components import AsyncSnakDialog, TocTreeManager
 from bookworm.gui.contentview_ctrl import ContentViewCtrl
 from bookworm.logger import logger
 from bookworm.paths import app_path, fonts_path
-from bookworm.reader import (DecryptionRequired, EBookReader, ReaderError,
-                             ResourceDoesNotExist, UnsupportedDocumentError,
-                             UriResolver)
+from bookworm.reader import (
+    DecryptionRequired,
+    EBookReader,
+    ReaderError,
+    ResourceDoesNotExist,
+    UnsupportedDocumentError,
+    UriResolver,
+)
 from bookworm.resources import app_icons, sounds
-from bookworm.signals import (reader_book_loaded, reader_book_unloaded,
-                              reading_position_change)
-from bookworm.structured_text import (SEMANTIC_ELEMENT_OUTPUT_OPTIONS, Style,
-                                      TextRange)
+from bookworm.signals import (
+    reader_book_loaded,
+    reader_book_unloaded,
+    reading_position_change,
+)
+from bookworm.structured_text import SEMANTIC_ELEMENT_OUTPUT_OPTIONS, Style, TextRange
 from bookworm.utils import gui_thread_safe
 
 from . import recents_manager

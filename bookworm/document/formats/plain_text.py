@@ -9,8 +9,11 @@ import ftfy
 
 from bookworm.logger import logger
 from bookworm.structured_text import TextRange
-from bookworm.utils import (TextContentDecoder, normalize_line_breaks,
-                            remove_excess_blank_lines)
+from bookworm.utils import (
+    TextContentDecoder,
+    normalize_line_breaks,
+    remove_excess_blank_lines,
+)
 
 from .. import BookMetadata
 from .. import DocumentCapability as DC
@@ -36,7 +39,6 @@ class PlainTextDocument(SinglePageDocument):
         self.text = TextContentDecoder(content).get_utf8()
         super().read()
 
-    
     def get_content(self):
         if len(self.text) > MAX_NUM_CHARS:
             return self.text
@@ -52,7 +54,7 @@ class PlainTextDocument(SinglePageDocument):
         return Section(
             title="",
             pager=Pager(first=0, last=0),
-            text_range=TextRange(0, len(self.get_content()))
+            text_range=TextRange(0, len(self.get_content())),
         )
 
     @cached_property

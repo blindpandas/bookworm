@@ -9,9 +9,11 @@ from functools import partial
 import wx
 
 from bookworm import app as appinfo
-from bookworm.commandline_handler import (BaseSubcommandHandler,
-                                          handle_app_commandline_args,
-                                          register_subcommand)
+from bookworm.commandline_handler import (
+    BaseSubcommandHandler,
+    handle_app_commandline_args,
+    register_subcommand,
+)
 from bookworm.config import setup_config
 from bookworm.database import init_database
 from bookworm.document.uri import DocumentUri
@@ -21,12 +23,20 @@ from bookworm.i18n import setup_i18n
 from bookworm.local_server import LocalServerSubcommand
 from bookworm.logger import configure_logger, logger
 from bookworm.paths import logs_path
-from bookworm.runtime import (CURRENT_PACKAGING_MODE, IS_IN_MAIN_PROCESS,
-                              IS_RUNNING_PORTABLE, PackagingMode)
+from bookworm.runtime import (
+    CURRENT_PACKAGING_MODE,
+    IS_IN_MAIN_PROCESS,
+    IS_RUNNING_PORTABLE,
+    PackagingMode,
+)
 from bookworm.service.handler import ServiceHandler
 from bookworm.shell import shell_disintegrate, shell_integrate
-from bookworm.signals import (app_shuttingdown, app_started, app_starting,
-                              app_window_shown)
+from bookworm.signals import (
+    app_shuttingdown,
+    app_started,
+    app_starting,
+    app_window_shown,
+)
 
 log = logger.getChild(__name__)
 

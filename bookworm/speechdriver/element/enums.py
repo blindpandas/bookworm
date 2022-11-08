@@ -3,8 +3,6 @@
 import functools
 from enum import IntEnum, auto
 
-
-
 SsmlIdentifier = type("SsmlIdentifier", (), {})
 
 
@@ -35,7 +33,6 @@ class EmphSpec(SsmlIdentifier, IntEnum):
     null = 3
     reduced = 4
 
-
     @property
     def ssml_identifier(self):
         return self.ssml_string_map()[self]
@@ -48,7 +45,7 @@ class EmphSpec(SsmlIdentifier, IntEnum):
             EmphSpec.null: "none",
             EmphSpec.strong: "strong",
             EmphSpec.moderate: "moderate",
-            EmphSpec.reduced: "reduced"
+            EmphSpec.reduced: "reduced",
         }
 
 
@@ -77,7 +74,7 @@ class VolumeSpec(SsmlIdentifier, IntEnum):
             VolumeSpec.medium: "medium",
             VolumeSpec.loud: "loud",
             VolumeSpec.extra_loud: "x-loud",
-            VolumeSpec.default: "default"
+            VolumeSpec.default: "default",
         }
 
 
@@ -102,7 +99,7 @@ class RateSpec(SsmlIdentifier, IntEnum):
             RateSpec.fast: "fast",
             RateSpec.medium: "medium",
             RateSpec.extra_slow: "x-slow",
-            RateSpec.slow: "slow"
+            RateSpec.slow: "slow",
         }
 
 
@@ -127,5 +124,5 @@ class PauseSpec(SsmlIdentifier, IntEnum):
             PauseSpec.small: "weak",
             PauseSpec.medium: "medium",
             PauseSpec.large: "strong",
-            PauseSpec.extra_large: "x-strong"
+            PauseSpec.extra_large: "x-strong",
         }

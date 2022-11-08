@@ -2,23 +2,24 @@
 
 
 import locale
-import winreg
 import weakref
-from enum import IntEnum
+import winreg
 from collections import OrderedDict
+from enum import IntEnum
 
 import comtypes.client
 import more_itertools
 from comtypes import COMError
+
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
+from bookworm.logger import logger
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.speechdriver.enumerations import EngineEvent, SynthState
-from bookworm.speechdriver.utterance import SpeechUtterance, SpeechStyle
-from bookworm.logger import logger
+from bookworm.speechdriver.utterance import SpeechStyle, SpeechUtterance
+
 from ..utils import process_audio_bookmark
 from .element_converter import sapi_speech_converter
-
 
 log = logger.getChild(__name__)
 
@@ -85,7 +86,9 @@ class SapiEventSink(object):
     def EndStream(self, streamNum, pos):
         synth = self.synthref()
         if synth is None:
-            log.warning("Called stream end method on EndStream while the synthesizer is dead")
+            log.warning(
+                "Called stream end method on EndStream while the synthesizer is dead"
+            )
         else:
             synth._set_state(SynthState.ready)
 
@@ -126,17 +129,16 @@ class SapiSpeechEngine(BaseSpeechEngine):
                 id = v[i].Id
                 name = v[i].GetDescription()
                 try:
-                    language=locale.windows_locale[int(v[i].getattribute('language').split(';')[0],16)]
+                    language = locale.windows_locale[
+                        int(v[i].getattribute("language").split(";")[0], 16)
+                    ]
                 except KeyError:
                     language = "en"
             except COMError:
                 log.warning("Could not get the voice info. Skipping...")
-            retval.append(VoiceInfo(
-                id=id,
-                name=name,
-                desc=name,
-                language=LocaleInfo(language)
-            ))
+            retval.append(
+                VoiceInfo(id=id, name=name, desc=name, language=LocaleInfo(language))
+            )
         return retval
 
     @property
@@ -148,7 +150,7 @@ class SapiSpeechEngine(BaseSpeechEngine):
         return more_itertools.first_true(
             voices := self.get_voices(),
             pred=lambda v: v.id == self.tts.voice.Id,
-            default=voices[0]
+            default=voices[0],
         )
 
     @voice.setter
@@ -181,18 +183,16 @@ class SapiSpeechEngine(BaseSpeechEngine):
     def pitch(self):
         return self.__pitch
 
-    @pitch.setter 
+    @pitch.setter
     def pitch(self, value):
         self.__pitch = value
 
     def preprocess_utterance(self, utterance):
         voice_utterance = SpeechUtterance()
-        style = SpeechStyle(
-            pitch=self.pitch
-        )
+        style = SpeechStyle(pitch=self.pitch)
         with voice_utterance.set_style(style):
             voice_utterance.add(utterance)
-        # SAPI5 does not raise bookmark events if the bookmark is the last element of the content 
+        # SAPI5 does not raise bookmark events if the bookmark is the last element of the content
         # thus, add a little scilence to force raising that bookmark event
         voice_utterance.add_pause(5)
         return voice_utterance
@@ -246,10 +246,11 @@ class SapiSpeechEngine(BaseSpeechEngine):
         )
         try:
             from .COM_interfaces.SpeechLib import ISpAudio
-            self.tts_audio_stream =self.tts.audioOutputStream.QueryInterface(ISpAudio)
+
+            self.tts_audio_stream = self.tts.audioOutputStream.QueryInterface(ISpAudio)
         except COMError:
-            log.warning("SAPI5 voice does not support ISPAudio") 
-            self.tts_audio_stream=None
+            log.warning("SAPI5 voice does not support ISPAudio")
+            self.tts_audio_stream = None
 
     def _get_voice_tokens(self):
         return self.tts.getVoices()

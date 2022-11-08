@@ -5,7 +5,6 @@ import os
 import winsound
 from urllib.parse import urlparse
 
-
 AUDIO_BOOKMARK_PREFIX = "audio: "
 START_URI_AT = len(AUDIO_BOOKMARK_PREFIX)
 
@@ -25,4 +24,3 @@ def process_audio_bookmark(bookmark):
 def _audio_uri_to_filepath(uri):
     path = urlparse(uri).path
     return os.path.abspath(path.lstrip("/"))
-

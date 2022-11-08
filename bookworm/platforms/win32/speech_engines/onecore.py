@@ -11,12 +11,11 @@ import neosynth
 from bookworm import app
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
-from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
-from bookworm.speechdriver.enumerations import (EngineEvent, RateSpec, SynthState)
 from bookworm.speechdriver.element.converter.ssml import SsmlSpeechConverter
-from .utils import process_audio_bookmark, create_audio_bookmark_name
+from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
+from bookworm.speechdriver.enumerations import EngineEvent, RateSpec, SynthState
 
-
+from .utils import create_audio_bookmark_name, process_audio_bookmark
 
 log = logger.getChild(__name__)
 NeosynthStateToSynthState = {
@@ -41,7 +40,6 @@ class NeosynthSsmlSpeechConverter(SsmlSpeechConverter):
 
 
 class EventSink:
-
     def __init__(self, synthref):
         self.synthref = synthref
 
@@ -67,7 +65,6 @@ class EventSink:
 
     def log(self, message, level):
         log.log(level, message)
-
 
 
 class OcSpeechEngine(BaseSpeechEngine):
@@ -145,7 +142,7 @@ class OcSpeechEngine(BaseSpeechEngine):
             else:
                 self.__rate = more_itertools.first(
                     (k for (k, v) in RATE_MAP.items() if value in v),
-                    default=RateSpec.medium
+                    default=RateSpec.medium,
                 )
         else:
             raise ValueError("The provided rate is out of range")

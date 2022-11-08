@@ -3,6 +3,4 @@
 """Constants for controlling speech."""
 
 from .element.enums import *
-from .engine import SynthState, EngineEvent
-
-
+from .engine import EngineEvent, SynthState

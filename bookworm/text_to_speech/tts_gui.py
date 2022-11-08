@@ -12,8 +12,11 @@ from bookworm.logger import logger
 from bookworm.speechdriver import DummySpeechEngine
 from bookworm.speechdriver.enumerations import SynthState
 
-from .tts_config import (END_OF_PAGE_PAUSE_MAX, END_OF_SECTION_PAUSE_MAX,
-                         PARAGRAPH_PAUSE_MAX)
+from .tts_config import (
+    END_OF_PAGE_PAUSE_MAX,
+    END_OF_SECTION_PAUSE_MAX,
+    PARAGRAPH_PAUSE_MAX,
+)
 
 log = logger.getChild(__name__)
 

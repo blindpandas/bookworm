@@ -1,18 +1,20 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 from lxml import etree
+
 from bookworm import typehints as t
+
 from ..enums import SpeechElementKind, SsmlIdentifier
 from .base import BaseSpeechConverter
-
 
 
 class SsmlSpeechConverter(BaseSpeechConverter):
     __slots__ = []
 
     def start(self, localeinfo):
-        lang_tag = localeinfo.ietf_tag if localeinfo else 'en'
+        lang_tag = localeinfo.ietf_tag if localeinfo else "en"
         return f'<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="{lang_tag}">'
 
     def end(self):
@@ -24,11 +26,11 @@ class SsmlSpeechConverter(BaseSpeechConverter):
     def ssml(self, content):
         out = []
         for child in etree.fromstring(content):
-            out.append(etree.tostring(child, encoding='unicode'))
+            out.append(etree.tostring(child, encoding="unicode"))
         return "".join(out)
 
     def sentence(self, content):
-        return f'<s>{self.escape(content)}</s>'
+        return f"<s>{self.escape(content)}</s>"
 
     def bookmark(self, content):
         return f'<mark name="{content}"/>'
@@ -77,11 +79,15 @@ class SsmlSpeechConverter(BaseSpeechConverter):
                 text.append(f' volume="{volume.ssml_identifier}" ')
             else:
                 text.append(f' volume="{volume}" ')
-        return "".join([*text, ">",])
+        return "".join(
+            [
+                *text,
+                ">",
+            ]
+        )
 
     def end_prosody(self, content):
         return "</prosody>"
-
 
 
 ssml_converter = SsmlSpeechConverter()

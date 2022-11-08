@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 from contextlib import suppress
 from dataclasses import dataclass, field
 from enum import IntEnum, auto
- 
+
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 

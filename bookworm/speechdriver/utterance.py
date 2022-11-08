@@ -11,15 +11,8 @@ from typing import get_type_hints
 from bookworm import typehints as t
 from bookworm.logger import logger
 
-from .element import SpeechStyle, SpeechElement
-from .element.enums import (
-    EmphSpec,
-    PauseSpec,
-    RateSpec,
-    SpeechElementKind,
-    VolumeSpec
-)
-
+from .element import SpeechElement, SpeechStyle
+from .element.enums import EmphSpec, PauseSpec, RateSpec, SpeechElementKind, VolumeSpec
 
 log = logger.getChild(__name__)
 
@@ -76,7 +69,9 @@ class SpeechUtterance:
         """Append a wave audio file to the speech stream."""
         if "://" not in file_uri_or_path:
             file_uri_or_path = Path(file_uri_or_path).as_uri()
-        self.speech_sequence.append(SpeechElement(SpeechElementKind.audio, file_uri_or_path))
+        self.speech_sequence.append(
+            SpeechElement(SpeechElementKind.audio, file_uri_or_path)
+        )
 
     def _is_valid_operand(self, other):
         return isinstance(other, self.__class__)

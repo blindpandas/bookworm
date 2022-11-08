@@ -1,16 +1,19 @@
 # coding: utf-8
 
 from __future__ import annotations
+
 from lxml import etree
+
 from bookworm import typehints as t
 from bookworm.speechdriver.element.converter.base import BaseSpeechConverter
 from bookworm.speechdriver.element.enums import (
-    SsmlIdentifier,
+    EmphSpec,
     PauseSpec,
     RateSpec,
-    EmphSpec,
-    VolumeSpec
+    SsmlIdentifier,
+    VolumeSpec,
 )
+
 from ..utils import create_audio_bookmark_name
 
 PAUSE_MAP = {
@@ -19,7 +22,7 @@ PAUSE_MAP = {
     PauseSpec.small: 150,
     PauseSpec.medium: 300,
     PauseSpec.large: 500,
-    PauseSpec.extra_large: 1000
+    PauseSpec.extra_large: 1000,
 }
 RATE_MAP = {
     RateSpec.extra_slow: 20,
@@ -46,7 +49,7 @@ class SapiSpeechConverter(BaseSpeechConverter):
         return '<xml version="1.0">'
 
     def end(self):
-        return '</xml>'
+        return "</xml>"
 
     def text(self, content):
         return self.escape(content)
@@ -62,7 +65,9 @@ class SapiSpeechConverter(BaseSpeechConverter):
         return f'<bookmark mark="{self.escape(content)}"/>'
 
     def pause(self, content):
-        pause_value = content if not isinstance(content, SsmlIdentifier) else PAUSE_MAP[content] 
+        pause_value = (
+            content if not isinstance(content, SsmlIdentifier) else PAUSE_MAP[content]
+        )
         return f'<silence msec="{pause_value}"/>'
 
     def audio(self, content):
@@ -83,7 +88,7 @@ class SapiSpeechConverter(BaseSpeechConverter):
     def start_emph(self, content):
         if isinstance(content, SsmlIdentifier) and content is EmphSpec.not_set:
             return
-        return f'<emph>'
+        return f"<emph>"
 
     def end_emph(self, content):
         return "</emph>"
@@ -98,7 +103,9 @@ class SapiSpeechConverter(BaseSpeechConverter):
             ratevalue = rate if not isinstance(rate, SsmlIdentifier) else RATE_MAP[rate]
             text.append(f'<rate absspeed="{self._percentToRate(ratevalue)}">')
         if volume not in (None, VolumeSpec.not_set):
-            volumevalue = volume if not isinstance(volume, SsmlIdentifier) else VOLUME_MAP[volume]
+            volumevalue = (
+                volume if not isinstance(volume, SsmlIdentifier) else VOLUME_MAP[volume]
+            )
             text.append(f'<volume level="{volumevalue}">')
         return "".join(text)
 
@@ -118,7 +125,6 @@ class SapiSpeechConverter(BaseSpeechConverter):
 
     def _percentToPitch(self, percent):
         return percent // 2 - 25
-
 
 
 sapi_speech_converter = SapiSpeechConverter()

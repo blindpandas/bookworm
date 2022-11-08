@@ -1,22 +1,21 @@
 # coding: utf-8
 
-from ctypes import windll, wintypes, byref
 import sys
 import winsound
+from ctypes import byref, windll, wintypes
 from functools import lru_cache
 from pathlib import Path
 from subprocess import list2cmdline
 
 import winpaths
+
 from bookworm import app
 
 from . import shellapi
 from .win_registry import RegKey, RegRoots
 
-
 SPI_GETHIGHCONTRAST = 0x0042
 PLAYER_FLAGS = winsound.SND_ASYNC | winsound.SND_FILENAME
-
 
 
 class SoundFile:

@@ -5,13 +5,11 @@ import platform
 from concurrent.futures import ThreadPoolExecutor
 from io import StringIO
 
-
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 from bookworm.ocr_engines import BaseOcrEngine, OcrRequest, OcrResult
 from bookworm.utils import NEWLINE
-
 
 log = logger.getChild(__name__)
 
@@ -19,6 +17,7 @@ log = logger.getChild(__name__)
 _ocr_available = False
 try:
     from docrpy import DocrEngine as Win10DocrEngine
+
     _ocr_available = True
 except Exception as e:
     log.error(f"Could not load the OCR functionality: {e}")
