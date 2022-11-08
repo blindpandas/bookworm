@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import annotations
+from lxml import etree
 from bookworm import typehints as t
 from bookworm.speechdriver.element.converter.base import BaseSpeechConverter
 from bookworm.speechdriver.element.enums import (
@@ -51,8 +52,8 @@ class SapiSpeechConverter(BaseSpeechConverter):
         return self.escape(content)
 
     def ssml(self, content):
-        return ""
-        raise NotImplementedError
+        """SSML is not supported. Return the plain text."""
+        return etree.fromstring(content).text
 
     def sentence(self, content):
         return self.text(content)

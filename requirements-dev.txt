@@ -1,12 +1,12 @@
 -r requirements-app.txt
 
-black==22.6.0
+black==22.10.0
 distro==1.5.0;sys_platform=="linux"
 isort==5.10.1
 jinja2==3.1.2
-packaging==21.0
-PyInstaller==5.3
-pyinstaller-hooks-contrib==2022.8
-pytest==7.1.2
-pytest-xdist==2.5.0
-wheel==0.37.1
+packaging==21.3
+PyInstaller==5.6.2
+pyinstaller-hooks-contrib==2022.12
+pytest==7.2.0
+pytest-xdist==3.0.2
+wheel==0.38.2
