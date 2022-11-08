@@ -162,7 +162,7 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
     def language(self) -> str:
         num_pages = len(self)
         num_samples = num_pages if num_pages <= 20 else 20
-        text = "".join(self[i].get_text() for i in range(num_samples)).encode("utf8")
+        text = "".join(self[i].get_text() for i in range(num_samples))
         return self.get_language(samples=text, is_html=False)
 
     @property
