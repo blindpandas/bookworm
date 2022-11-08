@@ -224,6 +224,7 @@ class TextToSpeechService(BookwormService):
                 }
             )
         )
+        utterance.add_pause(50)
         utterance.add_bookmark(self.encode_bookmark({"t": UT_SECTION_END}))
 
     def configure_end_of_section_utterance(self, utterance, section):

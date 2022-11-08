@@ -64,8 +64,7 @@ class SapiEventSink(object):
         self.synthref = synthref
 
     def StartStream(self, streamNum, pos):
-        synth = self.synthref()
-        if synth is None:
+        if (synth := self.synthref()) is None:
             log.warning(
                 "Called StartStream method on SapiSink while the synthesizer is dead"
             )
@@ -73,8 +72,7 @@ class SapiEventSink(object):
             synth._set_state(SynthState.busy)
 
     def Bookmark(self, streamNum, pos, bookmark, bookmarkId):
-        synth = self.synthref()
-        if synth is None:
+        if (synth := self.synthref()) is None:
             log.warning(
                 "Called Bookmark method on SapiSink while the synthesizer is dead"
             )
@@ -84,8 +82,7 @@ class SapiEventSink(object):
                 handler(synth, bookmark)
 
     def EndStream(self, streamNum, pos):
-        synth = self.synthref()
-        if synth is None:
+        if (synth := self.synthref()) is None:
             log.warning(
                 "Called stream end method on EndStream while the synthesizer is dead"
             )

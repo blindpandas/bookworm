@@ -159,9 +159,8 @@ class OcSpeechEngine(BaseSpeechEngine):
             raise ValueError("The provided volume level is out of range")
 
     def preprocess_utterance(self, utterance):
-        ssml = self.speech_converter.convert(utterance)
         ut = neosynth.SpeechUtterance()
-        ut.add_ssml(ssml)
+        ut.add_ssml(self.speech_converter.convert(utterance))
         return ut
 
     def speak_utterance(self, utterance):
