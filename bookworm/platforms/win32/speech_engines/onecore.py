@@ -14,6 +14,7 @@ from bookworm.logger import logger
 from bookworm.speechdriver.element.converter.ssml import SsmlSpeechConverter
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.speechdriver.enumerations import EngineEvent, RateSpec, SynthState
+from bookworm.speechdriver.utterance import SpeechUtterance, SpeechStyle
 
 from .utils import create_audio_bookmark_name, process_audio_bookmark
 
@@ -24,11 +25,11 @@ NeosynthStateToSynthState = {
     neosynth.SynthState.Busy: SynthState.busy,
 }
 RATE_MAP = {
-    RateSpec.extra_slow: range(0, 10),
-    RateSpec.slow: range(10, 15),
-    RateSpec.medium: range(15, 25),
-    RateSpec.fast: range(25, 40),
-    RateSpec.extra_fast: range(40, 100),
+    RateSpec.extra_slow: range(0, 20),
+    RateSpec.slow: range(20, 40),
+    RateSpec.medium: range(40, 60),
+    RateSpec.fast: range(60, 80),
+    RateSpec.extra_fast: range(80, 100),
 }
 
 
@@ -159,9 +160,14 @@ class OcSpeechEngine(BaseSpeechEngine):
             raise ValueError("The provided volume level is out of range")
 
     def preprocess_utterance(self, utterance):
-        ut = neosynth.SpeechUtterance()
-        ut.add_ssml(self.speech_converter.convert(utterance))
-        return ut
+        if not self.synth.is_prosody_supported():
+            style_ut = SpeechUtterance()
+            with style_ut.set_style(SpeechStyle(rate=self.rate)):
+                style_ut.add(utterance)
+            utterance = style_ut
+        neout = neosynth.SpeechUtterance()
+        neout.add_ssml(self.speech_converter.convert(utterance))
+        return neout
 
     def speak_utterance(self, utterance):
         self.synth.speak(utterance)
