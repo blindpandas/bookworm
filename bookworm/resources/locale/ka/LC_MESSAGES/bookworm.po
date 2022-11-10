@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Bookworm 2022.1b2\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2022-11-08 14:33+0000\n"
-"PO-Revision-Date: 2022-11-10 11:41+0400\n"
+"PO-Revision-Date: 2022-11-10 18:28+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: Translation team of Dragan Ratkovich\n"
 "Language: ka\n"
@@ -3704,7 +3704,7 @@ msgstr "დამატებითი პაუზა წინადადე�
 #. Translators: the label of an edit field
 #: bookworm/text_to_speech/tts_gui.py:181
 msgid "Additional Pause At Paragraph End (Ms)"
-msgstr "დამატებითი პაუზა პარაგრაფის ბოლოს (მილიწამებში)"
+msgstr "დამატებითი პაუზა აბზაცის ბოლოს (მილიწამებში)"
 
 #. Translators: the label of an edit field
 #: bookworm/text_to_speech/tts_gui.py:186
@@ -3918,7 +3918,7 @@ msgstr "URL მისამართი"
 
 #: bookworm/webservices/wikiworm.py:57
 msgid "&Wikipedia quick search"
-msgstr "&ვიკიპედიაში სწრაფი ძიება"
+msgstr "სწრაფი ძიება &ვიკიპედიაში"
 
 #: bookworm/webservices/wikiworm.py:58
 msgid "Get a quick definition from Wikipedia"
@@ -3952,7 +3952,7 @@ msgstr "გვერდი ვერ მოიძებნა"
 #. Translators: content of a message box
 #: bookworm/webservices/wikiworm.py:149
 msgid "Could not find a Wikipedia page for the given term.."
-msgstr "მოცემული ტერმინისთვის ვერ მოხერხდა ვიკიპედიის გვერდის პოვნა."
+msgstr "მოცემული ფრაზისთვის ვერ მოხერხდა ვიკიპედიის გვერდის პოვნა."
 
 #: bookworm/webservices/wikiworm.py:155
 msgid "Matches"
@@ -3964,7 +3964,7 @@ msgstr "ნაპოვნია რამდენიმე შესატყ�
 
 #: bookworm/webservices/wikiworm.py:171
 msgid "Failed to get term definition from Wikipedia."
-msgstr "ვიკიპედიიდან ტერმინის განმარტების მიღება ვერ მოხერხდა."
+msgstr "ვიკიპედიიდან ფრაზის განმარტების მიღება ვერ მოხერხდა."
 
 #: bookworm/webservices/wikiworm.py:188
 msgid "{term} — Wikipedia"
@@ -3987,7 +3987,7 @@ msgstr "&ბრაუზერში გახსნა"
 #. Translators: the title of a dialog to search for a term in Wikipedia
 #: bookworm/webservices/wikiworm.py:238
 msgid "Wikipedia Quick Search"
-msgstr "ვიკიპედიაში სწრაფი ძიება"
+msgstr "სწრაფი ძიება ვიკიპედიაში"
 
 #. Translators: label of an edit control in the search Wikipedia dialog
 #: bookworm/webservices/wikiworm.py:244
