@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b2\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-11-08 14:33+0000\n"
-"PO-Revision-Date: 2022-11-10 11:41+0400\n"
+"POT-Creation-Date: 2022-11-14 07:41+0000\n"
+"PO-Revision-Date: 2022-11-14 11:45+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -2501,6 +2501,14 @@ msgstr "Выход"
 msgid "Select a document"
 msgstr "Выберите документ"
 
+#: bookworm/gui/book_viewer/menubar.py:242
+msgid "Pinned"
+msgstr "Закреплено"
+
+#: bookworm/gui/book_viewer/menubar.py:246
+msgid "Unpinned"
+msgstr "Откреплено"
+
 #. Translators: the title of a dialog showing
 #. the progress of book export process
 #: bookworm/gui/book_viewer/menubar.py:272
@@ -3447,7 +3455,7 @@ msgstr ""
 msgid "Download Completed"
 msgstr "Загрузка завершена"
 
-#: bookworm/platforms/win32/speech_engines/onecore.py:73
+#: bookworm/platforms/win32/speech_engines/onecore.py:74
 msgid "One-core Synthesizer"
 msgstr "One-core Синтезатор"
 
@@ -3534,22 +3542,22 @@ msgstr "Вперед"
 msgid "End of document."
 msgstr "Конец документа."
 
-#: bookworm/text_to_speech/__init__.py:234
+#: bookworm/text_to_speech/__init__.py:235
 msgid "End of section: {chapter}."
 msgstr "Конец раздела: {chapter}."
 
 #. Translators: spoken message at the end of the document
-#: bookworm/text_to_speech/__init__.py:267
+#: bookworm/text_to_speech/__init__.py:268
 msgid "End of document"
 msgstr "Конец документа"
 
 #. Translators: the title of a message telling the user that no TTS voice found
-#: bookworm/text_to_speech/__init__.py:420
+#: bookworm/text_to_speech/__init__.py:421
 msgid "No TTS Voices"
 msgstr "Нет голосов TTS"
 
 #. Translators: a message telling the user that no TTS voice found
-#: bookworm/text_to_speech/__init__.py:422
+#: bookworm/text_to_speech/__init__.py:423
 msgid ""
 "A valid Text-to-speech voice was not found for the current speech engine.\n"
 "Text-to-speech functionality will be disabled."
@@ -3559,7 +3567,7 @@ msgstr ""
 "Функция преобразования текста в речь будет отключена."
 
 #. Translators: a message telling the user that the TTS voice has been changed
-#: bookworm/text_to_speech/__init__.py:440
+#: bookworm/text_to_speech/__init__.py:441
 msgid ""
 "Bookworm has noticed that the currently configured Text-to-speech voice "
 "speaks a language different from that of this book.\n"
@@ -3573,7 +3581,7 @@ msgstr ""
 
 #. Translators: the title of a message telling the user that the TTS voice has
 #. been changed
-#: bookworm/text_to_speech/__init__.py:447
+#: bookworm/text_to_speech/__init__.py:448
 msgid "Incompatible TTS Voice Detected"
 msgstr "Обнаружен несовместимый голос TTS"
 
@@ -3683,7 +3691,6 @@ msgstr "Скорость речи:"
 
 #. Translators: the label of the voice pitch slider
 #: bookworm/text_to_speech/tts_gui.py:160
-#| msgid "Voice Profiles"
 msgid "Voice Pitch:"
 msgstr "Высота голоса:"
 
