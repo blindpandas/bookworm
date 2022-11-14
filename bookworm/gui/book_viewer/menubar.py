@@ -239,11 +239,11 @@ class FileMenu(BaseMenu):
         if self.IsChecked(event.GetId()):
             recents_manager.pin(self.reader.document)
             sounds.pinning.play()
-            speech.announce("Pinned")
+            speech.announce(_("Pinned"))
         else:
             recents_manager.unpin(self.reader.document)
             sounds.pinning.play()
-            speech.announce("Unpinned")
+            speech.announce(_("Unpinned"))
         self.populate_pinned_documents_list()
 
     def onExportAsPlainText(self, event):
