@@ -490,7 +490,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             current_font_size = None
         raw_content_length = len(content)
         self.contentTextCtrl.Clear()
-        self.contentTextCtrl.SetDefaultStyle(self.get_content_view_text_style(font_size=current_font_size))
+        self.contentTextCtrl.SetDefaultStyle(
+            self.get_content_view_text_style(font_size=current_font_size)
+        )
         self.contentTextCtrl.AppendText(content)
         self.contentTextCtrl.SetInsertionPoint(0)
         if app.debug and raw_content_length != (
@@ -546,7 +548,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             sounds.navigation.play()
 
     def update_reading_progress(self):
-        self.readingProgressSlider.Enable(config.conf["general"]["show_reading_progress_percentage"])
+        self.readingProgressSlider.Enable(
+            config.conf["general"]["show_reading_progress_percentage"]
+        )
         if self.reader.document.is_single_page_document():
             char_count = self.contentTextCtrl.GetLastPosition()
             if char_count == 0:
@@ -597,10 +601,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             and self.get_insertion_point() not in self.reader.active_section.text_range
         )
         if condition:
-            self.reader.active_section = (
-                self.reader.document.get_section_at_position(
-                    self.get_insertion_point()
-                )
+            self.reader.active_section = self.reader.document.get_section_at_position(
+                self.get_insertion_point()
             )
             event.GetEventObject().SetFocus()
 

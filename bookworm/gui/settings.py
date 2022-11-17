@@ -297,7 +297,11 @@ class GeneralPanel(SettingsPanel):
                 _("Manage File &Associations"),
             )
             self.Bind(wx.EVT_BUTTON, self.onRequestFileAssoc, id=wx.ID_SETUP)
-        self.Bind(wx.EVT_CHECKBOX, self.onShowReadingProgressPercentCheckbox, self.showReadingProgressPercentCheckbox)
+        self.Bind(
+            wx.EVT_CHECKBOX,
+            self.onShowReadingProgressPercentCheckbox,
+            self.showReadingProgressPercentCheckbox,
+        )
         languages = [l for l in set(get_available_locales().values())]
         for langobj in languages:
             self.languageChoice.Append(langobj.description, langobj)

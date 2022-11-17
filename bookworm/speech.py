@@ -2,16 +2,16 @@
 
 """Screen reader and braille output."""
 
-import sys
 import shutil
-import win32com
+import sys
 
+import win32com
 from accessible_output2.outputs.auto import Auto
 
 from bookworm import config
-from bookworm.utils import restart_application
 from bookworm.logger import logger
 from bookworm.signals import reading_position_change
+from bookworm.utils import restart_application
 
 log = logger.getChild(__name__)
 

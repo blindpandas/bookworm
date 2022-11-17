@@ -11,8 +11,7 @@ import win32con
 import wx
 
 import bookworm.typehints as t
-from bookworm import app
-from bookworm import config
+from bookworm import app, config
 from bookworm.gui.text_ctrl_mixin import ContentViewCtrlMixin, ContentViewCtrlPanel
 from bookworm.logger import logger
 from bookworm.paths import app_path

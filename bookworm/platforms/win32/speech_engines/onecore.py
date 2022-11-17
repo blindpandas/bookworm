@@ -14,7 +14,7 @@ from bookworm.logger import logger
 from bookworm.speechdriver.element.converter.ssml import SsmlSpeechConverter
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
 from bookworm.speechdriver.enumerations import EngineEvent, RateSpec, SynthState
-from bookworm.speechdriver.utterance import SpeechUtterance, SpeechStyle
+from bookworm.speechdriver.utterance import SpeechStyle, SpeechUtterance
 
 from .utils import create_audio_bookmark_name, process_audio_bookmark
 
