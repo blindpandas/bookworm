@@ -222,58 +222,47 @@ class GeneralPanel(SettingsPanel):
         wx.StaticText(UIBox, -1, _("Display Language:"))
         self.languageChoice = wx.Choice(UIBox, -1, style=wx.CB_SORT)
         self.languageChoice.SetSizerProps(expand=True)
-        wx.CheckBox(
-            UIBox,
+        # Translators: the title of a group of controls shown in the
+        # general settings page related to spoken feedback
+        spokenFeedbackBox = self.make_static_box(_("Spoken feedback"))
+        self.enableSpokenFeedbackCheckbox = wx.CheckBox(
+            spokenFeedbackBox,
             -1,
             # Translators: the label of a checkbox
             _("Speak user interface messages"),
             name="general.announce_ui_messages",
         )
+        # Translators: the title of a group of controls shown in the
+        # general settings page related to miscellaneous settings
+        miscBox = self.make_static_box(_("Miscellaneous"))
         wx.CheckBox(
-            UIBox,
-            -1,
-            # Translators: the label of a checkbox
-            _("Speak page number"),
-            name="general.speak_page_number_when_navigating_pages",
-        )
-        wx.CheckBox(
-            UIBox,
-            -1,
-            # Translators: the label of a checkbox
-            _("Speak section title"),
-            name="general.speak_section_title",
-        )
-        wx.CheckBox(
-            UIBox,
+            miscBox,
             -1,
             # Translators: the label of a checkbox
             _("Play pagination sound"),
             name="general.play_pagination_sound",
         )
         wx.CheckBox(
-            UIBox,
+            miscBox,
             -1,
             # Translators: the label of a checkbox
             _("Include page label in page title"),
             name="general.include_page_label",
         )
         wx.CheckBox(
-            UIBox,
+            miscBox,
             -1,
             # Translators: the label of a checkbox
             _("Use file name instead of book title"),
             name="general.show_file_name_as_title",
         )
-        wx.CheckBox(
-            UIBox,
+        self.showReadingProgressPercentCheckbox = wx.CheckBox(
+            miscBox,
             -1,
             # Translators: the label of a checkbox
             _("Show reading progress percentage"),
             name="general.show_reading_progress_percentage",
         )
-        # Translators: the title of a group of controls shown in the
-        # general settings page related to miscellaneous settings
-        miscBox = self.make_static_box(_("Miscellaneous"))
         wx.CheckBox(
             miscBox,
             -1,
@@ -308,10 +297,16 @@ class GeneralPanel(SettingsPanel):
                 _("Manage File &Associations"),
             )
             self.Bind(wx.EVT_BUTTON, self.onRequestFileAssoc, id=wx.ID_SETUP)
+        self.Bind(wx.EVT_CHECKBOX, self.onShowReadingProgressPercentCheckbox, self.showReadingProgressPercentCheckbox)
         languages = [l for l in set(get_available_locales().values())]
         for langobj in languages:
             self.languageChoice.Append(langobj.description, langobj)
         self.languageChoice.SetStringSelection(app.current_language.description)
+
+    def onShowReadingProgressPercentCheckbox(self, event):
+        view = wx.GetApp().mainFrame
+        if view.reader.ready:
+            wx.CallAfter(view.update_reading_progress)
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
         if strategy is ReconciliationStrategies.save:
@@ -373,13 +368,6 @@ class AppearancePanel(SettingsPanel):
         # Translators: the title of a group of controls in the
         # appearance settings page related to the UI
         fontBox = self.make_static_box(_("Font"))
-        # Translators: label of a combobox
-        wx.StaticText(fontBox, -1, _("Font Face"))
-        self.fontChoice = wx.Choice(
-            fontBox,
-            -1,
-            choices=self.get_available_fonts(),
-        )
         self.useOpendyslexicFontCheckBox = wx.CheckBox(
             fontBox,
             -1,
@@ -387,7 +375,14 @@ class AppearancePanel(SettingsPanel):
             _("Use Open-&dyslexic font"),
             name="appearance.use_opendyslexic_font",
         )
-        # Translators: label of an edit box
+        # Translators: label of a combobox
+        wx.StaticText(fontBox, -1, _("Font Face"))
+        self.fontChoice = wx.Choice(
+            fontBox,
+            -1,
+            choices=self.get_available_fonts(),
+        )
+        # Translators: label of an static
         wx.StaticText(fontBox, -1, _("Font Size"))
         EnhancedSpinCtrl(fontBox, -1, min=10, max=96, name="appearance.font_point_size")
         wx.CheckBox(

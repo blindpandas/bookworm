@@ -490,12 +490,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             current_font_size = None
         raw_content_length = len(content)
         self.contentTextCtrl.Clear()
-        self.contentTextCtrl.SetValue(content)
-        self.contentTextCtrl.SetStyle(
-            0,
-            self.contentTextCtrl.GetLastPosition(),
-            self.get_content_view_text_style(font_size=current_font_size),
-        )
+        self.contentTextCtrl.SetDefaultStyle(self.get_content_view_text_style(font_size=current_font_size))
+        self.contentTextCtrl.AppendText(content)
         self.contentTextCtrl.SetInsertionPoint(0)
         if app.debug and raw_content_length != (
             textCtrlLength := self.contentTextCtrl.LastPosition
@@ -546,12 +542,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if is_single_page_doc:
             target_pos = self.get_containing_line(current.text_range.start + 1)[0]
             self.set_insertion_point(target_pos)
-        if config.conf["general"]["speak_section_title"]:
-            speech.announce(current.title, False)
         if is_single_page_doc:
             sounds.navigation.play()
 
     def update_reading_progress(self):
+        self.readingProgressSlider.Enable(config.conf["general"]["show_reading_progress_percentage"])
         if self.reader.document.is_single_page_document():
             char_count = self.contentTextCtrl.GetLastPosition()
             if char_count == 0:
@@ -589,10 +584,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.reader.save_current_position()
         except:
             log.exception("Failed to save current position", exc_info=True)
-        if (
-            config.conf["general"]["show_reading_progress_percentage"]
-            and self.reader.document.is_single_page_document()
-        ):
+        if self.reader.document.is_single_page_document():
             self.update_reading_progress()
 
     def onTocTreeFocus(self, event):
@@ -605,20 +597,18 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             and self.get_insertion_point() not in self.reader.active_section.text_range
         )
         if condition:
-            with self.mute_page_and_section_speech():
-                self.reader.active_section = (
-                    self.reader.document.get_section_at_position(
-                        self.get_insertion_point()
-                    )
+            self.reader.active_section = (
+                self.reader.document.get_section_at_position(
+                    self.get_insertion_point()
                 )
-                event.GetEventObject().SetFocus()
+            )
+            event.GetEventObject().SetFocus()
 
     def onTOCItemClick(self, event):
-        with self.mute_page_and_section_speech():
-            selectedItem = event.GetItem()
-            self.reader.active_section = self.tocTreeCtrl.GetItemData(selectedItem)
-            self.reader.go_to_first_of_section()
-            self.contentTextCtrl.SetFocus()
+        selectedItem = event.GetItem()
+        self.reader.active_section = self.tocTreeCtrl.GetItemData(selectedItem)
+        self.reader.go_to_first_of_section()
+        self.contentTextCtrl.SetFocus()
 
     def set_state_on_page_change(self, page):
         self.set_content(page.get_text())
@@ -630,26 +620,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             # Translators: label of content text control when the currently opened
             # document is a single page document
             self.contentTextCtrl.SetControlLabel(_("Document content"))
-        if config.conf["general"]["speak_page_number_when_navigating_pages"]:
-            # Translators: a message that is announced after navigating to a page
-            spoken_msg = _("Page {page} of {total}").format(
-                page=page.number, total=len(self.reader.document)
-            )
-            speech.announce(spoken_msg)
-        if config.conf["general"]["show_reading_progress_percentage"]:
-            self.update_reading_progress()
-
-    @contextmanager
-    def mute_page_and_section_speech(self):
-        opsc = config.conf["general"]["speak_page_number_when_navigating_pages"]
-        ossc = config.conf["general"]["speak_section_title"]
-        try:
-            config.conf["general"]["speak_page_number_when_navigating_pages"] = False
-            config.conf["general"]["speak_section_title"] = False
-            yield
-        finally:
-            config.conf["general"]["speak_page_number_when_navigating_pages"] = opsc
-            config.conf["general"]["speak_section_title"] = ossc
+        wx.CallAfter(self.update_reading_progress)
 
     def navigate_to_structural_element(self, element_type, forward):
         if not self.reader.ready:

@@ -12,6 +12,7 @@ import wx
 
 import bookworm.typehints as t
 from bookworm import app
+from bookworm import config
 from bookworm.gui.text_ctrl_mixin import ContentViewCtrlMixin, ContentViewCtrlPanel
 from bookworm.logger import logger
 from bookworm.paths import app_path
@@ -96,9 +97,10 @@ class ContentViewCtrl(ContentViewCtrlMixin):
     def SetControlLabel(self, label_text: str) -> None:
         super().SetControlLabel(label_text)
         # Notify name change for the TextCtrl
-        ctypes.windll.user32.NotifyWinEvent(
-            win32con.EVENT_OBJECT_NAMECHANGE,
-            self.GetHandle(),
-            win32con.OBJID_CLIENT,
-            win32con.CHILDID_SELF,
-        )
+        if config.conf["general"]["announce_ui_messages"]:
+            ctypes.windll.user32.NotifyWinEvent(
+                win32con.EVENT_OBJECT_NAMECHANGE,
+                self.GetHandle(),
+                win32con.OBJID_CLIENT,
+                win32con.CHILDID_SELF,
+            )
