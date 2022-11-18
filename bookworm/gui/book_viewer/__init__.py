@@ -493,7 +493,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.contentTextCtrl.SetDefaultStyle(
             self.get_content_view_text_style(font_size=current_font_size)
         )
-        self.contentTextCtrl.AppendText(content)
+        self.contentTextCtrl.SetValue(content)
         self.contentTextCtrl.SetInsertionPoint(0)
         if app.debug and raw_content_length != (
             textCtrlLength := self.contentTextCtrl.LastPosition
