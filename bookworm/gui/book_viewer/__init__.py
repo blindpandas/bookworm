@@ -351,7 +351,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         sizer.Add(panel, 1, wx.EXPAND)
         self.SetSizer(sizer)
         self.Fit()
-        self.SetSize(self.GetSize())
+        self.SetSize(wx.Size(1300, 750))
         self.CenterOnScreen(wx.BOTH)
 
     def finalize_gui_creation(self):
@@ -482,6 +482,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.reader.set_document(document)
 
     def set_content(self, content):
+        self.contentTextCtrl.Freeze()
         if self._has_text_zoom:
             current_style = wx.TextAttr(self.contentTextCtrl.GetDefaultStyle())
             self.contentTextCtrl.GetStyle(0, current_style)
@@ -489,14 +490,16 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         else:
             current_font_size = None
         raw_content_length = len(content)
-        self.contentTextCtrl.Clear()
+        self.contentTextCtrl.SetValue("\n\n")
+        self.contentTextCtrl.SetInsertionPoint(1)
         self.contentTextCtrl.SetDefaultStyle(
             self.get_content_view_text_style(font_size=current_font_size)
         )
-        self.contentTextCtrl.SetValue(content)
+        self.contentTextCtrl.WriteText(content)
         self.contentTextCtrl.SetInsertionPoint(0)
+        self.contentTextCtrl.Thaw()
         if app.debug and raw_content_length != (
-            textCtrlLength := self.contentTextCtrl.LastPosition
+            textCtrlLength := (self.contentTextCtrl.GetLastPosition() + 2)
         ):
             log.warning(
                 f"Content length is not the same before and after insertion: before: {raw_content_length} characters, after: {textCtrlLength} characters"

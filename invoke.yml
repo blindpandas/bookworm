@@ -1,12 +1,14 @@
 packages_to_install:
     pure_python:
+        - "mobi-0.3.3-py3-none-any.whl"
         - "pyxpdf_data-1.1.0-py3-none-any.whl"
     win32:
         pure_python:
         x64:
-            - "pyxpdf-0.2.3-cp39-cp39-win_amd64.whl"
+            - "pyxpdf-0.2.3-cp310-cp310-win_amd64.whl"
         x86:
-            - "pyxpdf-0.2.3-cp39-cp39-win32.whl"
+            - "pyxpdf-0.2.3-cp310-cp310-win32.whl"
+            - "wxPython-4.2.0-cp310-cp310-win32.whl"
 folders_to_clean:
     everytime:
         - build

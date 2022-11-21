@@ -55,7 +55,7 @@ class FitzPdfPage(FitzPage):
 
     def get_text(self):
         text = self.xpdf_text_output.get(self.index)[:-1]
-        return self.normalize_text(f"\n{text}\n")
+        return self.normalize_text(text)
 
     def normalize_text(self, text):
         text = ftfy.fix_text(text, normalization="NFKC")
