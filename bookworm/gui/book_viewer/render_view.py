@@ -53,11 +53,11 @@ class ViewPageAsImageDialog(wx.Dialog):
 
     @property
     def scroll_rate_x(self):
-        return self.imageCtrl.Size[0] * 0.05
+        return round(self.imageCtrl.Size[0] * 0.05)
 
     @property
     def scroll_rate_y(self):
-        return self.imageCtrl.Size[1] * 0.025
+        return round(self.imageCtrl.Size[1] * 0.025)
 
     @gui_thread_safe
     def onPageChange(self, sender, current, prev):

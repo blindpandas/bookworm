@@ -353,7 +353,7 @@ class DocumentInfoDialog(SimpleDialog):
         title_text_style = title_text_ctrl.GetDefaultStyle()
         title_text_style_font_size = title_text_style.GetFontSize()
         title_text_style.SetFontSize(
-            title_text_style_font_size + (title_text_style_font_size * 0.5)
+            round(title_text_style_font_size + (title_text_style_font_size * 0.5))
         )
         title_text_style.SetFontWeight(wx.FONTWEIGHT_EXTRABOLD)
         title_text_ctrl.SetStyle(0, title_text_ctrl.GetLastPosition(), title_text_style)
