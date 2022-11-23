@@ -30,6 +30,8 @@ folders_to_clean:
         - scripts/Bookworm*portable.zip
         - scripts/Bookworm-*.pot
         - scripts/release-info.json
+        - scripts/benchmark-x64.json
+        - scripts/benchmark-x86.json
         - scripts/builder/assets/version_info.txt
         - scripts/builder/assets/bookworm.bmp
         - scripts/builder/assets/bookworm-logo.bmp

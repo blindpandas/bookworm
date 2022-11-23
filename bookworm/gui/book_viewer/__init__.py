@@ -489,7 +489,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             current_font_size = current_style.Font.GetPointSize()
         else:
             current_font_size = None
-        raw_content_length = len(content)
         self.contentTextCtrl.SetValue("\n\n")
         self.contentTextCtrl.SetInsertionPoint(1)
         self.contentTextCtrl.SetDefaultStyle(
@@ -498,12 +497,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.contentTextCtrl.WriteText(content)
         self.contentTextCtrl.SetInsertionPoint(0)
         self.contentTextCtrl.Thaw()
-        if app.debug and raw_content_length != (
-            textCtrlLength := (self.contentTextCtrl.GetLastPosition() + 2)
-        ):
-            log.warning(
-                f"Content length is not the same before and after insertion: before: {raw_content_length} characters, after: {textCtrlLength} characters"
-            )
 
     def set_title(self, title):
         self.SetTitle(title)

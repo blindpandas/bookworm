@@ -689,6 +689,23 @@ def prepare_dev_environment(c):
     print("😊 Happy hacking...")
 
 
+@task
+@make_env
+def bench(c, filename="tests/assets/epub30-spec.epub", runs=5):
+    if shutil.which("hyperfine") is None:
+        print(
+            "To run this command, you need first to install hyperfine from the following URL:\n"
+            "https://github.com/sharkdp/hyperfine/releases/latest"
+        )
+        return
+    arch = os.environ["IAPP_ARCH"]
+    c.run(
+        f'hyperfine -N -r {runs} -w 1 '
+        f'--export-json "scripts\\benchmark-{arch}.json" '
+        f'"python -m bookworm benchmark {filename}"'
+    )
+
+
 @task(name="run")
 def run_application(c, debug=True):
     """Runs the app."""
@@ -707,3 +724,5 @@ def run_application(c, debug=True):
         c.run(f"python -m bookworm {args}")
     except UnexpectedExit as e:
         exit(e.result.return_code)
+
+

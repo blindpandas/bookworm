@@ -16,6 +16,8 @@ environment:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
 
 install:
+  # Install hyperfine for benchmarking
+  - cinst hyperfine
   # NSIS Paths
   # https://www.appveyor.com/docs/build-environment/#tools
   - set PATH=%PATH%;C:\Program Files (x86)\NSIS
@@ -33,6 +35,7 @@ build_script:
   - python -m pytest -vvv
   - invoke build
   - invoke create-portable
+  - invoke bench
   - deactivate
   # 64-bit version
   - ps: Write-Host "Building the 64-bit variant."
@@ -43,6 +46,7 @@ build_script:
   - python -m pytest -vvv
   - invoke build
   - invoke create-portable
+  - invoke bench
   # Update the release info file
   - invoke update-version-info
   - invoke gen-pot
@@ -53,6 +57,7 @@ artifacts:
   - path: scripts\Bookworm*update.bundle
   - path: scripts\Bookworm*portable.zip
   - path: scripts\release-info.json
+  - path: scripts\benchmark*.json
   - path: scripts\bookworm*.pot
 
 
@@ -69,7 +74,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
-  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /Bookworm-.*-portable\.zip/, /release-info\.json/, /bookworm-.*\.pot/
+  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /Bookworm-.*-portable\.zip/, /release-info\.json/, /bookworm-.*\.pot/, /benchmark.*\.json/
   draft: true
   prerelease: true
   on:

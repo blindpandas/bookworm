@@ -36,6 +36,7 @@ from bookworm.signals import (
     app_started,
     app_starting,
     app_window_shown,
+    reader_page_changed,
 )
 
 log = logger.getChild(__name__)
@@ -104,6 +105,24 @@ class ShellSubcommandHandler(BaseSubcommandHandler):
             if flag_value:
                 func()
         return 0
+
+
+@register_subcommand
+class BenchmarkSubcommandHandler(BaseSubcommandHandler):
+    subcommand_name = "benchmark"
+
+    @classmethod
+    def add_arguments(cls, subparser):
+        subparser.add_argument("filename", help="File to open", default="")
+
+    @classmethod
+    def handle_commandline_args(cls, args):
+        reader_page_changed.connect(
+            lambda sender, current, prev: sys.exit(0),
+            sender=reader_page_changed.ANY,
+            weak=False
+        )
+        return LauncherSubcommandHandler.handle_commandline_args(args)
 
 
 class BookwormApp(wx.App):
