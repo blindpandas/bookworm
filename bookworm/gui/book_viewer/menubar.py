@@ -18,7 +18,7 @@ from slugify import slugify
 from bookworm import app, config, ocr, paths, speech
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.concurrency import call_threaded, process_worker
-from bookworm.document import READING_MODE_LABELS
+from bookworm.document import READING_MODE_LABELS, ReadingMode
 from bookworm.document import DocumentCapability as DC
 from bookworm.document import DocumentInfo, PaginationError
 from bookworm.document.uri import DocumentUri
@@ -515,7 +515,11 @@ class DocumentMenu(BaseMenu):
             uri = self.reader.document.uri.create_copy()
             new_reading_mode = supported_reading_modes[dlg.GetSelection()]
             if current_reading_mode != new_reading_mode:
-                uri.openner_args["reading_mode"] = int(new_reading_mode)
+                if new_reading_mode is ReadingMode.DEFAULT:
+                    with suppress(KeyError):
+                        uri.openner_args.pop("reading_mode")
+                else:
+                    uri.openner_args["reading_mode"] = int(new_reading_mode)
                 most_recent_page = self.reader.current_page
                 self.view.open_uri(
                     uri,
