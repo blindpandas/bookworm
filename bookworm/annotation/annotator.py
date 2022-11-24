@@ -156,7 +156,7 @@ class Annotator:
             self.session.query(model)
             .filter_by(book_id=self.current_book.id)
             .filter(sa.or_(*clauses))
-            .order_by(model.page_number.asc())
+            .order_by(model.page_number.asc(), model.position.asc())
             .first()
         )
 
