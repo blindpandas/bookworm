@@ -318,7 +318,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             size=(200, 160),
             name="content_view",
         )
-        self.contentTextCtrl.SetMargins(self._get_text_view_margins())
+        self.set_text_view_margins()
         # Translators: label for the reading progress slider
         readingProgressLabel = wx.StaticText(
             panel, -1, _("Reading progress percentage")
@@ -733,9 +733,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if icon_file.exists():
             self.SetIcon(wx.Icon(str(icon_file)))
 
-    def _get_text_view_margins(self):
-        # XXX need to do some work here to obtain appropriate margins
-        return wx.Point(75, 75)
+    def set_text_view_margins(self):
+        config_margin = round(1000 * (config.conf["appearance"]["text_view_margins"] / 100))
+        margins =  wx.Point(config_margin, config_margin)
+        self.contentTextCtrl.SetMargins(margins)
 
     def get_password_from_user(self):
         password = wx.GetPasswordFromUser(

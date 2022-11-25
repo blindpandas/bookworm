@@ -369,8 +369,10 @@ class AppearancePanel(SettingsPanel):
             _("Apply text styling (when available)"),
             name="appearance.apply_text_styles",
         )
+        wx.StaticText(UIBox, -1, _("Text view margins percentage"))
+        EnhancedSpinCtrl(UIBox, -1, min=0, max=100, name="appearance.text_view_margins")
         # Translators: the title of a group of controls in the
-        # appearance settings page related to the UI
+        # appearance settings page related to the font
         fontBox = self.make_static_box(_("Font"))
         self.useOpendyslexicFontCheckBox = wx.CheckBox(
             fontBox,
@@ -423,6 +425,8 @@ class AppearancePanel(SettingsPanel):
         super().reconcile(strategy=strategy)
         if strategy is ReconciliationStrategies.save:
             wx.GetApp().mainFrame.set_content_view_font()
+            wx.GetApp().mainFrame.set_text_view_margins()
+            wx.GetApp().mainFrame.Refresh()
         else:
             if self.useOpendyslexicFontCheckBox.IsChecked():
                 self.fontChoice.Enable(False)
