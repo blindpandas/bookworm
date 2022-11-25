@@ -372,6 +372,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.SetMenuBar(self.menuBar)
         # Set accelerators for the menu items
         self._set_menu_accelerators()
+        if not config.conf["appearance"]["show_application_toolbar"]:
+            self.toolbar.Hide()
         if config.conf["appearance"]["start_maximized"]:
             self.Maximize()
         # XXX sent explicitly to disable items upon startup

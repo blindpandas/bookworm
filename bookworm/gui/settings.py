@@ -361,6 +361,13 @@ class AppearancePanel(SettingsPanel):
             _("Maximize the application window upon startup"),
             name="appearance.start_maximized",
         )
+        wx.CheckBox(
+            GeneralAppearanceBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Show the application's toolbar"),
+            name="appearance.show_application_toolbar",
+        )
         UIBox = self.make_static_box(_("Text Styling"))
         wx.CheckBox(
             UIBox,
@@ -426,6 +433,10 @@ class AppearancePanel(SettingsPanel):
         if strategy is ReconciliationStrategies.save:
             wx.GetApp().mainFrame.set_content_view_font()
             wx.GetApp().mainFrame.set_text_view_margins()
+            if self.config["show_application_toolbar"]:
+                wx.GetApp().mainFrame.toolbar.Show()
+            else:
+                wx.GetApp().mainFrame.toolbar.Hide()
             wx.GetApp().mainFrame.Refresh()
         else:
             if self.useOpendyslexicFontCheckBox.IsChecked():

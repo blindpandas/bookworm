@@ -22,6 +22,7 @@ config_spec = StringIO(
 [appearance]
     apply_text_styles = boolean(default=True)
     start_maximized = boolean(default=False)
+    show_application_toolbar = boolean(default=True)
     use_opendyslexic_font = boolean(default=False)
     font_facename = string(default="")
     font_family = string(default="")
