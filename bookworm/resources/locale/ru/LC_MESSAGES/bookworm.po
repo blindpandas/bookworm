@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Bookworm 2022.1b3\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2022-11-25 22:56+0000\n"
-"PO-Revision-Date: 2022-11-26 13:12+0400\n"
+"PO-Revision-Date: 2022-12-01 19:33+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -1749,7 +1749,7 @@ msgstr "Язык интерфейса:"
 #. general settings page related to spoken feedback
 #: bookworm/gui/settings.py:227
 msgid "Spoken feedback"
-msgstr "Уровень озвученной информации"
+msgstr "Озвученная информация"
 
 #. Translators: the label of a checkbox
 #: bookworm/gui/settings.py:232
