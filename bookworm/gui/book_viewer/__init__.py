@@ -33,6 +33,7 @@ from bookworm.reader import (
     UriResolver,
 )
 from bookworm.resources import app_icons, sounds
+from bookworm.runtime import keep_awake
 from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,
@@ -569,6 +570,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def onCaretMoved(self, event):
         event.Skip(True)
+        keep_awake()
         if not self.reader.ready:
             return
         threaded_worker.submit(self._after_caret_moved)

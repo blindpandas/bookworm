@@ -14,8 +14,9 @@ from bookworm import app
 from . import shellapi
 from .win_registry import RegKey, RegRoots
 
-SPI_GETHIGHCONTRAST = 0x0042
+ES_SYSTEM_REQUIRED = 0x1
 PLAYER_FLAGS = winsound.SND_ASYNC | winsound.SND_FILENAME
+SPI_GETHIGHCONTRAST = 0x0042
 
 
 class SoundFile:
@@ -58,3 +59,7 @@ def is_high_contrast_active():
     val = wintypes.BOOL()
     windll.user32.SystemParametersInfoW(SPI_GETHIGHCONTRAST, 0, byref(val), 0)
     return bool(val.value)
+
+
+def keep_awake():
+    ctypes.windll.kernel32.SetThreadExecutionState(ES_SYSTEM_REQUIRED)

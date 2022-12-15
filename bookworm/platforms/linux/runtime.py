@@ -14,3 +14,7 @@ def is_running_portable():
 
 def is_high_contrast_active():
     return False
+
+
+def keep_awake():
+    pass

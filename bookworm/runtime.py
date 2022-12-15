@@ -13,12 +13,14 @@ if PLATFORM == "win32":
     from bookworm.platforms.win32.runtime import (
         is_high_contrast_active,
         is_running_portable,
+        keep_awake,
         system_start_app,
     )
 elif PLATFORM == "linux":
     from bookworm.platforms.linux.runtime import (
         is_high_contrast_active,
         is_running_portable,
+        keep_awake,
         system_start_app,
     )
 
