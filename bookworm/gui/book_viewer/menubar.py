@@ -18,9 +18,9 @@ from slugify import slugify
 from bookworm import app, config, ocr, paths, speech
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.concurrency import call_threaded, process_worker
-from bookworm.document import READING_MODE_LABELS, ReadingMode
+from bookworm.document import READING_MODE_LABELS
 from bookworm.document import DocumentCapability as DC
-from bookworm.document import DocumentInfo, PaginationError
+from bookworm.document import DocumentInfo, PaginationError, ReadingMode
 from bookworm.document.uri import DocumentUri
 from bookworm.gui.book_viewer.core_dialogs import (
     DocumentInfoDialog,

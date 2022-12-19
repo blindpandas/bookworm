@@ -62,4 +62,4 @@ def is_high_contrast_active():
 
 
 def keep_awake():
-    ctypes.windll.kernel32.SetThreadExecutionState(ES_SYSTEM_REQUIRED)
+    windll.kernel32.SetThreadExecutionState(ES_SYSTEM_REQUIRED)

@@ -3,7 +3,6 @@
 import math
 import time
 import webbrowser
-from concurrent.futures import Future
 from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
@@ -570,7 +569,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def onCaretMoved(self, event):
         event.Skip(True)
-        keep_awake()
         if not self.reader.ready:
             return
         threaded_worker.submit(self._after_caret_moved)
@@ -582,6 +580,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 return
             self.reader.go_to_next()
             self._last_page_turn_time = time.monotonic()
+        threaded_worker.submit(keep_awake)
 
     def _after_caret_moved(self):
         try:
@@ -738,8 +737,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.SetIcon(wx.Icon(str(icon_file)))
 
     def set_text_view_margins(self):
-        config_margin = round(1000 * (config.conf["appearance"]["text_view_margins"] / 100))
-        margins =  wx.Point(config_margin, config_margin)
+        config_margin = round(
+            1000 * (config.conf["appearance"]["text_view_margins"] / 100)
+        )
+        margins = wx.Point(config_margin, config_margin)
         self.contentTextCtrl.SetMargins(margins)
 
     def get_password_from_user(self):

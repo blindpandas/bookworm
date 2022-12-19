@@ -120,7 +120,7 @@ class BenchmarkSubcommandHandler(BaseSubcommandHandler):
         reader_page_changed.connect(
             lambda sender, current, prev: sys.exit(0),
             sender=reader_page_changed.ANY,
-            weak=False
+            weak=False,
         )
         return LauncherSubcommandHandler.handle_commandline_args(args)
 
