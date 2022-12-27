@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Bookworm 2022.1b3\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2022-11-25 22:56+0000\n"
-"PO-Revision-Date: 2022-12-01 19:31+0400\n"
+"PO-Revision-Date: 2022-12-27 22:04+0400\n"
 "Last-Translator: Dragan Ratkovich\n"
 "Language-Team: Translation team of Dragan Ratkovich\n"
 "Language: ka\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.10.3\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #. Translators: the content of a message indicating a connection error
 #: bookworm/otau.py:76
@@ -1593,7 +1593,7 @@ msgstr "კონტენტის ჩატვირთვა ვერ მო
 
 #: bookworm/epub_serve/webapp.py:189
 msgid "Cannot retreive content. Probably the eBook has been closed."
-msgstr "შინაარსზე წვდომა შეუძლებელია. სავარაუდოდ, ელექტრონული წიგნი დაიხურა."
+msgstr "შიგთავსზე წვდომა შეუძლებელია. სავარაუდოდ, ელექტრონული წიგნი დაიხურა."
 
 #. Translators: The title for the dialog used to present general messages in
 #. browse mode.
@@ -1669,7 +1669,7 @@ msgid ""
 "windows explorer, it will be opened in Bookworm by default "
 msgstr ""
 "ეს დიალოგი დაგეხმარებათ, დააყენოთ ფაილების დაკავშირება.\n"
-"ფაილების Bookworm-თან დაკავშირება ნიშნავს, რომ Windows-ის ფაილის მნახველში, "
+"ფაილების Bookworm-თან დაკავშირება ნიშნავს რომ Windows-ის ფაილის მნახველში, "
 "ფაილზე დაჭერისას, ის სტანდარტულად გაიხსნება Bookworm-ში "
 
 #. Translators: the main label of a button
