@@ -580,7 +580,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 return
             self.reader.go_to_next()
             self._last_page_turn_time = time.monotonic()
-        threaded_worker.submit(keep_awake)
+        wx.CallAfter(keep_awake)
 
     def _after_caret_moved(self):
         try:
