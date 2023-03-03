@@ -97,4 +97,4 @@ The [Telegram channel](https://t.me/bookworm_news) will be dedicated to publishi
 
 ## License
 
-**Bookworm** is copyright (c) 2019-2022 Blind Pandas Team. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2019-2023 Blind Pandas Team. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
