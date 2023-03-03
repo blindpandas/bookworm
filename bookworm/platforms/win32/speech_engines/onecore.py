@@ -13,7 +13,8 @@ from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 from bookworm.speechdriver.element.converter.ssml import SsmlSpeechConverter
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
-from bookworm.speechdriver.enumerations import EngineEvent, RateSpec, SynthState
+from bookworm.speechdriver.enumerations import (EngineEvent, RateSpec,
+                                                SynthState)
 from bookworm.speechdriver.utterance import SpeechStyle, SpeechUtterance
 
 from .utils import create_audio_bookmark_name, process_audio_bookmark
@@ -69,7 +70,6 @@ class EventSink:
 
 
 class OcSpeechEngine(BaseSpeechEngine):
-
     name = "onecore"
     display_name = _("One-core Synthesizer")
     default_rate = 20

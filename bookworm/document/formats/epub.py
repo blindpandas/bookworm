@@ -26,12 +26,14 @@ from bookworm.image_io import ImageIO
 from bookworm.logger import logger
 from bookworm.paths import home_data_path
 from bookworm.structured_text import TextRange
-from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
+from bookworm.structured_text.structured_html_parser import \
+    StructuredHtmlParser
 from bookworm.utils import format_datetime, is_external_url
 
 from .. import SINGLE_PAGE_DOCUMENT_PAGER, BookMetadata, ChangeDocument
 from .. import DocumentCapability as DC
-from .. import DocumentError, LinkTarget, Section, SinglePageDocument, TreeStackBuilder
+from .. import (DocumentError, LinkTarget, Section, SinglePageDocument,
+                TreeStackBuilder)
 
 log = logger.getChild(__name__)
 HTML_FILE_EXTS = {
@@ -41,7 +43,6 @@ HTML_FILE_EXTS = {
 
 
 class EpubDocument(SinglePageDocument):
-
     format = "epub"
     # Translators: the name of a document file format
     name = _("Electronic Publication (EPUB)")
@@ -130,7 +131,7 @@ class EpubDocument(SinglePageDocument):
         if is_external_url(href):
             return LinkTarget(url=href, is_external=True)
         else:
-            for (html_id, text_range) in self.structure.html_id_ranges.items():
+            for html_id, text_range in self.structure.html_id_ranges.items():
                 if html_id.endswith(href):
                     return LinkTarget(
                         url=href, is_external=False, page=None, position=text_range
@@ -161,7 +162,7 @@ class EpubDocument(SinglePageDocument):
 
     @lru_cache(maxsize=10)
     def get_section_at_position(self, pos):
-        for ((start, end), section) in self.start_positions_for_sections:
+        for (start, end), section in self.start_positions_for_sections:
             if start <= pos < end:
                 return section
         return self.toc_tree
@@ -216,7 +217,7 @@ class EpubDocument(SinglePageDocument):
                 # Let's start the dance!
                 text_range = None
                 # Strip  punctuation as ebooklib, for some reason, strips those from html_ids
-                for (h_id, t_range) in id_ranges.items():
+                for h_id, t_range in id_ranges.items():
                     if (href == h_id.strip("/")) or (
                         href == h_id.strip(string.punctuation)
                     ):
@@ -293,7 +294,7 @@ class EpubDocument(SinglePageDocument):
             (item.file_name, item.content) for item in self.epub_html_items
         )
         buf = StringIO()
-        for (filename, html_content) in html_content_gen:
+        for filename, html_content in html_content_gen:
             buf.write(self.prefix_html_ids(filename, html_content))
             buf.write("\n<br/>\n")
         html_content = self.build_html(

@@ -22,25 +22,19 @@ from bookworm.document import READING_MODE_LABELS
 from bookworm.document import DocumentCapability as DC
 from bookworm.document import DocumentInfo, PaginationError, ReadingMode
 from bookworm.document.uri import DocumentUri
-from bookworm.gui.book_viewer.core_dialogs import (
-    DocumentInfoDialog,
-    ElementListDialog,
-    GoToPageDialog,
-    SearchBookDialog,
-    SearchResultsDialog,
-)
+from bookworm.gui.book_viewer.core_dialogs import (DocumentInfoDialog,
+                                                   ElementListDialog,
+                                                   GoToPageDialog,
+                                                   SearchBookDialog,
+                                                   SearchResultsDialog)
 from bookworm.gui.components import AsyncSnakDialog, RobustProgressDialog
 from bookworm.gui.settings import PreferencesDialog
 from bookworm.i18n import is_rtl
 from bookworm.logger import logger
 from bookworm.reader import EBookReader
 from bookworm.resources import sounds
-from bookworm.signals import (
-    config_updated,
-    reader_book_loaded,
-    reader_book_unloaded,
-    reading_position_change,
-)
+from bookworm.signals import (config_updated, reader_book_loaded,
+                              reader_book_unloaded, reading_position_change)
 from bookworm.utils import gui_thread_safe, restart_application
 
 from . import recents_manager
@@ -370,7 +364,7 @@ class FileMenu(BaseMenu):
             self._pinned[item.Id] = pinned_item.uri
         if self.reader.ready:
             current_document = self.reader.document
-            for (item_id, uri) in self._pinned.items():
+            for item_id, uri in self._pinned.items():
                 if uri == current_document.uri:
                     self.pinnedDocumentsMenu.Enable(item_id, False)
 
@@ -695,7 +689,7 @@ class SearchMenu(BaseMenu):
     def _add_search_results(self, request, dlg):
         search_func = self.reader.document.search
         results = []
-        for (i, resultset) in enumerate(search_func(request)):
+        for i, resultset in enumerate(search_func(request)):
             results.extend(resultset)
             if dlg.IsShown():
                 dlg.addResultSet(resultset)
@@ -902,7 +896,7 @@ class MenubarProvider:
 
     def doAddMenus(self):
         self.__menus.sort(key=lambda item: item[0])
-        for (__, menu, label) in self.__menus:
+        for __, menu, label in self.__menus:
             self.menuBar.Append(menu, label)
 
     def registerMenu(self, order, menu, label):
@@ -957,7 +951,7 @@ class MenubarProvider:
             )
         entries.extend(wx.GetApp().service_handler.get_contextmenu_items())
         entries.sort()
-        for (__, label, desc, ident) in entries:
+        for __, label, desc, ident in entries:
             if ident is None:
                 menu.AppendSeparator()
                 continue

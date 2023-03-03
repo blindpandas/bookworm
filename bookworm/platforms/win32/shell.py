@@ -84,7 +84,7 @@ def shell_integrate(supported="*"):
     log.info(f"Registering file associations for extensions {supported}.")
     register_application(app.prog_id, EXECUTABLE, supported)
     doctypes = get_ext_info(supported)
-    for (ext, (prog_id, desc, icon)) in doctypes.items():
+    for ext, (prog_id, desc, icon) in doctypes.items():
         associate_extension(ext, prog_id, EXECUTABLE, desc, icon)
     shell_notify_association_changed()
 
@@ -103,6 +103,6 @@ def shell_disintegrate(supported="*"):
     else:
         exekey.delete_key_tree()
     doctypes = get_ext_info(supported)
-    for (ext, (prog_id, desc, icon)) in doctypes.items():
+    for ext, (prog_id, desc, icon) in doctypes.items():
         remove_association(ext, prog_id)
     shell_notify_association_changed()

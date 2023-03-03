@@ -11,15 +11,11 @@ from bookworm.annotation import AnnotationService
 from bookworm.bookshelf import BookshelfService
 from bookworm.epub_serve import EpubServeService
 from bookworm.ocr import OCRService, OCRSettingsService
-
 # Builtin services
 from bookworm.otau import OTAUService
 from bookworm.text_to_speech import TextToSpeechService
-from bookworm.webservices import (
-    UrlOpenService,
-    WebservicesBaseService,
-    WikipediaService,
-)
+from bookworm.webservices import (UrlOpenService, WebservicesBaseService,
+                                  WikipediaService)
 
 BUILTIN_SERVICES = (
     OTAUService,

@@ -14,7 +14,6 @@ log = logger.getChild(__name__)
 
 
 class MarkdownDocument(BaseHtmlDocument):
-
     format = "markdown"
     # Translators: the name of a document file format
     name = _("Markdown File")

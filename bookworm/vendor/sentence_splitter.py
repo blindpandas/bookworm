@@ -80,7 +80,6 @@ class SentenceSplitter(object):
         self.__non_breaking_prefixes = dict()
         with open(non_breaking_prefix_file, mode="r", encoding="utf-8") as prefix_file:
             for line in prefix_file.readlines():
-
                 if "#NUMERIC_ONLY#" in line:
                     prefix_type = SentenceSplitter.PrefixType.NUMERIC_ONLY
                 else:
@@ -158,14 +157,12 @@ class SentenceSplitter(object):
         words = regex.split(pattern=r" +", string=text, flags=regex.UNICODE)
         text = ""
         for i in range(0, len(words) - 1):
-
             match = regex.search(
                 pattern=r"([\w\.\-]*)([\'\"\)\]\%\p{Final_Punctuation}]*)(\.+)$",
                 string=words[i],
                 flags=regex.UNICODE,
             )
             if match:
-
                 prefix = match.group(1)
                 starting_punct = match.group(2)
 

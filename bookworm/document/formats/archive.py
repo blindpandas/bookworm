@@ -15,11 +15,8 @@ from bookworm.logger import logger
 from bookworm.paths import app_path
 from bookworm.runtime import CURRENT_PACKAGING_MODE, PackagingMode
 
-from .. import (
-    ArchiveContainsMultipleDocuments,
-    ArchiveContainsNoDocumentsError,
-    ChangeDocument,
-)
+from .. import (ArchiveContainsMultipleDocuments,
+                ArchiveContainsNoDocumentsError, ChangeDocument)
 from .. import DocumentCapability as DC
 from .. import DocumentEncryptedError, DocumentIOError, DummyDocument
 from ..uri import DocumentUri
@@ -40,7 +37,6 @@ from unrar.rarfile import RarFile
 
 
 class ArchivedDocument(DummyDocument):
-
     format = "archive"
     # Translators: the name of a document file format
     name = _("Archive File")

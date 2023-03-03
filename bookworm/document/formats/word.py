@@ -39,7 +39,6 @@ TAGS_TO_REMOVE = [
 
 
 class WordDocument(BaseHtmlDocument):
-
     format = "docx"
     # Translators: the name of a document file format
     name = _("Word Document")
@@ -130,7 +129,6 @@ class WordDocument(BaseHtmlDocument):
 
 
 class Word97Document(DummyDocument):
-
     format = "doc"
     # Translators: the name of a document file format
     name = _("Word 97 - 2003 Document")

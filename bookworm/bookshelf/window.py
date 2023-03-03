@@ -9,14 +9,9 @@ import wx
 import wx.lib.sized_controls as sc
 
 from bookworm import speech
-from bookworm.bookshelf.provider import (
-    BookshelfAction,
-    BookshelfProvider,
-    ItemContainerSource,
-    MetaSource,
-    Source,
-    sources_updated,
-)
+from bookworm.bookshelf.provider import (BookshelfAction, BookshelfProvider,
+                                         ItemContainerSource, MetaSource,
+                                         Source, sources_updated)
 from bookworm.concurrency import threaded_worker
 from bookworm.gui.book_viewer.core_dialogs import DocumentInfoDialog
 from bookworm.gui.components import AsyncSnakDialog
@@ -41,7 +36,7 @@ class BookshelfNotebookPage(sc.SizedPanel):
         if not actions:
             return
         menu = wx.Menu()
-        for (item_id, action) in actions.items():
+        for item_id, action in actions.items():
             if action is None:
                 menu.AppendSeparator()
                 continue
@@ -68,7 +63,6 @@ class EmptyBookshelfPage(BookshelfNotebookPage):
 
 
 class BookshelfResultsPage(BookshelfNotebookPage):
-
     ITEM_ACTIVATION_KEYS = {
         wx.WXK_RETURN,
         wx.WXK_NUMPAD_ENTER,
@@ -172,7 +166,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
             .make_thumbnail(*icon_size, exact_fit=True)
             .to_wx_bitmap()
         )
-        for (idx, item) in enumerate(items):
+        for idx, item in enumerate(items):
             if cover_image := item.cover_image:
                 item_icon = cover_image.make_thumbnail(
                     *icon_size, exact_fit=True
@@ -209,7 +203,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         self.__source_navigation_stack.clear()
         self.items = items
         self.document_list.AssignImageList(image_list, wx.IMAGE_LIST_NORMAL)
-        for (idx, item) in enumerate(items):
+        for idx, item in enumerate(items):
             wx.CallAfter(self.document_list.InsertItem, idx, item.title, idx)
         self.document_list.RefreshItems(0, self.document_list.GetItemCount())
         self.list_label.SetLabel(self.source.name)
@@ -474,7 +468,7 @@ class BookshelfWindow(sc.SizedFrame):
         )
         self.tree_tabs.DeleteAllPages()
         self.add_sources(self.provider.get_sources(), self.tree_tabs)
-        for (menu_idx, (mb_menu, __)) in enumerate(self.menubar.GetMenus()):
+        for menu_idx, (mb_menu, __) in enumerate(self.menubar.GetMenus()):
             for menu_item in mb_menu.GetMenuItems():
                 self.Unbind(wx.EVT_MENU, id=menu_item.GetId())
             self.menubar.Remove(menu_idx)
@@ -485,7 +479,7 @@ class BookshelfWindow(sc.SizedFrame):
             if action.decider(self.provider)
         }
         menu = wx.Menu()
-        for (item_id, action) in menu_actions.items():
+        for item_id, action in menu_actions.items():
             menu.Append(item_id, action.display)
             self.Bind(
                 wx.EVT_MENU,
@@ -545,7 +539,8 @@ class BookshelfWindow(sc.SizedFrame):
 
 
 def run_bookshelf_standalone():
-    from bookworm.bootstrap import BookwormApp, log_diagnostic_info, setupSubsystems
+    from bookworm.bootstrap import (BookwormApp, log_diagnostic_info,
+                                    setupSubsystems)
 
     app = BookwormApp()
 

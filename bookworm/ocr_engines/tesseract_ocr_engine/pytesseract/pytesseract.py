@@ -25,13 +25,6 @@ except ImportError:
 
 tesseract_cmd = "tesseract"
 
-numpy_installed = find_loader("numpy") is not None
-if numpy_installed:
-    from numpy import ndarray
-
-pandas_installed = find_loader("pandas") is not None
-if pandas_installed:
-    import pandas as pd
 
 DEFAULT_ENCODING = "utf-8"
 LANG_PATTERN = re.compile("^[a-z_]+$")
@@ -263,7 +256,6 @@ def run_and_get_output(
     timeout=0,
     return_bytes=False,
 ):
-
     with save(image) as (temp_name, input_filename):
         kwargs = {
             "input_filename": input_filename,
@@ -484,19 +476,6 @@ def image_to_boxes(
         ),
         Output.STRING: lambda: run_and_get_output(*args),
     }[output_type]()
-
-
-def get_pandas_output(args, config=None):
-    if not pandas_installed:
-        raise PandasNotSupported()
-
-    kwargs = {"quoting": QUOTE_NONE, "sep": "\t"}
-    try:
-        kwargs.update(config)
-    except (TypeError, ValueError):
-        pass
-
-    return pd.read_csv(BytesIO(run_and_get_output(*args)), **kwargs)
 
 
 def image_to_data(

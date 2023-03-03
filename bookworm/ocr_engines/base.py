@@ -129,7 +129,7 @@ class BaseOcrEngine(metaclass=ABCMeta):
 
         try:
             with ThreadPoolExecutor(4) as pool:
-                for (idx, res) in enumerate(pool.map(recognize_page, doc)):
+                for idx, res in enumerate(pool.map(recognize_page, doc)):
                     out.write(
                         f"Page {res.cookie}{NEWLINE}{res.recognized_text}{NEWLINE}\f{NEWLINE}"
                     )

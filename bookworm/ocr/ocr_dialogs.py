@@ -10,32 +10,20 @@ from wx.adv import CommandLinkButton
 from bookworm import app, config
 from bookworm import typehints as t
 from bookworm.concurrency import threaded_worker
-from bookworm.gui.components import (
-    AsyncSnakDialog,
-    ColumnDefn,
-    ImmutableObjectListView,
-    RobustProgressDialog,
-    SimpleDialog,
-    SnakDialog,
-    make_sized_static_box,
-)
+from bookworm.gui.components import (AsyncSnakDialog, ColumnDefn,
+                                     ImmutableObjectListView,
+                                     RobustProgressDialog, SimpleDialog,
+                                     SnakDialog, make_sized_static_box)
 from bookworm.gui.settings import ReconciliationStrategies, SettingsPanel
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 from bookworm.ocr_engines.image_processing_pipelines import (
-    BlurProcessingPipeline,
-    ConcatImagesProcessingPipeline,
-    DebugProcessingPipeline,
-    DeskewProcessingPipeline,
-    DilationProcessingPipeline,
-    DPIProcessingPipeline,
-    ErosionProcessingPipeline,
-    ImageProcessingPipeline,
-    InvertColourProcessingPipeline,
-    SharpenColourProcessingPipeline,
-    ThresholdProcessingPipeline,
-    TwoInOneScanProcessingPipeline,
-)
+    BlurProcessingPipeline, ConcatImagesProcessingPipeline,
+    DebugProcessingPipeline, DeskewProcessingPipeline,
+    DilationProcessingPipeline, DPIProcessingPipeline,
+    ErosionProcessingPipeline, ImageProcessingPipeline,
+    InvertColourProcessingPipeline, SharpenColourProcessingPipeline,
+    ThresholdProcessingPipeline, TwoInOneScanProcessingPipeline)
 from bookworm.ocr_engines.tesseract_ocr_engine import TesseractOcrEngine
 from bookworm.platforms.win32 import tesseract_download
 from bookworm.utils import restart_application
@@ -277,7 +265,7 @@ class OCROptionsDialog(SimpleDialog):
         imgProcBox = make_sized_static_box(
             ippPanel, _("Available image pre-processing filters:")
         )
-        for (ipp_cls, lbl, should_enable) in self.get_image_processing_pipelines_info():
+        for ipp_cls, lbl, should_enable in self.get_image_processing_pipelines_info():
             chbx = wx.CheckBox(imgProcBox, -1, lbl)
             if self.stored_options is not None:
                 chbx.SetValue(ipp_cls in self.stored_ipp)
@@ -414,7 +402,7 @@ class TesseractLanguageManager(SimpleDialog):
                 TesseractLanguagePanel(self.notebookCtrl, is_offline=False),
             ),
         ]
-        for (label, panel) in panel_info:
+        for label, panel in panel_info:
             panel.SetSizerType("vertical")
             self.notebookCtrl.AddPage(panel, label)
         self.Bind(

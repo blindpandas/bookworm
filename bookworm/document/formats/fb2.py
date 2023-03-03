@@ -18,7 +18,6 @@ log = logger.getChild(__name__)
 
 
 class FitzFB2Document(FitzDocument):
-
     format = "fb2fitz"
     # Translators: the name of a document file format
     name = _("Fiction Book (FB2)")
@@ -30,7 +29,6 @@ class FitzFB2Document(FitzDocument):
 
 
 class FB2Document(BasePandocDocument):
-
     format = "fb2"
     # Translators: the name of a document file format
     name = _("Fiction Book (FB2)")

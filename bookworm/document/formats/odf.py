@@ -25,7 +25,8 @@ from bookworm.concurrency import process_worker
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
 from bookworm.paths import home_data_path
-from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
+from bookworm.structured_text.structured_html_parser import \
+    StructuredHtmlParser
 from bookworm.utils import NEWLINE, escape_html, generate_file_md5
 
 from .. import BaseDocument, BasePage, BookMetadata, ChangeDocument
@@ -76,7 +77,6 @@ class OdfParser:
 
 
 class OdfTextDocument(DummyDocument):
-
     format = "odt"
     # Translators: the name of a document file format
     name = _("Open Document Text")
@@ -162,7 +162,7 @@ class OdfPresentation(BaseDocument):
             level=1,
         )
         stack = TreeStackBuilder(root)
-        for (idx, (slide_title, slide_html)) in enumerate(self.slides.items()):
+        for idx, (slide_title, slide_html) in enumerate(self.slides.items()):
             stack.push(
                 Section(
                     title=slide_title,
