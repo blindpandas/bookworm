@@ -17,10 +17,8 @@ from pkgutil import find_loader
 from tempfile import NamedTemporaryFile
 from time import sleep
 
-try:
-    from PIL import Image
-except ImportError:
-    import Image
+from numpy import ndarray
+from PIL import Image
 
 
 tesseract_cmd = "tesseract"
@@ -152,7 +150,7 @@ def cleanup(temp_name):
 
 
 def prepare(image):
-    if numpy_installed and isinstance(image, ndarray):
+    if isinstance(image, ndarray):
         image = Image.fromarray(image)
 
     if not isinstance(image, Image.Image):
