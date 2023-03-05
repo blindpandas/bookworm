@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 'Bookworm'\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-12-19 17:10+0000\n"
-"PO-Revision-Date: 2022-12-26 19:35+0800\n"
+"POT-Creation-Date: 2023-02-01 12:21+0000\n"
+"PO-Revision-Date: 2023-02-04 10:35+0800\n"
 "Last-Translator: Cary-rowen <manchen_0528@outlook.com>\n"
 "Language-Team: Cary-Rowen <manchen_0528@outlook.com>\n"
 "Language: zh_CN\n"
@@ -92,7 +92,7 @@ msgstr "注解(&A)"
 
 #: bookworm/annotation/__init__.py:77
 msgid "&Bookmark...\tCtrl-B"
-msgstr "添加书签(&B)... \tCtrl-B"
+msgstr "添加书签... \tCtrl-B"
 
 #: bookworm/annotation/__init__.py:78 bookworm/annotation/__init__.py:84
 msgid "Bookmark the current location"
@@ -112,7 +112,7 @@ msgstr "在当前位置添加注释"
 
 #: bookworm/annotation/__init__.py:100
 msgid "Highlight Selection\tCtrl-Shift-H"
-msgstr "标记为高亮(&H)... \tCtrl-Shift-H"
+msgstr "标记为高亮... \tCtrl-Shift-H"
 
 #: bookworm/annotation/__init__.py:101
 msgid "Highlight and save selected text."
@@ -518,7 +518,7 @@ msgstr "使用视觉样式显示注释"
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:102
 msgid "Add &Bookmark\tCtrl-B"
-msgstr "添加书签(&B)... \tCtrl-B"
+msgstr "添加书签... \tCtrl-B"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:104
@@ -528,7 +528,7 @@ msgstr "在当前位置添加书签"
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:109
 msgid "Add &Named Bookmark...\tCtrl-Shift-B"
-msgstr "添加命名书签(&N)... \tCtrl-Shift-B"
+msgstr "添加命名书签... \tCtrl-Shift-B"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:111
@@ -538,7 +538,7 @@ msgstr "在当前位置添加并命名书签"
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:116
 msgid "Add Co&mment...\tCtrl-M"
-msgstr "添加注释(&M)... \tCtrl-M"
+msgstr "添加注释... \tCtrl-M"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:118
@@ -558,7 +558,7 @@ msgstr "高亮显示所选文本并保存。"
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:130
 msgid "Saved &Bookmarks..."
-msgstr "已保存的书签..."
+msgstr "已保存的书签(&B)..."
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:132
@@ -3656,7 +3656,7 @@ msgstr "语速："
 #. Translators: the label of the voice pitch slider
 #: bookworm/text_to_speech/tts_gui.py:160
 msgid "Voice Pitch:"
-msgstr "语调"
+msgstr "音调"
 
 #. Translators: the label of the speech volume slider
 #: bookworm/text_to_speech/tts_gui.py:166
