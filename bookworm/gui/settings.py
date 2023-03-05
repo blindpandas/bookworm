@@ -21,12 +21,8 @@ from bookworm.shellinfo import get_ext_info
 from bookworm.signals import app_started, config_updated
 from bookworm.utils import restart_application
 
-from .components import (
-    AsyncSnakDialog,
-    EnhancedSpinCtrl,
-    RobustProgressDialog,
-    SimpleDialog,
-)
+from .components import (AsyncSnakDialog, EnhancedSpinCtrl,
+                         RobustProgressDialog, SimpleDialog)
 
 log = logger.getChild(__name__)
 
@@ -174,7 +170,6 @@ def _on_app_first_run(sender):
 
 
 class SettingsPanel(sc.SizedPanel):
-
     config_section = None
 
     def __init__(self, parent, settings_dialog=None, config_object=None):

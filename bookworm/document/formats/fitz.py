@@ -19,13 +19,8 @@ from bookworm.utils import recursively_iterdir
 
 from .. import BaseDocument, BasePage, BookMetadata, ChangeDocument
 from .. import DocumentCapability as DC
-from .. import (
-    DocumentEncryptedError,
-    DocumentError,
-    DocumentRestrictedError,
-    Pager,
-    Section,
-)
+from .. import (DocumentEncryptedError, DocumentError, DocumentRestrictedError,
+                Pager, Section)
 
 log = logger.getChild(__name__)
 fitz.Tools().mupdf_display_errors(False)
@@ -105,7 +100,7 @@ class FitzDocument(BaseDocument):
             data={"html_file": None},
         )
         _last_entry = None
-        for (index, (level, title, start_page, infodict)) in enumerate(toc_info):
+        for index, (level, title, start_page, infodict) in enumerate(toc_info):
             try:
                 curr_index = index
                 next_item = toc_info[curr_index + 1]
@@ -169,7 +164,6 @@ class FitzDocument(BaseDocument):
 
 
 class FitzXpsDocument(FitzDocument):
-
     format = "xps"
     # Translators: the name of a document file format
     name = _("XPS Document")
@@ -177,7 +171,6 @@ class FitzXpsDocument(FitzDocument):
 
 
 class FitzCBZDocument(FitzDocument):
-
     format = "cbz"
     # Translators: the name of a document file format
     name = _("Comic Book Archive")

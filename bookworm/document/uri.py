@@ -132,7 +132,7 @@ class DocumentUri:
 
     @classmethod
     def _get_format_given_extension(cls, ext):
-        for (doc_format, doc_cls) in BaseDocument.document_classes.items():
+        for doc_format, doc_cls in BaseDocument.document_classes.items():
             if (doc_cls.extensions is not None) and (ext in doc_cls.extensions):
                 return doc_format
 

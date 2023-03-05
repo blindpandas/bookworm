@@ -7,17 +7,14 @@ import wx.lib.sized_controls as sc
 from platform_utils.clipboard import copy as copy_to_clipboard
 from platform_utils.clipboard import get_text as get_clipboard_text
 
-from bookworm.gui.components import (
-    ColumnDefn,
-    ImmutableObjectListView,
-    SimpleDialog,
-    make_sized_static_box,
-)
+from bookworm.gui.components import (ColumnDefn, ImmutableObjectListView,
+                                     SimpleDialog, make_sized_static_box)
 from bookworm.logger import logger
 from bookworm.resources import sounds
 from bookworm.utils import format_datetime
 
-from .annotator import AnnotationFilterCriteria, AnnotationSortCriteria, NoteTaker
+from .annotator import (AnnotationFilterCriteria, AnnotationSortCriteria,
+                        NoteTaker)
 from .exporters import ExportOptions, renderers
 
 log = logger.getChild(__name__)

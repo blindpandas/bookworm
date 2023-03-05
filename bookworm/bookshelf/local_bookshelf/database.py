@@ -20,7 +20,6 @@ class AutoOptimizedAPSWDatabase(APSWDatabase):
 
 
 class AutoCalculatedField(Field):
-
     AUTO_GEN_COLUMN_TYPES = (
         "virtual",
         "stored",

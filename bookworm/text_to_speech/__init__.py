@@ -12,34 +12,22 @@ from bookworm import config
 from bookworm.logger import logger
 from bookworm.resources import app_icons, sounds
 from bookworm.service import BookwormService
-from bookworm.signals import (
-    _signals,
-    reader_book_loaded,
-    reader_book_unloaded,
-    reader_page_changed,
-    reading_position_change,
-)
+from bookworm.signals import (_signals, reader_book_loaded,
+                              reader_book_unloaded, reader_page_changed,
+                              reading_position_change)
 from bookworm.speech_engines import TTS_ENGINES
-from bookworm.speechdriver import DummySpeechEngine, speech_engine_state_changed
-from bookworm.speechdriver.enumerations import (
-    EmphSpec,
-    EngineEvent,
-    PauseSpec,
-    SynthState,
-)
+from bookworm.speechdriver import (DummySpeechEngine,
+                                   speech_engine_state_changed)
+from bookworm.speechdriver.enumerations import (EmphSpec, EngineEvent,
+                                                PauseSpec, SynthState)
 from bookworm.speechdriver.utterance import SpeechStyle, SpeechUtterance
 from bookworm.structured_text import TextInfo
 from bookworm.utils import gui_thread_safe
 
 from .tts_config import TTSConfigManager, tts_config_spec
-from .tts_gui import (
-    SPEECH_KEYBOARD_SHORTCUTS,
-    ReadingPanel,
-    SpeechMenu,
-    SpeechPanel,
-    StatefulSpeechMenuIds,
-    StatelessSpeechMenuIds,
-)
+from .tts_gui import (SPEECH_KEYBOARD_SHORTCUTS, ReadingPanel, SpeechMenu,
+                      SpeechPanel, StatefulSpeechMenuIds,
+                      StatelessSpeechMenuIds)
 
 log = logger.getChild(__name__)
 
@@ -274,7 +262,7 @@ class TextToSpeechService(BookwormService):
         _last_known_section = None
         parag_pause = self.config_manager["paragraph_pause"]
         sent_pause = self.config_manager["sentence_pause"]
-        for (paragraph, text_range) in text_info.paragraphs:
+        for paragraph, text_range in text_info.paragraphs:
             with self.queue_speech_utterance() as utterance:
                 if is_single_page_document:
                     text_pos = sum(text_range.astuple()) / 2

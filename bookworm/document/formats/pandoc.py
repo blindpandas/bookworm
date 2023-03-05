@@ -13,7 +13,6 @@ log = logger.getChild(__name__)
 
 
 class BasePandocDocument(BaseHtmlDocument):
-
     format = None
     name = None
     extensions = ()

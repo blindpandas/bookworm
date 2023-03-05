@@ -16,32 +16,17 @@ from yarl import URL
 
 from bookworm.http_tools import HttpResource
 from bookworm.logger import logger
-from bookworm.structured_text import (
-    HEADING_LEVELS,
-    SemanticElementType,
-    Style,
-    TextRange,
-)
-from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.utils import (
-    NEWLINE,
-    TextContentDecoder,
-    escape_html,
-    is_external_url,
-    remove_excess_blank_lines,
-)
+from bookworm.structured_text import (HEADING_LEVELS, SemanticElementType,
+                                      Style, TextRange)
+from bookworm.structured_text.structured_html_parser import \
+    StructuredHtmlParser
+from bookworm.utils import (NEWLINE, TextContentDecoder, escape_html,
+                            is_external_url, remove_excess_blank_lines)
 
 from .. import SINGLE_PAGE_DOCUMENT_PAGER, BookMetadata, ChangeDocument
 from .. import DocumentCapability as DC
-from .. import (
-    DocumentError,
-    DocumentIOError,
-    LinkTarget,
-    ReadingMode,
-    Section,
-    SinglePageDocument,
-    TreeStackBuilder,
-)
+from .. import (DocumentError, DocumentIOError, LinkTarget, ReadingMode,
+                Section, SinglePageDocument, TreeStackBuilder)
 
 log = logger.getChild(__name__)
 # Default cache timeout
@@ -213,7 +198,7 @@ class BaseHtmlDocument(SinglePageDocument):
             key=lambda x: x[0],
         )
         with self._create_toc_stack() as (stack, root):
-            for ((start_pos, stop_pos), h_element) in heading_poses:
+            for (start_pos, stop_pos), h_element in heading_poses:
                 h_text = text[start_pos:stop_pos].strip()
                 h_level = int(h_element.name[-1])
                 section = Section(
@@ -224,7 +209,7 @@ class BaseHtmlDocument(SinglePageDocument):
                 )
                 stack.push(section)
             all_sections = tuple(root.iter_children())
-            for (this_sect, next_sect) in zip_offset(
+            for this_sect, next_sect in zip_offset(
                 all_sections, all_sections, offsets=(0, 1)
             ):
                 this_sect.text_range.stop = next_sect.text_range.start - 1
@@ -253,7 +238,6 @@ class BaseHtmlDocument(SinglePageDocument):
 
 
 class FileSystemHtmlDocument(BaseHtmlDocument):
-
     format = "html"
     # Translators: the name of a document file format
     name = _("HTML Document")
@@ -272,7 +256,6 @@ class FileSystemHtmlDocument(BaseHtmlDocument):
 
 
 class WebHtmlDocument(BaseHtmlDocument):
-
     __internal__ = True
     format = "webpage"
     supported_reading_modes = (

@@ -222,7 +222,6 @@ def correct_skew(image):
     # so we are going to use tesseract's image_to_osd function to set it right
 
     while True:
-
         # tesseract's image_to_osd() function works best with images with more visible characters.
         # so we are binarizing the image before passing it to the function
         # otherwise, due to less clarity in the image tesseract raises an expection: 0 dpi exception

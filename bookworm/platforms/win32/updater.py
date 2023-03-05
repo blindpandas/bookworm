@@ -17,7 +17,8 @@ import wx
 from requests.exceptions import RequestException
 
 from bookworm import app, config, paths
-from bookworm.commandline_handler import BaseSubcommandHandler, register_subcommand
+from bookworm.commandline_handler import (BaseSubcommandHandler,
+                                          register_subcommand)
 from bookworm.gui.components import RobustProgressDialog, SnakDialog
 from bookworm.http_tools import HttpResource
 from bookworm.logger import logger
