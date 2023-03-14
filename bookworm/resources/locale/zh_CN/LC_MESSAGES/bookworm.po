@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 'Bookworm'\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2023-02-01 12:21+0000\n"
-"PO-Revision-Date: 2023-03-06 09:23+0800\n"
+"PO-Revision-Date: 2023-03-14 10:28+0800\n"
 "Last-Translator: Cary-rowen <manchen_0528@outlook.com>\n"
 "Language-Team: Cary-Rowen <manchen_0528@outlook.com>\n"
 "Language: zh_CN\n"
@@ -568,7 +568,7 @@ msgstr "查看已添加的书签"
 #. Translators: the label of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:137
 msgid "Saved Co&mments..."
-msgstr "已保存的注释(&C)..."
+msgstr "已保存的注释(&M)..."
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/annotation/annotation_gui.py:139
@@ -2122,7 +2122,7 @@ msgstr "从列表中删除？"
 #. is opened.
 #: bookworm/gui/book_viewer/__init__.py:287
 msgid "Press (Ctrl + O) to open a document"
-msgstr "按 (Ctrl + O) 打开文档"
+msgstr "按 (Control + O) 打开文档"
 
 #. Translators: the label of the table-of-contents tree
 #: bookworm/gui/book_viewer/__init__.py:301
