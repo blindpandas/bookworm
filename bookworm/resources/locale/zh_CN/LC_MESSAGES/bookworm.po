@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 'Bookworm'\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2023-02-01 12:21+0000\n"
-"PO-Revision-Date: 2023-03-14 10:28+0800\n"
+"PO-Revision-Date: 2023-03-14 10:44+0800\n"
 "Last-Translator: Cary-rowen <manchen_0528@outlook.com>\n"
 "Language-Team: Cary-Rowen <manchen_0528@outlook.com>\n"
 "Language: zh_CN\n"
@@ -2387,7 +2387,7 @@ msgstr "新窗口...\tCtrl-N"
 
 #: bookworm/gui/book_viewer/menubar.py:100
 msgid "&Pin\tCtrl-P"
-msgstr "固定(&P)\tCtrl-P"
+msgstr "固定\tCtrl-P"
 
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:103
@@ -2419,7 +2419,7 @@ msgstr "清除文档缓存。有助于解决打开文档的一些问题。"
 #. Translators: the label of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:126
 msgid "Pi&nned Documents"
-msgstr "固定的文档"
+msgstr "固定的文档(&N)"
 
 #. Translators: the help text of an item in the application menubar
 #: bookworm/gui/book_viewer/menubar.py:128
