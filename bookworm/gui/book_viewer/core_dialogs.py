@@ -228,7 +228,7 @@ class ElementKind(enum.IntEnum):
 
     @property
     def display(self):
-        return SEMANTIC_ELEMENT_OUTPUT_OPTIONS[self.value][0]
+        return _(SEMANTIC_ELEMENT_OUTPUT_OPTIONS[self.value][0])
 
 
 class ElementListDialog(SimpleDialog):
