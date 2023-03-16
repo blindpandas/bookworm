@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2022-09-25 14:01+0200\n"
-"PO-Revision-Date: 2022-09-25 15:56+0200\n"
+"POT-Creation-Date: 2023-03-16 14:20+0200\n"
+"PO-Revision-Date: 2023-03-16 15:48+0200\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: fi_FI <janikinnunen340@gmail.com>\n"
 "Language: fi\n"
@@ -147,7 +147,7 @@ msgstr "Päivitetty viimeksi"
 #: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:241
 #: ..\..\..\../gui/book_viewer/core_dialogs.py:398
 #: ..\..\..\../gui/settings.py:103 ..\..\..\../ocr/ocr_dialogs.py:416
-#: ..\..\..\../text_to_speech/tts_gui.py:320
+#: ..\..\..\../text_to_speech/tts_gui.py:328
 #: ..\..\..\../webservices/wikiworm.py:215
 msgid "&Close"
 msgstr "&Sulje"
@@ -162,7 +162,7 @@ msgstr "Tallennetut kirjanmerkit"
 
 #: ..\..\..\../annotation/annotation_dialogs.py:130
 #: ..\..\..\../ocr/ocr_dialogs.py:455
-#: ..\..\..\../text_to_speech/tts_gui.py:314
+#: ..\..\..\../text_to_speech/tts_gui.py:322
 msgid "&Remove"
 msgstr "&Poista"
 
@@ -236,7 +236,7 @@ msgid "&View..."
 msgstr "&Näytä..."
 
 #: ..\..\..\../annotation/annotation_dialogs.py:374
-#: ..\..\..\../text_to_speech/tts_gui.py:312
+#: ..\..\..\../text_to_speech/tts_gui.py:320
 msgid "&Edit..."
 msgstr "&Muokkaa..."
 
@@ -527,153 +527,153 @@ msgstr "Kirjahylly"
 msgid "Boo&kshelf"
 msgstr "&Kirjahylly"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:48
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:47
 #: ..\..\..\../bookshelf/viewer_integration.py:36
 msgid "Local Bookshelf"
 msgstr "Paikallinen kirjahylly"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:57
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:56
 msgid "Remove..."
 msgstr "Poista..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:62
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:61
 msgid "Edit name..."
 msgstr "Muokkaa nimeä..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:67
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:66
 msgid "Clear documents..."
 msgstr "Poista asiakirjoja..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:91
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:90
 msgid "Recently Added"
-msgstr "&Viimeksi lisätyt"
+msgstr "Viimeksi lisätyt"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:98
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:97
 msgid "Currently Reading"
 msgstr "Luen tällä hetkellä"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:107
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:106
 msgid "Want to Read"
 msgstr "Haluan lukea"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:116
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:115
 msgid "Favorites"
 msgstr "Suosikit"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:126
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:125
 msgid "Reading Lists"
 msgstr "Lukulistat"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:131
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:130
 #: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:47
 msgid "Collections"
 msgstr "Kokoelmat"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:139
-#: ..\..\..\../gui/settings.py:577
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:138
+#: ..\..\..\../gui/settings.py:590
 msgid "General"
 msgstr "Yleiset"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:148
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:147
 msgid "Add New..."
 msgstr "Lisää uusi..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:167
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:166
 #: ..\..\..\../gui/book_viewer/core_dialogs.py:353
 msgid "Authors"
 msgstr "Tekijät"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:178
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:177
 msgid "Import Documents...\tCtrl+O"
 msgstr "Tuo asiakirjoja...\tCtrl+O"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:183
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:182
 msgid "Import documents from folder..."
 msgstr "Tuo asiakirjoja kansiosta..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:187
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:186
 msgid "Search Bookshelf..."
 msgstr "Hae kirjahyllystä..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:190
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:189
 msgid "Bundle Documents..."
-msgstr "Niputa asiakirjoja..."
+msgstr "Niputa asiakirjat..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:193
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:192
 msgid "Clear invalid documents..."
 msgstr "Poista virheelliset asiakirjat..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:205
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:204
 msgid "Import Documents To Bookshelf"
 msgstr "Tuo asiakirjoja kirjahyllyyn"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:221
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:621
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:220
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:620
 msgid "Edit reading list/collections"
 msgstr "Muokkaa lukulistaa/kokoelmia"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:238
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:237
 msgid "Importing document..."
 msgstr "Tuodaan asiakirjaa..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:241
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:240
 msgid "Importing documents..."
 msgstr "Tuodaan asiakirjoja..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:269
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:268
 msgid "Failed to import document. Please try again."
 msgstr "Asiakirjan tuonti epäonnistui. Yritä uudelleen."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:271
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:317
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:363
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:270
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:316
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:362
 #: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:225
-#: ..\..\..\../bookshelf/window.py:193 ..\..\..\../gui/settings.py:566
+#: ..\..\..\../bookshelf/window.py:192 ..\..\..\../gui/settings.py:579
 #: ..\..\..\../ocr/ocr_dialogs.py:203 ..\..\..\../ocr/ocr_dialogs.py:613
 #: ..\..\..\../platforms/win32/pandoc_download.py:63
 #: ..\..\..\../platforms/win32/tesseract_download.py:94
-#: ..\..\..\../text_to_speech/tts_gui.py:418
+#: ..\..\..\../text_to_speech/tts_gui.py:426
 #: ..\..\..\../webservices/wikiworm.py:170
 msgid "Error"
 msgstr "Virhe"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:282
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:281
 msgid "Import Documents From Folder"
 msgstr "Tuo asiakirjoja kansiosta"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:296
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:295
 msgid "Importing documents from folder. Please wait..."
 msgstr "Odota, kun asiakirjoja tuodaan kansiosta..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:305
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:304
 msgid "Documents imported from folder."
 msgstr "Asiakirjat tuotu kansiosta."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:307
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:306
 msgid "Operation Completed"
 msgstr "Toiminto suoritettu"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:315
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:314
 msgid "Failed to import documents from folder."
 msgstr "Asiakirjojen tuonti kansiosta epäonnistui."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:325
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:324
 msgid "Search Bookshelf"
 msgstr "Hae kirjahyllystä"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:338
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:337
 msgid "Searching bookshelf..."
 msgstr "Haetaan kirjahyllystä..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:361
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:360
 msgid "Failed to search bookshelf,"
 msgstr "Kirjahyllystä hakeminen epäonnistui,"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:378
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:377
 msgid "Full Text Search Results"
 msgstr "Koko tekstin hakutulokset"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:389
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:388
 msgid ""
 "This will create copies of all of the documents you have added to your Local "
 "Bookshelf.\n"
@@ -691,30 +691,30 @@ msgstr ""
 "Huomaa, että tämä toiminto luo kaksoiskappaleet kaikista lisäämistäsi "
 "asiakirjoista."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:392
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:391
 msgid "Bundle Documents?"
 msgstr "Niputetaanko asiakirjat?"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:400
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:399
 msgid "Bundling documents. Please wait..."
 msgstr "Odota, kun asiakirjoja niputetaan..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:429
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:428
 #, python-brace-format
 msgid "Bundled {num_documents} files."
 msgstr "Niputettu {num_documents} tiedostoa."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:431
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:430
 msgid "Done"
 msgstr "Valmis"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:440
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:439
 #, python-brace-format
 msgid "Bundle Results: {num_succesfull} successfull, {num_faild} faild"
 msgstr ""
 "Niputuksen tulokset: {num_succesfull} onnistui, {num_faild} epäonnistui"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:452
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:451
 msgid ""
 "This action will clear invalid documents from your bookshelf.\n"
 "Invalid documents are the documents which no longer exist on your computer."
@@ -722,19 +722,19 @@ msgstr ""
 "Tämä toiminto poistaa virheelliset asiakirjat kirjahyllystä.\n"
 "Virheelliset asiakirjat ovat sellaisia, joita ei enää ole tietokoneellasi."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:456
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:455
 msgid "Clear Invalid Documents?"
 msgstr "Poista virheelliset asiakirjat?"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:471
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:470
 msgid "New name:"
 msgstr "Uusi nimi:"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:473
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:472
 msgid "Edit Name"
 msgstr "Muokkaa nimeä"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:484
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:483
 #, python-brace-format
 msgid ""
 "The given name {name} already exists.\n"
@@ -743,11 +743,11 @@ msgstr ""
 "Antamasi nimi {name} on jo olemassa.\n"
 "Valitse toinen nimi."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:487
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:486
 msgid "Duplicate name"
 msgstr "Päällekkäinen nimi"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:498
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:497
 #, python-brace-format
 msgid ""
 "Are you sure you want to remove {name}?\n"
@@ -756,13 +756,13 @@ msgstr ""
 "Haluatko varmasti poistaa asiakirjan {name}?\n"
 "Tämä ei poista nimellä {name} luokiteltua asiakirjaa."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:501
-#: ..\..\..\../gui/components.py:609 ..\..\..\../ocr/ocr_dialogs.py:529
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:500
+#: ..\..\..\../gui/components.py:610 ..\..\..\../ocr/ocr_dialogs.py:529
 #: ..\..\..\../ocr/ocr_dialogs.py:571
 msgid "Confirm"
 msgstr "Vahvista"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:513
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:512
 #, python-brace-format
 msgid ""
 "Are you sure you want to clear all documents classified under {name}?\n"
@@ -771,51 +771,51 @@ msgstr ""
 "Haluatko varmasti poistaa kaikki nimellä {name} luokitellut asiakirjat?\n"
 "Tämä poistaa kyseiset asiakirjat kirjahyllystä."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:516
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:515
 msgid "Clear All Documents"
 msgstr "Poista kaikki asiakirjat"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:529
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:528
 msgid "Enter name:"
 msgstr "Kirjoita nimi:"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:531
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:530
 msgid "Add New"
 msgstr "Lisää uusi"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:556
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:555
 msgid "&Edit reading list / collections..."
 msgstr "&Muokkaa lukulistaa/kokoelmia..."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:561
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:560
 msgid "Remove from &currently reading"
 msgstr "Poista &luen tällä hetkellä -listalta"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:563
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:562
 msgid "Add to &currently reading"
 msgstr "Lisää l&uen tällä hetkellä -listalle"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:568
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:567
 msgid "Remove from &want to read"
 msgstr "Poista &haluan lukea -listalta"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:570
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:569
 msgid "Add to &want to read"
-msgstr "Lisää h&aaluan lukea -listalle"
+msgstr "Lisää h&aluan lukea -listalle"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:575
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:574
 msgid "Remove from &favorites"
 msgstr "Poista &suosikeista"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:577
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:576
 msgid "Add to &favorites"
 msgstr "Lisää &suosikkeihin"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:582
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:581
 msgid "&Remove from bookshelf"
 msgstr "&Poista kirjahyllystä"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:649
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:648
 #, python-brace-format
 msgid ""
 "Are you sure you want to remove this document from your bookshelf?\n"
@@ -826,11 +826,11 @@ msgstr ""
 "Title: {title}\n"
 "Tämä poistaa asiakirjan kaikista tunnisteista ja kategorioista."
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:652
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:651
 msgid "Remove From Bookshelf?"
 msgstr "Poistetaanko kirjahyllystä?"
 
-#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:684
+#: ..\..\..\../bookshelf/local_bookshelf/__init__.py:683
 msgid "Unknown Author"
 msgstr "Tuntematon tekijä"
 
@@ -849,7 +849,7 @@ msgid "Select a folder:"
 msgstr "Valitse kansio:"
 
 #: ..\..\..\../bookshelf/local_bookshelf/dialogs.py:112
-#: ..\..\..\../gui/book_viewer/__init__.py:400
+#: ..\..\..\../gui/book_viewer/__init__.py:402
 msgid "Search"
 msgstr "Hae"
 
@@ -937,15 +937,15 @@ msgstr "Lukulista ja kokoelmat"
 msgid "{name} ({count})"
 msgstr "{name} ({count})"
 
-#: ..\..\..\../bookshelf/window.py:75
+#: ..\..\..\../bookshelf/window.py:74
 msgid "Filter documents..."
 msgstr "Suodata asiakirjoja..."
 
-#: ..\..\..\../bookshelf/window.py:81
+#: ..\..\..\../bookshelf/window.py:80
 msgid "Loading items"
 msgstr "Ladataan kohteita"
 
-#: ..\..\..\../bookshelf/window.py:191
+#: ..\..\..\../bookshelf/window.py:190
 msgid ""
 "Failed to retrieve documents.\n"
 "Please try again."
@@ -953,51 +953,51 @@ msgstr ""
 "Asiakirjojen hakeminen epäonnistui.\n"
 "Ole hyvä ja yritä uudelleen."
 
-#: ..\..\..\../bookshelf/window.py:233
+#: ..\..\..\../bookshelf/window.py:232
 #: ..\..\..\../gui/book_viewer/core_dialogs.py:388
 msgid "&Open"
 msgstr "&Avaa"
 
-#: ..\..\..\../bookshelf/window.py:238
+#: ..\..\..\../bookshelf/window.py:237
 msgid "Open in &system viewer"
 msgstr "Avaa &järjestelmän katseluohjelmassa"
 
-#: ..\..\..\../bookshelf/window.py:243
+#: ..\..\..\../bookshelf/window.py:242
 msgid "Edit &title"
 msgstr "Muokkaa &nimekettä"
 
-#: ..\..\..\../bookshelf/window.py:296
+#: ..\..\..\../bookshelf/window.py:295
 msgid "No matching documents"
 msgstr "Ei vastaavia asiakirjoja"
 
-#: ..\..\..\../bookshelf/window.py:350 ..\..\..\../bookshelf/window.py:362
+#: ..\..\..\../bookshelf/window.py:349 ..\..\..\../bookshelf/window.py:361
 msgid "Retrieving items..."
 msgstr "Haetaan kohteita..."
 
-#: ..\..\..\../bookshelf/window.py:387
+#: ..\..\..\../bookshelf/window.py:386
 msgid "Document &info..."
 msgstr "Asiakirjan t&iedot..."
 
-#: ..\..\..\../bookshelf/window.py:418
+#: ..\..\..\../bookshelf/window.py:417
 msgid "Provider"
 msgstr "Tarjoaja"
 
-#: ..\..\..\../bookshelf/window.py:425 ..\..\..\../bookshelf/window.py:431
-#: ..\..\..\../gui/settings.py:609
+#: ..\..\..\../bookshelf/window.py:424 ..\..\..\../bookshelf/window.py:430
+#: ..\..\..\../gui/settings.py:622
 msgid "Categories"
 msgstr "Kategoriat"
 
-#: ..\..\..\../bookshelf/window.py:468
+#: ..\..\..\../bookshelf/window.py:467
 #, python-brace-format
 msgid "Bookworm Bookshelf: {name}"
 msgstr "Bookwormin kirjahylly: {name}"
 
-#: ..\..\..\../bookshelf/window.py:492
+#: ..\..\..\../bookshelf/window.py:491
 msgid "&Exit"
 msgstr "&Lopeta"
 
-#: ..\..\..\../bookshelf/window.py:495
-#: ..\..\..\../gui/book_viewer/menubar.py:879
+#: ..\..\..\../bookshelf/window.py:494
+#: ..\..\..\../gui/book_viewer/menubar.py:883
 msgid "&File"
 msgstr "&Tiedosto"
 
@@ -1029,75 +1029,75 @@ msgstr "Puhdas teksti"
 msgid "Full text"
 msgstr "Koko teksti"
 
-#: ..\..\..\../document/formats/archive.py:43
+#: ..\..\..\../document/formats/archive.py:42
 msgid "Archive File"
 msgstr "Pakattu tiedosto"
 
-#: ..\..\..\../document/formats/epub.py:49
+#: ..\..\..\../document/formats/epub.py:48
 msgid "Electronic Publication (EPUB)"
 msgstr "Elektroninen julkaisu (ePub)"
 
-#: ..\..\..\../document/formats/fb2.py:24
-#: ..\..\..\../document/formats/fb2.py:36
+#: ..\..\..\../document/formats/fb2.py:23
+#: ..\..\..\../document/formats/fb2.py:34
 msgid "Fiction Book (FB2)"
 msgstr "Fiction Book (FB2)"
 
-#: ..\..\..\../document/formats/fitz.py:170
+#: ..\..\..\../document/formats/fitz.py:169
 msgid "XPS Document"
 msgstr "XPS-asiakirja"
 
-#: ..\..\..\../document/formats/fitz.py:178
+#: ..\..\..\../document/formats/fitz.py:176
 msgid "Comic Book Archive"
 msgstr "Comic Book -arkisto"
 
 #: ..\..\..\../document/formats/html.py:174
-#: ..\..\..\../document/formats/html.py:244
+#: ..\..\..\../document/formats/html.py:243
 msgid "HTML Document"
 msgstr "HTML-asiakirja"
 
-#: ..\..\..\../document/formats/markdown.py:20
+#: ..\..\..\../document/formats/markdown.py:19
 msgid "Markdown File"
 msgstr "Markdown-tiedosto"
 
-#: ..\..\..\../document/formats/mobi.py:40
+#: ..\..\..\../document/formats/mobi.py:39
 msgid "Kindle eBook"
 msgstr "Kindle-e-kirja"
 
-#: ..\..\..\../document/formats/odf.py:83
+#: ..\..\..\../document/formats/odf.py:82
 msgid "Open Document Text"
 msgstr "Open Document Text"
 
-#: ..\..\..\../document/formats/odf.py:129
+#: ..\..\..\../document/formats/odf.py:128
 msgid "Open Document Presentation"
 msgstr "Open Document Presentation"
 
-#: ..\..\..\../document/formats/odf.py:192
-#: ..\..\..\../document/formats/powerpoint.py:156
+#: ..\..\..\../document/formats/odf.py:191
+#: ..\..\..\../document/formats/powerpoint.py:155
 #, python-brace-format
 msgid "Slide {number}"
 msgstr "Dia {number}"
 
-#: ..\..\..\../document/formats/pandoc.py:39
+#: ..\..\..\../document/formats/pandoc.py:38
 msgid "Rich Text Document"
 msgstr "Rich Text -asiakirja"
 
-#: ..\..\..\../document/formats/pandoc.py:48
+#: ..\..\..\../document/formats/pandoc.py:47
 msgid "Docbook Document"
 msgstr "Docbook-asiakirja"
 
-#: ..\..\..\../document/formats/pandoc.py:57
+#: ..\..\..\../document/formats/pandoc.py:56
 msgid "Jupyter notebook"
 msgstr "Jupyter-muistikirja"
 
-#: ..\..\..\../document/formats/pandoc.py:66
+#: ..\..\..\../document/formats/pandoc.py:65
 msgid "LaTeX Document"
 msgstr "LaTeX-asiakirja"
 
-#: ..\..\..\../document/formats/pandoc.py:75
+#: ..\..\..\../document/formats/pandoc.py:74
 msgid "Text2Tags Document"
 msgstr "Text2Tags-asiakirja"
 
-#: ..\..\..\../document/formats/pandoc.py:84
+#: ..\..\..\../document/formats/pandoc.py:83
 msgid "Unix manual page"
 msgstr "Unix-käsikirjan sivu"
 
@@ -1105,7 +1105,7 @@ msgstr "Unix-käsikirjan sivu"
 msgid "Portable Document (PDF)"
 msgstr "Siirrettävä asiakirja (PDF)"
 
-#: ..\..\..\../document/formats/plain_text.py:27
+#: ..\..\..\../document/formats/plain_text.py:28
 msgid "Plain Text File"
 msgstr "Vain teksti -tiedosto"
 
@@ -1113,15 +1113,15 @@ msgstr "Vain teksti -tiedosto"
 msgid "Slide Notes"
 msgstr "Dian muistiinpanot"
 
-#: ..\..\..\../document/formats/powerpoint.py:116
+#: ..\..\..\../document/formats/powerpoint.py:115
 msgid "PowerPoint Presentation"
 msgstr "PowerPoint-esitys"
 
-#: ..\..\..\../document/formats/word.py:45
+#: ..\..\..\../document/formats/word.py:44
 msgid "Word Document"
 msgstr "Word-asiakirja"
 
-#: ..\..\..\../document/formats/word.py:136
+#: ..\..\..\../document/formats/word.py:134
 msgid "Word 97 - 2003 Document"
 msgstr "Word 97-2003 -asiakirja"
 
@@ -1283,27 +1283,27 @@ msgstr "Sisällysluettelo"
 msgid "Reading progress percentage"
 msgstr "Lukemisen edistymisprosentti"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:397
+#: ..\..\..\../gui/book_viewer/__init__.py:399
 msgid "Open"
 msgstr "Avaa"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:402
+#: ..\..\..\../gui/book_viewer/__init__.py:404
 msgid "Mode"
 msgstr "Tila"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:405
+#: ..\..\..\../gui/book_viewer/__init__.py:407
 msgid "Big"
 msgstr "Suuri"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:407
+#: ..\..\..\../gui/book_viewer/__init__.py:409
 msgid "Small"
 msgstr "Pieni"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:452
+#: ..\..\..\../gui/book_viewer/__init__.py:454
 msgid "Incorrect Password"
 msgstr "Väärä salasana"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:456
+#: ..\..\..\../gui/book_viewer/__init__.py:458
 msgid ""
 "The password you provided is incorrect.\n"
 "Please try again with the correct password."
@@ -1311,59 +1311,52 @@ msgstr ""
 "Antamasi salasana on väärä.\n"
 "Yritä uudelleen kirjoittamalla oikea salasana."
 
-#: ..\..\..\../gui/book_viewer/__init__.py:522
+#: ..\..\..\../gui/book_viewer/__init__.py:518
 msgid "Document closed."
 msgstr "Asiakirja suljettu."
 
-#: ..\..\..\../gui/book_viewer/__init__.py:558
+#: ..\..\..\../gui/book_viewer/__init__.py:555
 #, python-brace-format
 msgid "{percentage} completed"
 msgstr "{percentage} luettu"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:622
+#: ..\..\..\../gui/book_viewer/__init__.py:613
 msgid "Document content"
 msgstr "Asiakirjan sisältö"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:625
-#: ..\..\..\../gui/book_viewer/__init__.py:809
-#: ..\..\..\../text_to_speech/__init__.py:167
-#, python-brace-format
-msgid "Page {page} of {total}"
-msgstr "Sivu {page} / {total}"
-
-#: ..\..\..\../gui/book_viewer/__init__.py:672
+#: ..\..\..\../gui/book_viewer/__init__.py:644
 #, python-brace-format
 msgid "{text}: {item_type}"
 msgstr "{text}: {item_type}"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:689
+#: ..\..\..\../gui/book_viewer/__init__.py:661
 #, python-brace-format
 msgid "No next {item}"
 msgstr "Ei seuraavaa {item}"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:691
+#: ..\..\..\../gui/book_viewer/__init__.py:663
 #, python-brace-format
 msgid "No previous {item}"
 msgstr "Ei edellistä {item}"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:707
+#: ..\..\..\../gui/book_viewer/__init__.py:679
 msgid "The font size has been Increased"
 msgstr "Fonttikokoa on suurennettu"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:713
+#: ..\..\..\../gui/book_viewer/__init__.py:685
 msgid "The font size has been decreased"
 msgstr "Fonttikokoa on pienennetty"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:717
+#: ..\..\..\../gui/book_viewer/__init__.py:689
 msgid "The font size has been reset"
 msgstr "Fonttikoko on nollattu"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:747
+#: ..\..\..\../gui/book_viewer/__init__.py:719
 #, python-brace-format
 msgid "Reading progress: {percentage}"
 msgstr "Lukemisen edistyminen: {percentage}"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:766
+#: ..\..\..\../gui/book_viewer/__init__.py:741
 msgid ""
 "This document is encrypted with a password.\n"
 "You need to provide the password in order to access its content.\n"
@@ -1373,11 +1366,17 @@ msgstr ""
 "Tarvitset salasanan sen lukemiseen.\n"
 "Kirjoita salasana ja paina Enteriä."
 
-#: ..\..\..\../gui/book_viewer/__init__.py:771
+#: ..\..\..\../gui/book_viewer/__init__.py:746
 msgid "Enter Password"
 msgstr "Kirjoita salasana"
 
-#: ..\..\..\../gui/book_viewer/__init__.py:894
+#: ..\..\..\../gui/book_viewer/__init__.py:784
+#: ..\..\..\../text_to_speech/__init__.py:167
+#, python-brace-format
+msgid "Page {page} of {total}"
+msgstr "Sivu {page} / {total}"
+
+#: ..\..\..\../gui/book_viewer/__init__.py:869
 #, python-brace-format
 msgid "Opening page: {url}"
 msgstr "Avataan sivua: {url}"
@@ -1582,6 +1581,14 @@ msgstr "Lopeta"
 msgid "Select a document"
 msgstr "Valitse asiakirja"
 
+#: ..\..\..\../gui/book_viewer/menubar.py:236
+msgid "Pinned"
+msgstr "Kiinnitetyt"
+
+#: ..\..\..\../gui/book_viewer/menubar.py:240
+msgid "Unpinned"
+msgstr "Ei-kiinnitetyt"
+
 #: ..\..\..\../gui/book_viewer/menubar.py:266
 msgid "Exporting Document"
 msgstr "Viedään asiakirjaa"
@@ -1656,12 +1663,12 @@ msgid "Change the current reading mode."
 msgstr "Muuta nykyistä lukutilaa."
 
 #: ..\..\..\../gui/book_viewer/menubar.py:441
-#: ..\..\..\../gui/book_viewer/menubar.py:943
+#: ..\..\..\../gui/book_viewer/menubar.py:947
 msgid "&Render Page...\tCtrl-R"
 msgstr "&Renderöi sivu...\tCtrl+R"
 
 #: ..\..\..\../gui/book_viewer/menubar.py:443
-#: ..\..\..\../gui/book_viewer/menubar.py:944
+#: ..\..\..\../gui/book_viewer/menubar.py:948
 msgid "View a fully rendered version of this page."
 msgstr "Näytä tämän sivun täysin renderöity versio."
 
@@ -1677,62 +1684,62 @@ msgstr "Käytettävissä olevat lukutilat"
 msgid "Select Reading Mode "
 msgstr "Valitse lukutila"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:524
+#: ..\..\..\../gui/book_viewer/menubar.py:528
 msgid "Element List"
 msgstr "Elementtilista"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:551
-#: ..\..\..\../gui/book_viewer/menubar.py:933
+#: ..\..\..\../gui/book_viewer/menubar.py:555
+#: ..\..\..\../gui/book_viewer/menubar.py:937
 msgid "&Find in Document...\tCtrl-F"
 msgstr "&Etsi asiakirjasta...\tCtrl+F"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:553
-#: ..\..\..\../gui/book_viewer/menubar.py:934
+#: ..\..\..\../gui/book_viewer/menubar.py:557
+#: ..\..\..\../gui/book_viewer/menubar.py:938
 msgid "Search this document."
 msgstr "Hae tästä asiakirjasta."
 
-#: ..\..\..\../gui/book_viewer/menubar.py:558
+#: ..\..\..\../gui/book_viewer/menubar.py:562
 msgid "Find &Next\tF3"
 msgstr "Etsi &seuraava\tF3"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:560
+#: ..\..\..\../gui/book_viewer/menubar.py:564
 msgid "Find next occurrence."
 msgstr "Etsi seuraava esiintymä."
 
-#: ..\..\..\../gui/book_viewer/menubar.py:565
+#: ..\..\..\../gui/book_viewer/menubar.py:569
 msgid "Find &Previous\tShift-F3"
 msgstr "Etsi e&dellinen\tVaihto+F3"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:567
+#: ..\..\..\../gui/book_viewer/menubar.py:571
 msgid "Find previous occurrence."
 msgstr "Etsi edellinen esiintymä."
 
-#: ..\..\..\../gui/book_viewer/menubar.py:572
+#: ..\..\..\../gui/book_viewer/menubar.py:576
 msgid "&Jump to Line...\tCtrl-L"
 msgstr "S&iirry riville...\tCtrl+L"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:574
+#: ..\..\..\../gui/book_viewer/menubar.py:578
 msgid "Jump to a line within the current page or document"
 msgstr "Jump to a line within the current page or document"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:579
-#: ..\..\..\../gui/book_viewer/menubar.py:927
+#: ..\..\..\../gui/book_viewer/menubar.py:583
+#: ..\..\..\../gui/book_viewer/menubar.py:931
 msgid "&Go To Page...\tCtrl-G"
 msgstr "S&iirry sivulle...\tCtrl+G"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:581
+#: ..\..\..\../gui/book_viewer/menubar.py:585
 msgid "Go to page"
 msgstr "Siirry sivulle"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:586
+#: ..\..\..\../gui/book_viewer/menubar.py:590
 msgid "&Go To Page By Label...\tCtrl-Shift-G"
 msgstr "Siirry sivulle t&unnisteen perusteella...\tCtrl+Vaihto+G"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:588
+#: ..\..\..\../gui/book_viewer/menubar.py:592
 msgid "Go to a page using its label"
 msgstr "Siirry sivulle sen tunnistetta käyttäen"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:622
+#: ..\..\..\../gui/book_viewer/menubar.py:626
 #, python-brace-format
 msgid ""
 "You are here: {current_line}\n"
@@ -1741,115 +1748,115 @@ msgstr ""
 "Olet tässä: {current_line}\n"
 "Et voi siirtyä edemmäs kuin: {last_line}"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:624
+#: ..\..\..\../gui/book_viewer/menubar.py:628
 msgid "Line number"
 msgstr "Rivinumero"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:625
+#: ..\..\..\../gui/book_viewer/menubar.py:629
 msgid "Jump to line"
 msgstr "Siirry riville"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:638
+#: ..\..\..\../gui/book_viewer/menubar.py:642
 msgid "Go To Page"
 msgstr "Siirry sivulle"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:645
+#: ..\..\..\../gui/book_viewer/menubar.py:649
 msgid "Go To Page By Label"
 msgstr "Siirry sivulle tunnisteen perusteella"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:645
+#: ..\..\..\../gui/book_viewer/menubar.py:649
 msgid "Page Label"
 msgstr "Sivun tunniste"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:653
+#: ..\..\..\../gui/book_viewer/menubar.py:657
 msgid "Search Document"
 msgstr "Hae asiakirjasta"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:679
+#: ..\..\..\../gui/book_viewer/menubar.py:683
 #, python-brace-format
 msgid "Searching For '{term}'"
 msgstr "Haetaan '{term}'"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:694
+#: ..\..\..\../gui/book_viewer/menubar.py:698
 #, python-brace-format
 msgid "Results | {total}"
 msgstr "Tulokset | {total}"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:731
+#: ..\..\..\../gui/book_viewer/menubar.py:735
 msgid "Search Result"
 msgstr "Hakutulos"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:769
+#: ..\..\..\../gui/book_viewer/menubar.py:773
 msgid "&User guide...\tF1"
 msgstr "&Käyttöopas...\tF1"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:771
+#: ..\..\..\../gui/book_viewer/menubar.py:775
 msgid "View Bookworm manuals"
 msgstr "Näytä Bookwormin käyttöohje"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:776
+#: ..\..\..\../gui/book_viewer/menubar.py:780
 msgid "Bookworm &website..."
-msgstr "Bookwormin v&erkkosivusto..."
+msgstr "Bookwormin v&erkkosivu..."
 
-#: ..\..\..\../gui/book_viewer/menubar.py:778
+#: ..\..\..\../gui/book_viewer/menubar.py:782
 msgid "Visit the official website of Bookworm"
 msgstr "Käy Bookwormin virallisella verkkosivustolla"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:783
+#: ..\..\..\../gui/book_viewer/menubar.py:787
 msgid "&License"
 msgstr "&Lisenssi"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:785
+#: ..\..\..\../gui/book_viewer/menubar.py:789
 msgid "View legal information about this program ."
 msgstr "Näytä tämän ohjelman oikeudelliset tiedot."
 
-#: ..\..\..\../gui/book_viewer/menubar.py:790
+#: ..\..\..\../gui/book_viewer/menubar.py:794
 msgid "Con&tributors"
 msgstr "&Osallistujat"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:792
+#: ..\..\..\../gui/book_viewer/menubar.py:796
 msgid "View a list of notable contributors to the program."
 msgstr "Näytä lista merkittävästi ohjelman kehitykseen osallistuneista."
 
-#: ..\..\..\../gui/book_viewer/menubar.py:798
+#: ..\..\..\../gui/book_viewer/menubar.py:802
 msgid "&Restart with debug-mode enabled"
 msgstr "&Käynnistä uudelleen virheenkorjaustilassa"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:800
+#: ..\..\..\../gui/book_viewer/menubar.py:804
 msgid "Restart the program with debug mode enabled to show errors"
 msgstr ""
 "Käynnistä ohjelma uudelleen virheenkorjaustilassa bugien etsimistä varten"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:810
+#: ..\..\..\../gui/book_viewer/menubar.py:814
 msgid "&About Bookworm"
 msgstr "T&ietoa Bookwormista"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:812
+#: ..\..\..\../gui/book_viewer/menubar.py:816
 msgid "Show general information about this program"
 msgstr "Näytä tämän ohjelman yleiset tiedot"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:845
+#: ..\..\..\../gui/book_viewer/menubar.py:849
 #, python-brace-format
 msgid "About {app_name}"
 msgstr "Tietoa {app_name}ista"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:881
+#: ..\..\..\../gui/book_viewer/menubar.py:885
 msgid "&Search"
 msgstr "&Haku"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:883
+#: ..\..\..\../gui/book_viewer/menubar.py:887
 msgid "&Document"
 msgstr "&Asiakirja"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:885
+#: ..\..\..\../gui/book_viewer/menubar.py:889
 msgid "&Help"
 msgstr "&Ohje"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:928
+#: ..\..\..\../gui/book_viewer/menubar.py:932
 msgid "Jump to a page"
 msgstr "Siirry sivulle"
 
-#: ..\..\..\../gui/book_viewer/menubar.py:982
+#: ..\..\..\../gui/book_viewer/menubar.py:986
 msgid "Supported document formats"
 msgstr "Tuetut asiakirjamuodot"
 
@@ -1890,17 +1897,17 @@ msgstr "Tietty luku"
 msgid "Select section:"
 msgstr "Valitse luku:"
 
-#: ..\..\..\../gui/components.py:276 ..\..\..\../gui/components.py:317
-#: ..\..\..\../gui/settings.py:633
+#: ..\..\..\../gui/components.py:277 ..\..\..\../gui/components.py:318
+#: ..\..\..\../gui/settings.py:646
 msgid "OK"
 msgstr "OK"
 
-#: ..\..\..\../gui/components.py:279 ..\..\..\../gui/components.py:320
-#: ..\..\..\../gui/settings.py:636
+#: ..\..\..\../gui/components.py:280 ..\..\..\../gui/components.py:321
+#: ..\..\..\../gui/settings.py:649
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: ..\..\..\../gui/components.py:606
+#: ..\..\..\../gui/components.py:607
 msgid ""
 "This will cancel all the operations in progress.\n"
 "Are you sure you want to abort?"
@@ -1963,51 +1970,47 @@ msgstr ""
 msgid "All registered file associations have been removed."
 msgstr "Kaikki rekisteröidyt tiedostokytkennät on poistettu."
 
-#: ..\..\..\../gui/settings.py:216
+#: ..\..\..\../gui/settings.py:215
 msgid "User Interface"
 msgstr "Käyttöliittymä"
 
-#: ..\..\..\../gui/settings.py:218
+#: ..\..\..\../gui/settings.py:217
 msgid "Display Language:"
 msgstr "Näyttökieli:"
 
-#: ..\..\..\../gui/settings.py:225
+#: ..\..\..\../gui/settings.py:222
+msgid "Spoken feedback"
+msgstr "Puhepalaute"
+
+#: ..\..\..\../gui/settings.py:227
 msgid "Speak user interface messages"
 msgstr "Puhu käyttöliittymän ilmoitukset"
 
-#: ..\..\..\../gui/settings.py:232 ..\..\..\../text_to_speech/tts_gui.py:84
-msgid "Speak page number"
-msgstr "Puhu sivunumero"
-
-#: ..\..\..\../gui/settings.py:239
-msgid "Speak section title"
-msgstr "Puhu luvun otsikko"
-
-#: ..\..\..\../gui/settings.py:246
-msgid "Play pagination sound"
-msgstr "Soita sivunvaihdon ääni"
-
-#: ..\..\..\../gui/settings.py:253
-msgid "Include page label in page title"
-msgstr "Lisää sivun tunniste sivun otsikkoon"
-
-#: ..\..\..\../gui/settings.py:260
-msgid "Use file name instead of book title"
-msgstr "Käytä tiedostonimeä kirjan nimen sijaan"
-
-#: ..\..\..\../gui/settings.py:267
-msgid "Show reading progress percentage"
-msgstr "Näytä lukemisen edistymisprosentti"
-
-#: ..\..\..\../gui/settings.py:272
+#: ..\..\..\../gui/settings.py:232
 msgid "Miscellaneous"
 msgstr "Sekalaiset"
 
-#: ..\..\..\../gui/settings.py:277
+#: ..\..\..\../gui/settings.py:237
+msgid "Play pagination sound"
+msgstr "Soita sivunvaihdon ääni"
+
+#: ..\..\..\../gui/settings.py:244
+msgid "Include page label in page title"
+msgstr "Lisää sivun tunniste sivun otsikkoon"
+
+#: ..\..\..\../gui/settings.py:251
+msgid "Use file name instead of book title"
+msgstr "Käytä tiedostonimeä kirjan nimen sijaan"
+
+#: ..\..\..\../gui/settings.py:258
+msgid "Show reading progress percentage"
+msgstr "Näytä lukemisen edistymisprosentti"
+
+#: ..\..\..\../gui/settings.py:265
 msgid "Open recently opened books from the last position"
 msgstr "Avaa äskettäin avatut kirjat edellisestä lukukohdasta"
 
-#: ..\..\..\../gui/settings.py:285
+#: ..\..\..\../gui/settings.py:273
 msgid ""
 "Try to support the screen reader's continuous reading mode by automatically "
 "turning pages (may not work in some cases)"
@@ -2015,19 +2018,19 @@ msgstr ""
 "Yritä tukea ruudunlukijan jatkuvan luvun tilaa kääntämällä sivuja "
 "automaattisesti (ei välttämättä toimi kaikissa tapauksissa)"
 
-#: ..\..\..\../gui/settings.py:293
+#: ..\..\..\../gui/settings.py:281
 msgid "Automatically check for updates"
 msgstr "Tarkista päivitykset automaattisesti"
 
-#: ..\..\..\../gui/settings.py:299
+#: ..\..\..\../gui/settings.py:287
 msgid "File Associations"
 msgstr "Tiedostokytkennät"
 
-#: ..\..\..\../gui/settings.py:304
+#: ..\..\..\../gui/settings.py:292
 msgid "Manage File &Associations"
 msgstr "Tiedosto&kytkentöjen hallinta"
 
-#: ..\..\..\../gui/settings.py:325
+#: ..\..\..\../gui/settings.py:323
 msgid ""
 "You have changed the display language of Bookworm.\n"
 "For this setting to fully take effect, you need to restart the application.\n"
@@ -2037,62 +2040,70 @@ msgstr ""
 "Sovellus on käynnistettävä uudelleen, jotta asetus tulee voimaan.\n"
 "Haluatko käynnistää sovelluksen uudelleen nyt?"
 
-#: ..\..\..\../gui/settings.py:331
+#: ..\..\..\../gui/settings.py:329
 msgid "Language Changed"
 msgstr "Kieli vaihdettu"
 
-#: ..\..\..\../gui/settings.py:353
+#: ..\..\..\../gui/settings.py:351
 msgid "General Appearance"
 msgstr "Yleinen ulkonäkö"
 
-#: ..\..\..\../gui/settings.py:358
+#: ..\..\..\../gui/settings.py:356
 msgid "Maximize the application window upon startup"
 msgstr "Suurenna sovellusikkuna käynnistettäessä"
 
-#: ..\..\..\../gui/settings.py:361
+#: ..\..\..\../gui/settings.py:363
+msgid "Show the application's toolbar"
+msgstr "Näytä sovelluksen työkalupalkki"
+
+#: ..\..\..\../gui/settings.py:366
 msgid "Text Styling"
 msgstr "Tekstin tyyli"
 
-#: ..\..\..\../gui/settings.py:366
+#: ..\..\..\../gui/settings.py:371
 msgid "Apply text styling (when available)"
 msgstr "Käytä tekstityylejä (kun käytettävissä)"
 
-#: ..\..\..\../gui/settings.py:371
+#: ..\..\..\../gui/settings.py:374
+msgid "Text view margins percentage"
+msgstr "Tekstinäkymän marginaalien prosenttiosuus"
+
+#: ..\..\..\../gui/settings.py:378
 msgid "Font"
 msgstr "Fontti"
-
-#: ..\..\..\../gui/settings.py:373
-msgid "Font Face"
-msgstr "Fontin tyyli "
 
 #: ..\..\..\../gui/settings.py:383
 msgid "Use Open-&dyslexic font"
 msgstr "Käytä Open-&dyslexic-fonttia"
 
 #: ..\..\..\../gui/settings.py:387
+msgid "Font Face"
+msgstr "Fontin tyyli "
+
+#: ..\..\..\../gui/settings.py:394
 msgid "Font Size"
 msgstr "Fonttikoko"
 
-#: ..\..\..\../gui/settings.py:393
+#: ..\..\..\../gui/settings.py:400
 msgid "Bold style"
 msgstr "Lihavoitu tyyli"
 
-#: ..\..\..\../gui/settings.py:447
+#: ..\..\..\../gui/settings.py:460
 msgid "Download Pandoc: The universal document converter"
 msgstr "Lataa Pandoc: yleinen asiakirjamuunnin"
 
-#: ..\..\..\../gui/settings.py:450
+#: ..\..\..\../gui/settings.py:463
 msgid ""
 "Add support for additional document formats including RTF and Word 2003 "
 "documents."
 msgstr ""
 "Lisää tuki  useammille asiakirjamuodoille, mukaan lukien RTF ja Word 2003."
 
-#: ..\..\..\../gui/settings.py:459
+#: ..\..\..\../gui/settings.py:472
 msgid "Update Pandoc (the universal document converter)"
 msgstr "Päivitä Pandoc (yleinen asiakirjamuunnin)"
 
-#: ..\..\..\../gui/settings.py:462
+#: ..\..\..\../gui/settings.py:475
 msgid ""
 "Update Pandoc to the latest version to improve performance and conversion "
 "quality."
@@ -2100,28 +2111,28 @@ msgstr ""
 "Päivitä Pandoc viimeisimpään versioon suorituskyvyn ja muunnoslaadun "
 "parantamiseksi."
 
-#: ..\..\..\../gui/settings.py:473
+#: ..\..\..\../gui/settings.py:481 ..\..\..\../gui/settings.py:486
 msgid "Reset Settings"
 msgstr "Nollaa asetukset"
 
-#: ..\..\..\../gui/settings.py:475
+#: ..\..\..\../gui/settings.py:488
 msgid "Reset Bookworm's settings to their defaults"
 msgstr "Nollaa Bookwormin asetukset oletusarvoihinsa"
 
-#: ..\..\..\../gui/settings.py:483
+#: ..\..\..\../gui/settings.py:496
 msgid "Downloading Pandoc"
 msgstr "Ladataan Pandoc"
 
-#: ..\..\..\../gui/settings.py:485 ..\..\..\../ocr/ocr_dialogs.py:129
+#: ..\..\..\../gui/settings.py:498 ..\..\..\../ocr/ocr_dialogs.py:129
 #: ..\..\..\../ocr/ocr_dialogs.py:544
 msgid "Getting download information..."
 msgstr "Haetaan lataustietoja..."
 
-#: ..\..\..\../gui/settings.py:498 ..\..\..\../ocr/ocr_dialogs.py:162
+#: ..\..\..\../gui/settings.py:511 ..\..\..\../ocr/ocr_dialogs.py:162
 msgid "Checking for updates. Please wait..."
 msgstr "Odota, kun päivityksiä tarkistetaan..."
 
-#: ..\..\..\../gui/settings.py:507
+#: ..\..\..\../gui/settings.py:520
 msgid ""
 "You will lose  all of your custom settings.\n"
 "Are you sure you want to restore all settings to their default values?"
@@ -2129,20 +2140,20 @@ msgstr ""
 "Menetät kaikki muokkaamasi asetukset.\n"
 "Haluatko varmasti palauttaa kaikki asetukset oletusarvoihinsa?"
 
-#: ..\..\..\../gui/settings.py:510
+#: ..\..\..\../gui/settings.py:523
 msgid "Reset Settings?"
 msgstr "Nollataanko asetukset?"
 
-#: ..\..\..\../gui/settings.py:523 ..\..\..\../ocr/ocr_dialogs.py:149
+#: ..\..\..\../gui/settings.py:536 ..\..\..\../ocr/ocr_dialogs.py:149
 msgid "Restart Required"
 msgstr "Uudelleenkäynnistys tarvitaan"
 
-#: ..\..\..\../gui/settings.py:525
+#: ..\..\..\../gui/settings.py:538
 msgid "Bookworm will now restart to complete the installation of Pandoc."
 msgstr ""
 "Bookworm käynnistyy nyt uudelleen suorittaakseen loppuun Pandocin asennuksen."
 
-#: ..\..\..\../gui/settings.py:535
+#: ..\..\..\../gui/settings.py:548
 msgid ""
 "A new version of Pandoc is available for download.\n"
 "It is strongly recommended to update to the latest version for the best "
@@ -2154,36 +2165,36 @@ msgstr ""
 "muunnoslaadun saavuttamiseksi.\n"
 "Haluatko päivittää uuteen versioon?"
 
-#: ..\..\..\../gui/settings.py:538
+#: ..\..\..\../gui/settings.py:551
 msgid "Update Pandoc?"
 msgstr "Päivitetäänkö Pandoc?"
 
-#: ..\..\..\../gui/settings.py:547
+#: ..\..\..\../gui/settings.py:560
 msgid "Removing old Pandoc version. Please wait..."
 msgstr "Odota, kun vanhaa Pandoc-versiota poistetaan..."
 
-#: ..\..\..\../gui/settings.py:553
+#: ..\..\..\../gui/settings.py:566
 msgid "Your version of Pandoc is up to date."
 msgstr "Pandocin versio on ajan tasalla."
 
-#: ..\..\..\../gui/settings.py:555 ..\..\..\../ocr/ocr_dialogs.py:192
+#: ..\..\..\../gui/settings.py:568 ..\..\..\../ocr/ocr_dialogs.py:192
 msgid "No updates"
 msgstr "Ei päivityksiä"
 
-#: ..\..\..\../gui/settings.py:563
+#: ..\..\..\../gui/settings.py:576
 msgid "Failed to check for updates. Please check your internet connection."
 msgstr ""
 "Päivitysten tarkistaminen epäonnistui. Tarkista internet-yhteytesi toimivuus."
 
-#: ..\..\..\../gui/settings.py:579
+#: ..\..\..\../gui/settings.py:592
 msgid "Appearance"
 msgstr "Ulkoasu"
 
-#: ..\..\..\../gui/settings.py:581
+#: ..\..\..\../gui/settings.py:594
 msgid "Advanced"
 msgstr "Lisäasetukset"
 
-#: ..\..\..\../gui/settings.py:638
+#: ..\..\..\../gui/settings.py:651
 msgid "Apply"
 msgstr "Käytä"
 
@@ -2662,7 +2673,7 @@ msgstr ""
 msgid "Update Available"
 msgstr "Päivitys saatavilla"
 
-#: ..\..\..\../platforms/win32/docr_engine.py:33
+#: ..\..\..\../platforms/win32/docr_engine.py:28
 msgid "Windows 10 OCR"
 msgstr "Windows 10:n tekstintunnistus"
 
@@ -2691,13 +2702,9 @@ msgstr ""
 "Pandocia ei voitu lisätä.\n"
 "Ole hyvä ja yritä uudelleen."
 
-#: ..\..\..\../platforms/win32/speech_engines/onecore/oc_engine.py:37
+#: ..\..\..\../platforms/win32/speech_engines/onecore.py:74
 msgid "One-core Synthesizer"
 msgstr "OneCore-syntetisaattori"
-
-#: ..\..\..\../platforms/win32/speech_engines/sapi/sp_engine.py:34
-msgid "Microsoft Speech API Version 5"
-msgstr "Microsoft Speech API:n versio 5"
 
 #: ..\..\..\../platforms/win32/tesseract_download.py:76
 msgid "Tesseract engine downloaded successfully"
@@ -2847,7 +2854,7 @@ msgstr "Luettelo"
 
 #: ..\..\..\../structured_text/structural_elements.py:69
 msgid "Quote"
-msgstr "Lainaus"
+msgstr "Sisennetty lainaus"
 
 #: ..\..\..\../structured_text/structural_elements.py:70
 msgid "Table"
@@ -2883,20 +2890,20 @@ msgstr "Seuraava"
 msgid "End of document."
 msgstr "Asiakirjan loppu."
 
-#: ..\..\..\../text_to_speech/__init__.py:222
+#: ..\..\..\../text_to_speech/__init__.py:223
 #, python-brace-format
 msgid "End of section: {chapter}."
 msgstr "Luvun {chapter} loppu."
 
-#: ..\..\..\../text_to_speech/__init__.py:255
+#: ..\..\..\../text_to_speech/__init__.py:256
 msgid "End of document"
 msgstr "Asiakirjan loppu"
 
-#: ..\..\..\../text_to_speech/__init__.py:408
+#: ..\..\..\../text_to_speech/__init__.py:409
 msgid "No TTS Voices"
 msgstr "Teksti puheeksi -ääniä ei ole"
 
-#: ..\..\..\../text_to_speech/__init__.py:411
+#: ..\..\..\../text_to_speech/__init__.py:412
 msgid ""
 "A valid Text-to-speech voice was not found for the current speech engine.\n"
 "Text-to-speech functionality will be disabled."
@@ -2904,7 +2911,7 @@ msgstr ""
 "Nykyiselle puhemoottorille ei löytynyt kelvollista teksti puheeksi -ääntä.\n"
 "Teksti puheeksi -toiminto poistetaan käytöstä."
 
-#: ..\..\..\../text_to_speech/__init__.py:429
+#: ..\..\..\../text_to_speech/__init__.py:430
 msgid ""
 "Bookworm has noticed that the currently configured Text-to-speech voice "
 "speaks a language different from that of this book.\n"
@@ -2916,19 +2923,19 @@ msgstr ""
 "Haluatko vaihtaa tilapäisesti toiseen ääneen, joka puhuu nykyisen asiakirjan "
 "kieltä?"
 
-#: ..\..\..\../text_to_speech/__init__.py:435
+#: ..\..\..\../text_to_speech/__init__.py:436
 msgid "Incompatible TTS Voice Detected"
 msgstr "Yhteensopimaton teksti puheeksi -ääni havaittu"
 
-#: ..\..\..\../text_to_speech/tts_config.py:124
+#: ..\..\..\../text_to_speech/tts_config.py:125
 msgid "Human-like"
 msgstr "Ihmismäinen"
 
-#: ..\..\..\../text_to_speech/tts_config.py:135
+#: ..\..\..\../text_to_speech/tts_config.py:136
 msgid "Deep Reading"
 msgstr "Syväluku"
 
-#: ..\..\..\../text_to_speech/tts_config.py:146
+#: ..\..\..\../text_to_speech/tts_config.py:147
 msgid "Express"
 msgstr "Pikaluku"
 
@@ -2968,6 +2975,10 @@ msgstr "Sivun alusta"
 msgid "During Reading Aloud"
 msgstr "Ääneeen luettaessa"
 
+#: ..\..\..\../text_to_speech/tts_gui.py:84
+msgid "Speak page number"
+msgstr "Puhu sivunumero"
+
 #: ..\..\..\../text_to_speech/tts_gui.py:91
 msgid "Announce the end of sections"
 msgstr "Ilmoita lukujen loppumisesta"
@@ -3001,70 +3012,74 @@ msgid "Speech Rate:"
 msgstr "Puhenopeus:"
 
 #: ..\..\..\../text_to_speech/tts_gui.py:157
+msgid "Voice Pitch:"
+msgstr "Äänenkorkeus:"
+
+#: ..\..\..\../text_to_speech/tts_gui.py:163
 msgid "Speech Volume:"
 msgstr "Puheen voimakkuus:"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:164
+#: ..\..\..\../text_to_speech/tts_gui.py:170
 msgid "Pauses"
 msgstr "Tauot"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:167
+#: ..\..\..\../text_to_speech/tts_gui.py:173
 msgid "Additional Pause At Sentence End (Ms)"
 msgstr "Lisätauko virkkeen lopussa (Ms)"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:172
+#: ..\..\..\../text_to_speech/tts_gui.py:178
 msgid "Additional Pause At Paragraph End (Ms)"
 msgstr "Lisätauko kappaleen lopussa (Ms)"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:177
+#: ..\..\..\../text_to_speech/tts_gui.py:183
 msgid "End of Page Pause (ms)"
 msgstr "Tauko sivun lopussa (ms)"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:186
+#: ..\..\..\../text_to_speech/tts_gui.py:192
 msgid "End of Section Pause (ms)"
 msgstr "Tauko luvun lopussa (ms)"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:230
+#: ..\..\..\../text_to_speech/tts_gui.py:236
 msgid "Speech Engine"
 msgstr "Puhemoottori"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:277
+#: ..\..\..\../text_to_speech/tts_gui.py:285
 #, python-brace-format
 msgid "Voice Profile: {profile}"
 msgstr "Ääniprofiili: {profile}"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:304
+#: ..\..\..\../text_to_speech/tts_gui.py:312
 msgid "Select Voice Profile:"
 msgstr "Valitse ääniprofiili:"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:310
+#: ..\..\..\../text_to_speech/tts_gui.py:318
 msgid "&Activate"
 msgstr "&Ota käyttöön"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:316
+#: ..\..\..\../text_to_speech/tts_gui.py:324
 msgid "&New Profile..."
 msgstr "&Uusi profiili..."
 
-#: ..\..\..\../text_to_speech/tts_gui.py:350
+#: ..\..\..\../text_to_speech/tts_gui.py:358
 #, python-brace-format
 msgid "{profile} (active)"
 msgstr "{profile} (käytössä)"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:400
+#: ..\..\..\../text_to_speech/tts_gui.py:408
 msgid "Profile Name:"
 msgstr "Profiilin nimi:"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:402
+#: ..\..\..\../text_to_speech/tts_gui.py:410
 msgid "New Voice Profile"
 msgstr "Uusi ääniprofiili"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:415
+#: ..\..\..\../text_to_speech/tts_gui.py:423
 msgid ""
 "A voice profile with the same name already exists. Please select another "
 "name."
 msgstr "Samanniminen ääniprofiili on jo olemassa. Valitse toinen nimi."
 
-#: ..\..\..\../text_to_speech/tts_gui.py:441
+#: ..\..\..\../text_to_speech/tts_gui.py:449
 #, python-brace-format
 msgid ""
 "Voice profile {profile} is the active profile.\n"
@@ -3075,11 +3090,11 @@ msgstr ""
 "Poista se ensin käytöstä valitsemalla Puhe-valikosta Poista käytöstä "
 "nykyinen ääniprofiili."
 
-#: ..\..\..\../text_to_speech/tts_gui.py:447
+#: ..\..\..\../text_to_speech/tts_gui.py:455
 msgid "Cannot Remove Profile"
 msgstr "Profiilia ei voi poistaa"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:454
+#: ..\..\..\../text_to_speech/tts_gui.py:462
 #, python-brace-format
 msgid ""
 "Are you sure you want to remove voice profile {profile}?\n"
@@ -3088,83 +3103,83 @@ msgstr ""
 "Haluatko varmasti poistaa ääniprofiilin {profile}?\n"
 "Poistoa ei voi peruuttaa."
 
-#: ..\..\..\../text_to_speech/tts_gui.py:458
+#: ..\..\..\../text_to_speech/tts_gui.py:466
 msgid "Remove Voice Profile?"
 msgstr "Poistetaanko ääniprofiili?"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:481
+#: ..\..\..\../text_to_speech/tts_gui.py:489
 msgid "Select Speech Engine:"
 msgstr "Valitse puhemoottori:"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:510
+#: ..\..\..\../text_to_speech/tts_gui.py:518
 msgid "&Play\tF5"
 msgstr "&Toista\tF5"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:512
+#: ..\..\..\../text_to_speech/tts_gui.py:520
 msgid "Start reading aloud"
 msgstr "Aloita ääneen lukeminen"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:517
+#: ..\..\..\../text_to_speech/tts_gui.py:525
 msgid "Pa&use/Resume\tF6"
 msgstr "Keske&ytä/jatka\tF6"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:519
+#: ..\..\..\../text_to_speech/tts_gui.py:527
 msgid "Pause/Resume reading aloud"
 msgstr "Keskeytä/jatka ääneen lukemista"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:524
+#: ..\..\..\../text_to_speech/tts_gui.py:532
 msgid "&Stop\tF7"
 msgstr "&Pysäytä\tF7"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:526
+#: ..\..\..\../text_to_speech/tts_gui.py:534
 msgid "Stop reading aloud"
 msgstr "Pysäytä ääneen lukeminen"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:531
+#: ..\..\..\../text_to_speech/tts_gui.py:539
 msgid "&Rewind\tAlt-LeftArrow"
 msgstr "Kelaa t&aaksepäin\tAlt+Vasen nuoli"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:533
+#: ..\..\..\../text_to_speech/tts_gui.py:541
 msgid "Skip to previous paragraph"
 msgstr "Siirry edelliseen kappaleeseen"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:538
+#: ..\..\..\../text_to_speech/tts_gui.py:546
 msgid "&Fast Forward\tAlt-RightArrow"
 msgstr "Kelaa &eteenpäin\tAlt+Oikea nuoli"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:540
+#: ..\..\..\../text_to_speech/tts_gui.py:548
 msgid "Skip to next paragraph"
 msgstr "Siirry seuraavaan kappaleeseen"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:545
+#: ..\..\..\../text_to_speech/tts_gui.py:553
 msgid "&Voice Profiles\tCtrl-Shift-V"
 msgstr "&Ääniprofiilit\tCtrl+Vaihto+V"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:547
+#: ..\..\..\../text_to_speech/tts_gui.py:555
 msgid "Manage voice profiles."
 msgstr "Hallitse ääniprofiileja."
 
-#: ..\..\..\../text_to_speech/tts_gui.py:552
+#: ..\..\..\../text_to_speech/tts_gui.py:560
 msgid "&Deactivate Active Voice Profile"
 msgstr "P&oista käytöstä nykyinen ääniprofiili"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:554
+#: ..\..\..\../text_to_speech/tts_gui.py:562
 msgid "Deactivate the active voice profile."
 msgstr "Poista käytöstä nykyinen ääniprofiili."
 
-#: ..\..\..\../text_to_speech/tts_gui.py:616
+#: ..\..\..\../text_to_speech/tts_gui.py:624
 msgid "Paused"
 msgstr "Keskeytetty"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:620
+#: ..\..\..\../text_to_speech/tts_gui.py:628
 msgid "Resumed"
 msgstr "Jatketaan"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:630
+#: ..\..\..\../text_to_speech/tts_gui.py:638
 msgid "Stopped"
 msgstr "Pysäytetty"
 
-#: ..\..\..\../text_to_speech/tts_gui.py:635
+#: ..\..\..\../text_to_speech/tts_gui.py:643
 msgid "Voice Profiles"
 msgstr "Ääniprofiilit"
 
@@ -3264,6 +3279,12 @@ msgstr "Syötä hakuehto"
 #: ..\..\..\../webservices/wikiworm.py:250
 msgid "Choose Wikipedia language"
 msgstr "Valitse Wikipedian kieli"
+
+#~ msgid "Speak section title"
+#~ msgstr "Puhu luvun otsikko"
+
+#~ msgid "Microsoft Speech API Version 5"
+#~ msgstr "Microsoft Speech API:n versio 5"
 
 #~ msgid "Exclude named bookmarks when jumping between bookmarks"
 #~ msgstr ""
