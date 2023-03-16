@@ -2,8 +2,10 @@
 
 ## Johdanto
 
-Bookworm on asiakirjanlukija, jonka avulla voit lukea PDF-, ePub-, MOBI- ja monia muita asiakirjamuotoja käyttäen monipuolista, mutta yksinkertaista ja helppokäyttöistä käyttöliittymää.
-Bookworm tarjoaa runsaasti työkaluja asiakirjojen lukemiseen. Voit etsiä asiakirjasta, lisätä kirjanmerkkejä ja korostaa mielenkiintoista sisältöä, käyttää teksti puheeksi -toimintoa ja muuntaa skannatut asiakirjat tavalliseksi tekstiksi tekstintunnistusta käyttäen.
+Bookworm on asiakirjanlukija, jonka avulla voit lukea PDF-, ePub-, MOBI- ja monia muita asiakirjamuotoja käyttäen monipuolista mutta yksinkertaista ja helppokäyttöistä käyttöliittymää.
+
+Bookworm tarjoaa runsaasti työkaluja asiakirjojen lukemiseen. Voit etsiä asiakirjasta, lisätä kirjanmerkkejä ja korostaa mielenkiintoista sisältöä, käyttää teksti puheeksi -toimintoa ja muuntaa skannatut asiakirjat pelkäksi tekstiksi tekstintunnistusta käyttäen.
+
 Bookworm toimii Windows-käyttöjärjestelmässä. Se toimii hyvin suosittujen ruudunlukijoiden, kuten NVDA:n ja JAWSin, kanssa. Vaikka mikään ruudunlukija ei olisi käytössä, Bookworm voi toimia puhuvana sovelluksena käyttäen sisäänrakennettuja teksti puheeksi -ominaisuuksia.
 
 ## Ominaisuudet
@@ -11,7 +13,7 @@ Bookworm toimii Windows-käyttöjärjestelmässä. Se toimii hyvin suosittujen r
 * Tukee yli 15 asiakirjamuotoa, mukaan lukien ePub, PDF, MOBI ja Microsoft Word
 * Tukee rakenteellista navigointia otsikoiden, luetteloiden, taulukoiden ja sisennettyjen lainausten välillä siirtymiseen pikanavigointikomentoja käyttäen
 * Haku koko tekstistä mukautettavilla asetuksilla
-* Kehittyneet ja helppokäyttöiset merkintätyökalut. Voit lisätä nimettyjä kirjanmerkkejä merkitsemään mielenkiintoisia kohtia tekstissä myöhempää käyttöä varten, ja voit lisätä kommentteja kiinnostavan ajatuksen vangitsemiseksi tai luoda yhteenvedon sisällöstä tietyssä tekstin kohdassa. Bookwormissa voit siirtyä nopeasti tiettyyn kommenttiin ja tarkastella sitä. Voit myös viedä kommentit tekstitiedostoon tai HTML-asiakirjaan myöhempää käyttöä varten.
+* Kehittyneet ja helppokäyttöiset merkintätyökalut. Voit lisätä nimettyjä kirjanmerkkejä merkitsemään mielenkiintoisia kohtia tekstissä myöhempää käyttöä varten, ja voit lisätä kommentteja kiinnostavan ajatuksen vangitsemiseksi tai luoda yhteenvedon sisällöstä tietyssä tekstin kohdassa. Voit siirtyä nopeasti tiettyyn kommenttiin ja tarkastella sitä. Voit myös viedä kommentit tekstitiedostoon tai HTML-asiakirjaan myöhempää käyttöä varten.
 * Bookworm tukee PDF-asiakirjoille kahta eri sivujenkatselutyyliä; pelkkää tekstiä ja täysin renderöityjä, zoomattavia kuvia.
 * Tuki tekstintunnistukselle tekstin poimimiseen skannatuista asiakirjoista ja kuvista Windows 10:n sisäänrakennettua tekstintunnistusmoottoria käyttäen. Ilmaiseksi saatavilla olevan Tesseract-tekstintunnistusmoottorin lataaminen ja käyttäminen on myös mahdollista.
 * Etsi termien määritelmiä ja lue Wikipedia-artikkeleita
@@ -76,7 +78,7 @@ Voit lisätä asiakirjaa lukiessasi kirjanmerkin painamalla Ctrl+B tai valitsema
 
 #### Kirjanmerkkien näyttäminen
 
-Siirry Merkinnät-valikkoon ja valitse Näytä kirjanmerkit -vaihtoehto. Näyttöön tulee valintaikkuna, jossa lisätyt kirjanmerkit näytetään. Minkä tahansa kohteen napsauttaminen kirjanmerkkiluettelossa siirtää välittömästi kyseisen kirjanmerkin kohtaan. Vaihtoehtoisesti voit siirtyä nopeasti lisättyjen kirjanmerkkien välillä käyttäen F2- ja Vaihto+F2-näppäimiä, jotka siirtävät suoraan siihen kohdistimen sijaintiin, johon kirjanmerkki viittaa.
+Siirry Merkinnät-valikkoon ja valitse Näytä kirjanmerkit -vaihtoehto. Näyttöön tulee valintaikkuna, jossa lisätyt kirjanmerkit näytetään. Minkä tahansa kohteen napsauttaminen kirjanmerkkiluettelossa siirtää välittömästi kyseisen kirjanmerkin kohtaan. Vaihtoehtoisesti voit siirtyä nopeasti lisättyjen kirjanmerkkien välillä käyttäen F2- ja Vaihto+F2-näppäinkomentoja, jotka siirtävät suoraan siihen kohdistimen sijaintiin, johon kirjanmerkki viittaa.
 
 #### Kommenttien lisääminen
 
@@ -92,7 +94,7 @@ Vaihtoehtoisesti voit napsauttaa Muokkaa-painiketta muuttaaksesi valitun komment
 
 #### Kommenttien vienti
 
-Bookwormilla voit viedä kommentit tekstitiedostoon tai HTML-asiakirjaan, joka voidaan avata verkkoselaimessa. Vaihtoehtoisesti Bookworm mahdollistaa kommenttien viennin Markdowniksi, joka on tehokäyttäjien keskuudessa suosittu rakenteellisten asiakirjojen tekstimuoto.
+Bookwormilla voit viedä kommentit tekstitiedostoon tai HTML-asiakirjaan, joka voidaan avata verkkoselaimessa. Vaihtoehtoisesti Bookworm mahdollistaa kommenttien viennin Markdown-muotoon, joka on tehokäyttäjien keskuudessa suosittu rakenteellisten asiakirjojen tekstimuoto.
 
 Vie kommentit seuraavasti:
 
@@ -151,12 +153,12 @@ Huomaa, että ominaisuuden tämänhetkisen toteutustavan takia odotettavissa on 
 
 ### Nykyisen sivun täysin renderöidyn version katselu
 
-Bookwormin avulla voit tarkastella asiakirjan täysin renderöityä versiota. Kun asiakirja on avattu, voit painaa Ctrl+R tai valita Asiakirja-valikosta Renderöi sivu -vaihtoehdon. Kutsumme tätä renderöintinäkymäksi.
+Bookwormin avulla voit tarkastella asiakirjan täysin renderöityä versiota. Kun asiakirja on avattu, voit painaa Ctrl+R tai valita Asiakirja-valikosta Renderöi sivu -vaihtoehdon. Tätä kutsutaan renderöintinäkymäksi.
 
 Kun olet renderöintinäkymässä, voit käyttää tavallisia zoomauskomentoja sivun lähentämiseen ja loitontamiseen:
 
 * Ctrl+=: Zoomaa lähemmäs
-* Ctrl+-: Zoomaa loitommas
+* Ctrl+-: Zoomaa kauemmas
 * Ctrl+0: Nollaa zoomaustaso
 
 Huomaa, että voit käyttää yllä mainittuja asiakirjojen navigointikomentoja myös renderöintinäkymässä liikkumiseen. Voit myös sulkea tämän näkymän ja palata tekstimuotoiseen oletusnäkymään painamalla Esc-näppäintä.
