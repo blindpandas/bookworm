@@ -243,7 +243,7 @@ class ElementListDialog(SimpleDialog):
         self.elementTypeRadio = EnumRadioBox(
             parent,
             -1,
-            label=("Element Type"),
+            label=_("Element Type"),
             choice_enum=ElementKind,
             majorDimension=0,
             style=wx.RA_SPECIFY_COLS,
