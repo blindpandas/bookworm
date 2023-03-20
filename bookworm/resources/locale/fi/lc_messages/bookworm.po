@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2023-03-16 14:20+0200\n"
-"PO-Revision-Date: 2023-03-16 15:48+0200\n"
+"POT-Creation-Date: 2023-03-20 09:59+0200\n"
+"PO-Revision-Date: 2023-03-20 10:00+0200\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: fi_FI <janikinnunen340@gmail.com>\n"
 "Language: fi\n"
@@ -1413,6 +1413,10 @@ msgstr "Sääntölauseke"
 #, python-brace-format
 msgid "Page number, of {total}:"
 msgstr "Sivu (yhteensä {total}):"
+
+#: ..\..\..\../gui/book_viewer/core_dialogs.py:246
+msgid "Element Type"
+msgstr "Elementin tyyppi"
 
 #: ..\..\..\../gui/book_viewer/core_dialogs.py:251
 msgid "Elements"
