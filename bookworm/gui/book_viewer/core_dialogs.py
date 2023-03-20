@@ -279,7 +279,7 @@ class ElementListDialog(SimpleDialog):
         label = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[
             self.elementTypeRadio.GetSelectedValue().value
         ][0]
-        self.elementListViewLabel.SetLabelText(label)
+        self.elementListViewLabel.SetLabelText(_(label))
 
     def populate_element_list(self, element_type):
         if (element_infos := self.__element_Info_cache.get(element_type)) is None:
