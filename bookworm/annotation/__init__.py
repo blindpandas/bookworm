@@ -272,7 +272,7 @@ class AnnotationService(BookwormService):
     def comments_page_handler(cls, sender, current, prev):
         comments = NoteTaker(sender).get_for_page()
         if comments.count():
-            if config.conf["annotation"]["play_sound_for_comments"]:
+            if config.conf["annotation"]["audable_indication_of_annotations_when_navigating_text"]:
                 wx.CallLater(150, lambda: sounds.has_note.play())
         for comment in comments:
             cls.style_comment(sender.view, comment.position)
