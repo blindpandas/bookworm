@@ -15,7 +15,7 @@ INVALID_PREFIXES = (
 
 
 CWD = Path(__file__).parent
-LONG_DESCRIPTION = (CWD / "README.md").read_text()
+LONG_DESCRIPTION = (CWD / "readme.md").read_text()
 
 REQUIREMENTS = []
 with open(CWD / "requirements-app.txt", "r") as reqs:
