@@ -15,6 +15,8 @@ INVALID_PREFIXES = (
 
 
 CWD = Path(__file__).parent
+print(f"CWD: {CWD}")
+print(list(CWD.iterdir()))
 LONG_DESCRIPTION = (CWD / "readme.md").read_text()
 
 REQUIREMENTS = []
