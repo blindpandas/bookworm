@@ -15,9 +15,7 @@ INVALID_PREFIXES = (
 
 
 CWD = Path(__file__).parent
-print(f"CWD: {CWD}")
-print(list(CWD.iterdir()))
-LONG_DESCRIPTION = (CWD / "readme.md").read_text()
+LONG_DESCRIPTION = "Bookworm is the universally accessible document reader.\nVisit [the project's home](https://github.com/blindpandas/bookworm) for more information."
 
 REQUIREMENTS = []
 with open(CWD / "requirements-app.txt", "r") as reqs:
