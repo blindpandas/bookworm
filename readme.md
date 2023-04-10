@@ -4,7 +4,7 @@
 
 **Bookworm** is an accessible document reader that enables blind and visually impaired individuals to read documents in an easy and hassle free manor. The main highlights of bookworm are:
 
-* Supports over 15 document formats
+* Supports over 20 document formats
 * Support for named **bookmarks**. This enables you to mark interesting positions in the text for later reference
 * Support for adding comments to capture an interesting thought or create a summary of the content at a particular position in the text. Bookworm allows you to quickly jump to a specific comment and view it. Later, you can export these comments to a text file or HTML document for later use.
 * Two different styles of viewing pages; plain-text and fully rendered, zoomable, images.
