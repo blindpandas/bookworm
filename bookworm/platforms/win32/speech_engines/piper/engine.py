@@ -164,7 +164,6 @@ class PiperSpeechEngine(BaseSpeechEngine):
 
 
 def get_piper_voices_directory():
-    return r"D:\Piper_TTS_Voices\voices"
     piper_voices_path = data_path("piper", "voices")
     piper_voices_path.mkdir(parents=True, exist_ok=True)
     return piper_voices_path
