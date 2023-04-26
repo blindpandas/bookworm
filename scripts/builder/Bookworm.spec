@@ -14,6 +14,7 @@ PACKAGES_WITH_DATA = [
     "lazy_import",
     "docx",
     "pptx",
+    "espeak_phonemizer",
 ]
 BOOKWORM_RESOURCES = collect_data_files(
     "bookworm",
