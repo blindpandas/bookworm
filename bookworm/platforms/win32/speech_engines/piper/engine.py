@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import string
 import weakref
 from pathlib import Path
 
@@ -31,11 +30,6 @@ class PiperTTSSsmlSpeechConverter(SsmlSpeechConverter):
 
     def audio(self, content):
         return self.bookmark(create_audio_bookmark_name(content))
-
-    def text(self, content):
-        if content.strip(string.whitespace + string.punctuation):
-            return super().text(content)
-        return ""
 
 
 class EventSink:

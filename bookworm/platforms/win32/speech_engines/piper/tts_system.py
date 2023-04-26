@@ -4,6 +4,7 @@ import audioop
 import io
 import json
 import os
+import string
 import typing
 import wave
 from dataclasses import dataclass, asdict
@@ -64,7 +65,9 @@ class MetaResult(BaseResult):
 
 
 class TextToken(BaseToken):
-    pass
+
+    def __bool__(self) -> bool:
+        return bool(self.text.strip(string.whitespace + string.punctuation))
 
 
 
@@ -173,6 +176,9 @@ class PiperSpeechSynthesisTask:
 
     token: BaseToken
     speech_options: SpeechOptions
+
+    def __bool__(self):
+        return bool(self.token)
 
     def generate_audio(self):
         audio_bytes = self.speech_options.voice.synthesize(
@@ -333,17 +339,15 @@ class PiperTextToSpeechSystem(TextToSpeechSystem):
         Returns an iterable of results (audio, marks, etc.)
         """
         yield BeginUtteranceResult()
-        last_speech_task = None
+        last_sample_rate = None
         for result in self._results:
             if isinstance(result, PiperSpeechSynthesisTask):
-                last_speech_task = result
+                if not result:
+                    continue
+                last_sample_rate = result.speech_options.voice.config.sample_rate
                 yield  result.generate_audio()
             elif isinstance(result, SilenceResult):
-                if last_speech_task is not None:
-                    sample_rate = last_speech_task.speech_options.voice.config.sample_rate
-                else:
-                    sample_rate = 16000
-                yield  result.generate_audio(sample_rate)
+                yield  result.generate_audio(last_sample_rate or 16000)
             else:
                 yield result
         self._results.clear()

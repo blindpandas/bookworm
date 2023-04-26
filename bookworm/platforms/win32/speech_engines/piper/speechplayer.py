@@ -21,8 +21,6 @@ from .opentts_abc.ssml import SSMLSpeaker
 
 log = logging.getLogger(__name__)
 
-STOP_PLAYBACK = object()
-
 
 # Sentinel
 _missing = object()
@@ -46,9 +44,6 @@ class PiperSpeechPlayer(AbstractContextManager):
         self._players_lock = threading.RLock()
         self.result_queue = queue.Queue()
         self._speech_task_executor = ThreadPoolExecutor(thread_name_prefix="piper_tts")
-        self.playing_thread = threading.Thread(target=self.player_func)
-        self.playing_thread.daemon = True
-        self.playing_thread.start()
         self.__current_state = PlayerState.STOPPED
         self._pause_playing = threading.Event()
         self._continue_playback = threading.Event()
@@ -91,17 +86,15 @@ class PiperSpeechPlayer(AbstractContextManager):
 
     def speak_ssml(self, ssml):
         self._speech_task_executor.submit(self._do_speak_ssml, ssml)
-        #self._do_speak_ssml(ssml)
 
     def stop(self):
         if not self._continue_playback.is_set():
             return
+        self._continue_playback.clear()
         with self._players_lock:
             for nvwp in self._players.values():
                 nvwp.stop()
-        with self.result_queue.mutex:
-            self.result_queue.queue.clear()
-        self.result_queue.put_nowait(STOP_PLAYBACK)
+                nvwp.close()
 
     def pause(self):
         if not self._pause_playing.is_set():
@@ -124,31 +117,14 @@ class PiperSpeechPlayer(AbstractContextManager):
     def _do_speak_ssml(self, ssml):
         if self._continue_playback.is_set():
             self.stop()
-        self.result_queue = queue.Queue()
         self._pause_playing.set()
         self._continue_playback.set()
         self.set_state(PlayerState.PLAYING)
-        for res in self.ssml_speaker.speak(ssml):
+        for item in self.ssml_speaker.speak(ssml):
             self._pause_playing.wait()
             if not self._continue_playback.is_set():
-                return
-            self.result_queue.put_nowait(res)
-        self.result_queue.put_nowait(STOP_PLAYBACK)
-
-    def player_func(self):
-        while True:
-            try:
-                item = self.result_queue.get(timeout=0.2)
-            except queue.Empty:
-                continue
-            if item is STOP_PLAYBACK:
-                self.set_state(PlayerState.STOPPED)
-                with self._players_lock:
-                    self._players.clear()
-                self._continue_playback.clear()
-                self._continue_playback.wait()
-                continue
-            elif isinstance(item, AudioResult):
+                break
+            if isinstance(item, AudioResult):
                 player = self._get_or_create_player(
                     sampling_rate=item.sample_rate_hz,
                     bits_per_sample=item.sample_width_bytes*8,
@@ -158,3 +134,4 @@ class PiperSpeechPlayer(AbstractContextManager):
                 player.idle()
             elif (self.bookmark_callback is not None) and isinstance(item, MarkResult):
                 self.bookmark_callback(item.name)
+        self.set_state(PlayerState.STOPPED)
