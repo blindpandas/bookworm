@@ -1,31 +1,22 @@
 # coding: utf-8
 
 import audioop
+import copy
 import io
 import json
 import os
-import string
+import sys
 import typing
 import wave
-from dataclasses import dataclass, asdict
+
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Mapping, Optional, Sequence, Union
 
 import numpy as np
 import onnxruntime
-from espeak_phonemizer import Phonemizer
-
-from .opentts_abc import (
-    AudioResult,
-    BaseResult,
-    BaseToken,
-    MarkResult,
-    Phonemes,
-    SayAs,
-    TextToSpeechSystem,
-    Voice,
-    Word,
-)
+from espeak_phonemizer  import Phonemizer
 
 
 DEFAULT_RATE = 50
@@ -36,52 +27,18 @@ _EOS = "$"
 _PAD = "_"
 
 
-class BeginUtteranceResult(BaseResult):
-    """Appended at the beginning of each speech utterance."""
-
-class EndUtteranceResult(BaseResult):
-    """Appended to the end of each speech utterance."""
-
-
-@dataclass
-class SilenceResult(BaseResult):
-    time_ms: int
-
-    def generate_audio(self, sample_rate) -> AudioResult:
-        """Generate silence (16-bit mono at sample rate)."""
-        num_samples = int((self.time_ms / 1000.0) * sample_rate)
-        audio_bytes = bytes(num_samples * 2)
-        return AudioResult(
-            sample_rate_hz=sample_rate,
-            audio_bytes=audio_bytes,
-            # 16-bit mono
-            sample_width_bytes=2,
-            num_channels=1
-        )
-
-
-class MetaResult(BaseResult):
-    """Piper specific result types."""
-
-
-class TextToken(BaseToken):
-
-    def __bool__(self) -> bool:
-        return bool(self.text.strip(string.whitespace + string.punctuation))
-
-
-
-@dataclass
-class ContainerToken(BaseToken):
-    tokens: Sequence[BaseToken]
-
-
 class VoiceNotFoundError(LookupError) :
     pass
 
 
 @dataclass
-class PiperVoice(Voice):
+class PiperVoice:
+    key: str
+    name: str
+    language: str
+    description: str
+    location: str
+    properties: typing.Optional[typing.Mapping[str, int]] = field(default_factory=dict)
 
     def __post_init__(self):
         try:
@@ -89,7 +46,7 @@ class PiperVoice(Voice):
             self.config_path = next(self.location.glob("*.onnx.json"))
         except StopIteration:
             raise RuntimeError(f"Could not load voice from `{os.fspath(self.location)}`")
-        self.config = load_config(self.config_path)
+        self.config = PiperConfig.load_from_json_file(self.config_path)
         self.__piper_model = None
         self.speakers = tuple(self.config.speaker_id_map.keys())
 
@@ -99,44 +56,17 @@ class PiperVoice(Voice):
             self.__piper_model = PiperModel(os.fspath(self.model_path), os.fspath(self.config_path))
         return self.__piper_model
 
-    def phonemize_token(self, token):
-        if isinstance(token, TextToken):
-            return self.model.text_to_phonemes(token.text)
-        elif isinstance(token, Word):
-            return self.model.word_to_phonemes(
-                token.text, word_role=token.role
-            )
-        elif isinstance(token, Phonemes):
-            phoneme_str = token.text.strip()
-            if " " in phoneme_str:
-                return phoneme_str.split()
-            else:
-                return phoneme_str
-        elif isinstance(token, SayAs):
-            return self.model.say_as_to_phonemes(
-                token.text,
-                interpret_as=token.interpret_as,
-                say_format=token.format,
-            )
+    def phonemize_text(self, text):
+        return self.model.text_to_phonemes(text)
 
-    def phonemes_from_tokens(self, tokens):
-        return [
-            self.phonemize_token(token)
-            for token in tokens
-        ]
-
-    def synthesize(self, token, speaker, rate):
-        phonemes = (
-            self.phonemize_token(token)
-            if not isinstance(token, ContainerToken)
-            else self.phonemes_from_tokens(token)
-        )
+    def synthesize(self, text, speaker, rate):
+        phonemes = self.phonemize_text(text)
         length_scale = self.config.length_scale
         if rate != DEFAULT_RATE:
             rate = rate or 1
             length_scale = length_scale * (50/rate)
             # Cap length_scale at 2.0 to avoid horrifying  audio result
-            length_scale = 2.0 if length_scale > 2 else length_scale
+            length_scale = 2. if length_scale > 2 else length_scale
         speaker_id = None
         if self.config.num_speakers > 1:
             if speaker is None:
@@ -156,49 +86,60 @@ class SpeechOptions:
     speaker: Optional[str] = None
     rate: int = DEFAULT_RATE
     volume: int = DEFAULT_VOLUME
+    pitch: int = 50
 
     def set_voice(self, voice: PiperVoice):
         self.voice = voice
         self.speaker = None
 
     def copy(self):
-        return SpeechOptions(
-            voice=self.voice,
-            speaker=self.speaker,
-            rate=self.rate,
-            volume=self.volume
-        )
+        return copy.copy(self)
 
 
 @dataclass
-class PiperSpeechSynthesisTask:
+class BookmarkTask:
+    name: str
+
+
+class AudioTask(ABC):
+
+    @abstractmethod
+    def generate_audio(self) -> bytes:
+        """Generate audio."""
+
+
+@dataclass
+class SilenceTask(AudioTask):
+    time_ms: int
+    sample_rate: int
+
+    def generate_audio(self):
+        """Generate silence (16-bit mono at sample rate)."""
+        num_samples = int((self.time_ms / 1000.0) * self.sample_rate)
+        return bytes(num_samples * 2)
+
+
+
+@dataclass
+class PiperSpeechSynthesisTask(AudioTask):
     """A pending request to synthesize a token."""
 
-    token: BaseToken
+    text: str
     speech_options: SpeechOptions
-
-    def __bool__(self):
-        return bool(self.token)
 
     def generate_audio(self):
         audio_bytes = self.speech_options.voice.synthesize(
-            self.token,
+            self.text,
             self.speech_options.speaker,
             self.speech_options.rate
         )
         volume = self.speech_options.volume
         if volume != DEFAULT_VOLUME:
             audio_bytes = audioop.mul(audio_bytes, 2, volume / 100.0)
-        return AudioResult(
-            sample_rate_hz=self.speech_options.voice.config.sample_rate,
-            audio_bytes=audio_bytes,
-            # 16-bit mono
-            sample_width_bytes=2,
-            num_channels=1,
-        )
+        return audio_bytes
 
 
-class PiperTextToSpeechSystem(TextToSpeechSystem):
+class PiperTextToSpeechSystem:
 
     def __init__(
         self,
@@ -214,7 +155,9 @@ class PiperTextToSpeechSystem(TextToSpeechSystem):
             self.speech_options = SpeechOptions(voice=voice)
         else:
             speech_options = speech_options
-        self._results = []
+
+    def shutdown(self):
+        pass
 
     @property
     def voice(self) -> str:
@@ -245,27 +188,49 @@ class PiperTextToSpeechSystem(TextToSpeechSystem):
         raise VoiceNotFoundError(f"A voice with the given language `{new_language}` was not found")
 
     @property
-    def volume(self) -> float:
+    def volume(self) -> int:
         """Get the current volume in [0, 100]"""
         return self.speech_options.volume
 
     @volume.setter
-    def volume(self, new_volume: float):
+    def volume(self, new_volume: int):
         """Set the current volume in [0, 100]"""
         self.speech_options.volume = new_volume
 
     @property
-    def rate(self) -> float:
+    def rate(self) -> int:
         """Get the current speaking rate in [0, 100]"""
         return self.speech_options.rate
 
     @rate.setter
-    def rate(self, new_rate: float):
+    def rate(self, new_rate: int):
         """Set the current speaking rate in [0, 100]"""
         self.speech_options.rate = new_rate
 
+    @property
+    def pitch(self) -> int:
+        """Get the current speaking rate in [0, 100]"""
+        return self.speech_options.pitch
+
+    @pitch.setter
+    def pitch(self, new_pitch: int):
+        """Set the current speaking rate in [0, 100]"""
+        self.speech_options.pitch = new_pitch
+
     def get_voices(self):
         return self.voices
+
+    def create_speech_task(self, text):
+        return PiperSpeechSynthesisTask(
+            text,
+            self.speech_options.copy()
+        )
+
+    def create_break_task(self, time_ms):
+        return SilenceTask(time_ms, self.speech_options.voice.config.sample_rate)
+
+    def create_bookmark_task(self, name):
+        return BookmarkTask(name)
 
     @staticmethod
     def load_voices_from_directory(voices_directory, *, directory_name_prefix="voice-"):
@@ -287,71 +252,6 @@ class PiperTextToSpeechSystem(TextToSpeechSystem):
             )
         return rv
 
-    def begin_utterance(self):
-        """Begins a new utterance"""
-
-    def speak_text(self, text: str, text_language: typing.Optional[str] = None):
-        """
-        Speaks text using the underlying system's tokenization mechanism.
-        Becomes an AudioResult in end_utterance()
-        """
-        self._results.append(
-            PiperSpeechSynthesisTask(
-                TextToken(text),
-                self.speech_options.copy(),
-            )
-        )
-
-    def speak_tokens(self, tokens: typing.Iterable[BaseToken]):
-        """
-        Speak user-defined tokens.
-        Becomes an AudioResult in end_utterance()
-        """
-        for token in tokens:
-            if isinstance(token, Phonemes) and token.alphabet.lower() != 'ipa':
-                raise ValueError("Unsupported phoneme alphabet `{token.alphabet}`")
-            self._results.append(
-                PiperSpeechSynthesisTask(
-                    token,
-                    self.speech_options.copy()
-                )
-            )
-
-    def add_break(self, time_ms: int):
-        """
-        Add milliseconds of silence to the current utterance.
-        Becomes an AudioResult in end_utterance()
-        """
-        self._results.append(
-            SilenceResult(time_ms)
-        )
-
-    def set_mark(self, name: str):
-        """
-        Set a named mark at this point in the utterance.
-        Becomes a MarkResult in end_utterance()
-        """
-        self._results.append(MarkResult(name=name))
-
-    def end_utterance(self) -> typing.Iterable[BaseResult]:
-        """
-        Complete an utterance after begin_utterance().
-        Returns an iterable of results (audio, marks, etc.)
-        """
-        yield BeginUtteranceResult()
-        last_sample_rate = None
-        for result in self._results:
-            if isinstance(result, PiperSpeechSynthesisTask):
-                if not result:
-                    continue
-                last_sample_rate = result.speech_options.voice.config.sample_rate
-                yield  result.generate_audio()
-            elif isinstance(result, SilenceResult):
-                yield  result.generate_audio(last_sample_rate or 16000)
-            else:
-                yield result
-        self._results.clear()
-        yield  EndUtteranceResult()
 
 
 @dataclass
@@ -366,6 +266,24 @@ class PiperConfig:
     phoneme_id_map: Mapping[str, Sequence[int]]
     speaker_id_map: Mapping[str, int]
 
+    @classmethod
+    def load_from_json_file(cls, config_path: Union[str, Path]):
+        with open(config_path, "r", encoding="utf-8") as config_file:
+            config_dict = json.load(config_file)
+            inference = config_dict.get("inference", {})
+
+            return cls(
+                num_symbols=config_dict["num_symbols"],
+                num_speakers=config_dict["num_speakers"],
+                sample_rate=config_dict["audio"]["sample_rate"],
+                espeak_voice=config_dict["espeak"]["voice"],
+                noise_scale=inference.get("noise_scale", 0.667),
+                length_scale=inference.get("length_scale", 1.0),
+                noise_w=inference.get("noise_w", 0.8),
+                phoneme_id_map=config_dict["phoneme_id_map"],
+                speaker_id_map=config_dict["speaker_id_map"],
+            )
+
 
 class PiperModel:
     def __init__(
@@ -377,11 +295,24 @@ class PiperModel:
         if config_path is None:
             config_path = f"{model_path}.json"
 
-        self.config = load_config(config_path)
-        self.phonemizer = Phonemizer(self.config.espeak_voice)
+        self.config = PiperConfig.load_from_json_file(config_path)
+        self.phonemizer = Phonemizer(
+            self.config.espeak_voice,
+        )
+
+        session_options = onnxruntime.SessionOptions()
+        session_options.enable_cpu_mem_arena = True
+        session_options.enable_mem_pattern = True
+        session_options.enable_mem_reuse = True
+        session_options.execution_order = onnxruntime.ExecutionOrder.PRIORITY_BASED
+        session_options.execution_mode = onnxruntime.ExecutionMode.ORT_PARALLEL
+        session_options.enable_profiling = False
+        session_options.inter_op_num_threads = int(os.cpu_count() / 2)
+        session_options.intra_op_num_threads = int(os.cpu_count() / 2)
+
         self.model = onnxruntime.InferenceSession(
             str(model_path),
-            sess_options=onnxruntime.SessionOptions(),
+            sess_options=session_options,
             providers=["CPUExecutionProvider"]
             if not use_cuda
             else ["CUDAExecutionProvider"],
@@ -434,7 +365,7 @@ class PiperModel:
                 "sid": sid,
             },
         )[0].squeeze((0, 1))
-        audio = audio_float_to_int16(audio.squeeze())
+        audio = self.audio_float_to_int16(audio.squeeze())
         return audio.tobytes()
 
     def synthesize_to_wav(
@@ -469,30 +400,14 @@ class PiperModel:
     def say_as_to_phonemes(self, text, interpret_as, say_format=None, text_language=None):
         return self.text_to_phonemes(text, text_language=text_language)
 
-
-def load_config(config_path: Union[str, Path]) -> PiperConfig:
-    with open(config_path, "r", encoding="utf-8") as config_file:
-        config_dict = json.load(config_file)
-        inference = config_dict.get("inference", {})
-
-        return PiperConfig(
-            num_symbols=config_dict["num_symbols"],
-            num_speakers=config_dict["num_speakers"],
-            sample_rate=config_dict["audio"]["sample_rate"],
-            espeak_voice=config_dict["espeak"]["voice"],
-            noise_scale=inference.get("noise_scale", 0.667),
-            length_scale=inference.get("length_scale", 1.0),
-            noise_w=inference.get("noise_w", 0.8),
-            phoneme_id_map=config_dict["phoneme_id_map"],
-            speaker_id_map=config_dict["speaker_id_map"],
-        )
+    @staticmethod
+    def audio_float_to_int16(
+        audio: np.ndarray, max_wav_value: float = 32767.0
+    ) -> np.ndarray:
+        """Normalize audio and convert to int16 range"""
+        audio_norm = audio * (max_wav_value / max(0.01, np.max(np.abs(audio))))
+        audio_norm = np.clip(audio_norm, -max_wav_value, max_wav_value)
+        audio_norm = audio_norm.astype("int16")
+        return audio_norm
 
 
-def audio_float_to_int16(
-    audio: np.ndarray, max_wav_value: float = 32767.0
-) -> np.ndarray:
-    """Normalize audio and convert to int16 range"""
-    audio_norm = audio * (max_wav_value / max(0.01, np.max(np.abs(audio))))
-    audio_norm = np.clip(audio_norm, -max_wav_value, max_wav_value)
-    audio_norm = audio_norm.astype("int16")
-    return audio_norm

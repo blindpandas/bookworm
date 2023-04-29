@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from .sapi import SapiSpeechEngine
-from .piper.engine import PiperSpeechEngine
+from .piper import PiperSpeechEngine
 
 TTS_ENGINES = (SapiSpeechEngine, PiperSpeechEngine,)
 
