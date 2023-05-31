@@ -210,6 +210,7 @@ Bookworm可让您查看书籍的完整渲染版本。打开书籍后，可以按
 
 若想了解有关 Bookworm 的最新消息，可以访问Bookworm的网站： [getbookworm.com](https://getbookworm.com/)。您也可以在Twitter上[@mush42](https://twitter.com/mush42/)来关注首席开发人员 Musharraf Omer。
 
+Bookworm 中文资讯请访问 [Bookworm中文站（bw.enabc.net）](https://bw.enabc.net)，也欢迎加入[Bookworm 中文交流 QQ 群 （556550625）](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=gW905iM3YPt1Y4gj8Y756_gqZ7ZDAjX9&authKey=55Cqb3%2Bz5sR%2Fw7Wqb6DS6FfZ9uJQczqd2K6DJh8jcy47nvLqgP2OGMeKunZ0eRef&noverify=0&group_code=556550625)。
 
 ## 许可协议
 
