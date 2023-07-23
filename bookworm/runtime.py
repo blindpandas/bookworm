@@ -35,6 +35,10 @@ else:
     CURRENT_PACKAGING_MODE = PackagingMode.Portable
 
 
+IS_RUNNING_FROM_SOURCE = CURRENT_PACKAGING_MODE is PackagingMode.Source
+IS_INSTALLED = CURRENT_PACKAGING_MODE is PackagingMode.Installed
+IS_PORTABLE = CURRENT_PACKAGING_MODE is PackagingMode.Portable
+
 try:
     IS_HIGH_CONTRAST_ACTIVE = is_high_contrast_active()
 except:

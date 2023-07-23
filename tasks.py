@@ -437,6 +437,29 @@ def copy_deps(c):
             _build_BkwRicheditOpts_dll(c)
     shutil.copy(richeditopts_dll_src, richeditopts_dll_dst)
 
+    copy_espeak_and_piper_libs()
+
+
+def copy_espeak_and_piper_libs():
+    arch = os.environ["IAPP_ARCH"]
+
+    espeak_dll_src = PROJECT_ROOT / "scripts" / "dlls" / "espeak-ng" / arch / "espeak-ng.dll"
+    espeak_data_src = PROJECT_ROOT / "scripts" / "dlls" / "espeak-ng" / "espeak-ng-data"
+    espeak_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"])
+
+    print("Copying eSpeak-ng dll and data...")
+    shutil.copy(espeak_dll_src, espeak_dst)
+    shutil.copy(espeak_data_src, espeak_dst)
+
+    onnxruntime_dll_src  = PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / arch / "onnxruntime.dll"
+    onnxruntime_notices_src = PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / "notices"
+    onnxruntime_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "onnxruntime"
+    onnxruntime_dst.mkdir(parents=True, exist_ok=True)
+
+    print("Copying ONNXRuntime dll and notices...")
+    shutil.copy(onnxruntime_dll_src, onnxruntime_dst)
+    shutil.copy(onnxruntime_notices_src, onnxruntime_dst)
+
 
 def _build_BkwRicheditOpts_dll(c):
     richeditopts_dll_src = PROJECT_ROOT / "scripts" / "dlls" / "richeditopts"
