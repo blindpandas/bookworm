@@ -5,10 +5,10 @@ packages_to_install:
     win32:
         pure_python:
         x64:
-            - "pyper-0.1.0-cp37-abi3-win_amd64.whl"
+            - "pyper-0.2.0-cp37-abi3-win_amd64.whl"
             - "pyxpdf-0.2.3-cp310-cp310-win_amd64.whl"
         x86:
-            - "pyper-0.1.0-cp37-abi3-win32.whl"
+            - "pyper-0.2.0-cp37-abi3-win32.whl"
             - "pyxpdf-0.2.3-cp310-cp310-win32.whl"
 folders_to_clean:
     everytime:

@@ -22,6 +22,7 @@ from pyper import Piper, VitsModel, AudioOutputConfig
 
 PIPER_VOICE_SAMPLES_URL = "https://rhasspy.github.io/piper-samples/"
 
+BATCH_SIZE = max(os.cpu_count() // 2, 2)
 FALLBACK_SPEAKER_NAME = "default"
 DEFAULT_RATE = 50
 DEFAULT_VOLUME = 100
@@ -104,27 +105,29 @@ class PiperVoice:
         else:
             self.default_speaker = None
 
-    def synthesize(self, text, speaker, rate, volume, pitch):
-        if self.is_multi_speaker:
+    def synthesize(self, text, speaker, rate, volume, pitch, appended_silence):
+        if speaker and self.is_multi_speaker:
             if self.vits_model.speaker != speaker:
                 self.vits_model.speaker = speaker
         audio_output_config = AudioOutputConfig(
             rate=rate,
             volume=volume,
-            pitch=pitch
+            pitch=pitch,
+            appended_silence_ms=appended_silence
         )
-        return self.synth.synthesize_lazy(text.strip(), audio_output_config=audio_output_config)
+        return self.synth.synthesize_batched(text.strip(), audio_output_config=audio_output_config, batch_size=BATCH_SIZE)
 
 
 class SpeechOptions:
-    __slots__ = ["voice", "speaker", "rate", "volume", "pitch"]
+    __slots__ = ["voice", "speaker", "rate", "volume", "pitch", "appended_silence",]
 
-    def __init__(self, voice, speaker=None, rate=None, volume=None, pitch=None):
+    def __init__(self, voice, speaker=None, rate=None, volume=None, pitch=None, appended_silence=None):
         self.voice = voice
         self.speaker = speaker
         self.rate = rate
         self.volume = volume
         self.pitch = pitch
+        self.appended_silence = appended_silence
 
     def set_voice(self, voice: PiperVoice):
         self.voice = voice
@@ -143,6 +146,7 @@ class SpeechOptions:
             self.rate,
             self.volume,
             self.pitch,
+            self.appended_silence
         )
 
 
@@ -264,6 +268,11 @@ class PiperTextToSpeechSystem:
     def create_speech_task(self, text):
         return PiperSpeechSynthesisTask(text, self.speech_options.copy())
 
+    def create_speech_task_with_pause(self, text, pause_value):
+        speech_options = self.speech_options.copy()
+        speech_options.appended_silence = pause_value
+        return PiperSpeechSynthesisTask(text, speech_options)
+
     def create_bookmark_task(self, name):
         return PiperBookmarkTask(name)
 
@@ -306,7 +315,7 @@ class PiperTextToSpeechSystem:
                 )
             )
 
-        rv.sort(key=lambda v: (v.lang, v.name))
+        rv.sort(key=lambda v: (v.language, v.name))
         return rv
 
     @classmethod

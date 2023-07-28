@@ -286,6 +286,7 @@ class TextToSpeechService(BookwormService):
                 for sent in text_info.split_sentences(paragraph):
                     utterance.add_sentence(sent + " ")
                     utterance.add_pause(sent_pause)
+                utterance.add_text("")
                 utterance.add_pause(parag_pause)
                 utterance.add_bookmark(
                     self.encode_bookmark(

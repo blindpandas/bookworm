@@ -449,7 +449,7 @@ def copy_espeak_and_piper_libs():
 
     print("Copying eSpeak-ng dll and data...")
     shutil.copy(espeak_dll_src, espeak_dst)
-    shutil.copy(espeak_data_src, espeak_dst)
+    shutil.copytree(espeak_data_src, espeak_dst.joinpath("espeak-ng-data"))
 
     onnxruntime_dll_src  = PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / arch / "onnxruntime.dll"
     onnxruntime_notices_src = PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / "notices"
@@ -458,7 +458,7 @@ def copy_espeak_and_piper_libs():
 
     print("Copying ONNXRuntime dll and notices...")
     shutil.copy(onnxruntime_dll_src, onnxruntime_dst)
-    shutil.copy(onnxruntime_notices_src, onnxruntime_dst)
+    shutil.copytree(onnxruntime_notices_src, onnxruntime_dst.joinpath("notices"))
 
 
 def _build_BkwRicheditOpts_dll(c):
