@@ -429,9 +429,15 @@ class TextToSpeechService(BookwormService):
             # Translators: a message telling the user that the TTS voice has been changed
             _(
                 "Bookworm has noticed that the currently configured Text-to-speech voice "
-                "speaks a language different from that of this book.\n"
+                "speaks a language different from that of this document.\n"
                 "Do you want to temporary switch to another voice that "
                 "speaks a language similar to the language  of the currently opened document?"
+                "\n\n"
+                "Voice language: {voice_lang}\n"
+                "Document language: {document_lang}"
+            ).format(
+                voice_lang=self.engine.voice.language.description,
+                document_lang=self.reader.document.language.description
             ),
             # Translators: the title of a message telling the user that the TTS voice has been changed
             _("Incompatible TTS Voice Detected"),
