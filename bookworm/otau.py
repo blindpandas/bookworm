@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import time
+from typing import Tuple
 
 import wx
 from pydantic import field_validator, BaseModel, HttpUrl, RootModel
