@@ -42,14 +42,14 @@ opencv-python-headless==4.5.5.62
 peewee==3.15.4
 Pillow==9.4.0
 platform-utils==1.5.1
-pydantic==1.10.5
+pydantic==2.1.1
 pymediawiki==0.7.2
 PyMuPDF==1.22.5
 python-dateutil==2.8.2
 python-docx==0.8.11
 python-pptx==0.6.21
 pywhatlang==1.0.0
-pywin32==303;sys_platform=="win32"
+pywin32==306;sys_platform=="win32"
 #pyxpdf==0.2.3
 pyxpdf-data==1.1.0
 trafilatura==1.6.1
