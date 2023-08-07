@@ -3,7 +3,7 @@
 import time
 
 import wx
-from pydantic import BaseModel, HttpUrl, validator
+from pydantic import field_validator, BaseModel, HttpUrl, RootModel
 
 from bookworm import app, config
 from bookworm import typehints as t
@@ -18,21 +18,22 @@ log = logger.getChild(__name__)
 UPDATE_CHECK_INTERVAL = 20 * 60 * 60
 
 
-class UpdateChannel(BaseModel):
-    __root__: str
+class UpdateChannel(RootModel[str]):
+    root: str
 
     def __hash__(self):
-        return hash(self.__root__)
+        return hash(self.root)
 
-    @validator("__root__")
-    def validate_identifier(cls, v):
+    @field_validator("root")
+    @classmethod
+    def validate_identifier(cls, v: str):
         if v not in ["", "b", "a", "dev"]:
             raise TypeError("Unrecognized release identifier")
         return v
 
     @property
-    def is_major(self):
-        return self.__root__ == ""
+    def is_major(self) -> bool:
+        return self.root == ""
 
 
 class VersionInfo(BaseModel):
@@ -43,23 +44,23 @@ class VersionInfo(BaseModel):
     x64_sha1hash: str
 
     @property
-    def bundle_download_url(self):
+    def bundle_download_url(self) -> HttpUrl:
         return getattr(self, f"{app.arch}_download")
 
     @property
-    def update_sha1hash(self):
+    def update_sha1hash(self) -> str:
         return getattr(self, f"{app.arch}_sha1hash")
 
 
-class UpdateInfo(BaseModel):
-    __root__: t.Dict[UpdateChannel, VersionInfo]
+class UpdateInfo(RootModel[t.Dict[UpdateChannel, VersionInfo]]):
+    root: t.Dict[UpdateChannel, VersionInfo]
 
     @property
-    def channels(self):
-        return tuple(self.__root__.keys())
+    def channels(self) -> Tuple[UpdateChannel]:
+        return tuple(self.root.keys())
 
-    def get_update_info_for_channel(self, channel_identifier):
-        return self.__root__.get(UpdateChannel.construct(__root__=channel_identifier))
+    def get_update_info_for_channel(self, channel_identifier: str) -> VersionInfo:
+        return self.root.get(UpdateChannel.model_validate(channel_identifier))
 
 
 @call_threaded
