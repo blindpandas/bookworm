@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from base64 import b85decode, b85encode
+from base64 import b64decode, b64encode
 from collections import deque
 from contextlib import contextmanager, suppress
 from functools import cached_property
@@ -10,12 +10,12 @@ import wx
 
 from bookworm import config
 from bookworm.logger import logger
-from bookworm.platform_services.speech_engines import TTS_ENGINES
 from bookworm.resources import app_icons, sounds
 from bookworm.service import BookwormService
 from bookworm.signals import (_signals, reader_book_loaded,
                               reader_book_unloaded, reader_page_changed,
                               reading_position_change)
+from bookworm.speech_engines import TTS_ENGINES
 from bookworm.speechdriver import (DummySpeechEngine,
                                    speech_engine_state_changed)
 from bookworm.speechdriver.enumerations import (EmphSpec, EngineEvent,
@@ -124,10 +124,10 @@ class TextToSpeechService(BookwormService):
 
     def encode_bookmark(self, data):
         payload = msgpack.dumps(data)
-        return b85encode(payload).decode("ascii")
+        return b64encode(payload).decode("ascii")
 
     def decode_bookmark(self, payload):
-        data = b85decode(payload.encode("ascii"))
+        data = b64decode(payload.encode("ascii"))
         return msgpack.loads(data)
 
     @contextmanager
@@ -212,6 +212,7 @@ class TextToSpeechService(BookwormService):
                 }
             )
         )
+        utterance.add_pause(50)
         utterance.add_bookmark(self.encode_bookmark({"t": UT_SECTION_END}))
 
     def configure_end_of_section_utterance(self, utterance, section):
@@ -253,7 +254,7 @@ class TextToSpeechService(BookwormService):
         if self.reader.document.is_single_page_document():
             # Translators: spoken message at the end of the document
             utterance.add_text(_("End of document"))
-        self.view.set_insertion_point(start_pos)
+        # self.view.set_insertion_point(start_pos)
         self.engine.speak(self.utterance_queue.pop())
 
     def add_text_utterances(self, text_info):
@@ -261,7 +262,7 @@ class TextToSpeechService(BookwormService):
         _last_known_section = None
         parag_pause = self.config_manager["paragraph_pause"]
         sent_pause = self.config_manager["sentence_pause"]
-        for (paragraph, text_range) in text_info.paragraphs:
+        for paragraph, text_range in text_info.paragraphs:
             with self.queue_speech_utterance() as utterance:
                 if is_single_page_document:
                     text_pos = sum(text_range.astuple()) / 2

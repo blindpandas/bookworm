@@ -16,41 +16,37 @@ environment:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
 
 install:
+  # Install hyperfine for benchmarking
+  - cinst hyperfine
   # NSIS Paths
   # https://www.appveyor.com/docs/build-environment/#tools
   - set PATH=%PATH%;C:\Program Files (x86)\NSIS
   # Python stdout encoding 
   - set PYTHONIOENCODING=utf-8
 
-before_build:
-  - cd %APPVEYOR_BUILD_FOLDER%
-  # Build required dlls
-  - cd includes\BookwormUWPServices
-  - nuget restore
-  - msbuild /t:Build /p:Configuration=Release
-  - cd %APPVEYOR_BUILD_FOLDER%
-
 
 build_script:
   # 32-bit version
   - ps: Write-Host "Building the 32-bit variant."
-  - py -3.9-32  -m venv .venv32
+  - py -3.10-32  -m venv .venv32
   - call ".venv32\Scripts\activate.bat"
   - python -m pip install invoke
   - invoke dev
   - python -m pytest -vvv
   - invoke build
   - invoke create-portable
+  - invoke bench
   - deactivate
   # 64-bit version
   - ps: Write-Host "Building the 64-bit variant."
-  - py -3.9-64 -m venv .venv64
+  - py -3.10-64 -m venv .venv64
   - call ".venv64\Scripts\activate.bat"
   - python -m pip install invoke
   - invoke dev
   - python -m pytest -vvv
   - invoke build
   - invoke create-portable
+  - invoke bench
   # Update the release info file
   - invoke update-version-info
   - invoke gen-pot
@@ -61,6 +57,7 @@ artifacts:
   - path: scripts\Bookworm*update.bundle
   - path: scripts\Bookworm*portable.zip
   - path: scripts\release-info.json
+  - path: scripts\benchmark*.json
   - path: scripts\bookworm*.pot
 
 
@@ -77,7 +74,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
-  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /Bookworm-.*-portable\.zip/, /release-info\.json/, /bookworm-.*\.pot/
+  artifact: /Bookworm-.*-setup\.exe/, /Bookworm-.*-update\.bundle/, /Bookworm-.*-portable\.zip/, /release-info\.json/, /bookworm-.*\.pot/, /benchmark.*\.json/
   draft: true
   prerelease: true
   on:

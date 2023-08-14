@@ -21,7 +21,6 @@ sources_updated = _signals.signal("bookshelf/source_updated")
 
 
 class BookshelfProvider(ABC):
-
     name: t.str = None
     display_name: t.TranslatableStr = None
     __registered_providers = []

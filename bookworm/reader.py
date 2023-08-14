@@ -1,8 +1,11 @@
 # coding: utf-8
 
 import os
+import string
 from contextlib import suppress
 from pathlib import Path
+
+from selectolax.parser import HTMLParser
 
 from bookworm import app, config
 from bookworm import typehints as t
@@ -30,6 +33,7 @@ PASS_THROUGH__DOCUMENT_EXCEPTIONS = {
     ArchiveContainsMultipleDocuments,
 }
 
+
 def get_document_format_info():
     return BaseDocument.document_classes
 
@@ -50,11 +54,10 @@ class DecryptionRequired(Exception):
     """Raised to signal to the view that the document requires a password to be decrypted ."""
 
 
-
 class UriResolver:
     """Retrieves a document given a uri."""
 
-    def __init__(self, uri):
+    def __init__(self, uri, num_fallbacks=0):
         if isinstance(uri, str):
             try:
                 self.uri = DocumentUri.from_uri_string(uri)
@@ -62,6 +65,7 @@ class UriResolver:
                 raise ReaderError(f"Failed to parse document uri {self.uri}") from e
         else:
             self.uri = uri
+        self.num_fallbacks = num_fallbacks
         doc_format_info = get_document_format_info()
         if (doc_format := self.uri.format) not in doc_format_info:
             raise UnsupportedDocumentError(
@@ -80,7 +84,10 @@ class UriResolver:
             return self._do_read_document()
         except:
             if (fallback_uri := self.uri.fallback_uri) is not None:
-                return UriResolver(uri=fallback_uri).read_document()
+                if self.num_fallbacks < 4:
+                    return UriResolver(
+                        uri=fallback_uri, num_fallbacks=self.num_fallbacks + 1
+                    ).read_document()
             raise
 
     def _do_read_document(self):
@@ -242,9 +249,11 @@ class EBookReader:
         """Return the current page."""
         return self.document.get_page(self.current_page)
 
-    def go_to_page(self, page_number: int, pos: int = 0) -> bool:
+    def go_to_page(
+        self, page_number: int, pos: int = 0, set_focus_to_text_ctrl: bool = True
+    ) -> bool:
         self.current_page = page_number
-        self.view.set_insertion_point(pos)
+        self.view.set_insertion_point(pos, set_focus_to_text_ctrl)
 
     def go_to_page_by_label(self, page_label):
         try:
@@ -354,6 +363,17 @@ class EBookReader:
         ):
             if position in link_range:
                 self.navigate_to_link_by_range(link_range)
+        try:
+            for idx, tbl_range in enumerate(
+                self.iter_semantic_ranges_for_elements_of_type(
+                    SemanticElementType.TABLE
+                )
+            ):
+                if position in range(*tbl_range):
+                    table_markup = self.get_current_page_object().get_table_markup(idx)
+                    self._show_table(table_markup)
+        except NotImplementedError:
+            pass
 
     @staticmethod
     def _get_semantic_element_from_page(page, element_type, forward, anchor):
@@ -417,3 +437,13 @@ class EBookReader:
             ],
             hidden=False,
         )
+
+    def _show_table(self, table_markup):
+        # Translators: title of a message dialog that shows a table as html document
+        title = _("Table View")
+        if (table_caption := HTMLParser(table_markup).css_first("caption")) is not None:
+            caption_text = (
+                table_caption.text().strip(string.whitespace).replace("\n", " ")
+            )
+            title = f"{caption_text} · {title}"
+        self.view.show_html_dialog(table_markup, title=title)

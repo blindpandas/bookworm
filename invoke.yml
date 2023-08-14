@@ -1,18 +1,13 @@
 packages_to_install:
     pure_python:
+        - "mobi-0.3.3-py3-none-any.whl"
         - "pyxpdf_data-1.1.0-py3-none-any.whl"
     win32:
         pure_python:
         x64:
-            - "apsw-3.36.0-cp39-cp39-win_amd64.whl"
-            - "pycld2-0.41-cp39-cp39-win_amd64.whl"
-            - "pyxpdf-0.2.3-cp39-cp39-win_amd64.whl"
-            - "pythonnet-2.5.2-cp39-cp39-win_amd64.whl"
+            - "pyxpdf-0.2.3-cp310-cp310-win_amd64.whl"
         x86:
-            - "apsw-3.36.0-cp39-cp39-win32.whl"
-            - "pycld2-0.41-cp39-cp39-win32.whl"
-            - "pyxpdf-0.2.3-cp39-cp39-win32.whl"
-            - "pythonnet-2.5.2-cp39-cp39-win32.whl"
+            - "pyxpdf-0.2.3-cp310-cp310-win32.whl"
 folders_to_clean:
     everytime:
         - build
@@ -34,6 +29,8 @@ folders_to_clean:
         - scripts/Bookworm*portable.zip
         - scripts/Bookworm-*.pot
         - scripts/release-info.json
+        - scripts/benchmark-x64.json
+        - scripts/benchmark-x86.json
         - scripts/builder/assets/version_info.txt
         - scripts/builder/assets/bookworm.bmp
         - scripts/builder/assets/bookworm-logo.bmp

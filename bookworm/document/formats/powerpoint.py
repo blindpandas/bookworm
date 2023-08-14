@@ -110,7 +110,6 @@ class PowerpointSlide(BasePage):
 
 
 class PowerpointPresentation(BaseDocument):
-
     format = "pptx"
     # Translators: the name of a document file format
     name = _("PowerPoint Presentation")
@@ -152,7 +151,7 @@ class PowerpointPresentation(BaseDocument):
             level=1,
         )
         stack = TreeStackBuilder(root)
-        for (idx, slide) in enumerate(self.slides):
+        for idx, slide in enumerate(self.slides):
             section_title = _("Slide {number}").format(number=idx + 1)
             if slide_title := self._get_slide_title(slide):
                 section_title = f"{section_title}: {slide_title}"

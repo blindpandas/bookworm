@@ -41,7 +41,6 @@ def create_db_tables(sender):
 
 
 class LocalBookshelfProvider(BookshelfProvider):
-
     name = "local_bookshelf"
     # Translators: the name of a book shelf type.
     # This bookshelf type is stored in a local database
@@ -408,7 +407,7 @@ class LocalBookshelfProvider(BookshelfProvider):
         func = partial(bundle_single_document, DEFAULT_BOOKSHELF_DATABASE_FILE)
         errors = []
         with ThreadPoolExecutor(max_workers=8) as executor:
-            for (idx, (is_ok, src_file, doc_title)) in enumerate(
+            for idx, (is_ok, src_file, doc_title) in enumerate(
                 executor.map(func, Document.select())
             ):
                 if not is_ok:

@@ -59,7 +59,13 @@ Bookworm 的主窗口包括以下两部分：
 * Alt + End: 跳转到当前章节的最后一页；
 * Alt + Page down： 跳转到下一章节；
 * Alt + Page up： 跳转到上一章节；
-
+* F2： 跳转到下一个书签；
+* Shift + F2：跳转到上一个书签；
+* F8：跳转到下一条注释；
+* Shift + F8：跳转到上一条注释；
+* F9：跳转到下一处高亮；
+* Shift + F9：跳转到上一处高亮；
+* Ctrl + enter：打开内部或外部链接（如果存在）。内部链接是由某些格式的文档目录创建的链接，外部链接是使用浏览器打开的常规链接。根据链接类型，如果链接是内部链接，即指向某目录章节的链接，那么按下该快捷键会将焦点移动到相应目录章节，如果链接是外部链接，则会使用系统默认浏览器打开。
 
 ### 书签和注释
 
@@ -139,7 +145,7 @@ Bookworm支持使用已安装的文本到语音引擎朗读已打开书籍的内
 
 请注意，根据当前实现此功能的方式，可能存在以下限制：
 
-* 如果到达空白页，朗读会中断。如果到达空白页，只需翻阅到非空白页，然后重新开始屏幕阅读器的“全文朗读”即可。
+* 如果到达空白页，朗读会停止。此时只需翻阅到非空白页，然后重新开始屏幕阅读器的“全文朗读”即可。
 * 当光标移动到页面的最后一个字符位置时，则会立即切换到下一页；
 
 
@@ -204,6 +210,7 @@ Bookworm可让您查看书籍的完整渲染版本。打开书籍后，可以按
 
 若想了解有关 Bookworm 的最新消息，可以访问Bookworm的网站： [getbookworm.com](https://getbookworm.com/)。您也可以在Twitter上[@mush42](https://twitter.com/mush42/)来关注首席开发人员 Musharraf Omer。
 
+Bookworm 中文资讯请访问 [Bookworm中文站（bw.enabc.net）](https://bw.enabc.net)，也欢迎加入[Bookworm 中文交流 QQ 群 （556550625）](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=gW905iM3YPt1Y4gj8Y756_gqZ7ZDAjX9&authKey=55Cqb3%2Bz5sR%2Fw7Wqb6DS6FfZ9uJQczqd2K6DJh8jcy47nvLqgP2OGMeKunZ0eRef&noverify=0&group_code=556550625)。
 
 ## 许可协议
 

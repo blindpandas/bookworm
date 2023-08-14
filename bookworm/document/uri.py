@@ -110,7 +110,7 @@ class DocumentUri:
             value = value.to_uri_string()
         elif type(value) is not str:
             raise ValueError(f"Invalid document URI: {value}")
-        self.openner_args['fallback_uri'] = value
+        self.openner_args["fallback_uri"] = value
 
     @classmethod
     def from_base64_encoded_string(cls, s):
@@ -132,7 +132,7 @@ class DocumentUri:
 
     @classmethod
     def _get_format_given_extension(cls, ext):
-        for (doc_format, doc_cls) in BaseDocument.document_classes.items():
+        for doc_format, doc_cls in BaseDocument.document_classes.items():
             if (doc_cls.extensions is not None) and (ext in doc_cls.extensions):
                 return doc_format
 

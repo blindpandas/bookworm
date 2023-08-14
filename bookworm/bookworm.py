@@ -43,7 +43,7 @@ def report_fatal_error(
 
 def main():
     try:
-        from bookworm.platform_services import check_runtime_components
+        from bookworm.platforms import check_runtime_components
 
         check_runtime_components()
 

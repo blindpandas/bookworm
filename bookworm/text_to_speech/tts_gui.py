@@ -46,15 +46,8 @@ class ReadingPanel(SettingsPanel):
     def addControls(self):
         # Translators: the label of a group of controls in the reading page
         generalReadingBox = self.make_static_box(_("Reading Options"))
-        wx.CheckBox(
-            generalReadingBox,
-            -1,
-            # Translators: the label of a checkbox to enable continuous reading
-            _("Use continuous reading mode"),
-            name="reading.use_continuous_reading",
-        )
         self.readingMode = wx.RadioBox(
-            self,
+            generalReadingBox,
             -1,
             # Translators: the title of a group of radio buttons in the reading page
             # in the application settings related to how to read.
@@ -160,6 +153,12 @@ class SpeechPanel(SettingsPanel):
             engineSettingsPanel, -1, minValue=0, maxValue=100, name="speech.rate"
         )
         self.rateSlider.SetPageSize(5)
+        # Translators: the label of the voice pitch slider
+        wx.StaticText(engineSettingsPanel, -1, _("Voice Pitch:"))
+        self.pitchSlider = wx.Slider(
+            engineSettingsPanel, -1, minValue=0, maxValue=100, name="speech.pitch"
+        )
+        self.pitchSlider.SetPageSize(5)
         # Translators: the label of the speech volume slider
         wx.StaticText(engineSettingsPanel, -1, _("Speech Volume:"))
         self.volumeSlider = wx.Slider(
@@ -227,7 +226,7 @@ class SpeechPanel(SettingsPanel):
 
     def OnChoosEngine(self, event):
         current_engine_index = 0
-        for (index, e) in enumerate(self.service.speech_engines):
+        for index, e in enumerate(self.service.speech_engines):
             if e.name == self.current_engine.name:
                 current_engine_index = index
         dlg = SpeechEngineSelector(
@@ -265,6 +264,8 @@ class SpeechPanel(SettingsPanel):
             self.rateSlider.Value = self.current_engine.default_rate
         if self.config.get("volume") == -1:
             self.volumeSlider.Value = self.current_engine.default_volume
+        if self.config.get("pitch") == -1:
+            self.pitchSlider.Value = self.current_engine.default_pitch
 
     def process_config_save(self):
         active_profile = self.service.config_manager.active_profile

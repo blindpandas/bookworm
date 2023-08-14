@@ -6,10 +6,8 @@ import wx
 
 from bookworm import config, speech
 from bookworm.document import PaginationError
-from bookworm.gui.contentview_ctrl import (EVT_CONTENT_NAVIGATION,
-                                           EVT_STRUCTURED_NAVIGATION,
-                                           NAV_BACKWORD_KEYS,
-                                           NAV_FOREWORD_KEYS, NAVIGATION_KEYS)
+from bookworm.gui.text_ctrl_mixin import (NAV_BACKWORD_KEYS, NAV_FOREWORD_KEYS,
+                                          NAVIGATION_KEYS)
 from bookworm.logger import logger
 from bookworm.signals import reader_page_changed
 
@@ -35,8 +33,8 @@ class NavigationProvider:
             self.zoom_keymap = {ord("0"): 0, ord("="): 1, ord("-"): -1}
         ctrl.Bind(wx.EVT_KEY_UP, self.onKeyUp, ctrl)
         if isinstance(ctrl, wx.TextCtrl):
-            ctrl.Bind(EVT_CONTENT_NAVIGATION, self.onTextCtrlNavigate)
-            ctrl.Bind(EVT_STRUCTURED_NAVIGATION, self.onStructuredNavigation)
+            ctrl.Bind(ctrl.EVT_CONTENT_NAVIGATION, self.onTextCtrlNavigate)
+            ctrl.Bind(ctrl.EVT_STRUCTURED_NAVIGATION, self.onStructuredNavigation)
         reader_page_changed.connect(self._reset_up_arrow_pressed_time, weak=False)
 
     def callback(self):

@@ -228,7 +228,7 @@ class ElementKind(enum.IntEnum):
 
     @property
     def display(self):
-        return SEMANTIC_ELEMENT_OUTPUT_OPTIONS[self.value][0]
+        return _(SEMANTIC_ELEMENT_OUTPUT_OPTIONS[self.value][0])
 
 
 class ElementListDialog(SimpleDialog):
@@ -243,7 +243,7 @@ class ElementListDialog(SimpleDialog):
         self.elementTypeRadio = EnumRadioBox(
             parent,
             -1,
-            label=("Element Type"),
+            label=_("Element Type"),
             choice_enum=ElementKind,
             majorDimension=0,
             style=wx.RA_SPECIFY_COLS,
@@ -279,7 +279,7 @@ class ElementListDialog(SimpleDialog):
         label = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[
             self.elementTypeRadio.GetSelectedValue().value
         ][0]
-        self.elementListViewLabel.SetLabelText(label)
+        self.elementListViewLabel.SetLabelText(_(label))
 
     def populate_element_list(self, element_type):
         if (element_infos := self.__element_Info_cache.get(element_type)) is None:
@@ -344,7 +344,7 @@ class DocumentInfoDialog(SimpleDialog):
         title_text_style = title_text_ctrl.GetDefaultStyle()
         title_text_style_font_size = title_text_style.GetFontSize()
         title_text_style.SetFontSize(
-            title_text_style_font_size + (title_text_style_font_size * 0.5)
+            round(title_text_style_font_size + (title_text_style_font_size * 0.5))
         )
         title_text_style.SetFontWeight(wx.FONTWEIGHT_EXTRABOLD)
         title_text_ctrl.SetStyle(0, title_text_ctrl.GetLastPosition(), title_text_style)

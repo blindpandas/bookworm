@@ -1,0 +1,31 @@
+
+<!doctype html>
+<HTML style="width : 350; height: 300">
+<HEAD>
+<TITLE></TITLE>
+<SCRIPT LANGUAGE=javascript>
+<!--
+function escapeKeyPress(e) {
+	e = e || window.event;
+	if(e.keyCode == 27){ // code for escape
+		window.close();
+	}
+};
+
+function windowOnLoad() {
+	// #5875: string.prototype.split strips the tail when a limit is supplied,
+	// so use a regexp instead.
+	var args = window.dialogArguments.match(/^(.*?);([\s\S]*)$/);
+	// args[0] is the whole string.
+	if (args && args.length == 3){
+		document.title= args[1];
+		messageID.innerHTML= args[2];
+	}
+} 
+//-->
+</SCRIPT>
+</HEAD>
+<BODY tabindex='0' id='main_body' style="margin:1em" LANGUAGE=javascript onload="return windowOnLoad()" onkeypress="return escapeKeyPress()" >
+<div id=messageID></div>
+</body>
+</html>

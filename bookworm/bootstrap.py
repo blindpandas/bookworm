@@ -21,13 +21,12 @@ from bookworm.i18n import setup_i18n
 from bookworm.local_server import LocalServerSubcommand
 from bookworm.logger import configure_logger, logger
 from bookworm.paths import logs_path
-from bookworm.platform_services.shell import (shell_disintegrate,
-                                              shell_integrate)
 from bookworm.runtime import (CURRENT_PACKAGING_MODE, IS_IN_MAIN_PROCESS,
                               IS_RUNNING_PORTABLE, PackagingMode)
 from bookworm.service.handler import ServiceHandler
+from bookworm.shell import shell_disintegrate, shell_integrate
 from bookworm.signals import (app_shuttingdown, app_started, app_starting,
-                              app_window_shown)
+                              app_window_shown, reader_page_changed)
 
 log = logger.getChild(__name__)
 
@@ -95,6 +94,24 @@ class ShellSubcommandHandler(BaseSubcommandHandler):
             if flag_value:
                 func()
         return 0
+
+
+@register_subcommand
+class BenchmarkSubcommandHandler(BaseSubcommandHandler):
+    subcommand_name = "benchmark"
+
+    @classmethod
+    def add_arguments(cls, subparser):
+        subparser.add_argument("filename", help="File to open", default="")
+
+    @classmethod
+    def handle_commandline_args(cls, args):
+        reader_page_changed.connect(
+            lambda sender, current, prev: sys.exit(0),
+            sender=reader_page_changed.ANY,
+            weak=False,
+        )
+        return LauncherSubcommandHandler.handle_commandline_args(args)
 
 
 class BookwormApp(wx.App):

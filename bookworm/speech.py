@@ -2,11 +2,16 @@
 
 """Screen reader and braille output."""
 
+import shutil
+import sys
+
+import win32com
 from accessible_output2.outputs.auto import Auto
 
 from bookworm import config
 from bookworm.logger import logger
 from bookworm.signals import reading_position_change
+from bookworm.utils import restart_application
 
 log = logger.getChild(__name__)
 
@@ -22,13 +27,9 @@ def announce(message, urgent=False):
     if _auto_output is None:
         try:
             _auto_output = Auto()
-        except AttributeError:
-            import shutil
-
-            import win32com
-
+        except (AttributeError, ImportError):
             shutil.rmtree(win32com.__gen_path__, ignore_errors=True)
-            return announce(message, urgent)
+            restart_application()
     _auto_output.speak(message, interrupt=urgent)
     _auto_output.braille(message)
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# coding: utf-8
 
 from pathlib import Path
 
@@ -7,14 +7,18 @@ from setuptools import find_packages, setup
 from bookworm import app
 
 # Invalid requirement specifier prefixes
-INVALID_PREFIXES = ('http://', 'https://', 'git+',)
+INVALID_PREFIXES = (
+    "http://",
+    "https://",
+    "git+",
+)
 
 
 CWD = Path(__file__).parent
-LONG_DESCRIPTION = (CWD / "README.md").read_text()
+LONG_DESCRIPTION = "Bookworm is the universally accessible document reader.\nVisit [the project's home](https://github.com/blindpandas/bookworm) for more information."
 
 REQUIREMENTS = []
-with open(CWD / "requirements-app.txt", "r") as reqs:
+with open(CWD / "requirements-app.txt", "r", encoding='utf-8') as reqs:
     for line in reqs:
         if any(line.startswith(prfx) for prfx in INVALID_PREFIXES):
             continue

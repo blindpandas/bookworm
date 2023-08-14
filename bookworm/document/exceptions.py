@@ -53,4 +53,5 @@ class ArchiveContainsMultipleDocuments(DocumentError):
 
     def __repr__(self):
         return f"{self.__class__.__name__}: [{self.args[0][0]!r},...]"
+
     __str__ = __repr__

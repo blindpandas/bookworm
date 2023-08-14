@@ -416,6 +416,46 @@ def copy_deps(c):
     for file in source_path.iterdir():
         shutil.copy(file, unrar_dst)
     print("Done copying unrar DLLs")
+    richeditopts_dll_src = (
+        PROJECT_ROOT
+        / "scripts"
+        / "dlls"
+        / "richeditopts"
+        / os.environ["IAPP_ARCH"]
+        / "BkwRicheditOpts.dll"
+    )
+    richeditopts_dll_dst = (
+        Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "BkwRicheditOpts.dll"
+    )
+    if not richeditopts_dll_src.exists():
+        if shutil.which("cargo") is None:
+            raise RuntimeError(
+                "The `BkwRicheditOpts.dll` was not found, and you do not have rust toolchain installed. "
+                "Please install rust or otherwise provide pre-built DLLs in the designated path."
+            )
+        else:
+            _build_BkwRicheditOpts_dll(c)
+    shutil.copy(richeditopts_dll_src, richeditopts_dll_dst)
+
+
+def _build_BkwRicheditOpts_dll(c):
+    richeditopts_dll_src = PROJECT_ROOT / "scripts" / "dlls" / "richeditopts"
+    targets = {"x86": "i686-pc-windows-msvc", "x64": "x86_64-pc-windows-msvc"}
+    richeditopts_code_src = PROJECT_ROOT / "includes" / "bkw_rich_edit_opts"
+    for arch, target in targets.items():
+        with c.cd(str(richeditopts_code_src)):
+            c.run(f"cargo build --release --target={target}")
+            arch_richeditopts_src = richeditopts_dll_src / arch
+            arch_richeditopts_src.mkdir(parents=True, exist_ok=True)
+            shutil.copy(
+                richeditopts_code_src
+                / "target"
+                / target
+                / "release"
+                / "BkwRicheditOpts.dll",
+                arch_richeditopts_src / "BkwRicheditOpts.dll",
+            )
+            print("Done copying `BkwRicheditOpts.dll`")
 
 
 @task
@@ -474,18 +514,6 @@ def update_version_info(c):
         json_info[f"{file.name}.sha1hash"] = generate_sha1hash(file)
     json_file.write_text(json.dumps(json_info, indent=2))
     print("Updated version information")
-
-
-@task(name="libs")
-@make_env
-def copy_uwp_services_lib(c):
-    if sys.platform != "win32":
-        return print("Not Windows.")
-    build_config = "Release" if "APPVEYOR_BUILD_FOLDER" in os.environ else "Debug"
-    uwp_services_path = PROJECT_ROOT / "includes" / "BookwormUWPServices"
-    src = uwp_services_path / "bin" / build_config / "BookwormUWPServices.dll"
-    dst = c["build_folder"]
-    shutil.copy(src, dst)
 
 
 def _add_pip_install_args(cmd, context):
@@ -597,7 +625,6 @@ def make_version_info_file(c):
     ),
     post=(
         copy_deps,
-        copy_uwp_services_lib,
     ),
 )
 @make_env
@@ -663,6 +690,23 @@ def prepare_dev_environment(c):
     print("😊 Happy hacking...")
 
 
+@task
+@make_env
+def bench(c, filename="tests/assets/epub30-spec.epub", runs=5):
+    if shutil.which("hyperfine") is None:
+        print(
+            "To run this command, you need first to install hyperfine from the following URL:\n"
+            "https://github.com/sharkdp/hyperfine/releases/latest"
+        )
+        return
+    arch = os.environ["IAPP_ARCH"]
+    c.run(
+        f'hyperfine -N -r {runs} -w 1 '
+        f'--export-json "scripts\\benchmark-{arch}.json" '
+        f'"python -m bookworm benchmark {filename}"'
+    )
+
+
 @task(name="run")
 def run_application(c, debug=True):
     """Runs the app."""
@@ -681,3 +725,5 @@ def run_application(c, debug=True):
         c.run(f"python -m bookworm {args}")
     except UnexpectedExit as e:
         exit(e.result.return_code)
+
+

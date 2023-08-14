@@ -20,7 +20,7 @@ from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.concurrency import call_threaded, process_worker
 from bookworm.document import READING_MODE_LABELS
 from bookworm.document import DocumentCapability as DC
-from bookworm.document import DocumentInfo, PaginationError
+from bookworm.document import DocumentInfo, PaginationError, ReadingMode
 from bookworm.document.uri import DocumentUri
 from bookworm.gui.book_viewer.core_dialogs import (DocumentInfoDialog,
                                                    ElementListDialog,
@@ -28,7 +28,6 @@ from bookworm.gui.book_viewer.core_dialogs import (DocumentInfoDialog,
                                                    SearchBookDialog,
                                                    SearchResultsDialog)
 from bookworm.gui.components import AsyncSnakDialog, RobustProgressDialog
-from bookworm.gui.contentview_ctrl import EVT_CONTEXTMENU_REQUESTED
 from bookworm.gui.settings import PreferencesDialog
 from bookworm.i18n import is_rtl
 from bookworm.logger import logger
@@ -110,7 +109,9 @@ class FileMenu(BaseMenu):
             # Translators: the label of an item in the application menubar
             _("C&lear Documents Cache..."),
             # Translators: the help text of an item in the application menubar
-            _("Clear the document cache. Helps in fixing some issues with openning documents."),
+            _(
+                "Clear the document cache. Helps in fixing some issues with openning documents."
+            ),
         )
         self.AppendSeparator()
         self.AppendSubMenu(
@@ -169,7 +170,9 @@ class FileMenu(BaseMenu):
             wx.EVT_MENU, self.onCloseCurrentFile, id=BookRelatedMenuIds.closeCurrentFile
         )
         self.view.Bind(
-            wx.EVT_MENU, self.onClearDocumentCache, id=ViewerMenuIds.clear_documents_cache
+            wx.EVT_MENU,
+            self.onClearDocumentCache,
+            id=ViewerMenuIds.clear_documents_cache,
         )
         self.view.Bind(wx.EVT_MENU, self.onClearRecentFileList, id=wx.ID_CLEAR)
         self.view.Bind(wx.EVT_MENU, self.onPreferences, id=wx.ID_PREFERENCES)
@@ -230,11 +233,11 @@ class FileMenu(BaseMenu):
         if self.IsChecked(event.GetId()):
             recents_manager.pin(self.reader.document)
             sounds.pinning.play()
-            speech.announce("Pinned")
+            speech.announce(_("Pinned"))
         else:
             recents_manager.unpin(self.reader.document)
             sounds.pinning.play()
-            speech.announce("Unpinned")
+            speech.announce(_("Unpinned"))
         self.populate_pinned_documents_list()
 
     def onExportAsPlainText(self, event):
@@ -291,7 +294,7 @@ class FileMenu(BaseMenu):
         item_uri = item_to_doc_map[item_id]
         if self.reader.ready and (item_uri == self.reader.document.uri):
             return
-        item_uri.view_args['from_list'] = True
+        item_uri.view_args["from_list"] = True
         self.view.open_uri(item_uri)
 
     def onClearRecentFileList(self, event):
@@ -316,28 +319,24 @@ class FileMenu(BaseMenu):
             _("Are you sure you want to clear the documents cache?"),
             # Translators: title of a message box
             _("Clear Documents Cache?"),
-            style=wx.YES_NO | wx.ICON_WARNING
+            style=wx.YES_NO | wx.ICON_WARNING,
         )
         if retval != wx.YES:
             return
-        task = partial(
-            shutil.rmtree,
-            paths.home_data_path(),
-            ignore_errors=True
-        )
+        task = partial(shutil.rmtree, paths.home_data_path(), ignore_errors=True)
         done_callback = lambda fut: wx.MessageBox(
             # Translators: content of a message box
             _("Documents cache has been cleared."),
             # Translators: title of a message box
             _("Success"),
-            style=wx.ICON_INFORMATION
+            style=wx.ICON_INFORMATION,
         )
         AsyncSnakDialog(
             task=task,
             done_callback=done_callback,
             # Translators: content of a message in a message box
             message=_("Clearing documents cache..."),
-            parent=self.view
+            parent=self.view,
         )
 
     def populate_pinned_documents_list(self):
@@ -365,7 +364,7 @@ class FileMenu(BaseMenu):
             self._pinned[item.Id] = pinned_item.uri
         if self.reader.ready:
             current_document = self.reader.document
-            for (item_id, uri) in self._pinned.items():
+            for item_id, uri in self._pinned.items():
                 if uri == current_document.uri:
                     self.pinnedDocumentsMenu.Enable(item_id, False)
 
@@ -510,7 +509,11 @@ class DocumentMenu(BaseMenu):
             uri = self.reader.document.uri.create_copy()
             new_reading_mode = supported_reading_modes[dlg.GetSelection()]
             if current_reading_mode != new_reading_mode:
-                uri.openner_args["reading_mode"] = int(new_reading_mode)
+                if new_reading_mode is ReadingMode.DEFAULT:
+                    with suppress(KeyError):
+                        uri.openner_args.pop("reading_mode")
+                else:
+                    uri.openner_args["reading_mode"] = int(new_reading_mode)
                 most_recent_page = self.reader.current_page
                 self.view.open_uri(
                     uri,
@@ -556,16 +559,23 @@ class SearchMenu(BaseMenu):
         self.Append(
             BookRelatedMenuIds.findNext,
             # Translators: the label of an item in the application menubar
-            _("&Find &Next\tF3"),
+            _("Find &Next\tF3"),
             # Translators: the help text of an item in the application menubar
             _("Find next occurrence."),
         )
         self.Append(
             BookRelatedMenuIds.findPrev,
             # Translators: the label of an item in the application menubar
-            _("&Find &Previous\tShift-F3"),
+            _("Find &Previous\tShift-F3"),
             # Translators: the help text of an item in the application menubar
             _("Find previous occurrence."),
+        )
+        self.Append(
+            BookRelatedMenuIds.goToLine,
+            # Translators: the label of an item in the application menubar
+            _("&Jump to Line...\tCtrl-L"),
+            # Translators: the help text of an item in the application menubar
+            _("Jump to a line within the current page or document"),
         )
         self.Append(
             BookRelatedMenuIds.goToPage,
@@ -583,6 +593,7 @@ class SearchMenu(BaseMenu):
         )
         # Bind events
         self.view.Bind(wx.EVT_MENU, self.onGoToPage, id=BookRelatedMenuIds.goToPage)
+        self.view.Bind(wx.EVT_MENU, self.onGoToLine, id=BookRelatedMenuIds.goToLine)
         self.view.Bind(
             wx.EVT_MENU, self.onGoToPageByLabel, id=BookRelatedMenuIds.goToPageByLabel
         )
@@ -601,6 +612,30 @@ class SearchMenu(BaseMenu):
 
     def after_unloading_book(self, sender):
         self._reset_search_history()
+
+    def onGoToLine(self, event):
+        textCtrl = self.view.contentTextCtrl
+        if (
+            idx_last_line := self.view.get_line_number(textCtrl.GetLastPosition())
+        ) == 0:
+            return wx.Bell()
+        last_line = idx_last_line + 1
+        current_line = self.view.get_line_number(self.view.get_insertion_point()) + 1
+        target_line = wx.GetNumberFromUser(
+            _(
+                "You are here: {current_line}\nYou can't go further than: {last_line}"
+            ).format(current_line=current_line, last_line=last_line),
+            _("Line number"),
+            _("Jump to line"),
+            value=current_line,
+            min=1,
+            max=last_line,
+        )
+        if target_line == wx.NOT_FOUND:
+            return
+        insertion_point = self.view.get_start_of_line(target_line - 1)
+        textCtrl.SetFocus()
+        self.view.set_insertion_point(insertion_point)
 
     def onGoToPage(self, event):
         # Translators: the title of the go to page dialog
@@ -654,7 +689,7 @@ class SearchMenu(BaseMenu):
     def _add_search_results(self, request, dlg):
         search_func = self.reader.document.search
         results = []
-        for (i, resultset) in enumerate(search_func(request)):
+        for i, resultset in enumerate(search_func(request)):
             results.extend(resultset)
             if dlg.IsShown():
                 dlg.addResultSet(resultset)
@@ -833,7 +868,7 @@ class MenubarProvider:
         self.menuBar = wx.MenuBar()
         # Context menu
         self.contentTextCtrl.Bind(
-            EVT_CONTEXTMENU_REQUESTED,
+            self.contentTextCtrl.EVT_CONTEXTMENU_REQUESTED,
             self.onContentTextCtrlContextMenu,
             self.contentTextCtrl,
         )
@@ -853,10 +888,15 @@ class MenubarProvider:
             # Translators: the label of an item in the application menubar
             (100, self.helpMenu, _("&Help")),
         ]
+        self.Bind(
+            wx.EVT_MENU,
+            lambda e: self.tocTreeCtrl.SetFocus(),
+            id=FOCUS_TABLE_OF_CONTENTS,
+        )
 
     def doAddMenus(self):
         self.__menus.sort(key=lambda item: item[0])
-        for (__, menu, label) in self.__menus:
+        for __, menu, label in self.__menus:
             self.menuBar.Append(menu, label)
 
     def registerMenu(self, order, menu, label):
@@ -911,7 +951,7 @@ class MenubarProvider:
             )
         entries.extend(wx.GetApp().service_handler.get_contextmenu_items())
         entries.sort()
-        for (__, label, desc, ident) in entries:
+        for __, label, desc, ident in entries:
             if ident is None:
                 menu.AppendSeparator()
                 continue
@@ -936,9 +976,9 @@ class MenubarProvider:
             if not doc_cls.__internal__
         ]
         for cls in visible_doc_cls:
-            for ext in cls.extensions:
-                rv.append("{name} ({ext})|{ext}|".format(name=_(cls.name), ext=ext))
-                all_exts.append(ext)
+            exts = ";".join(cls.extensions)
+            rv.append("{name}|{exts}|".format(name=_(cls.name), exts=exts))
+            all_exts.extend(cls.extensions)
         rv[-1] = rv[-1].rstrip("|")
         allfiles = ";".join(all_exts)
         allfiles_display = " ".join(e for e in all_exts)

@@ -77,7 +77,6 @@ class OdfParser:
 
 
 class OdfTextDocument(DummyDocument):
-
     format = "odt"
     # Translators: the name of a document file format
     name = _("Open Document Text")
@@ -163,7 +162,7 @@ class OdfPresentation(BaseDocument):
             level=1,
         )
         stack = TreeStackBuilder(root)
-        for (idx, (slide_title, slide_html)) in enumerate(self.slides.items()):
+        for idx, (slide_title, slide_html) in enumerate(self.slides.items()):
             stack.push(
                 Section(
                     title=slide_title,

@@ -8,6 +8,7 @@ import time
 from concurrent.futures import Future
 from functools import reduce
 from itertools import chain
+from typing import Optional
 
 import attr
 import wx
@@ -17,6 +18,7 @@ from wx.lib.combotreebox import ComboTreeBox
 
 import bookworm.typehints as t
 from bookworm.concurrency import threaded_worker
+from bookworm.document import DocumentCapability as DC
 from bookworm.logger import logger
 from bookworm.structured_text import TextRange
 from bookworm.vendor.repeating_timer import RepeatingTimer
@@ -169,9 +171,12 @@ class PageRangeControl(sc.SizedPanel):
             to_page = self.toPage.GetValue() - 1
         return from_page, to_page
 
-    def get_text_range(self):
-        if not self.is_single_page_document:
-            raise TypeError("Text ranges are not supported in single page documents")
+    def get_text_range(self) -> Optional[TextRange]:
+        # #170: Search results were not showing for documents which had no TOC.
+        # if there is only 1 section we assume that it is the full document and return its text range
+        # This actually turns out to fix #195 as well which was most likely a regression from the change that fixed the search results for text documents
+        if len(self.doc) == 1:
+            return self.doc.toc_tree.text_range
         if selected_item := self.sectionChoice.GetSelection():
             section = self.sectionChoice.GetClientData(selected_item)
             start_pos, stop_pos = section.text_range

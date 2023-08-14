@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import contextlib
 import os
+import shutil
 import subprocess
+import tempfile
 from io import BytesIO
 from pathlib import Path
 
@@ -26,6 +28,7 @@ from .. import ChangeDocument
 from .. import DocumentCapability as DC
 from .. import DocumentEncryptedError, DocumentError, DummyDocument
 from .html import BaseHtmlDocument
+from .pandoc import DocbookDocument
 
 log = logger.getChild(__name__)
 TAGS_TO_UNWRAP = []
@@ -36,7 +39,6 @@ TAGS_TO_REMOVE = [
 
 
 class WordDocument(BaseHtmlDocument):
-
     format = "docx"
     # Translators: the name of a document file format
     name = _("Word Document")
@@ -51,7 +53,9 @@ class WordDocument(BaseHtmlDocument):
                 self.try_decrypt(data_buf, decryption_key)
             else:
                 raise DocumentEncryptedError(self)
-        self.__html_content = self._get_html_content_from_docx(data_buf, is_encrypted_document)
+        self.__html_content = self._get_html_content_from_docx(
+            data_buf, is_encrypted_document
+        )
         super().read()
 
     def get_html(self):
@@ -81,7 +85,9 @@ class WordDocument(BaseHtmlDocument):
 
     def _get_html_content_from_docx(self, data_buf, is_encrypted_document):
         data_buf.seek(0)
-        cache = Cache(self._get_cache_directory(), eviction_policy="least-frequently-used")
+        cache = Cache(
+            self._get_cache_directory(), eviction_policy="least-frequently-used"
+        )
         cache_key = self.uri.to_uri_string()
         if cached_html_content := cache.get(cache_key):
             return cached_html_content.decode("utf-8")
@@ -123,12 +129,15 @@ class WordDocument(BaseHtmlDocument):
 
 
 class Word97Document(DummyDocument):
-
     format = "doc"
     # Translators: the name of a document file format
     name = _("Word 97 - 2003 Document")
     extensions = ("*.doc",)
     capabilities = DC.ASYNC_READ
+
+    @classmethod
+    def check(cls):
+        return DocbookDocument.check()
 
     def read(self):
         converted_file = threaded_worker.submit(
@@ -151,17 +160,25 @@ class Word97Document(DummyDocument):
 
     @classmethod
     def convert_to_docbook(cls, filename):
-        args = [cls.get_antiword_executable_path(), "-x", "db", filename]
-        creationflags = subprocess.CREATE_NO_WINDOW
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        ret = subprocess.run(
-            args,
-            capture_output=True,
-            creationflags=creationflags,
-            startupinfo=startupinfo,
-        )
-        return ret.stdout
+        with tempfile.TemporaryDirectory() as tempdir:
+            document_copy = os.path.join(tempdir, "document.doc")
+            shutil.copy(filename, document_copy)
+            args = [cls.get_antiword_executable_path(), "-x", "db", document_copy]
+            creationflags = subprocess.CREATE_NO_WINDOW
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            ret = subprocess.run(
+                args,
+                capture_output=True,
+                creationflags=creationflags,
+                startupinfo=startupinfo,
+            )
+            try:
+                ret.check_returncode()
+            except subprocess.CalledProcessError:
+                raise DocumentError("Failed to process document.")
+            else:
+                return ret.stdout
 
     @staticmethod
     def get_storage_area():

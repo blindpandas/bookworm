@@ -20,7 +20,8 @@ class BookRelatedMenuIds(enum.IntEnum):
     # Document
     document_info = next(ID_GEN)
     element_list = next(ID_GEN)
-    # Tools
+    # Search
+    goToLine = next(ID_GEN)
     goToPage = next(ID_GEN)
     goToPageByLabel = next(ID_GEN)
     searchBook = wx.ID_FIND
@@ -42,15 +43,20 @@ class ViewerMenuIds(enum.IntEnum):
     contributors = next(ID_GEN)
     restart_with_debug = next(ID_GEN)
     about = next(ID_GEN)
-    clear_documents_cache  = next(ID_GEN)
+    clear_documents_cache = next(ID_GEN)
+
+
+FOCUS_TABLE_OF_CONTENTS = next(ID_GEN)
 
 
 KEYBOARD_SHORTCUTS = {
+    FOCUS_TABLE_OF_CONTENTS: "Ctrl+T",
     wx.ID_OPEN: "Ctrl-O",
     wx.ID_NEW: "Ctrl-N",
     BookRelatedMenuIds.pin_document: "Ctrl-P",
     BookRelatedMenuIds.closeCurrentFile: "Ctrl-W",
     BookRelatedMenuIds.element_list: "Ctrl+F7",
+    BookRelatedMenuIds.goToLine: "Ctrl-L",
     BookRelatedMenuIds.goToPage: "Ctrl-G",
     wx.ID_FIND: "Ctrl-F",
     BookRelatedMenuIds.findNext: "F3",

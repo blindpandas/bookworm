@@ -8,6 +8,7 @@ from functools import cached_property
 import ftfy
 
 from bookworm.logger import logger
+from bookworm.structured_text import TextRange
 from bookworm.utils import (TextContentDecoder, normalize_line_breaks,
                             remove_excess_blank_lines)
 
@@ -50,6 +51,7 @@ class PlainTextDocument(SinglePageDocument):
         return Section(
             title="",
             pager=Pager(first=0, last=0),
+            text_range=TextRange(0, len(self.get_content())),
         )
 
     @cached_property

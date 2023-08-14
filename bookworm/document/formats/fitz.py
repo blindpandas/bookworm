@@ -52,7 +52,6 @@ class FitzDocument(BaseDocument):
     """The backend of this document type is Fitz (AKA MuPDF)."""
 
     format = None
-    # Translators: the name of a document file format
     name = None
     extensions = ()
     capabilities = (
@@ -101,7 +100,7 @@ class FitzDocument(BaseDocument):
             data={"html_file": None},
         )
         _last_entry = None
-        for (index, (level, title, start_page, infodict)) in enumerate(toc_info):
+        for index, (level, title, start_page, infodict) in enumerate(toc_info):
             try:
                 curr_index = index
                 next_item = toc_info[curr_index + 1]
@@ -162,36 +161,9 @@ class FitzDocument(BaseDocument):
             if self._ebook.authenticate(decription_key):
                 return True
         raise DocumentEncryptedError(self)
-    
-
-class FitzFB2Document(FitzDocument):
-
-    format = "fb2"
-    # Translators: the name of a document file format
-    name = _("Fiction Book (FB2)")
-    extensions = ("*.fb2",)
-
-    def read(self):
-        self.filename = self.get_file_system_path()
-        if not zipfile.is_zipfile(self.filename):
-            return super().read()
-        fb2_data = self.get_fb2_file_data()
-        try:
-            self._ebook = fitz.open(stream=fb2_data, filetype="fb2")
-            BaseDocument.read(self)
-        except Exception as e:
-            raise DocumentError from e
-        raise DocumentError("Invalid FB2 file")
-
-    def get_fb2_file_data(self):
-        with zipfile.ZipFile(self.filename, "r") as ziparchive:
-            for fname in ziparchive.namelist():
-                if fname.endswith("fb2"):
-                    return ziparchive.read(fname)
 
 
 class FitzXpsDocument(FitzDocument):
-
     format = "xps"
     # Translators: the name of a document file format
     name = _("XPS Document")
@@ -199,7 +171,6 @@ class FitzXpsDocument(FitzDocument):
 
 
 class FitzCBZDocument(FitzDocument):
-
     format = "cbz"
     # Translators: the name of a document file format
     name = _("Comic Book Archive")

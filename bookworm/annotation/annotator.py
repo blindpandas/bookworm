@@ -156,6 +156,7 @@ class Annotator:
             self.session.query(model)
             .filter_by(book_id=self.current_book.id)
             .filter(sa.or_(*clauses))
+            .order_by(model.page_number.asc(), model.position.asc())
             .first()
         )
 
@@ -277,6 +278,6 @@ class Quoter(TaggedAnnotator):
             .filter_by(book_id=self.current_book.id)
             .filter(sa.or_(*clauses))
             .order_by(model.page_number.desc())
-            .order_by(model.position.desc())
+            .order_by(model.end_pos.desc())
             .first()
         )

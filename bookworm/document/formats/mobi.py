@@ -34,7 +34,6 @@ EPUB_STRUCTURE_FILES = {
 
 
 class MobiDocument(DummyDocument):
-
     format = "mobi"
     # Translators: the name of a document file format
     name = _("Kindle eBook")

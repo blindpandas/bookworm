@@ -4,7 +4,7 @@
 
 **Bookworm** is an accessible document reader that enables blind and visually impaired individuals to read documents in an easy and hassle free manor. The main highlights of bookworm are:
 
-* Supports over 15 document formats
+* Supports over 20 document formats
 * Support for named **bookmarks**. This enables you to mark interesting positions in the text for later reference
 * Support for adding comments to capture an interesting thought or create a summary of the content at a particular position in the text. Bookworm allows you to quickly jump to a specific comment and view it. Later, you can export these comments to a text file or HTML document for later use.
 * Two different styles of viewing pages; plain-text and fully rendered, zoomable, images.
@@ -56,7 +56,7 @@ python -m venv .env
 * Install "invoke" : invoke is the command runner we use to define and run the build process. Install it from pip using:
 ```bash
 pip install invoke
-``
+```
 * Then run the following command to prepare your development environment:
 ```shell
 invoke dev
@@ -97,4 +97,4 @@ The [Telegram channel](https://t.me/bookworm_news) will be dedicated to publishi
 
 ## License
 
-**Bookworm** is copyright (c) 2019-2022 Blind Pandas Team. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2019-2023 Blind Pandas Team. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).

@@ -182,6 +182,7 @@ class BaseHtmlDocument(SinglePageDocument):
             extracted_text_and_info = StructuredHtmlParser.from_string(html)
         else:
             extracted_text_and_info = StructuredHtmlParser(html)
+        self.structure = extracted_text_and_info
         self._semantic_structure = extracted_text_and_info.semantic_elements
         self._style_info = extracted_text_and_info.styled_elements
         self.link_targets = extracted_text_and_info.link_targets
@@ -197,7 +198,7 @@ class BaseHtmlDocument(SinglePageDocument):
             key=lambda x: x[0],
         )
         with self._create_toc_stack() as (stack, root):
-            for ((start_pos, stop_pos), h_element) in heading_poses:
+            for (start_pos, stop_pos), h_element in heading_poses:
                 h_text = text[start_pos:stop_pos].strip()
                 h_level = int(h_element.name[-1])
                 section = Section(
@@ -208,7 +209,7 @@ class BaseHtmlDocument(SinglePageDocument):
                 )
                 stack.push(section)
             all_sections = tuple(root.iter_children())
-            for (this_sect, next_sect) in zip_offset(
+            for this_sect, next_sect in zip_offset(
                 all_sections, all_sections, offsets=(0, 1)
             ):
                 this_sect.text_range.stop = next_sect.text_range.start - 1
@@ -232,9 +233,11 @@ class BaseHtmlDocument(SinglePageDocument):
         yield stack, root
         self._outline = root
 
+    def get_document_table_markup(self, table_index):
+        return self.structure.get_table_markup(table_index)
+
 
 class FileSystemHtmlDocument(BaseHtmlDocument):
-
     format = "html"
     # Translators: the name of a document file format
     name = _("HTML Document")
@@ -253,7 +256,6 @@ class FileSystemHtmlDocument(BaseHtmlDocument):
 
 
 class WebHtmlDocument(BaseHtmlDocument):
-
     __internal__ = True
     format = "webpage"
     supported_reading_modes = (
