@@ -33,7 +33,7 @@ If you would like to contribute to *Bookworm's* development, please follow the f
 
 You need the following binaries to develop Bookworm:
 
-1. Python: currently we use Python 3.9 series: Grap the latest version from [python.org](https://www.python.org/downloads/)
+1. Python: currently we use Python 3.10 series: Grab the latest version from [python.org](https://www.python.org/downloads/)
 2. GNU win32 tools: the easiest way to get those is to install Git. Since Git comes with these binaries you can simply add them to your path.
 For example, if git was installed to: "C:\Program Files\Git". Then you need to add the following directory to your path: "C:\Program Files\Git\mingw64\bin".
 3. NSIS: for creating Windows installers. Get it from [NSIS download page](https://nsis.sourceforge.io/Download) and add it to your path.
