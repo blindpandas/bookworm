@@ -4,7 +4,7 @@ import time
 from typing import Tuple
 
 import wx
-from pydantic import field_validator, BaseModel, HttpUrl, RootModel
+from pydantic import BaseModel, HttpUrl, RootModel, field_validator
 
 from bookworm import app, config
 from bookworm import typehints as t
