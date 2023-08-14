@@ -42,7 +42,6 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: ${{ matrix.ARTIFACT }}
           path: ~/artifacts
       - name: Release
         if: startsWith(github.ref, 'refs/tags') && !github.event_type != 'pull_request'
