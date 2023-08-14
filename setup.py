@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 
 from bookworm import app
 
-,# Invalid requirement specifier prefixes
+# Invalid requirement specifier prefixes
 INVALID_PREFIXES = (
     "http://",
     "https://",
