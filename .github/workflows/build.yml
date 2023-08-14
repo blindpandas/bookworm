@@ -23,4 +23,4 @@ jobs:
           path: scripts/Bookworm*portable.zip
     strategy:
      matrix:
-       - CI_ARCH: ["x86", "x64"]
+       CI_ARCH: ["x86", "x64"]
