@@ -18,12 +18,22 @@ jobs:
         with:
           python-version: "3.10"
           architecture: ${{ matrix.CI_ARCH }}
-      - run: pip install invoke && invoke build
-      - name: Upload portable
+      - run: pip install invoke -r requirements-dev.txt
+      - run: invoke freeze
+      - run: invoke copy-executables
+      - name: Create installer
+        uses: joncloud/makensis-action@v4
+        with:
+          script-file: "scripts/bookworm.nsi"
+      - name: Upload portable build
         uses: actions/upload-artifact@v3
         with:
           name: Bookworm-portable-${{ matrix.CI_ARCH }}
           path: scripts/builder/dist/${{ matrix.CI_ARCH }}/Bookworm
+      - name: Upload installer
+        uses: actions/upload-artifact@v3
+        with:
+          path: scripts/Bookworm*setup.exe
     strategy:
      matrix:
        CI_ARCH: ["x86", "x64"]
