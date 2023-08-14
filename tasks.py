@@ -622,9 +622,7 @@ def make_version_info_file(c):
         install_bookworm,
         make_version_info_file,
     ),
-    post=(
-        copy_deps,
-    ),
+    post=(copy_deps,),
 )
 @make_env
 def freeze(c):
@@ -724,5 +722,3 @@ def run_application(c, debug=True):
         c.run(f"python -m bookworm {args}")
     except UnexpectedExit as e:
         exit(e.result.return_code)
-
-

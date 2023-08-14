@@ -21,10 +21,7 @@ jobs:
       - run: pip install invoke -r requirements-dev.txt
       - run: invoke freeze
       - run: invoke copy-executables
-      - name: Create installer
-        uses: joncloud/makensis-action@v4
-        with:
-          script-file: "scripts/bookworm.nsi"
+      - run: invoke make-installer
       - name: Upload portable build
         uses: actions/upload-artifact@v3
         with:
