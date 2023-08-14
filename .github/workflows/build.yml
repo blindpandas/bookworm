@@ -49,6 +49,5 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "/home/runner/artifacts/*"
-        draft: true
-        generateReleaseNotes: true
-        
+          draft: true
+          generateReleaseNotes: true
