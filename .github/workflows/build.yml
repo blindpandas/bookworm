@@ -18,12 +18,12 @@ jobs:
         with:
           python-version: "3.10"
           architecture: ${{ matrix.CI_ARCH }}
-      - run: pip install invoke && invoke build && invoke create-portable
+      - run: pip install invoke && invoke build
       - name: Upload portable
         uses: actions/upload-artifact@v3
         with:
-          name: Bookworm-${{ matrix.CI_ARCH }}
-          path: scripts/Bookworm*portable.zip
+          name: Bookworm-portable-${{ matrix.CI_ARCH }}
+          path: scripts/builder/dist/${{ matrix.CI_ARCH }}/Bookworm
     strategy:
      matrix:
        CI_ARCH: ["x86", "x64"]
