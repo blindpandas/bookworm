@@ -18,7 +18,7 @@ CWD = Path(__file__).parent
 LONG_DESCRIPTION = "Bookworm is the universally accessible document reader.\nVisit [the project's home](https://github.com/blindpandas/bookworm) for more information."
 
 REQUIREMENTS = []
-with open(CWD / "requirements-app.txt", "r") as reqs:
+with open(CWD / "requirements-app.txt", "r", encoding='utf-8') as reqs:
     for line in reqs:
         if any(line.startswith(prfx) for prfx in INVALID_PREFIXES):
             continue

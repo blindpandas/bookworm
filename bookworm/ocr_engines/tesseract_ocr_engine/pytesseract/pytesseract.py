@@ -20,7 +20,6 @@ from time import sleep
 from numpy import ndarray
 from PIL import Image
 
-
 tesseract_cmd = "tesseract"
 
 
