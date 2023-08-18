@@ -31,8 +31,11 @@ jobs:
           .venv/scripts/activate
           pip install -r requirements-dev.txt
         if: steps.cache-venv.outputs.cache-hit != 'true'
-      - run: invoke freeze
-      - run: invoke copy-executables
+      - name: Build code
+        run: |
+          .venv/scripts/activate
+          invoke freeze
+          invoke copy-executables
       - run: invoke make-installer
       - name: Upload portable build
         uses: actions/upload-artifact@v3
