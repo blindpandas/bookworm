@@ -21,19 +21,19 @@ jobs:
       - uses: actions/cache@v3
         id: cache-deps
         with:
-          path: .venv
+          path: venv
           key: ${{ runner.os }}-venv-${{ matrix.CI_ARCH }}-${{ hashFiles('requirements*.txt') }}
           restore-keys: |
            ${{ runner.os }}-venv-${{ matrix.CI_ARCH }}
       - name: Setup dependencies
         run: |
-          python -m venv .venv
-          .venv/scripts/activate
+          python -m venv venv
+          venv/scripts/activate
           pip install -r requirements-dev.txt
         if: steps.cache-venv.outputs.cache-hit != 'true'
       - name: Build code
         run: |
-          .venv/scripts/activate
+          venv/scripts/activate
           invoke freeze
           invoke copy-executables
       - run: invoke make-installer
