@@ -36,7 +36,7 @@ jobs:
           venv/scripts/activate
           invoke freeze
           invoke copy-executables
-      - run: invoke make-installer
+          invoke make-installer
       - name: Upload portable build
         uses: actions/upload-artifact@v3
         with:
