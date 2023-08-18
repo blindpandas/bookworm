@@ -25,10 +25,11 @@ jobs:
           key: ${{ runner.os }}-venv-${{ matrix.CI_ARCH }}-${{ hashFiles('requirements*.txt') }}
           restore-keys: |
            ${{ runner.os }}-venv-${{ matrix.CI_ARCH }}
-      - run: |
-        python -m venv .venv
-        .venv/scripts/activate
-        pip install -r requirements-dev.txt
+      - name: Setup dependencies
+        run: |
+          python -m venv .venv
+          .venv/scripts/activate
+          pip install -r requirements-dev.txt
         if: steps.cache-venv.outputs.cache-hit != 'true'
       - run: invoke freeze
       - run: invoke copy-executables
