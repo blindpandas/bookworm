@@ -23,8 +23,6 @@ jobs:
         with:
           path: venv
           key: ${{ runner.os }}-venv-${{ matrix.CI_ARCH }}-${{ hashFiles('requirements*.txt') }}
-          restore-keys: |
-           ${{ runner.os }}-venv-${{ matrix.CI_ARCH }}
       - name: Setup dependencies
         run: |
           python -m venv venv
