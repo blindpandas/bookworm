@@ -18,7 +18,15 @@ jobs:
         with:
           python-version: "3.10"
           architecture: ${{ matrix.CI_ARCH }}
-      - run: pip install invoke -r requirements-dev.txt
+      - uses: actions/cache@v3
+        id: cache-deps
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('requirements*.txt') }}
+          restore-keys: |
+           ${{ runner.os }}-venv-
+      - run: python -m venv .venv && . .venv/scripts/activate && pip install -r requirements-dev.txt
+        if: steps.cache-venv.outputs.cache-hit != 'true'
       - run: invoke freeze
       - run: invoke copy-executables
       - run: invoke make-installer
