@@ -60,8 +60,8 @@ jobs:
         run: |
           zip -r Bookworm-portable-x64.zip Bookworm-portable-x64
           zip -r Bookworm-portable-x86.zip Bookworm-portable-x86
-          cp -r Bookworm-setup-x64 .
-          cp -r Bookworm-setup-x86 .
+          mv -r Bookworm-setup-x64 .
+          mv -r Bookworm-setup-x86 .
         working-directory: /home/runner/artifacts
       - name: Release
         if: startsWith(github.ref, 'refs/tags') && !github.event_type != 'pull_request'
