@@ -28,7 +28,7 @@ jobs:
           python -m venv venv
           venv/scripts/activate
           pip install -r requirements-dev.txt
-        if: steps.cache-venv.outputs.cache-hit != 'true'
+        if: steps.cache-deps.outputs.cache-hit != 'true'
       - name: Build code
         run: |
           venv/scripts/activate
@@ -60,13 +60,11 @@ jobs:
         run: |
           zip -r Bookworm-portable-x64.zip Bookworm-portable-x64
           zip -r Bookworm-portable-x86.zip Bookworm-portable-x86
-          mv -r Bookworm-setup-x64 .
-          mv -r Bookworm-setup-x86 .
         working-directory: /home/runner/artifacts
       - name: Release
         if: startsWith(github.ref, 'refs/tags') && !github.event_type != 'pull_request'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "/home/runner/artifacts/*.zip,/home/runner/artifacts/*.exe"
+          artifacts: "/home/runner/artifacts/*.zip,/home/runner/artifacts/Bookworm-setup-x64/*.exe,/home/runner/artifacts/Bookworm-setup-x86/*.exe"
           draft: true
           generateReleaseNotes: true
