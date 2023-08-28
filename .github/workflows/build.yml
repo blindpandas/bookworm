@@ -35,6 +35,12 @@ jobs:
           invoke freeze
           invoke copy-executables
           invoke make-installer
+      - name: Generate translation catalogs and version info
+        if: matrix.CI_ARCH == 'x64'
+        run: |
+          venv/scripts/activate
+          invoke gen-pot
+          invoke update-version-info
       - name: Upload portable build
         uses: actions/upload-artifact@v3
         with:
@@ -45,6 +51,16 @@ jobs:
         with:
           name: Bookworm-setup-${{ matrix.CI_ARCH }}
           path: scripts/Bookworm*setup.exe
+      - name: Upload translation catalogs
+        uses: actions/upload-artifact@v3
+        with:
+          name: translation-catalogs
+          path: scripts/*.pot
+      - name: Upload version info
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-info
+          path: scripts/release-info.json
     strategy:
      matrix:
        CI_ARCH: ["x86", "x64"]
@@ -65,6 +81,6 @@ jobs:
         if: startsWith(github.ref, 'refs/tags') && !github.event_type != 'pull_request'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "/home/runner/artifacts/*.zip,/home/runner/artifacts/Bookworm-setup-x64/*.exe,/home/runner/artifacts/Bookworm-setup-x86/*.exe"
+          artifacts: "/home/runner/artifacts/*{.zip,.json,.pot}/home/runner/artifacts/Bookworm-setup-x64/*.exe,/home/runner/artifacts/Bookworm-setup-x86/*.exe"
           draft: true
           generateReleaseNotes: true
