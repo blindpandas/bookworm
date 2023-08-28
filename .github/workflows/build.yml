@@ -81,6 +81,6 @@ jobs:
         if: startsWith(github.ref, 'refs/tags') && !github.event_type != 'pull_request'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "/home/runner/artifacts/*{.zip,.json,.pot}/,home/runner/artifacts/Bookworm-setup-x64/*.exe,/home/runner/artifacts/Bookworm-setup-x86/*.exe"
+          artifacts: "/home/runner/artifacts/*{.zip,.json,.pot},/home/runner/artifacts/Bookworm-setup-x64/*.exe,/home/runner/artifacts/Bookworm-setup-x86/*.exe"
           draft: true
           generateReleaseNotes: true
