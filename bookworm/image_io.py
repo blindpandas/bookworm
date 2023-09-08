@@ -3,20 +3,20 @@
 from __future__ import annotations
 
 import io
+import importlib
 import tempfile
 from dataclasses import dataclass
 
 import fitz
 import wx
-from lazy_import import lazy_module
 from PIL import Image, ImageOps
 
 from bookworm import typehints as t
 from bookworm.logger import logger
+from bookworm.utils import lazy_module
 
 np = lazy_module("numpy")
 cv2 = lazy_module("cv2")
-
 
 log = logger.getChild(__name__)
 

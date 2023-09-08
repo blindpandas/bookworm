@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import importlib
 import hashlib
 import os
 import sys
@@ -131,3 +132,7 @@ def format_datetime(
     return app.current_language.format_datetime(
         datetime_to_format, date_only=date_only, format=format, localized=localized
     )
+
+def lazy_module(mod: str):
+    module = importlib.__import__(mod)
+    return module
