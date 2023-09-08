@@ -645,9 +645,7 @@ def make_version_info_file(c):
         install_bookworm,
         make_version_info_file,
     ),
-    post=(
-        copy_deps,
-    ),
+    post=(copy_deps,),
 )
 @make_env
 def freeze(c):
@@ -665,6 +663,10 @@ def freeze(c):
             f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}",
             hide=False,
         )
+        # This is required because pyxpdf_data looks for a default.xpdf file inside the site-packages folder
+        # TODO: Fix this if at all possible
+        lib = c['build_folder'] / "Lib" / "site-packages"
+        os.makedirs(str(lib))
     print("App freezed.")
 
 
@@ -747,5 +749,3 @@ def run_application(c, debug=True):
         c.run(f"python -m bookworm {args}")
     except UnexpectedExit as e:
         exit(e.result.return_code)
-
-
