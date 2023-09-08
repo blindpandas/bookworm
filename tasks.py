@@ -443,7 +443,9 @@ def copy_deps(c):
 def copy_espeak_and_piper_libs():
     arch = os.environ["IAPP_ARCH"]
 
-    espeak_dll_src = PROJECT_ROOT / "scripts" / "dlls" / "espeak-ng" / arch / "espeak-ng.dll"
+    espeak_dll_src = (
+        PROJECT_ROOT / "scripts" / "dlls" / "espeak-ng" / arch / "espeak-ng.dll"
+    )
     espeak_data_src = PROJECT_ROOT / "scripts" / "dlls" / "espeak-ng" / "espeak-ng-data"
     espeak_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"])
 
@@ -451,8 +453,12 @@ def copy_espeak_and_piper_libs():
     shutil.copy(espeak_dll_src, espeak_dst)
     shutil.copytree(espeak_data_src, espeak_dst.joinpath("espeak-ng-data"))
 
-    onnxruntime_dll_src  = PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / arch / "onnxruntime.dll"
-    onnxruntime_notices_src = PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / "notices"
+    onnxruntime_dll_src = (
+        PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / arch / "onnxruntime.dll"
+    )
+    onnxruntime_notices_src = (
+        PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / "notices"
+    )
     onnxruntime_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "onnxruntime"
     onnxruntime_dst.mkdir(parents=True, exist_ok=True)
 
