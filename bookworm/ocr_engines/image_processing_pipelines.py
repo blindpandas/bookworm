@@ -13,10 +13,11 @@ from bookworm.image_io import ImageIO
 from bookworm.logger import logger
 from bookworm.utils import lazy_module
 
+from . import cv2_utils
+
 
 np = lazy_module("numpy")
 cv2 = lazy_module("cv2")
-cv2_utils = lazy_module("bookworm.ocr_engines.cv2_utils")
 
 
 log = logger.getChild(__name__)

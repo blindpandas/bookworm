@@ -11,7 +11,6 @@ PACKAGES_WITH_DATA = [
     "trafilatura",
     "justext",
     "tld",
-    "lazy_import",
     "docx",
     "pptx",
 ]
