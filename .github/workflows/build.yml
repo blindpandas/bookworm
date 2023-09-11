@@ -74,13 +74,19 @@ jobs:
           path: ~/artifacts
       - name: Zip Artifacts
         run: |
-          zip -r Bookworm-portable-x64.zip Bookworm-portable-x64
-          zip -r Bookworm-portable-x86.zip Bookworm-portable-x86
+          mkdir -p upload
+          zip -r upload/Bookworm-portable-x64.zip Bookworm-portable-x64
+          zip -r upload/Bookworm-portable-x86.zip Bookworm-portable-x86
+          mv Bookworm-setup-x64/* upload
+          mv Bookworm-setup-x86/* upload
+          mv release-info/* upload
+          mv translation-catalogs/* upload
+
         working-directory: /home/runner/artifacts
       - name: Release
         if: startsWith(github.ref, 'refs/tags') && !github.event_type != 'pull_request'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "/home/runner/artifacts/*.zip,/home/runner/artifacts/Bookworm-setup-x64/*.exe,/home/runner/artifacts/Bookworm-setup-x86/*.exe,/home/runner/artifacts/release-info/*,/home/runner/artifacts/translation-catalogs/*"
+          artifacts: "/home/runner/artifacts/upload/*"
           draft: true
           generateReleaseNotes: true
