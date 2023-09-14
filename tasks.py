@@ -695,6 +695,13 @@ def copy_executables(c):
 @make_env
 def build(c):
     """Freeze, package, and prepare the app for distribution."""
+    # The following fixes a bug on windows where some DLL's are  not
+    # deletable due to pyinstaller copying them
+    # without clearing their read-only status 
+    if sys.platform == "win32":
+        build_folder = Path(c["build_folder"])
+        for dll_file in build_folder.glob("*.dll"):
+            os.system(f"attrib -R {os.fspath(dll_file)}")
 
 
 @task(name="create-portable")

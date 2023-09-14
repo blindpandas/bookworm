@@ -1,10 +1,10 @@
-accessible-output2==0.17
 # Our in-house packages
 bp-db-magic==0.2
 # Our fork of the configobj (py3k compatible version).
 https://github.com/blindpandas/configobj/tarball/v5.1.0.dev0
 
-apsw==3.42.0.0
+accessible-output2==0.17
+apsw==3.43.1.0
 attrs==23.1.0
 babel==2.12.1
 banal==1.0.6
@@ -13,7 +13,7 @@ bidict==0.22.1
 blinker==1.5
 bottle==0.12.24
 chardet==4.0.0
-comtypes==1.1.14
+comtypes==1.2.0
 cssselect==1.1.0
 dateparser==1.1.7
 demandimport==0.3.4
@@ -28,22 +28,22 @@ Levenshtein==0.20.0
 libloader==0.21
 lru-dict==1.1.8
 lxml==4.9.3
-mammoth==1.5.0
+mammoth==1.6.0
 mistune==0.8.4
 mobi==0.3.3
-more-itertools==9.1.0
-msgpack==1.0.4
+more-itertools==10.1.0
+msgpack==1.0.5
 msoffcrypto-tool==5.0.0
 neosynth==3.2.0;sys_platform=="win32"
 numpy==1.22.0
 odfpy==1.4.1
 opencv-python-headless==4.5.5.62
 peewee==3.15.4
-Pillow==9.4.0
+Pillow==10.0.0
 platform-utils==1.5.1
 pydantic==2.1.1
 pymediawiki==0.7.2
-PyMuPDF==1.22.5
+PyMuPDF==1.23.3
 python-dateutil==2.8.2
 python-docx==0.8.11
 python-pptx==0.6.21
@@ -51,7 +51,7 @@ pywhatlang==1.0.0
 pywin32==306;sys_platform=="win32"
 #pyxpdf==0.2.3
 pyxpdf-data==1.1.0
-trafilatura==1.6.1
+trafilatura==1.6.2
 tzlocal==4.2
 rapidfuzz==2.6.0
 requests==2.31.0
@@ -64,4 +64,4 @@ url-normalize==1.4.3
 waitress==2.1.2
 winpaths==0.2
 wxPython==4.2.1
-yarl==1.8.2
+yarl==1.9.2
