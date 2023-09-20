@@ -6,16 +6,18 @@ from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass, field
 from io import BytesIO
 
-from lazy_import import lazy_module
 from PIL import Image, ImageEnhance, ImageOps
 
 from bookworm import typehints as t
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
+from bookworm.utils import lazy_module
+
+from . import cv2_utils
+
 
 np = lazy_module("numpy")
 cv2 = lazy_module("cv2")
-cv2_utils = lazy_module("bookworm.ocr_engines.cv2_utils")
 
 
 log = logger.getChild(__name__)

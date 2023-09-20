@@ -2,3 +2,4 @@
 
 
 from .base import SpeechElement, SpeechStyle
+from .enums import SpeechElementKind
