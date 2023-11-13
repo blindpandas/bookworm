@@ -24,8 +24,6 @@ else:
 
 try:
     from .espeak import ESpeakSpeechEngine
-except FileExistsError:
-    pass
 except:
     raise
 else:
