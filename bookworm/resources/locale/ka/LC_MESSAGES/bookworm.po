@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b3\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2023-03-20 09:32+0000\n"
-"PO-Revision-Date: 2023-03-20 16:56+0400\n"
-"Last-Translator: Dragan Ratkovich\n"
+"POT-Creation-Date: 2023-11-29 08:22+0000\n"
+"PO-Revision-Date: 2023-11-29 12:46+0400\n"
+"Last-Translator: DraganRatkovich\n"
 "Language-Team: Translation team of Dragan Ratkovich\n"
 "Language: ka\n"
 "MIME-Version: 1.0\n"
@@ -17,10 +17,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.10.3\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. Translators: the content of a message indicating a connection error
-#: bookworm/otau.py:76
+#: bookworm/otau.py:78
 msgid "We couldn't access the internet right now. Please try again later."
 msgstr ""
 "ამჟამად ინტერნეტთან დაკავშირება ვერ შევძელით. გთხოვთ, სცადოთ მოგვიანებით."
@@ -28,13 +28,13 @@ msgstr ""
 #. Translators: the title of a message indicating a connection error
 #. Translators: the title of a message indicating a failure in downloading an
 #. update
-#: bookworm/otau.py:78 bookworm/platforms/win32/updater.py:120
+#: bookworm/otau.py:80 bookworm/platforms/win32/updater.py:120
 msgid "Network Error"
 msgstr "ქსელის შეცდომა"
 
 #. Translators: the content of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:88
+#: bookworm/otau.py:90
 msgid ""
 "We have faced a technical problem while checking for updates. Please try "
 "again later."
@@ -44,13 +44,13 @@ msgstr ""
 
 #. Translators: the title of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:92
+#: bookworm/otau.py:94
 msgid "Error Checking For Updates"
 msgstr "შეცდომა განახლებების შემოწმებისას"
 
 #. Translators: the content of a message indicating that there is no new
 #. version
-#: bookworm/otau.py:109
+#: bookworm/otau.py:111
 msgid ""
 "Congratulations, you have already got the latest version of Bookworm.\n"
 "We are working day and night on making Bookworm better. The next version of "
@@ -63,17 +63,17 @@ msgstr ""
 "შეგატყობინებთ."
 
 #. Translators: the title of a message indicating that there is no new version
-#: bookworm/otau.py:116
+#: bookworm/otau.py:118
 msgid "No Update"
 msgstr "არ არის განახლება"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/otau.py:141
+#: bookworm/otau.py:143
 msgid "&Check for updates"
 msgstr "&განახლებების შემოწმება"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/otau.py:143
+#: bookworm/otau.py:145
 msgid "Update the application"
 msgstr "აპლიკაციის განახლება"
 
@@ -2314,7 +2314,6 @@ msgid "Page number, of {total}:"
 msgstr "გვერდის ნომერი, {total}დან:"
 
 #: bookworm/gui/book_viewer/core_dialogs.py:246
-#| msgid "Elements"
 msgid "Element Type"
 msgstr "ელემენტის ტიპი"
 
@@ -3466,6 +3465,20 @@ msgstr "ჩამოტვირთვა დასრულებულია"
 msgid "One-core Synthesizer"
 msgstr "One-core სინთეზატორი"
 
+#: bookworm/platforms/win32/speech_engines/espeak/__init__.py:66
+msgid "eSpeak NG"
+msgstr "eSpeak NG"
+
+#. Translators: name of the default espeak varient.
+#: bookworm/platforms/win32/speech_engines/espeak/_espeak.py:442
+msgctxt "espeakVarient"
+msgid "none"
+msgstr "არაფერი"
+
+#: bookworm/platforms/win32/speech_engines/piper/__init__.py:184
+msgid "Piper Neural TTS"
+msgstr "Piper Neural TTS"
+
 #: bookworm/speechdriver/__init__.py:16
 msgid "No Speech"
 msgstr "არ არის ხმა"
@@ -3559,12 +3572,12 @@ msgid "End of document"
 msgstr "დოკუმენტის დასასრული"
 
 #. Translators: the title of a message telling the user that no TTS voice found
-#: bookworm/text_to_speech/__init__.py:409
+#: bookworm/text_to_speech/__init__.py:410
 msgid "No TTS Voices"
 msgstr "არ არის TTS ხმა"
 
 #. Translators: a message telling the user that no TTS voice found
-#: bookworm/text_to_speech/__init__.py:411
+#: bookworm/text_to_speech/__init__.py:412
 msgid ""
 "A valid Text-to-speech voice was not found for the current speech engine.\n"
 "Text-to-speech functionality will be disabled."
@@ -3574,21 +3587,32 @@ msgstr ""
 "ტექსტის მეტყველებაში გადაყვანის ფუნქცია გამოირთვება."
 
 #. Translators: a message telling the user that the TTS voice has been changed
-#: bookworm/text_to_speech/__init__.py:429
+#: bookworm/text_to_speech/__init__.py:430
+#| msgid ""
+#| "Bookworm has noticed that the currently configured Text-to-speech voice "
+#| "speaks a language different from that of this book.\n"
+#| "Do you want to temporary switch to another voice that speaks a language "
+#| "similar to the language  of the currently opened document?"
 msgid ""
 "Bookworm has noticed that the currently configured Text-to-speech voice "
-"speaks a language different from that of this book.\n"
+"speaks a language different from that of this document.\n"
 "Do you want to temporary switch to another voice that speaks a language "
-"similar to the language  of the currently opened document?"
+"similar to the language  of the currently opened document?\n"
+"\n"
+"Voice language: {voice_lang}\n"
+"Document language: {document_lang}"
 msgstr ""
 "Bookworm-მა შენიშნა, რომ ტექსტის მეტყველებაში გარდაქმნის ამჟამად "
 "კონფიგურირებული ხმის ენა განსხვავდება წიგნის ენისგან.\n"
-"გსურთ, დროებით გადართოთ სხვა ხმაზე, რომელიც შეესაბამება გახსნილი დოკუმენტის "
-"ენას?"
+"გსურთ რომ დროებით გადართოთ სხვა ხმაზე, რომელიც შეესაბამება გახსნილი "
+"დოკუმენტის ენას?\n"
+"\n"
+"ხმის ენა: {voice_lang}\n"
+"დოკუმენტის ენა: {document_lang}"
 
 #. Translators: the title of a message telling the user that the TTS voice has
 #. been changed
-#: bookworm/text_to_speech/__init__.py:436
+#: bookworm/text_to_speech/__init__.py:443
 msgid "Incompatible TTS Voice Detected"
 msgstr "აღმოჩენილია შეუთავსებელი TTS ხმა"
 
