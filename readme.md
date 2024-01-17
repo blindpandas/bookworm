@@ -1,4 +1,5 @@
 ![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/blindpandas/bookworm?branch=develop&svg=true)
+[Appveyor Builds](https://ci.appveyor.com/project/mush42/bookworm)
 
 # Bookworm
 
