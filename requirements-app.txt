@@ -39,9 +39,9 @@ numpy==1.22.0
 odfpy==1.4.1
 opencv-python-headless==4.5.5.62
 peewee==3.15.4
-Pillow==10.0.0
+Pillow==9.5.0
 platform-utils==1.5.1
-pydantic==2.1.1
+pydantic==2.3.0
 pymediawiki==0.7.2
 PyMuPDF==1.23.3
 python-dateutil==2.8.2

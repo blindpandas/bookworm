@@ -30,8 +30,6 @@ if IS_RUNNING_FROM_SOURCE:
         espeak_dll_dst = Path(configobj.__path__[0]).parent.joinpath("pyper", "espeak-ng.dll")
         if not espeak_dll_dst.exists():
             os.link(espeak_ng_dll, espeak_dll_dst)
-        else:
-            raise
 
 
 

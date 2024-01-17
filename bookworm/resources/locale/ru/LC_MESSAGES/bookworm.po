@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b3\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2023-03-20 09:32+0000\n"
-"PO-Revision-Date: 2023-03-20 16:58+0400\n"
-"Last-Translator: Dragan Ratkovich\n"
+"POT-Creation-Date: 2023-11-29 08:22+0000\n"
+"PO-Revision-Date: 2023-11-29 12:51+0400\n"
+"Last-Translator: DraganRatkovich\n"
 "Language-Team: \n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "Generated-By: Babel 2.9.1\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.4.1\n"
 "X-Poedit-Bookmarks: 561,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
 #. Translators: the content of a message indicating a connection error
-#: bookworm/otau.py:76
+#: bookworm/otau.py:78
 msgid "We couldn't access the internet right now. Please try again later."
 msgstr ""
 "Мы не могли получить доступ к Интернету сейчас. Пожалуйста, попробуйте позже."
@@ -30,13 +30,13 @@ msgstr ""
 #. Translators: the title of a message indicating a connection error
 #. Translators: the title of a message indicating a failure in downloading an
 #. update
-#: bookworm/otau.py:78 bookworm/platforms/win32/updater.py:120
+#: bookworm/otau.py:80 bookworm/platforms/win32/updater.py:120
 msgid "Network Error"
 msgstr "Ошибка сети"
 
 #. Translators: the content of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:88
+#: bookworm/otau.py:90
 msgid ""
 "We have faced a technical problem while checking for updates. Please try "
 "again later."
@@ -46,13 +46,13 @@ msgstr ""
 
 #. Translators: the title of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:92
+#: bookworm/otau.py:94
 msgid "Error Checking For Updates"
 msgstr "Ошибка проверки обновлений"
 
 #. Translators: the content of a message indicating that there is no new
 #. version
-#: bookworm/otau.py:109
+#: bookworm/otau.py:111
 msgid ""
 "Congratulations, you have already got the latest version of Bookworm.\n"
 "We are working day and night on making Bookworm better. The next version of "
@@ -65,17 +65,17 @@ msgstr ""
 "будет выпущен."
 
 #. Translators: the title of a message indicating that there is no new version
-#: bookworm/otau.py:116
+#: bookworm/otau.py:118
 msgid "No Update"
 msgstr "Нет обновления"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/otau.py:141
+#: bookworm/otau.py:143
 msgid "&Check for updates"
 msgstr "Проверить наличие &обновлений"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/otau.py:143
+#: bookworm/otau.py:145
 msgid "Update the application"
 msgstr "Обновить приложение"
 
@@ -2317,7 +2317,6 @@ msgid "Page number, of {total}:"
 msgstr "Номер страницы, из {total}:"
 
 #: bookworm/gui/book_viewer/core_dialogs.py:246
-#| msgid "Elements"
 msgid "Element Type"
 msgstr "Тип элемента"
 
@@ -3465,7 +3464,21 @@ msgstr "Загрузка завершена"
 
 #: bookworm/platforms/win32/speech_engines/onecore.py:74
 msgid "One-core Synthesizer"
-msgstr "One-core Синтезатор"
+msgstr "Синтезатор One-core"
+
+#: bookworm/platforms/win32/speech_engines/espeak/__init__.py:66
+msgid "eSpeak NG"
+msgstr "eSpeak NG"
+
+#. Translators: name of the default espeak varient.
+#: bookworm/platforms/win32/speech_engines/espeak/_espeak.py:442
+msgctxt "espeakVarient"
+msgid "none"
+msgstr "ничего"
+
+#: bookworm/platforms/win32/speech_engines/piper/__init__.py:184
+msgid "Piper Neural TTS"
+msgstr "Piper Neural TTS"
 
 #: bookworm/speechdriver/__init__.py:16
 msgid "No Speech"
@@ -3560,12 +3573,12 @@ msgid "End of document"
 msgstr "Конец документа"
 
 #. Translators: the title of a message telling the user that no TTS voice found
-#: bookworm/text_to_speech/__init__.py:409
+#: bookworm/text_to_speech/__init__.py:410
 msgid "No TTS Voices"
 msgstr "Нет голосов TTS"
 
 #. Translators: a message telling the user that no TTS voice found
-#: bookworm/text_to_speech/__init__.py:411
+#: bookworm/text_to_speech/__init__.py:412
 msgid ""
 "A valid Text-to-speech voice was not found for the current speech engine.\n"
 "Text-to-speech functionality will be disabled."
@@ -3575,21 +3588,32 @@ msgstr ""
 "Функция преобразования текста в речь будет отключена."
 
 #. Translators: a message telling the user that the TTS voice has been changed
-#: bookworm/text_to_speech/__init__.py:429
+#: bookworm/text_to_speech/__init__.py:430
+#| msgid ""
+#| "Bookworm has noticed that the currently configured Text-to-speech voice "
+#| "speaks a language different from that of this book.\n"
+#| "Do you want to temporary switch to another voice that speaks a language "
+#| "similar to the language  of the currently opened document?"
 msgid ""
 "Bookworm has noticed that the currently configured Text-to-speech voice "
-"speaks a language different from that of this book.\n"
+"speaks a language different from that of this document.\n"
 "Do you want to temporary switch to another voice that speaks a language "
-"similar to the language  of the currently opened document?"
+"similar to the language  of the currently opened document?\n"
+"\n"
+"Voice language: {voice_lang}\n"
+"Document language: {document_lang}"
 msgstr ""
 "Bookworm заметил, что настроенный в настоящее время голос преобразования "
 "текста в речь говорит на языке, отличном от языка этой книги.\n"
-"Вы хотите временно переключиться на другой голос, говорящий на языке, "
-"похожем на язык текущего открытого документа?"
+"Хотите временно переключиться на другой голос, говорящий на языке, похожем "
+"на язык открытого в данный момент документа?\n"
+"\n"
+"Язык голоса: {voice_lang}\n"
+"Язык документа: {document_lang}"
 
 #. Translators: the title of a message telling the user that the TTS voice has
 #. been changed
-#: bookworm/text_to_speech/__init__.py:436
+#: bookworm/text_to_speech/__init__.py:443
 msgid "Incompatible TTS Voice Detected"
 msgstr "Обнаружен несовместимый голос TTS"
 

@@ -216,4 +216,4 @@ To keep yourself updated with the latest news about Bookworm, you can visit Book
 
 ## License
 
-**Bookworm** is copyright (c) 2019-2022 Musharraf Omer and Bookworm Contributors. It is licensed under the [MIT License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2019-2023 Musharraf Omer and Bookworm Contributors. It is licensed under the [MIT License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
