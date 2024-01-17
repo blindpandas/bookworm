@@ -12,8 +12,13 @@ import db_magic as db
 from bookworm.logger import logger
 from bookworm.paths import db_path as get_db_path
 
-from .models import (Book, DocumentPositionInfo, GetOrCreateMixin,
-                     PinnedDocument, RecentDocument)
+from .models import (
+    Book,
+    DocumentPositionInfo,
+    GetOrCreateMixin,
+    PinnedDocument,
+    RecentDocument,
+)
 from .schema import upgrade_database_schema
 
 log = logger.getChild(__name__)

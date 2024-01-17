@@ -478,7 +478,9 @@ def get_espeak_directory():
 @cache
 def get_espeak_dll_path():
     if IS_RUNNING_FROM_SOURCE:
-        espeak_ng_dll = Path.cwd().joinpath("scripts", "dlls", "espeak-ng", app.arch, "espeak-ng.dll")
+        espeak_ng_dll = Path.cwd().joinpath(
+            "scripts", "dlls", "espeak-ng", app.arch, "espeak-ng.dll"
+        )
     else:
         espeak_ng_dll = app_path("espeak-ng.dll")
 

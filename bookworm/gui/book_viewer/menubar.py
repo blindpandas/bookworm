@@ -22,19 +22,25 @@ from bookworm.document import READING_MODE_LABELS
 from bookworm.document import DocumentCapability as DC
 from bookworm.document import DocumentInfo, PaginationError, ReadingMode
 from bookworm.document.uri import DocumentUri
-from bookworm.gui.book_viewer.core_dialogs import (DocumentInfoDialog,
-                                                   ElementListDialog,
-                                                   GoToPageDialog,
-                                                   SearchBookDialog,
-                                                   SearchResultsDialog)
+from bookworm.gui.book_viewer.core_dialogs import (
+    DocumentInfoDialog,
+    ElementListDialog,
+    GoToPageDialog,
+    SearchBookDialog,
+    SearchResultsDialog,
+)
 from bookworm.gui.components import AsyncSnakDialog, RobustProgressDialog
 from bookworm.gui.settings import PreferencesDialog
 from bookworm.i18n import is_rtl
 from bookworm.logger import logger
 from bookworm.reader import EBookReader
 from bookworm.resources import sounds
-from bookworm.signals import (config_updated, reader_book_loaded,
-                              reader_book_unloaded, reading_position_change)
+from bookworm.signals import (
+    config_updated,
+    reader_book_loaded,
+    reader_book_unloaded,
+    reading_position_change,
+)
 from bookworm.utils import gui_thread_safe, restart_application
 
 from . import recents_manager

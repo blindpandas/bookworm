@@ -10,7 +10,14 @@ from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 from bookworm.speechdriver.utterance import SpeechUtterance
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
-from bookworm.speechdriver.enumerations import (SynthState, EngineEvent, SpeechElementKind, RateSpec, VolumeSpec, PauseSpec)
+from bookworm.speechdriver.enumerations import (
+    SynthState,
+    EngineEvent,
+    SpeechElementKind,
+    RateSpec,
+    VolumeSpec,
+    PauseSpec,
+)
 from bookworm.speechdriver.element.converter.ssml import SsmlSpeechConverter
 from bookworm.platforms.win32.nvwave import WavePlayer
 
@@ -22,6 +29,7 @@ log = logger.getChild(__name__)
 
 RATE_BOOST_MULTIPLIER = 3
 META_BOOKMARK_START = "$MBKW_START"
+
 
 class ESpeakSsmlSpeechConverter(SsmlSpeechConverter):
     """eSpeak synthesizer does not support the audio element."""
@@ -74,7 +82,7 @@ class ESpeakSpeechEngine(BaseSpeechEngine):
         _espeak.initialize(self._espeak_bookmark_callback)
         default_voice = more_itertools.first(
             (v for v in self.get_voices() if v.language.ietf_tag == "en-US"),
-            default=self.get_voices()[0]
+            default=self.get_voices()[0],
         )
         _espeak.setVoice(default_voice.data["es_voice"])
 
@@ -92,8 +100,12 @@ class ESpeakSpeechEngine(BaseSpeechEngine):
         for v in _espeak.getVoiceList():
             if v.identifier is None:
                 continue
-            identifier  = os.path.basename(_espeak.decodeEspeakString(v.identifier)).lower().split("+")[0]
-            lang =_espeak.decodeEspeakString(v.languages[1:])
+            identifier = (
+                os.path.basename(_espeak.decodeEspeakString(v.identifier))
+                .lower()
+                .split("+")[0]
+            )
+            lang = _espeak.decodeEspeakString(v.languages[1:])
             name = _espeak.decodeEspeakString(v.name)
             try:
                 voice_locale = LocaleInfo(lang)
@@ -109,7 +121,7 @@ class ESpeakSpeechEngine(BaseSpeechEngine):
                     data={
                         "id": v.identifier,
                         "es_voice": v,
-                    }
+                    },
                 )
             )
         return rv
@@ -121,7 +133,7 @@ class ESpeakSpeechEngine(BaseSpeechEngine):
     @property
     def voice(self):
         es_voice = _espeak.getCurrentVoice()
-        current_identifier  = es_voice.identifier
+        current_identifier = es_voice.identifier
         for voice in self.get_voices():
             if current_identifier == voice.data["id"]:
                 return voice
@@ -132,33 +144,33 @@ class ESpeakSpeechEngine(BaseSpeechEngine):
 
     @property
     def rate(self):
-        val = _espeak.getParameter(_espeak.espeakRATE,1)
-        val=int(val/ RATE_BOOST_MULTIPLIER)
-        return self.paramToPercent(val,_espeak.minRate,_espeak.maxRate)
+        val = _espeak.getParameter(_espeak.espeakRATE, 1)
+        val = int(val / RATE_BOOST_MULTIPLIER)
+        return self.paramToPercent(val, _espeak.minRate, _espeak.maxRate)
 
     @rate.setter
     def rate(self, value):
         val = self.percentToParam(value, _espeak.minRate, _espeak.maxRate)
-        val=int(val* RATE_BOOST_MULTIPLIER)
-        _espeak.setParameter(_espeak.espeakRATE,val,0)
+        val = int(val * RATE_BOOST_MULTIPLIER)
+        _espeak.setParameter(_espeak.espeakRATE, val, 0)
 
     @property
     def pitch(self):
-        val=_espeak.getParameter(_espeak.espeakPITCH,1)
-        return self.paramToPercent(val,_espeak.minPitch,_espeak.maxPitch)
+        val = _espeak.getParameter(_espeak.espeakPITCH, 1)
+        return self.paramToPercent(val, _espeak.minPitch, _espeak.maxPitch)
 
     @pitch.setter
     def pitch(self, value):
-        val=self.percentToParam(value, _espeak.minPitch, _espeak.maxPitch)
-        _espeak.setParameter(_espeak.espeakPITCH,val,0)
+        val = self.percentToParam(value, _espeak.minPitch, _espeak.maxPitch)
+        _espeak.setParameter(_espeak.espeakPITCH, val, 0)
 
     @property
     def volume(self):
-        return _espeak.getParameter(_espeak.espeakVOLUME,1)
+        return _espeak.getParameter(_espeak.espeakVOLUME, 1)
 
     @volume.setter
     def volume(self, value):
-        _espeak.setParameter(_espeak.espeakVOLUME,value,0)
+        _espeak.setParameter(_espeak.espeakVOLUME, value, 0)
 
     def preprocess_utterance(self, utterance):
         ut = SpeechUtterance()
@@ -219,4 +231,3 @@ class ESpeakSpeechEngine(BaseSpeechEngine):
         if event not in (EngineEvent.bookmark_reached, EngineEvent.state_changed):
             raise NotImplementedError
         self.event_handlers.setdefault(event, []).append(handler)
-

@@ -16,9 +16,11 @@ import waitress
 from bottle import Bottle
 
 from bookworm import app
-from bookworm.commandline_handler import (BaseSubcommandHandler,
-                                          register_subcommand,
-                                          run_subcommand_in_a_new_process)
+from bookworm.commandline_handler import (
+    BaseSubcommandHandler,
+    register_subcommand,
+    run_subcommand_in_a_new_process,
+)
 from bookworm.logger import logger
 from bookworm.signals import local_server_booting
 

@@ -6,12 +6,20 @@ from bookworm import config, speech
 from bookworm.logger import logger
 from bookworm.resources import sounds
 from bookworm.service import BookwormService
-from bookworm.signals import (reader_book_loaded, reader_book_unloaded,
-                              reader_page_changed, reading_position_change)
+from bookworm.signals import (
+    reader_book_loaded,
+    reader_book_unloaded,
+    reader_page_changed,
+    reading_position_change,
+)
 from bookworm.utils import gui_thread_safe
 
-from .annotation_gui import (ANNOTATIONS_KEYBOARD_SHORTCUTS, AnnotationMenu,
-                             AnnotationSettingsPanel, AnnotationsMenuIds)
+from .annotation_gui import (
+    ANNOTATIONS_KEYBOARD_SHORTCUTS,
+    AnnotationMenu,
+    AnnotationSettingsPanel,
+    AnnotationsMenuIds,
+)
 from .annotation_models import Note, Quote
 from .annotator import Bookmarker, NoteTaker, Quoter
 
@@ -272,7 +280,9 @@ class AnnotationService(BookwormService):
     def comments_page_handler(cls, sender, current, prev):
         comments = NoteTaker(sender).get_for_page()
         if comments.count():
-            if config.conf["annotation"]["audable_indication_of_annotations_when_navigating_text"]:
+            if config.conf["annotation"][
+                "audable_indication_of_annotations_when_navigating_text"
+            ]:
                 wx.CallLater(150, lambda: sounds.has_note.play())
         for comment in comments:
             cls.style_comment(sender.view, comment.position)

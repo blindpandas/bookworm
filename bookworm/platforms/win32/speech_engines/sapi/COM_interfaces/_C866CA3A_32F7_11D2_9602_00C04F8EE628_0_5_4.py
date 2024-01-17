@@ -5,8 +5,7 @@ from ctypes import *
 from ctypes import HRESULT
 
 import comtypes.gen._00020430_0000_0000_C000_000000000046_0_2_0
-from comtypes import (BSTR, COMMETHOD, GUID, CoClass, IUnknown, dispid,
-                      helpstring)
+from comtypes import BSTR, COMMETHOD, GUID, CoClass, IUnknown, dispid, helpstring
 
 WSTRING = c_wchar_p
 from ctypes.wintypes import _LARGE_INTEGER, _ULARGE_INTEGER, VARIANT_BOOL
