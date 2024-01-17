@@ -15,4 +15,3 @@ def test_utterance_compile_to_ssml():
     ssml_string = ssml_converter.convert(ut, localeinfo=LocaleInfo("en-US"))
     ssml_tree = etree.fromstring(ssml_string)
     assert ssml_tree[0].attrib["name"] == "mark1"
-    

@@ -15,7 +15,7 @@ def test_get_url_spans():
         f"Our code is hosted at {url3}\nPlease check those out."
     )
     # Internal consistency
-    for ((start, end), url_target) in expected_url_ranges_and_targets.items():
+    for (start, end), url_target in expected_url_ranges_and_targets.items():
         assert text[start:end] == url_target
     url_ranges_and_targets = get_url_spans(text)
     assert dict(url_ranges_and_targets) == expected_url_ranges_and_targets
