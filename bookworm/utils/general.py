@@ -133,6 +133,7 @@ def format_datetime(
         datetime_to_format, date_only=date_only, format=format, localized=localized
     )
 
+
 def lazy_module(mod: str):
     module = importlib.__import__(mod)
     return module

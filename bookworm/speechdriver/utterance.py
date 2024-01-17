@@ -12,8 +12,7 @@ from bookworm import typehints as t
 from bookworm.logger import logger
 
 from .element import SpeechElement, SpeechStyle
-from .element.enums import (EmphSpec, PauseSpec, RateSpec, SpeechElementKind,
-                            VolumeSpec)
+from .element.enums import EmphSpec, PauseSpec, RateSpec, SpeechElementKind, VolumeSpec
 
 log = logger.getChild(__name__)
 

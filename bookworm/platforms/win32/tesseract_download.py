@@ -15,8 +15,10 @@ from bookworm import app
 from bookworm import typehints as t
 from bookworm.http_tools import HttpResource, RemoteJsonResource
 from bookworm.logger import logger
-from bookworm.ocr_engines.tesseract_ocr_engine import (TesseractOcrEngine,
-                                                       get_tesseract_path)
+from bookworm.ocr_engines.tesseract_ocr_engine import (
+    TesseractOcrEngine,
+    get_tesseract_path,
+)
 from bookworm.paths import resources_path
 
 log = logger.getChild(__name__)

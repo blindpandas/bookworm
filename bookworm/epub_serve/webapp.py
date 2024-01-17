@@ -12,8 +12,16 @@ from functools import cached_property, lru_cache
 from tempfile import TemporaryDirectory
 
 import apsw
-from bottle import (Bottle, HTTPError, abort, redirect, request, response,
-                    static_file, template)
+from bottle import (
+    Bottle,
+    HTTPError,
+    abort,
+    redirect,
+    request,
+    response,
+    static_file,
+    template,
+)
 from url_normalize import url_normalize
 
 from bookworm import paths

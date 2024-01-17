@@ -1,14 +1,32 @@
 # coding: utf-8
 
-from .base import (BaseDocument, BasePage, DummyDocument, SinglePage,
-                   SinglePageDocument, VirtualDocument)
-from .elements import (SINGLE_PAGE_DOCUMENT_PAGER, BookMetadata, DocumentInfo,
-                       LinkTarget, Pager, Section, TreeStackBuilder)
-from .exceptions import (ArchiveContainsMultipleDocuments,
-                         ArchiveContainsNoDocumentsError, ChangeDocument,
-                         DocumentEncryptedError, DocumentError,
-                         DocumentIOError, DocumentRestrictedError,
-                         PaginationError)
+from .base import (
+    BaseDocument,
+    BasePage,
+    DummyDocument,
+    SinglePage,
+    SinglePageDocument,
+    VirtualDocument,
+)
+from .elements import (
+    SINGLE_PAGE_DOCUMENT_PAGER,
+    BookMetadata,
+    DocumentInfo,
+    LinkTarget,
+    Pager,
+    Section,
+    TreeStackBuilder,
+)
+from .exceptions import (
+    ArchiveContainsMultipleDocuments,
+    ArchiveContainsNoDocumentsError,
+    ChangeDocument,
+    DocumentEncryptedError,
+    DocumentError,
+    DocumentIOError,
+    DocumentRestrictedError,
+    PaginationError,
+)
 from .features import READING_MODE_LABELS, DocumentCapability, ReadingMode
 from .formats import *
 from .uri import DocumentUri

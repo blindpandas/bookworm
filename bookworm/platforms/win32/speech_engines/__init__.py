@@ -5,7 +5,6 @@ from .sapi import SapiSpeechEngine
 TTS_ENGINES = (SapiSpeechEngine,)
 
 
-
 try:
     from .onecore import OcSpeechEngine
 except:
@@ -30,4 +29,8 @@ except:
     raise
 else:
     if ESpeakSpeechEngine.check():
-        TTS_ENGINES = (*TTS_ENGINES, PiperSpeechEngine, ESpeakSpeechEngine,)
+        TTS_ENGINES = (
+            *TTS_ENGINES,
+            PiperSpeechEngine,
+            ESpeakSpeechEngine,
+        )
