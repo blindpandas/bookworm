@@ -26,14 +26,12 @@ from bookworm.image_io import ImageIO
 from bookworm.logger import logger
 from bookworm.paths import home_data_path
 from bookworm.structured_text import TextRange
-from bookworm.structured_text.structured_html_parser import \
-    StructuredHtmlParser
+from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 from bookworm.utils import format_datetime, is_external_url
 
 from .. import SINGLE_PAGE_DOCUMENT_PAGER, BookMetadata, ChangeDocument
 from .. import DocumentCapability as DC
-from .. import (DocumentError, LinkTarget, Section, SinglePageDocument,
-                TreeStackBuilder)
+from .. import DocumentError, LinkTarget, Section, SinglePageDocument, TreeStackBuilder
 
 log = logger.getChild(__name__)
 HTML_FILE_EXTS = {
@@ -169,15 +167,29 @@ class EpubDocument(SinglePageDocument):
 
     @cached_property
     def epub_html_items(self) -> tuple[str]:
+        items = tuple()
         if html_items := tuple(self.epub.get_items_of_type(ebooklib.ITEM_DOCUMENT)):
-            return html_items
+            items = html_items
         else:
-            return tuple(
+            items = tuple(
                 filter(
                     lambda item: os.path.splitext(item.file_name)[1] in HTML_FILE_EXTS,
                     self.epub.items,
                 )
             )
+        # Previously the chapters order wouldn't respect the table of content
+        # In most cases this is not an issue
+        # However this poses a problem when the chapters do not follow a conventional numeric scheme but rather use something like roman numbers
+        # As reported in issue 243
+        # We will now sort the items obtained earlier based on the position that the chapter itself occupies in the TOC
+        spine = [x[0] for x in self.epub.spine]
+        try:
+            items = sorted(items, key=lambda x: spine.index(x.file_name.split('/')[-1]))
+        except ValueError:
+            log.warn(
+                'Failed to order chapters based on the table of content. Order may be inconsistent'
+            )
+        return items
 
     def get_epub_html_item_by_href(self, href):
         if epub_item := self.epub.get_item_with_href("href"):
@@ -199,10 +211,12 @@ class EpubDocument(SinglePageDocument):
             level=1,
             text_range=TextRange(0, len(self.get_content())),
         )
+        log.debug(root)
         id_ranges = {
             urllib_parse.unquote(key): value
             for (key, value) in self.structure.html_id_ranges.items()
         }
+        log.debug(list(id_ranges.keys()))
         stack = TreeStackBuilder(root)
         toc_entries = self.epub.toc
         if not isinstance(toc_entries, collections.abc.Iterable):
@@ -315,7 +329,7 @@ class EpubDocument(SinglePageDocument):
             tree.remove(tree.head)
             tree.body.tag = "section"
         except:
-            pass
+            raise e
         tree.tag = "div"
         tree.insert(0, tree.makeelement("header", attrib={"id": filename}))
         return lxml_html.tostring(tree, method="html", encoding="unicode")

@@ -13,7 +13,7 @@ def test_is_valid_identifier():
     for identifier in valid_identifiers:
         channel = UpdateChannel(identifier)
 
+
 def test_is_major_version():
     c = UpdateChannel('')
     assert c.is_major == True
-
