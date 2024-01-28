@@ -31,8 +31,8 @@ jobs:
         if: steps.cache-deps.outputs.cache-hit != 'true'
       - name: test code
         run: |
-        venv/scripts/activate
-        pytest -v
+          venv/scripts/activate
+          pytest -v
       - name: Build code
         run: |
           venv/scripts/activate
