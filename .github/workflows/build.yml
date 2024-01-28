@@ -1,0 +1,101 @@
+on:
+  push: {}
+
+name: Build
+
+env:
+  PYTHONIOENCODING: utf-8
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-2019
+    steps:
+      - name: Check out sources
+        uses: actions/checkout@v4
+      - name: Get Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          architecture: ${{ matrix.CI_ARCH }}
+      - uses: actions/cache@v4
+        id: cache-deps
+        with:
+          path: |
+            venv
+            bookworm/resources
+          key: ${{ runner.os }}-venv-${{ matrix.CI_ARCH }}-${{ hashFiles('requirements*.txt') }}
+      - name: Setup dependencies
+        run: |
+          python -m venv venv
+          venv/scripts/activate
+          pip install invoke
+          invoke dev
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+      - name: test code
+        run: |
+          venv/scripts/activate
+          pytest -v
+      - name: Build code
+        run: |
+          venv/scripts/activate
+          invoke freeze
+          invoke copy-executables
+          invoke make-installer
+      - name: Generate translation catalogs and version info
+        if: matrix.CI_ARCH == 'x64'
+        run: |
+          venv/scripts/activate
+          invoke gen-pot
+          invoke update-version-info
+      - name: Upload portable build
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bookworm-portable-${{ matrix.CI_ARCH }}
+          path: scripts/builder/dist/${{ matrix.CI_ARCH }}/Bookworm
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bookworm-setup-${{ matrix.CI_ARCH }}
+          path: scripts/Bookworm*setup.exe
+      - name: Upload translation catalogs
+        if: matrix.CI_ARCH == 'x64'
+        uses: actions/upload-artifact@v4
+        with:
+          name: translation-catalogs
+          path: scripts/*.pot
+      - name: Upload version info
+        if: matrix.CI_ARCH == 'x64' && startsWith(github.ref, 'refs/tags') && !github.event_type != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-info
+          path: scripts/release-info.json
+    strategy:
+     matrix:
+       CI_ARCH: ["x86", "x64"]
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: ["build"]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: ~/artifacts
+      - name: Zip Artifacts
+        run: |
+          mkdir -p upload
+          zip -r upload/Bookworm-portable-x64.zip Bookworm-portable-x64
+          zip -r upload/Bookworm-portable-x86.zip Bookworm-portable-x86
+          mv Bookworm-setup-x64/* upload
+          mv Bookworm-setup-x86/* upload
+          mv release-info/* upload || echo "No release-info"
+          mv translation-catalogs/* upload
+
+        working-directory: /home/runner/artifacts
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags') && !github.event_type != 'pull_request'
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "/home/runner/artifacts/upload/*"
+          draft: true
+          generateReleaseNotes: true
