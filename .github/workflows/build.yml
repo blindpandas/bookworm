@@ -30,7 +30,9 @@ jobs:
           pip install -r requirements-dev.txt
         if: steps.cache-deps.outputs.cache-hit != 'true'
       - name: test code
-        run: pytest -v
+        run: |
+        venv/scripts/activate
+        pytest -v
       - name: Build code
         run: |
           venv/scripts/activate
