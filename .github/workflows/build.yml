@@ -88,7 +88,7 @@ jobs:
           zip -r upload/Bookworm-portable-x86.zip Bookworm-portable-x86
           mv Bookworm-setup-x64/* upload
           mv Bookworm-setup-x86/* upload
-          mv release-info/* upload
+          mv release-info/* upload || echo "No release-info"
           mv translation-catalogs/* upload
 
         working-directory: /home/runner/artifacts
