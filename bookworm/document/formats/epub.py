@@ -182,9 +182,10 @@ class EpubDocument(SinglePageDocument):
         # However this poses a problem when the chapters do not follow a conventional numeric scheme but rather use something like roman numbers
         # As reported in issue 243
         # We will now sort the items obtained earlier based on the position that the chapter itself occupies in the TOC
-        spine = [x[0] for x in self.epub.spine]
+        spine = [x[0].split('/')[-1] for x in self.epub.spine]
+        log.info(spine)
         try:
-            items = sorted(items, key=lambda x: spine.index(x.file_name.split('/')[-1]))
+            items = sorted(items, key=lambda x: spine.index(x.id))
         except ValueError:
             log.warn(
                 'Failed to order chapters based on the table of content. Order may be inconsistent'
