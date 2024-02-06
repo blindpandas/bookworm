@@ -36,6 +36,6 @@ def test_epub_document_section_at_text_position(asset):
         114545: "4.2.2. Default Vocabulary",
         9227: "EPUB 3 Specifications - Table of Contents",
     }
-    for (text_position, section_title) in position_to_section_title.items():
+    for text_position, section_title in position_to_section_title.items():
         section = epub.get_section_at_position(text_position)
         assert section.title == section_title

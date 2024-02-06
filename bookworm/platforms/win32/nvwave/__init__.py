@@ -434,7 +434,9 @@ class WavePlayer:
                 with self._global_waveout_lock:
                     try:
                         winmm.waveOutUnprepareHeader(
-                            self._waveout_arg, LPWAVEHDR(self._prev_whdr), sizeof(WAVEHDR)
+                            self._waveout_arg,
+                            LPWAVEHDR(self._prev_whdr),
+                            sizeof(WAVEHDR),
                         )
                     except WindowsError:
                         # The device may have become unavailable.
