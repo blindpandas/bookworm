@@ -12,5 +12,5 @@ def test_remove_excess_blank_lines_without_effecting_structure():
     raw_lines = [line for line in raw_text.split("\n") if line.strip()]
     processed_lines = [line for line in raw_text.split("\n") if line.strip()]
     assert len(processed_lines) == len(raw_lines)
-    for (rl, pl) in zip(raw_lines, processed_lines):
+    for rl, pl in zip(raw_lines, processed_lines):
         assert rl[:3] == pl[:3]

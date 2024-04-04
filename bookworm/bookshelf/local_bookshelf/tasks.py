@@ -24,9 +24,18 @@ from bookworm.runtime import IS_RUNNING_PORTABLE
 from bookworm.signals import app_shuttingdown, local_server_booting
 from bookworm.utils import generate_file_md5
 
-from .models import (DEFAULT_BOOKSHELF_DATABASE_FILE, Author, Category,
-                     Document, DocumentAuthor, DocumentFTSIndex, DocumentTag,
-                     Format, Page, Tag)
+from .models import (
+    DEFAULT_BOOKSHELF_DATABASE_FILE,
+    Author,
+    Category,
+    Document,
+    DocumentAuthor,
+    DocumentFTSIndex,
+    DocumentTag,
+    Format,
+    Page,
+    Tag,
+)
 
 log = logger.getChild(__name__)
 ADD_TO_BOOKSHELF_URL_PREFIX = "/add-to-bookshelf"

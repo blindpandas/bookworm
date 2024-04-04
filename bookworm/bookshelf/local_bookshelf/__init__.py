@@ -20,17 +20,37 @@ from bookworm.gui.components import AsyncSnakDialog
 from bookworm.logger import logger
 from bookworm.signals import app_booting
 
-from ..provider import (BookshelfAction, BookshelfProvider,
-                        ItemContainerSource, MetaSource, Source,
-                        sources_updated)
-from .dialogs import (AddFolderToLocalBookshelfDialog,
-                      BookshelfSearchResultsDialog, BundleErrorsDialog,
-                      EditDocumentClassificationDialog, SearchBookshelfDialog)
-from .models import (DEFAULT_BOOKSHELF_DATABASE_FILE, Author, BaseModel,
-                     Category, Document, DocumentAuthor, DocumentFTSIndex,
-                     DocumentTag, Tag)
-from .tasks import (add_document_to_bookshelf, bundle_single_document,
-                    import_folder_to_bookshelf)
+from ..provider import (
+    BookshelfAction,
+    BookshelfProvider,
+    ItemContainerSource,
+    MetaSource,
+    Source,
+    sources_updated,
+)
+from .dialogs import (
+    AddFolderToLocalBookshelfDialog,
+    BookshelfSearchResultsDialog,
+    BundleErrorsDialog,
+    EditDocumentClassificationDialog,
+    SearchBookshelfDialog,
+)
+from .models import (
+    DEFAULT_BOOKSHELF_DATABASE_FILE,
+    Author,
+    BaseModel,
+    Category,
+    Document,
+    DocumentAuthor,
+    DocumentFTSIndex,
+    DocumentTag,
+    Tag,
+)
+from .tasks import (
+    add_document_to_bookshelf,
+    bundle_single_document,
+    import_folder_to_bookshelf,
+)
 
 log = logger.getChild(__name__)
 

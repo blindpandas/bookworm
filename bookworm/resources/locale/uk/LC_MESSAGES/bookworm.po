@@ -1,0 +1,3308 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2024-01-13 10:22+0200\n"
+"PO-Revision-Date: 2024-02-02 13:05+0200\n"
+"Last-Translator: Heorhii Halas <nvda.translation.uk@gmail.com>\n"
+"Language-Team: \n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+"X-Poedit-Basepath: ../../../..\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: annotation/__init__.py:61
+msgid "&Annotation"
+msgstr "&Анотація"
+
+#: annotation/__init__.py:69
+msgid "&Bookmark...\tCtrl-B"
+msgstr "&Закладка...\tCtrl-B"
+
+#: annotation/__init__.py:70 annotation/__init__.py:76
+msgid "Bookmark the current location"
+msgstr "Зберегти поточне місцезнаходження в закладках"
+
+#: annotation/__init__.py:75
+msgid "&Named Bookmark...\tCtrl-Shift-B"
+msgstr "&Іменована закладка...\tCtrl-Shift-B"
+
+#: annotation/__init__.py:81
+msgid "Co&mment...\tCtrl-m"
+msgstr "&Коментар...\tCtrl-m"
+
+#: annotation/__init__.py:82
+msgid "Add a comment at the current location"
+msgstr "Додати коментар у поточному місці"
+
+#: annotation/__init__.py:92
+msgid "Highlight Selection\tCtrl-Shift-H"
+msgstr "Виділити вибране\tCtrl-Shift-H"
+
+#: annotation/__init__.py:93
+msgid "Highlight and save selected text."
+msgstr "Виділити і зберегтиь вибраний текст."
+
+#: annotation/__init__.py:102 annotation/__init__.py:139
+msgid "Bookmark"
+msgstr "Закладка"
+
+#: annotation/__init__.py:104
+msgid "Comment"
+msgstr "Коментар"
+
+#: annotation/__init__.py:114 annotation/exporters/core_renderers.py:171
+msgid "Annotation"
+msgstr "Анотація"
+
+#: annotation/__init__.py:127
+msgid "No next bookmark"
+msgstr "Немає наступної закладки"
+
+#: annotation/__init__.py:130
+msgid "No previous bookmark"
+msgstr "Немає попередньої закладки"
+
+#: annotation/__init__.py:157
+msgid "No next comment"
+msgstr "Немає наступного коментаря"
+
+#: annotation/__init__.py:160
+msgid "No previous comment"
+msgstr "Немає попереднього коментаря"
+
+#: annotation/__init__.py:171
+#, python-brace-format
+msgid "Comment: {comment}"
+msgstr "Коментар: {comment}"
+
+#: annotation/__init__.py:184
+msgid "No next highlight"
+msgstr "Немає наступного виділення"
+
+#: annotation/__init__.py:187
+msgid "No previous highlight"
+msgstr "Немає попереднього виділення"
+
+#: annotation/__init__.py:197
+msgid "Highlight"
+msgstr "Виділити"
+
+#: annotation/__init__.py:239
+msgid "Bookmarked"
+msgstr "Додано в закладки"
+
+#: annotation/__init__.py:242
+msgid "Highlighted"
+msgstr "Виділено"
+
+#: annotation/__init__.py:245
+msgid "Line contains highlight"
+msgstr "Рядок містить виділення"
+
+#: annotation/__init__.py:248
+msgid "Has comment"
+msgstr "Має коментар"
+
+#: annotation/annotation_dialogs.py:56 annotation/annotation_dialogs.py:263
+#: bookshelf/local_bookshelf/dialogs.py:122 gui/book_viewer/__init__.py:307
+msgid "Content"
+msgstr "Зміст"
+
+#: annotation/annotation_dialogs.py:60
+msgid "Metadata"
+msgstr "Метадані"
+
+#: annotation/annotation_dialogs.py:63 annotation/annotation_dialogs.py:519
+#: annotation/exporters/core_renderers.py:201
+msgid "Tags"
+msgstr "Теги"
+
+#: annotation/annotation_dialogs.py:68
+msgid "Date Created"
+msgstr "Дата створення"
+
+#: annotation/annotation_dialogs.py:74
+msgid "Last updated"
+msgstr "Останнє оновлення"
+
+#: annotation/annotation_dialogs.py:88 annotation/annotation_dialogs.py:145
+#: bookshelf/local_bookshelf/dialogs.py:173
+#: bookshelf/local_bookshelf/dialogs.py:241 gui/book_viewer/core_dialogs.py:398
+#: gui/settings.py:103 ocr/ocr_dialogs.py:416 text_to_speech/tts_gui.py:328
+#: webservices/wikiworm.py:215
+msgid "&Close"
+msgstr "&Закрити"
+
+#: annotation/annotation_dialogs.py:122
+msgid "[Unnamed Bookmark]"
+msgstr "[Безіменна закладка]"
+
+#: annotation/annotation_dialogs.py:127
+msgid "Saved Bookmarks"
+msgstr "Збережені закладки"
+
+#: annotation/annotation_dialogs.py:130 ocr/ocr_dialogs.py:455
+#: text_to_speech/tts_gui.py:322
+msgid "&Remove"
+msgstr "&Видалити"
+
+#: annotation/annotation_dialogs.py:154 gui/book_viewer/core_dialogs.py:256
+msgid "Name"
+msgstr "Назва"
+
+#: annotation/annotation_dialogs.py:161 annotation/annotation_dialogs.py:352
+#: annotation/exporters/core_renderers.py:178
+#: bookshelf/local_bookshelf/dialogs.py:192 gui/book_viewer/core_dialogs.py:51
+#: gui/book_viewer/render_view.py:32
+msgid "Page"
+msgstr "Сторінка"
+
+#: annotation/annotation_dialogs.py:169 annotation/annotation_dialogs.py:258
+#: annotation/exporters/core_renderers.py:145
+#: gui/book_viewer/core_dialogs.py:66
+msgid "Section"
+msgstr "Розділ"
+
+#: annotation/annotation_dialogs.py:217
+msgid ""
+"This action can not be reverted.\r\n"
+"Are you sure you want to remove this bookmark?"
+msgstr ""
+"Цю дію не можна скасувати.\n"
+"Ви впевнені, що хочете видалити цю закладку?"
+
+#: annotation/annotation_dialogs.py:220
+msgid "Remove Bookmark?"
+msgstr "Видалити закладку?"
+
+#: annotation/annotation_dialogs.py:247 annotation/annotation_dialogs.py:356
+#: annotation/annotation_dialogs.py:552
+#: annotation/exporters/core_renderers.py:143
+msgid "Book"
+msgstr "Книга"
+
+#: annotation/annotation_dialogs.py:252
+#: annotation/exporters/core_renderers.py:147
+msgid "Tag"
+msgstr "Тег"
+
+#: annotation/annotation_dialogs.py:268
+msgid "&Apply"
+msgstr "&Застосувати"
+
+#: annotation/annotation_dialogs.py:335
+msgid "Filter By"
+msgstr "Фільтрувати за"
+
+#: annotation/annotation_dialogs.py:344
+msgid "Sort By"
+msgstr "Сортувати за"
+
+#: annotation/annotation_dialogs.py:350
+msgid "Date"
+msgstr "Дата"
+
+#: annotation/annotation_dialogs.py:362
+msgid "Ascending"
+msgstr "За зростанням"
+
+#: annotation/annotation_dialogs.py:371
+msgid "&View..."
+msgstr "&Переглянути..."
+
+#: annotation/annotation_dialogs.py:374 text_to_speech/tts_gui.py:320
+msgid "&Edit..."
+msgstr "&Редагувати..."
+
+#: annotation/annotation_dialogs.py:377
+msgid "&Delete..."
+msgstr "&Видалити..."
+
+#: annotation/annotation_dialogs.py:379
+msgid "E&xport..."
+msgstr "&Експорт..."
+
+#: annotation/annotation_dialogs.py:451
+msgid "Editing"
+msgstr "Редагування"
+
+#: annotation/annotation_dialogs.py:451
+msgid "View"
+msgstr "Переглянути"
+
+#: annotation/annotation_dialogs.py:469
+msgid ""
+"This action can not be reverted.\r\n"
+"Are you sure you want to remove this item?"
+msgstr ""
+"Цю дію не можна скасувати.\n"
+"Ви впевнені, що хочете видалити цей елемент?"
+
+#: annotation/annotation_dialogs.py:472
+msgid "Delete Annotation?"
+msgstr "Видалити анотацію?"
+
+#: annotation/annotation_dialogs.py:517
+msgid "Edit Tags"
+msgstr "Редагувати теги"
+
+#: annotation/annotation_dialogs.py:530
+msgid "Export Options"
+msgstr "Параметри експорту"
+
+#: annotation/annotation_dialogs.py:590
+msgid "Include book title"
+msgstr "Включити назву книги"
+
+#: annotation/annotation_dialogs.py:595
+msgid "Include section title"
+msgstr "Включити назву розділу"
+
+#: annotation/annotation_dialogs.py:601
+msgid "Include  page number"
+msgstr "Включити номер сторінки"
+
+#: annotation/annotation_dialogs.py:604
+msgid "Include tags"
+msgstr "Включити теги"
+
+#: annotation/annotation_dialogs.py:606
+msgid "Output format:"
+msgstr "Вихідний формат:"
+
+#: annotation/annotation_dialogs.py:611
+msgid "Output File"
+msgstr "Вихідний файл"
+
+#: annotation/annotation_dialogs.py:616
+msgid "&Browse"
+msgstr "&Огляд"
+
+#: annotation/annotation_dialogs.py:621
+msgid "Open file after exporting"
+msgstr "Відкрити файл після експорту"
+
+#: annotation/annotation_dialogs.py:648 gui/book_viewer/menubar.py:247
+msgid "Save As"
+msgstr "Зберегти як"
+
+#: annotation/annotation_gui.py:25
+msgid "When navigating text"
+msgstr "При переміщенні по тексту"
+
+#: annotation/annotation_gui.py:30
+msgid "Play a sound to indicate the presence of annotations"
+msgstr "Відтворювати звук при наявності анотацій"
+
+#: annotation/annotation_gui.py:37
+msgid "Speak a message to indicate the presence of annotations"
+msgstr "Промовляти повідомлення при наявності анотацій"
+
+#: annotation/annotation_gui.py:41
+msgid "Miscellaneous settings"
+msgstr "Різні налаштування"
+
+#: annotation/annotation_gui.py:46
+msgid "Speak the bookmark when jumping"
+msgstr "Промовляти закладку під час переходу"
+
+#: annotation/annotation_gui.py:53
+msgid "Select the bookmarked line when jumping"
+msgstr "Вибирати рядок з закладкою Під час переходу"
+
+#: annotation/annotation_gui.py:60
+msgid "Use visual styles to indicate annotations"
+msgstr "Використовувати візуальні стилі для позначення анотацій"
+
+#: annotation/annotation_gui.py:99
+msgid "Add &Bookmark\tCtrl-B"
+msgstr "Додати &закладку\tCtrl-B"
+
+#: annotation/annotation_gui.py:101
+msgid "Add a bookmark at the current position"
+msgstr "Додати закладку в поточну позицію"
+
+#: annotation/annotation_gui.py:106
+msgid "Add &Named Bookmark...\tCtrl-Shift-B"
+msgstr "Додати &іменовану закладку...\tCtrl-Shift-B"
+
+#: annotation/annotation_gui.py:108
+msgid "Add a named bookmark at the current position"
+msgstr "Додати іменовану закладку в поточну позицію"
+
+#: annotation/annotation_gui.py:113
+msgid "Add Co&mment...\tCtrl-M"
+msgstr "&Додати коментар...\tCtrl-M"
+
+#: annotation/annotation_gui.py:115
+msgid "Add a comment at the current position"
+msgstr "Додати коментар до поточної позиції"
+
+#: annotation/annotation_gui.py:120
+msgid "&Highlight Selection\tCtrl-H"
+msgstr "&Виділити вибране\tCtrl-H"
+
+#: annotation/annotation_gui.py:122
+msgid "Highlight selected text and save it."
+msgstr "Виділити вибраний текст і зберегти його."
+
+#: annotation/annotation_gui.py:127
+msgid "Saved &Bookmarks..."
+msgstr "Збережені &закладки..."
+
+#: annotation/annotation_gui.py:129
+msgid "View added bookmarks"
+msgstr "Переглянути додані закладки"
+
+#: annotation/annotation_gui.py:134
+msgid "Saved Co&mments..."
+msgstr "&Збережені коментарі..."
+
+#: annotation/annotation_gui.py:136
+msgid "View, edit, and remove comments."
+msgstr "Переглянути, редагувати та видалити коментарі."
+
+#: annotation/annotation_gui.py:141
+msgid "Saved &Highlights..."
+msgstr "Збережені &анотації..."
+
+#: annotation/annotation_gui.py:143
+msgid "View saved highlights."
+msgstr "Переглянути збережені анотації."
+
+#: annotation/annotation_gui.py:181
+msgid "Bookmark removed"
+msgstr "Закладку видалено"
+
+#: annotation/annotation_gui.py:184
+msgid "Bookmark Added"
+msgstr "Закладку додано"
+
+#: annotation/annotation_gui.py:193
+msgid "Add Named Bookmark"
+msgstr "Додати іменовану закладку"
+
+#: annotation/annotation_gui.py:195
+msgid "Bookmark name:"
+msgstr "Назва закладки:"
+
+#: annotation/annotation_gui.py:205
+msgid "New Comment"
+msgstr "Новий коментар"
+
+#: annotation/annotation_gui.py:207
+msgid "Comment:"
+msgstr "Коментар:"
+
+#: annotation/annotation_gui.py:220
+msgid "Tag Comment"
+msgstr "Коментар до тега"
+
+#: annotation/annotation_gui.py:222 annotation/annotation_gui.py:269
+msgid "Tags:"
+msgstr "Теги:"
+
+#: annotation/annotation_gui.py:234
+msgid "No selection"
+msgstr "Вибір відсутній"
+
+#: annotation/annotation_gui.py:242
+msgid "Highlight removed"
+msgstr "Виділення видалено"
+
+#: annotation/annotation_gui.py:245
+msgid "Already highlighted"
+msgstr "Вже виділено"
+
+#: annotation/annotation_gui.py:252 annotation/annotation_gui.py:258
+msgid "Highlight extended"
+msgstr "Розширене виділення"
+
+#: annotation/annotation_gui.py:261
+msgid "Selection highlighted"
+msgstr "Вибір виділено"
+
+#: annotation/annotation_gui.py:267
+msgid "Tag Highlight"
+msgstr "Виділення тегу"
+
+#: annotation/annotation_gui.py:282
+#, python-brace-format
+msgid "Bookmarks | {book}"
+msgstr "Закладки | {book}"
+
+#: annotation/annotation_gui.py:292
+msgid "Comments"
+msgstr "Коментарі"
+
+#: annotation/annotation_gui.py:305
+msgid "Highlights"
+msgstr "Виділення"
+
+#: annotation/exporters/core_renderers.py:15 gui/book_viewer/menubar.py:251
+#: ocr/ocr_menu.py:285
+msgid "Plain Text"
+msgstr "Простий текст"
+
+#: annotation/exporters/core_renderers.py:27
+#: annotation/exporters/core_renderers.py:90
+#, python-brace-format
+msgid "Section: {section_title}"
+msgstr "Розділ: {section_title}"
+
+#: annotation/exporters/core_renderers.py:32
+#, python-brace-format
+msgid "Tagged: {tag}"
+msgstr "Позначено: {tag}"
+
+#: annotation/exporters/core_renderers.py:42
+msgid "End of File"
+msgstr "Кінець файлу"
+
+#: annotation/exporters/core_renderers.py:52
+#: annotation/exporters/core_renderers.py:113
+#, python-brace-format
+msgid "Page {number}"
+msgstr "Сторінка {number}"
+
+#: annotation/exporters/core_renderers.py:74
+msgid "Markdown"
+msgstr "Markdown"
+
+#: annotation/exporters/core_renderers.py:94
+#, python-brace-format
+msgid "Tagged: {tags}"
+msgstr "Позначено: {tags}"
+
+#: annotation/exporters/core_renderers.py:126
+msgid "Tagged"
+msgstr "З позначкою"
+
+#: annotation/exporters/core_renderers.py:137
+msgid "HTML"
+msgstr "HTML"
+
+#: annotation/exporters/core_renderers.py:156
+msgid "Exported Annotations"
+msgstr "Експортовані анотації"
+
+#: annotation/exporters/core_renderers.py:186
+msgid "Copy to clipboard"
+msgstr "Копіювати в буфер обміну"
+
+#: bookshelf/__init__.py:54
+msgid "Bookshelf"
+msgstr "Книжкова полиця"
+
+#: bookshelf/__init__.py:64
+msgid "Boo&kshelf"
+msgstr "Книжкова &полиця"
+
+#: bookshelf/local_bookshelf/__init__.py:47 bookshelf/viewer_integration.py:36
+msgid "Local Bookshelf"
+msgstr "Локальна книжкова полиця"
+
+#: bookshelf/local_bookshelf/__init__.py:56
+msgid "Remove..."
+msgstr "Видалити..."
+
+#: bookshelf/local_bookshelf/__init__.py:61
+msgid "Edit name..."
+msgstr "Редагувати назву..."
+
+#: bookshelf/local_bookshelf/__init__.py:66
+msgid "Clear documents..."
+msgstr "Очистити документи..."
+
+#: bookshelf/local_bookshelf/__init__.py:90
+msgid "Recently Added"
+msgstr "Нещодавно додані"
+
+#: bookshelf/local_bookshelf/__init__.py:97
+msgid "Currently Reading"
+msgstr "Зараз читаю"
+
+#: bookshelf/local_bookshelf/__init__.py:106
+msgid "Want to Read"
+msgstr "Хочу читати"
+
+#: bookshelf/local_bookshelf/__init__.py:115
+msgid "Favorites"
+msgstr "Обране"
+
+#: bookshelf/local_bookshelf/__init__.py:125
+msgid "Reading Lists"
+msgstr "Списки для читання"
+
+#: bookshelf/local_bookshelf/__init__.py:130
+#: bookshelf/local_bookshelf/dialogs.py:47
+msgid "Collections"
+msgstr "Колекції"
+
+#: bookshelf/local_bookshelf/__init__.py:138 gui/settings.py:590
+msgid "General"
+msgstr "Загальні"
+
+#: bookshelf/local_bookshelf/__init__.py:147
+msgid "Add New..."
+msgstr "Додати новий..."
+
+#: bookshelf/local_bookshelf/__init__.py:166
+#: gui/book_viewer/core_dialogs.py:353
+msgid "Authors"
+msgstr "Автори"
+
+#: bookshelf/local_bookshelf/__init__.py:177
+msgid "Import Documents...\tCtrl+O"
+msgstr "Імпортувати документи...\\tCtrl+O"
+
+#: bookshelf/local_bookshelf/__init__.py:182
+msgid "Import documents from folder..."
+msgstr "Імпортувати документи з папки..."
+
+#: bookshelf/local_bookshelf/__init__.py:186
+msgid "Search Bookshelf..."
+msgstr "Пошук на книжковій полиці..."
+
+#: bookshelf/local_bookshelf/__init__.py:189
+msgid "Bundle Documents..."
+msgstr "Об'єднати Документи..."
+
+#: bookshelf/local_bookshelf/__init__.py:192
+msgid "Clear invalid documents..."
+msgstr "Видалити недійсні документи..."
+
+#: bookshelf/local_bookshelf/__init__.py:204
+msgid "Import Documents To Bookshelf"
+msgstr "Імпорт документів на книжкову полицю"
+
+#: bookshelf/local_bookshelf/__init__.py:220
+#: bookshelf/local_bookshelf/__init__.py:620
+msgid "Edit reading list/collections"
+msgstr "Редагувати список/збірку для читання"
+
+#: bookshelf/local_bookshelf/__init__.py:237
+msgid "Importing document..."
+msgstr "Імпорт документа..."
+
+#: bookshelf/local_bookshelf/__init__.py:240
+msgid "Importing documents..."
+msgstr "Імпорт документів..."
+
+#: bookshelf/local_bookshelf/__init__.py:268
+msgid "Failed to import document. Please try again."
+msgstr "Не вдалося імпортувати документ. Будь ласка спробуйте ще раз."
+
+#: bookshelf/local_bookshelf/__init__.py:270
+#: bookshelf/local_bookshelf/__init__.py:316
+#: bookshelf/local_bookshelf/__init__.py:362
+#: bookshelf/local_bookshelf/dialogs.py:225 bookshelf/window.py:192
+#: gui/settings.py:579 ocr/ocr_dialogs.py:203 ocr/ocr_dialogs.py:613
+#: platforms/win32/pandoc_download.py:63
+#: platforms/win32/tesseract_download.py:94 text_to_speech/tts_gui.py:426
+#: webservices/wikiworm.py:170
+msgid "Error"
+msgstr "Помилка"
+
+#: bookshelf/local_bookshelf/__init__.py:281
+msgid "Import Documents From Folder"
+msgstr "Імпортувати документи з папки"
+
+#: bookshelf/local_bookshelf/__init__.py:295
+msgid "Importing documents from folder. Please wait..."
+msgstr "Імпорт документів із папки. Будь ласка, зачекайте..."
+
+#: bookshelf/local_bookshelf/__init__.py:304
+msgid "Documents imported from folder."
+msgstr "Документи імпортовано з папки."
+
+#: bookshelf/local_bookshelf/__init__.py:306
+msgid "Operation Completed"
+msgstr "Операцію завершено"
+
+#: bookshelf/local_bookshelf/__init__.py:314
+msgid "Failed to import documents from folder."
+msgstr "Не вдалося імпортувати документи з папки."
+
+#: bookshelf/local_bookshelf/__init__.py:324
+msgid "Search Bookshelf"
+msgstr "Книжкова полиця пошуку"
+
+#: bookshelf/local_bookshelf/__init__.py:337
+msgid "Searching bookshelf..."
+msgstr "Пошук книжкової полиці..."
+
+#: bookshelf/local_bookshelf/__init__.py:360
+msgid "Failed to search bookshelf,"
+msgstr "Не вдалося знайти книжкову полицю,"
+
+#: bookshelf/local_bookshelf/__init__.py:377
+msgid "Full Text Search Results"
+msgstr "Результати повнотекстового пошуку"
+
+#: bookshelf/local_bookshelf/__init__.py:388
+msgid ""
+"This will create copies of all of the documents you have added to your Local "
+"Bookshelf.\n"
+"After this operation, you can open documents stored in your bookshelf, even "
+"if you have deleted or moved the original documents.\n"
+"\n"
+"Please note that this action will create duplicate copies of all of your "
+"added documents."
+msgstr ""
+"Буде створено копії всіх документів, які ви додали до локальної книжкової "
+"полиці.\n"
+"Після цієї операції ви зможете відкривати документи, що зберігаються на "
+"вашій книжковій полиці, навіть якщо ви видалили або перемістили оригінали "
+"документів.\n"
+"\n"
+"Зверніть увагу, що ця дія створить дублікати всіх доданих вами документів."
+
+#: bookshelf/local_bookshelf/__init__.py:391
+msgid "Bundle Documents?"
+msgstr "Об'єднати Документи?"
+
+#: bookshelf/local_bookshelf/__init__.py:399
+msgid "Bundling documents. Please wait..."
+msgstr "Об’єднання документів. Будь ласка, зачекайте..."
+
+#: bookshelf/local_bookshelf/__init__.py:428
+#, python-brace-format
+msgid "Bundled {num_documents} files."
+msgstr "Об'єднано {num_documents} файлів."
+
+#: bookshelf/local_bookshelf/__init__.py:430
+msgid "Done"
+msgstr "Готово"
+
+#: bookshelf/local_bookshelf/__init__.py:439
+#, python-brace-format
+msgid "Bundle Results: {num_succesfull} successfull, {num_faild} faild"
+msgstr "Результати об'єднання: успішно {num_succesfull}, неуспішно {num_faild}"
+
+#: bookshelf/local_bookshelf/__init__.py:451
+msgid ""
+"This action will clear invalid documents from your bookshelf.\n"
+"Invalid documents are the documents which no longer exist on your computer."
+msgstr ""
+"Ця дія очистить вашу книжкову полицю від недійсних документів.\n"
+"Недійсні документи - це документи, які більше не існують на вашому "
+"комп'ютері."
+
+#: bookshelf/local_bookshelf/__init__.py:455
+msgid "Clear Invalid Documents?"
+msgstr "Очистити недійсні документи?"
+
+#: bookshelf/local_bookshelf/__init__.py:470
+msgid "New name:"
+msgstr "Нова назва:"
+
+#: bookshelf/local_bookshelf/__init__.py:472
+msgid "Edit Name"
+msgstr "Редагувати назву"
+
+#: bookshelf/local_bookshelf/__init__.py:483
+#, python-brace-format
+msgid ""
+"The given name {name} already exists.\n"
+"Please choose another name."
+msgstr ""
+"Назва {name} уже існує.\n"
+"Виберіть інше ім'я."
+
+#: bookshelf/local_bookshelf/__init__.py:486
+msgid "Duplicate name"
+msgstr "Дублююче ім'я"
+
+#: bookshelf/local_bookshelf/__init__.py:497
+#, python-brace-format
+msgid ""
+"Are you sure you want to remove {name}?\n"
+"This will not remove document classified under {name}."
+msgstr ""
+"Ви впевнені, що хочете вилучити {name}?\n"
+"Це не призведе до вилучення документа, класифікованого під {name}."
+
+#: bookshelf/local_bookshelf/__init__.py:500 gui/components.py:610
+#: ocr/ocr_dialogs.py:529 ocr/ocr_dialogs.py:571
+msgid "Confirm"
+msgstr "Підтвердити"
+
+#: bookshelf/local_bookshelf/__init__.py:512
+#, python-brace-format
+msgid ""
+"Are you sure you want to clear all documents classified under {name}?\n"
+"This will remove those documents from your bookshelf."
+msgstr ""
+"Ви впевнені, що хочете очистити всі документи, класифіковані під {name}?\n"
+"Це призведе до видалення цих документів з вашої книжкової полиці."
+
+#: bookshelf/local_bookshelf/__init__.py:515
+msgid "Clear All Documents"
+msgstr "Очистити всі документи"
+
+#: bookshelf/local_bookshelf/__init__.py:528
+msgid "Enter name:"
+msgstr "Введіть назву:"
+
+#: bookshelf/local_bookshelf/__init__.py:530
+msgid "Add New"
+msgstr "Додати новий"
+
+#: bookshelf/local_bookshelf/__init__.py:555
+msgid "&Edit reading list / collections..."
+msgstr "&Редагувати список для читання / колекції..."
+
+#: bookshelf/local_bookshelf/__init__.py:560
+msgid "Remove from &currently reading"
+msgstr "&Вилучити з поточного читання"
+
+#: bookshelf/local_bookshelf/__init__.py:562
+msgid "Add to &currently reading"
+msgstr "&Додати до поточного читання"
+
+#: bookshelf/local_bookshelf/__init__.py:567
+msgid "Remove from &want to read"
+msgstr "&Видалити з бажаного для читання"
+
+#: bookshelf/local_bookshelf/__init__.py:569
+msgid "Add to &want to read"
+msgstr "&Додати до бажаного для читання"
+
+#: bookshelf/local_bookshelf/__init__.py:574
+msgid "Remove from &favorites"
+msgstr "Видалити з &обраного"
+
+#: bookshelf/local_bookshelf/__init__.py:576
+msgid "Add to &favorites"
+msgstr "&Додати в обране"
+
+#: bookshelf/local_bookshelf/__init__.py:581
+msgid "&Remove from bookshelf"
+msgstr "&Видалити з книжкової полиці"
+
+#: bookshelf/local_bookshelf/__init__.py:648
+#, python-brace-format
+msgid ""
+"Are you sure you want to remove this document from your bookshelf?\n"
+"Title: {title}\n"
+"This will remove the document from all tags and categories."
+msgstr ""
+"Ви впевнені, що хочете видалити цей документ зі своєї книжкової полиці?\n"
+"Назва: {title}\n"
+"Це видалить документ з усіх тегів і категорій."
+
+#: bookshelf/local_bookshelf/__init__.py:651
+msgid "Remove From Bookshelf?"
+msgstr "Видалити з книжкової полиці?"
+
+#: bookshelf/local_bookshelf/__init__.py:683
+msgid "Unknown Author"
+msgstr "Невідомий автор"
+
+#: bookshelf/local_bookshelf/dialogs.py:43
+#: bookshelf/local_bookshelf/dialogs.py:86
+msgid "Reading List"
+msgstr "Список для читання"
+
+#: bookshelf/local_bookshelf/dialogs.py:51
+#: bookshelf/local_bookshelf/dialogs.py:93
+msgid "Add to full-text search index"
+msgstr "Додати до індексу повнотекстового пошуку"
+
+#: bookshelf/local_bookshelf/dialogs.py:80
+msgid "Select a folder:"
+msgstr "Виберіть папку:"
+
+#: bookshelf/local_bookshelf/dialogs.py:112 gui/book_viewer/__init__.py:402
+msgid "Search"
+msgstr "Пошук"
+
+#: bookshelf/local_bookshelf/dialogs.py:116
+msgid "Search Field"
+msgstr "Поле пошуку"
+
+#: bookshelf/local_bookshelf/dialogs.py:120
+#: bookshelf/local_bookshelf/dialogs.py:186
+#: bookshelf/local_bookshelf/dialogs.py:229 gui/book_viewer/core_dialogs.py:342
+msgid "Title"
+msgstr "Назва"
+
+#: bookshelf/local_bookshelf/dialogs.py:154
+msgid "Title matches"
+msgstr "Збіги заголовків"
+
+#: bookshelf/local_bookshelf/dialogs.py:157
+msgid "Title Matches"
+msgstr "Збіги заголовків"
+
+#: bookshelf/local_bookshelf/dialogs.py:164
+msgid "Content matches"
+msgstr "Збіги вмісту"
+
+#: bookshelf/local_bookshelf/dialogs.py:167
+msgid "Content Matches"
+msgstr "Збіги вмісту"
+
+#: bookshelf/local_bookshelf/dialogs.py:183
+msgid "Snippet"
+msgstr "Фрагмент"
+
+#: bookshelf/local_bookshelf/dialogs.py:227
+msgid "File Name"
+msgstr "Ім'я файлу"
+
+#: bookshelf/local_bookshelf/dialogs.py:232
+msgid "Errors"
+msgstr "Помилки"
+
+#: bookshelf/local_bookshelf/dialogs.py:235
+msgid "Failed to copy document"
+msgstr "Не вдалося скопіювати документ"
+
+#: bookshelf/viewer_integration.py:41
+msgid "Automatically add opened books to the local bookshelf"
+msgstr "Автоматично додавати відкриті книги на локальну книжкову полицю"
+
+#: bookshelf/viewer_integration.py:54
+msgid "&Open Bookshelf"
+msgstr "&Відкрити книжкову полицю"
+
+#: bookshelf/viewer_integration.py:56
+msgid "Open your bookshelf"
+msgstr "Відкрийте книжкову полицю"
+
+#: bookshelf/viewer_integration.py:61
+msgid "&Add to local bookshelf..."
+msgstr "&Додати на локальну книжкову полицю..."
+
+#: bookshelf/viewer_integration.py:63
+msgid "Add the current book to the local bookshelf"
+msgstr "Додати поточну книгу на локальну книжкову полицю"
+
+#: bookshelf/viewer_integration.py:94
+msgid ""
+"You can not add this document to Bookshelf.\n"
+"The document should exist locally in your computer."
+msgstr ""
+"Ви не можете додати цей документ на Книжкову полицю.\n"
+"Документ повинен існувати локально на вашому комп'ютері."
+
+#: bookshelf/viewer_integration.py:97
+msgid "Can not add document"
+msgstr "Неможливо додати документ"
+
+#: bookshelf/viewer_integration.py:104
+msgid "Reading list and collections"
+msgstr "Список для читання та збірки"
+
+#: bookshelf/window.py:51
+#, python-brace-format
+msgid "{name} ({count})"
+msgstr "{name} ({count})"
+
+#: bookshelf/window.py:74
+msgid "Filter documents..."
+msgstr "Фільтр документів..."
+
+#: bookshelf/window.py:80
+msgid "Loading items"
+msgstr "Завантаження елементів"
+
+#: bookshelf/window.py:190
+msgid ""
+"Failed to retrieve documents.\n"
+"Please try again."
+msgstr ""
+"Не вдалося отримати документи.\n"
+"Будь ласка спробуйте ще раз."
+
+#: bookshelf/window.py:232 gui/book_viewer/core_dialogs.py:388
+msgid "&Open"
+msgstr "&Відкрити"
+
+#: bookshelf/window.py:237
+msgid "Open in &system viewer"
+msgstr "Відкрити у &системному веб-переглядачі"
+
+#: bookshelf/window.py:242
+msgid "Edit &title"
+msgstr "Редагувати &заголовок"
+
+#: bookshelf/window.py:295
+msgid "No matching documents"
+msgstr "Немає відповідних документів"
+
+#: bookshelf/window.py:349 bookshelf/window.py:361
+msgid "Retrieving items..."
+msgstr "Отримання елементів..."
+
+#: bookshelf/window.py:386
+msgid "Document &info..."
+msgstr "&Інформація про документ..."
+
+#: bookshelf/window.py:417
+msgid "Provider"
+msgstr "Провайдер"
+
+#: bookshelf/window.py:424 bookshelf/window.py:430 gui/settings.py:622
+msgid "Categories"
+msgstr "Категорії"
+
+#: bookshelf/window.py:467
+#, python-brace-format
+msgid "Bookworm Bookshelf: {name}"
+msgstr "Книжкова полиця Bookworm: {name}"
+
+#: bookshelf/window.py:491
+msgid "&Exit"
+msgstr "&Вихід"
+
+#: bookshelf/window.py:494 gui/book_viewer/menubar.py:883
+msgid "&File"
+msgstr "&Файл"
+
+#: document/features.py:53
+msgid "Default reading mode"
+msgstr "Режим стандартного читання"
+
+#: document/features.py:54
+msgid "Reading order"
+msgstr "Порядок читання"
+
+#: document/features.py:55
+msgid "Physical layout"
+msgstr "Фізичне розташування"
+
+#: document/features.py:56
+msgid "Paginated"
+msgstr "Посторінковий"
+
+#: document/features.py:57
+msgid "Chapter by chapter"
+msgstr "Розділ за розділом"
+
+#: document/features.py:58
+msgid "Clean text"
+msgstr "Чистий текст"
+
+#: document/features.py:59
+msgid "Full text"
+msgstr "Повний текст"
+
+#: document/formats/archive.py:42
+msgid "Archive File"
+msgstr "Архівний файл"
+
+#: document/formats/epub.py:48
+msgid "Electronic Publication (EPUB)"
+msgstr "Електронне видання (EPUB)"
+
+#: document/formats/fb2.py:23 document/formats/fb2.py:34
+msgid "Fiction Book (FB2)"
+msgstr "Художня книга (FB2)"
+
+#: document/formats/fitz.py:169
+msgid "XPS Document"
+msgstr "Документ XPS"
+
+#: document/formats/fitz.py:176
+msgid "Comic Book Archive"
+msgstr "Архів коміксів"
+
+#: document/formats/html.py:174 document/formats/html.py:243
+msgid "HTML Document"
+msgstr "Документ HTML"
+
+#: document/formats/markdown.py:19
+msgid "Markdown File"
+msgstr "Файл markdown"
+
+#: document/formats/mobi.py:39
+msgid "Kindle eBook"
+msgstr "Електронна книга Kindle"
+
+#: document/formats/odf.py:82
+msgid "Open Document Text"
+msgstr "Відкрити текст документа"
+
+#: document/formats/odf.py:128
+msgid "Open Document Presentation"
+msgstr "Відкрити презентацію документа"
+
+#: document/formats/odf.py:191 document/formats/powerpoint.py:155
+#, python-brace-format
+msgid "Slide {number}"
+msgstr "Слайд {number}"
+
+#: document/formats/pandoc.py:38
+msgid "Rich Text Document"
+msgstr "Форматований текстовий документ"
+
+#: document/formats/pandoc.py:47
+msgid "Docbook Document"
+msgstr "Документ Docbook"
+
+#: document/formats/pandoc.py:56
+msgid "Jupyter notebook"
+msgstr "Блокнот Jupyter"
+
+#: document/formats/pandoc.py:65
+msgid "LaTeX Document"
+msgstr "Документ LaTeX"
+
+#: document/formats/pandoc.py:74
+msgid "Text2Tags Document"
+msgstr "Документ Text2Tags"
+
+#: document/formats/pandoc.py:83
+msgid "Unix manual page"
+msgstr "Сторінка посібника Unix"
+
+#: document/formats/pdf.py:73
+msgid "Portable Document (PDF)"
+msgstr "Портативний документ (PDF)"
+
+#: document/formats/plain_text.py:28
+msgid "Plain Text File"
+msgstr "Звичайний текстовий файл"
+
+#: document/formats/powerpoint.py:85
+msgid "Slide Notes"
+msgstr "Нотатки до слайдів"
+
+#: document/formats/powerpoint.py:115
+msgid "PowerPoint Presentation"
+msgstr "Презентація PowerPoint"
+
+#: document/formats/word.py:44
+msgid "Word Document"
+msgstr "Документ Word"
+
+#: document/formats/word.py:134
+msgid "Word 97 - 2003 Document"
+msgstr "Документ word 97 - 2003"
+
+#: epub_serve/__init__.py:43
+msgid "Open in &web Viewer"
+msgstr "Відкрити у &веб-переглядачі"
+
+#: epub_serve/__init__.py:44
+msgid "Open the current EPUB book in the browser"
+msgstr "Відкрити поточну книгу EPUB у веб-переглядачі"
+
+#: epub_serve/__init__.py:61
+msgid "Openning in web viewer..."
+msgstr "Відкриття у веб-переглядачі..."
+
+#: epub_serve/__init__.py:81
+msgid "Failed to launch web viewer"
+msgstr "Не вдалося запустити веб переглядач"
+
+#: epub_serve/__init__.py:82
+msgid "An error occurred while opening the web viewer. Please try again."
+msgstr ""
+"Виникла помилка при відкритті веб переглядача. Будь ласка, спробуйте ще раз."
+
+#: epub_serve/webapp.py:140
+msgid "404 Not Found"
+msgstr "404 Не знайдено"
+
+#: epub_serve/webapp.py:142
+msgid ""
+"The book you are trying to access does not exist or has been closed. Please "
+"make sure you opened the book from within Bookworm. All URLs are temporary "
+"and may not work after you close the page."
+msgstr ""
+"Книга, до якої ви намагаєтеся отримати доступ, не існує або була закрита. "
+"Будь ласка, переконайтеся, що ви відкрили книгу за допомогою Bookworm. Всі "
+"URL-адреси є тимчасовими і можуть не працювати після закриття сторінки."
+
+#: epub_serve/webapp.py:180
+msgid "Failed to load content"
+msgstr "Не вдалося завантажити вміст"
+
+#: epub_serve/webapp.py:182
+msgid "Cannot retreive content. Probably the eBook has been closed."
+msgstr "Не вдається отримати вміст. Можливо, електронну книгу було закрито."
+
+#: gui/book_viewer/__init__.py:76
+msgid "Failed to open document"
+msgstr "Не вдалося відкрити документ"
+
+#: gui/book_viewer/__init__.py:78
+msgid "The document you are trying to open could not be opened in Bookworm."
+msgstr ""
+"Документ, який ви намагаєтеся відкрити, не вдалося відкрити у Bookworm."
+
+#: gui/book_viewer/__init__.py:91
+msgid "Opening document, please wait..."
+msgstr "Відкриття документа, зачекайте..."
+
+#: gui/book_viewer/__init__.py:109
+msgid "Document not found"
+msgstr "Документ не знайдено"
+
+#: gui/book_viewer/__init__.py:111
+msgid ""
+"Could not open Document.\n"
+"The document does not exist."
+msgstr ""
+"Не вдалося відкрити документ.\n"
+"Документ не існує."
+
+#: gui/book_viewer/__init__.py:123
+msgid "Document Restricted"
+msgstr "Доступ до документа обмежено"
+
+#: gui/book_viewer/__init__.py:126
+msgid ""
+"Could not open Document.\n"
+"The document is restricted by the publisher."
+msgstr ""
+"Не вдалося відкрити документ.\n"
+"Доступ до документа обмежено видавцем."
+
+#: gui/book_viewer/__init__.py:137
+msgid "Unsupported Document Format"
+msgstr "Непідтримуваний формат документа"
+
+#: gui/book_viewer/__init__.py:140
+msgid "The format of the given document is not supported by Bookworm."
+msgstr "Формат цього документа не підтримується Bookworm."
+
+#: gui/book_viewer/__init__.py:149
+msgid "Archive contains no documents"
+msgstr "Архів не містить документів"
+
+#: gui/book_viewer/__init__.py:152
+msgid ""
+"Bookworm cannot open this archive file.\n"
+"The archive contains no documents."
+msgstr ""
+"Bookworm не може відкрити цей архівний файл.\n"
+"Архів не містить документів."
+
+#: gui/book_viewer/__init__.py:160
+msgid "Documents"
+msgstr "Документи"
+
+#: gui/book_viewer/__init__.py:161
+msgid "Multiple documents found"
+msgstr "Знайдено кілька документів"
+
+#: gui/book_viewer/__init__.py:175
+msgid "Error Opening Document"
+msgstr "Помилка при відкритті документа"
+
+#: gui/book_viewer/__init__.py:178
+msgid ""
+"Could not open file\n"
+".Either the file  has been damaged during download, or it has been corrupted "
+"in some other way."
+msgstr ""
+"Не вдалося відкрити файл.\\n\n"
+"Файл було пошкоджено під час завантаження, або він був пошкоджений іншим "
+"чином."
+
+#: gui/book_viewer/__init__.py:190
+msgid "Error Openning Document"
+msgstr "Помилка при відкритті документа"
+
+#: gui/book_viewer/__init__.py:193
+msgid ""
+"Could not open document.\n"
+"An unknown error occurred while loading the file."
+msgstr ""
+"Не вдалося відкрити документ.\n"
+"Під час завантаження файлу виникла невідома помилка."
+
+#: gui/book_viewer/__init__.py:205
+msgid ""
+"Failed to open document.\n"
+"Would you like to remove its entry from the 'recent documents' and 'pinned "
+"documents' lists?"
+msgstr ""
+"Не вдалося відкрити документ.\n"
+"Ви хочете видалити його запис зі списків \"нещодавні документи\" та "
+"\"закріплені документи\"?"
+
+#: gui/book_viewer/__init__.py:208
+msgid "Remove from lists?"
+msgstr "Вилучити зі списків?"
+
+#: gui/book_viewer/__init__.py:277
+msgid "Press (Ctrl + O) to open a document"
+msgstr "Натисніть (Ctrl + O), щоб відкрити документ"
+
+#: gui/book_viewer/__init__.py:291
+msgid "Table of Contents"
+msgstr "Зміст"
+
+#: gui/book_viewer/__init__.py:314
+msgid "Reading progress percentage"
+msgstr "Перебіг прочитаного"
+
+#: gui/book_viewer/__init__.py:399
+msgid "Open"
+msgstr "Відкрити"
+
+#: gui/book_viewer/__init__.py:404
+msgid "Mode"
+msgstr "Режим"
+
+#: gui/book_viewer/__init__.py:407
+msgid "Big"
+msgstr "Великий"
+
+#: gui/book_viewer/__init__.py:409
+msgid "Small"
+msgstr "Маленький"
+
+#: gui/book_viewer/__init__.py:454
+msgid "Incorrect Password"
+msgstr "Невірний пароль"
+
+#: gui/book_viewer/__init__.py:458
+msgid ""
+"The password you provided is incorrect.\n"
+"Please try again with the correct password."
+msgstr ""
+"Ви ввели неправильний пароль.\n"
+"Будь ласка, спробуйте ще раз з правильним паролем."
+
+#: gui/book_viewer/__init__.py:518
+msgid "Document closed."
+msgstr "Документ закрито."
+
+#: gui/book_viewer/__init__.py:555
+#, python-brace-format
+msgid "{percentage} completed"
+msgstr "{percentage} завершено"
+
+#: gui/book_viewer/__init__.py:613
+msgid "Document content"
+msgstr "Зміст документа"
+
+#: gui/book_viewer/__init__.py:644
+#, python-brace-format
+msgid "{text}: {item_type}"
+msgstr "{text}: {item_type}"
+
+#: gui/book_viewer/__init__.py:661
+#, python-brace-format
+msgid "No next {item}"
+msgstr "Немає наступного {item}"
+
+#: gui/book_viewer/__init__.py:663
+#, python-brace-format
+msgid "No previous {item}"
+msgstr "Немає попереднього {item}"
+
+#: gui/book_viewer/__init__.py:679
+msgid "The font size has been Increased"
+msgstr "Розмір шрифту збільшено"
+
+#: gui/book_viewer/__init__.py:685
+msgid "The font size has been decreased"
+msgstr "Розмір шрифту зменшено"
+
+#: gui/book_viewer/__init__.py:689
+msgid "The font size has been reset"
+msgstr "Розмір шрифту скинуто"
+
+#: gui/book_viewer/__init__.py:719
+#, python-brace-format
+msgid "Reading progress: {percentage}"
+msgstr "Перебіг читання: {percentage}"
+
+#: gui/book_viewer/__init__.py:741
+msgid ""
+"This document is encrypted with a password.\n"
+"You need to provide the password in order to access its content.\n"
+"Please provide the password and press enter."
+msgstr ""
+"Цей документ зашифровано паролем.\n"
+"Щоб отримати доступ до його вмісту, вам потрібно ввести пароль.\n"
+"Будь ласка, введіть пароль і натисніть enter."
+
+#: gui/book_viewer/__init__.py:746
+msgid "Enter Password"
+msgstr "Введіть пароль"
+
+#: gui/book_viewer/__init__.py:784 text_to_speech/__init__.py:167
+#, python-brace-format
+msgid "Page {page} of {total}"
+msgstr "Сторінка {page} з {total}"
+
+#: gui/book_viewer/__init__.py:869
+#, python-brace-format
+msgid "Opening page: {url}"
+msgstr "Початкова сторінка: {url}"
+
+#: gui/book_viewer/core_dialogs.py:47
+msgid "Search Results"
+msgstr "Результати пошуку"
+
+#: gui/book_viewer/core_dialogs.py:58
+msgid "Text"
+msgstr "Текст"
+
+#: gui/book_viewer/core_dialogs.py:74
+msgid "Search Progress:"
+msgstr "Перебіг пошуку:"
+
+#: gui/book_viewer/core_dialogs.py:148
+msgid "Search term:"
+msgstr "Пошуковий запит:"
+
+#: gui/book_viewer/core_dialogs.py:154
+msgid "Case sensitive"
+msgstr "Враховувати регістр"
+
+#: gui/book_viewer/core_dialogs.py:156
+msgid "Match whole word only"
+msgstr "Лише цілі слова"
+
+#: gui/book_viewer/core_dialogs.py:158
+msgid "Regular expression"
+msgstr "Регулярний вираз"
+
+#: gui/book_viewer/core_dialogs.py:207
+#, python-brace-format
+msgid "Page number, of {total}:"
+msgstr "Номер сторінки, з {total}:"
+
+#: gui/book_viewer/core_dialogs.py:246
+msgid "Element Type"
+msgstr "Тип елемента"
+
+#: gui/book_viewer/core_dialogs.py:251
+msgid "Elements"
+msgstr "Елементи"
+
+#: gui/book_viewer/core_dialogs.py:327
+msgid "Document Info"
+msgstr "Інформація про документ"
+
+#: gui/book_viewer/core_dialogs.py:356
+msgid "Author"
+msgstr "Автор"
+
+#: gui/book_viewer/core_dialogs.py:360
+msgid "Description"
+msgstr "Опис"
+
+#: gui/book_viewer/core_dialogs.py:369
+msgid "Number of Sections"
+msgstr "Кількість розділів"
+
+#: gui/book_viewer/core_dialogs.py:373
+msgid "Number of Pages"
+msgstr "Кількість сторінок"
+
+#: gui/book_viewer/core_dialogs.py:376 ocr/ocr_dialogs.py:484
+msgid "Language"
+msgstr "Мова"
+
+#: gui/book_viewer/core_dialogs.py:379
+msgid "Publisher"
+msgstr "Видавець"
+
+#: gui/book_viewer/core_dialogs.py:381
+msgid "Created at"
+msgstr "Створено"
+
+#: gui/book_viewer/core_dialogs.py:384
+msgid "Publication Date"
+msgstr "Дата публікації"
+
+#: gui/book_viewer/menubar.py:47
+#, python-brace-format
+msgid ""
+"{display_name}\n"
+"Version: {version}\n"
+"Website: {website}\n"
+"\n"
+"{display_name} is an advanced and accessible document reader that enables "
+"blind and visually impaired individuals to read documents in an easy, "
+"accessible, and hassle-free manor. It is being developed by {author} with "
+"some contributions from the community.\n"
+"\n"
+"{copyright}\n"
+"{display_name} is free software; you can redistribute it and/or modify it "
+"under the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.\n"
+"This program is distributed in the hope that it will be useful, but WITHOUT "
+"ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
+"FITNESS FOR A PARTICULAR PURPOSE.\n"
+"For further details, you can view the full licence from the help menu.\n"
+msgstr ""
+"{display_name}\n"
+"Версія: {version}\n"
+"Веб-сайт: {website}\n"
+"\n"
+"{display_name} це вдосконалена та доступна програма для читання документів, "
+"яка дає змогу незрячим і людям з порушенням зору читати документи легко, "
+"доступно та без зайвих клопотів. Його розробляє {author} з деякими внесками "
+"від спільноти.\n"
+"\n"
+"{copyright}\n"
+"{display_name} є безкоштовним програмним забезпеченням; ви можете поширювати "
+"його або змінювати згідно з умовами GNU General Public License, "
+"опублікованої Free Software Foundation; версії 2 цієї ліцензії, або (на ваш "
+"вибір) будь-якої пізнішої версії.\n"
+"Ця програма розповсюджується в надії, що вона буде корисною, але БЕЗ ЖОДНИХ "
+"ГАРАНТІЙ; навіть без неявної гарантії ПРИДАТНОСТІ ДЛЯ ПРОДАЖУ чи "
+"ВІДПОВІДНОСТІ ДЛЯ КОНКРЕТНОЇ МЕТИ.\n"
+"Щоб отримати додаткові відомості, ви можете переглянути повну ліцензію в "
+"меню довідки.\n"
+
+#: gui/book_viewer/menubar.py:59
+msgid ""
+"This release of Bookworm is generously sponsored  by Capeds (www.capeds.net)."
+msgstr "Цей випуск Bookworm щедро спонсорує компанія Capeds (www.capeds.net)."
+
+#: gui/book_viewer/menubar.py:88
+msgid "Open...\tCtrl-O"
+msgstr "Відкрити...\tCtrl-O"
+
+#: gui/book_viewer/menubar.py:90
+msgid "New Window...\tCtrl-N"
+msgstr "Нове вікно...\tCtrl-N"
+
+#: gui/book_viewer/menubar.py:94
+msgid "&Pin\tCtrl-P"
+msgstr "&Закріпити\tCtrl-P"
+
+#: gui/book_viewer/menubar.py:97
+msgid "&Save As Plain Text..."
+msgstr "&Зберегти як звичайний текст..."
+
+#: gui/book_viewer/menubar.py:102
+msgid "&Close Current Document\tCtrl-W"
+msgstr "&Закрити поточний документ\tCtrl-W"
+
+#: gui/book_viewer/menubar.py:104
+msgid "Close the currently open document"
+msgstr "Закрити поточний відкритий документ"
+
+#: gui/book_viewer/menubar.py:110
+msgid "C&lear Documents Cache..."
+msgstr "О&чистити кеш документів..."
+
+#: gui/book_viewer/menubar.py:113
+msgid ""
+"Clear the document cache. Helps in fixing some issues with openning "
+"documents."
+msgstr ""
+"Очистити кеш документів. Допомагає виправити деякі проблеми з відкриттям "
+"документів."
+
+#: gui/book_viewer/menubar.py:120
+msgid "Pi&nned Documents"
+msgstr "&Закріплені документи"
+
+#: gui/book_viewer/menubar.py:122
+msgid "Opens a list of documents you pinned."
+msgstr "Відкриває список закріплених вами документів."
+
+#: gui/book_viewer/menubar.py:128 gui/book_viewer/menubar.py:142
+msgid "Clear list"
+msgstr "Очистити список"
+
+#: gui/book_viewer/menubar.py:130
+msgid "Clear the pinned documents list"
+msgstr "Очистити список закріплених документів"
+
+#: gui/book_viewer/menubar.py:135
+msgid "&Recently Opened"
+msgstr "&Нещодавно відкриті"
+
+#: gui/book_viewer/menubar.py:137
+msgid "Opens a list of recently opened books."
+msgstr "Відкриває список нещодавно відкритих книг."
+
+#: gui/book_viewer/menubar.py:144
+msgid "Clear the recent books list."
+msgstr "Очистити список нещодавніх книг."
+
+#: gui/book_viewer/menubar.py:150
+msgid "&Preferences...\tCtrl-Shift-P"
+msgstr "&Налаштування...\tCtrl-Shift-P"
+
+#: gui/book_viewer/menubar.py:152
+msgid "Configure application"
+msgstr "Налаштування програми"
+
+#: gui/book_viewer/menubar.py:156
+msgid "Exit"
+msgstr "Вихід"
+
+#: gui/book_viewer/menubar.py:207
+msgid "Select a document"
+msgstr "Виберіть документ"
+
+#: gui/book_viewer/menubar.py:236
+msgid "Pinned"
+msgstr "Закріплено"
+
+#: gui/book_viewer/menubar.py:240
+msgid "Unpinned"
+msgstr "Відкріплено"
+
+#: gui/book_viewer/menubar.py:266
+msgid "Exporting Document"
+msgstr "Експорт документа"
+
+#: gui/book_viewer/menubar.py:268
+msgid "Converting document to plain text."
+msgstr "Перетворення документа у звичайний текст."
+
+#: gui/book_viewer/menubar.py:286
+#, python-brace-format
+msgid "Exporting Page {current} of {total}..."
+msgstr "Експорт сторінки {current} з {total}..."
+
+#: gui/book_viewer/menubar.py:308
+#, python-brace-format
+msgid "{app_name} Preferences"
+msgstr "Налаштування {app_name}"
+
+#: gui/book_viewer/menubar.py:319
+msgid "Are you sure you want to clear the documents cache?"
+msgstr "Ви впевнені, що хочете очистити кеш документів?"
+
+#: gui/book_viewer/menubar.py:321
+msgid "Clear Documents Cache?"
+msgstr "Очистити кеш документів?"
+
+#: gui/book_viewer/menubar.py:329
+msgid "Documents cache has been cleared."
+msgstr "Кеш документів очищено."
+
+#: gui/book_viewer/menubar.py:331 gui/settings.py:117 gui/settings.py:135
+#: platforms/win32/pandoc_download.py:45
+#: platforms/win32/tesseract_download.py:74
+msgid "Success"
+msgstr "Успішно"
+
+#: gui/book_viewer/menubar.py:338
+msgid "Clearing documents cache..."
+msgstr "Очищення кешу документів..."
+
+#: gui/book_viewer/menubar.py:382
+msgid "(No recent books)"
+msgstr "(Немає нещодавніх книг)"
+
+#: gui/book_viewer/menubar.py:383
+msgid "No recent books"
+msgstr "Немає нещодавніх книг"
+
+#: gui/book_viewer/menubar.py:420
+msgid "Document &Info..."
+msgstr "&Інформація про документ..."
+
+#: gui/book_viewer/menubar.py:422
+msgid "Show information about number of chapters, word count..etc."
+msgstr "Показувати інформацію про кількість розділів, кількість слів тощо."
+
+#: gui/book_viewer/menubar.py:427
+msgid "&Element list...\tCtrl+F7"
+msgstr "&Список елементів...\tCtrl+F7"
+
+#: gui/book_viewer/menubar.py:429
+msgid "Show a list of semantic elements."
+msgstr "Показати список семантичних елементів."
+
+#: gui/book_viewer/menubar.py:434
+msgid "Change Reading &Mode...\tCtrl-Shift-M"
+msgstr "&Змінити режим читання...\tCtrl-Shift-M"
+
+#: gui/book_viewer/menubar.py:436
+msgid "Change the current reading mode."
+msgstr "Змінити поточний режим читання."
+
+#: gui/book_viewer/menubar.py:441 gui/book_viewer/menubar.py:947
+msgid "&Render Page...\tCtrl-R"
+msgstr "&Відобразити сторінку...\tCtrl-R"
+
+#: gui/book_viewer/menubar.py:443 gui/book_viewer/menubar.py:948
+msgid "View a fully rendered version of this page."
+msgstr "Переглянути повну версію цієї сторінки."
+
+#: gui/book_viewer/menubar.py:485
+msgid "Rendered Page"
+msgstr "Відображена сторінка"
+
+#: gui/book_viewer/menubar.py:502
+msgid "Available reading modes"
+msgstr "Доступні режими читання"
+
+#: gui/book_viewer/menubar.py:503
+msgid "Select Reading Mode "
+msgstr "Виберіть режим читання "
+
+#: gui/book_viewer/menubar.py:528
+msgid "Element List"
+msgstr "Список елементів"
+
+#: gui/book_viewer/menubar.py:555 gui/book_viewer/menubar.py:937
+msgid "&Find in Document...\tCtrl-F"
+msgstr "&Знайти в документі...\tCtrl-F"
+
+#: gui/book_viewer/menubar.py:557 gui/book_viewer/menubar.py:938
+msgid "Search this document."
+msgstr "Пошук у цьому документі."
+
+#: gui/book_viewer/menubar.py:562
+msgid "Find &Next\tF3"
+msgstr "Знайти &Далі\tF3"
+
+#: gui/book_viewer/menubar.py:564
+msgid "Find next occurrence."
+msgstr "Знайти наступний випадок."
+
+#: gui/book_viewer/menubar.py:569
+msgid "Find &Previous\tShift-F3"
+msgstr "Знайти &попереднє\tShift-F3"
+
+#: gui/book_viewer/menubar.py:571
+msgid "Find previous occurrence."
+msgstr "Знайти попередній випадок."
+
+#: gui/book_viewer/menubar.py:576
+msgid "&Jump to Line...\tCtrl-L"
+msgstr "&Перейти до рядка...\tCtrl-L"
+
+#: gui/book_viewer/menubar.py:578
+msgid "Jump to a line within the current page or document"
+msgstr "Перехід до рядка в межах поточної сторінки або документа"
+
+#: gui/book_viewer/menubar.py:583 gui/book_viewer/menubar.py:931
+msgid "&Go To Page...\tCtrl-G"
+msgstr "&Перейти на сторінку...\tCtrl-G"
+
+#: gui/book_viewer/menubar.py:585
+msgid "Go to page"
+msgstr "Перейти на сторінку"
+
+#: gui/book_viewer/menubar.py:590
+msgid "&Go To Page By Label...\tCtrl-Shift-G"
+msgstr "&Перейти на сторінку за міткою...\tCtrl-Shift-G"
+
+#: gui/book_viewer/menubar.py:592
+msgid "Go to a page using its label"
+msgstr "Перехід на сторінку за її міткою"
+
+#: gui/book_viewer/menubar.py:626
+#, python-brace-format
+msgid ""
+"You are here: {current_line}\n"
+"You can't go further than: {last_line}"
+msgstr ""
+"Ви тут: {current_line}\\n\n"
+"Ви не можете піти далі ніж: {last_line}"
+
+#: gui/book_viewer/menubar.py:628
+msgid "Line number"
+msgstr "Номер рядка"
+
+#: gui/book_viewer/menubar.py:629
+msgid "Jump to line"
+msgstr "Перейти до рядка"
+
+#: gui/book_viewer/menubar.py:642
+msgid "Go To Page"
+msgstr "Перейти на сторінку"
+
+#: gui/book_viewer/menubar.py:649
+msgid "Go To Page By Label"
+msgstr "Перейти на сторінку за міткою"
+
+#: gui/book_viewer/menubar.py:649
+msgid "Page Label"
+msgstr "Мітка сторінки"
+
+#: gui/book_viewer/menubar.py:657
+msgid "Search Document"
+msgstr "Пошук по документу"
+
+#: gui/book_viewer/menubar.py:683
+#, python-brace-format
+msgid "Searching For '{term}'"
+msgstr "Пошук \"{term}\""
+
+#: gui/book_viewer/menubar.py:698
+#, python-brace-format
+msgid "Results | {total}"
+msgstr "Результати | {total}"
+
+#: gui/book_viewer/menubar.py:735
+msgid "Search Result"
+msgstr "Результат пошуку"
+
+#: gui/book_viewer/menubar.py:773
+msgid "&User guide...\tF1"
+msgstr "&Посібник користувача...\tF1"
+
+#: gui/book_viewer/menubar.py:775
+msgid "View Bookworm manuals"
+msgstr "Переглянути посібники Bookworm"
+
+#: gui/book_viewer/menubar.py:780
+msgid "Bookworm &website..."
+msgstr "&Сайт Bookworm..."
+
+#: gui/book_viewer/menubar.py:782
+msgid "Visit the official website of Bookworm"
+msgstr "Відвідайте офіційний сайт Bookworm"
+
+#: gui/book_viewer/menubar.py:787
+msgid "&License"
+msgstr "&Ліцензія"
+
+#: gui/book_viewer/menubar.py:789
+msgid "View legal information about this program ."
+msgstr "Переглянути юридичну інформацію про цю програму."
+
+#: gui/book_viewer/menubar.py:794
+msgid "Con&tributors"
+msgstr "&Учасники"
+
+#: gui/book_viewer/menubar.py:796
+msgid "View a list of notable contributors to the program."
+msgstr "Переглянути список видатних учасників програми."
+
+#: gui/book_viewer/menubar.py:802
+msgid "&Restart with debug-mode enabled"
+msgstr "&Перезапустити з увімкненим режимом налагодження"
+
+#: gui/book_viewer/menubar.py:804
+msgid "Restart the program with debug mode enabled to show errors"
+msgstr ""
+"Перезапустіть програму з увімкненим режимом налагодження, щоб побачити "
+"помилки"
+
+#: gui/book_viewer/menubar.py:814
+msgid "&About Bookworm"
+msgstr "&Про Bookworm"
+
+#: gui/book_viewer/menubar.py:816
+msgid "Show general information about this program"
+msgstr "Показати загальну інформацію про цю програму"
+
+#: gui/book_viewer/menubar.py:849
+#, python-brace-format
+msgid "About {app_name}"
+msgstr "Про {app_name}"
+
+#: gui/book_viewer/menubar.py:885
+msgid "&Search"
+msgstr "&Пошук"
+
+#: gui/book_viewer/menubar.py:887
+msgid "&Document"
+msgstr "&Документ"
+
+#: gui/book_viewer/menubar.py:889
+msgid "&Help"
+msgstr "&Довідка"
+
+#: gui/book_viewer/menubar.py:932
+msgid "Jump to a page"
+msgstr "Перейти на сторінку"
+
+#: gui/book_viewer/menubar.py:986
+msgid "Supported document formats"
+msgstr "Підтримувані формати документів"
+
+#: gui/book_viewer/render_view.py:88
+#, python-brace-format
+msgid "Zoom is at {factor} percent"
+msgstr "Масштаб становить {factor} відсотків"
+
+#: gui/book_viewer/render_view.py:100
+msgid "Page {}"
+msgstr "Сторінка {}"
+
+#: gui/browseable_message.py:46
+msgid "Message"
+msgstr "Повідомлення"
+
+#: gui/components.py:104
+msgid "Search Range"
+msgstr "Діапазон пошуку"
+
+#: gui/components.py:106
+msgid "Page Range"
+msgstr "Діапазон сторінок"
+
+#: gui/components.py:112
+msgid "From:"
+msgstr "Від:"
+
+#: gui/components.py:118
+msgid "To:"
+msgstr "До:"
+
+#: gui/components.py:123
+msgid "Specific section"
+msgstr "Конкретний розділ"
+
+#: gui/components.py:126
+msgid "Select section:"
+msgstr "Виберіть розділ:"
+
+#: gui/components.py:277 gui/components.py:318 gui/settings.py:646
+msgid "OK"
+msgstr "Гаразд"
+
+#: gui/components.py:280 gui/components.py:321 gui/settings.py:649
+msgid "Cancel"
+msgstr "Скасувати"
+
+#: gui/components.py:607
+msgid ""
+"This will cancel all the operations in progress.\n"
+"Are you sure you want to abort?"
+msgstr ""
+"Це скасує всі поточні операції.\\n\n"
+"Ви впевнені, що хочете перервати?"
+
+#: gui/settings.py:44
+msgid "Bookworm File Associations"
+msgstr "Асоціації файлів Bookworm"
+
+#: gui/settings.py:57
+msgid ""
+"This dialog will help you to setup file associations.\n"
+"Associating files with Bookworm means that when you click on a file in "
+"windows explorer, it will be opened in Bookworm by default "
+msgstr ""
+"Цей діалог допоможе вам налаштувати асоціації файлів.\n"
+"Асоціація файлів із Bookworm означає, що коли ви клацаєте файл у провіднику "
+"Windows, він буде початково відкритий у Bookworm "
+
+#: gui/settings.py:69
+msgid "Associate all"
+msgstr "Асоціювати все"
+
+#: gui/settings.py:71
+msgid "Use Bookworm to open all supported document formats"
+msgstr ""
+"Використовувати Bookworm для відкриття всіх підтримуваних форматів документів"
+
+#: gui/settings.py:79
+#, python-brace-format
+msgid "Associate files of type {format}"
+msgstr "Асоційовані файли типу {format}"
+
+#: gui/settings.py:82
+#, python-brace-format
+msgid "Associate files with {ext} extension so they always open in Bookworm"
+msgstr ""
+"Асоціювати файли з розширенням {ext}, щоб вони завжди відкривалися в Bookworm"
+
+#: gui/settings.py:94
+msgid "Dissociate all supported file types"
+msgstr "Відокремити всі підтримувані типи файлів"
+
+#: gui/settings.py:96
+msgid "Remove previously associated file types"
+msgstr "Видалити раніше асоційовані типи файлів"
+
+#: gui/settings.py:113
+#, python-brace-format
+msgid "Files of type {format} have been associated with Bookworm."
+msgstr "Файли типу {format} були асоційовані з Bookworm."
+
+#: gui/settings.py:127
+msgid "All supported file types have been set to open by default in Bookworm."
+msgstr "Усі підтримувані типи файлів початково відкриваються у Bookworm."
+
+#: gui/settings.py:131
+msgid "All registered file associations have been removed."
+msgstr "Всі зареєстровані асоціації файлів видалено."
+
+#: gui/settings.py:215
+msgid "User Interface"
+msgstr "Інтерфейс користувача"
+
+#: gui/settings.py:217
+msgid "Display Language:"
+msgstr "Мова відображення:"
+
+#: gui/settings.py:222
+msgid "Spoken feedback"
+msgstr "Мовний відгук"
+
+#: gui/settings.py:227
+msgid "Speak user interface messages"
+msgstr "Вимовляти повідомлення інтерфейсу користувача"
+
+#: gui/settings.py:232
+msgid "Miscellaneous"
+msgstr "Різне"
+
+#: gui/settings.py:237
+msgid "Play pagination sound"
+msgstr "Відтворювати звук нумерації сторінок"
+
+#: gui/settings.py:244
+msgid "Include page label in page title"
+msgstr "Включати мітку сторінки в заголовок сторінки"
+
+#: gui/settings.py:251
+msgid "Use file name instead of book title"
+msgstr "Використовувати назву файлу замість назви книги"
+
+#: gui/settings.py:258
+msgid "Show reading progress percentage"
+msgstr "Показувати відсоток перебігу читання"
+
+#: gui/settings.py:265
+msgid "Open recently opened books from the last position"
+msgstr "Відкривати нещодавно відкриті книги з останньої позиції"
+
+#: gui/settings.py:273
+msgid ""
+"Try to support the screen reader's continuous reading mode by automatically "
+"turning pages (may not work in some cases)"
+msgstr ""
+"Спробувати підтримувати режим безперервного читання програми зчитування з "
+"екрана, автоматично гортаючи сторінки (у деяких випадках може не працювати)"
+
+#: gui/settings.py:281
+msgid "Automatically check for updates"
+msgstr "Автоматично перевіряти наявність оновлень"
+
+#: gui/settings.py:287
+msgid "File Associations"
+msgstr "Асоціації файлів"
+
+#: gui/settings.py:292
+msgid "Manage File &Associations"
+msgstr "Керування &асоціаціями файлів"
+
+#: gui/settings.py:323
+msgid ""
+"You have changed the display language of Bookworm.\n"
+"For this setting to fully take effect, you need to restart the application.\n"
+"Would you like to restart the application right now?"
+msgstr ""
+"Ви змінили мову відображення Bookworm.\n"
+"Щоб це налаштування повністю вступило в силу, потрібно перезапустити "
+"програму.\n"
+"Ви хочете перезапустити програму прямо зараз?"
+
+#: gui/settings.py:329
+msgid "Language Changed"
+msgstr "Мову змінено"
+
+#: gui/settings.py:351
+msgid "General Appearance"
+msgstr "Загальний вигляд"
+
+#: gui/settings.py:356
+msgid "Maximize the application window upon startup"
+msgstr "Розгортати вікно програми під час запуску"
+
+#: gui/settings.py:363
+msgid "Show the application's toolbar"
+msgstr "Показувати панель інструментів програми"
+
+#: gui/settings.py:366
+msgid "Text Styling"
+msgstr "Стилізація тексту"
+
+#: gui/settings.py:371
+msgid "Apply text styling (when available)"
+msgstr "Застосувати стилізацію тексту (якщо доступно)"
+
+#: gui/settings.py:374
+msgid "Text view margins percentage"
+msgstr "Відсоток полів перегляду тексту"
+
+#: gui/settings.py:378
+msgid "Font"
+msgstr "Шрифт"
+
+#: gui/settings.py:383
+msgid "Use Open-&dyslexic font"
+msgstr "Використовувати шрифт Open-&dyslexic"
+
+#: gui/settings.py:387
+msgid "Font Face"
+msgstr "Стиль Шрифту"
+
+#: gui/settings.py:394
+msgid "Font Size"
+msgstr "Розмір шрифту"
+
+#: gui/settings.py:400
+msgid "Bold style"
+msgstr "Жирний стиль"
+
+#: gui/settings.py:460
+msgid "Download Pandoc: The universal document converter"
+msgstr "Завантажити Pandoc: Універсальний конвертер документів"
+
+#: gui/settings.py:463
+msgid ""
+"Add support for additional document formats including RTF and Word 2003 "
+"documents."
+msgstr ""
+"Додайте підтримку додаткових форматів документів, зокрема RTF та Word 2003."
+
+#: gui/settings.py:472
+msgid "Update Pandoc (the universal document converter)"
+msgstr "Оновити Pandoc (універсальний конвертер документів)"
+
+#: gui/settings.py:475
+msgid ""
+"Update Pandoc to the latest version to improve performance and conversion "
+"quality."
+msgstr ""
+"Оновіть Pandoc до останньої версії, щоб покращити продуктивність та якість "
+"конвертації."
+
+#: gui/settings.py:481 gui/settings.py:486
+msgid "Reset Settings"
+msgstr "Скинути налаштування"
+
+#: gui/settings.py:488
+msgid "Reset Bookworm's settings to their defaults"
+msgstr "Скинути налаштування Bookworm до початкових"
+
+#: gui/settings.py:496
+msgid "Downloading Pandoc"
+msgstr "Завантаження Pandoc"
+
+#: gui/settings.py:498 ocr/ocr_dialogs.py:129 ocr/ocr_dialogs.py:544
+msgid "Getting download information..."
+msgstr "Отримання інформації щодо завантаження..."
+
+#: gui/settings.py:511 ocr/ocr_dialogs.py:162
+msgid "Checking for updates. Please wait..."
+msgstr "Перевірка оновлень. Будь ласка, зачекайте..."
+
+#: gui/settings.py:520
+msgid ""
+"You will lose  all of your custom settings.\n"
+"Are you sure you want to restore all settings to their default values?"
+msgstr ""
+"Ви втратите всі власні налаштування.\n"
+"Ви впевнені, що бажаєте відновити всі налаштування до початкових значень?"
+
+#: gui/settings.py:523
+msgid "Reset Settings?"
+msgstr "Скинути налаштування?"
+
+#: gui/settings.py:536 ocr/ocr_dialogs.py:149
+msgid "Restart Required"
+msgstr "Потрібен перезапуск"
+
+#: gui/settings.py:538
+msgid "Bookworm will now restart to complete the installation of Pandoc."
+msgstr "Bookworm перезапуститься, щоб завершити встановлення Pandoc."
+
+#: gui/settings.py:548
+msgid ""
+"A new version of Pandoc is available for download.\n"
+"It is strongly recommended to update to the latest version for the best "
+"performance and conversion quality.\n"
+"Would you like to update to the new version?"
+msgstr ""
+"Нова версія Pandoc доступна для завантаження.\n"
+"Наполегливо рекомендуємо оновити до останньої версії для найкращої "
+"продуктивності та якості конвертації.\n"
+"Бажаєте оновитися до нової версії?"
+
+#: gui/settings.py:551
+msgid "Update Pandoc?"
+msgstr "Оновити Pandoc?"
+
+#: gui/settings.py:560
+msgid "Removing old Pandoc version. Please wait..."
+msgstr "Видалення старої версії Pandoc. Будь ласка, зачекайте..."
+
+#: gui/settings.py:566
+msgid "Your version of Pandoc is up to date."
+msgstr "Ваша версія Pandoc є актуальною."
+
+#: gui/settings.py:568 ocr/ocr_dialogs.py:192
+msgid "No updates"
+msgstr "Немає оновлень"
+
+#: gui/settings.py:576
+msgid "Failed to check for updates. Please check your internet connection."
+msgstr ""
+"Не вдалося перевірити наявність оновлень. Перевірте підключення до Інтернету."
+
+#: gui/settings.py:592
+msgid "Appearance"
+msgstr "Зовнішній вигляд"
+
+#: gui/settings.py:594
+msgid "Advanced"
+msgstr "Розширені"
+
+#: gui/settings.py:651
+msgid "Apply"
+msgstr "Застосувати"
+
+#: http_tools/http_resource.py:43 platforms/win32/updater.py:196
+#, python-brace-format
+msgid "Downloaded {downloaded} MB of {total} MB"
+msgstr "Завантажено {downloaded} МБ з {total} МБ"
+
+#: ocr/__init__.py:70 ocr/__init__.py:89 ocr/__init__.py:92
+msgid "OCR"
+msgstr "Розпізнавання"
+
+#: ocr/ocr_dialogs.py:51 ocr/ocr_menu.py:207
+msgid "OCR Options"
+msgstr "Параметри розпізнавання"
+
+#: ocr/ocr_dialogs.py:58
+msgid "Default OCR Engine"
+msgstr "Початковий механізм розпізнавання"
+
+#: ocr/ocr_dialogs.py:65 ocr_engines/tesseract_ocr_engine/__init__.py:25
+#: ocr_engines/tesseract_ocr_engine/alt_tess.py:29
+msgid "Tesseract OCR Engine"
+msgstr "Механізм Tesseract OCR"
+
+#: ocr/ocr_dialogs.py:70
+msgid "Download Tesseract OCR Engine"
+msgstr "Завантажити механізм Tesseract OCR"
+
+#: ocr/ocr_dialogs.py:72
+msgid "Get a free, high-quality OCR engine that supports over 100 languages."
+msgstr ""
+"Отримайте безкоштовний високоякісний механізм розпізнавання, який підтримує "
+"понад 100 мов."
+
+#: ocr/ocr_dialogs.py:81
+msgid "Manage Tesseract OCR Languages"
+msgstr "Керування мовами Tesseract OCR"
+
+#: ocr/ocr_dialogs.py:83
+msgid "Add support for new languages, and /or remove installed languages."
+msgstr "Додайте підтримку нових мов та/або видаліть встановлені мови."
+
+#: ocr/ocr_dialogs.py:89
+msgid "Update Tesseract OCr Engine"
+msgstr "Оновити механізм Tesseract OCr"
+
+#: ocr/ocr_dialogs.py:91
+msgid "Check for and install updates for Tesseract OCR Engine"
+msgstr "Перевірка та встановлення оновлень для Tesseract OCR Engine"
+
+#: ocr/ocr_dialogs.py:97
+msgid "Image processing"
+msgstr "Обробка зображення"
+
+#: ocr/ocr_dialogs.py:103
+msgid "Enable default image enhancement filters"
+msgstr "Увімкнути стандартні фільтри покращення зображення"
+
+#: ocr/ocr_dialogs.py:127
+msgid "Downloading Tesseract OCR Engine"
+msgstr "Завантаження Tesseract OCR Engine"
+
+#: ocr/ocr_dialogs.py:140
+msgid "Manage Tesseract OCR Engine Languages"
+msgstr "Керування мовами Tesseract OCR Engine"
+
+#: ocr/ocr_dialogs.py:152
+msgid ""
+"Bookworm will now restart to complete the installation of the Tesseract OCR "
+"Engine."
+msgstr ""
+"Bookworm перезапуститься, щоб завершити інсталяцію Tesseract OCR Engine."
+
+#: ocr/ocr_dialogs.py:172
+msgid ""
+"A new version of Tesseract OCr engine is available for download.\n"
+"It is strongly recommended to update to the latest version for the best "
+"accuracy and performance.\n"
+"Would you like to update to the new version?"
+msgstr ""
+"Нова версія механізму Tesseract OCr доступна для завантаження.\n"
+"Наполегливо рекомендуємо оновити до останньої версії для найкращої точності "
+"та продуктивності.\n"
+"Бажаєте оновити до нової версії?"
+
+#: ocr/ocr_dialogs.py:175
+msgid "Update Tesseract OCr Engine?"
+msgstr "Оновити Tesseract OCr Engine?"
+
+#: ocr/ocr_dialogs.py:184
+msgid "Removing old Tesseract version. Please wait..."
+msgstr "Видалення старої версії Tesseract. Будь ласка, зачекайте..."
+
+#: ocr/ocr_dialogs.py:190
+msgid "Your version of Tesseract OCR engine is up to date."
+msgstr "Ваша версія механізму Tesseract OCR є актуальною."
+
+#: ocr/ocr_dialogs.py:201
+msgid "Failed to check for updates for Tesseract OCr engine."
+msgstr "Не вдалося перевірити наявність оновлень для механізму Tesseract OCr."
+
+#: ocr/ocr_dialogs.py:235
+msgid "Recognition Language"
+msgstr "Мова розпізнавання"
+
+#: ocr/ocr_dialogs.py:237
+msgid "Primary recognition Language"
+msgstr "Основна мова розпізнавання"
+
+#: ocr/ocr_dialogs.py:244
+msgid "Add a secondary recognition language"
+msgstr "Додати додаткову мову розпізнавання"
+
+#: ocr/ocr_dialogs.py:248
+msgid "Secondary recognition Language"
+msgstr "Вторинна мова розпізнавання"
+
+#: ocr/ocr_dialogs.py:256 structured_text/structural_elements.py:71
+msgid "Image"
+msgstr "Зображення"
+
+#: ocr/ocr_dialogs.py:257
+msgid "Supplied Image resolution::"
+msgstr "Роздільна здатність зображення::"
+
+#: ocr/ocr_dialogs.py:261
+msgid "Enable image enhancements"
+msgstr "Увімкнути покращення зображень"
+
+#: ocr/ocr_dialogs.py:266
+msgid "Available image pre-processing filters:"
+msgstr "Доступні фільтри попередньої обробки зображень:"
+
+#: ocr/ocr_dialogs.py:281
+msgid "&Save these options until I close the current book"
+msgstr "&Зберігати ці параметри, доки я не закрию поточну книгу"
+
+#: ocr/ocr_dialogs.py:362
+msgid "Increase image resolution"
+msgstr "Збільшити роздільну здатність зображення"
+
+#: ocr/ocr_dialogs.py:363
+msgid "Binarization"
+msgstr "Бінаризація"
+
+#: ocr/ocr_dialogs.py:366
+msgid "Split two-in-one scans to individual pages"
+msgstr "Розділити скани \"два в одному\" на окремі сторінки"
+
+#: ocr/ocr_dialogs.py:369
+msgid "Combine images"
+msgstr "Об'єднати зображення"
+
+#: ocr/ocr_dialogs.py:370
+msgid "Blurring"
+msgstr "Розмиття"
+
+#: ocr/ocr_dialogs.py:371
+msgid "Deskewing"
+msgstr "Вирівнювання поверхні"
+
+#: ocr/ocr_dialogs.py:372
+msgid "Erosion"
+msgstr "Зменшення"
+
+#: ocr/ocr_dialogs.py:373
+msgid "Dilation"
+msgstr "Розширення"
+
+#: ocr/ocr_dialogs.py:374
+msgid "Sharpen image"
+msgstr "Збільшити чіткість зображення"
+
+#: ocr/ocr_dialogs.py:375
+msgid "Invert colors"
+msgstr "Інвертувати кольори"
+
+#: ocr/ocr_dialogs.py:378
+msgid "Debug"
+msgstr "Налагодження"
+
+#: ocr/ocr_dialogs.py:397
+msgid "Installed Languages"
+msgstr "Встановлені мови"
+
+#: ocr/ocr_dialogs.py:401
+msgid "Downloadable Languages"
+msgstr "Завантажувані мови"
+
+#: ocr/ocr_dialogs.py:432
+msgid "Tesseract Languages"
+msgstr "Мови Tesseract"
+
+#: ocr/ocr_dialogs.py:445
+msgid "Download &Best Model"
+msgstr "Завантажити &найкращу модель"
+
+#: ocr/ocr_dialogs.py:449
+msgid "Download &Fast Model"
+msgstr "Завантажити &швидку модель"
+
+#: ocr/ocr_dialogs.py:491
+msgid "Installed"
+msgstr "Встановлено"
+
+#: ocr/ocr_dialogs.py:494
+msgid "Yes"
+msgstr "Так"
+
+#: ocr/ocr_dialogs.py:494
+msgid "No"
+msgstr "Ні"
+
+#: ocr/ocr_dialogs.py:525
+msgid ""
+"A version of the selected language model already exists.\n"
+"Are you sure you want to replace it?"
+msgstr ""
+"Версія вибраної мовної моделі вже існує.\n"
+"Ви впевнені, що хочете її замінити?"
+
+#: ocr/ocr_dialogs.py:542
+msgid "Downloading Language"
+msgstr "Завантаження мови"
+
+#: ocr/ocr_dialogs.py:567
+#, python-brace-format
+msgid ""
+"Are you sure you want to remove language:\n"
+"{lang}?"
+msgstr ""
+"Ви впевнені, що хочете видалити мову:\n"
+"{lang}?"
+
+#: ocr/ocr_dialogs.py:592
+msgid "Language Added"
+msgstr "Мову додано"
+
+#: ocr/ocr_dialogs.py:594
+msgid "The Language Model was downloaded successfully."
+msgstr "Мовну модель успішно завантажено."
+
+#: ocr/ocr_dialogs.py:602 platforms/win32/pandoc_download.py:54
+#: platforms/win32/tesseract_download.py:83 webservices/wikiworm.py:135
+msgid "Connection Error"
+msgstr "Помилка з'єднання"
+
+#: ocr/ocr_dialogs.py:605
+msgid ""
+"Failed to download language data.\n"
+"Please check your internet connection."
+msgstr ""
+"Не вдалося завантажити мовні дані.\n"
+"Будь ласка, перевірте підключення до Інтернету."
+
+#: ocr/ocr_dialogs.py:615
+msgid ""
+"Failed to install language data.\n"
+"Please try again later."
+msgstr ""
+"Не вдалося встановити мовні дані.\n"
+"Будь-ласка спробуйте пізніше."
+
+#: ocr/ocr_menu.py:84
+#, python-brace-format
+msgid "Recognition Result: {image_name}"
+msgstr "Результат розпізнавання: {image_name}"
+
+#: ocr/ocr_menu.py:119
+msgid "&Scan Current Page...\tF4"
+msgstr "&Сканувати поточну сторінку...\tF4"
+
+#: ocr/ocr_menu.py:121
+msgid "Run OCR on the current page"
+msgstr "Запустити розпізнавання на поточній сторінці"
+
+#: ocr/ocr_menu.py:126
+msgid "&Automatic OCR\tCtrl-F4"
+msgstr "&Автоматичне розпізнавання\tCtrl-F4"
+
+#: ocr/ocr_menu.py:128
+msgid "Auto run  OCR when turning pages."
+msgstr "Автоматичний запуск розпізнавання під час перегортання сторінок."
+
+#: ocr/ocr_menu.py:134
+msgid "&Change OCR Options..."
+msgstr "&Змінити параметри розпізнавання..."
+
+#: ocr/ocr_menu.py:136
+msgid "Change OCR options"
+msgstr "Змінити параметри розпізнавання"
+
+#: ocr/ocr_menu.py:141
+msgid "Scan To &Text File..."
+msgstr "Сканувати в &текстовий файл..."
+
+#: ocr/ocr_menu.py:143
+msgid "Scan pages and save the text to a .txt file."
+msgstr "Сканувати сторінки та зберегти текст у файлі .txt."
+
+#: ocr/ocr_menu.py:148
+msgid "Image To Text..."
+msgstr "Зображення в текст..."
+
+#: ocr/ocr_menu.py:150
+msgid "Run OCR on an image."
+msgstr "Запустити розпізнавання зображення."
+
+#: ocr/ocr_menu.py:198
+msgid ""
+"No language for OCR is present.\n"
+"Please checkout Bookworm user manual to learn how to add new languages."
+msgstr ""
+"Наразі немає мови для розпізнавання тексту.\n"
+"Будь ласка, зверніться до посібника користувача Bookworm, щоб дізнатися, як "
+"додати нові мови."
+
+#: ocr/ocr_menu.py:201
+msgid "No Languages for OCR"
+msgstr "Немає мов для розпізнавання тексту"
+
+#: ocr/ocr_menu.py:220
+msgid "Canceled"
+msgstr "Скасовано"
+
+#: ocr/ocr_menu.py:256
+msgid "Running OCR, please wait..."
+msgstr "Виконується розпізнавання, зачекайте..."
+
+#: ocr/ocr_menu.py:266
+msgid "Automatic OCR is enabled"
+msgstr "Автоматичне розпізнавання тексту ввімкнено"
+
+#: ocr/ocr_menu.py:268
+msgid "Automatic OCR is disabled"
+msgstr "Автоматичне розпізнавання тексту вимкнено"
+
+#: ocr/ocr_menu.py:281
+msgid "Save as"
+msgstr "Зберегти як"
+
+#: ocr/ocr_menu.py:298
+msgid "Scanning Pages"
+msgstr "Сканування сторінок"
+
+#: ocr/ocr_menu.py:300
+msgid "Preparing book"
+msgstr "Підготовка книги"
+
+#: ocr/ocr_menu.py:320
+#, python-brace-format
+msgid ""
+"Successfully processed {total} pages.\n"
+"Extracted text was written to: {file}"
+msgstr ""
+"Успішно оброблено {total} сторінок.\n"
+"Видобутий текст було записано до: {file}"
+
+#: ocr/ocr_menu.py:322
+msgid "OCR Completed"
+msgstr "Розпізнавання завершено"
+
+#: ocr/ocr_menu.py:339
+msgid "Portable Network Graphics"
+msgstr "Портативна мережева графіка"
+
+#: ocr/ocr_menu.py:340
+msgid "JPEG images"
+msgstr "зображення JPEG"
+
+#: ocr/ocr_menu.py:341
+msgid "Bitmap images"
+msgstr "Растрові зображення"
+
+#: ocr/ocr_menu.py:342
+msgid "Tiff graphics"
+msgstr "Графіка Tiff"
+
+#: ocr/ocr_menu.py:348
+msgid "All supported image formats"
+msgstr "Усі підтримувані формати зображень"
+
+#: ocr/ocr_menu.py:352
+msgid "Choose image file"
+msgstr "Виберіть файл зображення"
+
+#: ocr/ocr_menu.py:368
+#, python-brace-format
+msgid ""
+"Could not load image from\n"
+"{filename}.\n"
+"Please make sure the file exists and the data contained in is not corrupted."
+msgstr ""
+"Не вдалося завантажити зображення з\n"
+"{filename}.\n"
+"Будь ласка, переконайтеся, що файл існує, а дані, що містяться в ньому, не "
+"пошкоджені."
+
+#: ocr/ocr_menu.py:372
+msgid "Could not load image file"
+msgstr "Не вдалося завантажити файл зображення"
+
+#: ocr/ocr_menu.py:418
+msgid "Scan finished."
+msgstr "Сканування завершено."
+
+#: ocr/ocr_menu.py:424
+msgid "OCR canceled"
+msgstr "розпізнавання скасовано"
+
+#: otau.py:78
+msgid "We couldn't access the internet right now. Please try again later."
+msgstr ""
+"Зараз не можливо отримати доступ до Інтернету. Будь-ласка спробуйте пізніше."
+
+#: otau.py:80 platforms/win32/updater.py:120
+msgid "Network Error"
+msgstr "Помилка мережі"
+
+#: otau.py:91
+msgid ""
+"We have faced a technical problem while checking for updates. Please try "
+"again later."
+msgstr ""
+"Виникла технічна проблема під час перевірки оновлень. Будь-ласка спробуйте "
+"пізніше."
+
+#: otau.py:94
+msgid "Error Checking For Updates"
+msgstr "Помилка перевірки оновлень"
+
+#: otau.py:112
+msgid ""
+"Congratulations, you have already got the latest version of Bookworm.\n"
+"We are working day and night on making Bookworm better. The next version of "
+"Bookworm is on its way, so wait for it. Rest assured, we will notify you "
+"when it is released."
+msgstr ""
+"Вітаємо, ви вже отримали останню версію Bookworm.\n"
+"Ми працюємо день і ніч над тим, щоб зробити Bookworm кращим. Наступна версія "
+"Bookworm вже в роботі, тож чекайте на неї. Будьте певні, ми повідомимо вас, "
+"коли вона буде випущена."
+
+#: otau.py:118
+msgid "No Update"
+msgstr "Немає оновлення"
+
+#: otau.py:143
+msgid "&Check for updates"
+msgstr "&Перевірити наявність оновлень"
+
+#: otau.py:145
+msgid "Update the application"
+msgstr "Оновити програму"
+
+#: platforms/linux/updater.py:15
+#, python-brace-format
+msgid ""
+"A new update for Bookworm is available.\n"
+"\tInstalled Version: {current}\n"
+"\tNew Version: {new}\n"
+"Please check Bookworm's documentation to learn how to update your version of "
+"Bookworm"
+msgstr ""
+"Вийшло нове оновлення для Bookworm.\n"
+"\tВстановлена версія: {current}\n"
+"\tНова версія: {new}\n"
+"Будь ласка, зверніться до документації Bookworm, щоб дізнатися, як оновити "
+"вашу версію Bookworm"
+
+#: platforms/linux/updater.py:22
+msgid "Update Available"
+msgstr "Доступне оновлення"
+
+#: platforms/win32/docr_engine.py:28
+msgid "Windows 10 OCR"
+msgstr "Розпізнавання тексту Windows 10"
+
+#: platforms/win32/pandoc_download.py:39
+#: platforms/win32/tesseract_download.py:68
+msgid "Extracting file..."
+msgstr "Розпакування файлу..."
+
+#: platforms/win32/pandoc_download.py:47
+msgid "Pandoc downloaded successfully"
+msgstr "Pandoc успішно завантажено"
+
+#: platforms/win32/pandoc_download.py:56
+msgid ""
+"Could not download Pandoc.\n"
+"Please check your internet connection and try again."
+msgstr ""
+"Не вдалося завантажити Pandoc.\n"
+"Перевірте підключення до Інтернету та повторіть спробу."
+
+#: platforms/win32/pandoc_download.py:64
+msgid ""
+"Could not add Pandoc.\n"
+"Please try again."
+msgstr ""
+"Не вдалося додати Pandoc.\n"
+"Будь ласка спробуйте ще раз."
+
+#: platforms/win32/speech_engines/espeak/__init__.py:66
+msgid "eSpeak NG"
+msgstr "eSpeak NG"
+
+#: platforms/win32/speech_engines/onecore.py:74
+msgid "One-core Synthesizer"
+msgstr "Синтезатор One-core"
+
+#: platforms/win32/speech_engines/piper/__init__.py:184
+msgid "Piper Neural TTS"
+msgstr "Piper Neural TTS"
+
+#: platforms/win32/tesseract_download.py:76
+msgid "Tesseract engine downloaded successfully"
+msgstr "Механізм Tesseract успішно завантажено"
+
+#: platforms/win32/tesseract_download.py:85
+msgid ""
+"Could not download Tesseract OCR Engine.\n"
+"Please check your internet and try again."
+msgstr ""
+"Не вдалося завантажити Tesseract OCR Engine.\n"
+"Перевірте своє Інтернет з'єднання і повторіть спробу."
+
+#: platforms/win32/tesseract_download.py:95
+msgid ""
+"Could not install the Tesseract OCR engine.\n"
+"Please try again."
+msgstr ""
+"Не вдалося встановити механізм Tesseract OCR.\n"
+"Будь ласка спробуйте ще раз."
+
+#: platforms/win32/updater.py:76
+#, python-brace-format
+msgid ""
+"A new update for Bookworm has been released.\n"
+"Would you like to download and install it?\n"
+"Installed Version: {current}\n"
+"New Version: {new}\n"
+msgstr ""
+"Вийшла нова версія Bookworm.\n"
+"Бажаєте завантажити та встановити її?\n"
+"Встановлена ​​версія: {current}\\n\n"
+"Нова версія: {new}\n"
+
+#: platforms/win32/updater.py:82
+msgid "Bookworm Update"
+msgstr "Оновлення Bookworm"
+
+#: platforms/win32/updater.py:92
+msgid "Downloading Update"
+msgstr "Завантаження оновлення"
+
+#: platforms/win32/updater.py:94
+msgid "Downloading update bundle"
+msgstr "Завантаження пакета оновлень"
+
+#: platforms/win32/updater.py:115
+msgid ""
+"A network error was occured when trying to download the update.\n"
+"Make sure you are connected to the internet, or try again at a later time."
+msgstr ""
+"Під час спроби завантажити оновлення сталася помилка мережі.\n"
+"Переконайтеся, що ви підключені до Інтернету, або повторіть спробу пізніше."
+
+#: platforms/win32/updater.py:135
+msgid ""
+"The update file has been downloaded, but it has been corrupted during "
+"download.\n"
+"Would you like to download the update file again?"
+msgstr ""
+"Файл оновлення було завантажено, але він був пошкоджений під час "
+"завантаження.\n"
+"Бажаєте завантажити файл оновлення ще раз?"
+
+#: platforms/win32/updater.py:139
+msgid "Download Error"
+msgstr "Помилка завантаження"
+
+#: platforms/win32/updater.py:150
+msgid "Extracting update bundle..."
+msgstr "Видобування пакета оновлень..."
+
+#: platforms/win32/updater.py:156
+msgid ""
+"A problem has occured when installing the update.\n"
+"Please check the logs for more info."
+msgstr ""
+"Під час встановлення оновлення виникла проблема.\n"
+"Будь ласка, перевірте журнали для отримання додаткової інформації."
+
+#: platforms/win32/updater.py:158
+msgid "Error installing update"
+msgstr "Помилка встановлення оновлення"
+
+#: platforms/win32/updater.py:168
+msgid ""
+"The update has been downloaded successfully, and it is ready to be "
+"installed.\n"
+"The application will be restarted in order to complete the update process.\n"
+"Click the OK button to continue."
+msgstr ""
+"Оновлення успішно завантажено, і воно готове до встановлення.\n"
+"Для завершення процесу оновлення програму буде перезапущено.\n"
+"Натисніть кнопку OK, щоб продовжити."
+
+#: platforms/win32/updater.py:173
+msgid "Download Completed"
+msgstr "Завантаження завершено"
+
+#: reader.py:426
+#, python-brace-format
+msgid "{title} — by {author}"
+msgstr "{title} — {author}"
+
+#: reader.py:443
+msgid "Table View"
+msgstr "Табличний вигляд"
+
+#: speechdriver/__init__.py:16
+msgid "No Speech"
+msgstr "Без мовлення"
+
+#: structured_text/structural_elements.py:60
+msgid "Heading"
+msgstr "Заголовок"
+
+#: structured_text/structural_elements.py:61
+msgid "Heading level 1"
+msgstr "Заголовок рівня 1"
+
+#: structured_text/structural_elements.py:62
+msgid "Heading level 2"
+msgstr "Заголовок рівня 2"
+
+#: structured_text/structural_elements.py:63
+msgid "Heading level 3"
+msgstr "Заголовок рівня 3"
+
+#: structured_text/structural_elements.py:64
+msgid "Heading level 4"
+msgstr "Заголовок рівня 4"
+
+#: structured_text/structural_elements.py:65
+msgid "Heading level 5"
+msgstr "Заголовок рівня 5"
+
+#: structured_text/structural_elements.py:66
+msgid "Heading level 6"
+msgstr "Заголовок рівня 6"
+
+#: structured_text/structural_elements.py:67
+msgid "Link"
+msgstr "Посилання"
+
+#: structured_text/structural_elements.py:68
+msgid "List"
+msgstr "Список"
+
+#: structured_text/structural_elements.py:69
+msgid "Quote"
+msgstr "Цитата"
+
+#: structured_text/structural_elements.py:70
+msgid "Table"
+msgstr "Таблиця"
+
+#: text_to_speech/__init__.py:94
+msgid "S&peech"
+msgstr "&Мовлення"
+
+#: text_to_speech/__init__.py:99
+msgid "Reading"
+msgstr "Читання"
+
+#: text_to_speech/__init__.py:101 text_to_speech/__init__.py:112
+#: text_to_speech/tts_gui.py:137
+msgid "Voice"
+msgstr "Голос"
+
+#: text_to_speech/__init__.py:109
+msgid "Back"
+msgstr "Назад"
+
+#: text_to_speech/__init__.py:110
+msgid "Play"
+msgstr "Відтворити"
+
+#: text_to_speech/__init__.py:111
+msgid "Forward"
+msgstr "Вперед"
+
+#: text_to_speech/__init__.py:202
+msgid "End of document."
+msgstr "Кінець документа."
+
+#: text_to_speech/__init__.py:223
+#, python-brace-format
+msgid "End of section: {chapter}."
+msgstr "Кінець розділу: {chapter}."
+
+#: text_to_speech/__init__.py:256
+msgid "End of document"
+msgstr "Кінець документа"
+
+#: text_to_speech/__init__.py:410
+msgid "No TTS Voices"
+msgstr "Немає голосів TTS"
+
+#: text_to_speech/__init__.py:413
+msgid ""
+"A valid Text-to-speech voice was not found for the current speech engine.\n"
+"Text-to-speech functionality will be disabled."
+msgstr ""
+"Для поточного синтезатора мовлення не знайдено відповідного голосу для "
+"перетворення тексту в мовлення.\n"
+"Функцію перетворення тексту в мовлення буде вимкнено."
+
+#: text_to_speech/__init__.py:431
+#, python-brace-format
+msgid ""
+"Bookworm has noticed that the currently configured Text-to-speech voice "
+"speaks a language different from that of this document.\n"
+"Do you want to temporary switch to another voice that speaks a language "
+"similar to the language  of the currently opened document?\n"
+"\n"
+"Voice language: {voice_lang}\n"
+"Document language: {document_lang}"
+msgstr ""
+"Bookworm помітив, що поточний налаштований голос синтезу мовлення розмовляє "
+"мовою, відмінною від мови цього документа.\n"
+"Ви бажаєте тимчасово переключитися на інший голос, який розмовляє мовою, "
+"подібною до мови поточного відкритого документа?\n"
+"\n"
+"Мова голосу: {voice_lang}\n"
+"Мова документа: {document_lang}"
+
+#: text_to_speech/__init__.py:443
+msgid "Incompatible TTS Voice Detected"
+msgstr "Виявлено несумісний голос TTS"
+
+#: text_to_speech/tts_config.py:125
+msgid "Human-like"
+msgstr "Людиноподібний"
+
+#: text_to_speech/tts_config.py:136
+msgid "Deep Reading"
+msgstr "Глибоке читання"
+
+#: text_to_speech/tts_config.py:147
+msgid "Express"
+msgstr "Експрес"
+
+#: text_to_speech/tts_gui.py:48
+msgid "Reading Options"
+msgstr "Параметри читання"
+
+#: text_to_speech/tts_gui.py:54
+msgid "When Pressing Play:"
+msgstr "При натисканні на кнопку Відтворити:"
+
+#: text_to_speech/tts_gui.py:59
+msgid "Read the entire book"
+msgstr "Прочитати всю книгу"
+
+#: text_to_speech/tts_gui.py:61
+msgid "Read the current section"
+msgstr "Прочитати поточний розділ"
+
+#: text_to_speech/tts_gui.py:63
+msgid "Read the current page"
+msgstr "Прочитати поточну сторінку"
+
+#: text_to_speech/tts_gui.py:71
+msgid "Start reading from:"
+msgstr "Почати читати з:"
+
+#: text_to_speech/tts_gui.py:75
+msgid "Cursor position"
+msgstr "Положення курсору"
+
+#: text_to_speech/tts_gui.py:75
+msgid "Beginning of page"
+msgstr "Початку сторінки"
+
+#: text_to_speech/tts_gui.py:79
+msgid "During Reading Aloud"
+msgstr "Під час читання вголос"
+
+#: text_to_speech/tts_gui.py:84
+msgid "Speak page number"
+msgstr "Промовляти номер сторінки"
+
+#: text_to_speech/tts_gui.py:91
+msgid "Announce the end of sections"
+msgstr "Оголосити закінчення розділів"
+
+#: text_to_speech/tts_gui.py:98
+msgid "Ask to switch to a voice that speaks the language of the current book"
+msgstr "Попросити переключитися на голос, який говорить мовою поточної книги"
+
+#: text_to_speech/tts_gui.py:105
+msgid "Highlight spoken text"
+msgstr "Виділити промовлений текст"
+
+#: text_to_speech/tts_gui.py:112
+msgid "Select spoken text"
+msgstr "Вибрати промовлений текст"
+
+#: text_to_speech/tts_gui.py:140
+msgid "Speech Engine:"
+msgstr "Синтезатор мовлення:"
+
+#: text_to_speech/tts_gui.py:145
+msgid "Change..."
+msgstr "Змінити..."
+
+#: text_to_speech/tts_gui.py:148
+msgid "Select Voice:"
+msgstr "Виберіть голос:"
+
+#: text_to_speech/tts_gui.py:151
+msgid "Speech Rate:"
+msgstr "Швидкість мовлення:"
+
+#: text_to_speech/tts_gui.py:157
+msgid "Voice Pitch:"
+msgstr "Висота голосу:"
+
+#: text_to_speech/tts_gui.py:163
+msgid "Speech Volume:"
+msgstr "Гучність мовлення:"
+
+#: text_to_speech/tts_gui.py:170
+msgid "Pauses"
+msgstr "Паузи"
+
+#: text_to_speech/tts_gui.py:173
+msgid "Additional Pause At Sentence End (Ms)"
+msgstr "Додаткова пауза в кінці речення (Ms)"
+
+#: text_to_speech/tts_gui.py:178
+msgid "Additional Pause At Paragraph End (Ms)"
+msgstr "Додаткова пауза в кінці абзацу (Ms)"
+
+#: text_to_speech/tts_gui.py:183
+msgid "End of Page Pause (ms)"
+msgstr "Пауза в кінці сторінки (мс)"
+
+#: text_to_speech/tts_gui.py:192
+msgid "End of Section Pause (ms)"
+msgstr "Пауза в кінці розділу (мс)"
+
+#: text_to_speech/tts_gui.py:236
+msgid "Speech Engine"
+msgstr "Синтезатор мовлення"
+
+#: text_to_speech/tts_gui.py:285
+#, python-brace-format
+msgid "Voice Profile: {profile}"
+msgstr "Голосовий профіль: {profile}"
+
+#: text_to_speech/tts_gui.py:312
+msgid "Select Voice Profile:"
+msgstr "Виберіть голосовий профіль:"
+
+#: text_to_speech/tts_gui.py:318
+msgid "&Activate"
+msgstr "&Активувати"
+
+#: text_to_speech/tts_gui.py:324
+msgid "&New Profile..."
+msgstr "&Новий профіль..."
+
+#: text_to_speech/tts_gui.py:358
+#, python-brace-format
+msgid "{profile} (active)"
+msgstr "(активний) {profile}"
+
+#: text_to_speech/tts_gui.py:408
+msgid "Profile Name:"
+msgstr "Назва профілю:"
+
+#: text_to_speech/tts_gui.py:410
+msgid "New Voice Profile"
+msgstr "Новий голосовий профіль"
+
+#: text_to_speech/tts_gui.py:423
+msgid ""
+"A voice profile with the same name already exists. Please select another "
+"name."
+msgstr "Голосовий профіль із такою назвою вже існує. Виберіть іншу назву."
+
+#: text_to_speech/tts_gui.py:449
+#, python-brace-format
+msgid ""
+"Voice profile {profile} is the active profile.\n"
+"Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
+"menu item from the speech menu."
+msgstr ""
+"Голосовий профіль {profile} є активним профілем.\n"
+"Спочатку вимкніть його, натиснувши пункт меню «Деактивувати активний "
+"голосовий профіль» у меню мовлення."
+
+#: text_to_speech/tts_gui.py:455
+msgid "Cannot Remove Profile"
+msgstr "Неможливо видалити профіль"
+
+#: text_to_speech/tts_gui.py:462
+#, python-brace-format
+msgid ""
+"Are you sure you want to remove voice profile {profile}?\n"
+"This cannot be undone."
+msgstr ""
+"Ви впевнені, що хочете видалити голосовий профіль {profile}?\n"
+"Цю дію не можливо скасувати."
+
+#: text_to_speech/tts_gui.py:466
+msgid "Remove Voice Profile?"
+msgstr "Видалити голосовий профіль?"
+
+#: text_to_speech/tts_gui.py:489
+msgid "Select Speech Engine:"
+msgstr "Виберіть синтезатор мовлення:"
+
+#: text_to_speech/tts_gui.py:518
+msgid "&Play\tF5"
+msgstr "&Відтворити\tF5"
+
+#: text_to_speech/tts_gui.py:520
+msgid "Start reading aloud"
+msgstr "Почати читати вголос"
+
+#: text_to_speech/tts_gui.py:525
+msgid "Pa&use/Resume\tF6"
+msgstr "&Пауза/відтворити\tF6"
+
+#: text_to_speech/tts_gui.py:527
+msgid "Pause/Resume reading aloud"
+msgstr "Призупинити/відновити читання вголос"
+
+#: text_to_speech/tts_gui.py:532
+msgid "&Stop\tF7"
+msgstr "&Зупинити\tF7"
+
+#: text_to_speech/tts_gui.py:534
+msgid "Stop reading aloud"
+msgstr "Зупинити читання вголос"
+
+#: text_to_speech/tts_gui.py:539
+msgid "&Rewind\tAlt-LeftArrow"
+msgstr "&Перемотати назад\tAlt-Стрілка вліво"
+
+#: text_to_speech/tts_gui.py:541
+msgid "Skip to previous paragraph"
+msgstr "Перейти до попереднього абзацу"
+
+#: text_to_speech/tts_gui.py:546
+msgid "&Fast Forward\tAlt-RightArrow"
+msgstr "&Перемотати вперед\tAlt-стрілка вправо"
+
+#: text_to_speech/tts_gui.py:548
+msgid "Skip to next paragraph"
+msgstr "Перейти до наступного абзацу"
+
+#: text_to_speech/tts_gui.py:553
+msgid "&Voice Profiles\tCtrl-Shift-V"
+msgstr "&Голосові профілі\tCtrl-Shift-V"
+
+#: text_to_speech/tts_gui.py:555
+msgid "Manage voice profiles."
+msgstr "Керування голосовими профілями."
+
+#: text_to_speech/tts_gui.py:560
+msgid "&Deactivate Active Voice Profile"
+msgstr "&Деактивувати активний голосовий профіль"
+
+#: text_to_speech/tts_gui.py:562
+msgid "Deactivate the active voice profile."
+msgstr "Вимкнути активний голосовий профіль."
+
+#: text_to_speech/tts_gui.py:624
+msgid "Paused"
+msgstr "Призупинено"
+
+#: text_to_speech/tts_gui.py:628
+msgid "Resumed"
+msgstr "Відновлено"
+
+#: text_to_speech/tts_gui.py:638
+msgid "Stopped"
+msgstr "Зупинено"
+
+#: text_to_speech/tts_gui.py:643
+msgid "Voice Profiles"
+msgstr "Голосові профілі"
+
+#: webservices/__init__.py:23
+msgid "&Web Services"
+msgstr "& Веб-сервіси"
+
+#: webservices/url_open.py:34
+msgid "&Open URL\tCtrl+U"
+msgstr "&Відкрити URL\tCtrl+U"
+
+#: webservices/url_open.py:36
+msgid "&Open URL From Clipboard\tCtrl+Shift+U"
+msgstr "&Відкрити URL-адресу з буфера обміну\tCtrl+Shift+U"
+
+#: webservices/url_open.py:49
+msgid "Enter URL"
+msgstr "Введіть URL"
+
+#: webservices/url_open.py:51
+msgid "URL"
+msgstr "URL"
+
+#: webservices/wikiworm.py:57
+msgid "&Wikipedia quick search"
+msgstr "&Швидкий пошук у Вікіпедії"
+
+#: webservices/wikiworm.py:58
+msgid "Get a quick definition from Wikipedia"
+msgstr "Отримайте коротке визначення з Вікіпедії"
+
+#: webservices/wikiworm.py:70
+msgid "Define using Wikipedia"
+msgstr "Визначити за допомогою Вікіпедії"
+
+#: webservices/wikiworm.py:71
+msgid "Define the selected text using Wikipedia"
+msgstr "Визначити вибраний текст за допомогою Вікіпедії"
+
+#: webservices/wikiworm.py:105
+msgid "Retrieving information, please wait..."
+msgstr "Отримання інформації, зачекайте..."
+
+#: webservices/wikiworm.py:137
+msgid ""
+"Could not connect to Wikipedia at the moment.\\Please make sure that you're "
+"connected to the internet or try again later."
+msgstr ""
+"Наразі не вдалося підключитися до Вікіпедії.\\Переконайтеся, що ви "
+"підключені до Інтернету, або повторіть спробу пізніше."
+
+#: webservices/wikiworm.py:147
+msgid "Page not found"
+msgstr "Сторінку не знайдено"
+
+#: webservices/wikiworm.py:149
+msgid "Could not find a Wikipedia page for the given term.."
+msgstr "Не вдалося знайти сторінку у Вікіпедії для даного терміну..."
+
+#: webservices/wikiworm.py:155
+msgid "Matches"
+msgstr "Збіги"
+
+#: webservices/wikiworm.py:156
+msgid "Multiple Matches Found"
+msgstr "Знайдено декілька збігів"
+
+#: webservices/wikiworm.py:171
+msgid "Failed to get term definition from Wikipedia."
+msgstr "Не вдалося отримати визначення терміна з Вікіпедії."
+
+#: webservices/wikiworm.py:188
+#, python-brace-format
+msgid "{term} — Wikipedia"
+msgstr "{term} — Вікіпедія"
+
+#: webservices/wikiworm.py:194
+msgid "Summary"
+msgstr "Результат"
+
+#: webservices/wikiworm.py:205
+msgid "Open in &Bookworm"
+msgstr "Відкрити в &Bookworm"
+
+#: webservices/wikiworm.py:206
+msgid "&Open in Browser"
+msgstr "&Відкрити в браузері"
+
+#: webservices/wikiworm.py:238
+msgid "Wikipedia Quick Search"
+msgstr "Швидкий пошук у Вікіпедії"
+
+#: webservices/wikiworm.py:244
+msgid "Enter term"
+msgstr "Введіть термін"
+
+#: webservices/wikiworm.py:250
+msgid "Choose Wikipedia language"
+msgstr "Виберіть мову Вікіпедії"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:8918
+msgid "CloseAboutDialog"
+msgstr "Закрити діалог"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:9016
+msgid "NoOriginalForm"
+msgstr "Немає оригінальної форми"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:9034
+msgid "EqSource"
+msgstr "Джерело еквалайзера"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:9039
+msgid "Close"
+msgstr "Закрити"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:9075
+msgid "ScaleMath"
+msgstr "Масштаб"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:9089
+msgid "NonZeroScale"
+msgstr "Ненульовий масштаб"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:9090
+msgid "PercentScale"
+msgstr "Панель перебігу"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:9133
+msgid "SwitchAnyway"
+msgstr "Все одно перемкнути"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:9214
+msgid "LoadURL"
+msgstr "Завантажити URL"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:9217
+msgid "BadURL"
+msgstr "Неправильна URL-адреса"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:9223
+msgid "BadData"
+msgstr "Невірні дані"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:9858
+msgid "HelpDialog"
+msgstr "Діалог довідки"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:10069
+msgid "UnknownNodeType"
+msgstr "Невідомий тип вузла"
+
+#: resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:10332
+msgid "CantCreateXMLParser"
+msgstr "Не вдається створити аналізатор XML"

@@ -15,7 +15,14 @@ from bookworm.paths import data_path, app_path
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 from bookworm.speechdriver.engine import BaseSpeechEngine, VoiceInfo
-from bookworm.speechdriver.enumerations import (SynthState, EngineEvent, SpeechElementKind, RateSpec, VolumeSpec, PauseSpec)
+from bookworm.speechdriver.enumerations import (
+    SynthState,
+    EngineEvent,
+    SpeechElementKind,
+    RateSpec,
+    VolumeSpec,
+    PauseSpec,
+)
 from bookworm.platforms.win32.nvwave import WavePlayer
 from bookworm.runtime import IS_RUNNING_FROM_SOURCE
 
@@ -26,15 +33,26 @@ if IS_RUNNING_FROM_SOURCE:
     except ImportError:
         # Just a hack! don't ask
         import configobj
-        espeak_ng_dll = Path.cwd().joinpath("scripts", "dlls", "espeak-ng", app.arch, "espeak-ng.dll")
-        espeak_dll_dst = Path(configobj.__path__[0]).parent.joinpath("pyper", "espeak-ng.dll")
+
+        espeak_ng_dll = Path.cwd().joinpath(
+            "scripts", "dlls", "espeak-ng", app.arch, "espeak-ng.dll"
+        )
+        espeak_dll_dst = Path(configobj.__path__[0]).parent.joinpath(
+            "pyper", "espeak-ng.dll"
+        )
         if not espeak_dll_dst.exists():
             os.link(espeak_ng_dll, espeak_dll_dst)
 
 
-
 from ..utils import _audio_uri_to_filepath
-from .tts_system import PiperTextToSpeechSystem, PiperSpeechSynthesisTask, AudioTask, PiperBookmarkTask, DEFAULT_RATE, DEFAULT_VOLUME
+from .tts_system import (
+    PiperTextToSpeechSystem,
+    PiperSpeechSynthesisTask,
+    AudioTask,
+    PiperBookmarkTask,
+    DEFAULT_RATE,
+    DEFAULT_VOLUME,
+)
 
 
 log = logger.getChild(__name__)
@@ -64,7 +82,7 @@ VOLUME_VALUE_MAP = {
     VolumeSpec.medium: 50,
     VolumeSpec.loud: 75,
     VolumeSpec.extra_loud: 100,
-    VolumeSpec.default: DEFAULT_VOLUME
+    VolumeSpec.default: DEFAULT_VOLUME,
 }
 
 
@@ -129,7 +147,6 @@ class DoneSpeaking:
 
 
 class BgThread(threading.Thread):
-
     def __init__(self, bgQueue):
         super().__init__()
         self._bgQueue = bgQueue
@@ -188,17 +205,21 @@ class PiperSpeechEngine(BaseSpeechEngine):
         super().__init__()
         self.event_sink = EventSink(weakref.ref(self))
         self.event_handlers = {}
-        voices = PiperTextToSpeechSystem.load_voices_from_directory(get_piper_voices_directory())
+        voices = PiperTextToSpeechSystem.load_voices_from_directory(
+            get_piper_voices_directory()
+        )
         self.tts = PiperTextToSpeechSystem(voices)
         self._bgQueue = queue.Queue()
         self._bgThread = BgThread(self._bgQueue)
         self._players = {}
-        self._player = self._get_or_create_player(self.tts.speech_options.voice.sample_rate)
+        self._player = self._get_or_create_player(
+            self.tts.speech_options.voice.sample_rate
+        )
 
     @classmethod
     def check(self):
         if IS_RUNNING_FROM_SOURCE:
-            onnxruntime_dll =         Path.cwd().joinpath(
+            onnxruntime_dll = Path.cwd().joinpath(
                 "scripts", "dlls", "onnxruntime", app.arch, "onnxruntime.dll"
             )
             espeak_ng_data_dir = Path.cwd().joinpath("scripts", "dlls", "espeak-ng")
@@ -206,8 +227,14 @@ class PiperSpeechEngine(BaseSpeechEngine):
             os.putenv("ORT_DYLIB_PATH", os.fspath(onnxruntime_dll))
         else:
             os.environ["PIPER_ESPEAKNG_DATA_DIRECTORY"] = os.fspath(app_path())
-            os.environ["ORT_DYLIB_PATH"] =  os.fspath(app_path("onnxruntime", "onnxruntime.dll"))
-        return any(PiperTextToSpeechSystem.load_voices_from_directory(get_piper_voices_directory()))
+            os.environ["ORT_DYLIB_PATH"] = os.fspath(
+                app_path("onnxruntime", "onnxruntime.dll")
+            )
+        return any(
+            PiperTextToSpeechSystem.load_voices_from_directory(
+                get_piper_voices_directory()
+            )
+        )
 
     def close(self):
         super().close()
@@ -280,7 +307,13 @@ class PiperSpeechEngine(BaseSpeechEngine):
         old_speech_options = self.tts.speech_options.copy()
         old_voice = None
         old_prosody = (None, None, None)
-        speech_seq = reduce(combine_sentences_and_pauses, utterance, [None,])
+        speech_seq = reduce(
+            combine_sentences_and_pauses,
+            utterance,
+            [
+                None,
+            ],
+        )
         for element in speech_seq:
             kind, content = element.kind, element.content
             task = None
@@ -288,13 +321,15 @@ class PiperSpeechEngine(BaseSpeechEngine):
                 if not content.strip(string.punctuation + string.whitespace):
                     continue
                 if isinstance(element, SentenceWithPause):
-                    task = self.tts.create_speech_task_with_pause(content, element.pause)
+                    task = self.tts.create_speech_task_with_pause(
+                        content, element.pause
+                    )
                 else:
                     task = self.tts.create_speech_task(content)
             elif kind is SpeechElementKind.bookmark:
                 task = self.tts.create_bookmark_task(content)
             elif kind is SpeechElementKind.pause:
-                if (pause_value := PAUSE_VALUE_MAP.get(content, content)):
+                if pause_value := PAUSE_VALUE_MAP.get(content, content):
                     task = self.tts.create_break_task(pause_value)
             elif kind is SpeechElementKind.start_voice:
                 old_voice = self.tts.voice
@@ -320,23 +355,13 @@ class PiperSpeechEngine(BaseSpeechEngine):
                 if volume is not None:
                     self.tts.volume = volume
             elif kind is SpeechElementKind.audio:
-                self._bgQueue.put(AudioFileTask(_audio_uri_to_filepath(content), self.event_sink))
-                continue
-            self._bgQueue.put(
-                ProcessPiperTask(
-                    task,
-                    self._player,
-                    self.event_sink
+                self._bgQueue.put(
+                    AudioFileTask(_audio_uri_to_filepath(content), self.event_sink)
                 )
-            )
-        self._bgQueue.put(
-            DoneSpeaking(
-                self._player,
-                self.event_sink
-            )
-        )
+                continue
+            self._bgQueue.put(ProcessPiperTask(task, self._player, self.event_sink))
+        self._bgQueue.put(DoneSpeaking(self._player, self.event_sink))
         self.tts.speech_options = old_speech_options
-
 
     def stop(self):
         self.event_sink._silence_event.set()
@@ -366,10 +391,7 @@ class PiperSpeechEngine(BaseSpeechEngine):
     def _get_or_create_player(self, sample_rate):
         if sample_rate not in self._players:
             self._players[sample_rate] = WavePlayer(
-                channels=1,
-                samplesPerSec=sample_rate,
-                bitsPerSample=16,
-                buffered=True
+                channels=1, samplesPerSec=sample_rate, bitsPerSample=16, buffered=True
             )
         return self._players[sample_rate]
 
@@ -384,7 +406,9 @@ def combine_sentences_and_pauses(items, item):
     prev = items[-1]
 
     if prev is None:
-        return [item,]
+        return [
+            item,
+        ]
 
     if prev.kind is SpeechElementKind.sentence:
         if item.kind is SpeechElementKind.pause:
@@ -392,15 +416,15 @@ def combine_sentences_and_pauses(items, item):
             if (pause_value := getattr(prev, "pause", None)) is None:
                 pause_value = PAUSE_VALUE_MAP.get(item.content, item.content)
             items.append(
-                SentenceWithPause(kind=SpeechElementKind.sentence, content=prev.content, pause=pause_value)
+                SentenceWithPause(
+                    kind=SpeechElementKind.sentence,
+                    content=prev.content,
+                    pause=pause_value,
+                )
             )
             return items
         elif item.kind is SpeechElementKind.sentence:
-            object.__setattr__(
-                prev,
-                "content",
-                f"{prev.content} {item.content}"
-            )
+            object.__setattr__(prev, "content", f"{prev.content} {item.content}")
             return items
 
     items.append(item)

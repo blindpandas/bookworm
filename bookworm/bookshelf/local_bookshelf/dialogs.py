@@ -10,8 +10,12 @@ import wx.lib.filebrowsebutton as filebrowse
 import wx.lib.sized_controls as sc
 
 from bookworm import speech
-from bookworm.gui.components import (ColumnDefn, ImmutableObjectListView,
-                                     SimpleDialog, make_sized_static_box)
+from bookworm.gui.components import (
+    ColumnDefn,
+    ImmutableObjectListView,
+    SimpleDialog,
+    make_sized_static_box,
+)
 from bookworm.logger import logger
 from bookworm.reader import EBookReader
 from bookworm.resources import sounds

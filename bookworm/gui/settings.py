@@ -21,8 +21,12 @@ from bookworm.shellinfo import get_ext_info
 from bookworm.signals import app_started, config_updated
 from bookworm.utils import restart_application
 
-from .components import (AsyncSnakDialog, EnhancedSpinCtrl,
-                         RobustProgressDialog, SimpleDialog)
+from .components import (
+    AsyncSnakDialog,
+    EnhancedSpinCtrl,
+    RobustProgressDialog,
+    SimpleDialog,
+)
 
 log = logger.getChild(__name__)
 

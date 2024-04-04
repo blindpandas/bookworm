@@ -6,8 +6,13 @@ from lxml import etree
 
 from bookworm import typehints as t
 from bookworm.speechdriver.element.converter.base import BaseSpeechConverter
-from bookworm.speechdriver.element.enums import (EmphSpec, PauseSpec, RateSpec,
-                                                 SsmlIdentifier, VolumeSpec)
+from bookworm.speechdriver.element.enums import (
+    EmphSpec,
+    PauseSpec,
+    RateSpec,
+    SsmlIdentifier,
+    VolumeSpec,
+)
 
 from ..utils import create_audio_bookmark_name
 

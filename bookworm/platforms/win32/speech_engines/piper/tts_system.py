@@ -75,7 +75,6 @@ class PiperBookmarkTask:
     name: str
 
 
-
 @dataclass
 class PiperVoice:
     key: str
@@ -110,18 +109,32 @@ class PiperVoice:
             if self.vits_model.speaker != speaker:
                 self.vits_model.speaker = speaker
         audio_output_config = AudioOutputConfig(
-            rate=rate,
-            volume=volume,
-            pitch=pitch,
-            appended_silence_ms=appended_silence
+            rate=rate, volume=volume, pitch=pitch, appended_silence_ms=appended_silence
         )
-        return self.synth.synthesize_batched(text.strip(), audio_output_config=audio_output_config, batch_size=BATCH_SIZE)
+        return self.synth.synthesize_batched(
+            text.strip(), audio_output_config=audio_output_config, batch_size=BATCH_SIZE
+        )
 
 
 class SpeechOptions:
-    __slots__ = ["voice", "speaker", "rate", "volume", "pitch", "appended_silence",]
+    __slots__ = [
+        "voice",
+        "speaker",
+        "rate",
+        "volume",
+        "pitch",
+        "appended_silence",
+    ]
 
-    def __init__(self, voice, speaker=None, rate=None, volume=None, pitch=None, appended_silence=None):
+    def __init__(
+        self,
+        voice,
+        speaker=None,
+        rate=None,
+        volume=None,
+        pitch=None,
+        appended_silence=None,
+    ):
         self.voice = voice
         self.speaker = speaker
         self.rate = rate
@@ -146,12 +159,11 @@ class SpeechOptions:
             self.rate,
             self.volume,
             self.pitch,
-            self.appended_silence
+            self.appended_silence,
         )
 
 
 class PiperTextToSpeechSystem:
-
     VOICE_NAME_REGEX = re.compile(
         r"voice(-|_)(?P<language>[a-z]+[-]?([a-z]+)?)(-|_)(?P<name>[a-z]+)(-|_)(?P<quality>(high|medium|low|x-low))"
     )
@@ -263,7 +275,9 @@ class PiperTextToSpeechSystem:
         if self.speech_options.voice.is_multi_speaker:
             return self.speech_options.voice.speakers
         else:
-            return [FALLBACK_SPEAKER_NAME, ]
+            return [
+                FALLBACK_SPEAKER_NAME,
+            ]
 
     def create_speech_task(self, text):
         return PiperSpeechSynthesisTask(text, self.speech_options.copy())
@@ -294,7 +308,9 @@ class PiperTextToSpeechSystem:
         return data_path("piper", "voices")
 
     @classmethod
-    def load_voices_from_directory(cls, voices_directory, *, directory_name_prefix="voice-"):
+    def load_voices_from_directory(
+        cls, voices_directory, *, directory_name_prefix="voice-"
+    ):
         rv = []
         for directory in (d for d in Path(voices_directory).iterdir() if d.is_dir()):
             match = cls.VOICE_NAME_REGEX.match(directory.name)
@@ -351,4 +367,3 @@ class PiperTextToSpeechSystem:
             else:
                 tar.extract(m_model_card, path=os.fspath(dst), set_attrs=False)
             return voice_key
-

@@ -85,7 +85,7 @@ class TextInfo:
     eol: str = "\n"
     """The recognizable end-of-line sequence. Used to split the text into paragraphs."""
 
-    sent_tokenizer: SentenceSplitter = None
+    sent_tokenizer: t.Any = None
 
     def __attrs_post_init__(self):
         if not self.text.endswith("\n"):
