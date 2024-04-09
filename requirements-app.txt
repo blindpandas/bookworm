@@ -39,7 +39,7 @@ numpy==1.22.0
 odfpy==1.4.1
 opencv-python-headless==4.5.5.62
 peewee==3.15.4
-Pillow==10.2.0
+Pillow==10.3.0
 platform-utils==1.5.1
 pydantic==2.3.0
 pymediawiki==0.7.2

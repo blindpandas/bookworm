@@ -8,19 +8,13 @@ import bisect
 import math
 import operator
 from collections.abc import Container
-from functools import cached_property
+from functools import cached_property, partial
 
 import attr
 from more_itertools import locate
+from pytqsm import segment as segment_sentences
 
 from bookworm import typehints as t
-from bookworm.vendor.sentence_splitter import (
-    SentenceSplitter,
-    SentenceSplitterException,
-)
-from bookworm.vendor.sentence_splitter import (
-    supported_languages as splitter_supported_languages,
-)
 
 
 @attr.s(auto_attribs=True, slots=True, hash=False)
@@ -91,15 +85,12 @@ class TextInfo:
     eol: str = "\n"
     """The recognizable end-of-line sequence. Used to split the text into paragraphs."""
 
-    sent_tokenizer: SentenceSplitter = None
+    sent_tokenizer: t.Any = None
 
     def __attrs_post_init__(self):
-        lang = self.lang
-        if lang not in splitter_supported_languages():
-            lang = "en"
         if not self.text.endswith("\n"):
             self.text += "\n"
-        self.sent_tokenizer = SentenceSplitter(lang)
+        self.sent_tokenizer = partial(segment_sentences, self.lang)
 
     @cached_property
     def sentence_markers(self):
@@ -110,7 +101,7 @@ class TextInfo:
         return self._record_markers(self.paragraphs)
 
     def split_sentences(self, paragraph):
-        return self.sent_tokenizer.split(paragraph)
+        return self.sent_tokenizer(paragraph)
 
     @cached_property
     def sentences(self):
