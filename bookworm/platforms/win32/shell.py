@@ -64,15 +64,10 @@ def remove_association(ext, prog_id):
     else:
         progkey.delete_key_tree()
     try:
-        extkey = RegKey.LocalSoftware(rf"{ext}\OpenWithProgids")
-        extkey.delete_value(prog_id)
+        extkey = RegKey.LocalSoftware(ext)
+        extkey.delete_key_tree()
     except OSError:
-        log.warning(f"Faild to remove the openwith value for ext {ext}")
-    try:
-        root_extkey = RegKey.LocalSoftware(ext)
-        root_extkey.set_value("", "")
-    except OSError:
-        log.warning(f"Faild to remove the default ext key for ext {ext}")
+        log.warning(f"Failed to remove the registry key for extension {ext}")
 
 
 @ignore(Exception)
