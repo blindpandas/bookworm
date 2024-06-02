@@ -125,15 +125,16 @@ class StructuredHtmlParser(Inscriptis):
         kwargs.setdefault("config", INSCRIPTIS_CONFIG)
         super().__init__(*args, **kwargs)
 
-    def _parse_html_tree(self, tree):
+    def _parse_html_tree(self, state, tree):
+        canvas = state.canvas
         try:
-            start_index = self.canvas.current_block.idx
+            start_index = canvas.current_block.idx
         except TypeError:
             start_index = 0
-        super()._parse_html_tree(tree)
-        end_index = self.canvas.current_block.idx
+        super()._parse_html_tree(state, tree)
+        end_index = canvas.current_block.idx
         try:
-            anot = self.canvas.annotations[-1]
+            anot = canvas.annotations[-1]
         except IndexError:
             pass
         else:
@@ -145,6 +146,8 @@ class StructuredHtmlParser(Inscriptis):
             self.html_id_ranges[anch] = element_range
         if tree.tag == "table":
             self._table_elements.append(tree)
+
+        return state.canvas
 
     @classmethod
     def preprocess_html_string(cls, html_string):

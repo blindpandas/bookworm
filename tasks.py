@@ -411,7 +411,7 @@ def copy_deps(c):
     print("Done copying vcredis 2015 ucrt DLLs.")
     print("Copying Unrar DLLs")
     source_path = PROJECT_ROOT / "scripts" / "dlls" / "unrar_dll"
-    unrar_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "unrar_dll"
+    unrar_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "_internal" / "unrar_dll"
     unrar_dst.mkdir(parents=True, exist_ok=True)
     for file in source_path.iterdir():
         shutil.copy(file, unrar_dst)
@@ -425,7 +425,7 @@ def copy_deps(c):
         / "BkwRicheditOpts.dll"
     )
     richeditopts_dll_dst = (
-        Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "BkwRicheditOpts.dll"
+        Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "_internal" / "BkwRicheditOpts.dll"
     )
     if not richeditopts_dll_src.exists():
         if shutil.which("cargo") is None:
@@ -447,7 +447,7 @@ def copy_espeak_and_piper_libs():
         PROJECT_ROOT / "scripts" / "dlls" / "espeak-ng" / arch / "espeak-ng.dll"
     )
     espeak_data_src = PROJECT_ROOT / "scripts" / "dlls" / "espeak-ng" / "espeak-ng-data"
-    espeak_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"])
+    espeak_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "_internal"
 
     print("Copying eSpeak-ng dll and data...")
     shutil.copy(espeak_dll_src, espeak_dst)
@@ -459,7 +459,7 @@ def copy_espeak_and_piper_libs():
     onnxruntime_notices_src = (
         PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / "notices"
     )
-    onnxruntime_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "onnxruntime"
+    onnxruntime_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "_internal" / "onnxruntime"
     onnxruntime_dst.mkdir(parents=True, exist_ok=True)
 
     print("Copying ONNXRuntime dll and notices...")

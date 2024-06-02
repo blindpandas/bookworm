@@ -28,7 +28,7 @@ from .. import (
 )
 
 log = logger.getChild(__name__)
-fitz.Tools().mupdf_display_errors(False)
+# fitz.Tools().mupdf_display_errors(False)
 
 
 class FitzPage(BasePage):

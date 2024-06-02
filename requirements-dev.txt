@@ -1,13 +1,13 @@
 -r requirements-app.txt
 
-black==24.3.0
+black==24.4.2
 distro==1.5.0;sys_platform=="linux"
-isort==5.12.0
+isort==5.13.2
 invoke==2.2.0
 jinja2==3.1.4
-packaging==23.1
-pyinstaller==5.13.2
-pyinstaller-hooks-contrib==2023.8
-pytest==7.4.2
-pytest-xdist==3.3.1
-wheel==0.41.2
+packaging==24.0
+pyinstaller==6.7.0
+pyinstaller-hooks-contrib==2024.6
+pytest==8.2.1
+pytest-xdist==3.6.1
+wheel==0.43.0
