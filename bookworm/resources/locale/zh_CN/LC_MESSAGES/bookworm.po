@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 'Bookworm'\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2023-03-20 01:27+0000\n"
-"PO-Revision-Date: 2023-03-20 13:51+0800\n"
+"PO-Revision-Date: 2024-08-21 23:07+0800\n"
 "Last-Translator: Cary-rowen <manchen_0528@outlook.com>\n"
 "Language-Team: Cary-Rowen <manchen_0528@outlook.com>\n"
 "Language: zh_CN\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.9.1\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.4.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #. Translators: the content of a message indicating a connection error
@@ -1432,7 +1432,7 @@ msgstr "全文"
 #. Translators: the name of a document file format
 #: bookworm/document/formats/archive.py:42
 msgid "Archive File"
-msgstr "存档文件"
+msgstr "压缩文件"
 
 #. Translators: the name of a document file format
 #: bookworm/document/formats/epub.py:48
@@ -1522,7 +1522,7 @@ msgstr "Portable Document (PDF)"
 #. Translators: the name of a document file format
 #: bookworm/document/formats/plain_text.py:28
 msgid "Plain Text File"
-msgstr "Plain Text File"
+msgstr "文本文档"
 
 #: bookworm/document/formats/powerpoint.py:85
 msgid "Slide Notes"
@@ -1660,7 +1660,7 @@ msgid ""
 msgstr ""
 "此对话框可以帮助您设置文件关联。\n"
 "设置文件关联后，当您在Windows资源管理器中单击文件时，将会在 Bookworm 中打开该"
-"文件 "
+"文件"
 
 #. Translators: the main label of a button
 #: bookworm/gui/settings.py:69
@@ -1675,7 +1675,7 @@ msgstr "使用Bookworm打开所有支持的文档格式"
 #. Translators: the main label of a button
 #: bookworm/gui/settings.py:79
 msgid "Associate files of type {format}"
-msgstr "{format}文件"
+msgstr "{format}"
 
 #. Translators: the note of a button
 #: bookworm/gui/settings.py:81
@@ -2053,7 +2053,7 @@ msgstr "Bookworm不支持该文档格式。"
 #. Translators: the title of an error message
 #: bookworm/gui/book_viewer/__init__.py:149
 msgid "Archive contains no documents"
-msgstr "存档中未包含文档"
+msgstr "压缩文件中未包含文档"
 
 #. Translators: the content of an error message
 #: bookworm/gui/book_viewer/__init__.py:151
@@ -2061,8 +2061,8 @@ msgid ""
 "Bookworm cannot open this archive file.\n"
 "The archive contains no documents."
 msgstr ""
-"Bookworm 无法打开该存档文件。\n"
-"该存档中未包含文档。"
+"Bookworm 无法打开该压缩文件。\n"
+"该压缩文件中未包含文档。"
 
 #: bookworm/gui/book_viewer/__init__.py:160
 msgid "Documents"
@@ -3660,7 +3660,7 @@ msgstr "语速："
 #. Translators: the label of the voice pitch slider
 #: bookworm/text_to_speech/tts_gui.py:157
 msgid "Voice Pitch:"
-msgstr "音调"
+msgstr "音调："
 
 #. Translators: the label of the speech volume slider
 #: bookworm/text_to_speech/tts_gui.py:163
