@@ -16,7 +16,7 @@ from bookworm.logger import logger
 from bookworm.paths import app_path
 from bookworm.platforms import PLATFORM
 from bookworm.resources import app_icons
-from bookworm.shell import shell_disintegrate, shell_integrate
+from bookworm.shell import shell_disintegrate, shell_integrate,is_file_type_associated
 from bookworm.shellinfo import get_ext_info
 from bookworm.signals import app_started, config_updated
 from bookworm.utils import restart_application
@@ -39,7 +39,6 @@ class ReconciliationStrategies(IntEnum):
     load = auto()
     save = auto()
 
-
 class FileAssociationDialog(SimpleDialog):
     """Associate supported file types."""
 
@@ -58,8 +57,8 @@ class FileAssociationDialog(SimpleDialog):
             parent,
             -1,
             _(
-                "This dialog will help you to setup file associations.\n"
-                "Associating files with Bookworm means that when you click on a file in windows explorer, it will be opened in Bookworm by default "
+                "This dialog will help you to set up file associations.\n"
+                "Associating files with Bookworm means that when you click on a file in Windows Explorer, it will be opened in Bookworm by default."
             ),
         )
         masterPanel = sc.SizedPanel(parent, -1)
@@ -69,9 +68,7 @@ class FileAssociationDialog(SimpleDialog):
         assoc_btn = CommandLinkButton(
             panel1,
             -1,
-            # Translators: the main label of a button
             _("Associate all"),
-            # Translators: the note of a button
             _("Use Bookworm to open all supported document formats"),
         )
         half = len(self.ext_info) / 2
@@ -79,28 +76,71 @@ class FileAssociationDialog(SimpleDialog):
         for i, (ext, metadata) in enumerate(self.ext_info):
             if i >= half:
                 buttonPanel = panel2
-            # Translators: the main label of a button
-            mlbl = _("Associate files of type {format}").format(format=metadata[1])
-            # Translators: the note of a button
-            nlbl = _(
-                "Associate files with {ext} extension so they always open in Bookworm"
-            ).format(ext=ext)
-            btn = CommandLinkButton(buttonPanel, -1, mlbl, nlbl)
-            self.Bind(
-                wx.EVT_BUTTON,
-                lambda e, args=(ext, metadata[1]): self.onFileAssoc(*args),
-                btn,
-            )
+            # Create button
+            btn = CommandLinkButton(buttonPanel, -1, "", "")
+            # Update the button with the correct label and event handler
+            self.update_button_for_file_type(btn, ext, metadata)
         dissoc_btn = CommandLinkButton(
             panel2,
             -1,
-            # Translators: the main label of a button
             _("Dissociate all supported file types"),
-            # Translators: the note of a button
             _("Remove previously associated file types"),
         )
         self.Bind(wx.EVT_BUTTON, lambda e: self.onBatchAssoc(assoc=True), assoc_btn)
         self.Bind(wx.EVT_BUTTON, lambda e: self.onBatchAssoc(assoc=False), dissoc_btn)
+
+    def update_button_for_file_type(self, btn, ext, metadata):
+        """
+        Updates the button's label and event handler based on the file type's association status.
+
+        Args:
+            btn (wx.CommandLinkButton): The button to update.
+            ext (str): The file extension associated with the button.
+            metadata (tuple): The metadata tuple containing prog_id, description, and icon.
+        """
+        is_associated = is_file_type_associated(ext)
+        if is_associated:
+            # Translators: the main label of a button
+            mlbl = _("Dissociate files of type {format}").format(format=metadata[1])
+            # Translators: the note of a button
+            nlbl = _("Dissociate files with {ext} extension so they no longer open in Bookworm").format(ext=ext)
+            btn.SetLabel(mlbl)
+            btn.SetNote(nlbl)
+            btn.Bind(wx.EVT_BUTTON, lambda e: self.on_disassociate(btn, ext, metadata))
+        else:
+            # Translators: the main label of a button
+            mlbl = _("Associate files of type {format}").format(format=metadata[1])
+            # Translators: the note of a button
+            nlbl = _("Associate files with {ext} extension so they always open in Bookworm").format(ext=ext)
+            btn.SetLabel(mlbl)
+            btn.SetNote(nlbl)
+            btn.Bind(wx.EVT_BUTTON, lambda e: self.on_associate(btn, ext, metadata))
+
+    def on_disassociate(self, btn, ext, metadata):
+        """
+        Handles the disassociation of a file type.
+
+        Args:
+            btn (wx.CommandLinkButton): The button associated with the action.
+            ext (str): The file extension to disassociate.
+            metadata (tuple): The metadata associated with the file type.
+        """
+        shell_disintegrate(supported=ext)
+        # After disassociating, update the button to reflect the change
+        self.update_button_for_file_type(btn, ext, metadata)
+
+    def on_associate(self, btn, ext, metadata):
+        """
+        Handles the association of a file type.
+
+        Args:
+            btn (wx.CommandLinkButton): The button associated with the action.
+            ext (str): The file extension to associate.
+            metadata (tuple): The metadata associated with the file type.
+        """
+        shell_integrate(supported=ext)
+        # After associating, update the button to reflect the change
+        self.update_button_for_file_type(btn, ext, metadata)
 
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
