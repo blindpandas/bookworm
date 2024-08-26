@@ -41,7 +41,9 @@ if IS_RUNNING_FROM_SOURCE:
             "pyper", "espeak-ng.dll"
         )
         if not espeak_dll_dst.exists():
-            os.link(espeak_ng_dll, espeak_dll_dst)
+            os.symlink(espeak_ng_dll, espeak_dll_dst)
+
+
 
 
 from ..utils import _audio_uri_to_filepath
