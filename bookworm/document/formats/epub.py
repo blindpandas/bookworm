@@ -82,8 +82,15 @@ class EpubDocument(SinglePageDocument):
             desc = HTMLParser(info.get("description", "")).text()
         except:
             desc = None
+        date_value = info.get("date", "")
+        if not isinstance(date_value, str):
+            log.warning(f"Unexpected date format: {type(date_value)}. Converting to string.")
+            if isinstance(date_value, (int, float)):
+                date_value = str(date_value)
+            else:
+                date_value = ""
         if pubdate := dateparser.parse(
-            info.get("date", ""),
+            date_value,
             languages=[
                 self.language.two_letter_language_code,
             ],
@@ -92,7 +99,7 @@ class EpubDocument(SinglePageDocument):
                 pubdate, date_only=True, format="long", localized=True
             )
         else:
-            publish_date = ""
+            publish_date = "Unknown Publication Date"
         return BookMetadata(
             title=self.epub.title,
             author=author.removeprefix("By ").strip(),
