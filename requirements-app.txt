@@ -36,7 +36,7 @@ msoffcrypto-tool==5.0.0
 neosynth==3.2.0;sys_platform=="win32"
 numpy==1.26.4
 odfpy==1.4.1
-opencv-python-headless==4.5.5.62
+opencv-python-headless==4.8.1.78
 peewee==3.17.5
 Pillow==10.3.0
 platform-utils==1.5.1
