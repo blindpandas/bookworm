@@ -315,22 +315,25 @@ class OCRMenu(wx.Menu):
             target=self.service.current_ocr_engine.scan_to_text, args=args
         )
         progress_dlg.set_abort_callback(scan2text_process.cancel)
-        scan2text_process.add_done_callback(
-            wx.CallAfter,
-            wx.MessageBox,
-            _(
-                "Successfully processed {total} pages.\nExtracted text was written to: {file}"
-            ).format(total=total, file=output_file),
-            _("OCR Completed"),
-            wx.ICON_INFORMATION,
-        )
-        for progress in scan2text_process:
-            progress_dlg.Update(
-                progress + 1,
-                f"Scanning page {progress} of {total}",
+
+        try:
+            for progress in scan2text_process:
+                progress_dlg.Update(
+                    progress + 1,
+                    f"Scanning page {progress} of {total}",
+                )
+            wx.CallAfter(
+                wx.MessageBox,
+                message = _(
+                    "Successfully processed {total} pages.\nExtracted text was written to: {file}"
+                ).format(total=total, file=output_file),
+                caption = _("OCR Completed"),
+                style = wx.ICON_INFORMATION | wx.OK,
+                parent = self.view  # 设置 parent 确保对话框聚焦
             )
-        progress_dlg.Dismiss()
-        wx.CallAfter(self.view.contentTextCtrl.SetFocus)
+        finally:
+            progress_dlg.Dismiss()
+            wx.CallAfter(self.view.contentTextCtrl.SetFocus)
 
     def onChangeOCROptions(self, event):
         self._get_ocr_options(from_cache=False)
