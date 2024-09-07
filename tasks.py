@@ -662,9 +662,15 @@ def freeze(c):
     with c.cd(str(PROJECT_ROOT / "scripts" / "builder")):
         if app.get_version_info()["pre_type"] is None:
             print(
-                "The current build is a final release. Turnning on python optimizations..."
+                "Final release detected. Python optimizations are currently disabled "
+                "to ensure assert statements and runtime checks are preserved."
+                " This is a temporary measure, and we plan to enable optimizations in future versions."
             )
-            os.environ["PYTHONOPTIMIZE"] = "2"
+            # TODO: Python optimization mode is commented out to prevent removal of assert statements
+            # in production builds. Assert statements are crucial for ensuring runtime checks,
+            # and omitting them could lead to unexpected behavior or failures.
+            # To revisit: Determine how to handle optimizations without impacting critical runtime checks.
+            # os.environ["PYTHONOPTIMIZE"] = "2"
         c.run(
             f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}",
             hide=False,
