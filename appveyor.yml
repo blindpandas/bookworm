@@ -18,7 +18,7 @@ environment:
 install:
   # Install Chocolatey if not already installed
   - powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
-  # Install hyperfine with vcredist140 dependencies but without reboot
+  # Install hyperfine without reboot
   - choco install hyperfine --params "/norestart"
   # NSIS Paths
   # https://www.appveyor.com/docs/build-environment/#tools
