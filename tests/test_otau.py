@@ -9,7 +9,7 @@ def test_is_not_valid_identifier():
 
 
 def test_is_valid_identifier():
-    valid_identifiers = ('', 'a', 'b', 'dev')
+    valid_identifiers = ('', 'a', 'b', 'rc')
     for identifier in valid_identifiers:
         channel = UpdateChannel(identifier)
 
