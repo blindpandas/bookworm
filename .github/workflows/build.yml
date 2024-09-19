@@ -16,7 +16,7 @@ permissions:
 jobs:
   build:
     name: Build
-    runs-on: windows-2019
+    runs-on: windows-latest
     strategy:
       matrix:
         CI_ARCH: ["x86", "x64"]  # Define architectures to build for
@@ -105,7 +105,7 @@ jobs:
 
   generate_update_info:
     name: Generate update-info.json
-    runs-on: windows-2019
+    runs-on: windows-latest
     needs: build  # Wait for the build job to complete
     steps:
       # Step 1: Check out the repository
@@ -153,7 +153,7 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on: windows-2019
+    runs-on: windows-latest
     needs: [build, generate_update_info]  # Wait for build and generate_update_info jobs
     steps:
       # Step 1: Download all artifacts from previous jobs
@@ -193,7 +193,7 @@ jobs:
 
   submit_update_info:
     name: Submit update_info.json to main
-    runs-on: windows-2019
+    runs-on: windows-latest
     if: github.event_name == 'release' && github.event.action == 'published'  # Trigger when the release is published
     steps:
       # Step 1: Check out the repository
