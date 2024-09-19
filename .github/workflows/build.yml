@@ -206,17 +206,14 @@ jobs:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           $ReleaseAssetsUrl = "${{ github.event.release.assets_url }}"
-          Write-Host "Release Assets URL: $ReleaseAssetsUrl"
+          Write-Host "Fetching release assets from: $ReleaseAssetsUrl"
           $AuthHeader = "token $env:PAT_TOKEN"
-          Write-Host "PAT_TOKEN Length: $($env:PAT_TOKEN.Length)"
           $Headers = @{
-            Authorization = $AuthHeader
+            Authorization = "token $env:PAT_TOKEN"
             Accept = "application/vnd.github.v3+json"
           }
           $Assets = Invoke-RestMethod -Headers $Headers -Uri $ReleaseAssetsUrl
-          Write-Host "Assets: $($Assets | ConvertTo-Json -Depth 3)"
           $UpdateInfoAsset = $Assets | Where-Object { $_.name -eq "update_info.json" }
-          Write-Host "Update Info Asset: $($UpdateInfoAsset | ConvertTo-Json)"
           if ($UpdateInfoAsset -ne $null) {
             Write-Host "Downloading update_info.json from: $($UpdateInfoAsset.browser_download_url)"
             Invoke-WebRequest -Headers $Headers -Uri $UpdateInfoAsset.browser_download_url -OutFile update_info.json
