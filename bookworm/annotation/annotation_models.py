@@ -11,7 +11,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import deferred, relationship, synonym
 
-from bookworm.database import GetOrCreateMixin, db
+from bookworm.database import GetOrCreateMixin, Base
 
 
 class TaggedMixin:
@@ -30,7 +30,7 @@ class TaggedMixin:
     def _prepare_association_table(table_name, remote1, remote2):
         return sa.Table(
             table_name,
-            db.Model.metadata,
+            Base.metadata,
             sa.Column(f"{remote1}_id", sa.Integer, sa.ForeignKey(f"{remote1}.id")),
             sa.Column(f"{remote2}_id", sa.Integer, sa.ForeignKey(f"{remote2}.id")),
         )
@@ -41,7 +41,7 @@ class TaggedMixin:
             # Create the Tag model
             tag_attrs = {
                 "id": sa.Column(sa.Integer, primary_key=True),
-                "title": db.string(512, nullable=False, unique=True, index=True),
+                "title": sa.Column(sa.String(512), nullable=False, unique=True, index=True),
                 "items": relationship(
                     cls,
                     secondary=lambda: cls.__tags_association_table__,
@@ -49,7 +49,7 @@ class TaggedMixin:
                 ),
             }
             cls.Tag = type(
-                f"{cls.__name__}Tag", (GetOrCreateMixin, db.Model), tag_attrs
+                f"{cls.__name__}Tag", (GetOrCreateMixin, Base), tag_attrs
             )
             # The many-to-many association table
             cls.__tags_association_table__ = cls._prepare_association_table(
@@ -64,13 +64,14 @@ class TaggedMixin:
         )
 
 
-class AnnotationBase(db.Model):
+class AnnotationBase(Base):
     __abstract__ = True
-    title = db.string(255, nullable=False)
-    page_number = db.integer(nullable=False)
-    position = db.integer(nullable=False, default=0)
-    section_title = db.string(1024, nullable=False)
-    section_identifier = db.string(1024, nullable=False)
+    __tablename__ = "annotation_base"
+    title = sa.Column(sa.String(255), nullable=False)
+    page_number = sa.Column(sa.Integer, nullable=False)
+    position = sa.Column(sa.Integer, nullable=False, default=0)
+    section_title = sa.Column(sa.String(1024), nullable=False)
+    section_identifier = sa.Column(sa.String(1024), nullable=False)
     date_created = sa.Column(sa.DateTime, default=datetime.utcnow)
     date_updated = sa.Column(sa.DateTime, onupdate=datetime.utcnow)
 
@@ -90,14 +91,16 @@ class AnnotationBase(db.Model):
 
 class Bookmark(AnnotationBase):
     """Represents a user-defined bookmark."""
+    __tablename__ = "bookmark"
 
 
 class TaggedContent(AnnotationBase, TaggedMixin):
     __abstract__ = True
+    __tablename__ = "tagged_content"
 
     @declared_attr
     def content(cls):
-        return deferred(db.text(nullable=False))
+        return deferred(sa.Column(sa.Text, nullable=False))
 
     @declared_attr
     def text_column(cls):
@@ -106,10 +109,12 @@ class TaggedContent(AnnotationBase, TaggedMixin):
 
 class Note(TaggedContent):
     """Represents user comments (notes)."""
+    __tablename__ = "note"
 
 
 class Quote(TaggedContent):
     """Represents a highlight (quote) from the book."""
+    __tablename__ = "quote"
 
-    start_pos = db.integer(nullable=False)
-    end_pos = db.integer(nullable=False)
+    start_pos = sa.Column(sa.Integer, nullable=False)
+    end_pos = sa.Column(sa.Integer, nullable=False)

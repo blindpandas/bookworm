@@ -10,6 +10,7 @@ import db_magic as db
 import sqlalchemy as sa
 from sqlalchemy import types
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
+from sqlalchemy.orm import DeclarativeBase, scoped_session, declarative_base
 
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
@@ -39,10 +40,17 @@ class GetOrCreateMixin:
             return obj
         return cls(**kwargs)
 
+class Model:
+    id = sa.Column(sa.Integer, primary_key=True)
 
-class DocumentBase(db.Model, GetOrCreateMixin):
+Base = declarative_base()
+
+
+class DocumentBase(Base, GetOrCreateMixin):
     __abstract__ = True
-    title = db.string(512, nullable=False)
+    __tablename__ = "document_base"
+    id = sa.Column(sa.Integer, primary_key=True)
+    title = sa.Column(sa.String(512), nullable=False)
     uri = sa.Column(DocumentUriDBType(1024), nullable=False, unique=True, index=True)
 
     @classmethod
@@ -55,14 +63,17 @@ class DocumentBase(db.Model, GetOrCreateMixin):
 
 
 class Book(DocumentBase):
+    __tablename__ = "book"
+    
     @property
     def identifier(self):
         return self.uri.to_uri_string()
 
 
 class DocumentPositionInfo(DocumentBase):
-    last_page = db.integer(default=0)
-    last_position = db.integer(default=0)
+    __tablename__ = "document_position_info"
+    last_page = sa.Column(sa.Integer, default=0)
+    last_position = sa.Column(sa.Integer, default=0)
 
     def get_last_position(self):
         return (self.last_page, self.last_position)
@@ -74,7 +85,8 @@ class DocumentPositionInfo(DocumentBase):
 
 
 class RecentDocument(DocumentBase):
-    last_opened_on = db.date_time(default=datetime.utcnow, onupdate=datetime.utcnow)
+    __tablename__ = "recent_document"
+    last_opened_on = sa.Column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def record_open(self):
         self.last_opened_on = datetime.utcnow()
@@ -93,9 +105,10 @@ class RecentDocument(DocumentBase):
 
 
 class PinnedDocument(DocumentBase):
-    last_opened_on = db.date_time(default=datetime.utcnow, onupdate=datetime.utcnow)
-    is_pinned = db.boolean(default=False)
-    pinning_order = db.integer(default=0)
+    __tablename__ = "pinned_document"
+    last_opened_on = sa.Column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_pinned = sa.Column(sa.Boolean, default=False)
+    pinning_order = sa.Column(sa.Integer, default=0)
 
     @classmethod
     def get_pinned(cls, limit=50):
