@@ -203,7 +203,7 @@ jobs:
       # Step 2: Download update_info.json from the release assets
       - name: Download update_info.json from release
         env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+          PAT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $ReleaseAssetsUrl = "${{ github.event.release.assets_url }}"
           Write-Host "Fetching release assets from: $ReleaseAssetsUrl"
@@ -233,7 +233,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Update update_info.json after release'
           branch: update-info/${{ github.run_id }}
           title: 'Update update_info.json after release'
