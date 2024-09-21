@@ -1,101 +1,242 @@
+name: Build
+
+# Trigger the workflow on any push and when a release is published
 on:
   push: {}
-
-name: Build
+  release:
+    types: [published]
 
 env:
   PYTHONIOENCODING: utf-8
 
+# Set the permissions of GITHUB_TOKEN
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build
-    runs-on: windows-2019
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        CI_ARCH: ["x86", "x64"]  # Define architectures to build for
     steps:
+      # Step 1: Check out the repository
       - name: Check out sources
         uses: actions/checkout@v4
-      - name: Get Python
+
+      # Step 2: Set up Python environment with the specified architecture
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
           architecture: ${{ matrix.CI_ARCH }}
-      - uses: actions/cache@v4
+
+      # Step 3: Cache dependencies to speed up builds
+      - name: Cache dependencies
+        uses: actions/cache@v4
         id: cache-deps
         with:
           path: |
-            venv
+            .env
             bookworm/resources
-          key: ${{ runner.os }}-venv-${{ matrix.CI_ARCH }}-${{ hashFiles('requirements*.txt') }}
-      - name: Setup dependencies
+          key: ${{ runner.os }}-env-${{ matrix.CI_ARCH }}-${{ hashFiles('requirements*.txt') }}
+
+      # Step 4: Install dependencies if cache is not hit
+      - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
-          python -m venv venv
-          venv/scripts/activate
+          python -m venv .env
+          .env\Scripts\activate
           pip install invoke
           invoke dev
-        if: steps.cache-deps.outputs.cache-hit != 'true'
-      - name: test code
+
+      # Step 5: Build the project
+      - name: Build the project
         run: |
-          venv/scripts/activate
-          pytest -v
-      - name: Build code
-        run: |
-          venv/scripts/activate
-          invoke freeze
-          invoke copy-executables
-          invoke make-installer
+          .env\Scripts\activate
+          invoke build
+          invoke create-portable
+
+      # Step 6: Generate translation catalogs and version info (only for x64)
       - name: Generate translation catalogs and version info
         if: matrix.CI_ARCH == 'x64'
         run: |
-          venv/scripts/activate
+          .env\Scripts\activate
           invoke gen-pot
           invoke update-version-info
-      - name: Upload portable build
-        uses: actions/upload-artifact@v4
-        with:
-          name: Bookworm-portable-${{ matrix.CI_ARCH }}
-          path: scripts/builder/dist/${{ matrix.CI_ARCH }}/Bookworm
+
+      # Step 7: Upload installer artifact
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
           name: Bookworm-setup-${{ matrix.CI_ARCH }}
-          path: scripts/Bookworm*setup.exe
+          path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-setup.exe
+
+      # Step 8: Upload portable version artifact
+      - name: Upload portable version
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bookworm-portable-${{ matrix.CI_ARCH }}
+          path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-portable.zip
+
+      # Step 9: Upload update bundle artifact
+      - name: Upload update bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bookworm-bundle-${{ matrix.CI_ARCH }}
+          path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-update.bundle
+
+      # Step 10: Upload translation catalogs (only for x64)
       - name: Upload translation catalogs
         if: matrix.CI_ARCH == 'x64'
         uses: actions/upload-artifact@v4
         with:
           name: translation-catalogs
-          path: scripts/*.pot
-      - name: Upload version info
-        if: matrix.CI_ARCH == 'x64' && startsWith(github.ref, 'refs/tags') && !github.event_type != 'pull_request'
+          path: scripts\*.pot
+
+      # Step 11: Upload release info (only for x64 and non-pull_request)
+      - name: Upload release info
+        if: matrix.CI_ARCH == 'x64' && startsWith(github.ref, 'refs/tags') && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: release-info
-          path: scripts/release-info.json
-    strategy:
-     matrix:
-       CI_ARCH: ["x86", "x64"]
-  
-  deploy:
-    runs-on: ubuntu-latest
-    needs: ["build"]
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: ~/artifacts
-      - name: Zip Artifacts
-        run: |
-          mkdir -p upload
-          zip -r upload/Bookworm-portable-x64.zip Bookworm-portable-x64
-          zip -r upload/Bookworm-portable-x86.zip Bookworm-portable-x86
-          mv Bookworm-setup-x64/* upload
-          mv Bookworm-setup-x86/* upload
-          mv release-info/* upload || echo "No release-info"
-          mv translation-catalogs/* upload
+          path: scripts\release-info.json
 
-        working-directory: /home/runner/artifacts
-      - name: Release
-        if: startsWith(github.ref, 'refs/tags') && !github.event_type != 'pull_request'
+  generate_update_info:
+    name: Generate update-info.json
+    runs-on: windows-latest
+    needs: build  # Wait for the build job to complete
+    steps:
+      # Step 1: Check out the repository
+      - name: Check out sources
+        uses: actions/checkout@v4
+
+      # Step 2: Download update bundles from both architectures
+      - name: Download update bundle for x64
+        uses: actions/download-artifact@v4
+        with:
+          name: Bookworm-bundle-x64
+          path: scripts
+      - name: Download update bundle for x86
+        uses: actions/download-artifact@v4
+        with:
+          name: Bookworm-bundle-x86
+          path: scripts
+
+      # Step 3: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m venv .env
+          .env\Scripts\activate
+          pip install invoke
+          invoke dev
+
+      # Step 5: Generate update-info.json
+      - name: Generate update-info.json
+        run: |
+          .env\Scripts\activate
+          invoke gen-update-info-file
+
+      # Step 6: Upload update-info.json as an artifact
+      - name: Upload update-info.json
+        uses: actions/upload-artifact@v4
+        with:
+          name: update-info
+          path: update_info.json
+
+  deploy:
+    name: Deploy
+    runs-on: windows-latest
+    needs: [build, generate_update_info]  # Wait for build and generate_update_info jobs
+    steps:
+      # Step 1: Download all artifacts from previous jobs
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      # Step 2: Prepare release assets by moving them into an upload directory
+      - name: Prepare release assets
+        run: |
+          mkdir upload
+          echo Listing files in artifacts directory...
+          dir artifacts\
+          echo Moving setup files...
+          move artifacts\Bookworm-setup-x86\* upload\
+          move artifacts\Bookworm-setup-x64\* upload\
+          echo Moving portable files...
+          move artifacts\Bookworm-portable-x86\* upload\
+          move artifacts\Bookworm-portable-x64\* upload\
+          echo Moving bundle files...
+          move artifacts\Bookworm-bundle-x86\* upload\
+          move artifacts\Bookworm-bundle-x64\* upload\
+          if exist artifacts\translation-catalogs\* (move artifacts\translation-catalogs\* upload\) else (echo "No translation catalogs")
+          if exist artifacts\release-info\* (move artifacts\release-info\* upload\) else (echo "No release info")
+          if exist artifacts\update-info\* (move artifacts\update-info\* upload\) else (echo "No update info")
+        shell: cmd
+
+      # Step 3: Create a draft release (only when a tag is pushed and not for pull requests)
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags') && github.event_name != 'pull_request'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "/home/runner/artifacts/upload/*"
+          artifacts: 'upload\*'
           draft: true
           generateReleaseNotes: true
+
+  submit_update_info:
+    name: Submit update_info.json to main
+    runs-on: windows-latest
+    if: github.event_name == 'release' && github.event.action == 'published'  # Trigger when the release is published
+    steps:
+      # Step 1: Check out the repository
+      - name: Check out sources
+        uses: actions/checkout@v4
+
+      # Step 2: Download update_info.json from the release assets
+      - name: Download update_info.json from release
+        env:
+          PAT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $ReleaseAssetsUrl = "${{ github.event.release.assets_url }}"
+          Write-Host "Fetching release assets from: $ReleaseAssetsUrl"
+          $AuthHeader = "token $env:PAT_TOKEN"
+          $Headers = @{
+            Authorization = "token $env:PAT_TOKEN"
+            Accept = "application/vnd.github.v3+json"
+          }
+          $Assets = Invoke-RestMethod -Headers $Headers -Uri $ReleaseAssetsUrl
+          $UpdateInfoAsset = $Assets | Where-Object { $_.name -eq "update_info.json" }
+          if ($UpdateInfoAsset -ne $null) {
+            Write-Host "Downloading update_info.json from: $($UpdateInfoAsset.browser_download_url)"
+            Invoke-WebRequest -Headers $Headers -Uri $UpdateInfoAsset.browser_download_url -OutFile update_info.json
+          } else {
+            Write-Error "update_info.json not found in release assets"
+            exit 1
+          }
+        shell: pwsh
+
+      # Step 3: Set up Git user
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+
+      # Step 4: Create Pull Request to main branch
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'Update update_info.json after release'
+          branch: update-info/${{ github.run_id }}
+          title: 'Update update_info.json after release'
+          body: 'This Pull Request updates update_info.json after the release is published.'
+          labels: 'automation'
+          base: main
