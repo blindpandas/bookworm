@@ -67,6 +67,7 @@ class TaggedMixin:
 class AnnotationBase(Base):
     __abstract__ = True
     __tablename__ = "annotation_base"
+    id = sa.Column(sa.Integer, primary_key=True)
     title = sa.Column(sa.String(255), nullable=False)
     page_number = sa.Column(sa.Integer, nullable=False)
     position = sa.Column(sa.Integer, nullable=False, default=0)

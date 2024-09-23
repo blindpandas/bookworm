@@ -21,7 +21,14 @@ BOOKWORM_RESOURCES = collect_data_files(
         "*.md",
     ],
 )
+# alembic 
+root = Path("../../")
 DATA_FILES = [
+    (f"{root / 'alembic/env.py'}", 'alembic'),
+    (f"{root / 'alembic/versions/*'}", 'alembic/versions'),
+    (f"{root / 'alembic.ini'}", '.')
+]
+DATA_FILES += [
     (
         src,
         Path(dst).relative_to("bookworm"),
@@ -40,6 +47,7 @@ HIDDEN_SUBMODULES = [
     "justext",
 ]
 HIDDEN_IMPORTS = [
+    "alembic",
     "numpy",
     "cv2",
     "pkg_resources.py2_warn",

@@ -5,12 +5,13 @@ Database models for `Bookworm`.
 """
 
 from datetime import datetime
+import re
 
-import db_magic as db
 import sqlalchemy as sa
 from sqlalchemy import types
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
-from sqlalchemy.orm import DeclarativeBase, scoped_session, declarative_base
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import class_mapper, mapper, Query, scoped_session, declarative_base
 
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
@@ -40,10 +41,34 @@ class GetOrCreateMixin:
             return obj
         return cls(**kwargs)
 
+
+class _QueryProperty(object):
+    """Convenience property to query a model."""
+
+    def __get__(self, obj, type):
+        try:
+            mapper = class_mapper(type)
+            if mapper:
+                return Query(mapper, session=type.session())
+        except UnmappedClassError:
+            return None
+
 class Model:
     id = sa.Column(sa.Integer, primary_key=True)
+    query = _QueryProperty()
 
-Base = declarative_base()
+    @declared_attr
+    def __tablename__(cls) -> str:
+        """Taken from db_magic"""
+        """Convert CamelCase class name to underscores_between_words 
+        table name."""
+        name = cls.__name__
+        return name[0].lower() + re.sub(
+            r"([A-Z])", lambda m: "_" + m.group(0).lower(), name[1:]
+        )
+
+
+Base = declarative_base(cls=Model)
 
 
 class DocumentBase(Base, GetOrCreateMixin):

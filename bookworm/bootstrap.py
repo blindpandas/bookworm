@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import logging.config
 import multiprocessing
 import os
 import platform

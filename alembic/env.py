@@ -5,6 +5,8 @@ from sqlalchemy import pool
 from sqlalchemy.orm import configure_mappers
 
 from alembic import context
+from alembic.autogenerate import rewriter
+from alembic.operations import ops
 
 from bookworm.database import Base, get_db_url
 
@@ -28,6 +30,14 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
+writer = rewriter.Rewriter()
+
+@writer.rewrites(ops.MigrationScript)
+def add_imports(context, revision, op):
+    op.imports.add("import bookworm")
+    return [op]
+
 
 
 def run_migrations_offline() -> None:
@@ -65,7 +75,8 @@ def run_migrations_online() -> None:
     
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection, target_metadata=target_metadata,
+            process_revision_directives=writer
         )
 
         with context.begin_transaction():
