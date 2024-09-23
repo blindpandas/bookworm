@@ -6,8 +6,8 @@ isort==5.13.2
 invoke==2.2.0
 jinja2==3.1.4
 packaging==24.0
-pyinstaller==6.7.0
-pyinstaller-hooks-contrib==2024.6
+pyinstaller==6.10.0
+pyinstaller-hooks-contrib==2024.8
 pytest==8.2.1
 pytest-xdist==3.6.1
 wheel==0.43.0
