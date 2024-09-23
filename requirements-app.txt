@@ -3,6 +3,7 @@
 https://github.com/blindpandas/configobj/tarball/v5.1.0.dev0
 
 accessible-output2==0.17
+alembic==1.13.2
 apsw==3.46.0.0
 attrs==23.2.0
 babel==2.15.0
