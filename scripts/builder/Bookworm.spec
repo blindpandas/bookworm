@@ -2,6 +2,8 @@
 
 
 from pathlib import Path
+import site
+
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 
@@ -23,10 +25,15 @@ BOOKWORM_RESOURCES = collect_data_files(
 )
 # alembic 
 root = Path("../../")
+# pyxpdff_data searches for a file named default.xpdf in the site-packages directory
+# We need to also include this as a data file
+# TODO: Find a way to move this operation under pyxpdf_data
+default_xpdf = Path(site.getsitepackages()[1]) / "default.xpdf"
 DATA_FILES = [
     (f"{root / 'alembic/env.py'}", 'alembic'),
     (f"{root / 'alembic/versions/*'}", 'alembic/versions'),
-    (f"{root / 'alembic.ini'}", '.')
+    (f"{root / 'alembic.ini'}", '.'),
+    (f"{default_xpdf}", "lib/site-packages"),
 ]
 DATA_FILES += [
     (
