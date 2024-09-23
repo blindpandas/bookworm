@@ -26,7 +26,6 @@ from .models import (
     PinnedDocument,
     RecentDocument,
 )
-from bookworm.annotation.annotation_models import * 
 
 log = logger.getChild(__name__)
 

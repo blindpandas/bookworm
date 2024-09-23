@@ -9,6 +9,8 @@ from alembic.autogenerate import rewriter
 from alembic.operations import ops
 
 from bookworm.database import Base, get_db_url
+from bookworm.annotation.annotation_models import * 
+
 
 
 # this is the Alembic Config object, which provides
