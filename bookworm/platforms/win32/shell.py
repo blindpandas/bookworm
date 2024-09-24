@@ -101,3 +101,19 @@ def shell_disintegrate(supported="*"):
     for ext, (prog_id, desc, icon) in doctypes.items():
         remove_association(ext, prog_id)
     shell_notify_association_changed()
+
+
+def is_file_type_associated(ext):
+    ext_info = get_ext_info([ext])
+    prog_id, _, _ = ext_info[ext]
+    try:
+        with RegKey.LocalSoftware(rf"{ext}\OpenWithProgids") as key:
+            key.get_value(prog_id)
+            return True
+    except FileNotFoundError:
+        return False
+    except PermissionError:
+        return False
+    except Exception as e:
+        log.exception(f"Unexpected error when checking file association for {ext}: {str(e)}")
+        return False

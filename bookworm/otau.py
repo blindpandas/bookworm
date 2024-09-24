@@ -28,7 +28,9 @@ class UpdateChannel(RootModel[str]):
     @field_validator("root")
     @classmethod
     def validate_identifier(cls, v: str):
-        if v not in ["", "b", "a", "dev"]:
+        if v is None:
+            v = ""
+        if v not in ["", "b", "a", "rc"]:
             raise TypeError("Unrecognized release identifier")
         return v
 
@@ -61,6 +63,8 @@ class UpdateInfo(RootModel[t.Dict[UpdateChannel, VersionInfo]]):
         return tuple(self.root.keys())
 
     def get_update_info_for_channel(self, channel_identifier: str) -> VersionInfo:
+        if channel_identifier is None:
+            channel_identifier = ""
         return self.root.get(UpdateChannel.model_validate(channel_identifier))
 
 

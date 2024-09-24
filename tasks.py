@@ -545,6 +545,69 @@ def update_version_info(c):
     print("Updated version information")
 
 
+@task
+@make_env
+def gen_update_info_file(c):
+    """
+    Generate or update the `update_info.json` file with the latest version details,
+    including download URLs and SHA1 hashes for x86 and x64 builds.
+    """
+    from bookworm import app
+    from bookworm.utils import generate_sha1hash
+
+    print("Generating update information file...")
+
+    # Get the version info and determine the release channel
+    version_info = app.get_version_info(app.version)
+    channel = version_info.get("pre_type", "")  # Stable version if no pre_type
+
+    # Define base URLs and file paths for x86 and x64 builds
+    base_url = f"https://github.com/blindpandas/bookworm/releases/download/{app.version}"
+    x86_file = f"{app.display_name}-{app.version}-x86-update.bundle"
+    x64_file = f"{app.display_name}-{app.version}-x64-update.bundle"
+    x86_download_url = f"{base_url}/{x86_file}"
+    x64_download_url = f"{base_url}/{x64_file}"
+
+    artifacts_folder = PROJECT_ROOT / "scripts"
+    x86_bundle_path = artifacts_folder / x86_file
+    x64_bundle_path = artifacts_folder / x64_file
+
+    # Generate SHA1 hash or use default if file does not exist
+    x86_sha1hash = generate_sha1hash(x86_bundle_path) if x86_bundle_path.exists() else "example_x86_sha1hash"
+    x64_sha1hash = generate_sha1hash(x64_bundle_path) if x64_bundle_path.exists() else "example_x64_sha1hash"
+
+    # Construct the update info dictionary
+    update_info = {
+        channel or "": {  # Ensure stable version uses an empty string key
+            "version": app.version,
+            "x86_download": x86_download_url,
+            "x64_download": x64_download_url,
+            "x86_sha1hash": x86_sha1hash,
+            "x64_sha1hash": x64_sha1hash,
+        }
+    }
+
+#    update_info_file = artifacts_folder / "update_info.json"
+    update_info_file = PROJECT_ROOT / "update_info.json"
+
+    # Read the existing data if the file exists, otherwise start with an empty dictionary
+    try:
+        with update_info_file.open("r", encoding="utf-8") as f:
+            existing_data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Warning: No valid update_info.json file found. Creating a new one.")
+        existing_data = {}
+
+    # Update the existing data with the new update information
+    existing_data.update(update_info)
+
+    # Write the updated data back to the JSON file
+    with update_info_file.open("w", encoding="utf-8") as f:
+        json.dump(existing_data, f, indent=2, sort_keys=True)
+
+    print(f"Update information file generated at {update_info_file}")
+
+
 def _add_pip_install_args(cmd, context):
     return "{cmd} --timeout {timeout} --retries {retries}".format(
         cmd=cmd,
@@ -662,9 +725,15 @@ def freeze(c):
     with c.cd(str(PROJECT_ROOT / "scripts" / "builder")):
         if app.get_version_info()["pre_type"] is None:
             print(
-                "The current build is a final release. Turnning on python optimizations..."
+                "Final release detected. Python optimizations are currently disabled "
+                "to ensure assert statements and runtime checks are preserved."
+                " This is a temporary measure, and we plan to enable optimizations in future versions."
             )
-            os.environ["PYTHONOPTIMIZE"] = "2"
+            # TODO: Python optimization mode is commented out to prevent removal of assert statements
+            # in production builds. Assert statements are crucial for ensuring runtime checks,
+            # and omitting them could lead to unexpected behavior or failures.
+            # To revisit: Determine how to handle optimizations without impacting critical runtime checks.
+            # os.environ["PYTHONOPTIMIZE"] = "2"
         c.run(
             f"pyinstaller Bookworm.spec --clean -y --distpath {c['build_folder'].parent}",
             hide=False,

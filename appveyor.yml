@@ -16,8 +16,10 @@ environment:
     secure: "ogfTv7V0xR13ETjrC+koS7ZURfl0KLRfwcjYBexoiB1gcc5pppO/H42BopJWl0ua"
 
 install:
-  # Install hyperfine for benchmarking
-  - cinst hyperfine
+  # Install Chocolatey if not already installed
+  - powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+  # Install hyperfine without reboot
+  - choco install hyperfine --params "/norestart"
   # NSIS Paths
   # https://www.appveyor.com/docs/build-environment/#tools
   - set PATH=%PATH%;C:\Program Files (x86)\NSIS

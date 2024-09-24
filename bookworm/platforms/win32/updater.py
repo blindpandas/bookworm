@@ -179,7 +179,7 @@ def execute_bootstrap(extraction_dir):
     log.info("Executing bootstrap to complete update.")
     move_to = extraction_dir.parent
     shutil.move(str(extraction_dir / "bootstrap.exe"), str(move_to))
-    args = f'"{os.getpid()}" "{extraction_dir}" "{paths.app_path()}" "{sys.executable}"'
+    args = f'"{os.getpid()}" "{extraction_dir}" "{Path(paths.app_path()).parent}" "{sys.executable}"'
     viewer = wx.GetApp().mainFrame
     if viewer.reader.ready:
         viewer.reader.save_current_position()
