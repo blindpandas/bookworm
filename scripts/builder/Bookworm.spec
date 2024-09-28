@@ -30,6 +30,7 @@ root = Path("../../")
 # pyxpdff_data searches for a file named default.xpdf in the site-packages directory
 # We need to also include this as a data file
 # TODO: Find a way to move this operation under pyxpdf_data
+default_xpdf = Path(site.getsitepackages()[1]) / "default.xpdf"
 DATA_FILES = [
     (f"{root / 'alembic/env.py'}", 'alembic'),
     (f"{root / 'alembic/versions/*'}", 'alembic/versions'),
