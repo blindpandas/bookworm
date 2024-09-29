@@ -36,13 +36,11 @@ def get_db_url() -> str:
 def init_database():
     engine = create_engine(get_db_url())
     log.info("Running database migrations and setup")
-    cfg_file = None
+    cfg_file = ""
     script_location = "alembic"
     if app.is_frozen:
         cfg_file = sys._MEIPASS
         script_location = paths.app_path("alembic")
-    else:
-        cfg_file = Path(__file__).parent.parent
     
     cfg = Config(Path(cfg_file, "alembic.ini"))
     cfg.set_main_option('script_location', str(script_location))
