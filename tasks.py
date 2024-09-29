@@ -719,10 +719,6 @@ def make_version_info_file(c):
 @make_env
 def freeze(c):
     """Freeze the app using pyinstaller."""
-    import site
-    path = Path(site.getsitepackages()[1], "default.xpdf").absolute()
-    os.environ["PYXPDF_RC_PATH"] = str(path)
-
 
     from bookworm import app
 
