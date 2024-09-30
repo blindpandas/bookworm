@@ -6,10 +6,8 @@ from enum import IntEnum, auto
 import sqlalchemy as sa
 
 from bookworm import config
-from bookworm.database.models import Book
+from bookworm.database.models import Book, Bookmark, Note, Quote
 from bookworm.logger import logger
-
-from .annotation_models import Bookmark, Note, Quote
 
 log = logger.getChild(__name__)
 # The bakery caches query objects to avoid recompiling them into strings in every call

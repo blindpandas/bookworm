@@ -8,8 +8,7 @@ from alembic import context
 from alembic.autogenerate import rewriter
 from alembic.operations import ops
 
-from bookworm.database import Base, get_db_url
-from bookworm.annotation.annotation_models import * 
+from bookworm.database import *
 
 
 
@@ -54,7 +53,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = get_db_url()
+    url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -73,7 +72,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = create_engine(get_db_url())
+    connectable = create_engine(config.get_main_option("sqlalchemy.url"))
     
     with connectable.connect() as connection:
         context.configure(
