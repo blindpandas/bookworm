@@ -19,7 +19,7 @@ from pathlib import Path
 
 from bookworm import app
 from bookworm.runtime import IS_RUNNING_FROM_SOURCE
-from bookworm.paths import app_path
+from bookworm.paths import app_path, libs_path
 from bookworm.logger import logger
 from bookworm.platforms.win32 import nvwave
 
@@ -470,7 +470,7 @@ def get_espeak_directory():
     if IS_RUNNING_FROM_SOURCE:
         espeak_ng_data_dir = Path.cwd().joinpath("scripts", "dlls", "espeak-ng")
     else:
-        espeak_ng_data_dir = app_path()
+        espeak_ng_data_dir = libs_path()
 
     return os.fspath(espeak_ng_data_dir)
 
@@ -482,6 +482,6 @@ def get_espeak_dll_path():
             "scripts", "dlls", "espeak-ng", app.arch, "espeak-ng.dll"
         )
     else:
-        espeak_ng_dll = app_path("espeak-ng.dll")
+        espeak_ng_dll = libs_path("espeak-ng.dll")
 
     return os.fspath(espeak_ng_dll)

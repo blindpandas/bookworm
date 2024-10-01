@@ -719,6 +719,7 @@ def make_version_info_file(c):
 @make_env
 def freeze(c):
     """Freeze the app using pyinstaller."""
+
     from bookworm import app
 
     print("Freezing the application...")

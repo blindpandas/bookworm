@@ -113,3 +113,8 @@ def home_data_path():
 @merge_paths
 def fonts_path():
     return app_path("resources", "fonts")
+
+
+@merge_paths
+def libs_path() -> str:
+    return app_path()

@@ -14,7 +14,7 @@ import bookworm.typehints as t
 from bookworm import app, config
 from bookworm.gui.text_ctrl_mixin import ContentViewCtrlMixin, ContentViewCtrlPanel
 from bookworm.logger import logger
-from bookworm.paths import app_path
+from bookworm.paths import app_path, libs_path
 
 from .wnd_proc_hook import WndProcHookMixin
 
@@ -22,7 +22,7 @@ log = logger.getChild(__name__)
 
 
 if app.is_frozen:
-    BKWRICHEDITOPTS_DLL = app_path("BkwRicheditOpts.dll")
+    BKWRICHEDITOPTS_DLL = libs_path("BkwRicheditOpts.dll")
 else:
     BKWRICHEDITOPTS_DLL = (
         Path.cwd()

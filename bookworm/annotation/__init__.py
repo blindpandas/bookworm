@@ -3,6 +3,7 @@
 import wx
 
 from bookworm import config, speech
+from bookworm.database.models import Note, Quote
 from bookworm.logger import logger
 from bookworm.resources import sounds
 from bookworm.service import BookwormService
@@ -20,7 +21,6 @@ from .annotation_gui import (
     AnnotationSettingsPanel,
     AnnotationsMenuIds,
 )
-from .annotation_models import Note, Quote
 from .annotator import Bookmarker, NoteTaker, Quoter
 
 log = logger.getChild(__name__)
