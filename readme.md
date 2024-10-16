@@ -1,6 +1,3 @@
-![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/blindpandas/bookworm?branch=develop&svg=true)
-[Appveyor Builds](https://ci.appveyor.com/project/mush42/bookworm)
-
 # Bookworm
 
 **Bookworm** is an accessible document reader that enables blind and visually impaired individuals to read documents in an easy and hassle free manor. The main highlights of bookworm are:
@@ -16,14 +13,13 @@
 * Support for standard zoom-in/zoom-out/reset commands. This is supported in the textual view and the rendered page view.
 * Support for exporting any document format to a plain text file.
 
-
+## **IMPORTANT**
+Bookworm's official website is currently no more. The domain which has worked up until now has currently not been renewed, and as such bookworm will no longer be provided there until further notice. We urge you not to interact with that domain, as we're no longer in charge of it.
+You can keep downloading bookworm from the [releases page](https://github.com/blindpandas/bookworm/releases) for the most recent ones.
 ## Resources
 
-* The official website: [getbookworm.com](https://getbookworm.com/)
 * Telegram group: [Bookworm Official group](https://t.me/bookworm_official)
 * Telegram channel: [Bookworm news](https://t.me/bookworm_news)
-* User guide: [Bookworm user guide](https://getbookworm.com/user-guide/)
-
 
 ## Development
 
