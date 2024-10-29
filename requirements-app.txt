@@ -61,7 +61,7 @@ ujson==5.10.0
 unicode-slugify==0.1.5
 unrar==0.4
 url-normalize==1.4.3
-waitress==3.0.0
+waitress==3.0.1
 winpaths==0.2
 wxPython==4.2.1
 yarl==1.9.4
