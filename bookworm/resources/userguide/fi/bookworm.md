@@ -25,7 +25,7 @@ Bookworm toimii Windows-käyttöjärjestelmässä. Se toimii hyvin suosittujen r
 
 ## Asennus
 
-Lataa Bookworm [sen viralliselta verkkosivulta.](https://getbookworm.com)
+Lataa Bookworm [sen viralliselta verkkosivulta.](https://github.com/blindpandas/bookworm)
 
 Bookworm on saatavana kolmessa muodossa:
 
@@ -211,7 +211,7 @@ Huomaa, että joitakin ongelmia voi olla vaikea toistaa, koska ne poistuvat, kun
 
 ## Uutiset ja päivitykset
 
-Pysyäksesi ajan tasalla viimeisimmistä Bookworm-uutisista, vieraile sovelluksen sivustolla osoitteessa [getbookworm.com](https://getbookworm.com/). Voit myös seurata johtavan kehittäjän, Musharraf Omerin, Twitter-tiliä [@mush42](https://twitter.com/mush42/).
+Pysyäksesi ajan tasalla viimeisimmistä Bookworm-uutisista, vieraile sovelluksen sivustolla osoitteessa [github.com/blindpandas/bookworm](https://github.com/blindpandas/bookworm/). Voit myös seurata johtavan kehittäjän, Musharraf Omerin, Twitter-tiliä [@mush42](https://twitter.com/mush42/).
 
 
 ## Lisenssi

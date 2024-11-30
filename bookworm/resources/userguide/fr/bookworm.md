@@ -25,7 +25,7 @@ Bookworm fonctionne sur le système d'exploitation Windows de Microsoft. Il fonc
 
 Pour installer et exécuter Bookworm sur votre ordinateur, procédez comme suit :
 
-1. Pointez votre navigateur Web sur [(getbookworm.com), le site officiel de Bookworm](https://getbookworm.com/)
+1. Pointez votre navigateur Web sur [(github.com/blindpandas/bookworm), le site officiel de Bookworm](https://github.com/blindpandas/bookworm/)
 2. Bookworm est disponible en trois versions. Téléchargez celle qui vous convient :
 * Installateur 32 bits pour les ordinateurs exécutant une variante 32 bits ou 64 bits de Windows
 * Installateur 64 bits pour les ordinateurs exécutant une variante 64 bits de Windows

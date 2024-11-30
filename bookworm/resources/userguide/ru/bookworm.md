@@ -25,7 +25,7 @@ Bookworm работает в операционной системе Microsoft W
 
 ## Установка
 
-Чтобы установить и запустить Bookworm на своем компьютере, сначала посетите [официальный сайт Bookworm](https://getbookworm.com)
+Чтобы установить и запустить Bookworm на своем компьютере, сначала посетите [официальный сайт Bookworm](https://github.com/blindpandas/bookworm)
 
 Bookworm выпускается в трех вариантах:
 
@@ -211,7 +211,7 @@ Bookworm позволяет просматривать полностью обр
 
 ## Новости и обновления
 
-Чтобы быть в курсе последних новостей о Bookworm, посетите веб-сайт Bookworm по адресу: [getbookworm.com](https://getbookworm.com/). Вы также можете следить за ведущим разработчиком Мушаррафом Омером в Twitter [@mush42](https://twitter.com/mush42/).
+Чтобы быть в курсе последних новостей о Bookworm, посетите веб-сайт Bookworm по адресу: [github.com/blindpandas/bookworm](https://github.com/blindpandas/bookworm/). Вы также можете следить за ведущим разработчиком Мушаррафом Омером в Twitter [@mush42](https://twitter.com/mush42/).
 
 
 ## Лицензия

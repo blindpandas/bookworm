@@ -23,7 +23,7 @@ Bookworm, Microsoft Windows işletim sisteminde çalışır. NVDA ve JAWS gibi f
 
 ## Kurulum
 
-Bookworm'u bilgisayarınıza kurmak ve çalıştırmak için önce [Bookworm'un resmi web sitesini](https://getbookworm.com) ziyaret edin.
+Bookworm'u bilgisayarınıza kurmak ve çalıştırmak için önce [Bookworm'un resmi web sitesini](https://github.com/blindpandas/bookworm) ziyaret edin.
 
 Bookworm üç şekilde gelir:
 
@@ -219,7 +219,7 @@ Bazı sorunların yeniden oluşturulmasının zor olabileceğini, programı yeni
 
 ## Haberler ve Güncellemeler
 
-Bookworm hakkındaki en son haberlerden haberdar olmak için Bookworm'un web sitesini şu adresten ziyaret edebilirsiniz: [getbookworm.com](https://getbookworm.com/). Baş geliştirici Mosharraf Omer'i Twitter'da [@mush42](https://twitter.com/mush42/) adresinden de takip edebilirsiniz.
+Bookworm hakkındaki en son haberlerden haberdar olmak için Bookworm'un web sitesini şu adresten ziyaret edebilirsiniz: [github.com/blindpandas/bookworm](https://github.com/blindpandas/bookworm/). Baş geliştirici Mosharraf Omer'i Twitter'da [@mush42](https://twitter.com/mush42/) adresinden de takip edebilirsiniz.
 
 
 ## Lisans

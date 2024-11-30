@@ -25,7 +25,7 @@ Bookworm runs on the Microsoft Windows operating system. It works well with your
 
 ## Installation
 
-To install and run Bookworm on your computer, first visit the [official website of Bookworm](https://getbookworm.com)
+To install and run Bookworm on your computer, first visit the [official website of Bookworm](https://github.com/blindpandas/bookworm)
 
 Bookworm comes in three flavors:
 
@@ -211,7 +211,7 @@ Note that some issues could be tricky to reproduce, they go away when you restar
 
 ## News & Updates
 
-To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: [getbookworm.com](https://getbookworm.com/). You can also follow the lead developer, Musharraf Omer, at [@mush42](https://twitter.com/mush42/) on Twitter.
+To keep yourself updated with the latest news about Bookworm, you can visit Bookworm's website at: [github.com/blindpandas/bookworm](https://github.com/blindpandas/bookworm/). You can also follow the lead developer, Musharraf Omer, at [@mush42](https://twitter.com/mush42/) on Twitter.
 
 
 ## License

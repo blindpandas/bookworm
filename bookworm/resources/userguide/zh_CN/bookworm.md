@@ -24,7 +24,7 @@ Bookworm 可以运行于 Microsoft Windows 操作系统。与您喜爱的屏幕�
 
 ## 安装
 
-要安装Bookworm到您的计算机上，请先访问[Bookworm 官网](https://getbookworm.com)下载软件。
+要安装Bookworm到您的计算机上，请先访问[Bookworm 官网](https://github.com/blindpandas/bookworm)下载软件。
 
 Bookworm 软件包含三种类型：
 
@@ -208,7 +208,7 @@ Bookworm可让您查看书籍的完整渲染版本。打开书籍后，可以按
 
 ## 最新消息和更新信息
 
-若想了解有关 Bookworm 的最新消息，可以访问Bookworm的网站： [getbookworm.com](https://getbookworm.com/)。您也可以在Twitter上[@mush42](https://twitter.com/mush42/)来关注首席开发人员 Musharraf Omer。
+若想了解有关 Bookworm 的最新消息，可以访问Bookworm的网站： [github.com/blindpandas/bookworm](https://github.com/blindpandas/bookworm/)。您也可以在Twitter上[@mush42](https://twitter.com/mush42/)来关注首席开发人员 Musharraf Omer。
 
 Bookworm 中文资讯请访问 [Bookworm中文站（bw.enabc.net）](https://bw.enabc.net)，也欢迎加入[Bookworm 中文交流 QQ 群 （556550625）](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=gW905iM3YPt1Y4gj8Y756_gqZ7ZDAjX9&authKey=55Cqb3%2Bz5sR%2Fw7Wqb6DS6FfZ9uJQczqd2K6DJh8jcy47nvLqgP2OGMeKunZ0eRef&noverify=0&group_code=556550625)。
 
