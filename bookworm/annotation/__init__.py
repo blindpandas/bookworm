@@ -226,9 +226,17 @@ class AnnotationService(BookwormService):
                 evtdata["line_contains_highlight"] = True
                 break
         for comment in NoteTaker(self.reader).get_for_page():
-            if comment.position in pos_range:
-                evtdata["comment"] = True
-                break
+            start_pos, end_pos = (comment.start_pos, comment.end_pos)
+            # If the comment has a selection, we check if the caret position is inside the selection. Otherwise, we check that the ocmment position is in the pos_range, typically the whole line.
+            condition = (start_pos <= position <= end_pos) if (start_pos, end_pos) != (None, None) else  comment.position in pos_range
+            if condition:
+                # Previously comment would have the value True
+                # Now, since it is possible that two comments overlap, we set how many comments are present in the given position
+                # TODO: Understand whether htis is worth it, or if we should prevent comments from overlapping
+                if "comment" in evtdata:
+                    evtdata["comment"] += 1
+                else:
+                    evtdata["comment"] = 1
         wx.CallAfter(self._process_caret_move, evtdata)
 
     def _process_caret_move(self, evtdata):
@@ -252,8 +260,15 @@ class AnnotationService(BookwormService):
                 # Translators: spoken message indicating the presence of an annotation when the user navigates the text
                 to_speak.append(_("Line contains highlight"))
             if "comment" in evtdata:
-                # Translators: spoken message indicating the presence of an annotation when the user navigates the text
-                to_speak.append(_("Has comment"))
+                # Translators: Text that appears when only a comment is present
+                single_comment_msg = _("Has comment")
+                # Translators: text that appears if multiple comments are present
+                multiple_comments_msg = _("Has {} comments")
+                comments = evtdata["comment"]
+                if comments == 1:
+                    to_speak.append(single_comment_msg)
+                else:
+                    to_speak.append(multiple_comments_msg.format(comments))
             speech.announce(" ".join(to_speak), False)
 
     def get_annotation(self, annotator_cls, *, foreword):
