@@ -141,6 +141,7 @@ class Annotator:
     def get(self, item_id):
         return self.model.query.get(item_id)
 
+    
     def get_first_after(self, page_number, pos):
         model = self.model
         clauses = (
@@ -240,6 +241,9 @@ class NoteTaker(TaggedAnnotator):
 
     model = Note
 
+    def get_for_selection(self, start_pos: int, end_pos: int):
+        model = self.model
+        return model.query.filter_by(book_id=self.current_book.id, start_pos=start_pos, end_pos=end_pos).first()
 
 class Quoter(TaggedAnnotator):
     """Highlights."""

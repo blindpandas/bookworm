@@ -208,16 +208,25 @@ class AnnotationMenu(wx.Menu):
         # see: https://docs.wxpython.org/wx.TextEntry.html#wx.TextEntry.GetSelection
         if start_pos == end_pos:
             start_pos, end_pos = (None, None)
+        else:
+            # We have to set end_pos to end_pos-1 to avoid selecting an extra character
+            end_pos -= 1
+        comments = NoteTaker(self.reader)
+        # We check if there is already a comment that precisely overlaps with the selection
+        # If it exists, we edit it directly
+        comment = comments.get_for_selection(start_pos, end_pos)
+        value = comment.content if comment else ""
         comment_text = self.view.get_text_from_user(
             # Translators: the title of a dialog to add a comment
             _("New Comment"),
             # Translators: the label of an edit field to enter a comment
             _("Comment:"),
             style=wx.OK | wx.CANCEL | wx.TE_MULTILINE | wx.CENTER,
+            value=value,
         )
         if not comment_text:
             return
-        note = NoteTaker(self.reader).create(
+        note = comments.create(
             title="", content=comment_text, position=insertionPoint, start_pos=start_pos, end_pos=end_pos
         )
         self.service.style_comment(self.view, insertionPoint)
