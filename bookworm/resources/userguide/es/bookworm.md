@@ -1,194 +1,227 @@
-# Manual de Usuario de Bookworm
+# Guía de usuario de Bookworm
 
 ## Introducción
 
-**Bookworm** es un lector de Ebooks accesible que le permite a las personas ciegas y de baja visión leer libros electrónicos de manera fácil y sin complicaciones. Entre lo destacable de Bookworm se encuentra:
+Bookworm es un lector de documentos que le permite leer PDF, EPUB, MOBI y muchos otros formatos de documentos utilizando una interfaz versátil, pero sencilla y muy accesible.
 
-* Soporte para los formatos de E-book más populares, incluyendo EPUB y PDF
-* Usted puede agregar marcadores con nombre indicando posiciones de interés en el texto para una referencia posterior
-* Usted puede añadir notas para capturar opiniones de interés o crear un resumen del contenido en una posición específica del texto. Bookworm le permite desplazarse a una nota que desee para su revisión. Después, podrá exportar dichas notas a un archivo de texto o a un documento HTML para una referencia posterior.
-* Hay dos estilos diferentes para visualizar las páginas: texto plano e imágenes completamente renderizadas y acercables.
-* Búsqueda completa de texto con opciones de búsqueda personalizables
-* Se soporta ampliamente la navegación del libro por tabla de contenidos para todos los formatos
-* Soporte para la lectura de libros en voz alta usando Texto a Voz, con parámetros de voz configurables.
-* Es posible personalizar el texto a voz mediante perfiles. ¡Cada perfil de voz configura el estilo de la voz y usted puede activar/desactivar cada perfil, incluso mientras se lee en voz alta!
-* Soporta comandos estándar para acercar/alejar/restablecer zoom, Ctrl + =, Ctrl + - y Ctrl + 0 respectivamente. Esta funcionalidad está disponible tanto en la vista de texto plano como en la página renderizada.
-* Se soporta la exportación de cualquier E-book a un archivo de texto plano.
+Bookworm te proporciona un rico conjunto de herramientas para leer tus documentos. Puede buscar en sus documentos, marcar y resaltar contenidos de interés, utilizar la conversión de texto a voz y convertir documentos escaneados a texto sin formato mediante el reconocimiento óptico de caracteres (OCR).
+
+Bookworm funciona con el sistema operativo Microsoft Windows. Funciona bien con tus lectores de pantalla favoritos, como NVDA y JAWS. Incluso cuando un lector de pantalla no está activo, Bookworm puede actuar como una aplicación de voz utilizando las funciones incorporadas de texto a voz.
+
+
+## Características
+
+* Admite más de 15 formatos de documento, incluidos EPUB, PDF, MOBI y documentos de Microsoft Word.
+* Admite navegación estructurada mediante comandos de navegación de una sola letra para saltar entre títulos, listas, tablas y citas
+* Búsqueda de texto completo con opciones de búsqueda personalizables
+* Herramientas de anotación avanzadas y fáciles de usar. Puede añadir marcadores con nombre para marcar lugares de interés en el texto para su posterior consulta, y puede añadir comentarios para capturar un pensamiento interesante o crear un resumen del contenido en una posición concreta del texto. Bookworm te permite saltar rápidamente a un comentario concreto y visualizarlo. Más tarde, puede exportar estos comentarios a un archivo de texto o documento HTML para su uso posterior.
+* Para los documentos PDF, Bookworm admite dos estilos diferentes de visualización de las páginas: texto sin formato e imágenes con zoom.
+* Soporta el uso de OCR para extraer texto de documentos e imágenes escaneados utilizando el motor OCR integrado de Windows10. También tiene la opción de descargar y utilizar el motor de OCR Tesseract disponible gratuitamente dentro de Bookworm.
+* Busque la definición de un término en Wikipedia y lea artículos de Wikipedia desde Bookworm.
+* Un extractor de artículos web incorporado que le permite abrir URLs y extraer automáticamente el artículo principal de la página.
+* La navegación de documentos a través de la tabla de contenido está ampliamente soportada para todos los formatos de documento.
+* Soporte para lectura de libros en voz alta usando Texto-a-voz, con opciones de voz personalizables usando perfiles de voz.
+* Soporte para zoom de texto usando los comandos estándar de zoom-in/zoom-out/reset.
+* Soporte para exportar cualquier formato de documento a un archivo de texto plano.
 
 
 ## Instalación
 
-Para hacer que Bookworm funcione en su equipo, siga estos pasos:
+Para instalar y ejecutar Bookworm en su ordenador, visite primero el [sitio web oficial de Bookworm](https://github.com/blindpandas/bookworm)
 
-1. Lleve su navegador al  [sitio oficial de Bookworm](https://mush42.github.io/bookworm/) y descargue el instalador que corresponda a su sistema operativo. Bookworm se distribuye de dos formas: 
+Bookworm está disponible en tres versiones:
 
-* Un instalador para ejecutarse en la variante 32 bits de Windows
-* Un instalador para equipos con una variante 64 bits de Windows 
+* Instalador de 32 bits para ordenadores con Windows de 32 o 64 bits.
+* Instalador de 64 bits para ordenadores con Windows de 64 bits.
+* Versión portable para ejecutar desde una unidad flash
 
-2. Abra el instalador y siga las instrucciones
-3. Después de que la instalación se haya completado con éxito, puede iniciar Bookworm desde el escritorio o desde la lista de programas ubicada en el menú inicio
+Si tiene voces SAPI5 heredadas instaladas en su sistema y desea utilizarlas con Bookworm, le recomendamos que instale la versión de 32 bits de Bookworm o que utilice la versión portable de 32 bits.
+
+Tras seleccionar la versión que más te convenga, descárgala. Si has descargado la versión instalable de Bookworm, ejecuta el archivo .exe y sigue las instrucciones que aparecen en pantalla, o si has optado por utilizar una copia portable de Bookworm, descomprime el contenido del archivo donde quieras y ejecuta el ejecutable de Bookworm para iniciar la copia portable.
 
 
 ## Uso
 
-### Abriendo un libro
 
-puede abrir un libro seleccionando la opción  "Abrir..." desde el menú archivo. Como alternativa, puede usar el atajo de teclado Ctrl+O. De cualquier forma, se mostrará un conocido diálogo para abrir archivos. Navegue hasta el ebook y seleccione abrir para que se cargue.
+### Abrir un documento
+
+Puede abrir un documento seleccionando la opción «Abrir...» del menú «Archivo». También puede utilizar el atajo de teclado Ctrl+O. En cualquiera de los dos casos, aparecerá el conocido cuadro de diálogo «Abrir archivo». Busque su documento y haga clic en Abrir para cargarlo.
+
 
 ### La ventana del lector
 
-La ventana principal de Bookworm se compone de dos partes:
+La ventana principal de Bookworm consta de las dos partes siguientes:
 
-1. La "Tabla de contenido": Aquí aparecerán los capítulos del libro. Esto le permite explorar la estructura del contenido. Use las teclas de navegación para navegar por los capítulos y presione enter para desplazarse al que desee.
-2. El área textual visible: Esta parte contiene el texto de la página actual. En esta sección puede usar los comandos regulares de lectura para navegar por el texto. Además, dispone de los siguientes comandos de teclado para navegar por el libro::
+1. La «Tabla de contenidos»: Esta parte muestra los capítulos del documento. Le permite explorar la estructura del contenido. Utilice las teclas de navegación para navegar por los capítulos, y pulse intro para navegar a un capítulo específico.
 
-* Enter: se desplaza a la siguiente página en la sección actual
-* Retroceso: se desplaza a la página anterior en la sección actual
-* Si el cursor está en la primera línea, presionando la flecha arriba dos veces seguidas le llevará a la página anterior.
-* Si el cursor está en la última línea, presionando la flecha abajo dos veces seguidas le llevará a la página siguiente.
-* Alt + Inicio: se desplaza a la primera página de la sección actual
-* Alt + Fin: se desplaza a la última página de la sección actual
-* Alt + Avance de página: se desplaza a la sección siguiente
-* Alt + Retroceso de página: se desplaza a la sección anterior
+2. El área «Vista textual»: Esta parte contiene el texto de la página actual. En esta parte puede utilizar sus comandos de lectura habituales para navegar por el texto. Además, puede utilizar los siguientes atajos de teclado para navegar por el documento:
+
+* Intro: pasar a la página siguiente de la sección actual.
+* Retroceso: navegar a la página anterior de la sección actual.
+* Mientras el cursor está en la primera línea, pulsando dos veces seguidas la flecha hacia arriba se pasa a la página anterior.
+* Mientras el cursor está en la última línea, pulsando dos veces seguidas la flecha hacia abajo se pasa a la página siguiente.
+* Alt + Inicio: navegar a la primera página de la sección actual.
+* Alt + Fin: navegar a la última página de la sección actual.
+* Alt + página abajo: navegar a la sección siguiente.
+* Alt + página arriba: navegar a la sección anterior;
+* F2: ir al siguiente marcador;
+* Mayús + F2: ir al marcador anterior;
+* F8: ir al comentario siguiente;
+* Mayús + F8: ir al comentario anterior;
+* F9: ir al siguiente resaltado
+* Shift + F9: ir al resaltado anterior;
+* ctrl + enter: abrir cualquier enlace interno o externo si el documento lo contiene. Los enlaces internos son enlaces creados por el índice del documento en algunos formatos, los enlaces externos son enlaces normales abiertos por el navegador. Dependiendo del tipo de enlace, si el enlace es interno, es decir, el enlace a la tabla de contenidos, al pulsar el atajo de teclado anterior se moverá el foco a la tabla de contenidos deseada, y si el enlace es externo, se abrirá en el navegador predeterminado del sistema.
 
 
-### Marcadores y notas
+### Marcadores y comentarios
 
-Bookworm le permite  hacer anotaciones en el libro actualmente abierto. Puede agregar un marcador para recordar una posición específica en el libro y, más tarde, saltar rápidamente hacia ella. También puede tomar una nota para capturar una idea o resumir su contenido.
+Bookworm le permite hacer anotaciones en un documento abierto. Puede añadir un marcador para recordar una ubicación específica en un documento y saltar rápidamente a ella. Además, puede añadir un comentario para capturar una idea o resumir el contenido.
 
-#### Agregar marcadores
 
-Durante la lectura, puede presionar Ctrl + B (o seleccionar el elemento "Agregar marcador" desde el menú "Anotaciones") para añadir un marcador. Éste se añadirá en la posición actual del cursor. Se le pedirá que proporcione un título para el marcador. Escriba el título que desee y haga clic en el botón Aceptar. Se añadirá un marcador en la posición correspondiente y la línea actual se verá resaltada.
+#### Añadir marcadores
 
-#### Visualizando marcadores
+Mientras lees un documento, puedes pulsar Ctrl + B (o seleccionar la opción de menú Añadir marcador) en el menú Anotaciones para añadir un marcador. El marcador se añadirá en la posición actual del cursor. Alternativamente, puede añadir un marcador con nombre pulsando ctrl+mayús+b, se abrirá una ventana que le pedirá el nombre del marcador o, alternativamente, seleccione Añadir marcador con nombre en el menú Anotaciones.
 
-Presione Ctrl + Shift + B o seleccione la opción "Ver marcadores" del menú "Anotaciones". Se mostrará un diálogo con los marcadores agregados. Haciendo clic en cualquier elemento de la lista de marcadores le llevará a la posición de dicho marcador.
 
-Adicionalmente, puede presionar F2 para editar el título del marcador en cuestión, o puede hacer clic en el botón "eliminar", o presionar la tecla "Suprimir"  del teclado para eliminar el marcador seleccionado.
+#### Visualización de marcadores
 
-#### Tomar notas
+Vaya al menú Anotaciones y seleccione la opción «Ver marcadores». Aparecerá un cuadro de diálogo con los marcadores añadidos. Al hacer clic en cualquier elemento de la lista de marcadores, accederá inmediatamente a la posición de ese marcador. Alternativamente, para saltar rápidamente a través de los marcadores añadidos, puedes utilizar las teclas f2 y shift+f2, que irán directamente a la posición del cursor del marcador.
 
-Durante la lectura de un libro, puede presionar Ctrl + N o elegir  la opción "tomar nota" del menú "anotaciones" para proceder. Se agregará una nota en la posición actual del cursor. Se le pedirá que especifique un título y el contenido para la nota. Escriba el título deseado y el contenido y haga clic en el botón Aceptar. Se creará una nota en la ubicación actual.
 
-Cuando navegue a una página que contenga al menos una nota, se oirá un sonido indicando que existe una nota en esa página.
+#### Añadir comentarios
 
-#### Gestionando las notas
+Mientras lees un documento, puedes pulsar Ctrl+m (o seleccionar la opción de menú Añadir comentario) en el menú Anotaciones para añadir un comentario. Se te pedirá el contenido del comentario. Introduzca el contenido y haga clic en «Aceptar». El comentario se añadirá en la ubicación actual.
 
-Presione Ctrl + Shift + N o seleccione el elemento "Gestionar notas" del menú "Anotaciones". Se mostrará un diálogo con las notas agregadas. Haciendo clic en la lista de notas lo llevará inmediatamente a la posición de la nota. Eligiendo el botón "Ver" se abrirá un diálogo mostrando el título y el contenido de la nota seleccionada.
+Cuando vaya a una página que contenga al menos un comentario, oirá un pequeño sonido que le indicará que hay un comentario en la página actual.
 
-También puede hacer clic en el botón "Editar" para editar el título y el contenido de la nota, presionar F2 para cambiar el título de la nota en cuestión, o puede hacer clic en el botón "Eliminar", o presionar suprimir en el teclado.
 
-#### Exportando las notas
+#### Gestión de comentarios
 
-Bookworm le permite exportar sus notas a un archivo de texto plano o a un documento HTML, el cual podrá abrir en su explorador web. Bookworm también le permite opcionalmente exportar sus notas a markdown, que es un formato de texto base estructurado popular entre usuarios informáticos expertos.
+Seleccione la opción «Comentarios guardados» del menú «Anotaciones». Aparecerá un cuadro de diálogo con los comentarios añadidos. Si hace clic en cualquier elemento de la lista de comentarios, saltará inmediatamente a la posición de ese comentario. Al hacer clic en el botón «Ver» se abrirá un cuadro de diálogo que mostrará la etiqueta y el contenido del comentario seleccionado.
 
-Para exportar las notas, siga estos pasos:
+También puede hacer clic en el botón «Editar» para cambiar la etiqueta y el contenido del comentario seleccionado, pulsar F2 para editar la etiqueta del comentario seleccionado en su lugar, o puede pulsar la tecla Supr de su teclado o el atajo de teclado Alt+d para eliminar el comentario seleccionado.
 
-1. En el menú "Anotaciones" seleccione el elemento "exportador de notas"...
-2. Seleccione el rango de exportación. Esto indicará a Bookworm que desea exportar las notas ya sea de todo el libro o exportar las notas de la sección actual. 
-3. Seleccione el formato de salida. Esto determinará el formato del archivo conseguido tras la exportación. Exportando a texto plano le entregará un archivo de texto simple pero formateado, exportando a HTML obtendrá una página web y seleccionando markdown recibirá un documento markdown que es un formato de texto base estructurado popular entre usuarios informáticos expertos.
-4. Si necesita que Bookworm abra el archivo que contiene las notas exportadas, puede marcar la casilla "abrir archivo tras la exportación".
-5. Haga clic en Exportar. Se le pedirá que seleccione un nombre para el archivo exportado y una ubicación hacia la que se guardará. Haciendo clic en "guardar" se almacenará el archivo y se abrirá si le ha indicado a Bookworm tal acción.
+
+#### Exportar comentarios
+
+Bookworm le permite exportar sus comentarios a un archivo de texto plano o a un documento HTML, que puede abrirse en un navegador web. Opcionalmente, Bookworm le permite exportar sus comentarios a Markdown, que es un formato de texto para escribir documentos estructurados muy popular entre los usuarios avanzados de ordenadores.
+
+Para exportar comentarios, siga estos pasos:
+
+1. En el menú de anotaciones, navegue hasta Comentarios guardados;
+2. Busque «Exportar» y pulse Intro. También puede utilizar la combinación de teclas Alt+x para abrir el menú de exportación;
+
+A continuación, tiene las siguientes opciones, puede desmarcar o dejar marcada cualquier opción que desee:
+
+* Incluir título del libro - esta opción le permite incluir el título del libro en el archivo de salida final cuando exporta comentarios;
+* Incluir título de sección - opción que se utiliza para incluir el título de la sección en la que se deja el comentario;
+* Incluir número de página - esta opción se utiliza para incluir los números de las páginas en las que se hizo el comentario;
+* Incluir etiquetas - esta opción se utiliza para incluir o no las etiquetas del comentario que se hicieron durante la anotación.
+
+Después de especificar la opción correcta según sus necesidades, debe seleccionar el formato de salida del archivo, de los que actualmente hay tres: formato de texto sin formato, Html y Markdown.
+Una vez seleccionado el formato deseado, aparece un área de texto de sólo lectura denominada «Archivo de salida» y vacía por defecto. Debe hacer clic en el botón Examinar o, alternativamente, utilizar alt+b para abrir una ventana del explorador y especificar el nombre de archivo y la carpeta donde se guardará el archivo de salida.
+Al especificar un nombre de archivo y una carpeta de archivo, hay una casilla de verificación «Abrir archivo después de exportar» que permite a Bookworm abrir automáticamente el archivo de salida después de guardarlo. Desactive esta casilla si no desea abrir automáticamente el archivo guardado y haga clic en Aceptar. El archivo se guardará en la carpeta especificada y podrá abrirlo con Bookworm o con cualquier otro editor de texto, como «Bloc de notas».
 
 
 ### Lectura en voz alta
 
-Bookworm soporta leer el contenido del libro abierto utilizando una voz TTS. Solamente presione F5 para iniciar la voz, , F6 para pausar o reanudar y F7 para detenerla por completo.
+Bookworm permite leer en voz alta el contenido del documento abierto utilizando una voz de texto a voz instalada. Basta con pulsar F5 para iniciar la reproducción, F6 para pausarla o reanudarla y F7 para detenerla por completo.
 
-Usted puede configurar la voz de dos maneras:
-1. Usando un perfil de voz: un perfil de voz contiene sus ajustes personalizados del habla, que puede ser activado o desactivado en cualquier momento. Puede acceder a los perfiles de voz desde el menú voz o presionando Ctrl + Shift + V. Nótese que Bookworm ofrece algunos perfiles preestablecidos.
-2. Mediante los ajustes globales TTS: estos ajustes se usarán de forma predeterminada si no hay un perfil de voz activo. Usted puede configurar los ajustes globales de voz desde las preferencias de la aplicación.
+Puede configurar el habla de dos maneras:
+1. Utilizando un perfil de voz: Un perfil de voz contiene sus configuraciones de habla personalizadas, puede activar/desactivar el perfil de voz en cualquier momento. Puede acceder a los perfiles de voz desde el menú de voz o pulsando Ctrl + Mayús + V. Tenga en cuenta que Bookworm viene con algunos perfiles de voz incorporados ejemplares.
+2. Los ajustes globales de voz: estos ajustes se utilizarán por defecto cuando no haya ningún perfil de voz activo. Puede configurar los ajustes globales de voz desde las preferencias de la aplicación. 
 
-Durante la lectura, usted puede moverse hacia adelante y atrás por párrafo presionando Alt más las flechas izquierda y derecha.
+Durante la lectura en voz alta, puedes saltar hacia atrás o hacia delante por párrafos pulsando Alt más las teclas de flecha izquierda y derecha.
 
 
-### Configurando el estilo de lectura
+### Configuración del estilo de lectura
 
-Además de los ajustes de voz, Bookworm le dal a posibilidad de modificar su comportamiento al leer mediante estas configuraciones. Todos los ajustes siguientes se encuentran en la página "Lectura" desde las preferencias de la aplicación.
+Además de los ajustes de voz, Bookworm te da la posibilidad de ajustar su comportamiento de lectura a través de estos ajustes. Todos los ajustes siguientes se pueden encontrar en la página de lectura de las preferencias de la aplicación.
 
-* Al reproducir: Esta opción controla lo que sucede al indicarle a Bookworm que reproduzca el libro actual. Puede elegir entre  "Leer todo el libro", "Leer la sección actual" o leer sólo "La página actual". De forma predeterminada, Bookworm lee todo el libro continuamente, a menos que se le ordene detenerse cuando se alcance el final de la página o de la sección.
-* Empezar a leer desde: Esta opción controla la posición desde la que se inicia la lectura en voz alta. Usted puede elegir entre empezar a leer desde la posición del cursor o de la página actual.
-* Durante la lectura: el siguiente conjunto de opciones controla cómo se comporta Bookworm mientras se lee en voz alta. Puede activar o desactivar cualquiera de las opciones siguientes marcando o desmarcando las casillas correspondientes:
+* Al pulsar Reproducir: Esta configuración determina lo que sucede cuando le dices a Bookworm que «Reproduzca» el documento actual. Puede seleccionar «Leer todo el documento», «Leer la sección actual» o leer sólo la «página actual». Por defecto, Bookworm lee continuamente todo el documento a menos que le digas que se detenga cuando llegue al final de la página o al final de la sección actual.
+* Empezar a leer desde: esta opción determina la posición desde la que empezar a leer en voz alta. Puedes empezar a leer desde la «Posición del cursor» o desde el «Inicio de la página actual».
+* Durante la lectura en voz alta: este conjunto de opciones controla cómo se comporta Bookworm durante la lectura en voz alta. Puede activar/desactivar cualquiera de las siguientes opciones marcando/desmarcando su respectiva casilla:
 
-* Resaltar texto leído: Si esta opción está activada, el texto que se lee será visualmente resaltado
-* Seleccionar texto leído: si esta opción está activada, el texto leído será seleccionado. Por ejemplo, esto le permite presionar CTRL+C para copiar el párrafo leído actualmente.
-* Reproducir sonido para fin de sección: Si esta opción está activada, Bookworm reproduce un sonido cuando se alcance el final de sección.
+* Pronunciar el número de página: el texto a voz pronunciará cada página a medida que navegue hasta ella;
+* Anunciar el final de las secciones: cuando termine una sección, la voz le avisará;
+* Pedir que se cambie a una voz que hable el idioma del libro actual - esta opción determinará si Bookworm avisará o no de una voz incompatible, lo que ocurre por defecto cuando la voz del idioma de texto-a-voz seleccionado difiere del idioma del documento abierto;
+* Resaltar texto hablado: si esta opción está activada, el texto hablado en ese momento se resalta visualmente.
+* Seleccionar texto hablado: si esta opción está activada, se selecciona el texto hablado en ese momento. Esto le permite, por ejemplo, pulsar Ctrl + C para copiar el párrafo hablado en ese momento.
 
 
 ### Modo de lectura continua
 
-Además de las funciones incluidas de Texto a voz en Bookworm, puede aprovechar la función lectura continua de lector de pantalla (también conocida como "Verbalizar todo"). Bookworm ofrece soporte para esta característica mediante el "modo de lectura continua". De forma predeterminada este modo está activo y puede desactivarse en la pestaña Lectura en las preferencias de la aplicación. Mientras que el modo de lectura continua esté en uso, se irán pasando las páginas en cuanto el lector de pantalla progrese en el libro.
+Además de las funciones incorporadas de texto a voz de Bookworm, puede aprovechar la funcionalidad de lectura continua de su lector de pantalla (también conocida como «decirlo todo»). Bookworm proporciona soporte para esta funcionalidad a través de su «modo de lectura continua». Este modo está activo por defecto, y puedes desactivarlo desde la página de lectura de las preferencias de la aplicación. Mientras el modo de lectura continua está activo, las páginas se pasan automáticamente a medida que el lector de pantalla avanza por el documento.
 
-Nótese que debido a la forma en que este modo se ha implementado, deben tenerse en cuenta las siguientes limitaciones:
+Tenga en cuenta que, debido a la forma en que esta función está implementada actualmente, cabe esperar las siguientes limitaciones:
 
-* La lectura continua se interrumpirá si se llega a una página en blanco. Si este es el caso, simplemente navegue a una página que no esté en blanco y reactive la lectura continua del lector de pantalla desde allí.
-* Si se mueve el cursor al último carácter en la página, se cambiará de inmediato a la página siguiente.
-
-
-
-### Ver una versión renderizada de la página actual
-
-Bookworm le permite ver una versión renderizada completa del libro. Mientras el libro esté abierto, puede presionar Ctrl + R o seleccionar la opción "Renderizar página" en el menú Herramientas. Le llamamos "vista renderizada" en contraste con la vista textual predeterminada.
-
-Cuando esté en la vista renderizada, puede utilizar los comandos estándar para acercar o alejar la página:
-
-* Ctrl + = Aumentar el zoom
-* Ctrl + - Disminuir el zoom
-* Ctrl + 0 Restablecer el nivel de zoom
-
-Cabe mencionar que también puede usar los comandos de navegación del libro citados anteriormente  para desplazarse por la vista renderizada. También puede presionar Escape para cerrar esta vista y regresar a la ventana textual por defecto.
+* La lectura continua se interrumpirá si se llega a una página vacía. Si llega a una página vacía, simplemente navegue a una página que no esté vacía y reactive la funcionalidad de lectura continua de su lector de pantalla desde allí.
+* Si mueve el cursor hasta el último carácter de la página, pasará inmediatamente a la página siguiente.
 
 
-Navegando a una página específica
+### Ver una versión completamente renderizada de la página actual
 
-Para navegar a una página de su elección en el libro actualmente abierto, Presione Ctrl + G o seleccione la opción "Ir a..." desde el menú herramientas para mostrar este diálogo. Aquí puede escribir el número de cualquier página hacia donde quiera moverse y Bookworm lellevará a ella. Nótese que este diálogo le indicará el número total de páginas disponibles en el libro.
+Bookworm le permite ver una versión completamente renderizada del documento. Mientras el documento está abierto, puede pulsar Ctrl + R o seleccionar la opción «Renderizar página» del menú del documento. Llamamos a esta vista «Vista de renderizado», en contraposición a la vista textual por defecto.
+
+Cuando esté en la vista de renderizado, puede utilizar los comandos de zoom habituales para acercar o alejar la página:
+
+* Ctrl + = acercar 
+* Ctrl + - alejar
+* Ctrl + 0 restablecer el nivel de zoom
+
+Tenga en cuenta que también puede utilizar los comandos de navegación del documento, mencionados anteriormente, para navegar por la vista de renderizado. También puedes pulsar la tecla escape para descartar esta vista y volver a la vista textual por defecto.
+
+
+### Navegar a una página específica
+
+Para navegar a una página específica en el documento actualmente abierto, pulse Ctrl + G, o seleccione la opción «Ir a la página...» del menú de búsqueda para mostrar el diálogo «Ir a la página». En este diálogo puede escribir el número de cualquier página a la que desee navegar, y Bookworm le llevará a ella. Tenga en cuenta que este diálogo le indicará el número total de páginas encontradas en el documento actual.
 
  
-### Buscando en el libro
+### Búsqueda en el documento
 
-Para buscar un término específico o una porción de texto en el libro actualmente abierto, puede presionar Ctrl + F para mostrar el diálogo "buscar en el libro". Este diálogo le permite escribir el texto que desee buscar así como configurar el proceso de búsqueda. Las siguientes opciones están disponibles:
+Para encontrar un término específico, o un fragmento de texto en el documento actualmente abierto, puede pulsar Ctrl + F para abrir el «Diálogo de búsqueda en el documento». Este diálogo le permite escribir el texto que desea buscar y configurar el proceso de búsqueda. Dispone de las siguientes opciones:
 
-* Sensible a las mayúsculas: La búsqueda tendrá en cuenta las mayúsculas o minúsculas en el término de búsqueda.
-* Buscar palabras completas: el término de búsqueda debe encontrarse como una palabra entera, p. ej. no como parte de otra existente.
-* Rango de búsqueda: Esto le permite limitar la búsqueda a ciertas páginas o a una sección específica.
+* Sensible a mayúsculas y minúsculas: La búsqueda tendrá en cuenta las mayúsculas y minúsculas del término buscado.
+* Buscar sólo palabra completa: El término buscado debe encontrarse como palabra completa, es decir, no como parte de otra palabra.
+* Rango de búsqueda: Permite limitar la búsqueda a determinadas páginas o a una sección específica.
 
-Tras hacer clic en Aceptar en el "diálogo buscar", aparecerá un segundo diálogo con los resultados de la búsqueda. Haciendo clic en cualquier elemento en la lista de resultados lo llevará a la posición correspondiente con el término de búsqueda resaltado para usted.
+Tras pulsar el botón OK en el «Diálogo del documento de búsqueda», se mostrará otro diálogo con los resultados de la búsqueda. Si hace clic en cualquier elemento de la lista de resultados de la búsqueda, irá inmediatamente a la posición de ese resultado con el término de búsqueda resaltado para usted.
 
-Nótese que si ya ha cerrado la ventana con la lista de resultados, puede presionar F3 y Shift+F3 para moverse a la aparición anterior y siguiente de la última búsqueda, respectivamente.
-
-
-## Gestionando asociaciones de archivo
-
-el botón "Administrar asociaciones" que se encuentra en la página general en las preferencias de la aplicación le ayuda a administrar qué tipos de archivo están asociados con Bookworm. Asociar archivos con Bookworm significa que cuando abra un archivo en el explorador de Windows, ese archivo será abierto por Bookworm por defecto. Nótese que este diálogo siempre se muestra al usuario tras la primera ejecución.
-
-Una vez que inicie el gestor de asociaciones de archivo, contará con las siguientes opciones:
-
-* Asociar todo: esto modifica los ajustes de tal forma que si Bookworm soporta un archivo, Windows lo utilizará para abrir el archivo.
-* Desasociar todos los tipos de archivos soportados: esto eliminará las asociaciones de archivo anteriormente guardadas.
-* Botones individuales para cada tipo de archivo soportado: haciendo clic en cualquier botón de ellos, se asociará su respectivo tipo de archivo con Bookworm.
+Tenga en cuenta que si ha cerrado la ventana de resultados de búsqueda, puede pulsar F3 y Mayúsculas + F3 para desplazarse a la aparición siguiente y anterior de la última búsqueda, respectivamente.
 
 
-Actualizando Bookworm
+## Gestionar Asociaciones de Archivos
 
-De forma predeterminada, Bookworm comprueba si hay nuevas versiones al iniciarse. Esto asegura que usted consiga lo último y lo mejor de Bookworm lo más pronto posible. Usted puede desactivar este comportamiento desde las preferencias de la aplicación. También puede hacer esto manualmente seleccionando el elemento "Comprovar actualizaciones" en el menú "Ayuda".
+El botón administrar asociaciones de archivos», que se encuentra en la página general de las preferencias de la aplicación, le ayuda a gestionar qué tipos de archivos están asociados con Bookworm. Asociar archivos con Bookworm significa que cuando pulses sobre un archivo en el explorador de Windows, ese archivo se abrirá en Bookworm por defecto. Tenga en cuenta que este cuadro de diálogo siempre se muestra al usuario la primera vez que inicia el programa y sólo está disponible cuando se utiliza el instalador, en la versión portable esta opción no es necesaria, respectivamente, en la versión portable, la capacidad de asociar archivos está desactivada y se requieren algunos trucos si aún desea que Bookworm abra cualquier documento soportado por defecto.
 
-De cualquier forma, si se encuentra una nueva versión, Bookworm le preguntará si desea instalarla. Si selecciona "Sí", la aplicación proseguirá y descargará el paquete de actualización, mostrando un diálogo indicando el proceso de descarga. Después de que haya finalizado, Bookworm le alertará con un mensaje indicando que la aplicación debe reiniciarse para actualizarse.
+Una vez que lances el administrador de asociaciones de archivos, tendrás las siguientes opciones:
+
+* Asociar todos: cambia la configuración de modo que si un archivo es compatible con Bookworm, Windows lo abrirá con Bookworm. 
+* Desasociar todos los tipos de archivos compatibles: esto eliminará las asociaciones de archivos registradas previamente.
+* Botones individuales para cada tipo de archivo soportado: al hacer clic en cualquiera de ellos se asociará su respectivo tipo de archivo con Bookworm.
 
 
-## Reportando problemas / dificultades
+## Actualizar Bookworm
 
-Como desarrolladores ciegos, nuestra responsabilidad es desarrollar aplicaciones que brinden independencia para nosotros y nuestros compañeros ciegos por todo el mundo. Por lo tanto, si ha encontrado útil Bookworm de alguna forma, por favor ayúdenos en mejorar Bookworm para usted y los demás. En esta etapa inicial, queremos que nos haga saber sobre cualquier error que encuentre al usar Bookworm. Para ello, abra un nuevo asunto con detalles del error en [el Rastreador de problemas](https://github.com/mush42/bookworm/issues/). Muchas gracias por su ayuda.
+Por defecto, Bookworm busca nuevas versiones al iniciarse. Esto asegura que obtengas la última y mejor versión de Bookworm lo antes posible. Puedes desactivar este comportamiento por defecto desde las preferencias de la aplicación.   También puedes buscar actualizaciones manualmente haciendo clic en la opción «comprobar actualizaciones» del menú «Ayuda».
 
-Antes de  enviar un nuevo problema, asegúrese de haber ejecutado Bookworm en modo de depuración. Para activarlo, vaya al menú "Ayuda" y haga clic en iniciar en modo de depuración activado e intente reproducir dicho problema. En la mayoría de los casos, cuando se produzca el error de nuevo con este modo activo, se mostrará un diálogo con los detalles del error. Así podrá copiar esta información e incluirla con el reporte del fallo.
+En cualquier caso, cuando se encuentre una nueva versión, Bookworm le preguntará si desea instalarla. Si haces clic en «Sí», la aplicación descargará el paquete de actualización y mostrará un cuadro de diálogo indicando el progreso de la descarga. Una vez descargada la actualización, Bookworm te avisará con un mensaje, indicándote que reiniciará la aplicación para actualizar. Haz clic en «Aceptar» para completar el proceso de actualización.
 
-Note que algunos fallos pueden ser difíciles de reproducir ya que desaparecen al reiniciar el programa. En este caso, es válido reportar el error con el modo de depuración activado. Sólo asegúrese de incluir cuanta más información le sea posible particularmente de su sistema y el escenario de uso.
+
+## Notificación de problemas
+
+Como desarrolladores ciegos, nuestra responsabilidad es desarrollar aplicaciones que nos proporcionen independencia a nosotros y a nuestros amigos ciegos de todo el mundo. Así que, si has encontrado Bookworm útil de alguna manera, por favor ayúdanos a hacer Bookworm mejor para ti y para los demás. En esta fase inicial, queremos que nos comentes cualquier error que encuentres durante el uso de Bookworm. Para ello, abre una nueva incidencia con los detalles del error en [el gestor de incidencias](https://github.com/blindpandas/bookworm/issues/). Agradecemos enormemente tu ayuda.
+
+Antes de enviar una nueva incidencia, asegúrate de que has ejecutado Bookworm en modo depuración. Para activar el modo de depuración, vaya al menú «Ayuda» y haga clic en «Reiniciar con el modo de depuración habilitado» e intente reproducir el problema con el modo de depuración activado. En la mayoría de los casos, cuando el error vuelva a producirse con el modo de depuración activado, se mostrará un cuadro de diálogo con los detalles de dicho error. A continuación, puede copiar esta información e incluirla en su informe del problema.
+
+Tenga en cuenta que algunos problemas pueden ser difíciles de reproducir, desaparecen cuando reinicia el programa. En este caso, está bien informar del problema sin la información detallada del modo de depuración. Sólo asegúrese de incluir tanta información como sea posible acerca de las particularidades de su sistema y escenario de uso.
 
 
 ## Noticias y actualizaciones
 
-Para mantenerse al tanto con las últimas noticias de Bookworm, puede visitar el sitio web de Bookworm (en inglés): [mush42.github.io/bookworm](https://mush42.github.io/bookworm/). También puede seguir al desarrollador principal, Musharraf Omer, como [@mush42](https://twitter.com/mush42/) en Twitter.
+Para mantenerte al día con las últimas noticias sobre Bookworm, puedes visitar el sitio web de Bookworm en: [github.com/blindpandas/bookworm](https://github.com/blindpandas/bookworm/). También puedes seguir al desarrollador principal, Musharraf Omer, en [@mush42](https://twitter.com/mush42/) en Twitter.
 
 
 ## Licencia
 
-**Bookworm** es copyright (c) 2019 Musharraf Omer y ayudantes de Bookworm. Bajo la [Licencia MIT License](https://github.com/mush42/bookworm/blob/master/LICENSE).
+**Bookworm** es copyright (c) 2019-2023 Musharraf Omer y Bookworm Contributors. Está licenciado bajo la [Licencia MIT](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
