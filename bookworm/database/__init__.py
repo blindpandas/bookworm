@@ -30,7 +30,7 @@ def get_db_url() -> str:
 def init_database(engine = None, url: str = None) -> bool:
     if not url:
         url = get_db_url()
-    if not engine:
+    if engine == None:
         engine = create_engine(get_db_url())
     log.debug(f"Using url {url} ")
     with engine.connect() as conn:

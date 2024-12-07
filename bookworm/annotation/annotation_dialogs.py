@@ -576,7 +576,11 @@ class CommentsDialog(AnnotationWithContentDialog):
     def go_to_item(self, item):
         super().go_to_item(item)
         self.service.view.set_insertion_point(item.position)
-
+        start_pos, end_pos = (item.start_pos, item.end_pos)
+        if (start_pos, end_pos) != (None, None):
+            # We have a selection, let's select the text
+            self.service.view.contentTextCtrl.SetSelection(start_pos, end_pos)
+        
 
 class QuotesDialog(AnnotationWithContentDialog):
     def go_to_item(self, item):
