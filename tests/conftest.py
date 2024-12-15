@@ -2,7 +2,10 @@ from pathlib import Path
 
 import pytest
 
+from bookworm.config import setup_config
+from bookworm.database import init_database
 from bookworm.document.elements import Section
+from bookworm.reader import EBookReader
 
 @pytest.fixture(scope="function", autouse=True)
 def asset():
@@ -53,3 +56,20 @@ class DummyView:
 
     def show_html_dialog(self, markup: str, title: str) -> None:
         pass
+
+@pytest.fixture()
+def text_ctrl():
+    yield DummyTextCtrl()
+
+@pytest.fixture
+def view(text_ctrl):
+    v = DummyView()
+    v.contentTextCtrl = text_ctrl
+    yield v
+
+@pytest.fixture()
+def reader(view):
+    setup_config()
+    init_database(url="sqlite:///memory")
+    reader = EBookReader(view)
+    yield reader
