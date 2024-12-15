@@ -70,6 +70,8 @@ def view(text_ctrl):
 @pytest.fixture()
 def reader(view):
     setup_config()
-    init_database(url="sqlite:///memory")
+    engine = init_database(url="sqlite:///test.db")
     reader = EBookReader(view)
     yield reader
+    engine.dispose()
+    Path("test.db").unlink()
