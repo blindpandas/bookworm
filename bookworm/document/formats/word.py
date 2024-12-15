@@ -19,6 +19,7 @@ from selectolax.parser import HTMLParser
 
 from bookworm import app
 from bookworm.concurrency import process_worker, threaded_worker
+from bookworm.document import cache_utils
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
 from bookworm.paths import app_path, home_data_path
@@ -85,17 +86,19 @@ class WordDocument(BaseHtmlDocument):
 
     def _get_html_content_from_docx(self, data_buf, is_encrypted_document):
         data_buf.seek(0)
+        doc_path = self.get_file_system_path
         cache = Cache(
             self._get_cache_directory(), eviction_policy="least-frequently-used"
         )
         cache_key = self.uri.to_uri_string()
-        if cached_html_content := cache.get(cache_key):
+        if (cached_html_content := cache.get(cache_key)) and not cache_utils.is_document_modified(cache_key, doc_path, cache):
             return cached_html_content.decode("utf-8")
         result = mammoth.convert_to_html(data_buf, include_embedded_style_map=False)
         data_buf.seek(0)
         html_content = self.make_proper_html(result.value, data_buf)
         if not is_encrypted_document:
             cache.set(cache_key, html_content.encode("utf-8"))
+            cache_utils.set_document_modified_time(cache_key, doc_path, cache)
         return html_content
 
     def make_proper_html(self, html_string, data_buf):

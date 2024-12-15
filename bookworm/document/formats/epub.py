@@ -21,6 +21,7 @@ from diskcache import Cache
 from lxml import html as lxml_html
 from selectolax.parser import HTMLParser
 
+from bookworm.document import cache_utils
 from bookworm.i18n import LocaleInfo
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
@@ -190,7 +191,7 @@ class EpubDocument(SinglePageDocument):
         # As reported in issue 243
         # We will now sort the items obtained earlier based on the position that the chapter itself occupies in the TOC
         spine = [x[0].split('/')[-1] for x in self.epub.spine]
-        log.info(spine)
+        log.debug(spine)
         try:
             items = sorted(items, key=lambda x: spine.index(x.id))
         except ValueError:
@@ -310,7 +311,8 @@ class EpubDocument(SinglePageDocument):
             self._get_cache_directory(), eviction_policy="least-frequently-used"
         )
         cache_key = self.uri.to_uri_string()
-        if cached_html_content := cache.get(cache_key):
+        document_path = self.get_file_system_path()
+        if (cached_html_content := cache.get(cache_key)) and not cache_utils.is_document_modified(cache_key, document_path, cache):
             return cached_html_content.decode("utf-8")
         html_content_gen = (
             (item.file_name, item.content) for item in self.epub_html_items
@@ -323,6 +325,7 @@ class EpubDocument(SinglePageDocument):
             title=self.epub.title, body_content=buf.getvalue()
         )
         cache.set(cache_key, html_content.encode("utf-8"))
+        cache_utils.set_document_modified_time(cache_key, document_path, cache)
         return html_content
 
     def prefix_html_ids(self, filename, html):
