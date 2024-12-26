@@ -170,11 +170,16 @@ class AnnotationService(BookwormService):
                 speech.announce(no_annotation_msg)
                 sounds.invalid.play()
                 return
-            self.reader.go_to_page(comment.page_number, comment.position)
-            self.view.select_text(*self.view.get_containing_line(comment.position))
+            start_pos, end_pos = (comment.start_pos, comment.end_pos)
+            is_whole_line = (start_pos, end_pos) == (None, None)
+            self.reader.go_to_page(comment.page_number, comment.position if is_whole_line else end_pos)
+            if is_whole_line:
+                self.view.select_text(*self.view.get_containing_line(comment.position))
+            else:
+                self.view.select_text(start_pos, end_pos)
             reading_position_change.send(
                 self.view,
-                position=comment.position,
+                position=comment.position if is_whole_line else end_pos,
                 # Translators: spoken message when jumping to a comment
                 text_to_announce=_("Comment: {comment}").format(
                     comment=comment.content
@@ -277,7 +282,9 @@ class AnnotationService(BookwormService):
                 annotator_cls.__name__, annotator_cls(self.reader)
             )
         page_number = self.reader.current_page
-        start, end = self.view.get_containing_line(self.view.get_insertion_point())
+        # start, end = self.view.get_containing_line(self.view.get_insertion_point())
+        start = self.view.get_insertion_point()
+        end = start
         if foreword:
             annot = annotator.get_first_after(page_number, end)
         else:
@@ -293,7 +300,9 @@ class AnnotationService(BookwormService):
 
     @classmethod
     def comments_page_handler(cls, sender, current, prev):
-        comments = NoteTaker(sender).get_for_page()
+        comments = NoteTaker(sender)
+        # comments.update_ranges(current)
+        comments = comments.get_for_page()
         if comments.count():
             if config.conf["annotation"][
                 "audable_indication_of_annotations_when_navigating_text"

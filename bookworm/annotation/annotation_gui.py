@@ -15,7 +15,7 @@ from .annotation_dialogs import (
     GenericAnnotationWithContentDialog,
     QuotesDialog,
 )
-from .annotator import Bookmarker, NoteTaker, Quoter
+from .annotator import Bookmarker, NoteTaker, Quoter, AnnotationOverlapsError
 
 log = logger.getChild(__name__)
 
@@ -226,9 +226,18 @@ class AnnotationMenu(wx.Menu):
         )
         if not comment_text:
             return
-        note = comments.create(
-            title="", content=comment_text, position=insertionPoint, start_pos=start_pos, end_pos=end_pos
-        )
+        note = None
+        try:
+            note = comments.create(
+                title="", content=comment_text, position=insertionPoint, start_pos=start_pos, end_pos=end_pos
+            )
+        except AnnotationOverlapsError:
+            return self.view.notify_user(
+                _("Error"),
+                # Translator: Message obtained whenever another note is overlapping the selected position
+                _("Another note is currently overlapping the selected position.")
+            )
+
         self.service.style_comment(self.view, insertionPoint)
         if _with_tags:
             # add tags
