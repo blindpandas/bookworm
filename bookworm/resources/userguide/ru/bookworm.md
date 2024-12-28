@@ -216,4 +216,4 @@ Bookworm позволяет просматривать полностью обр
 
 ## Лицензия
 
-**Bookworm** является авторским правом (c) 2019-2023 Musharraf Omer и Bookworm Contributors. Он распространяется под лицензией [MIT License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
+**Bookworm** является авторским правом (c) 2019-2024 Musharraf Omer и Bookworm Contributors. Он распространяется под лицензией [MIT License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
