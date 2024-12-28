@@ -22,6 +22,7 @@ log = logger.getChild(__name__)
 
 class DocumentUriDBType(types.TypeDecorator):
     """Provides sqlalchemy custom type for the DocumentUri."""
+    cache_ok = True
 
     impl = types.Unicode
 

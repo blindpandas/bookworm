@@ -1,11 +1,19 @@
+import atexit
+import os
 from pathlib import Path
+import tempfile
+import time
 
 import pytest
+from sqlalchemy.orm import close_all_sessions
+from sqlalchemy.pool import NullPool
 
 from bookworm.config import setup_config
 from bookworm.database import init_database
+from bookworm.database.models import Base
 from bookworm.document.elements import Section
 from bookworm.reader import EBookReader
+
 
 @pytest.fixture(scope="function", autouse=True)
 def asset():
@@ -68,10 +76,18 @@ def view(text_ctrl):
     yield v
 
 @pytest.fixture()
-def reader(view):
+def engine(tmp_path):
+    temp_file =  tmp_path / "test.db"
+    engine = init_database(
+        url=f"sqlite:///{temp_file}",
+        poolclass = NullPool
+    )
+    yield engine
+    close_all_sessions()
+    engine.dispose()
+
+@pytest.fixture()
+def reader(view, engine):
     setup_config()
-    engine = init_database(url="sqlite:///test.db")
     reader = EBookReader(view)
     yield reader
-    engine.dispose()
-    Path("test.db").unlink()
