@@ -42,7 +42,7 @@ Pillow==10.3.0
 platform-utils==1.5.1
 pydantic==2.4.0
 pymediawiki==0.7.4
-PyMuPDF==1.24.3
+PyMuPDF==1.25.1
 python-dateutil==2.8.2
 python-docx==1.1.2
 python-pptx==0.6.21
