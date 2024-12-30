@@ -212,31 +212,24 @@ class AnnotationMenu(wx.Menu):
             # We have to set end_pos to end_pos-1 to avoid selecting an extra character
             end_pos -= 1
         comments = NoteTaker(self.reader)
-        # We check if there is already a comment that precisely overlaps with the selection
-        # If it exists, we edit it directly
-        comment = comments.get_for_selection(start_pos, end_pos)
-        value = comment.content if comment else ""
+        if comments.overlaps(start_pos, end_pos, self.reader.current_page, insertionPoint):
+            return self.view.notify_user(
+                _("Error"),
+                # Translator: Message obtained whenever another note is overlapping the selected position
+                _("Another note is currently overlapping the selected position.")
+            )
         comment_text = self.view.get_text_from_user(
             # Translators: the title of a dialog to add a comment
             _("New Comment"),
             # Translators: the label of an edit field to enter a comment
             _("Comment:"),
             style=wx.OK | wx.CANCEL | wx.TE_MULTILINE | wx.CENTER,
-            value=value,
         )
         if not comment_text:
             return
-        note = None
-        try:
-            note = comments.create(
-                title="", content=comment_text, position=insertionPoint, start_pos=start_pos, end_pos=end_pos
-            )
-        except AnnotationOverlapsError:
-            return self.view.notify_user(
-                _("Error"),
-                # Translator: Message obtained whenever another note is overlapping the selected position
-                _("Another note is currently overlapping the selected position.")
-            )
+        note = comments.create(
+            title="", content=comment_text, position=insertionPoint, start_pos=start_pos, end_pos=end_pos
+        )
 
         self.service.style_comment(self.view, insertionPoint)
         if _with_tags:

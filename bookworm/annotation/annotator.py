@@ -2,6 +2,7 @@
 
 from dataclasses import astuple, dataclass
 from enum import IntEnum, auto
+from typing import Optional
 
 import sqlalchemy as sa
 
@@ -11,12 +12,6 @@ from bookworm.logger import logger
 
 log = logger.getChild(__name__)
 # The bakery caches query objects to avoid recompiling them into strings in every call
-
-class AnnotationOverlapsError(Exception):
-    pass
-
-class QuoteOverlapsError(Exception):
-    pass
 
 @dataclass
 class AnnotationFilterCriteria:
@@ -243,11 +238,13 @@ class TaggedAnnotator(Annotator):
 class PositionedAnnotator(TaggedAnnotator):
     """Annotations which are positioned on a specific text range"""
 
-    def create(self, **kwargs):
-        start = kwargs.get('start_pos')
-        end = kwargs.get('end_pos')
-        page_number = kwargs.get('page_number', 0)
-        position = kwargs.get('position', 0)
+    def overlaps(self, start: Optional[int], end: Optional[int], page_number: int, position: int) -> bool:
+        """
+        Determines whether an annotation overlaps with  a given position
+        The criterias used to check for the position are the following:
+        - If a selection is present, represented by start and end, then it is checked
+        - If no selection is present the insertion point is used to determine if the annotation overlaps
+        """
         model = self.model
         clauses = [
             sa.and_(
@@ -275,12 +272,10 @@ class PositionedAnnotator(TaggedAnnotator):
                         model.end_pos >= position,
                     )
                 )
-
             )
         ]
-        if self.session.query(model).filter_by(book_id = self.current_book.id).filter(sa.or_(*clauses)).one_or_none():
-            raise AnnotationOverlapsError
-        return super().create(**kwargs)
+        return self.session.query(model).filter_by(book_id = self.current_book.id).filter(sa.or_(*clauses)).one_or_none() is not None
+
 
 class NoteTaker(PositionedAnnotator):
     """Comments."""
