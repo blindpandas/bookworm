@@ -1,7 +1,6 @@
 import pytest
 
 from bookworm.annotation import NoteTaker
-from bookworm.annotation.annotator import AnnotationOverlapsError
 from bookworm.database.models import * 
 from bookworm.document.uri import DocumentUri
 
