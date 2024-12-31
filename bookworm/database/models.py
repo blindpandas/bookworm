@@ -22,6 +22,7 @@ log = logger.getChild(__name__)
 
 class DocumentUriDBType(types.TypeDecorator):
     """Provides sqlalchemy custom type for the DocumentUri."""
+    cache_ok = True
 
     impl = types.Unicode
 
@@ -264,7 +265,11 @@ class TaggedContent(AnnotationBase, TaggedMixin):
 class Note(TaggedContent):
     """Represents user comments (notes)."""
     __tablename__ = "note"
-
+    # Like Quote, a note can have a start and an end position
+    # difference is that they are allowed to be None, and if so, it means they are targeting the whole line
+    start_pos = sa.Column(sa.Integer, default = None)
+    end_pos = sa.Column(sa.Integer, default = None)
+    
 
 class Quote(TaggedContent):
     """Represents a highlight (quote) from the book."""

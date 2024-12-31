@@ -203,6 +203,21 @@ class AnnotationMenu(wx.Menu):
     def onAddNote(self, event):
         _with_tags = wx.GetKeyState(wx.WXK_SHIFT)
         insertionPoint = self.view.contentTextCtrl.GetInsertionPoint()
+        start_pos, end_pos = self.view.contentTextCtrl.GetSelection()
+        # if start_pos and end_pos are equal, there is no selection
+        # see: https://docs.wxpython.org/wx.TextEntry.html#wx.TextEntry.GetSelection
+        if start_pos == end_pos:
+            start_pos, end_pos = (None, None)
+        else:
+            # We have to set end_pos to end_pos-1 to avoid selecting an extra character
+            end_pos -= 1
+        comments = NoteTaker(self.reader)
+        if comments.overlaps(start_pos, end_pos, self.reader.current_page, insertionPoint):
+            return self.view.notify_user(
+                _("Error"),
+                # Translator: Message obtained whenever another note is overlapping the selected position
+                _("Another note is currently overlapping the selected position.")
+            )
         comment_text = self.view.get_text_from_user(
             # Translators: the title of a dialog to add a comment
             _("New Comment"),
@@ -212,9 +227,10 @@ class AnnotationMenu(wx.Menu):
         )
         if not comment_text:
             return
-        note = NoteTaker(self.reader).create(
-            title="", content=comment_text, position=insertionPoint
+        note = comments.create(
+            title="", content=comment_text, position=insertionPoint, start_pos=start_pos, end_pos=end_pos
         )
+
         self.service.style_comment(self.view, insertionPoint)
         if _with_tags:
             # add tags

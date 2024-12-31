@@ -170,11 +170,16 @@ class AnnotationService(BookwormService):
                 speech.announce(no_annotation_msg)
                 sounds.invalid.play()
                 return
-            self.reader.go_to_page(comment.page_number, comment.position)
-            self.view.select_text(*self.view.get_containing_line(comment.position))
+            start_pos, end_pos = (comment.start_pos, comment.end_pos)
+            is_whole_line = (start_pos, end_pos) == (None, None)
+            self.reader.go_to_page(comment.page_number, comment.position if is_whole_line else end_pos)
+            if is_whole_line:
+                self.view.select_text(*self.view.get_containing_line(comment.position))
+            else:
+                self.view.select_text(start_pos, end_pos)
             reading_position_change.send(
                 self.view,
-                position=comment.position,
+                position=comment.position if is_whole_line else end_pos,
                 # Translators: spoken message when jumping to a comment
                 text_to_announce=_("Comment: {comment}").format(
                     comment=comment.content
@@ -226,9 +231,11 @@ class AnnotationService(BookwormService):
                 evtdata["line_contains_highlight"] = True
                 break
         for comment in NoteTaker(self.reader).get_for_page():
-            if comment.position in pos_range:
+            start_pos, end_pos = (comment.start_pos, comment.end_pos)
+            # If the comment has a selection, we check if the caret position is inside the selection. Otherwise, we check that the ocmment position is in the pos_range, typically the whole line.
+            condition = (start_pos <= position < end_pos) if (start_pos, end_pos) != (None, None) else  comment.position in pos_range
+            if condition:
                 evtdata["comment"] = True
-                break
         wx.CallAfter(self._process_caret_move, evtdata)
 
     def _process_caret_move(self, evtdata):
@@ -252,8 +259,9 @@ class AnnotationService(BookwormService):
                 # Translators: spoken message indicating the presence of an annotation when the user navigates the text
                 to_speak.append(_("Line contains highlight"))
             if "comment" in evtdata:
-                # Translators: spoken message indicating the presence of an annotation when the user navigates the text
-                to_speak.append(_("Has comment"))
+                # Translators: Text that appears when only a comment is present
+                comment_msg = _("Has comment")
+                to_speak.append(comment_msg)
             speech.announce(" ".join(to_speak), False)
 
     def get_annotation(self, annotator_cls, *, foreword):
@@ -262,7 +270,9 @@ class AnnotationService(BookwormService):
                 annotator_cls.__name__, annotator_cls(self.reader)
             )
         page_number = self.reader.current_page
-        start, end = self.view.get_containing_line(self.view.get_insertion_point())
+        # start, end = self.view.get_containing_line(self.view.get_insertion_point())
+        start = self.view.get_insertion_point()
+        end = start
         if foreword:
             annot = annotator.get_first_after(page_number, end)
         else:
@@ -278,7 +288,8 @@ class AnnotationService(BookwormService):
 
     @classmethod
     def comments_page_handler(cls, sender, current, prev):
-        comments = NoteTaker(sender).get_for_page()
+        comments = NoteTaker(sender)
+        comments = comments.get_for_page()
         if comments.count():
             if config.conf["annotation"][
                 "audable_indication_of_annotations_when_navigating_text"

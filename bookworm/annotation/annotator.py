@@ -2,6 +2,7 @@
 
 from dataclasses import astuple, dataclass
 from enum import IntEnum, auto
+from typing import Optional
 
 import sqlalchemy as sa
 
@@ -11,7 +12,6 @@ from bookworm.logger import logger
 
 log = logger.getChild(__name__)
 # The bakery caches query objects to avoid recompiling them into strings in every call
-
 
 @dataclass
 class AnnotationFilterCriteria:
@@ -141,6 +141,7 @@ class Annotator:
     def get(self, item_id):
         return self.model.query.get(item_id)
 
+    
     def get_first_after(self, page_number, pos):
         model = self.model
         clauses = (
@@ -234,12 +235,111 @@ class TaggedAnnotator(Annotator):
             session.delete(otag)
         session.commit()
 
+class PositionedAnnotator(TaggedAnnotator):
+    """Annotations which are positioned on a specific text range"""
 
-class NoteTaker(TaggedAnnotator):
+    def overlaps(self, start: Optional[int], end: Optional[int], page_number: int, position: int) -> bool:
+        """
+        Determines whether an annotation overlaps with  a given position
+        The criterias used to check for the position are the following:
+        - If a selection is present, represented by start and end, then it is checked
+        - If no selection is present the insertion point is used to determine if the annotation overlaps
+        """
+        model = self.model
+        clauses = [
+            sa.and_(
+                model.start_pos.is_not(None),
+                model.end_pos.is_not(None),
+                model.start_pos == start,
+                model.end_pos == end,
+                model.page_number == page_number,
+            ),
+            sa.and_(
+                model.page_number == page_number,
+                model.position == position
+            ),
+            sa.and_(
+                model.start_pos.is_not(None),
+                model.end_pos.is_not(None),
+                model.page_number == page_number,
+                sa.or_(
+                    sa.and_(
+                        model.start_pos == position,
+                        model.end_pos == position,
+                    ),
+                    sa.and_(
+                        model.start_pos <= position,
+                        model.end_pos >= position,
+                    )
+                )
+            )
+        ]
+        return self.session.query(model).filter_by(book_id = self.current_book.id).filter(sa.or_(*clauses)).one_or_none() is not None
+
+
+class NoteTaker(PositionedAnnotator):
     """Comments."""
 
     model = Note
 
+
+    def get_first_after(self, page_number, pos):
+        model = self.model
+        clauses = (
+            sa.and_(
+                model.page_number == page_number,
+                # sa.or_(
+                model.start_pos > pos,
+                model.start_pos.is_not(None),
+                # ),
+            ),
+            sa.and_(
+                model.page_number == page_number,
+                model.position > pos,
+            ),
+            sa.and_(
+                model.page_number == page_number,
+                model.end_pos.is_(None),
+                model.position > pos,
+            ),
+            model.page_number > page_number,
+        )
+        return (
+            self.session.query(model)
+            .filter_by(book_id=self.current_book.id)
+            .filter(sa.or_(*clauses))
+            .order_by(
+                model.page_number.asc(),
+                sa.nulls_first(model.start_pos.asc()),
+                sa.nulls_first(model.end_pos.asc()),
+                model.position.asc(),
+            )
+            .first()
+        )
+
+    def get_first_before(self, page_number, pos):
+        model = self.model
+        clauses = (
+            sa.and_(
+                model.page_number == page_number,
+                model.start_pos < pos,
+                model.start_pos.is_not(None),
+            ),
+            sa.and_(
+                model.page_number == page_number,
+                model.position  < pos,
+                model.start_pos.is_(None)
+            ),
+            model.page_number < page_number,
+        )
+        return (
+            self.session.query(model)
+            .filter_by(book_id=self.current_book.id)
+            .filter(sa.or_(*clauses))
+            .order_by(model.page_number.desc())
+            .order_by(sa.nulls_last(model.end_pos.desc()))
+            .first()
+        )
 
 class Quoter(TaggedAnnotator):
     """Highlights."""

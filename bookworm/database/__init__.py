@@ -27,11 +27,11 @@ def get_db_url() -> str:
     db_path = os.path.join(get_db_path(), "database.sqlite")
     return f"sqlite:///{db_path}"
 
-def init_database(engine = None, url: str = None) -> bool:
+def init_database(engine = None, url: str = None, **kwargs) -> bool:
     if not url:
         url = get_db_url()
-    if not engine:
-        engine = create_engine(get_db_url())
+    if engine == None:
+        engine = create_engine(url, **kwargs)
     log.debug(f"Using url {url} ")
     with engine.connect() as conn:
         context = MigrationContext.configure(conn)
@@ -61,5 +61,5 @@ def init_database(engine = None, url: str = None) -> bool:
     Base.session = scoped_session(
         sessionmaker(engine, autocommit=False, autoflush=False)
     )
-    return True
+    return engine
 
