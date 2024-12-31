@@ -282,21 +282,6 @@ class NoteTaker(PositionedAnnotator):
 
     model = Note
 
-    def update_ranges(self, page) -> None:
-        """
-        Start_pos and end_poss are None whenever the comments handle the whole text
-        Since there is currently no way to dynamically set the correct values at runtime, we'll handle it here
-        """
-        for note in self.session.query(self.model).filter_by(book_id=self.current_book.id).filter(self.model.start_pos == None, self.model.end_pos == None, self.model.page_number == self.reader.current_page).all():
-            start_pos, end_pos = self.reader.view.get_containing_line(note.position)
-            note.start_pos = start_pos
-            note.end_pos = end_pos - 1
-            self.session.add(note)
-        self.session.commit()
-    
-    def get_for_selection(self, start: int, end: int):
-        model = self.model
-        return self.session.query(model).filter_by(book_id = self.current_book.id).filter(model.start_pos == start, model.end_pos == end, model.page_number == self.reader.current_page).one_or_none()
 
     def get_first_after(self, page_number, pos):
         model = self.model

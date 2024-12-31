@@ -1,4 +1,3 @@
-import atexit
 import os
 from pathlib import Path
 import tempfile

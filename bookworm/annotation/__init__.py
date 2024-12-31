@@ -289,7 +289,6 @@ class AnnotationService(BookwormService):
     @classmethod
     def comments_page_handler(cls, sender, current, prev):
         comments = NoteTaker(sender)
-        # comments.update_ranges(current)
         comments = comments.get_for_page()
         if comments.count():
             if config.conf["annotation"][
