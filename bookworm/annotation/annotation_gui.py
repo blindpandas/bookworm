@@ -208,9 +208,6 @@ class AnnotationMenu(wx.Menu):
         # see: https://docs.wxpython.org/wx.TextEntry.html#wx.TextEntry.GetSelection
         if start_pos == end_pos:
             start_pos, end_pos = (None, None)
-        else:
-            # We have to set end_pos to end_pos-1 to avoid selecting an extra character
-            end_pos -= 1
         comments = NoteTaker(self.reader)
         if comments.overlaps(start_pos, end_pos, self.reader.current_page, insertionPoint):
             return self.view.notify_user(
