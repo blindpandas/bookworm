@@ -15,7 +15,7 @@ from .annotation_dialogs import (
     GenericAnnotationWithContentDialog,
     QuotesDialog,
 )
-from .annotator import Bookmarker, NoteTaker, Quoter, AnnotationOverlapsError
+from .annotator import Bookmarker, NoteTaker, Quoter
 
 log = logger.getChild(__name__)
 
