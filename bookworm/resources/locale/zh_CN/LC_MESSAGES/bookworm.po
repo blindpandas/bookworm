@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 'Bookworm'\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2024-08-26 09:17+0800\n"
-"PO-Revision-Date: 2024-08-26 10:02+0800\n"
+"POT-Creation-Date: 2025-01-03 09:08+0000\n"
+"PO-Revision-Date: 2025-01-03 19:47+0800\n"
 "Last-Translator: Cary-rowen <manchen_0528@outlook.com>\n"
 "Language-Team: Cary-Rowen <manchen_0528@outlook.com>\n"
 "Language: zh_CN\n"
@@ -17,24 +17,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.9.1\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #. Translators: the content of a message indicating a connection error
-#: bookworm/otau.py:78
+#: bookworm/otau.py:82
 msgid "We couldn't access the internet right now. Please try again later."
 msgstr "当前无法连接网络，请稍后再试。"
 
 #. Translators: the title of a message indicating a connection error
 #. Translators: the title of a message indicating a failure in downloading an
 #. update
-#: bookworm/otau.py:80 bookworm/platforms/win32/updater.py:119
+#: bookworm/otau.py:84 bookworm/platforms/win32/updater.py:119
 msgid "Network Error"
 msgstr "网络错误"
 
 #. Translators: the content of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:90
+#: bookworm/otau.py:94
 msgid ""
 "We have faced a technical problem while checking for updates. Please try "
 "again later."
@@ -42,13 +42,13 @@ msgstr "检查更新过程中遇到了问题。请稍后再试。"
 
 #. Translators: the title of a message indicating an error while updating the
 #. app
-#: bookworm/otau.py:94
+#: bookworm/otau.py:98
 msgid "Error Checking For Updates"
 msgstr "检查更新出错"
 
 #. Translators: the content of a message indicating that there is no new
 #. version
-#: bookworm/otau.py:111
+#: bookworm/otau.py:115
 msgid ""
 "Congratulations, you have already got the latest version of Bookworm.\n"
 "We are working day and night on making Bookworm better. The next version of "
@@ -57,21 +57,21 @@ msgid ""
 msgstr ""
 "恭喜，您的Bookworm已更新到最新版。\n"
 "\n"
-"我们正在不停地努力使Bookworm变得更好。下一个版本的Bookworm即将推出，请耐心等"
-"待。我们会在发布新版时通知您。"
+"我们正在不停地努力使 Bookworm 变得更好。下一个版本的 Bookworm 即将推出，请耐"
+"心等待。我们会在发布新版时通知您。"
 
 #. Translators: the title of a message indicating that there is no new version
-#: bookworm/otau.py:118
+#: bookworm/otau.py:122
 msgid "No Update"
 msgstr "当前已是最新版"
 
 #. Translators: the label of an item in the application menubar
-#: bookworm/otau.py:143
+#: bookworm/otau.py:147
 msgid "&Check for updates"
 msgstr "检测更新(&C)"
 
 #. Translators: the help text of an item in the application menubar
-#: bookworm/otau.py:145
+#: bookworm/otau.py:149
 msgid "Update the application"
 msgstr "更新应用程序"
 
@@ -158,45 +158,44 @@ msgid "No previous comment"
 msgstr "往上没有注释"
 
 #. Translators: spoken message when jumping to a comment
-#: bookworm/annotation/__init__.py:179
+#: bookworm/annotation/__init__.py:184
 msgid "Comment: {comment}"
 msgstr "注释： {comment}"
 
 #. Translators: spoken message
-#: bookworm/annotation/__init__.py:192
+#: bookworm/annotation/__init__.py:197
 msgid "No next highlight"
 msgstr "往下没有高亮"
 
 #. Translators: spoken message
-#: bookworm/annotation/__init__.py:195
+#: bookworm/annotation/__init__.py:200
 msgid "No previous highlight"
 msgstr "往上没有高亮"
 
-#: bookworm/annotation/__init__.py:205
+#: bookworm/annotation/__init__.py:210
 msgid "Highlight"
 msgstr "高亮"
 
 #. Translators: spoken message indicating the presence of an annotation when
 #. the user navigates the text
-#: bookworm/annotation/__init__.py:247
+#: bookworm/annotation/__init__.py:254
 msgid "Bookmarked"
 msgstr "书签"
 
 #. Translators: spoken message indicating the presence of an annotation when
 #. the user navigates the text
-#: bookworm/annotation/__init__.py:250
+#: bookworm/annotation/__init__.py:257
 msgid "Highlighted"
 msgstr "高亮"
 
 #. Translators: spoken message indicating the presence of an annotation when
 #. the user navigates the text
-#: bookworm/annotation/__init__.py:253
+#: bookworm/annotation/__init__.py:260
 msgid "Line contains highlight"
 msgstr "行包含高亮"
 
-#. Translators: spoken message indicating the presence of an annotation when
-#. the user navigates the text
-#: bookworm/annotation/__init__.py:256
+#. Translators: Text that appears when only a comment is present
+#: bookworm/annotation/__init__.py:263
 msgid "Has comment"
 msgstr "有注释"
 
@@ -430,52 +429,52 @@ msgstr "导出选项"
 
 #. Translators: label of a checkbox in a dialog to set export options for
 #. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:593
+#: bookworm/annotation/annotation_dialogs.py:597
 msgid "Include book title"
 msgstr "包含书名"
 
-#: bookworm/annotation/annotation_dialogs.py:598
+#: bookworm/annotation/annotation_dialogs.py:602
 msgid "Include section title"
 msgstr "包含章节标题"
 
-#: bookworm/annotation/annotation_dialogs.py:604
+#: bookworm/annotation/annotation_dialogs.py:608
 msgid "Include  page number"
 msgstr "包含页码"
 
 #. Translators: label of a checkbox in a dialog to set export options for
 #. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:607
+#: bookworm/annotation/annotation_dialogs.py:611
 msgid "Include tags"
 msgstr "包含标签"
 
 #. Translators: label of a choice control in a dialog to set export options for
 #. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:609
+#: bookworm/annotation/annotation_dialogs.py:613
 msgid "Output format:"
 msgstr "输出格式："
 
 #. Translators: label of an edit control in a dialog to set export options for
 #. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:614
+#: bookworm/annotation/annotation_dialogs.py:618
 msgid "Output File"
 msgstr "输出文件"
 
 #. Translators: text of a button in a dialog to set export options for
 #. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:619
+#: bookworm/annotation/annotation_dialogs.py:623
 msgid "&Browse"
 msgstr "浏览(&B)"
 
 #. Translators: label of a checkbox in a dialog to set export options for
 #. comments/highlights
-#: bookworm/annotation/annotation_dialogs.py:624
+#: bookworm/annotation/annotation_dialogs.py:628
 msgid "Open file after exporting"
 msgstr "导出后打开文件"
 
 #. Translators: the title of a save file dialog asking the user for a filename
 #. to export annotations to
 #. Translators: the title of a dialog to save the exported book
-#: bookworm/annotation/annotation_dialogs.py:651
+#: bookworm/annotation/annotation_dialogs.py:655
 #: bookworm/gui/book_viewer/menubar.py:253
 msgid "Save As"
 msgstr "另存为"
@@ -604,67 +603,97 @@ msgstr "命名书签"
 msgid "Bookmark name:"
 msgstr "书签名称："
 
+#. Translators: title of a message indicating an error
+#. Translators: title of a message shown when importing documents to the
+#. bookshelf has failed
+#. Translators: title  of a message shown when importing documents from a
+#. folder to the bookshelf has failed
+#. Translators: title of a message shown when searching bookshelf has failed
+#. Translators: spoken message
+#. Translators: title of a list control colum showing errors encountered when
+#. bundling documents
+#. Translators: title of a message box
+#. Translators: title of a messagebox
+#. Translators: the title of a message telling the user that an error has
+#. occurred
+#: bookworm/annotation/annotation_gui.py:214
+#: bookworm/bookshelf/local_bookshelf/__init__.py:290
+#: bookworm/bookshelf/local_bookshelf/__init__.py:336
+#: bookworm/bookshelf/local_bookshelf/__init__.py:382
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:229
+#: bookworm/bookshelf/window.py:197 bookworm/gui/settings.py:623
+#: bookworm/ocr/ocr_dialogs.py:215 bookworm/ocr/ocr_dialogs.py:625
+#: bookworm/platforms/win32/pandoc_download.py:63
+#: bookworm/platforms/win32/tesseract_download.py:96
+#: bookworm/text_to_speech/tts_gui.py:429 bookworm/webservices/wikiworm.py:170
+msgid "Error"
+msgstr "错误"
+
+#: bookworm/annotation/annotation_gui.py:216
+msgid "Another note is currently overlapping the selected position."
+msgstr "另一个注释与当前所选位置存在重叠。"
+
 #. Translators: the title of a dialog to add a comment
-#: bookworm/annotation/annotation_gui.py:208
+#: bookworm/annotation/annotation_gui.py:220
 msgid "New Comment"
 msgstr "添加注释"
 
 #. Translators: the label of an edit field to enter a comment
-#: bookworm/annotation/annotation_gui.py:210
+#: bookworm/annotation/annotation_gui.py:222
 msgid "Comment:"
 msgstr "注释："
 
 #. Translators: title of a dialog
-#: bookworm/annotation/annotation_gui.py:223
+#: bookworm/annotation/annotation_gui.py:236
 msgid "Tag Comment"
 msgstr "标签注释"
 
 #. Translators: label of a text entry
-#: bookworm/annotation/annotation_gui.py:225
-#: bookworm/annotation/annotation_gui.py:272
+#: bookworm/annotation/annotation_gui.py:238
+#: bookworm/annotation/annotation_gui.py:285
 msgid "Tags:"
 msgstr "标签："
 
-#: bookworm/annotation/annotation_gui.py:237
+#: bookworm/annotation/annotation_gui.py:250
 msgid "No selection"
 msgstr "无章节"
 
 #. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:245
+#: bookworm/annotation/annotation_gui.py:258
 msgid "Highlight removed"
 msgstr "已取消高亮"
 
 #. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:248
+#: bookworm/annotation/annotation_gui.py:261
 msgid "Already highlighted"
 msgstr "已高亮显示"
 
 #. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:255
-#: bookworm/annotation/annotation_gui.py:261
+#: bookworm/annotation/annotation_gui.py:268
+#: bookworm/annotation/annotation_gui.py:274
 msgid "Highlight extended"
 msgstr "高亮扩展"
 
 #. Translators: spoken message
-#: bookworm/annotation/annotation_gui.py:264
+#: bookworm/annotation/annotation_gui.py:277
 msgid "Selection highlighted"
 msgstr "高亮显示选中"
 
 #. Translators: title of a dialog
-#: bookworm/annotation/annotation_gui.py:270
+#: bookworm/annotation/annotation_gui.py:283
 msgid "Tag Highlight"
 msgstr "标签高亮"
 
 #. Translators: the title of a dialog to view bookmarks
-#: bookworm/annotation/annotation_gui.py:285
+#: bookworm/annotation/annotation_gui.py:298
 msgid "Bookmarks | {book}"
 msgstr "书签 | {book}"
 
-#: bookworm/annotation/annotation_gui.py:295
+#: bookworm/annotation/annotation_gui.py:308
 msgid "Comments"
 msgstr "注释"
 
-#: bookworm/annotation/annotation_gui.py:308
+#: bookworm/annotation/annotation_gui.py:321
 msgid "Highlights"
 msgstr "高亮"
 
@@ -818,31 +847,6 @@ msgid ""
 msgstr ""
 "无法检索文档。\n"
 "请再试一次。"
-
-#. Translators: title of a message indicating an error
-#. Translators: title of a message shown when importing documents to the
-#. bookshelf has failed
-#. Translators: title  of a message shown when importing documents from a
-#. folder to the bookshelf has failed
-#. Translators: title of a message shown when searching bookshelf has failed
-#. Translators: spoken message
-#. Translators: title of a list control colum showing errors encountered when
-#. bundling documents
-#. Translators: title of a message box
-#. Translators: title of a messagebox
-#. Translators: the title of a message telling the user that an error has
-#. occurred
-#: bookworm/bookshelf/local_bookshelf/__init__.py:290
-#: bookworm/bookshelf/local_bookshelf/__init__.py:336
-#: bookworm/bookshelf/local_bookshelf/__init__.py:382
-#: bookworm/bookshelf/local_bookshelf/dialogs.py:229
-#: bookworm/bookshelf/window.py:197 bookworm/gui/settings.py:623
-#: bookworm/ocr/ocr_dialogs.py:215 bookworm/ocr/ocr_dialogs.py:625
-#: bookworm/platforms/win32/pandoc_download.py:63
-#: bookworm/platforms/win32/tesseract_download.py:96
-#: bookworm/text_to_speech/tts_gui.py:429 bookworm/webservices/wikiworm.py:170
-msgid "Error"
-msgstr "错误"
 
 #. Translators: label of an item in the context menu of a document in the
 #. bookshelf
@@ -1435,7 +1439,7 @@ msgid "Archive File"
 msgstr "压缩文件"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/epub.py:46
+#: bookworm/document/formats/epub.py:47
 msgid "Electronic Publication (EPUB)"
 msgstr "Electronic Publication (EPUB)"
 
@@ -1534,12 +1538,12 @@ msgid "PowerPoint Presentation"
 msgstr "PowerPoint Presentation"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/word.py:44
+#: bookworm/document/formats/word.py:45
 msgid "Word Document"
 msgstr "Word Document"
 
 #. Translators: the name of a document file format
-#: bookworm/document/formats/word.py:134
+#: bookworm/document/formats/word.py:137
 msgid "Word 97 - 2003 Document"
 msgstr "Word 97 - 2003 Document"
 
@@ -2152,13 +2156,13 @@ msgstr "模式"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/__init__.py:417
-msgid "Big"
-msgstr "大"
+msgid "Small"
+msgstr "小"
 
 #. Translators: the label of a button in the application toolbar
 #: bookworm/gui/book_viewer/__init__.py:419
-msgid "Small"
-msgstr "小"
+msgid "Big"
+msgstr "大"
 
 #. Translators: title of a message telling the user that they entered an
 #. incorrect
@@ -3208,7 +3212,7 @@ msgstr "扫描页面"
 msgid "Preparing book"
 msgstr "准备文档"
 
-#: bookworm/ocr/ocr_menu.py:321
+#: bookworm/ocr/ocr_menu.py:327
 msgid ""
 "Successfully processed {total} pages.\n"
 "Extracted text was written to: {file}"
@@ -3216,37 +3220,37 @@ msgstr ""
 "已成功处理 {total} 页。\n"
 "提取的文本被写入：{file}"
 
-#: bookworm/ocr/ocr_menu.py:324
+#: bookworm/ocr/ocr_menu.py:330
 msgid "OCR Completed"
 msgstr "OCR已完成"
 
-#: bookworm/ocr/ocr_menu.py:341
+#: bookworm/ocr/ocr_menu.py:344
 msgid "Portable Network Graphics"
 msgstr "PNG"
 
-#: bookworm/ocr/ocr_menu.py:342
+#: bookworm/ocr/ocr_menu.py:345
 msgid "JPEG images"
 msgstr "JPEG"
 
-#: bookworm/ocr/ocr_menu.py:343
+#: bookworm/ocr/ocr_menu.py:346
 msgid "Bitmap images"
 msgstr "BMP"
 
-#: bookworm/ocr/ocr_menu.py:344
+#: bookworm/ocr/ocr_menu.py:347
 msgid "Tiff graphics"
 msgstr "Tiff 图像"
 
-#: bookworm/ocr/ocr_menu.py:350
+#: bookworm/ocr/ocr_menu.py:353
 msgid "All supported image formats"
 msgstr "所有支持的图像格式"
 
 #. Translators: the title of a file dialog to browse to an image
-#: bookworm/ocr/ocr_menu.py:354
+#: bookworm/ocr/ocr_menu.py:357
 msgid "Choose image file"
 msgstr "选择图像文件"
 
 #. Translators: content of a message box
-#: bookworm/ocr/ocr_menu.py:369
+#: bookworm/ocr/ocr_menu.py:372
 msgid ""
 "Could not load image from\n"
 "{filename}.\n"
@@ -3256,15 +3260,15 @@ msgstr ""
 "请确保文件存在且其中包含的数据未损坏。"
 
 #. Translators: title of a message box
-#: bookworm/ocr/ocr_menu.py:374
+#: bookworm/ocr/ocr_menu.py:377
 msgid "Could not load image file"
 msgstr "无法加载图像文件"
 
-#: bookworm/ocr/ocr_menu.py:420
+#: bookworm/ocr/ocr_menu.py:423
 msgid "Scan finished."
 msgstr "扫描完成。"
 
-#: bookworm/ocr/ocr_menu.py:426
+#: bookworm/ocr/ocr_menu.py:429
 msgid "OCR canceled"
 msgstr "取消识别"
 
@@ -3444,7 +3448,7 @@ msgctxt "espeakVarient"
 msgid "none"
 msgstr "无"
 
-#: bookworm/platforms/win32/speech_engines/piper/__init__.py:201
+#: bookworm/platforms/win32/speech_engines/piper/__init__.py:203
 msgid "Piper Neural TTS"
 msgstr "Piper Neural TTS"
 

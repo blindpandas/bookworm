@@ -10,7 +10,7 @@ Bookworm 可以运行于 Microsoft Windows 操作系统。与您喜爱的屏幕�
 
 * 支持超过 15 种文档格式，包括 EPUB、PDF、MOBI 和 Microsoft Word 文档。
 * 支持结构化导航，使用单键导航在标题、列表、表格和引用之间跳转。
-* 具备可自定义搜索选项的全文搜索。
+* 支持可自定义搜索选项的全文搜索。
 * 高级且易用的注释工具。支持在文本中添加书签为特定内容做标记，方便日后查阅，还可以添加注释来记录有趣的想法， Bookworm支持快速跳转并查看已保存的注释，您可以将这些注释导出为文本文档或HTML文档，以备将来参考。
  * 对于PDF文档，Bookworm 支持两种不同样式的页面查看方式，纯文本和渲染的可缩放图像视图。
 * 支持使用 Windows10 以上系统中内置的 OCR 引擎从扫描版文档和图像中识别文本。除此之外您还可以下载使用 Bookworm 中提供的免费 Tesseract OCR 引擎。
@@ -20,7 +20,6 @@ Bookworm 可以运行于 Microsoft Windows 操作系统。与您喜爱的屏幕�
 *支持使用 TTS 朗读书籍内容，并可以使用语音配置文件自定义语音参数。
 * 支持使用快捷键执行标准的文本缩放。增大/减小/重置，分别为 Ctrl + =， Ctrl +- 和 Ctrl + 0。
 * 支持将任何文档格式导出为纯文本文档。
-
 
 ## 安装
 
@@ -49,7 +48,7 @@ Bookworm 的主窗口包括以下两部分：
 
 1. “目录”：这部分显示了文档的章节，您可以在此查看文档的目录结构，使用方向键导航，然后按Enter键跳转至指定章节。
 
-2. “文本视图”区域：此部分包含书籍当前页的文本内容。在此区域，您可以使用常规的文本导航命令来阅读文本。此外，您还可以使用以下键盘快捷键浏览电子书：
+2. “文本视图”区域：此部分包含书籍当前页的文本内容。在此区域，您可以使用常规的文本导航命令来阅读文本。此外，您还可以使用以下键盘快捷键浏览文档：
 
 * Enter： 跳转到当前章节的下一页；
 * Backspace： 跳转到当前章节的上一页；
@@ -65,7 +64,7 @@ Bookworm 的主窗口包括以下两部分：
 * Shift + F8：跳转到上一条注释；
 * F9：跳转到下一处高亮；
 * Shift + F9：跳转到上一处高亮；
-* Ctrl + enter：打开内部或外部链接（如果存在）。内部链接是由某些格式的文档目录创建的链接，外部链接是使用浏览器打开的常规链接。根据链接类型，如果链接是内部链接，即指向某目录章节的链接，那么按下该快捷键会将焦点移动到相应目录章节，如果链接是外部链接，则会使用系统默认浏览器打开。
+* Ctrl + enter：在 HTML 视图中渲染当前表格，打开内部或外部链接（如果存在）。内部链接是由某些格式的文档目录创建的链接，外部链接是使用浏览器打开的常规链接。根据链接类型，如果链接是内部链接，即指向某目录章节的链接，那么按下该快捷键会将焦点移动到相应目录章节，如果链接是外部链接，则会使用系统默认浏览器打开。
 
 ### 书签和注释
 
@@ -205,13 +204,14 @@ Bookworm可让您查看书籍的完整渲染版本。打开书籍后，可以按
 
 请注意，有些问题可能很难重现，当您重新启动程序时，这些问题或许就消失了。如果是这样，您也可以在没有调试模式详细信息的情况下报告问题。只要您确保包含尽可能详细的有关系统和操作步骤的信息即可。
 
-
 ## 最新消息和更新信息
 
 若想了解有关 Bookworm 的最新消息，可以访问Bookworm的网站： [github.com/blindpandas/bookworm](https://github.com/blindpandas/bookworm/)。您也可以在Twitter上[@mush42](https://twitter.com/mush42/)来关注首席开发人员 Musharraf Omer。
 
-Bookworm 中文资讯请访问 [Bookworm中文站（bw.enabc.net）](https://bw.enabc.net)，也欢迎加入[Bookworm 中文交流 QQ 群 （556550625）](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=gW905iM3YPt1Y4gj8Y756_gqZ7ZDAjX9&authKey=55Cqb3%2Bz5sR%2Fw7Wqb6DS6FfZ9uJQczqd2K6DJh8jcy47nvLqgP2OGMeKunZ0eRef&noverify=0&group_code=556550625)。
+Bookworm 中文资讯请访问 [Bookworm中文站（bw.enabc.net）](https://bw.enabc.net)。
+
+欢迎加入[Bookworm 中文交流 QQ 群 （556550625）](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=gW905iM3YPt1Y4gj8Y756_gqZ7ZDAjX9&authKey=55Cqb3%2Bz5sR%2Fw7Wqb6DS6FfZ9uJQczqd2K6DJh8jcy47nvLqgP2OGMeKunZ0eRef&noverify=0&group_code=556550625)。
 
 ## 许可协议
 
-**Bookworm** 版权： copyright (c) 2019-2022 Musharraf Omer和Bookworm贡献者。遵循[MIT版权许可](https://github.com/blindpandas/bookworm/blob/master/LICENSE)。
+**Bookworm** 版权： copyright (c) 2019-2024 Musharraf Omer和Bookworm贡献者。遵循[MIT版权许可](https://github.com/blindpandas/bookworm/blob/master/LICENSE)。
