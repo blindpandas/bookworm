@@ -414,9 +414,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             (20, "reading_mode", _("Mode"), BookRelatedMenuIds.changeReadingMode),
             (32, "", "", None),
             # Translators: the label of a button in the application toolbar
-            (60, "zoom_out", _("Big"), wx.ID_PREVIEW_ZOOM_OUT),
+            (60, "zoom_out", _("Small"), wx.ID_PREVIEW_ZOOM_OUT),
             # Translators: the label of a button in the application toolbar
-            (70, "zoom_in", _("Small"), wx.ID_PREVIEW_ZOOM_IN),
+            (70, "zoom_in", _("Big"), wx.ID_PREVIEW_ZOOM_IN),
             (71, "", "", None),
         ]
         tool_info.extend(wx.GetApp().service_handler.get_toolbar_items())
