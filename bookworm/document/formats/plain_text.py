@@ -43,7 +43,16 @@ class PlainTextDocument(SinglePageDocument):
         if len(self.text) > MAX_NUM_CHARS:
             return self.text
         text = remove_excess_blank_lines(self.text)
-        return ftfy.ftfy(text)
+        config = ftfy.TextFixerConfig(
+            fix_character_width=False,
+            uncurl_quotes=False,
+            fix_latin_ligatures=False,
+            normalization='NFC',
+            unescape_html=False,
+            fix_line_breaks=True,
+            max_decode_length=MAX_NUM_CHARS
+        )
+        return ftfy.fix_text(text, config)
 
     def close(self):
         super().close()

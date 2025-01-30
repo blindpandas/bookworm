@@ -107,13 +107,16 @@ class StructuredHtmlParser(Inscriptis):
 
     @staticmethod
     def normalize_html(html_string):
-        html_string = ftfy.fix_text(
-            html_string,
-            normalization="NFKC",
+        config = ftfy.TextFixerConfig(
+            fix_character_width=False,
+            uncurl_quotes=False,
+            fix_latin_ligatures=False,
+            normalization='NFC',
             unescape_html=False,
             fix_line_breaks=True,
-            max_decode_length=MAX_DECODE_LENGTH,
+            max_decode_length=MAX_DECODE_LENGTH
         )
+        html_string = ftfy.fix_text(html_string, config)
         return remove_excess_blank_lines(html_string)
 
     def __init__(self, *args, **kwargs):

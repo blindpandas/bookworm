@@ -42,7 +42,13 @@ class FitzPage(BasePage):
         bloks = page.get_text_blocks()
         text = [blk[4].replace("\n", " ") for blk in bloks if blk[-1] == 0]
         text = "\r\n".join(text)
-        return ftfy.fix_text(text, normalization="NFKC")
+        config = ftfy.TextFixerConfig(
+            fix_character_width=False,
+            uncurl_quotes=False,
+            fix_latin_ligatures=False,
+            normalization='NFC'
+        )
+        return ftfy.fix_text(text, config)
 
     def get_text(self):
         return self.normalize_text(self._text_from_page(self._fitz_page))
