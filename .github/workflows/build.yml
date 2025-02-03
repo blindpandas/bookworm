@@ -3,6 +3,7 @@ name: Build
 # Trigger the workflow on any push and when a release is published
 on:
   push: {}
+  pull_request: {}
   release:
     types: [published]
 
