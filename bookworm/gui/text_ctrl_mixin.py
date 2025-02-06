@@ -6,6 +6,7 @@ import wx.lib.newevent
 import bookworm.typehints as t
 from bookworm.logger import logger
 from bookworm.structured_text import SemanticElementType
+from bookworm import config
 
 log = logger.getChild(__name__)
 
@@ -61,10 +62,13 @@ class ContentViewCtrlMixin(wx.TextCtrl):
     def __init__(self, parent, *args, label="", **kwargs):
         self.panel = self.ContainingPanel(self, parent, size=parent.GetSize())
         self.controlLabel = wx.StaticText(self.panel, -1, label)
+        style = self.TEXTCTRL_STYLE
+        if not config.conf["appearance"]["text_wrap"]:
+            style |= wx.TE_DONTWRAP
         super().__init__(
             self.panel,
             *args,
-            style=self.TEXTCTRL_STYLE,
+            style=style,
             **kwargs,
         )
         sizer = wx.BoxSizer(wx.HORIZONTAL)

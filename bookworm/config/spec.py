@@ -29,6 +29,7 @@ config_spec = StringIO(
     font_point_size = integer(default=12)
     use_bold_font = boolean(default=False)
     text_view_margins = integer(default=10, min=0, max=100)
+    text_wrap = boolean(default=False)
 [advanced]
 """
 )
