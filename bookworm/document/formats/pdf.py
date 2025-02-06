@@ -58,7 +58,13 @@ class FitzPdfPage(FitzPage):
         return self.normalize_text(text)
 
     def normalize_text(self, text):
-        text = ftfy.fix_text(text, normalization="NFKC")
+        config = ftfy.TextFixerConfig(
+            fix_character_width=False,
+            uncurl_quotes=False,
+            fix_latin_ligatures=False,
+            normalization='NFC'
+        )
+        text = ftfy.fix_text(text, config)
         return super().normalize_text(text)
 
     def get_label(self) -> str:
