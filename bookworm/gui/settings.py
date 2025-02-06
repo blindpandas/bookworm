@@ -415,6 +415,13 @@ class AppearancePanel(SettingsPanel):
             _("Apply text styling (when available)"),
             name="appearance.apply_text_styles",
         )
+        self.textWrapCheckBox = wx.CheckBox(
+            UIBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Enable text wrapping (requires restart)"),
+            name="appearance.text_wrap",
+        )
         wx.StaticText(UIBox, -1, _("Text view margins percentage"))
         EnhancedSpinCtrl(UIBox, -1, min=0, max=100, name="appearance.text_view_margins")
         # Translators: the title of a group of controls in the
@@ -468,6 +475,21 @@ class AppearancePanel(SettingsPanel):
                 self.fontChoice.SetSelection(0)
         elif strategy is ReconciliationStrategies.save:
             self.config["font_facename"] = self.fontChoice.GetStringSelection()
+            if self.textWrapCheckBox.GetValue() != self.config["text_wrap"]:
+                msg = wx.MessageBox(
+                    # Translators: the content of a message asking the user to restart
+                    _(
+                        "You have changed the text wrapping setting.\n"
+                        "For this setting to fully take effect, you need to restart the application.\n"
+                        "Would you like to restart the application right now?"
+                    ),
+                    # Translators: the title of a message telling the user
+                    # that the text wrapping setting has been changed
+                    _("Text Wrapping Changed"),
+                    style=wx.YES_NO | wx.ICON_WARNING,
+                )
+                if msg == wx.YES:
+                    restart_application()
         super().reconcile(strategy=strategy)
         if strategy is ReconciliationStrategies.save:
             wx.GetApp().mainFrame.set_content_view_font()
