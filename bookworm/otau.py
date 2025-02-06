@@ -5,6 +5,7 @@ from typing import Tuple
 
 import wx
 from pydantic import BaseModel, HttpUrl, RootModel, field_validator
+from packaging import version
 
 from bookworm import app, config
 from bookworm import typehints as t
@@ -67,6 +68,42 @@ class UpdateInfo(RootModel[t.Dict[UpdateChannel, VersionInfo]]):
             channel_identifier = ""
         return self.root.get(UpdateChannel.model_validate(channel_identifier))
 
+def is_newer_version(current_version: str, upstream_version: str) -> bool:
+    """Compare two version strings to determine if upstream_version is newer than current_version.
+    
+    Args:
+        current_version: The version string of the current installation
+        upstream_version: The version string of the available update
+        
+    Returns:
+        bool: True if upstream_version is newer than current_version
+        
+    Note:
+        - Returns False if upstream_version is invalid
+        - Returns True if current_version is invalid but upstream_version is valid
+        - Uses semantic versioning for valid version strings
+    """
+    # Normal version comparison
+    try:
+        return version.parse(upstream_version) > version.parse(current_version)
+    except Exception:
+        log.warning(
+            f"Failed to parse version strings: current_version='{current_version}', "
+            f"upstream_version='{upstream_version}'"
+        )
+        
+        # Check if upstream version is valid
+        try:
+            version.parse(upstream_version)
+        except Exception:
+            return False  # Invalid upstream version is never newer
+            
+        # Check if current version is valid
+        try:
+            version.parse(current_version)
+        except Exception:
+            return True  # Valid upstream version is always newer than invalid current version
+
 
 @call_threaded
 def check_for_updates(verbose=False):
@@ -103,7 +140,7 @@ def check_for_updates(verbose=False):
     update_channel = app.get_version_info().get("pre_type", "")
     upstream_version_info = update_info.get_update_info_for_channel(update_channel)
     if (upstream_version_info is None) or (
-        upstream_version_info.version == app.version
+        not is_newer_version(app.version, upstream_version_info.version)
     ):
         log.info("No new version.")
         config.conf["general"]["last_update_check"] = time.time()
