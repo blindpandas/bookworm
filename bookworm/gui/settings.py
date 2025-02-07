@@ -476,6 +476,8 @@ class AppearancePanel(SettingsPanel):
         elif strategy is ReconciliationStrategies.save:
             self.config["font_facename"] = self.fontChoice.GetStringSelection()
             if self.textWrapCheckBox.GetValue() != self.config["text_wrap"]:
+                self.config["text_wrap"] = self.textWrapCheckBox.GetValue()
+                config.save()
                 msg = wx.MessageBox(
                     # Translators: the content of a message asking the user to restart
                     _(
