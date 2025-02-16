@@ -50,6 +50,9 @@ def init_database(engine = None, url: str = None, **kwargs) -> bool:
         script_location = paths.app_path("alembic")
     
     cfg = Config(Path(cfg_file, "alembic.ini"))
+    # we set this attribute in order to prevent alembic from configuring logging if we're running the commands programmatically.
+    # This is because otherwise our loggers would be overridden
+    cfg.attributes['configure_logger'] = False
     cfg.set_main_option('script_location', str(script_location))
     cfg.set_main_option("sqlalchemy.url", url)
     if rev == None:
