@@ -85,7 +85,9 @@ class EpubDocument(SinglePageDocument):
             desc = None
         date_value = info.get("date", "")
         if not isinstance(date_value, str):
-            log.warning(f"Unexpected date format: {type(date_value)}. Converting to string.")
+            log.warning(
+                f"Unexpected date format: {type(date_value)}. Converting to string."
+            )
             if isinstance(date_value, (int, float)):
                 date_value = str(date_value)
             else:
@@ -190,13 +192,13 @@ class EpubDocument(SinglePageDocument):
         # However this poses a problem when the chapters do not follow a conventional numeric scheme but rather use something like roman numbers
         # As reported in issue 243
         # We will now sort the items obtained earlier based on the position that the chapter itself occupies in the TOC
-        spine = [x[0].split('/')[-1] for x in self.epub.spine]
+        spine = [x[0].split("/")[-1] for x in self.epub.spine]
         log.debug(spine)
         try:
             items = sorted(items, key=lambda x: spine.index(x.id))
         except ValueError:
             log.warn(
-                'Failed to order chapters based on the table of content. Order may be inconsistent'
+                "Failed to order chapters based on the table of content. Order may be inconsistent"
             )
         return items
 
@@ -312,7 +314,9 @@ class EpubDocument(SinglePageDocument):
         )
         cache_key = self.uri.to_uri_string()
         document_path = self.get_file_system_path()
-        if (cached_html_content := cache.get(cache_key)) and not cache_utils.is_document_modified(cache_key, document_path, cache):
+        if (
+            cached_html_content := cache.get(cache_key)
+        ) and not cache_utils.is_document_modified(cache_key, document_path, cache):
             return cached_html_content.decode("utf-8")
         html_content_gen = (
             (item.file_name, item.content) for item in self.epub_html_items

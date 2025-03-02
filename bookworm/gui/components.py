@@ -489,8 +489,7 @@ class ImmutableObjectListView(DialogListCtrl):
     def onDeleteItem(self, event):
         self.prevent_mutations()
 
-    def onDeleteAllItems(self, event):
-        ...
+    def onDeleteAllItems(self, event): ...
 
     def onInsertItem(self, event):
         self.prevent_mutations()

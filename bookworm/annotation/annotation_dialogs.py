@@ -35,9 +35,9 @@ class FilterAndSortState:
         book_id = annotator.current_book.id if has_book else None
         return cls(
             filter_criteria=AnnotationFilterCriteria(book_id=book_id),
-            sort_criteria=AnnotationSortCriteria.Page
-            if has_book
-            else AnnotationSortCriteria.Date,
+            sort_criteria=(
+                AnnotationSortCriteria.Page if has_book else AnnotationSortCriteria.Date
+            ),
             asc=has_book,
         )
 
@@ -298,9 +298,9 @@ class AnnotationFilterPanel(sc.SizedPanel):
         self.filter_callback(
             book_id=book_id,
             tag=self.tagsCombo.GetValue().strip(),
-            section_title=self.sectionChoice.GetValue().strip()
-            if not self.filter_by_book
-            else "",
+            section_title=(
+                self.sectionChoice.GetValue().strip() if not self.filter_by_book else ""
+            ),
             content=self.contentFilterText.GetValue().strip(),
         )
 
@@ -580,7 +580,7 @@ class CommentsDialog(AnnotationWithContentDialog):
         if (start_pos, end_pos) != (None, None):
             # We have a selection, let's select the text
             self.service.view.contentTextCtrl.SetSelection(start_pos, end_pos)
-        
+
 
 class QuotesDialog(AnnotationWithContentDialog):
     def go_to_item(self, item):

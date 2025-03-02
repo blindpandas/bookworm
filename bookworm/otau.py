@@ -68,16 +68,17 @@ class UpdateInfo(RootModel[t.Dict[UpdateChannel, VersionInfo]]):
             channel_identifier = ""
         return self.root.get(UpdateChannel.model_validate(channel_identifier))
 
+
 def is_newer_version(current_version: str, upstream_version: str) -> bool:
     """Compare two version strings to determine if upstream_version is newer than current_version.
-    
+
     Args:
         current_version: The version string of the current installation
         upstream_version: The version string of the available update
-        
+
     Returns:
         bool: True if upstream_version is newer than current_version
-        
+
     Note:
         - Returns False if upstream_version is invalid
         - Returns True if current_version is invalid but upstream_version is valid
@@ -91,13 +92,13 @@ def is_newer_version(current_version: str, upstream_version: str) -> bool:
             f"Failed to parse version strings: current_version='{current_version}', "
             f"upstream_version='{upstream_version}'"
         )
-        
+
         # Check if upstream version is valid
         try:
             version.parse(upstream_version)
         except Exception:
             return False  # Invalid upstream version is never newer
-            
+
         # Check if current version is valid
         try:
             version.parse(current_version)

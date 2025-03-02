@@ -1,4 +1,5 @@
 """Caching utilities"""
+
 from pathlib import Path
 
 from diskcache import Cache
@@ -17,7 +18,7 @@ def is_document_modified(key: str, path: Path, cache: Cache) -> bool:
     stat_mtime = path.stat().st_mtime
     return mtime != stat_mtime
 
+
 def set_document_modified_time(key: str, path: Path, cache: Cache) -> bool:
     key = f"{key}_meta"
     cache.set(key, path.stat().st_mtime)
-    

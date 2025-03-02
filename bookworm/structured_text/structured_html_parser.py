@@ -111,10 +111,10 @@ class StructuredHtmlParser(Inscriptis):
             fix_character_width=False,
             uncurl_quotes=False,
             fix_latin_ligatures=False,
-            normalization='NFC',
+            normalization="NFC",
             unescape_html=False,
             fix_line_breaks=True,
-            max_decode_length=MAX_DECODE_LENGTH
+            max_decode_length=MAX_DECODE_LENGTH,
         )
         html_string = ftfy.fix_text(html_string, config)
         return remove_excess_blank_lines(html_string)

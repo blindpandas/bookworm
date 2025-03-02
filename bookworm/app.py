@@ -13,7 +13,9 @@ version = "2025.1"
 version_ex = "2025.1.0.0"
 url = "https://github.com/blindpandas/bookworm"
 website = "https://github.com/blindpandas/bookworm"
-update_url = "https://raw.githubusercontent.com/blindpandas/bookworm/main/update_info.json"
+update_url = (
+    "https://raw.githubusercontent.com/blindpandas/bookworm/main/update_info.json"
+)
 copyright = f"Copyright (c) 2025 {author} and {display_name} contributors."
 exit_code = 0
 is_frozen = getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")

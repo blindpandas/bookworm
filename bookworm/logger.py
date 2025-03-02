@@ -35,7 +35,7 @@ def configure_logger(log_file_suffix="", level: int = logging.DEBUG):
     error_handler.setFormatter(formatter)
     error_handler.setLevel(logging.ERROR)
     logger.addHandler(error_handler)
-    
+
     # we are actually interested in the stream handler only when we are running from source
     if not app.is_frozen:
         stream_handler = logging.StreamHandler(sys.stdout)
@@ -44,4 +44,3 @@ def configure_logger(log_file_suffix="", level: int = logging.DEBUG):
         logger.addHandler(stream_handler)
 
     logger.setLevel(level)
-    

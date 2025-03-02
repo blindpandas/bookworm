@@ -16,7 +16,7 @@ from bookworm.logger import logger
 from bookworm.paths import app_path
 from bookworm.platforms import PLATFORM
 from bookworm.resources import app_icons
-from bookworm.shell import shell_disintegrate, shell_integrate,is_file_type_associated
+from bookworm.shell import shell_disintegrate, shell_integrate, is_file_type_associated
 from bookworm.shellinfo import get_ext_info
 from bookworm.signals import app_started, config_updated
 from bookworm.utils import restart_application
@@ -38,6 +38,7 @@ if PLATFORM == "win32":
 class ReconciliationStrategies(IntEnum):
     load = auto()
     save = auto()
+
 
 class FileAssociationDialog(SimpleDialog):
     """Associate supported file types."""
@@ -103,7 +104,9 @@ class FileAssociationDialog(SimpleDialog):
             # Translators: the main label of a button
             mlbl = _("Dissociate files of type {format}").format(format=metadata[1])
             # Translators: the note of a button
-            nlbl = _("Dissociate files with {ext} extension so they no longer open in Bookworm").format(ext=ext)
+            nlbl = _(
+                "Dissociate files with {ext} extension so they no longer open in Bookworm"
+            ).format(ext=ext)
             btn.SetLabel(mlbl)
             btn.SetNote(nlbl)
             btn.Bind(wx.EVT_BUTTON, lambda e: self.on_disassociate(btn, ext, metadata))
@@ -111,7 +114,9 @@ class FileAssociationDialog(SimpleDialog):
             # Translators: the main label of a button
             mlbl = _("Associate files of type {format}").format(format=metadata[1])
             # Translators: the note of a button
-            nlbl = _("Associate files with {ext} extension so they always open in Bookworm").format(ext=ext)
+            nlbl = _(
+                "Associate files with {ext} extension so they always open in Bookworm"
+            ).format(ext=ext)
             btn.SetLabel(mlbl)
             btn.SetNote(nlbl)
             btn.Bind(wx.EVT_BUTTON, lambda e: self.on_associate(btn, ext, metadata))

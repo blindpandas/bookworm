@@ -172,7 +172,9 @@ class AnnotationService(BookwormService):
                 return
             start_pos, end_pos = (comment.start_pos, comment.end_pos)
             is_whole_line = (start_pos, end_pos) == (None, None)
-            self.reader.go_to_page(comment.page_number, comment.position if is_whole_line else end_pos)
+            self.reader.go_to_page(
+                comment.page_number, comment.position if is_whole_line else end_pos
+            )
             if is_whole_line:
                 self.view.select_text(*self.view.get_containing_line(comment.position))
             else:
@@ -233,7 +235,11 @@ class AnnotationService(BookwormService):
         for comment in NoteTaker(self.reader).get_for_page():
             start_pos, end_pos = (comment.start_pos, comment.end_pos)
             # If the comment has a selection, we check if the caret position is inside the selection. Otherwise, we check that the ocmment position is in the pos_range, typically the whole line.
-            condition = (start_pos <= position < end_pos) if (start_pos, end_pos) != (None, None) else  comment.position in pos_range
+            condition = (
+                (start_pos <= position < end_pos)
+                if (start_pos, end_pos) != (None, None)
+                else comment.position in pos_range
+            )
             if condition:
                 evtdata["comment"] = True
         wx.CallAfter(self._process_caret_move, evtdata)
