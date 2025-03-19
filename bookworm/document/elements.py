@@ -229,12 +229,12 @@ class DocumentInfo:
             title=metadata.title,
             language=document.language,
             description=metadata.description,
-            number_of_pages=len(document)
-            if not document.is_single_page_document()
-            else None,
-            number_of_sections=len(document.toc_tree)
-            if document.has_toc_tree()
-            else None,
+            number_of_pages=(
+                len(document) if not document.is_single_page_document() else None
+            ),
+            number_of_sections=(
+                len(document.toc_tree) if document.has_toc_tree() else None
+            ),
             authors=metadata.author,
             creation_date=metadata.creation_date,
             publication_date=metadata.publication_year,

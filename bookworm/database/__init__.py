@@ -23,11 +23,13 @@ from .models import *
 
 log = logger.getChild(__name__)
 
+
 def get_db_url() -> str:
     db_path = os.path.join(get_db_path(), "database.sqlite")
     return f"sqlite:///{db_path}"
 
-def init_database(engine = None, url: str = None, **kwargs) -> bool:
+
+def init_database(engine=None, url: str = None, **kwargs) -> bool:
     if not url:
         url = get_db_url()
     if engine == None:
@@ -38,7 +40,9 @@ def init_database(engine = None, url: str = None, **kwargs) -> bool:
         rev = context.get_current_revision()
         # let's check for the book table
         # Should it be too ambiguous, we'd have to revisit what tables should be checked to determine whether the DB is at the baseline point
-        cursor = conn.execute(text("SELECT name FROM sqlite_master WHERE type='table';"))
+        cursor = conn.execute(
+            text("SELECT name FROM sqlite_master WHERE type='table';")
+        )
         tables = [row[0] for row in cursor.fetchall()]
         is_baseline = tables != None and "book" in tables and rev == None
     log.info(f"Current revision is {rev}")
@@ -48,18 +52,22 @@ def init_database(engine = None, url: str = None, **kwargs) -> bool:
     if app.is_frozen:
         cfg_file = sys._MEIPASS
         script_location = paths.app_path("alembic")
-    
+
     cfg = Config(Path(cfg_file, "alembic.ini"))
-    cfg.set_main_option('script_location', str(script_location))
+    # we set this attribute in order to prevent alembic from configuring logging if we're running the commands programmatically.
+    # This is because otherwise our loggers would be overridden
+    cfg.attributes["configure_logger"] = False
+    cfg.set_main_option("script_location", str(script_location))
     cfg.set_main_option("sqlalchemy.url", url)
     if rev == None:
         if is_baseline:
-            log.info("No revision was found, but the database appears to be at the baseline required to begin tracking.")
+            log.info(
+                "No revision was found, but the database appears to be at the baseline required to begin tracking."
+            )
             log.info("Stamping alembic revision")
-            command.stamp(cfg, "28099038d8d6")        
+            command.stamp(cfg, "28099038d8d6")
     command.upgrade(cfg, "head")
     Base.session = scoped_session(
         sessionmaker(engine, autocommit=False, autoflush=False)
     )
     return engine
-

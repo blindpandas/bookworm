@@ -324,12 +324,12 @@ class OCRMenu(wx.Menu):
                 )
             wx.CallAfter(
                 wx.MessageBox,
-                message = _(
+                message=_(
                     "Successfully processed {total} pages.\nExtracted text was written to: {file}"
                 ).format(total=total, file=output_file),
-                caption = _("OCR Completed"),
-                style = wx.ICON_INFORMATION | wx.OK,
-                parent = self.view  # 设置 parent 确保对话框聚焦
+                caption=_("OCR Completed"),
+                style=wx.ICON_INFORMATION | wx.OK,
+                parent=self.view,  # 设置 parent 确保对话框聚焦
             )
         finally:
             progress_dlg.Dismiss()

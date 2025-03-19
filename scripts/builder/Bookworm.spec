@@ -56,6 +56,7 @@ HIDDEN_IMPORTS = [
     "numpy",
     "cv2",
     "pkg_resources.py2_warn",
+    "logging.config",
 ]
 for package_with_submodules in HIDDEN_SUBMODULES:
     HIDDEN_IMPORTS += collect_submodules(package_with_submodules)

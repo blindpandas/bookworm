@@ -13,9 +13,9 @@ def section_to_dict(section: Section) -> dict[str, t.Any]:
     return {
         "title": section.title,
         "pager": section.pager.astuple(),
-        "text_range": None
-        if (text_range := section.text_range) is None
-        else text_range.astuple(),
+        "text_range": (
+            None if (text_range := section.text_range) is None else text_range.astuple()
+        ),
         "level": section.level,
         "data": section.data,
     }

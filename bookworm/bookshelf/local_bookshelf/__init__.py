@@ -577,23 +577,32 @@ class LocalDatabaseSource(Source):
             ),
             BookshelfAction(
                 # Translators: label of an item in the context menu of a document in the bookshelf
-                _("Remove from &currently reading") if doc_instance.is_currently_reading
-                # Translators: label of an item in the context menu of a document in the bookshelf
-                else _("Add to &currently reading"),
+                (
+                    _("Remove from &currently reading")
+                    if doc_instance.is_currently_reading
+                    # Translators: label of an item in the context menu of a document in the bookshelf
+                    else _("Add to &currently reading")
+                ),
                 func=lambda __: self._do_toggle_currently_reading(doc_instance),
             ),
             BookshelfAction(
                 # Translators: label of an item in the context menu of a document in the bookshelf
-                _("Remove from &want to read") if doc_instance.in_reading_list
-                # Translators: label of an item in the context menu of a document in the bookshelf
-                else _("Add to &want to read"),
+                (
+                    _("Remove from &want to read")
+                    if doc_instance.in_reading_list
+                    # Translators: label of an item in the context menu of a document in the bookshelf
+                    else _("Add to &want to read")
+                ),
                 func=lambda __: self._do_toggle_in_reading_list(doc_instance),
             ),
             BookshelfAction(
                 # Translators: label of an item in the context menu of a document in the bookshelf
-                _("Remove from &favorites") if doc_instance.favorited
-                # Translators: label of an item in the context menu of a document in the bookshelf
-                else _("Add to &favorites"),
+                (
+                    _("Remove from &favorites")
+                    if doc_instance.favorited
+                    # Translators: label of an item in the context menu of a document in the bookshelf
+                    else _("Add to &favorites")
+                ),
                 func=lambda __: self._do_toggle_favorited(doc_instance),
             ),
             BookshelfAction(
@@ -639,9 +648,9 @@ class LocalDatabaseSource(Source):
             # Translators: title of a dialog to change the reading list or collection for a document
             title=_("Edit reading list/collections"),
             categories=[cat.name for cat in Category.get_all()],
-            given_category=None
-            if not doc_instance.category
-            else doc_instance.category.name,
+            given_category=(
+                None if not doc_instance.category else doc_instance.category.name
+            ),
             tags_names=[
                 Tag.get_by_id(doc_tag.tag_id).name
                 for doc_tag in DocumentTag.select().where(

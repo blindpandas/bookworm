@@ -2,6 +2,7 @@
 
 import logging
 from logging.handlers import RotatingFileHandler
+import sys
 
 from bookworm import app, paths
 from bookworm.runtime import IS_IN_MAIN_PROCESS
@@ -16,10 +17,9 @@ formatter = logging.Formatter(MESSAGE_FORMAT, datefmt=DATE_FORMAT)
 BOOKWORM_FILTER = logging.Filter("bookworm")
 
 logger = logging.getLogger("bookworm")
-logger.setLevel(logging.DEBUG)
 
 
-def configure_logger(log_file_suffix=""):
+def configure_logger(log_file_suffix="", level: int = logging.DEBUG):
     suffix = log_file_suffix if not log_file_suffix else "." + log_file_suffix
     app_handler = RotatingFileHandler(
         paths.logs_path(f"{APP_LOG_FILE}{suffix}.log"), mode="w"
@@ -35,3 +35,12 @@ def configure_logger(log_file_suffix=""):
     error_handler.setFormatter(formatter)
     error_handler.setLevel(logging.ERROR)
     logger.addHandler(error_handler)
+
+    # we are actually interested in the stream handler only when we are running from source
+    if not app.is_frozen:
+        stream_handler = logging.StreamHandler(sys.stdout)
+        stream_handler.setFormatter(formatter)
+        stream_handler.addFilter(BOOKWORM_FILTER)
+        logger.addHandler(stream_handler)
+
+    logger.setLevel(level)

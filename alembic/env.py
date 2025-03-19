@@ -11,15 +11,16 @@ from alembic.operations import ops
 from bookworm.database import *
 
 
-
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+if config.config_file_name is not None and config.attributes.get(
+    "configure_logger", True
+):
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
@@ -34,11 +35,11 @@ target_metadata = Base.metadata
 
 writer = rewriter.Rewriter()
 
+
 @writer.rewrites(ops.MigrationScript)
 def add_imports(context, revision, op):
     op.imports.add("import bookworm")
     return [op]
-
 
 
 def run_migrations_offline() -> None:
@@ -73,11 +74,12 @@ def run_migrations_online() -> None:
 
     """
     connectable = create_engine(config.get_main_option("sqlalchemy.url"))
-    
+
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata,
-            process_revision_directives=writer
+            connection=connection,
+            target_metadata=target_metadata,
+            process_revision_directives=writer,
         )
 
         with context.begin_transaction():

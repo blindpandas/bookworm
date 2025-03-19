@@ -62,7 +62,7 @@ class FitzPdfPage(FitzPage):
             fix_character_width=False,
             uncurl_quotes=False,
             fix_latin_ligatures=False,
-            normalization='NFC'
+            normalization="NFC",
         )
         text = ftfy.fix_text(text, config)
         return super().normalize_text(text)
