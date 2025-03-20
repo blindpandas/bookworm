@@ -15,7 +15,7 @@ import more_itertools
 import wx
 from slugify import slugify
 
-from bookworm import app, config, ocr, paths, speech
+from bookworm import app, config, ocr, paths, qread, speech
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.concurrency import call_threaded, process_worker
 from bookworm.document import READING_MODE_LABELS
@@ -89,11 +89,22 @@ class FileMenu(BaseMenu):
         self.pinnedDocumentsMenu = wx.Menu()
         # A submenu for recent documents
         self.recentFilesMenu = wx.Menu()
+        # a submenu to import books from external sources
+        self.import_menu = wx.Menu()
         # File menu
         # Translators: the label of an item in the application menubar
         self.Append(wx.ID_OPEN, _("Open...\tCtrl-O"))
         # Translators: the label of an item in the application menubar
         self.Append(wx.ID_NEW, _("New Window...\tCtrl-N"))
+        self.AppendSeparator()
+        self.AppendSubMenu(
+            self.import_menu,
+            # translators, the label of an item in the application menubar
+            _("i&mport"),
+            # Translators: the help text of an item in the application menubar
+            _("Import a book from an external resource")
+        )
+        self.import_menu.Append(ImportMenuIds.qread, _("&Import QRD file"))
         self.AppendSeparator()
         # Translators: the label of an item in the application menubar
         self.Append(
@@ -163,6 +174,7 @@ class FileMenu(BaseMenu):
         # Bind event handlers
         self.view.Bind(wx.EVT_MENU, self.onOpenEBook, id=wx.ID_OPEN)
         self.view.Bind(wx.EVT_MENU, self.onNewWindow, id=wx.ID_NEW)
+        self.view.Bind(wx.EVT_MENU, self.onImportQread, id=ImportMenuIds.qread)
         self.view.Bind(
             wx.EVT_MENU, self.onClearPinDocuments, id=self.clearPinnedDocumentsID
         )
@@ -229,6 +241,29 @@ class FileMenu(BaseMenu):
         if app.debug:
             args.append("--debug")
         run_subcommand_in_a_new_process(args, hidden=False)
+
+    def onImportQread(self, event):
+        with wx.FileDialog(
+            self.view,
+            # translators: the title of a file dialog to import qrd files
+            message = _("Import QRD file"),
+            style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST,
+            wildcard=("*.qrd")
+        ) as dlg:
+            if dlg.ShowModal() != wx.ID_OK:
+                return
+            
+            qrd_path = dlg.GetPath()
+            book_info = qread.get_book_info(qrd_path)
+        if not book_info:
+            return self.view.notify_user(
+                _("Failed to import QRD file"),
+                _("The QRD file could not be imported"),
+                icon=wx.ICON_ERROR
+            )
+        uri = DocumentUri.from_filename(book_info.original_path)
+        uri.openner_args = {"position": book_info.current_position}
+        return self.view.open_uri(uri)
 
     def onClearPinDocuments(self, event):
         recents_manager.clear_pinned()

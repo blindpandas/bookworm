@@ -45,6 +45,9 @@ class ViewerMenuIds(enum.IntEnum):
     about = next(ID_GEN)
     clear_documents_cache = next(ID_GEN)
 
+class ImportMenuIds(enum.IntEnum):
+    """Ids for the import submenu"""
+    qread = next(ID_GEN)
 
 FOCUS_TABLE_OF_CONTENTS = next(ID_GEN)
 
