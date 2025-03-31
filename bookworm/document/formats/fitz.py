@@ -46,7 +46,7 @@ class FitzPage(BasePage):
             fix_character_width=False,
             uncurl_quotes=False,
             fix_latin_ligatures=False,
-            normalization='NFC'
+            normalization="NFC",
         )
         return ftfy.fix_text(text, config)
 

@@ -459,7 +459,9 @@ def copy_espeak_and_piper_libs():
     onnxruntime_notices_src = (
         PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / "notices"
     )
-    onnxruntime_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "_internal" / "onnxruntime"
+    onnxruntime_dst = (
+        Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "_internal" / "onnxruntime"
+    )
     onnxruntime_dst.mkdir(parents=True, exist_ok=True)
 
     print("Copying ONNXRuntime dll and notices...")
@@ -562,7 +564,9 @@ def gen_update_info_file(c):
     channel = version_info.get("pre_type", "")  # Stable version if no pre_type
 
     # Define base URLs and file paths for x86 and x64 builds
-    base_url = f"https://github.com/blindpandas/bookworm/releases/download/{app.version}"
+    base_url = (
+        f"https://github.com/blindpandas/bookworm/releases/download/{app.version}"
+    )
     x86_file = f"{app.display_name}-{app.version}-x86-update.bundle"
     x64_file = f"{app.display_name}-{app.version}-x64-update.bundle"
     x86_download_url = f"{base_url}/{x86_file}"
@@ -573,12 +577,21 @@ def gen_update_info_file(c):
     x64_bundle_path = artifacts_folder / x64_file
 
     # Generate SHA1 hash or use default if file does not exist
-    x86_sha1hash = generate_sha1hash(x86_bundle_path) if x86_bundle_path.exists() else "example_x86_sha1hash"
-    x64_sha1hash = generate_sha1hash(x64_bundle_path) if x64_bundle_path.exists() else "example_x64_sha1hash"
+    x86_sha1hash = (
+        generate_sha1hash(x86_bundle_path)
+        if x86_bundle_path.exists()
+        else "example_x86_sha1hash"
+    )
+    x64_sha1hash = (
+        generate_sha1hash(x64_bundle_path)
+        if x64_bundle_path.exists()
+        else "example_x64_sha1hash"
+    )
 
     # Construct the update info dictionary
     update_info = {
-        channel or "": {  # Ensure stable version uses an empty string key
+        channel
+        or "": {  # Ensure stable version uses an empty string key
             "version": app.version,
             "x86_download": x86_download_url,
             "x64_download": x64_download_url,
@@ -587,7 +600,7 @@ def gen_update_info_file(c):
         }
     }
 
-#    update_info_file = artifacts_folder / "update_info.json"
+    #    update_info_file = artifacts_folder / "update_info.json"
     update_info_file = PROJECT_ROOT / "update_info.json"
 
     # Read the existing data if the file exists, otherwise start with an empty dictionary
@@ -741,7 +754,7 @@ def freeze(c):
         )
         # This is required because pyxpdf_data looks for a default.xpdf file inside the site-packages folder
         # TODO: Fix this if at all possible
-        lib = c['build_folder'] / "Lib" / "site-packages"
+        lib = c["build_folder"] / "Lib" / "site-packages"
         os.makedirs(str(lib))
     print("App freezed.")
 
@@ -767,7 +780,7 @@ def build(c):
     """Freeze, package, and prepare the app for distribution."""
     # The following fixes a bug on windows where some DLL's are  not
     # deletable due to pyinstaller copying them
-    # without clearing their read-only status 
+    # without clearing their read-only status
     if sys.platform == "win32":
         build_folder = Path(c["build_folder"])
         for dll_file in build_folder.glob("*.dll"):
@@ -808,7 +821,7 @@ def bench(c, filename="tests/assets/epub30-spec.epub", runs=5):
         return
     arch = os.environ["IAPP_ARCH"]
     c.run(
-        f'hyperfine -N -r {runs} -w 1 '
+        f"hyperfine -N -r {runs} -w 1 "
         f'--export-json "scripts\\benchmark-{arch}.json" '
         f'"python -m bookworm benchmark {filename}"'
     )

@@ -22,10 +22,11 @@ def asset():
 class DummyTextCtrl:
     def SetFocus(self):
         pass
-        
+
 
 class DummyView:
     """Represents a mock for the bookworm view"""
+
     def __init__(self):
         self.title = ""
         self.toc_tree = None
@@ -33,7 +34,7 @@ class DummyView:
         self.insertion_point = 0
         self.state_on_section_change: Section = None
         self.contentTextCtrl = DummyTextCtrl()
-    
+
     def add_toc_tree(self, tree):
         self.toc_tree = tree
 
@@ -45,7 +46,7 @@ class DummyView:
 
     def get_insertion_point(self):
         return self.insertion_point
-        
+
     def set_state_on_section_change(self, value: Section) -> None:
         self.state_on_section_change = value
 
@@ -57,16 +58,18 @@ class DummyView:
 
     def go_to_position(self, start: int, end: int) -> None:
         self.set_insertion_point(start)
-    
+
     def go_to_webpage(self, url: str) -> None:
         pass
 
     def show_html_dialog(self, markup: str, title: str) -> None:
         pass
 
+
 @pytest.fixture()
 def text_ctrl():
     yield DummyTextCtrl()
+
 
 @pytest.fixture
 def view(text_ctrl):
@@ -74,16 +77,15 @@ def view(text_ctrl):
     v.contentTextCtrl = text_ctrl
     yield v
 
+
 @pytest.fixture()
 def engine(tmp_path):
-    temp_file =  tmp_path / "test.db"
-    engine = init_database(
-        url=f"sqlite:///{temp_file}",
-        poolclass = NullPool
-    )
+    temp_file = tmp_path / "test.db"
+    engine = init_database(url=f"sqlite:///{temp_file}", poolclass=NullPool)
     yield engine
     close_all_sessions()
     engine.dispose()
+
 
 @pytest.fixture()
 def reader(view, engine):

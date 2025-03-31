@@ -12,7 +12,16 @@ from sqlalchemy import types
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import deferred, relationship, synonym, class_mapper, mapper, Query, scoped_session, declarative_base
+from sqlalchemy.orm import (
+    deferred,
+    relationship,
+    synonym,
+    class_mapper,
+    mapper,
+    Query,
+    scoped_session,
+    declarative_base,
+)
 
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
@@ -22,6 +31,7 @@ log = logger.getChild(__name__)
 
 class DocumentUriDBType(types.TypeDecorator):
     """Provides sqlalchemy custom type for the DocumentUri."""
+
     cache_ok = True
 
     impl = types.Unicode
@@ -54,6 +64,7 @@ class _QueryProperty(object):
                 return Query(mapper, session=type.session())
         except UnmappedClassError:
             return None
+
 
 class Model:
     id = sa.Column(sa.Integer, primary_key=True)
@@ -91,7 +102,7 @@ class DocumentBase(Base, GetOrCreateMixin):
 
 class Book(DocumentBase):
     __tablename__ = "book"
-    
+
     @property
     def identifier(self):
         return self.uri.to_uri_string()
@@ -113,7 +124,9 @@ class DocumentPositionInfo(DocumentBase):
 
 class RecentDocument(DocumentBase):
     __tablename__ = "recent_document"
-    last_opened_on = sa.Column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    last_opened_on = sa.Column(
+        sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
 
     def record_open(self):
         self.last_opened_on = datetime.utcnow()
@@ -133,7 +146,9 @@ class RecentDocument(DocumentBase):
 
 class PinnedDocument(DocumentBase):
     __tablename__ = "pinned_document"
-    last_opened_on = sa.Column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    last_opened_on = sa.Column(
+        sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
     is_pinned = sa.Column(sa.Boolean, default=False)
     pinning_order = sa.Column(sa.Integer, default=0)
 
@@ -166,7 +181,9 @@ class PinnedDocument(DocumentBase):
             session.delete(item)
         session.commit()
 
+
 # annotation models
+
 
 class TaggedMixin:
     """Provides a generic many-to-many relationship
@@ -195,16 +212,16 @@ class TaggedMixin:
             # Create the Tag model
             tag_attrs = {
                 "id": sa.Column(sa.Integer, primary_key=True),
-                "title": sa.Column(sa.String(512), nullable=False, unique=True, index=True),
+                "title": sa.Column(
+                    sa.String(512), nullable=False, unique=True, index=True
+                ),
                 "items": relationship(
                     cls,
                     secondary=lambda: cls.__tags_association_table__,
                     backref="related_tags",
                 ),
             }
-            cls.Tag = type(
-                f"{cls.__name__}Tag", (GetOrCreateMixin, Base), tag_attrs
-            )
+            cls.Tag = type(f"{cls.__name__}Tag", (GetOrCreateMixin, Base), tag_attrs)
             # The many-to-many association table
             cls.__tags_association_table__ = cls._prepare_association_table(
                 table_name=f"{cls.__tablename__}s_tags",
@@ -246,6 +263,7 @@ class AnnotationBase(Base):
 
 class Bookmark(AnnotationBase):
     """Represents a user-defined bookmark."""
+
     __tablename__ = "bookmark"
 
 
@@ -264,15 +282,17 @@ class TaggedContent(AnnotationBase, TaggedMixin):
 
 class Note(TaggedContent):
     """Represents user comments (notes)."""
+
     __tablename__ = "note"
     # Like Quote, a note can have a start and an end position
     # difference is that they are allowed to be None, and if so, it means they are targeting the whole line
-    start_pos = sa.Column(sa.Integer, default = None)
-    end_pos = sa.Column(sa.Integer, default = None)
-    
+    start_pos = sa.Column(sa.Integer, default=None)
+    end_pos = sa.Column(sa.Integer, default=None)
+
 
 class Quote(TaggedContent):
     """Represents a highlight (quote) from the book."""
+
     __tablename__ = "quote"
 
     start_pos = sa.Column(sa.Integer, nullable=False)

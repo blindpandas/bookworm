@@ -115,5 +115,7 @@ def is_file_type_associated(ext):
     except PermissionError:
         return False
     except Exception as e:
-        log.exception(f"Unexpected error when checking file association for {ext}: {str(e)}")
+        log.exception(
+            f"Unexpected error when checking file association for {ext}: {str(e)}"
+        )
         return False

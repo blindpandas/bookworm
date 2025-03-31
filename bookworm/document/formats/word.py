@@ -91,7 +91,9 @@ class WordDocument(BaseHtmlDocument):
             self._get_cache_directory(), eviction_policy="least-frequently-used"
         )
         cache_key = self.uri.to_uri_string()
-        if (cached_html_content := cache.get(cache_key)) and not cache_utils.is_document_modified(cache_key, doc_path, cache):
+        if (
+            cached_html_content := cache.get(cache_key)
+        ) and not cache_utils.is_document_modified(cache_key, doc_path, cache):
             return cached_html_content.decode("utf-8")
         result = mammoth.convert_to_html(data_buf, include_embedded_style_map=False)
         data_buf.seek(0)

@@ -209,11 +209,13 @@ class AnnotationMenu(wx.Menu):
         if start_pos == end_pos:
             start_pos, end_pos = (None, None)
         comments = NoteTaker(self.reader)
-        if comments.overlaps(start_pos, end_pos, self.reader.current_page, insertionPoint):
+        if comments.overlaps(
+            start_pos, end_pos, self.reader.current_page, insertionPoint
+        ):
             return self.view.notify_user(
                 _("Error"),
                 # Translator: Message obtained whenever another note is overlapping the selected position
-                _("Another note is currently overlapping the selected position.")
+                _("Another note is currently overlapping the selected position."),
             )
         comment_text = self.view.get_text_from_user(
             # Translators: the title of a dialog to add a comment
@@ -225,7 +227,11 @@ class AnnotationMenu(wx.Menu):
         if not comment_text:
             return
         note = comments.create(
-            title="", content=comment_text, position=insertionPoint, start_pos=start_pos, end_pos=end_pos
+            title="",
+            content=comment_text,
+            position=insertionPoint,
+            start_pos=start_pos,
+            end_pos=end_pos,
         )
 
         self.service.style_comment(self.view, insertionPoint)

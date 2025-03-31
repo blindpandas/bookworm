@@ -47,10 +47,10 @@ class PlainTextDocument(SinglePageDocument):
             fix_character_width=False,
             uncurl_quotes=False,
             fix_latin_ligatures=False,
-            normalization='NFC',
+            normalization="NFC",
             unescape_html=False,
             fix_line_breaks=True,
-            max_decode_length=MAX_NUM_CHARS
+            max_decode_length=MAX_NUM_CHARS,
         )
         return ftfy.fix_text(text, config)
 
