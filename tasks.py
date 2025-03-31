@@ -79,8 +79,13 @@ def _add_envars(context):
 
     arch = app.arch
     build_folder = PROJECT_ROOT / "scripts" / "builder" / "dist" / arch / "Bookworm"
+    # From pyinstaller 6.0.0, all content except the executable and required libraries has been moved to a content directory
+    # By default the directory is named _internal
+    # see: https://pyinstaller.org/en/stable/CHANGES.html#id66
+    build_folder_content = build_folder / "_internal"
     context["offline_run"] = os.environ.get("BOOKWORM_BUILD_OFFLINE", "")
     context["build_folder"] = build_folder
+    context["build_folder_content"] = build_folder_content
     context["pip_timeout"], context["pip_retries"] = (
         (1, 1) if context["offline_run"] else (15, 5)
     )
@@ -96,6 +101,7 @@ def _add_envars(context):
             "IAPP_WEBSITE": app.website,
             "IAPP_COPYRIGHT": app.copyright,
             "IAPP_FROZEN_DIRECTORY": str(build_folder),
+            "IAPP_FROZEN_CONTENT_DIRECTORY": str(build_folder_content),
         }
     )
     context["_envars_added"] = True
@@ -382,7 +388,7 @@ def copy_deps(c):
         return print("Not Windows")
     print("Copying vcredis 2015 ucrt support DLLs...")
     arch = os.environ["IAPP_ARCH"]
-    dist_dir = os.environ["IAPP_FROZEN_DIRECTORY"]
+    dist_dir = c["build_folder_content"]
     dlls = [
         Path(
             f"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\redist\\{arch}\\Microsoft.VC140.CRT\\msvcp140.dll"
@@ -411,7 +417,7 @@ def copy_deps(c):
     print("Done copying vcredis 2015 ucrt DLLs.")
     print("Copying Unrar DLLs")
     source_path = PROJECT_ROOT / "scripts" / "dlls" / "unrar_dll"
-    unrar_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "_internal" / "unrar_dll"
+    unrar_dst = Path(c["build_folder_content"]) / "unrar_dll"
     unrar_dst.mkdir(parents=True, exist_ok=True)
     for file in source_path.iterdir():
         shutil.copy(file, unrar_dst)
@@ -425,7 +431,7 @@ def copy_deps(c):
         / "BkwRicheditOpts.dll"
     )
     richeditopts_dll_dst = (
-        Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "_internal" / "BkwRicheditOpts.dll"
+        Path(c["build_folder_content"]) / "BkwRicheditOpts.dll"
     )
     if not richeditopts_dll_src.exists():
         if shutil.which("cargo") is None:
@@ -447,7 +453,7 @@ def copy_espeak_and_piper_libs():
         PROJECT_ROOT / "scripts" / "dlls" / "espeak-ng" / arch / "espeak-ng.dll"
     )
     espeak_data_src = PROJECT_ROOT / "scripts" / "dlls" / "espeak-ng" / "espeak-ng-data"
-    espeak_dst = Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "_internal"
+    espeak_dst = Path(os.environ["IAPP_FROZEN_CONTENT_DIRECTORY"])
 
     print("Copying eSpeak-ng dll and data...")
     shutil.copy(espeak_dll_src, espeak_dst)
@@ -460,7 +466,7 @@ def copy_espeak_and_piper_libs():
         PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / "notices"
     )
     onnxruntime_dst = (
-        Path(os.environ["IAPP_FROZEN_DIRECTORY"]) / "_internal" / "onnxruntime"
+        Path(os.environ["IAPP_FROZEN_CONTENT_DIRECTORY"]) / "onnxruntime"
     )
     onnxruntime_dst.mkdir(parents=True, exist_ok=True)
 
@@ -518,7 +524,7 @@ def bundle_update(c):
             archive.write(file, file.relative_to(frozen_dir))
         archive.write(
             PROJECT_ROOT / "scripts" / "executables" / "bootstrap" / "bootstrap.exe",
-            "bootstrap.exe",
+            "_internal/bootstrap.exe",
         )
     print("Done preparing update bundle.")
 
@@ -754,7 +760,7 @@ def freeze(c):
         )
         # This is required because pyxpdf_data looks for a default.xpdf file inside the site-packages folder
         # TODO: Fix this if at all possible
-        lib = c["build_folder"] / "Lib" / "site-packages"
+        lib = c["build_folder_content"] / "Lib" / "site-packages"
         os.makedirs(str(lib))
     print("App freezed.")
 
@@ -764,7 +770,7 @@ def freeze(c):
 def copy_executables(c):
     if sys.platform == "win32":
         print("Copying antiword executable")
-        build_folder = c["build_folder"]
+        build_folder = c["build_folder_content"]
         antiword_executable_dir = PROJECT_ROOT / "scripts" / "executables" / "antiword"
         antiword_dst = build_folder / "antiword"
         shutil.copytree(antiword_executable_dir, antiword_dst, dirs_exist_ok=True)
@@ -836,7 +842,7 @@ def run_application(c, debug=True):
 
         if Path(bookworm.__path__[0]).parent != Path.cwd():
             print(
-                "WARNGING: bookworm is being imported from a different location.\n"
+                "WARNING: bookworm is being imported from a different location.\n"
                 "This may happen because bookworm is not installed in dev mode.\n"
                 "Changes you make in the bookworm pacakge will not show up.\n"
                 "To fix this, run:\n\tpip uninstall bookworm\n\tpip install -e .\n"
