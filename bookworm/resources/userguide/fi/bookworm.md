@@ -21,7 +21,7 @@ Bookworm toimii Windows-käyttöjärjestelmässä. Se toimii hyvin suosittujen r
 * Sisällysluettelon avulla tapahtuvaa navigointia tuetaan laajasti kaikissa asiakirjamuodoissa
 * Tuki kirjojen ääneen lukemiselle käyttäen teksti puheeksi -toimintoa, jonka asetuksia voi muokata ääniprofiilien avulla
 * Tuki tekstin zoomaukselle tavallisia zoomaa lähemmäs/zoomaa kauemmas/nollaa-komentoja käyttäen
-* Tuki minkä tahansa asiakirjamuodon viemiselle pelkäksi tekstiksi.
+* Tuki minkä tahansa asiakirjamuodon viemiselle pelkkä teksti -muotoon.
 
 ## Asennus
 
@@ -216,4 +216,4 @@ Pysyäksesi ajan tasalla viimeisimmistä Bookworm-uutisista, vieraile sovellukse
 
 ## Lisenssi
 
-**Bookworm** on copyright (c) 2019-2022 Musharraf Omer sekä muut kehitykseen osallistuneet. Se on [MIT-lisenssin](https://github.com/blindpandas/bookworm/blob/master/LICENSE) alainen.
+**Bookworm** on copyright (c) 2019-2024 Musharraf Omer sekä muut kehitykseen osallistuneet. Se on [MIT-lisenssin](https://github.com/blindpandas/bookworm/blob/master/LICENSE) alainen.
