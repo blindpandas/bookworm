@@ -418,8 +418,9 @@ class EBookReader:
             self.view.go_to_webpage(target_info.url)
         else:
             start, end = target_info.position
+            start += 1
             self.perform_wormhole_navigation(
-                page=target_info.page, start=start, end=None, last_position=link_range
+                page=target_info.page, start=start, end=end, last_position=link_range
             )
 
     def get_view_title(self, include_author=False):
