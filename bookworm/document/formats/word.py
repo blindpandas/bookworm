@@ -86,7 +86,7 @@ class WordDocument(BaseHtmlDocument):
 
     def _get_html_content_from_docx(self, data_buf, is_encrypted_document):
         data_buf.seek(0)
-        doc_path = self.get_file_system_path
+        doc_path = self.get_file_system_path()
         cache = Cache(
             self._get_cache_directory(), eviction_policy="least-frequently-used"
         )
