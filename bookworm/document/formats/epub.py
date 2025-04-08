@@ -341,10 +341,24 @@ class EpubDocument(SinglePageDocument):
             for node in tree.xpath("//*[@id]"):
                 node.set("id", filename + "#" + node.get("id"))
         try:
-            tree.remove(tree.head)
-            tree.body.tag = "section"
-        except:
-            raise e
+            # Attempt to access and remove head
+            head_element = tree.head
+            if head_element is not None:
+                tree.remove(head_element)
+
+            # Attempt to access and modify body tag
+            body_element = tree.body
+            if body_element is not None:
+                body_element.tag = "section"
+
+        except IndexError:
+            # Handle case where xpath lookup for head or body fails
+            log.warning(f"Could not find <head> or <body> element via xpath in {filename}. Skipping removal/modification.")
+        except Exception as exc:
+            # Catch other potential errors during head/body processing
+            log.warning(f"Error processing HTML structure (head/body) in {filename}: {exc}")
+            raise exc # Re-raise other unexpected errors
+
         tree.tag = "div"
         tree.insert(0, tree.makeelement("header", attrib={"id": filename}))
         return lxml_html.tostring(tree, method="html", encoding="unicode")
