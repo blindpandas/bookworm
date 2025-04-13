@@ -491,8 +491,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             current_font_size = current_style.Font.GetPointSize()
         else:
             current_font_size = None
-        self.contentTextCtrl.SetValue("\n\n")
-        self.contentTextCtrl.SetInsertionPoint(1)
+        self.contentTextCtrl.SetValue("")
+        self.contentTextCtrl.SetInsertionPoint(0)
         self.contentTextCtrl.SetDefaultStyle(
             self.get_content_view_text_style(font_size=current_font_size)
         )
