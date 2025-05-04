@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import pytest
 
 from bookworm.annotation import NoteTaker
+from bookworm.annotation.annotator import AnnotationSortCriteria
 from bookworm.database.models import *
 from bookworm.document.uri import DocumentUri
 
@@ -31,7 +32,7 @@ def test_notes_respect_sort_criteria(asset, reader):
     # the shape of the list's elements is:
     # (title, content, page_number, position, start_pos, end_pos)
     notes = [
-        ("first test", "test", 0, 0, 0, 1),
+        ("first test", "test", 0, 1, 1, 1),
         ("second test", "test", 0, 1, 1, 2),
         ("third test", "test", 0, 5, 5, 10),
         ("fourth test", "test", 0, 11, 11, 15),
@@ -50,3 +51,18 @@ def test_notes_respect_sort_criteria(asset, reader):
         )
     titles = [x.title for x in annotator.get_all(asc=True)]
     assert expected_titles == titles
+    # we append a note which is supposed to show up as first when ordered by position
+    note = ("sixth test", "test", 0, 0, 0, 1)
+    notes.append(note)
+    annotator.create(
+        title=note[0],
+        content=note[1],
+        page_number=note[2],
+        position=note[3],
+        start_pos=note[4],
+        end_pos=note[5],
+    )
+    expected_titles = [x[0] for x in sorted(notes, key = lambda x: x[3])]
+    titles = [x.title for x in annotator.get_all(asc=True, sort_criteria=AnnotationSortCriteria.Position)]
+    print(expected_titles)
+    assert titles == expected_titles
