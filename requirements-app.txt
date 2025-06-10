@@ -52,7 +52,7 @@ pywin32==306;sys_platform=="win32"
 pyxpdf-data==1.1.0
 rapidfuzz==3.9.3
 regex==2024.5.15
-requests==2.32.3
+requests==2.32.4
 selectolax==0.3.21
 SQLAlchemy > 2
 trafilatura==1.10.0
