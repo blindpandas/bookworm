@@ -353,6 +353,8 @@ class AnnotationWithContentDialog(SimpleDialog):
             (_("Date"), AnnotationSortCriteria.Date),
             # Translators: text of a toggle button to sort comments/highlights list
             (_("Page"), AnnotationSortCriteria.Page),
+            # Translators: text of a toggle button to sort comments/highlights list
+            (_("Position"), AnnotationSortCriteria.Position),
         ]
         if not self.reader.ready:
             # Translators: text of a toggle button to sort comments/highlights list
