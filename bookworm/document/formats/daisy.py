@@ -1,7 +1,5 @@
 """Daisy 3.0  document format """
-from collections import OrderedDict
 from dataclasses import dataclass
-import glob
 from pathlib import Path
 from typing import Dict, List
 import zipfile
@@ -9,7 +7,7 @@ from zipfile import ZipFile
 
 from lxml import etree
 
-from bookworm.document.base import SinglePageDocument, SINGLE_PAGE_DOCUMENT_PAGER, TreeStackBuilder
+from bookworm.document.base import SinglePageDocument, SINGLE_PAGE_DOCUMENT_PAGER
 from bookworm.document import BookMetadata, DocumentCapability as DC, Section
 from bookworm.logger import logger
 from bookworm.structured_text import TextRange
@@ -32,6 +30,7 @@ class DaisyNavPoint:
     id: str
     content: str
     label: str
+    children: list['DaisyNavPoint']
 
 def _parse_opf(path: Path | zipfile.Path) -> DaisyMetadata:
     """Parses the OPF file of a daisy3 book in order to obtain its book metadata"""
@@ -74,13 +73,19 @@ def _parse_ncx(path: Path | zipfile.Path) -> List[DaisyNavPoint]:
     # We are not interested in the navInfo element, which means that findall() will likely suffice
     nav_points = tree.findall('navMap/navPoint', tree.nsmap)
     def parse_point(element) -> DaisyNavPoint:
+        # Only get direct child navPoint elements, not nested ones
+        # children_nav_points = [child for child in element if child.tag.endswith('navPoint')]
+        children_nav_points = element.findall('navPoint', element.nsmap)
+        children = [parse_point(x) for x in children_nav_points]
+
         _id = element.attrib.get('id')
         label = element.find('navLabel/text', element.nsmap).text
         content = element.find('content', element.nsmap).attrib.get('src')
         return DaisyNavPoint(
             id=_id,
             label=label,
-            content=content
+            content=content,
+            children=children,
         )
     
     return [parse_point(x) for x in nav_points]
@@ -104,12 +109,16 @@ def read_daisy(path: Path) -> DaisyBook:
             entry = etree.fromstring((path / file).read_bytes())
             tree_cache[file] = entry
         return entry
-    for point in toc:
+    def build_nav_ref(point: DaisyNavPoint) -> None:
+        for child in point.children:
+            build_nav_ref(child)
         file, ref = point.content.split("#")
         tree = get_smil(file)
         child = tree.xpath(f"//*[@id='{ref}']")[0]
         text = child.find('text', child.nsmap).attrib.get('src')
         nav_ref[point.content] = text
+    for point in toc:
+        build_nav_ref(point)
     
     return DaisyBook(
         metadata=metadata,
@@ -164,23 +173,27 @@ class DaisyDocument(SinglePageDocument):
         return '\n'.join(content)
 
     def _build_toc(self) -> Section:
+        level = 1
         root = Section(
             title=self._book.metadata.title,
             pager = SINGLE_PAGE_DOCUMENT_PAGER,
-            level=1,
+            level=level,
             text_range=TextRange(0, len(self.structure.get_text())),
         )
-        stack = TreeStackBuilder(root)
-        for entry in self._book.toc:
+        def add_children(stack: Section, entry: DaisyNavPoint, level: int) -> Section:
             item_ref = self._book.nav_ref[entry.content].split('#')[1]
             item_range = self.structure.html_id_ranges.get(item_ref)
             if item_range:
                 s = Section(
                     title=entry.label,
                     pager = SINGLE_PAGE_DOCUMENT_PAGER,
-                    level = 2,
-                    text_range=TextRange(*item_range)
+                    level = level,
+                    text_range=TextRange(*item_range),
                 )
-                stack.push(s)
+                s.children=[add_children(s, x, level+1) for x in entry.children]
+                stack.append(s)
+            return s
+        for entry in self._book.toc:
+            add_children(root, entry, level+1 )
         return root
         
