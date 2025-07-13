@@ -1,7 +1,3 @@
-# Our in-house packages
-# Our fork of the configobj (py3k compatible version).
-https://github.com/blindpandas/configobj/tarball/v5.1.0.dev0
-
 accessible-output2==0.17
 alembic==1.13.2
 apsw==3.46.0.0
@@ -14,6 +10,7 @@ blinker==1.8.2
 bottle==0.12.25
 chardet==4.0.0
 comtypes==1.4.2
+configobj==5.0.9
 cssselect==1.1.0
 dateparser==1.2.0
 demandimport==0.3.4
@@ -52,7 +49,7 @@ pywin32==306;sys_platform=="win32"
 pyxpdf-data==1.1.0
 rapidfuzz==3.9.3
 regex==2024.5.15
-requests==2.32.3
+requests==2.32.4
 selectolax==0.3.21
 SQLAlchemy > 2
 trafilatura==1.10.0

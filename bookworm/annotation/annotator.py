@@ -44,6 +44,7 @@ class AnnotationSortCriteria(IntEnum):
     Date = auto()
     Page = auto()
     Book = auto()
+    Position = auto()
 
     def sort_query(self, model, query, asc=True):
         if self is AnnotationSortCriteria.Null:
@@ -57,6 +58,8 @@ class AnnotationSortCriteria(IntEnum):
             return query.order_by(sort_fn(model.page_number))
         elif self is AnnotationSortCriteria.Book:
             return query.order_by(sort_fn(model.book_id))
+        elif self is AnnotationSortCriteria.Position:
+            return query.order_by(sort_fn(model.position))
 
 
 class Annotator:
