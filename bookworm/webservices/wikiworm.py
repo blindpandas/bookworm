@@ -63,25 +63,34 @@ class WikipediaService(BookwormService):
 
     def get_contextmenu_items(self):
         rv = ()
-        if selected_text := self.view.contentTextCtrl.GetStringSelection().strip():
-            rv = [
-                (
-                    2,
-                    _("Define using Wikipedia"),
-                    _("Define the selected text using Wikipedia"),
-                    self.wiki_quick_search_id,
-                )
-            ]
+        # First, get the clean selection range from our gatekeeper method
+        selection_range = self.view.get_selection_range()
+        # Check if there is an actual selection
+        if selection_range.start != selection_range.stop:
+            # Now, safely get the text based on the clean range
+            selected_text = self.view.get_text_by_range(selection_range.start, selection_range.stop).strip()
+            # Only proceed if the stripped text is not empty
+            if selected_text:
+                rv = [
+                    (
+                        2,
+                        _("Define using Wikipedia"),
+                        _("Define the selected text using Wikipedia"),
+                        self.wiki_quick_search_id,
+                    )
+                ]
         return rv
 
     def get_keyboard_shortcuts(self):
         return {self.wiki_quick_search_id: "Ctrl+Shift+W"}
 
     def onQuickWikiSearch(self, event):
-        if selected_text := self.view.contentTextCtrl.GetStringSelection().strip():
-            term = selected_text
-        else:
-            term = ""
+        term = ""
+        selection_range = self.view.get_selection_range()
+        if selection_range.start != selection_range.stop:
+            selected_text = self.view.get_text_by_range(selection_range.start, selection_range.stop).strip()
+            if selected_text:
+                term = selected_text
         language = (
             self.view.reader.document.language
             if self.view.reader.ready

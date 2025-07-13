@@ -110,24 +110,20 @@ class NavigationProvider:
     def _auto_navigate(self, event, key_code):
         now = time.time()
         last_press = self._key_press_record.get(key_code)
-        num_lines = self._nav_ctrl.NumberOfLines - 1
+        # WHY: Use the view's gatekeeper methods for all position logic.
+        num_lines = self.view.get_line_number(self.view.get_last_position())
         _curr_page = self.reader.current_page
         if key_code == wx.WXK_UP:
-            is_first_line = (
-                self._nav_ctrl.PositionToXY(self._nav_ctrl.InsertionPoint)[-1] == 0
-            )
+            is_first_line = self.view.get_line_number() == 0
             if not is_first_line:
                 return
             if (last_press is not None) and (now - last_press) <= DKEY_TIMEOUT:
                 self.reader.go_to_prev()
                 if _curr_page != self.reader.current_page:
-                    self._nav_ctrl.InsertionPoint = self._nav_ctrl.GetLastPosition() - 1
+                    self.view.set_insertion_point(self.view.get_last_position())
             self._key_press_record[key_code] = now
         elif key_code == wx.WXK_DOWN:
-            is_last_line = (
-                self._nav_ctrl.PositionToXY(self._nav_ctrl.InsertionPoint)[-1]
-                == num_lines
-            )
+            is_last_line = self.view.get_line_number() == num_lines
             if not is_last_line:
                 return
             if (last_press is not None) and (now - last_press) <= DKEY_TIMEOUT:
@@ -156,11 +152,12 @@ class NavigationProvider:
         )
 
     def _do_paginate(self, text_ctrl, down):
-        current_pos = self.view.get_containing_line(text_ctrl.GetInsertionPoint())[0]
+        # WHY: Use the view's gatekeepers for all position calculations.
+        current_pos = self.view.get_containing_line(self.view.get_insertion_point())[0]
         if down:
             target_pos = current_pos + PAGINATION_NUM_CHARS
-            if target_pos >= (last_pos := text_ctrl.GetLastPosition()):
-                text_ctrl.SetInsertionPoint(last_pos - 1)
+            if target_pos >= (last_pos := self.view.get_last_position()):
+                self.view.set_insertion_point(last_pos)
                 return
         else:
             target_pos = current_pos - PAGINATION_NUM_CHARS
@@ -169,4 +166,4 @@ class NavigationProvider:
         target_fol = self.view.get_containing_line(
             round(target_pos / PAGINATION_NUM_CHARS) * PAGINATION_NUM_CHARS
         )[0]
-        text_ctrl.SetInsertionPoint(target_fol)
+        self.view.set_insertion_point(target_fol)

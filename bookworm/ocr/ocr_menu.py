@@ -268,7 +268,7 @@ class OCRMenu(wx.Menu):
             speech.announce(_("Automatic OCR is enabled"))
         else:
             speech.announce(_("Automatic OCR is disabled"))
-        if not self.view.contentTextCtrl.GetValue():
+        if self.view.is_empty():
             self.onScanCurrentPage(event)
 
     def onScanToTextFile(self, event):
