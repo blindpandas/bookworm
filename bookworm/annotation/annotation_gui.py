@@ -171,11 +171,11 @@ class AnnotationMenu(wx.Menu):
 
     def _add_bookmark(self, name=""):
         bookmarker = Bookmarker(self.reader)
-        insertionPoint = self.view.contentTextCtrl.GetInsertionPoint()
-        __, __, current_lino = self.view.contentTextCtrl.PositionToXY(insertionPoint)
+        insertionPoint = self.view.get_insertion_point()
+        current_lino = self.view.get_line_number(insertionPoint)
         count = 0
         for bkm in bookmarker.get_for_page(self.reader.current_page):
-            __, __, lino = self.view.contentTextCtrl.PositionToXY(bkm.position)
+            lino = self.view.get_line_number(bkm.position)
             if lino == current_lino:
                 count += 1
                 bookmarker.delete(bkm.id)
@@ -202,8 +202,9 @@ class AnnotationMenu(wx.Menu):
 
     def onAddNote(self, event):
         _with_tags = wx.GetKeyState(wx.WXK_SHIFT)
-        insertionPoint = self.view.contentTextCtrl.GetInsertionPoint()
-        start_pos, end_pos = self.view.contentTextCtrl.GetSelection()
+        insertionPoint = self.view.get_insertion_point()
+        selection_range = self.view.get_selection_range()
+        start_pos, end_pos = selection_range.start, selection_range.stop
         # if start_pos and end_pos are equal, there is no selection
         # see: https://docs.wxpython.org/wx.TextEntry.html#wx.TextEntry.GetSelection
         if start_pos == end_pos:
@@ -251,10 +252,10 @@ class AnnotationMenu(wx.Menu):
     def onQuoteSelection(self, event):
         _with_tags = wx.GetKeyState(wx.WXK_SHIFT)
         quoter = Quoter(self.reader)
-        selected_text = self.view.contentTextCtrl.GetStringSelection()
-        if not selected_text:
-            return speech.announce(_("No selection"))
         x, y = self.view.get_selection_range()
+        if x == y:
+            return speech.announce(_("No selection"))
+        selected_text = self.view.get_text_by_range(x, y)
         for q in quoter.get_for_page():
             q_range = TextRange(q.start_pos, q.end_pos)
             if (q_range.start == x) and (q_range.stop == y):

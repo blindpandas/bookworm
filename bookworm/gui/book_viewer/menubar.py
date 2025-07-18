@@ -102,7 +102,7 @@ class FileMenu(BaseMenu):
             # translators, the label of an item in the application menubar
             _("i&mport"),
             # Translators: the help text of an item in the application menubar
-            _("Import a book from an external resource")
+            _("Import a book from an external resource"),
         )
         self.import_menu.Append(ImportMenuIds.qread, _("&Import QRD file"))
         self.AppendSeparator()
@@ -246,20 +246,20 @@ class FileMenu(BaseMenu):
         with wx.FileDialog(
             self.view,
             # translators: the title of a file dialog to import qrd files
-            message = _("Import QRD file"),
+            message=_("Import QRD file"),
             style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST,
-            wildcard=("*.qrd")
+            wildcard=("*.qrd"),
         ) as dlg:
             if dlg.ShowModal() != wx.ID_OK:
                 return
-            
+
             qrd_path = dlg.GetPath()
             book_info = qread.get_book_info(qrd_path)
         if not book_info:
             return self.view.notify_user(
                 _("Failed to import QRD file"),
                 _("The QRD file could not be imported"),
-                icon=wx.ICON_ERROR
+                icon=wx.ICON_ERROR,
             )
         uri = DocumentUri.from_filename(book_info.original_path)
         uri.openner_args = {"position": book_info.current_position}
@@ -657,7 +657,7 @@ class SearchMenu(BaseMenu):
     def onGoToLine(self, event):
         textCtrl = self.view.contentTextCtrl
         if (
-            idx_last_line := self.view.get_line_number(textCtrl.GetLastPosition())
+            idx_last_line := self.view.get_line_number(self.view.get_last_position())
         ) == 0:
             return wx.Bell()
         last_line = idx_last_line + 1

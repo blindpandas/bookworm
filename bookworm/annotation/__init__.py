@@ -92,7 +92,8 @@ class AnnotationService(BookwormService):
             ),
             (6, "", "", None),
         ]
-        if self.view.contentTextCtrl.GetStringSelection():
+        selection = self.view.get_selection_range()
+        if selection.start != selection.stop:
             rv.insert(
                 0,
                 (
@@ -214,19 +215,28 @@ class AnnotationService(BookwormService):
             sounds.navigation.play()
 
     def onCaretMoved(self, event):
+        # This method reacts every time the user moves the cursor.
+        # The `event.Position` from wxPython is the REAL, physical position in the control.
+        # All of our stored annotation positions (bookmarks, highlights) are "clean".
+        # Therefore, we MUST convert the real `event.Position` into a `clean_position`
+        # before doing any logical comparisons.
         event.Skip(True)
         if not self.reader.ready:
             return
+        # Convert the real position from the event to a clean position.
+        # We assume TEXT_CTRL_OFFSET is 1. Using a hardcoded 1 is robust here.
+        clean_position = event.Position - 1
+        if clean_position < 0:
+            return
         evtdata = {}
-        position = event.Position
-        start, end = self.view.get_containing_line(position)
-        pos_range = range(start, end - 1)
+        start, end = self.view.get_containing_line(clean_position)
+        pos_range = range(start, end)
         for bookmark in Bookmarker(self.reader).get_for_page():
             if bookmark.position in pos_range:
                 evtdata["bookmark"] = True
                 break
         for highlight in Quoter(self.reader).get_for_page():
-            if highlight.start_pos <= position <= (highlight.end_pos - 1):
+            if highlight.start_pos <= clean_position < highlight.end_pos:
                 evtdata["highlight"] = True
                 break
             elif highlight.start_pos in pos_range:
@@ -234,9 +244,8 @@ class AnnotationService(BookwormService):
                 break
         for comment in NoteTaker(self.reader).get_for_page():
             start_pos, end_pos = (comment.start_pos, comment.end_pos)
-            # If the comment has a selection, we check if the caret position is inside the selection. Otherwise, we check that the ocmment position is in the pos_range, typically the whole line.
             condition = (
-                (start_pos <= position < end_pos)
+                (start_pos <= clean_position < end_pos)
                 if (start_pos, end_pos) != (None, None)
                 else comment.position in pos_range
             )
@@ -328,14 +337,21 @@ class AnnotationService(BookwormService):
     @staticmethod
     @gui_thread_safe
     def style_bookmark(view, position, enable=True):
+        # This method applies a visual style (underline) to a line.
+        # The input `position` is a clean index.
+        # The final call to `.SetStyle()` MUST use real, offset-adjusted positions.
         if not config.conf["annotation"]["use_visuals"]:
             return
+        # `get_containing_line` is a gatekeeper and correctly returns a clean range.
         start, end = view.get_containing_line(position)
-        if config.conf["annotation"]["use_visuals"]:
-            attr = wx.TextAttr()
-            view.contentTextCtrl.GetStyle(start, attr)
-            attr.SetFontUnderlined(enable)
-            view.contentTextCtrl.SetStyle(start, end, attr)
+        # We need a new TextAttr object to avoid modifying a shared default style.
+        new_attr = wx.TextAttr()
+        # We must get the existing style from the REAL position to preserve other attributes.
+        # We assume TEXT_CTRL_OFFSET is 1.
+        view.contentTextCtrl.GetStyle(start + 1, new_attr)
+        new_attr.SetFontUnderlined(enable)
+        # We must apply the new style to the REAL, offset positions.
+        view.contentTextCtrl.SetStyle(start + 1, end + 1, new_attr)
 
     @staticmethod
     @gui_thread_safe
