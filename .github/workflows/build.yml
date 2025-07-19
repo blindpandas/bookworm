@@ -33,19 +33,19 @@ jobs:
           python-version: "3.10"
           architecture: ${{ matrix.CI_ARCH }}
 
-      # Step 3: Cache dependencies to speed up builds
-      - name: Cache dependencies
+      # Step 3: Cache pip's download directory to speed up dependency resolution.
+      - name: Cache Python dependencies
         uses: actions/cache@v4
-        id: cache-deps
+        id: cache-pip
         with:
-          path: |
-            .env
-            bookworm/resources
-          key: ${{ runner.os }}-env-${{ matrix.CI_ARCH }}-${{ hashFiles('requirements*.txt') }}
+          path: ~/.cache/pip
+          # The cache key is based on all requirements files. A change in any of them will invalidate the cache.
+          key: ${{ runner.os }}-pip-${{ matrix.CI_ARCH }}-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.CI_ARCH }}-
 
-      # Step 4: Install dependencies if cache is not hit
-      - name: Install dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
+      # Step 4: Install dependencies and compile resources.
+      - name: Install dependencies and compile resources
         run: |
           python -m venv .env
           .env\Scripts\activate
