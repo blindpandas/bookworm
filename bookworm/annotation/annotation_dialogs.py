@@ -216,7 +216,7 @@ class BookmarksViewer(SimpleDialog):
             wx.MessageBox(
                 # Translators: content of a message asking the user if they want to delete a bookmark
                 _(
-                    "This action can not be reverted.\r\nAre you sure you want to remove this bookmark?"
+                    "This action can not be reverted.\nAre you sure you want to remove this bookmark?"
                 ),
                 # Translators: title of a message asking the user if they want to delete a bookmark
                 _("Remove Bookmark?"),
@@ -470,7 +470,7 @@ class AnnotationWithContentDialog(SimpleDialog):
             wx.MessageBox(
                 # Translators: content of a message asking the user if they want to delete a comment/highlight
                 _(
-                    "This action can not be reverted.\r\nAre you sure you want to remove this item?"
+                    "This action can not be reverted.\nAre you sure you want to remove this item?"
                 ),
                 # Translators: title of a message asking the user if they want to delete a bookmark
                 _("Delete Annotation?"),
