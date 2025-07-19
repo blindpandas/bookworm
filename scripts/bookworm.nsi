@@ -88,12 +88,24 @@ RMDir /r "$SMPROGRAMS\$StartMenuFolder"
 SectionEnd
 
 Function .onInit
-!insertmacro MUI_LANGDLL_DISPLAY
-StrCmp $%IAPP_ARCH% "x64" +1 +3
-  StrCpy $instdir "$programfiles64\$%IAPP_DISPLAY_NAME%"
-  SetRegView 64
-IfFileExists "$INSTDIR\Bookworm.exe" 0 +2
-  ExecWait '"$INSTDIR\Bookworm.exe" kill-other-instances'
+  !insertmacro MUI_LANGDLL_DISPLAY
+  # Handle 64-bit installation path & registry.
+  ${If} $%IAPP_ARCH% == "x64"
+    SetRegView 64
+    StrCpy $instdir "$programfiles64\$%IAPP_DISPLAY_NAME%"
+  ${EndIf}
+  # --- Silent Uninstall of Previous Version ---
+  ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "UninstallString"
+  IfErrors NoOldVersion
+  DetailPrint "Previous version found. Attempting silent uninstall..."
+  # Execute silent uninstall. /S = silent, _?=$INSTDIR prevents self-deletion.
+  ExecWait '"$R0" /S _?=$INSTDIR'
+  DetailPrint "Silent uninstall finished."
+NoOldVersion:
+  # --- End of Uninstall Logic ---
+  # Kill any running instances of the application before installing.
+  IfFileExists "$INSTDIR\Bookworm.exe" 0 +2
+    ExecWait '"$INSTDIR\Bookworm.exe" kill-other-instances'
 FunctionEnd
 
 Function un.onInit
