@@ -16,7 +16,7 @@ dateparser==1.2.0
 demandimport==0.3.4
 diskcache==5.4.0
 docrpy==0.2.0;sys_platform=="win32"
-EbookLib==0.18
+EbookLib==0.19
 ftfy==6.2.0
 fuzzywuzzy==0.18.0
 inscriptis==2.5.0
