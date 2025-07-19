@@ -353,11 +353,15 @@ class EpubDocument(SinglePageDocument):
 
         except IndexError:
             # Handle case where xpath lookup for head or body fails
-            log.warning(f"Could not find <head> or <body> element via xpath in {filename}. Skipping removal/modification.")
+            log.warning(
+                f"Could not find <head> or <body> element via xpath in {filename}. Skipping removal/modification."
+            )
         except Exception as exc:
             # Catch other potential errors during head/body processing
-            log.warning(f"Error processing HTML structure (head/body) in {filename}: {exc}")
-            raise exc # Re-raise other unexpected errors
+            log.warning(
+                f"Error processing HTML structure (head/body) in {filename}: {exc}"
+            )
+            raise exc  # Re-raise other unexpected errors
 
         tree.tag = "div"
         tree.insert(0, tree.makeelement("header", attrib={"id": filename}))

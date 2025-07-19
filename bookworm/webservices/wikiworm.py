@@ -68,7 +68,9 @@ class WikipediaService(BookwormService):
         # Check if there is an actual selection
         if selection_range.start != selection_range.stop:
             # Now, safely get the text based on the clean range
-            selected_text = self.view.get_text_by_range(selection_range.start, selection_range.stop).strip()
+            selected_text = self.view.get_text_by_range(
+                selection_range.start, selection_range.stop
+            ).strip()
             # Only proceed if the stripped text is not empty
             if selected_text:
                 rv = [
@@ -88,7 +90,9 @@ class WikipediaService(BookwormService):
         term = ""
         selection_range = self.view.get_selection_range()
         if selection_range.start != selection_range.stop:
-            selected_text = self.view.get_text_by_range(selection_range.start, selection_range.stop).strip()
+            selected_text = self.view.get_text_by_range(
+                selection_range.start, selection_range.stop
+            ).strip()
             if selected_text:
                 term = selected_text
         language = (

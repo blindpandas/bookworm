@@ -430,9 +430,7 @@ def copy_deps(c):
         / os.environ["IAPP_ARCH"]
         / "BkwRicheditOpts.dll"
     )
-    richeditopts_dll_dst = (
-        Path(c["build_folder_content"]) / "BkwRicheditOpts.dll"
-    )
+    richeditopts_dll_dst = Path(c["build_folder_content"]) / "BkwRicheditOpts.dll"
     if not richeditopts_dll_src.exists():
         if shutil.which("cargo") is None:
             raise RuntimeError(
@@ -465,9 +463,7 @@ def copy_espeak_and_piper_libs():
     onnxruntime_notices_src = (
         PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / "notices"
     )
-    onnxruntime_dst = (
-        Path(os.environ["IAPP_FROZEN_CONTENT_DIRECTORY"]) / "onnxruntime"
-    )
+    onnxruntime_dst = Path(os.environ["IAPP_FROZEN_CONTENT_DIRECTORY"]) / "onnxruntime"
     onnxruntime_dst.mkdir(parents=True, exist_ok=True)
 
     print("Copying ONNXRuntime dll and notices...")

@@ -53,7 +53,9 @@ class DummyView:
     def set_state_on_page_change(self, page):
         pass
 
-    def set_insertion_point(self, point: int, set_focus_to_text_ctrl: bool = True) -> None:
+    def set_insertion_point(
+        self, point: int, set_focus_to_text_ctrl: bool = True
+    ) -> None:
         self.insertion_point = point
 
     def go_to_position(self, start: int, end: int) -> None:

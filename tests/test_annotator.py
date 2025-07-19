@@ -37,8 +37,8 @@ def test_notes_respect_sort_criteria(asset, reader):
         ("third test", "test", 0, 5, 5, 10),
         ("fourth test", "test", 0, 11, 11, 15),
         ("fifth test", "test", 0, 16, 16, 20),
-    ]        
-    expected_titles = [x[0] for x in sorted(notes, key = lambda x: x[3])]
+    ]
+    expected_titles = [x[0] for x in sorted(notes, key=lambda x: x[3])]
     annotator = NoteTaker(reader)
     for note in notes:
         annotator.create(
@@ -62,7 +62,12 @@ def test_notes_respect_sort_criteria(asset, reader):
         start_pos=note[4],
         end_pos=note[5],
     )
-    expected_titles = [x[0] for x in sorted(notes, key = lambda x: x[3])]
-    titles = [x.title for x in annotator.get_all(asc=True, sort_criteria=AnnotationSortCriteria.Position)]
+    expected_titles = [x[0] for x in sorted(notes, key=lambda x: x[3])]
+    titles = [
+        x.title
+        for x in annotator.get_all(
+            asc=True, sort_criteria=AnnotationSortCriteria.Position
+        )
+    ]
     print(expected_titles)
     assert titles == expected_titles
