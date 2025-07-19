@@ -27,6 +27,9 @@ VIFileVersion "$%IAPP_VERSION_EX%"
 !define MUI_ABORTWARNING
 !define MUI_FINISHPAGE_LINK "$%IAPP_WEBSITE%"
 !define MUI_FINISHPAGE_LINK_LOCATION $%IAPP_WEBSITE%
+# Variables to store old version info
+Var /GLOBAL OldInstallPath
+Var /GLOBAL OldVersionFound
 !insertmacro MUI_PAGE_WELCOME
 !define MUI_LICENSEPAGE_RADIOBUTTONS
 !insertmacro MUI_PAGE_LICENSE "..\LICENSE"
@@ -53,6 +56,16 @@ var StartMenuFolder
 !insertmacro MUI_LANGUAGE "Ukrainian"
 !insertmacro MUI_RESERVEFILE_LANGDLL
 Section
+  ${If} $OldVersionFound == 1
+    DetailPrint "Previous version detected. Uninstalling..."
+        # Kill the old running process if it exists
+    IfFileExists "$OldInstallPath\Bookworm.exe" 0 +2
+      ExecWait '"$OldInstallPath\Bookworm.exe" kill-other-instances'
+          # Set the working directory and execute the old uninstaller
+    SetOutPath "$OldInstallPath"
+    ExecWait '"$OldInstallPath\Uninstall.exe" /S _?=$INSTDIR'
+    DetailPrint "Previous version has been uninstalled."
+  ${EndIf}
 SetShellVarContext All
 SetOutPath "$INSTDIR"
 File /r "$%IAPP_FROZEN_DIRECTORY%\*"
@@ -89,21 +102,26 @@ SectionEnd
 
 Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
-  # Handle 64-bit installation path & registry.
+
+  # Set registry view for checking old version and for the new install
   ${If} $%IAPP_ARCH% == "x64"
     SetRegView 64
-    StrCpy $instdir "$programfiles64\$%IAPP_DISPLAY_NAME%"
   ${EndIf}
-  # --- Silent Uninstall of Previous Version ---
-  ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "UninstallString"
-  IfErrors NoOldVersion
-  DetailPrint "Previous version found. Attempting silent uninstall..."
-  # Execute silent uninstall. /S = silent, _?=$INSTDIR prevents self-deletion.
-  ExecWait '"$R0" /S _?=$INSTDIR'
-  DetailPrint "Silent uninstall finished."
-NoOldVersion:
-  # --- End of Uninstall Logic ---
-  # Kill any running instances of the application before installing.
+
+  # Initialize the flag to '0' (meaning 'not found').
+  StrCpy $OldVersionFound 0
+    ReadRegStr $OldInstallPath HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$%IAPP_NAME%" "InstallLocation"
+  IfErrors done
+  # If ReadRegStr was successful, it means an old version exists. Set the flag to '1' (meaning 'found').
+  StrCpy $OldVersionFound 1
+done:
+
+  ${If} $%IAPP_ARCH% == "x64"
+    StrCpy $instdir "$programfiles64\$%IAPP_DISPLAY_NAME%"
+  ${Else}
+    StrCpy $instdir "$programfiles32\$%IAPP_DISPLAY_NAME%"
+  ${EndIf}
+
   IfFileExists "$INSTDIR\Bookworm.exe" 0 +2
     ExecWait '"$INSTDIR\Bookworm.exe" kill-other-instances'
 FunctionEnd
