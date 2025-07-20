@@ -652,7 +652,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 if should_speak_whole_text
                 else (start, stop)
             )
-            text = self.get_text_by_range(text_start, text_stop)  # <--- 修正这一行
+            text = self.get_text_by_range(text_start, text_stop)
             msg = _("{text}: {item_type}").format(text=text, item_type=_(element_label))
             target_position = (
                 start
@@ -857,14 +857,12 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         return max(0, real_pos - TEXT_CTRL_OFFSET)
 
     def select_text(self, fpos, tpos):
-        # WHY: 必须将“干净”的起止点转换为实际位置
         self.contentTextCtrl.SetFocusFromKbd()
         self.contentTextCtrl.SetSelection(
             fpos + TEXT_CTRL_OFFSET, tpos + TEXT_CTRL_OFFSET
         )
 
     def set_insertion_point(self, to, set_focus_to_text_ctrl=True):
-        # WHY: 必须将“干净”位置 'to' 转换为实际位置
         actual_position = to + TEXT_CTRL_OFFSET
         self.contentTextCtrl.ShowPosition(actual_position)
         self.contentTextCtrl.SetInsertionPoint(actual_position)
@@ -881,7 +879,6 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 args = (args(default_style),)
             attr_func(style, *args)
             for start, stop in style_info[style_type]:
-                # WHY: 必须在应用样式时转换位置
                 self.contentTextCtrl.SetStyle(
                     start + TEXT_CTRL_OFFSET, stop + TEXT_CTRL_OFFSET, style
                 )
