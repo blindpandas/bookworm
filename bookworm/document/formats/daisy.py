@@ -134,6 +134,7 @@ class DaisyDocument(SinglePageDocument):
     capabilities = (
         DC.TOC_TREE
         | DC.METADATA
+        | DC.STRUCTURED_NAVIGATION
         | DC.SINGLE_PAGE
     )
 
@@ -146,6 +147,10 @@ class DaisyDocument(SinglePageDocument):
     def get_content(self) -> str:
         return self.structure.get_text()
 
+    def get_document_semantic_structure(self):
+        return self.structure.semantic_elements
+
+    
     @property
     def toc_tree(self) -> Section:
         return self._toc
