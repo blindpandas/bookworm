@@ -244,15 +244,11 @@ class TextToSpeechService(BookwormService):
             start_pos = (
                 0
                 if config.conf["reading"]["start_reading_from"]
-                else self.textCtrl.GetInsertionPoint()
+                else self.view.get_insertion_point()
             )
+        text_content = self.view.get_text_by_range(start_pos, -1)
         self.text_info = text_info = TextInfo(
-            text="".join(
-                [
-                    self.textCtrl.GetRange(start_pos, self.textCtrl.GetLastPosition()),
-                    "\n",
-                ]
-            ),
+            text=f"{text_content}\n",
             lang=self.reader.document.language.two_letter_language_code,
             start_pos=start_pos,
         )
@@ -266,7 +262,6 @@ class TextToSpeechService(BookwormService):
         if self.reader.document.is_single_page_document():
             # Translators: spoken message at the end of the document
             utterance.add_text(_("End of document"))
-        # self.view.set_insertion_point(start_pos)
         self.engine.speak(self.utterance_queue.pop())
 
     def add_text_utterances(self, text_info):
@@ -324,13 +319,13 @@ class TextToSpeechService(BookwormService):
             if config.conf["reading"]["highlight_spoken_text"]:
                 self.view.highlight_range(p_start, p_end)
             if config.conf["reading"]["select_spoken_text"]:
-                self.textCtrl.SetSelection(p_start, p_end)
+                self.view.select_text(p_start, p_end)
             self._highlighted_ranges.add((p_start, p_end))
         elif bookmark_type == UT_PARAGRAPH_END:
             if config.conf["reading"]["highlight_spoken_text"]:
                 self.view.clear_highlight(*bookmark["txr"])
             if config.conf["reading"]["select_spoken_text"]:
-                self.textCtrl.SelectNone()
+                self.view.unselect_text()
         elif bookmark_type == UT_PAGE_END:
             should_navigate = all(
                 retval
@@ -356,7 +351,7 @@ class TextToSpeechService(BookwormService):
         if ignore_command_conditions:
             wx.Bell()
             return
-        insertion_point = self.textCtrl.GetInsertionPoint()
+        insertion_point = self.view.get_insertion_point()
         try:
             p_range = self.text_info.get_paragraph_to_the_right_of(insertion_point)
             self.engine.stop()
@@ -374,10 +369,9 @@ class TextToSpeechService(BookwormService):
             wx.Bell()
             return
         if self._whole_page_text_info is None:
-            self._whole_page_text_info = TextInfo(
-                self.textCtrl.GetRange(0, self.textCtrl.GetLastPosition())
-            )
-        insertion_point = self.textCtrl.GetInsertionPoint()
+            full_text = self.view.get_text_by_range(0, -1)
+            self._whole_page_text_info = TextInfo(full_text)
+        insertion_point = self.view.get_insertion_point()
         try:
             p_range = self._whole_page_text_info.get_paragraph_to_the_left_of(
                 insertion_point
@@ -517,7 +511,7 @@ class TextToSpeechService(BookwormService):
             toolbar.EnableTool(ctrl_id, enable)
 
     def clear_highlighted_ranges(self):
-        self.textCtrl.SelectNone()
+        self.view.unselect_text()
         for start_pos, stop_pos in self._highlighted_ranges:
             self.view.clear_highlight(start_pos, stop_pos)
         self._highlighted_ranges.clear()

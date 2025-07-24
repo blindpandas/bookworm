@@ -180,8 +180,7 @@ class BookmarksViewer(SimpleDialog):
             return
         self.reader.go_to_page(item.page_number)
         self.Close()
-        wx.CallAfter(self.parent.contentTextCtrl.SetFocusFromKbd)
-        wx.CallAfter(self.parent.contentTextCtrl.SetInsertionPoint, item.position)
+        wx.CallAfter(self.parent.set_insertion_point, item.position)
 
     def onKeyDown(self, event):
         item = self.annotationsListCtrl.get_selected()
@@ -217,7 +216,7 @@ class BookmarksViewer(SimpleDialog):
             wx.MessageBox(
                 # Translators: content of a message asking the user if they want to delete a bookmark
                 _(
-                    "This action can not be reverted.\r\nAre you sure you want to remove this bookmark?"
+                    "This action can not be reverted.\nAre you sure you want to remove this bookmark?"
                 ),
                 # Translators: title of a message asking the user if they want to delete a bookmark
                 _("Remove Bookmark?"),
@@ -353,6 +352,8 @@ class AnnotationWithContentDialog(SimpleDialog):
             (_("Date"), AnnotationSortCriteria.Date),
             # Translators: text of a toggle button to sort comments/highlights list
             (_("Page"), AnnotationSortCriteria.Page),
+            # Translators: text of a toggle button to sort comments/highlights list
+            (_("Position"), AnnotationSortCriteria.Position),
         ]
         if not self.reader.ready:
             # Translators: text of a toggle button to sort comments/highlights list
@@ -469,7 +470,7 @@ class AnnotationWithContentDialog(SimpleDialog):
             wx.MessageBox(
                 # Translators: content of a message asking the user if they want to delete a comment/highlight
                 _(
-                    "This action can not be reverted.\r\nAre you sure you want to remove this item?"
+                    "This action can not be reverted.\nAre you sure you want to remove this item?"
                 ),
                 # Translators: title of a message asking the user if they want to delete a bookmark
                 _("Delete Annotation?"),
@@ -579,7 +580,7 @@ class CommentsDialog(AnnotationWithContentDialog):
         start_pos, end_pos = (item.start_pos, item.end_pos)
         if (start_pos, end_pos) != (None, None):
             # We have a selection, let's select the text
-            self.service.view.contentTextCtrl.SetSelection(start_pos, end_pos)
+            self.service.view.select_text(start_pos, end_pos)
 
 
 class QuotesDialog(AnnotationWithContentDialog):

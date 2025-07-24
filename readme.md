@@ -17,11 +17,6 @@
 Bookworm's official website is currently no more. The domain which has worked up until now has currently not been renewed, and as such bookworm will no longer be provided there until further notice. We urge you not to interact with that domain, as we're no longer in charge of it.
 You can keep downloading bookworm from the [releases page](https://github.com/blindpandas/bookworm/releases) for the most recent ones.
 
-## Resources
-
-* [Bookworm official Telegram group](https://t.me/bookworm_official)
-* [Bookworm official Telegram channel](https://t.me/bookworm_news)
-
 ## Development
 
 If you would like to contribute to the development of *Bookworm*, follow these steps to run Bookworm on your computer:
@@ -81,18 +76,9 @@ As an example, to build Bookworm, issue the following command:
 ```shell
 invoke build
 ```
-* If you've found a bug, or you want to contribute your changes back to bookworm, please create an issue or submit a pull request. We welcome any contribution.
 
-
-### Telegram group
-
-You can discuss Bookworm, help others or make suggestions in the official Telegram group. Join it by visiting [this link](https://t.me/bookworm_official)
-
-### Telegram channel
-
-The [Telegram channel](https://t.me/bookworm_news) will be dedicated to publishing new features, changes and fixes. All discussions will continue in the main group and files will also be available for download from the main group.
-
+If you've found a bug, or you want to contribute your changes back to bookworm, please create an issue or submit a pull request. We welcome any contribution.
 
 ## License
 
-**Bookworm** is copyright (c) 2019-2024 Blind Pandas Team. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2019-2025 Blind Pandas Team. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
