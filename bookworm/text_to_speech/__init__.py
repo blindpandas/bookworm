@@ -63,6 +63,7 @@ UT_PAGE_END = "ge"
 UT_SECTION_BEGIN = "sb"
 UT_SECTION_END = "se"
 
+
 class TextToSpeechService(BookwormService):
     name = "text_to_speech"
     config_spec = tts_config_spec
@@ -131,7 +132,9 @@ class TextToSpeechService(BookwormService):
     def start_global_listener(self):
         if self.pynput_listener is None:
             try:
-                self.pynput_listener = keyboard.Listener(on_press=self.on_key_press_global)
+                self.pynput_listener = keyboard.Listener(
+                    on_press=self.on_key_press_global
+                )
                 self.pynput_listener.start()
             except Exception:
                 self.pynput_listener = None
@@ -149,7 +152,7 @@ class TextToSpeechService(BookwormService):
         action = self.pynput_key_map.get(key)
         if action:
             wx.CallAfter(action)
-    
+
     def process_menubar(self, menubar):
         self.menu = SpeechMenu(self)
         # Translators: the label of an item in the application menubar

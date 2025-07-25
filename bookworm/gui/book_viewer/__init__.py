@@ -322,7 +322,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 tts_service.rewind()
         else:
             event.Skip()
-    
+
     def createControls(self):
         # Now create the Panel to put the other controls on.
         rect = wx.GetClientDisplayRect()
