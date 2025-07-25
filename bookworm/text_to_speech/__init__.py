@@ -7,13 +7,17 @@ from functools import cached_property
 
 import msgpack
 import wx
+from pynput import keyboard
 
 from bookworm import config
+from bookworm import speech
 from bookworm.logger import logger
 from bookworm.resources import app_icons, sounds
 from bookworm.service import BookwormService
 from bookworm.signals import (
     _signals,
+    app_started,
+    config_updated,
     reader_book_loaded,
     reader_book_unloaded,
     reader_page_changed,
@@ -59,7 +63,6 @@ UT_PAGE_END = "ge"
 UT_SECTION_BEGIN = "sb"
 UT_SECTION_END = "se"
 
-
 class TextToSpeechService(BookwormService):
     name = "text_to_speech"
     config_spec = tts_config_spec
@@ -76,6 +79,12 @@ class TextToSpeechService(BookwormService):
         self.config_manager = TTSConfigManager()
         self.textCtrl = self.view.contentTextCtrl
         self.engine = None
+        self.pynput_listener = None
+        self.pynput_key_map = {
+            keyboard.Key.media_play_pause: self.pause_or_resume,
+            keyboard.Key.media_next: self.fastforward,
+            keyboard.Key.media_previous: self.rewind,
+        }
         self._whole_page_text_info = None
         self._highlighted_ranges = set()
         restart_speech.connect(self.on_restart_speech, sender=self.view)
@@ -88,6 +97,8 @@ class TextToSpeechService(BookwormService):
         reading_position_change.connect(
             self.on_reading_position_change, sender=self.view
         )
+        config_updated.connect(self._on_config_updated)
+        app_started.connect(self._on_app_started)
         self.initialize_state()
 
     def initialize_state(self):
@@ -96,10 +107,49 @@ class TextToSpeechService(BookwormService):
         self._whole_page_text_info = None
         self.clear_highlighted_ranges()
 
+    def _on_app_started(self, sender):
+        log.debug("App has started, setting up initial listener state.")
+        self._update_listener_state()
+
     def shutdown(self):
+        self.stop_global_listener()
         with suppress(RuntimeError):
             self.close()
 
+    def _on_config_updated(self, sender, section=None):
+        if section == "reading":
+            log.debug("Reading config updated, toggling global listener.")
+            self._update_listener_state()
+
+    def _update_listener_state(self):
+        enable = config.conf["reading"]["enable_global_media_keys"]
+        if enable and self.pynput_listener is None:
+            self.start_global_listener()
+        elif not enable and self.pynput_listener is not None:
+            self.stop_global_listener()
+
+    def start_global_listener(self):
+        if self.pynput_listener is None:
+            try:
+                self.pynput_listener = keyboard.Listener(on_press=self.on_key_press_global)
+                self.pynput_listener.start()
+            except Exception:
+                self.pynput_listener = None
+
+    def stop_global_listener(self):
+        if self.pynput_listener:
+            try:
+                self.pynput_listener.stop()
+                self.pynput_listener.join()
+                self.pynput_listener = None
+            except Exception:
+                self.pynput_listener = None
+
+    def on_key_press_global(self, key):
+        action = self.pynput_key_map.get(key)
+        if action:
+            wx.CallAfter(action)
+    
     def process_menubar(self, menubar):
         self.menu = SpeechMenu(self)
         # Translators: the label of an item in the application menubar
@@ -150,6 +200,88 @@ class TextToSpeechService(BookwormService):
         utterance.add_text("\n.")
         utterance.add_bookmark(self.encode_bookmark({"t": UT_END}))
         self.utterance_queue.appendleft(utterance)
+
+    def play_or_resume(self):
+        if not self.is_engine_ready:
+            self.initialize_engine()
+        state = self.engine.state
+        if state is SynthState.busy:
+            wx.Bell()
+            return
+        if state is SynthState.paused:
+            self.engine.resume()
+            # Translators: a message that is announced when the speech is resumed
+            speech.announce(_("Resumed"))
+            return
+        setattr(self, "_requested_play", True)
+        self.speak_page()
+
+    def pause_or_resume(self):
+        if not self.is_engine_ready:
+            wx.Bell()
+            return
+        state = self.engine.state
+        if state is SynthState.busy:
+            self.engine.pause()
+            # Translators: a message that is announced when the speech is paused
+            speech.announce(_("Paused"))
+        elif state is SynthState.paused:
+            self.engine.resume()
+            # Translators: a message that is announced when the speech is resumed
+            speech.announce(_("Resumed"))
+        else:
+            self.play_or_resume()
+
+    def stop_playback(self):
+        if self.is_engine_ready and self.engine.state is not SynthState.ready:
+            self.stop_speech(user_requested=True)
+            # Translators: a message that is announced when the speech is stopped
+            speech.announce(_("Stopped"))
+        else:
+            wx.Bell()
+
+    def fastforward(self):
+        if not self.is_engine_ready or self.text_info is None:
+            wx.Bell()
+            return
+        was_speaking = self.engine.state is SynthState.busy
+        if was_speaking:
+            self.engine.stop()
+        insertion_point = self.view.get_insertion_point()
+        try:
+            p_range = self.text_info.get_paragraph_to_the_right_of(insertion_point)
+            self.view.set_insertion_point(p_range.start)
+            if was_speaking:
+                self.initialize_state()
+                self.speak_page(start_pos=p_range.start)
+            else:
+                sounds.navigation.play()
+        except LookupError:
+            wx.Bell()
+
+    def rewind(self):
+        if not self.is_engine_ready:
+            wx.Bell()
+            return
+        was_speaking = self.engine.state is SynthState.busy
+        if was_speaking:
+            self.engine.stop()
+        if self._whole_page_text_info is None:
+            full_text = self.view.get_text_by_range(0, -1)
+            self._whole_page_text_info = TextInfo(full_text)
+        insertion_point = self.view.get_insertion_point()
+        try:
+            p_range = self._whole_page_text_info.get_paragraph_to_the_left_of(
+                insertion_point
+            )
+            self.view.set_insertion_point(p_range.start)
+            if was_speaking:
+                self.initialize_state()
+                self.speak_page(start_pos=p_range.start)
+            else:
+                sounds.navigation.play()
+        except LookupError:
+            wx.Bell()
 
     def on_restart_speech(self, sender, start_speech_from, speech_prefix=None):
         if (not self.is_engine_ready) or (self.engine.state is not SynthState.busy):
@@ -341,47 +473,6 @@ class TextToSpeechService(BookwormService):
                 navigated = self.reader.go_to_next()
                 if navigated:
                     self.speak_page()
-
-    def fastforward(self):
-        ignore_command_conditions = (
-            self.engine is None
-            or self.engine.state is not SynthState.busy
-            or self.text_info is None
-        )
-        if ignore_command_conditions:
-            wx.Bell()
-            return
-        insertion_point = self.view.get_insertion_point()
-        try:
-            p_range = self.text_info.get_paragraph_to_the_right_of(insertion_point)
-            self.engine.stop()
-            self.view.set_insertion_point(p_range.start)
-            self.initialize_state()
-            self.speak_page(start_pos=p_range.start)
-        except LookupError:
-            wx.Bell()
-
-    def rewind(self):
-        ignore_command_conditions = (
-            self.engine is None or self.engine.state is not SynthState.busy
-        )
-        if ignore_command_conditions:
-            wx.Bell()
-            return
-        if self._whole_page_text_info is None:
-            full_text = self.view.get_text_by_range(0, -1)
-            self._whole_page_text_info = TextInfo(full_text)
-        insertion_point = self.view.get_insertion_point()
-        try:
-            p_range = self._whole_page_text_info.get_paragraph_to_the_left_of(
-                insertion_point
-            )
-            self.engine.stop()
-            self.view.set_insertion_point(p_range.start)
-            self.initialize_state()
-            self.speak_page(start_pos=p_range.start)
-        except LookupError:
-            wx.Bell()
 
     def initialize_engine(self):
         engine_name = self.config_manager["engine"]

@@ -9,6 +9,7 @@ from pathlib import Path
 
 import wx
 
+from bookworm.text_to_speech import TextToSpeechService
 from bookworm import app, config, speech
 from bookworm import typehints as t
 from bookworm.concurrency import CancellationToken, threaded_worker
@@ -241,6 +242,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, -1, title, name="main_window")
+        self.wx_key_map = {
+            wx.WXK_MEDIA_PLAY_PAUSE: "play_pause",
+            wx.WXK_MEDIA_NEXT_TRACK: "next",
+            wx.WXK_MEDIA_PREV_TRACK: "prev",
+        }
         self.setFrameIcon()
 
         self.reader = EBookReader(self)
@@ -282,6 +288,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             id=self.readingProgressSlider.GetId(),
         )
 
+        self.Bind(wx.EVT_CHAR_HOOK, self.on_key_press_local)
+
         self.toc_tree_manager = TocTreeManager(self.tocTreeCtrl)
         # Set status bar text
         # Translators: the text of the status bar when no book is currently open.
@@ -293,6 +301,28 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         StateProvider.__init__(self)
         MenubarProvider.__init__(self)
 
+    def on_key_press_local(self, event):
+        if config.conf["reading"]["enable_global_media_keys"]:
+            event.Skip()
+            return
+
+        keycode = event.GetKeyCode()
+        key_name = self.wx_key_map.get(keycode)
+
+        if key_name:
+            tts_service = wx.GetApp().service_handler.get_service("text_to_speech")
+            if not tts_service:
+                return
+
+            if key_name == "play_pause":
+                tts_service.pause_or_resume()
+            elif key_name == "next":
+                tts_service.fastforward()
+            elif key_name == "prev":
+                tts_service.rewind()
+        else:
+            event.Skip()
+    
     def createControls(self):
         # Now create the Panel to put the other controls on.
         rect = wx.GetClientDisplayRect()

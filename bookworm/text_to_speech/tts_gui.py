@@ -115,6 +115,13 @@ class ReadingPanel(SettingsPanel):
             _("Select spoken text"),
             name="reading.select_spoken_text",
         )
+        wx.CheckBox(
+            miscBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Enable global media keys (Play/Pause, Next, Previous)"),
+            name="reading.enable_global_media_keys",
+        )
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
         if strategy is ReconciliationStrategies.load:
@@ -602,44 +609,16 @@ class SpeechMenu(wx.Menu):
         )
 
     def onPlay(self, event):
-        if not self.service.is_engine_ready:
-            self.service.initialize_engine()
-        elif self.service.engine.state is SynthState.busy:
-            return wx.Bell()
-        setattr(self.service, "_requested_play", True)
-        if self.service.engine.state is SynthState.paused:
-            return self.onPauseToggle(event)
-        self.service.speak_page()
+        self.service.play_or_resume()
 
     def onPlayToggle(self, event):
-        if (not self.service.is_engine_ready) or (
-            self.service.engine.state is SynthState.ready
-        ):
-            self.onPlay(event)
-        else:
-            self.onPauseToggle(event)
+        self.service.pause_or_resume()
 
     def onPauseToggle(self, event):
-        if self.service.is_engine_ready:
-            if self.service.engine.state is SynthState.busy:
-                self.service.engine.pause()
-                # Translators: a message that is announced when the speech is paused
-                return speech.announce(_("Paused"))
-            elif self.service.engine.state is SynthState.paused:
-                self.service.engine.resume()
-                # Translators: a message that is announced when the speech is resumed
-                return speech.announce(_("Resumed"))
-        wx.Bell()
+        self.service.pause_or_resume()
 
     def onStop(self, event):
-        if (
-            self.service.is_engine_ready
-            and self.service.engine.state is not SynthState.ready
-        ):
-            self.service.stop_speech(user_requested=True)
-            # Translators: a message that is announced when the speech is stopped
-            return speech.announce(_("Stopped"))
-        wx.Bell()
+        self.service.stop_playback()
 
     def onVoiceProfiles(self, event):
         # Translators: the title of the voice profiles dialog
