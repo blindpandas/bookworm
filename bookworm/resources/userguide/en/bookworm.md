@@ -133,8 +133,8 @@ The media keys are mapped to core TTS actions:
 
 The feature supports two distinct modes for flexibility:
 
-1.  **Global Mode  (Default)**: Users can enable this via a new "**Enable global media keys**" checkbox under `Settings > Reading`. This allows them to control playback from anywhere in the OS, even when Bookworm is running in the background.
-2.  **Local Mode (Opt-in)**: Media keys are handled only when the Bookworm application window has focus.
+1.  **Local Mode (Default)**: Media keys are handled only when the Bookworm application window has focus.
+2.  **Global Mode (Opt-in)**: Users can enable this via a new "**Enable global media keys**" checkbox under `Settings > Reading`. This allows them to control playback from anywhere in the OS, even when Bookworm is running in the background.
 
 This setting can be toggled dynamically without restarting the application.
 
