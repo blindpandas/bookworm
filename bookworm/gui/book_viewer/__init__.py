@@ -301,26 +301,32 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         StateProvider.__init__(self)
         MenubarProvider.__init__(self)
 
-    def on_key_press_local(self, event):
-        if config.conf["reading"]["enable_global_media_keys"]:
-            event.Skip()
-            return
-
+    def on_key_press_local(self, event: wx.KeyEvent):
+        """Handles local (in-focus) key presses via EVT_CHAR_HOOK."""
         keycode = event.GetKeyCode()
         key_name = self.wx_key_map.get(keycode)
-
+        # If global mode is on, only the pynput listener should handle media keys.
+        if config.conf["reading"]["enable_global_media_keys"]:
+            if key_name:
+                log.debug(
+                    f"Local media key '{key_name}' ignored; global mode is active."
+                )
+            event.Skip()  # Pass all other keys (like Tab) through.
+            return
+        # --- Local Mode Handling ---
         if key_name:
             tts_service = wx.GetApp().service_handler.get_service("text_to_speech")
-            if not tts_service:
-                return
-
-            if key_name == "play_pause":
-                tts_service.pause_or_resume()
-            elif key_name == "next":
-                tts_service.fastforward()
-            elif key_name == "prev":
-                tts_service.rewind()
+            if tts_service:
+                log.info(f"Local media key handled: '{key_name}'.")
+                actions = {
+                    "play_pause": tts_service.pause_or_resume,
+                    "next": tts_service.fastforward,
+                    "prev": tts_service.rewind,
+                }
+                actions[key_name]()
+            # Consume the event; do not call event.Skip().
         else:
+            # Not a media key, so let other controls handle it.
             event.Skip()
 
     def createControls(self):

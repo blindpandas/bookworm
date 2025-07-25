@@ -138,7 +138,7 @@ The feature supports two distinct modes for flexibility:
 
 This setting can be toggled dynamically without restarting the application.
 
-**This feature  may be conflicts with other running media applications (e.g., Spotify, Browser) that also listen for system-wide media keys. This is a platform-level behavior.**
+**Note: Media key functionality can be unreliable when multiple media applications are running simultaneously, regardless of whether global mode is on or off.**
 
 ### Configuring The Reading Style
 

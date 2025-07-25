@@ -122,6 +122,21 @@ class ReadingPanel(SettingsPanel):
             _("Enable global media keys (Play/Pause, Next, Previous)"),
             name="reading.enable_global_media_keys",
         )
+        # Add a static text warning for the global media key feature.
+        warning_text = wx.StaticText(
+            miscBox,
+            -1,
+            # Translators: A warning message in the settings dialog.
+            _(
+                "Note: Media key functionality can be unreliable when multiple media applications are running simultaneously, regardless of whether global mode is on or off."
+            ),
+        )
+        # Make the font slightly smaller to serve as help text.
+        font = warning_text.GetFont()
+        font.MakeSmaller()
+        warning_text.SetFont(font)
+        # Indent the warning text to visually group it with the checkbox above.
+        warning_text.SetSizerProps(border=(("left",), 15))
 
     def reconcile(self, strategy=ReconciliationStrategies.load):
         if strategy is ReconciliationStrategies.load:

@@ -80,6 +80,8 @@ class TextToSpeechService(BookwormService):
         self.config_manager = TTSConfigManager()
         self.textCtrl = self.view.contentTextCtrl
         self.engine = None
+        # Holds the pynput listener instance for global media key control.
+        # It runs in a separate thread.
         self.pynput_listener = None
         self.pynput_key_map = {
             keyboard.Key.media_play_pause: self.pause_or_resume,
@@ -132,25 +134,33 @@ class TextToSpeechService(BookwormService):
     def start_global_listener(self):
         if self.pynput_listener is None:
             try:
+                log.info("Attempting to start global media key listener.")
                 self.pynput_listener = keyboard.Listener(
                     on_press=self.on_key_press_global
                 )
                 self.pynput_listener.start()
             except Exception:
+                log.exception("Failed to start the pynput global listener.")
                 self.pynput_listener = None
 
     def stop_global_listener(self):
         if self.pynput_listener:
             try:
+                log.info("Stopping global media key listener.")
                 self.pynput_listener.stop()
                 self.pynput_listener.join()
                 self.pynput_listener = None
             except Exception:
+                log.exception("Failed to stop the pynput global listener.")
                 self.pynput_listener = None
 
     def on_key_press_global(self, key):
         action = self.pynput_key_map.get(key)
         if action:
+            # CRITICAL: This method is called from a non-GUI thread created by pynput.
+            # Any direct interaction with wxPython GUI elements or methods that
+            # are not thread-safe MUST be delegated to the main GUI thread.
+            # wx.CallAfter is the standard, safe way to do this.
             wx.CallAfter(action)
 
     def process_menubar(self, menubar):
