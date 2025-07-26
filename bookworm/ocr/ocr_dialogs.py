@@ -104,6 +104,17 @@ class OcrPanel(SettingsPanel):
             )
             self.Bind(wx.EVT_BUTTON, self.onDownloadTesseractLanguages, tessLangDlBtn)
             self.Bind(wx.EVT_BUTTON, self.onUpdateTesseractEngine, updateTesseractBtn)
+        # Translators: the label of a group of controls in the OCR page
+        # of the settings related to Baidu OCR engine
+        baiduBox = self.make_static_box(_("Baidu OCR Engine"))
+        # Translators: the label of an edit field
+        wx.StaticText(baiduBox, -1, _("API Key:"))
+        wx.TextCtrl(baiduBox, -1, name="ocr.baidu_api_key").SetSizerProps(expand=True)
+        # Translators: the label of an edit field
+        wx.StaticText(baiduBox, -1, _("Secret Key:"))
+        wx.TextCtrl(baiduBox, -1, name="ocr.baidu_secret_key").SetSizerProps(
+            expand=True
+        )
         # Translators: the label of a group of controls in the reading page
         # of the settings related to image enhancement
         miscBox = self.make_static_box(_("Image processing"))
