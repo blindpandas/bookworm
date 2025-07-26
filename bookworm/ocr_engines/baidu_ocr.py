@@ -5,12 +5,41 @@ import json
 from functools import lru_cache
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from bookworm import config
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 from bookworm.ocr_engines import BaseOcrEngine, OcrRequest, OcrResult
 
 log = logger.getChild(__name__)
+
+
+def create_session_with_retries() -> requests.Session:
+    """
+    Creates a requests session with a robust retry strategy,
+    """
+    session = requests.Session()
+    # Configure the retry strategy using parameters supported by your urllib3 version.
+    retries = Retry(
+        total=3,  # Total number of retries to allow.
+        backoff_factor=0.5,
+        status_forcelist=[
+            429,
+            500,
+            502,
+            503,
+            504,
+        ],  # Retry on these specific server error codes.
+        allowed_methods=["POST", "GET"],
+        respect_retry_after_header=True,
+    )
+    # Mount the strategy to the session for both http and https protocols.
+    adapter = HTTPAdapter(max_retries=retries)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    return session
+
 
 # Define constants for configuration keys
 BAIDU_API_KEY_NAME = "baidu_api_key"
@@ -27,6 +56,8 @@ class _BaiduOcrBase(BaseOcrEngine):
 
     # The specific API endpoint URL will be overridden in subclasses.
     url = ""
+
+    session = create_session_with_retries()
 
     @classmethod
     def check(cls) -> bool:
@@ -58,38 +89,58 @@ class _BaiduOcrBase(BaseOcrEngine):
 
     @classmethod
     @lru_cache(maxsize=1)
-    def _get_access_token(cls) -> str | None:
+    def _fetch_and_cache_token(cls, api_key: str, api_secret: str) -> str:
         """
-        Fetches the access_token from Baidu Cloud API.
-        The token is cached as it's valid for 30 days.
+        Internal method that performs the actual network request to get the token.
+        It is decorated with lru_cache, and its cache key is based on the api_key and api_secret.
+        It either returns a valid token string (which gets cached) or raises an exception.
         """
-        conf = config.conf["ocr"]
-        api_key = conf.get(BAIDU_API_KEY_NAME)
-        api_secret = conf.get(BAIDU_SECRET_KEY_NAME)
-
         if not api_key or not api_secret:
+            # This check is now inside the cached function
             log.error("Baidu OCR API Key or Secret Key is not configured.")
-            return None
-
+            raise ValueError("API keys not found")
         token_url = (
             "https://aip.baidubce.com/oauth/2.0/token"
             f"?grant_type=client_credentials&client_id={api_key}&client_secret={api_secret}"
         )
         headers = {"Content-Type": "application/json", "Accept": "application/json"}
         try:
-            response = requests.post(token_url, headers=headers, timeout=10)
+            response = cls.session.post(token_url, headers=headers, timeout=10)
             response.raise_for_status()
             response_data = response.json()
             access_token = response_data.get("access_token")
             if not access_token:
                 log.error(f"Failed to get Baidu access_token: {response_data}")
-                return None
+                raise ValueError("Access token not in response")
             return access_token
-        except requests.exceptions.RequestException as e:
-            log.exception(f"Network error while getting Baidu access_token: {e}")
-            return None
-        except KeyError:
-            log.exception(f"Unexpected response format from Baidu token endpoint.")
+        except (
+            requests.exceptions.RequestException,
+            KeyError,
+            json.JSONDecodeError,
+        ) as e:
+            log.exception(
+                f"An exception occurred while fetching Baidu access_token: {e}"
+            )
+            raise ValueError("Token fetch failed") from e
+
+    @classmethod
+    def _get_access_token(cls) -> str | None:
+        """
+        Gets the access_token, utilizing a cache that is sensitive to API key changes.
+        If fetching fails, it returns None and ensures the failure is not cached.
+        """
+        conf = config.conf["ocr"]
+        api_key = conf.get(BAIDU_API_KEY_NAME)
+        api_secret = conf.get(BAIDU_SECRET_KEY_NAME)
+        try:
+            # Pass the keys to the cached function. If keys change, it's a cache miss.
+            return cls._fetch_and_cache_token(api_key, api_secret)
+        except ValueError:
+            # If the cached method raised an error, it means the fetch failed.
+            # We clear the cache for this specific key pair to ensure the next call retries.
+            # Note: with lru_cache, this specific failed call won't be cached anyway.
+            # Clearing is an extra safety measure.
+            cls._fetch_and_cache_token.cache_clear()
             return None
 
     @classmethod
@@ -122,7 +173,7 @@ class _BaiduOcrBase(BaseOcrEngine):
         payload = {"image": b64_image}
 
         try:
-            response = requests.post(
+            response = cls.session.post(
                 request_url, headers=headers, data=payload, timeout=20
             )
             response.raise_for_status()
