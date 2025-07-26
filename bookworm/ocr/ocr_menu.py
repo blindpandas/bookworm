@@ -22,6 +22,12 @@ from bookworm.gui.settings import ReconciliationStrategies, SettingsPanel
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
 from bookworm.ocr_engines import OcrRequest
+from bookworm.ocr_engines.base import (
+    OcrError,
+    OcrAuthenticationError,
+    OcrNetworkError,
+    OcrProcessingError,
+)
 from bookworm.resources import sounds
 from bookworm.signals import (
     _signals,
@@ -414,9 +420,35 @@ class OCRMenu(wx.Menu):
             return
         try:
             ocr_result = task.result()
-        except Exception as e:
-            log.exception(f"Error getting OCR recognition results.", exc_info=True)
+        except OcrAuthenticationError as e:
             ocr_ended.send(sender=self.view, isfaulted=True)
+            wx.MessageBox(
+                str(e), _("Authentication Error"), style=wx.ICON_ERROR, parent=self.view
+            )
+            return
+        except OcrNetworkError as e:
+            ocr_ended.send(sender=self.view, isfaulted=True)
+            wx.MessageBox(
+                str(e), _("Network Error"), style=wx.ICON_ERROR, parent=self.view
+            )
+            return
+        except OcrProcessingError as e:
+            ocr_ended.send(sender=self.view, isfaulted=True)
+            wx.MessageBox(
+                str(e), _("OCR Service Error"), style=wx.ICON_ERROR, parent=self.view
+            )
+            return
+        except Exception as e:
+            log.exception("An unexpected error occurred during OCR.")
+            ocr_ended.send(sender=self.view, isfaulted=True)
+            wx.MessageBox(
+                _(
+                    "An unexpected error occurred during OCR. Please check the logs for details."
+                ),
+                _("Error"),
+                style=wx.ICON_ERROR,
+                parent=self.view,
+            )
             return
         callback(ocr_result)
         sounds.ocr_end.play()

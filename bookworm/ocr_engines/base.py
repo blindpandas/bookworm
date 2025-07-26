@@ -152,3 +152,27 @@ class BaseOcrEngine(metaclass=ABCMeta):
             langs.remove(current_lang)
             langs.insert(0, current_lang)
         return langs
+
+
+class OcrError(Exception):
+    """Base exception for all OCR-related errors."""
+
+    pass
+
+
+class OcrAuthenticationError(OcrError):
+    """Raised when API key or authentication fails."""
+
+    pass
+
+
+class OcrNetworkError(OcrError):
+    """Raised for network-related issues during OCR."""
+
+    pass
+
+
+class OcrProcessingError(OcrError):
+    """Raised when the OCR service returns a specific error for a request."""
+
+    pass
