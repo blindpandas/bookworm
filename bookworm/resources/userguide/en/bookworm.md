@@ -123,6 +123,22 @@ You can configure the speech in two ways:
 
 During reading aloud, you can skip backward or foreword by paragraph by pressing Alt plus the left and right arrow  keys.
 
+### Media keys behavior
+
+The media keys are mapped to core TTS actions:
+
+* **▶️ Play/Pause Key**: Toggles TTS play, pause, and resume.
+* **⏭️ Next Track Key**: Functions as "Fast Forward," jumping to the **next paragraph** (equivalent to `Alt+Right Arrow`).
+* **⏮️ Previous Track Key**: Functions as "Rewind," jumping to the **previous paragraph** (equivalent to `Alt+Left Arrow`).
+
+The feature supports two distinct modes for flexibility:
+
+1.  **Local Mode (Default)**: Media keys are handled only when the Bookworm application window has focus.
+2.  **Global Mode (Opt-in)**: Users can enable this via a new "**Enable global media keys**" checkbox under `Settings > Reading`. This allows them to control playback from anywhere in the OS, even when Bookworm is running in the background.
+
+This setting can be toggled dynamically without restarting the application.
+
+**Note: Media key functionality can be unreliable when multiple media applications are running simultaneously, regardless of whether global mode is on or off.**
 
 ### Configuring The Reading Style
 
