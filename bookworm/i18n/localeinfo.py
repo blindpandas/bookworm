@@ -66,7 +66,7 @@ class LocaleInfo:
         self.__init__(**state)
 
     def should_be_considered_equal_to(self, other, strict=False):
-        if not isinstance(other, self.__class__):
+        if not isinstance(other, LocaleInfo):
             raise TypeError(f"{other} is not a LocaleInfo object.")
         if strict:
             return self == other

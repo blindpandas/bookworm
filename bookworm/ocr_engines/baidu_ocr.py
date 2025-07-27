@@ -53,6 +53,37 @@ class _BaiduOcrBase(BaseOcrEngine):
 
     __supports_more_than_one_recognition_language__ = False
     url = ""
+
+    # A comprehensive map of Bookworm's language codes to Baidu's API codes.
+    # This includes all languages supported by the accurate version.
+    # Subclasses can select from this map.
+    LANG_CODE_MAP = {
+        "zh": "CHN_ENG",
+        "en": "ENG",
+        "ja": "JAP",
+        "ko": "KOR",
+        "fr": "FRE",
+        "es": "SPA",
+        "pt": "POR",
+        "de": "GER",
+        "it": "ITA",
+        "ru": "RUS",
+        "da": "DAN",
+        "nl": "DUT",
+        "ms": "MAL",
+        "sv": "SWE",
+        "id": "IND",
+        "pl": "POL",
+        "ro": "ROM",
+        "tr": "TUR",
+        "el": "GRE",
+        "hu": "HUN",
+        "th": "THA",
+        "vi": "VIE",
+        "ar": "ARA",
+        "hi": "HIN",
+    }
+
     session = create_session_with_retries()
 
     @classmethod
@@ -148,12 +179,35 @@ class _BaiduOcrBase(BaseOcrEngine):
         # This will raise OcrAuthenticationError if keys are missing or invalid,
         # or OcrNetworkError on connection issues.
         access_token = cls._get_access_token()
+        selected_language = ocr_request.language
+        api_lang_code = (
+            "auto_detect"  # Default for accurate version if auto is selected
+        )
+        # Check if the selected language is the special 'auto_detect' one.
+        if selected_language.given_locale_name == "auto_detect":
+            # Ensure the current engine actually supports auto_detect
+            if "auto_detect" not in [
+                lang.given_locale_name for lang in cls.get_recognition_languages()
+            ]:
+                # Fallback if auto_detect is somehow selected for the standard engine
+                api_lang_code = "CHN_ENG"
+        else:
+            # It's a specific language, map it.
+            lang_code = selected_language.two_letter_language_code
+            api_lang_code = cls.LANG_CODE_MAP.get(
+                lang_code, "CHN_ENG"
+            )  # Fallback to CHN_ENG
+        log.debug(
+            f"Selected language '{selected_language.identifier}', using API language_type '{api_lang_code}'."
+        )
         image_bytes = ocr_request.image.as_bytes(format="PNG")
         b64_image = base64.b64encode(image_bytes)
         request_url = f"{cls.url}?access_token={access_token}"
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
-        payload = {"image": b64_image}
-
+        payload = {
+            "image": b64_image,
+            "language_type": api_lang_code,
+        }
         try:
             response = cls.session.post(
                 request_url, headers=headers, data=payload, timeout=20
@@ -186,6 +240,25 @@ class BaiduGeneralOcrEngine(_BaiduOcrBase):
     display_name = _("Baidu General OCR (Standard)")
     url = "https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic"
 
+    # Override the language map to reflect the limited set of the standard version.
+    LANG_CODE_MAP = {
+        "zh": "CHN_ENG",
+        "en": "ENG",
+        "ja": "JAP",
+        "ko": "KOR",
+        "fr": "FRE",
+        "es": "SPA",
+        "pt": "POR",
+        "de": "GER",
+        "it": "ITA",
+        "ru": "RUS",
+    }
+
+    @classmethod
+    def get_recognition_languages(cls) -> list[LocaleInfo]:
+        """Returns the exact list of languages supported by the standard version."""
+        return [LocaleInfo(lang_code) for lang_code in cls.LANG_CODE_MAP.keys()]
+
 
 class BaiduAccurateOcrEngine(_BaiduOcrBase):
     """Baidu General OCR Engine (High-Precision version)."""
@@ -193,3 +266,36 @@ class BaiduAccurateOcrEngine(_BaiduOcrBase):
     name = "baidu_accurate_ocr"
     display_name = _("Baidu General OCR (Accurate)")
     url = "https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic"
+
+    class _AutoDetectLocale(LocaleInfo):
+        """
+        A specialized LocaleInfo subclass to represent the 'Auto Detect' option.
+        """
+
+        def __init__(self):
+            # Initialize with a valid locale ('en') to satisfy the parent constructor.
+            # The actual locale doesn't matter as we override the necessary properties.
+            super().__init__("en")
+            # This is the unique identifier our `recognize` method will look for.
+            self.given_locale_name = "auto_detect"
+
+        @property
+        def description(self) -> str:
+            """Override the description to provide the desired UI text."""
+            # Translators: An option in the OCR language list to automatically detect the language.
+            return _("Auto Detect")
+
+    @classmethod
+    def get_recognition_languages(cls) -> list[LocaleInfo]:
+        """
+        Returns the list of languages supported by the accurate version,
+        including a special option for auto-detection.
+        """
+        # Create an instance of our special subclass.
+        auto_detect_lang = cls._AutoDetectLocale()
+        # Get all specific languages from the map.
+        specific_languages = [
+            LocaleInfo(lang_code) for lang_code in cls.LANG_CODE_MAP.keys()
+        ]
+        # Return "Auto Detect" as the first option in the list.
+        return [auto_detect_lang] + specific_languages
