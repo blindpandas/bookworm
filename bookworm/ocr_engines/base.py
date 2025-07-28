@@ -24,6 +24,9 @@ from .image_processing_pipelines import ImageProcessingPipeline
 
 log = logger.getChild(__name__)
 
+# Default interval in seconds between concurrent API requests for rate-limited engines.
+# 1.0 seconds provides a safe buffer for a 2 QPS limit.
+DEFAULT_RATE_LIMIT_INTERVAL = 1.0
 
 def _initialize_worker_process():
     """
@@ -154,8 +157,7 @@ class BaseOcrEngine(metaclass=ABCMeta):
             """
             if cls.__requires_rate_limiting__:
                 # Add a small delay to avoid hitting API rate limits.
-                # 0.8 seconds provides a safe buffer for a 2 QPS limit.
-                time.sleep(0.8)
+                time.sleep(DEFAULT_RATE_LIMIT_INTERVAL)
             try:
                 # Create a request for the current page
                 ocr_req = OcrRequest(
