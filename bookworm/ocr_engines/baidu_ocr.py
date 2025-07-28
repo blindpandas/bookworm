@@ -12,6 +12,7 @@ from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
 from .base import (
     BaseOcrEngine,
+    EngineOption,
     OcrRequest,
     OcrResult,
     OcrError,
@@ -95,6 +96,28 @@ class _BaiduOcrBase(BaseOcrEngine):
         return True
 
     @classmethod
+    def get_engine_options(cls) -> list[EngineOption]:
+        """Returns the list of options supported by Baidu OCR engines."""
+        return [
+            EngineOption(
+                key="detect_direction",
+                label=_("Auto-detect and correct image direction"),
+                default=True
+            ),
+            EngineOption(
+                key="paragraph",
+                label=_("Attempt to reconstruct paragraphs"),
+                default=True
+            ),
+            EngineOption(
+                key="multidirectional_recognize",
+                label=_("Recognize text with multiple directions"),
+                # This option is only supported by the accurate engine
+                is_supported=lambda engine: engine.name == "baidu_accurate_ocr"
+            ),
+        ]
+
+    @classmethod
     def get_recognition_languages(cls) -> list[LocaleInfo]:
         """Returns a list of languages supported by Baidu OCR."""
         return [
@@ -171,6 +194,34 @@ class _BaiduOcrBase(BaseOcrEngine):
             raise
 
     @classmethod
+    def _parse_recognition_result(cls, response_data: dict, ocr_request: OcrRequest) -> str:
+        """
+        Parses the recognition result from the Baidu API response.
+        If paragraph information is available and requested, it uses it to reconstruct paragraphs.
+        Otherwise, it falls back to joining individual lines.
+        """
+        all_lines = response_data.get("words_result", [])
+        # Check if the user requested paragraph info AND if the API returned it
+        if ocr_request.engine_options.get("paragraph") and "paragraphs_result" in response_data:
+            log.debug("Parsing recognition result using paragraph information.")
+            paragraphs_info = response_data.get("paragraphs_result", [])
+            reconstructed_paragraphs = []
+            for para_info in paragraphs_info:
+                # Get the indices of the lines belonging to this paragraph
+                line_indices = para_info.get("words_result_idx", [])
+                # Join the words of these lines with a space, not a newline
+                paragraph_text = "".join(
+                    all_lines[i].get("words", "").strip() for i in line_indices if i < len(all_lines)
+                )
+                reconstructed_paragraphs.append(paragraph_text)
+            # Join the reconstructed paragraphs with newlines to separate them
+            return "\n".join(reconstructed_paragraphs)
+        else:
+            # Fallback to the simple line-by-line joining method
+            log.debug("Parsing recognition result by joining lines.")
+            return "\n".join([item.get("words", "") for item in all_lines])
+
+    @classmethod
     def recognize(cls, ocr_request: OcrRequest) -> OcrResult:
         """
         Performs the OCR recognition.
@@ -179,35 +230,35 @@ class _BaiduOcrBase(BaseOcrEngine):
         # This will raise OcrAuthenticationError if keys are missing or invalid,
         # or OcrNetworkError on connection issues.
         access_token = cls._get_access_token()
-        selected_language = ocr_request.language
-        api_lang_code = (
-            "auto_detect"  # Default for accurate version if auto is selected
-        )
-        # Check if the selected language is the special 'auto_detect' one.
-        if selected_language.given_locale_name == "auto_detect":
-            # Ensure the current engine actually supports auto_detect
-            if "auto_detect" not in [
-                lang.given_locale_name for lang in cls.get_recognition_languages()
-            ]:
-                # Fallback if auto_detect is somehow selected for the standard engine
-                api_lang_code = "CHN_ENG"
-        else:
-            # It's a specific language, map it.
-            lang_code = selected_language.two_letter_language_code
-            api_lang_code = cls.LANG_CODE_MAP.get(
-                lang_code, "CHN_ENG"
-            )  # Fallback to CHN_ENG
-        log.debug(
-            f"Selected language '{selected_language.identifier}', using API language_type '{api_lang_code}'."
-        )
+
         image_bytes = ocr_request.image.as_bytes(format="PNG")
         b64_image = base64.b64encode(image_bytes)
-        request_url = f"{cls.url}?access_token={access_token}"
-        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
         payload = {
             "image": b64_image,
-            "language_type": api_lang_code,
         }
+
+        # Add language type
+        selected_language = ocr_request.language
+        if selected_language.given_locale_name == "auto_detect":
+            payload["language_type"] = "auto_detect"
+        else:
+            lang_code = selected_language.two_letter_language_code
+            payload["language_type"] = cls.LANG_CODE_MAP.get(lang_code, "CHN_ENG")
+    
+        # Add boolean options dynamically from the generic options dictionary
+        for key, value in ocr_request.engine_options.items():
+            if value: # Only add if the user checked the box
+                payload[key] = "true"
+
+        log.debug(
+            "Sending Baidu OCR request with payload: %s",
+            {k: v for k, v in payload.items() if k != "image"},
+        )
+
+        request_url = f"{cls.url}?access_token={access_token}"
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
         try:
             response = cls.session.post(
                 request_url, headers=headers, data=payload, timeout=20
@@ -225,8 +276,7 @@ class _BaiduOcrBase(BaseOcrEngine):
             raise OcrProcessingError(_("Baidu OCR failed: ") + error_msg)
         # Only on success, process the result
         words_result = response_data.get("words_result", [])
-        recognized_text = "\n".join([item.get("words", "") for item in words_result])
-
+        recognized_text = cls._parse_recognition_result(response_data, ocr_request)
         return OcrResult(
             recognized_text=recognized_text,
             ocr_request=ocr_request,

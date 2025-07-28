@@ -198,7 +198,8 @@ class OCRMenu(wx.Menu):
 
     def _get_ocr_options_from_dlg(self, last_stored_options=None, **dlg_kw):
         self.service._init_ocr_engine()
-        langs = self.service.current_ocr_engine.get_sorted_languages()
+        engine = self.service.current_ocr_engine
+        langs = engine.get_sorted_languages()
         if not langs:
             wx.MessageBox(
                 # Translators: content of a message
@@ -213,9 +214,10 @@ class OCRMenu(wx.Menu):
         dlg = OCROptionsDialog(
             parent=self.view,
             title=_("OCR Options"),
+        engine=engine,
             languages=langs,
             stored_options=last_stored_options,
-            is_multilingual=self.service.current_ocr_engine.__supports_more_than_one_recognition_language__,
+            is_multilingual=engine.__supports_more_than_one_recognition_language__,
             **dlg_kw,
         )
         self.service.saved_scanned_pages.clear()
@@ -239,6 +241,7 @@ class OCRMenu(wx.Menu):
             image=image,
             image_processing_pipelines=ocr_opts.image_processing_pipelines,
             cookie=reader.current_page,
+            engine_options=ocr_opts.engine_options
         )
 
         def _ocr_callback(ocr_result):
