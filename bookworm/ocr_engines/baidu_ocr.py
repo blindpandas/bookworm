@@ -36,6 +36,7 @@ class _BaiduOcrBase(BaseOcrEngine):
 
     __supports_more_than_one_recognition_language__ = False
     url = ""
+    __requires_rate_limiting__ = True
 
     # A comprehensive map of Bookworm's language codes to Baidu's API codes.
     # This includes all languages supported by the accurate version.

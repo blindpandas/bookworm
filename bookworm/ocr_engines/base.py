@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import annotations
-
 from abc import ABCMeta, abstractmethod
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import suppress
@@ -10,7 +9,10 @@ from io import StringIO
 from operator import attrgetter
 from typing import Callable
 from more_itertools import first_true
+import time
 
+from bookworm import config
+from bookworm import i18n
 from bookworm import app
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
@@ -21,6 +23,17 @@ from bookworm.utils import NEWLINE
 from .image_processing_pipelines import ImageProcessingPipeline
 
 log = logger.getChild(__name__)
+
+
+def _initialize_worker_process():
+    """
+    Initializes necessary subsystems for a worker process.
+    This function is called at the beginning of a task that runs in a separate process
+    to ensure that configurations is loaded correctly.
+    """
+    if config.conf is None:
+        log.debug("Worker process: Initializing configuration.")
+        config.setup_config()
 
 
 @dataclass
@@ -64,6 +77,9 @@ class BaseOcrEngine(metaclass=ABCMeta):
     """The user-facing name of this engine."""
     __supports_more_than_one_recognition_language__ = False
     """Does this engine supports more than one recognition language?"""
+
+    # If True, a delay will be added between concurrent requests in scan_to_text.
+    __requires_rate_limiting__ = False
 
     @classmethod
     @abstractmethod
@@ -125,25 +141,59 @@ class BaseOcrEngine(metaclass=ABCMeta):
         output_file: t.PathLike,
         ocr_options: "OcrOptions",
     ):
+        _initialize_worker_process()
         if not cls.check():
             raise RuntimeError(f"OCR Engine {cls} is not available.")
         total = len(doc)
         out = StringIO()
 
         def recognize_page(page):
-            image = page.get_image(ocr_options.zoom_factor)
-            ocr_req = OcrRequest(
-                languages=ocr_options.languages, image=image, cookie=page.number
-            )
-            return cls.preprocess_and_recognize(ocr_req)
+            """
+            A helper function to recognize a single page and handle errors gracefully.
+            This function runs in a worker thread from the ThreadPoolExecutor.
+            """
+            if cls.__requires_rate_limiting__:
+                # Add a small delay to avoid hitting API rate limits.
+                # 0.8 seconds provides a safe buffer for a 2 QPS limit.
+                time.sleep(0.8)
+            try:
+                # Create a request for the current page
+                ocr_req = OcrRequest(
+                    languages=ocr_options.languages,
+                    image=page.get_image(ocr_options.zoom_factor),
+                    cookie=page.number,
+                    # Pass through the engine options selected by the user
+                    engine_options=ocr_options.engine_options,
+                )
+                # This call can raise OcrError for this specific page
+                return cls.preprocess_and_recognize(ocr_req)
+            except OcrError as e:
+                # If any OCR error occurs for this page, log it and return None
+                log.error(
+                    f"Failed to recognize page {page.number}: {e}", exc_info=False
+                )
+                return None
+            except Exception:
+                # Catch any other unexpected errors for this page
+                log.exception(
+                    f"An unexpected error occurred while processing page {page.number}."
+                )
+                return None
 
         try:
             with ThreadPoolExecutor(4) as pool:
                 for idx, res in enumerate(pool.map(recognize_page, doc)):
+                    if res is None:
+                        # The page failed to recognize, the error has been logged.
+                        # We still yield the progress to update the progress bar.
+                        yield idx
+                        continue  # Skip to the next page
+
                     out.write(
                         f"Page {res.cookie}{NEWLINE}{res.recognized_text}{NEWLINE}\f{NEWLINE}"
                     )
-                    yield idx
+                    yield idx  # Yield progress
+
             with open(output_file, "w", encoding="utf8") as file:
                 file.write(out.getvalue())
         finally:
