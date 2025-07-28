@@ -91,7 +91,7 @@ class BaseOcrEngine(metaclass=ABCMeta):
             ocr_req = OcrRequest(
                 image=image,
                 languages=ocr_request.languages,
-                engine_options=ocr_request.engine_options
+                engine_options=ocr_request.engine_options,
             )
             recog_result = cls.recognize(ocr_req)
             text.append(recog_result.recognized_text)
@@ -167,10 +167,11 @@ class BaseOcrEngine(metaclass=ABCMeta):
 @dataclass
 class EngineOption:
     """Represents a configurable option for an OCR engine."""
+
     key: str  # The key used in the payload, e.g., "detect_direction"
-    label: str # The user-facing label for the checkbox
-    default: bool = False # Default state of the checkbox
-    
+    label: str  # The user-facing label for the checkbox
+    default: bool = False  # Default state of the checkbox
+
     # A function that returns True if the option should be shown for a given engine
     is_supported: Callable[["BaseOcrEngine"], bool] = lambda engine: True
 

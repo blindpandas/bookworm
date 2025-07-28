@@ -214,7 +214,7 @@ class OCRMenu(wx.Menu):
         dlg = OCROptionsDialog(
             parent=self.view,
             title=_("OCR Options"),
-        engine=engine,
+            engine=engine,
             languages=langs,
             stored_options=last_stored_options,
             is_multilingual=engine.__supports_more_than_one_recognition_language__,
@@ -241,7 +241,7 @@ class OCRMenu(wx.Menu):
             image=image,
             image_processing_pipelines=ocr_opts.image_processing_pipelines,
             cookie=reader.current_page,
-            engine_options=ocr_opts.engine_options
+            engine_options=ocr_opts.engine_options,
         )
 
         def _ocr_callback(ocr_result):
@@ -271,14 +271,23 @@ class OCRMenu(wx.Menu):
 
     def onAutoScanPages(self, event):
         event.Skip()
-        if self.service.stored_options is None:
-            self._get_ocr_options(force_save=True)
+        # We only need to ask for options if the user is TURNING ON auto-scan
+        # and no options have been stored yet.
+        if self.auto_scan_item.IsChecked() and self.service.stored_options is None:
+            # force_save=True ensures the "store options" checkbox is hidden and on by default
+            opts = self._get_ocr_options(from_cache=False, force_save=True)
+            if opts is None:
+                # User clicked Cancel while setting up auto-scan options.
+                speech.announce(_("Automatic OCR setup canceled."), True)
+                self.auto_scan_item.Check(False)
+                return
+        # Announce the final state of the checkbox
         if self.auto_scan_item.IsChecked():
             speech.announce(_("Automatic OCR is enabled"))
+            if self.view.is_empty():
+                self.onScanCurrentPage(event)
         else:
             speech.announce(_("Automatic OCR is disabled"))
-        if self.view.is_empty():
-            self.onScanCurrentPage(event)
 
     def onScanToTextFile(self, event):
         ocr_opts = self._get_ocr_options(from_cache=False, force_save=True)

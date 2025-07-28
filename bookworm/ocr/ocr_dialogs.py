@@ -52,6 +52,7 @@ class OcrOptions:
     store_options: bool
     engine_options: dict = field(default_factory=dict)
 
+
 class OcrPanel(SettingsPanel):
     config_section = "ocr"
 
@@ -253,7 +254,7 @@ class OCROptionsDialog(SimpleDialog):
             if self.stored_options is None
             else self.stored_options.image_processing_pipelines
         )
-        self._engine_option_checkboxes = {} # To store our dynamic checkboxes
+        self._engine_option_checkboxes = {}  # To store our dynamic checkboxes
         super().__init__(*args, **kwargs)
 
     def addControls(self, parent):
@@ -295,8 +296,12 @@ class OCROptionsDialog(SimpleDialog):
                 if option.is_supported(self.engine):
                     cb = wx.CheckBox(recognitionBox, -1, option.label)
                     initial_value = option.default
-                    if self.stored_options and hasattr(self.stored_options, 'engine_options'):
-                        initial_value = self.stored_options.engine_options.get(option.key, option.default)
+                    if self.stored_options and hasattr(
+                        self.stored_options, "engine_options"
+                    ):
+                        initial_value = self.stored_options.engine_options.get(
+                            option.key, option.default
+                        )
                     cb.SetValue(initial_value)
                     # Store the checkbox using its key for later retrieval
                     self._engine_option_checkboxes[option.key] = cb
@@ -381,7 +386,7 @@ class OCROptionsDialog(SimpleDialog):
             _ipp_enabled=self.should_enhance_images.IsChecked(),
             image_processing_pipelines=selected_image_pp,
             store_options=self.force_save or self.storeOptionsCheckbox.IsChecked(),
-            engine_options=engine_options_values
+            engine_options=engine_options_values,
         )
         self.Close()
 

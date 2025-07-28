@@ -102,18 +102,18 @@ class _BaiduOcrBase(BaseOcrEngine):
             EngineOption(
                 key="detect_direction",
                 label=_("Auto-detect and correct image direction"),
-                default=True
+                default=True,
             ),
             EngineOption(
                 key="paragraph",
                 label=_("Attempt to reconstruct paragraphs"),
-                default=True
+                default=True,
             ),
             EngineOption(
                 key="multidirectional_recognize",
                 label=_("Recognize text with multiple directions"),
                 # This option is only supported by the accurate engine
-                is_supported=lambda engine: engine.name == "baidu_accurate_ocr"
+                is_supported=lambda engine: engine.name == "baidu_accurate_ocr",
             ),
         ]
 
@@ -194,7 +194,9 @@ class _BaiduOcrBase(BaseOcrEngine):
             raise
 
     @classmethod
-    def _parse_recognition_result(cls, response_data: dict, ocr_request: OcrRequest) -> str:
+    def _parse_recognition_result(
+        cls, response_data: dict, ocr_request: OcrRequest
+    ) -> str:
         """
         Parses the recognition result from the Baidu API response.
         If paragraph information is available and requested, it uses it to reconstruct paragraphs.
@@ -202,7 +204,10 @@ class _BaiduOcrBase(BaseOcrEngine):
         """
         all_lines = response_data.get("words_result", [])
         # Check if the user requested paragraph info AND if the API returned it
-        if ocr_request.engine_options.get("paragraph") and "paragraphs_result" in response_data:
+        if (
+            ocr_request.engine_options.get("paragraph")
+            and "paragraphs_result" in response_data
+        ):
             log.debug("Parsing recognition result using paragraph information.")
             paragraphs_info = response_data.get("paragraphs_result", [])
             reconstructed_paragraphs = []
@@ -211,7 +216,9 @@ class _BaiduOcrBase(BaseOcrEngine):
                 line_indices = para_info.get("words_result_idx", [])
                 # Join the words of these lines with a space, not a newline
                 paragraph_text = "".join(
-                    all_lines[i].get("words", "").strip() for i in line_indices if i < len(all_lines)
+                    all_lines[i].get("words", "").strip()
+                    for i in line_indices
+                    if i < len(all_lines)
                 )
                 reconstructed_paragraphs.append(paragraph_text)
             # Join the reconstructed paragraphs with newlines to separate them
@@ -245,10 +252,10 @@ class _BaiduOcrBase(BaseOcrEngine):
         else:
             lang_code = selected_language.two_letter_language_code
             payload["language_type"] = cls.LANG_CODE_MAP.get(lang_code, "CHN_ENG")
-    
+
         # Add boolean options dynamically from the generic options dictionary
         for key, value in ocr_request.engine_options.items():
-            if value: # Only add if the user checked the box
+            if value:  # Only add if the user checked the box
                 payload[key] = "true"
 
         log.debug(
