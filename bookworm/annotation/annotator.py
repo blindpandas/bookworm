@@ -292,60 +292,60 @@ class NoteTaker(PositionedAnnotator):
     model = Note
 
     def get_first_after(self, page_number, pos):
+        """
+        Finds the first comment that occurs after the given page and position.
+        """
         model = self.model
+        # Create an 'effective_pos' column that uses 'start_pos' for selection-based notes
+        # and falls back to 'position' for single-point notes. This provides a single,
+        # reliable value for sorting and comparison, regardless of the note type.
+        effective_pos = sa.func.coalesce(model.start_pos, model.position)
+
+        # Define the search criteria:
+        # 1. Comments on the same page but after the current position.
+        # 2. Any comment on subsequent pages.
         clauses = (
             sa.and_(
                 model.page_number == page_number,
-                # sa.or_(
-                model.start_pos > pos,
-                model.start_pos.is_not(None),
-                # ),
-            ),
-            sa.and_(
-                model.page_number == page_number,
-                model.position > pos,
-            ),
-            sa.and_(
-                model.page_number == page_number,
-                model.end_pos.is_(None),
-                model.position > pos,
+                effective_pos > pos,
             ),
             model.page_number > page_number,
         )
+
         return (
             self.session.query(model)
             .filter_by(book_id=self.current_book.id)
             .filter(sa.or_(*clauses))
-            .order_by(
-                model.page_number.asc(),
-                sa.nulls_first(model.start_pos.asc()),
-                sa.nulls_first(model.end_pos.asc()),
-                model.position.asc(),
-            )
+            # Sort first by page number, then by the effective position to find the correct next note.
+            .order_by(model.page_number.asc(), effective_pos.asc())
             .first()
         )
 
     def get_first_before(self, page_number, pos):
+        """
+        Finds the first comment that occurs before the given page and position.
+        """
         model = self.model
+        # Similar to get_first_after, create a unified position for comparison.
+        effective_pos = sa.func.coalesce(model.start_pos, model.position)
+
+        # Define the search criteria:
+        # 1. Comments on the same page but before the current position.
+        # 2. Any comment on preceding pages.
         clauses = (
             sa.and_(
                 model.page_number == page_number,
-                model.start_pos < pos,
-                model.start_pos.is_not(None),
-            ),
-            sa.and_(
-                model.page_number == page_number,
-                model.position < pos,
-                model.start_pos.is_(None),
+                effective_pos < pos,
             ),
             model.page_number < page_number,
         )
+
         return (
             self.session.query(model)
             .filter_by(book_id=self.current_book.id)
             .filter(sa.or_(*clauses))
-            .order_by(model.page_number.desc())
-            .order_by(sa.nulls_last(model.end_pos.desc()))
+            # Sort in descending order to find the nearest previous note.
+            .order_by(model.page_number.desc(), effective_pos.desc())
             .first()
         )
 

@@ -176,9 +176,8 @@ class AnnotationService(BookwormService):
             self.reader.go_to_page(
                 comment.page_number, comment.position if is_whole_line else end_pos
             )
-            if is_whole_line:
-                self.view.select_text(*self.view.get_containing_line(comment.position))
-            else:
+            # We do not select whole line comments, See issue#332
+            if not is_whole_line:
                 self.view.select_text(start_pos, end_pos)
             reading_position_change.send(
                 self.view,
