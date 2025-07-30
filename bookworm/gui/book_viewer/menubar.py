@@ -816,6 +816,13 @@ class HelpMenu(BaseMenu):
             _("View Bookworm manuals"),
         )
         self.Append(
+            ViewerMenuIds.changelog,
+            # Translators: the label of an item in the application menubar
+            _("What's &New..."),
+            # Translators: the help text of an item in the application menubar
+            _("View the application's changelog"),
+        )
+        self.Append(
             ViewerMenuIds.website,
             # Translators: the label of an item in the application menubar
             _("Bookworm &website..."),
@@ -859,6 +866,11 @@ class HelpMenu(BaseMenu):
         # Bind menu events
         self.view.Bind(
             wx.EVT_MENU, self.onOpenDocumentation, id=ViewerMenuIds.documentation
+        )
+        self.view.Bind(
+            wx.EVT_MENU,
+            lambda e: webbrowser.open(app.changelog_url),
+            id=ViewerMenuIds.changelog,
         )
         self.view.Bind(
             wx.EVT_MENU,
