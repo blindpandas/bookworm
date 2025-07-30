@@ -38,6 +38,7 @@ class ViewerMenuIds(enum.IntEnum):
     preferences = wx.ID_PREFERENCES
     # Help Menu
     documentation = next(ID_GEN)
+    changelog = next(ID_GEN)
     website = next(ID_GEN)
     license = next(ID_GEN)
     contributors = next(ID_GEN)
