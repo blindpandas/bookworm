@@ -5,8 +5,6 @@ import json
 from functools import lru_cache
 
 import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
 from bookworm import config
 from bookworm.i18n import LocaleInfo
 from bookworm.logger import logger
@@ -20,7 +18,9 @@ from .base import (
     OcrNetworkError,
     OcrProcessingError,
 )
+from ._shared import StrictRateLimiter
 from ._shared import create_session_with_retries
+
 
 log = logger.getChild(__name__)
 
@@ -36,7 +36,8 @@ class _BaiduOcrBase(BaseOcrEngine):
 
     __supports_more_than_one_recognition_language__ = False
     url = ""
-    __requires_rate_limiting__ = True
+    # 0.8 provides a safe buffer for a 2 QPS limit.
+    rate_limiter = StrictRateLimiter(qps=0.8)
 
     # A comprehensive map of Bookworm's language codes to Baidu's API codes.
     # This includes all languages supported by the accurate version.
@@ -219,6 +220,7 @@ class _BaiduOcrBase(BaseOcrEngine):
         """
         # This will raise OcrAuthenticationError if keys are missing or invalid,
         # or OcrNetworkError on connection issues.
+        cls.rate_limiter.wait_for_permission()
         access_token = cls._get_access_token()
 
         image_bytes = ocr_request.image.as_bytes(format="PNG")

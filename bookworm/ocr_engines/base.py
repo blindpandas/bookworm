@@ -3,30 +3,22 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import suppress
 from dataclasses import dataclass, field
 from io import StringIO
 from operator import attrgetter
 from typing import Callable
 from more_itertools import first_true
-import time
 
 from bookworm import config
-from bookworm import i18n
 from bookworm import app
 from bookworm import typehints as t
 from bookworm.i18n import LocaleInfo
 from bookworm.image_io import ImageIO
-from bookworm.logger import logger
+from bookworm.logger import logger, configure_logger
 from bookworm.utils import NEWLINE
-
 from .image_processing_pipelines import ImageProcessingPipeline
 
 log = logger.getChild(__name__)
-
-# Default interval in seconds between concurrent API requests for rate-limited engines.
-# 1.0 seconds provides a safe buffer for a 2 QPS limit.
-DEFAULT_RATE_LIMIT_INTERVAL = 1.0
 
 def _initialize_worker_process():
     """
@@ -34,8 +26,9 @@ def _initialize_worker_process():
     This function is called at the beginning of a task that runs in a separate process
     to ensure that configurations is loaded correctly.
     """
+    configure_logger(log_file_suffix="WorkerProcess")
     if config.conf is None:
-        log.debug("Worker process: Initializing configuration.")
+        log.debug("Worker process: Initializing...")
         config.setup_config()
 
 
@@ -155,9 +148,6 @@ class BaseOcrEngine(metaclass=ABCMeta):
             A helper function to recognize a single page and handle errors gracefully.
             This function runs in a worker thread from the ThreadPoolExecutor.
             """
-            if cls.__requires_rate_limiting__:
-                # Add a small delay to avoid hitting API rate limits.
-                time.sleep(DEFAULT_RATE_LIMIT_INTERVAL)
             try:
                 # Create a request for the current page
                 ocr_req = OcrRequest(
