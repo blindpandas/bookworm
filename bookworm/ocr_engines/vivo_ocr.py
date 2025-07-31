@@ -94,10 +94,7 @@ class VivoOcrEngine(BaseOcrEngine):
             "businessid": business_id,
         }
         cls.rate_limiter.wait_for_permission()
-        log.info(
-            "Starting Vivo OCR with options: %s",
-            ocr_request.engine_options
-        )
+        log.info("Starting Vivo OCR with options: %s", ocr_request.engine_options)
         try:
             headers = vivo_auth.gen_sign_headers(
                 nvdacn_user, nvdacn_pass, "POST", cls.URI, {}

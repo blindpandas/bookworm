@@ -44,7 +44,9 @@ def _fetch_signature_from_service(nvdacn_user, nvdacn_pass, signing_string_bytes
     }
     url = f"{NVDACN_API_URL}?{urllib.parse.urlencode(api_params)}"
     try:
-        log.debug("Requesting Vivo signature from NVDA.cn API for user: %s", nvdacn_user)
+        log.debug(
+            "Requesting Vivo signature from NVDA.cn API for user: %s", nvdacn_user
+        )
         response = auth_session.post(url, data=signing_string_bytes, timeout=10)
         response.raise_for_status()
         result = response.json()
@@ -55,13 +57,19 @@ def _fetch_signature_from_service(nvdacn_user, nvdacn_pass, signing_string_bytes
             error_message = result.get("data", "Unknown API error")
             log.error(
                 "NVDACN signature API returned a business error for user %s: %s (Code: %s)",
-                nvdacn_user, error_message, result.get('code')
+                nvdacn_user,
+                error_message,
+                result.get("code"),
             )
             raise OcrAuthenticationError(
                 f"NVDACN API Error: {error_message} (Code: {result.get('code')})"
             )
     except requests.exceptions.RequestException as e:
-        log.error("Network error while fetching Vivo signature for user %s.", nvdacn_user, exc_info=True)
+        log.error(
+            "Network error while fetching Vivo signature for user %s.",
+            nvdacn_user,
+            exc_info=True,
+        )
         raise OcrNetworkError("NVDACN API connection failed") from e
     except (json.JSONDecodeError, KeyError, TypeError) as e:
         raise OcrAuthenticationError("Invalid response from NVDACN API") from e
