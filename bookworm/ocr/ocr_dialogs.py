@@ -116,6 +116,17 @@ class OcrPanel(SettingsPanel):
         wx.TextCtrl(baiduBox, -1, name="ocr.baidu_secret_key").SetSizerProps(
             expand=True
         )
+        # Translators: the label of a group of controls in the OCR page
+        # of the settings related to Vivo OCR engine
+        vivoBox = self.make_static_box(_("Vivo OCR Engine (requires NVDA.cn account)"))
+        # Translators: the label of an edit field for username
+        wx.StaticText(vivoBox, -1, _("Username:"))
+        wx.TextCtrl(vivoBox, -1, name="ocr.vivo_nvdacn_user").SetSizerProps(expand=True)
+        # Translators: the label of an edit field for password
+        wx.StaticText(vivoBox, -1, _("Password:"))
+        wx.TextCtrl(
+            vivoBox, -1, name="ocr.vivo_nvdacn_pass", style=wx.TE_PASSWORD
+        ).SetSizerProps(expand=True)
         # Translators: the label of a group of controls in the reading page
         # of the settings related to image enhancement
         miscBox = self.make_static_box(_("Image processing"))

@@ -11,6 +11,7 @@ from .base import (
 )
 from .tesseract_ocr_engine import TesseractOcrEngine
 from .baidu_ocr import BaiduGeneralOcrEngine, BaiduAccurateOcrEngine
+from .vivo_ocr import VivoOcrEngine
 
 # from .tesseract_ocr_engine.tesseract_alt import TesseractOcrEngineAlt
 
@@ -18,4 +19,5 @@ GENERIC_OCR_ENGINES = [
     TesseractOcrEngine,
     BaiduGeneralOcrEngine,
     BaiduAccurateOcrEngine,
+    VivoOcrEngine,
 ]
