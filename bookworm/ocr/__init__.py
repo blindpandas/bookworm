@@ -28,6 +28,8 @@ OCR_CONFIG_SPEC = {
     "ocr": dict(
         engine='string(default="")',
         enhance_images="boolean(default=True)",
+        baidu_api_key='string(default="")',
+        baidu_secret_key='string(default="")',
     )
 }
 

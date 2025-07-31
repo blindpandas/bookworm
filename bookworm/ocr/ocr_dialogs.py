@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import partial
 
 import wx
@@ -50,6 +50,7 @@ class OcrOptions:
     _ipp_enabled: int
     image_processing_pipelines: t.Tuple[ImageProcessingPipeline]
     store_options: bool
+    engine_options: dict = field(default_factory=dict)
 
 
 class OcrPanel(SettingsPanel):
@@ -104,6 +105,17 @@ class OcrPanel(SettingsPanel):
             )
             self.Bind(wx.EVT_BUTTON, self.onDownloadTesseractLanguages, tessLangDlBtn)
             self.Bind(wx.EVT_BUTTON, self.onUpdateTesseractEngine, updateTesseractBtn)
+        # Translators: the label of a group of controls in the OCR page
+        # of the settings related to Baidu OCR engine
+        baiduBox = self.make_static_box(_("Baidu OCR Engine"))
+        # Translators: the label of an edit field
+        wx.StaticText(baiduBox, -1, _("API Key:"))
+        wx.TextCtrl(baiduBox, -1, name="ocr.baidu_api_key").SetSizerProps(expand=True)
+        # Translators: the label of an edit field
+        wx.StaticText(baiduBox, -1, _("Secret Key:"))
+        wx.TextCtrl(baiduBox, -1, name="ocr.baidu_secret_key").SetSizerProps(
+            expand=True
+        )
         # Translators: the label of a group of controls in the reading page
         # of the settings related to image enhancement
         miscBox = self.make_static_box(_("Image processing"))
@@ -223,12 +235,14 @@ class OCROptionsDialog(SimpleDialog):
     def __init__(
         self,
         *args,
+        engine,
         stored_options=None,
         languages=(),
         force_save=False,
         is_multilingual=False,
         **kwargs,
     ):
+        self.engine = engine
         self.stored_options = stored_options
         self.languages = {lang.description: lang for lang in languages}
         self.force_save = force_save
@@ -240,6 +254,7 @@ class OCROptionsDialog(SimpleDialog):
             if self.stored_options is None
             else self.stored_options.image_processing_pipelines
         )
+        self._engine_option_checkboxes = {}  # To store our dynamic checkboxes
         super().__init__(*args, **kwargs)
 
     def addControls(self, parent):
@@ -272,6 +287,24 @@ class OCROptionsDialog(SimpleDialog):
         self.should_enhance_images = wx.CheckBox(
             imageResBox, -1, _("Enable image enhancements")
         )
+        engine_options = self.engine.get_engine_options()
+        if engine_options:
+            # Translators: Title for a group of engine-specific OCR options
+            recognitionBox = make_sized_static_box(parent, _("Engine Specific Options"))
+            for option in engine_options:
+                # Check if this specific engine supports this option
+                if option.is_supported(self.engine):
+                    cb = wx.CheckBox(recognitionBox, -1, option.label)
+                    initial_value = option.default
+                    if self.stored_options and hasattr(
+                        self.stored_options, "engine_options"
+                    ):
+                        initial_value = self.stored_options.engine_options.get(
+                            option.key, option.default
+                        )
+                    cb.SetValue(initial_value)
+                    # Store the checkbox using its key for later retrieval
+                    self._engine_option_checkboxes[option.key] = cb
         ippPanel = sc.SizedPanel(parent)
         # Translators: the label of a checkbox
         imgProcBox = make_sized_static_box(
@@ -298,9 +331,18 @@ class OCROptionsDialog(SimpleDialog):
             self.zoomFactorSlider.SetValue(2)
             self.should_enhance_images.SetValue(config.conf["ocr"]["enhance_images"])
         else:
-            self.primaryLangChoice.SetSelection(
-                self.languages.index(self.stored_options.language)
-            )
+            stored_lang_obj = self.stored_options.languages[0]
+            # Find the corresponding description string (the key in our dictionary).
+            stored_lang_description = None
+            for description, lang_info in self.languages.items():
+                if lang_info == stored_lang_obj:
+                    stored_lang_description = description
+                    break
+            if stored_lang_description:
+                self.primaryLangChoice.SetStringSelection(stored_lang_description)
+            else:
+                # Fallback to the first item if the stored language is not found
+                self.primaryLangChoice.SetSelection(0)
             self.zoomFactorSlider.SetValue(self.stored_options.zoom_factor)
             self.should_enhance_images.SetValue(self.stored_options._ipp_enabled)
             if not self.force_save:
@@ -334,12 +376,17 @@ class OCROptionsDialog(SimpleDialog):
                 for c, ipp_cls in self.image_processing_pipelines
                 if c.IsChecked()
             ]
+        # Dynamically gather the state of the engine option checkboxes
+        engine_options_values = {
+            key: cb.IsChecked() for key, cb in self._engine_option_checkboxes.items()
+        }
         self._return_value = OcrOptions(
             languages=self.get_selected_recognition_langs(),
             zoom_factor=self.zoomFactorSlider.GetValue() or 1,
             _ipp_enabled=self.should_enhance_images.IsChecked(),
             image_processing_pipelines=selected_image_pp,
             store_options=self.force_save or self.storeOptionsCheckbox.IsChecked(),
+            engine_options=engine_options_values,
         )
         self.Close()
 
