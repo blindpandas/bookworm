@@ -20,6 +20,7 @@ from .image_processing_pipelines import ImageProcessingPipeline
 
 log = logger.getChild(__name__)
 
+
 def _initialize_worker_process():
     """
     Initializes necessary subsystems for a worker process.
