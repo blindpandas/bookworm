@@ -492,17 +492,53 @@ class TextToSpeechService(BookwormService):
         last_known_state = (
             SynthState.ready if not self.is_engine_ready else self.engine.state
         )
-        if self.is_engine_ready and (self.engine.name == engine_name):
+        # If the requested engine is already loaded, just re-configure it and exit.
+        if self.is_engine_ready and self.engine.name == engine_name:
             self.configure_engine(last_known_state)
             return
-        self.close()
-        Engine = self.get_engine(engine_name)
-        self.engine = Engine()
-        # Event handlers
-        self.engine.bind(EngineEvent.state_changed, self.on_state_changed)
-        self.engine.bind(EngineEvent.bookmark_reached, self.on_bookmark_reached)
-        self.configure_engine(last_known_state)
-        self._try_set_tts_language()
+        # Close any currently active engine before initializing a new one.
+        if self.is_engine_ready:
+            self.close()
+        # Attempt to load the user's configured speech engine first.
+        try:
+            Engine = self.get_engine(engine_name, by_name=True)
+            self.engine = Engine()
+            log.info(f"Successfully initialized speech engine: {engine_name}")
+        except Exception:
+            # If the primary engine fails (e.g., due to an OSError for a missing component),
+            # log the error and attempt to find a working fallback engine.
+            log.exception(
+                f"Failed to initialize the selected speech engine '{engine_name}'. Finding a working fallback.",
+                exc_info=True
+            )
+            try:
+                FallbackEngine = self.get_engine(by_name=False)
+                self.engine = FallbackEngine()
+                log.info(f"Successfully fell back to and initialized speech engine: {FallbackEngine.name}")
+                self.config_manager["engine"] = FallbackEngine.name
+                self.config_manager.save()
+                # Translators: The title of a warning dialog that appears when a speech engine fails to load.
+                title = _("Speech Engine Warning")
+                # Translators: The main message of the dialog, explaining that the application automatically
+                # switched to a different, working speech engine.
+                message = _("The previously selected speech engine could not be loaded. Bookworm has automatically switched to '{engine_display_name}'.").format(engine_display_name=_(FallbackEngine.display_name))
+                wx.CallAfter(self.view.notify_user, title, message, icon=wx.ICON_WARNING)
+            except Exception:
+                 # If even the fallback engine fails, disable TTS functionality completely.
+                log.exception("CRITICAL: No speech engines could be successfully initialized.", exc_info=True)
+                self.engine = None
+                # Translators: The title of a critical error dialog.
+                title = _("Critical Speech Error")
+                # Translators: The main message explaining that no speech engines could be loaded at all.
+                message = _("No speech engines could be loaded on this system. Text-to-speech functionality will be disabled.")
+                wx.CallAfter(self.view.notify_user, title, message, icon=wx.ICON_ERROR)
+                return
+        # If an engine was successfully loaded (either primary or fallback), bind its events.
+        if self.is_engine_ready:
+            self.engine.bind(EngineEvent.state_changed, self.on_state_changed)
+            self.engine.bind(EngineEvent.bookmark_reached, self.on_bookmark_reached)
+            self.configure_engine(last_known_state)
+            self._try_set_tts_language()
 
     def configure_engine(self, last_known_state=SynthState.ready):
         if not self.is_engine_ready:
@@ -621,19 +657,52 @@ class TextToSpeechService(BookwormService):
         self._highlighted_ranges.clear()
 
     @classmethod
-    def get_engine(cls, engine_name, first_available=True):
-        engine = None
-        for e in cls.speech_engines:
-            if e.name == engine_name:
-                engine = e
-                break
-        if engine is None:
-            if first_available:
-                return (
-                    cls.speech_engines[0]
-                    if any(cls.speech_engines)
-                    else DummySpeechEngine
-                )
-            else:
-                raise LookupError(f"Engine {engine_name} was not found or unavailable.")
-        return engine
+    def get_engine(cls, engine_name="", by_name=True):
+        """
+        Gets a speech engine class based on the specified mode.
+
+        This method has two modes of operation controlled by the 'by_name' parameter:
+        1.  Precise Lookup (by_name=True): Finds the engine with the exact name provided.
+        2.  Fallback/Availability Check (by_name=False): Finds the first engine in the
+            list that can be successfully initialized.
+
+        Args:
+            engine_name (str): The name of the engine to find. Only used when by_name is True.
+            by_name (bool): If True, performs a precise search by name. If False, finds the
+                            first available and working engine.
+
+        Returns:
+            A subclass of BaseSpeechEngine that is ready to be instantiated. If no engine
+            can be found or initialized, returns the DummySpeechEngine.
+
+        Raises:
+            LookupError: If by_name is True and no engine with the specified name is found.
+        """
+        if by_name:
+            if engine_name == "sapi":
+                # --- Backward Compatibility Fix ---
+                # Handle old configuration files where the SAPI5 engine was named "sapi".
+                engine_name= "sapi5"
+            for e in cls.speech_engines:
+                if e.name == engine_name:
+                    return e
+            # If no match is found in precise mode, it's an error condition.
+            raise LookupError(f"Engine '{engine_name}' was not found.")
+        else:
+            # --- Fallback Mode ---
+            # Find the first available engine by attempting to initialize each one.
+            for Engine in cls.speech_engines:
+                try:
+                    temp_engine = Engine()
+                    temp_engine.close()
+                    # If no exception was raised, this engine is working.
+                    return Engine
+                except Exception:
+                    # This engine failed to initialize (e.g., due to missing system
+                    # components like for OneCore). Log it and try the next one.
+                    log.warning(f"Fallback check failed for engine: {Engine.name}", exc_info=True)
+                    continue
+            # If the loop completes without finding any working engine,
+            # return the DummySpeechEngine as the ultimate fallback.
+            return DummySpeechEngine
+

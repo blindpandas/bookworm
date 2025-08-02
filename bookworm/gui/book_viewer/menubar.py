@@ -343,11 +343,15 @@ class FileMenu(BaseMenu):
         self.populate_recent_file_list()
 
     def onPreferences(self, event):
-        dlg = PreferencesDialog(
-            self.view,
-            # Translators: the title of the application preferences dialog
-            title=_("{app_name} Preferences").format(app_name=app.display_name),
-        )
+        try:
+            dlg = PreferencesDialog(
+                self.view,
+                # Translators: the title of the application preferences dialog
+                title=_("{app_name} Preferences").format(app_name=app.display_name),
+            )
+        except Exception as e:
+            log.exception("CRITICAL: Failed to instantiate PreferencesDialog.", exc_info=True)
+            return
         with dlg:
             dlg.ShowModal()
 

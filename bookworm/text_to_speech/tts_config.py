@@ -108,7 +108,7 @@ tts_config_spec = {
         enable_global_media_keys="boolean(default=False)",
     ),
     "speech": dict(
-        engine="string(default='sapi')",
+        engine="string(default='sapi5')",
         voice="string(default='')",
         rate="integer(default=-1, min=-1, max=100)",
         pitch="integer(default=-1, min=-1, max=100)",

@@ -239,11 +239,21 @@ class SpeechPanel(SettingsPanel):
         engine_name = engine_name or self.config["engine"]
         self.current_engine = self.service.get_engine(engine_name)
         self.engineInfoText.SetValue(_(self.current_engine.display_name))
-        self.voices = self.current_engine().get_voices()
+        try:
+            temp_engine_instance = self.current_engine()
+            self.voices = temp_engine_instance.get_voices()
+            temp_engine_instance.close()  # Immediately release any resources.
+        except Exception:
+            # If instantiation fails, log the error and provide a safe empty list.
+            # This allows the UI to continue functioning without crashing.
+            log.exception(f"Failed to instantiate engine '{self.current_engine.name}' to get voices. Voice list will be empty.")
+            self.voices = [] 
         self.voice.Clear()
         self.voice.Append([v.display_name for v in self.voices])
         self.reconcile()
-        if self.current_engine is DummySpeechEngine:
+        # If the engine is a DummyEngine or failed to provide any voices,
+        # disable the engine-specific settings panel for safety.
+        if self.current_engine is DummySpeechEngine or not self.voices:
             self.engineSettingsPanel.Enable(False)
             return
         else:
