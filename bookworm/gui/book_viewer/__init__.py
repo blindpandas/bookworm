@@ -94,7 +94,7 @@ class ResourceLoader:
             )
             return
         if not resolver.should_read_async():
-            doc = self.resolve_document(resolver.read_document, uri)
+            self.resolve_document(resolver.read_document, uri)
         else:
             AsyncSnakDialog(
                 task=partial(resolver.read_document),
@@ -108,9 +108,9 @@ class ResourceLoader:
     def resolve_document(self, resolve_doc_func, uri):
         _last_exception = None
         try:
-            doc = resolve_doc_func()
+            doc, original_uri = resolve_doc_func()
             if doc is not None:
-                self.load(doc)
+                self.load(doc, original_uri)
         except DecryptionRequired:
             self.view.decrypt_document(uri)
         except ResourceDoesNotExist as e:
@@ -229,10 +229,10 @@ class ResourceLoader:
                 if app.debug:
                     raise _last_exception
 
-    def load(self, document):
+    def load(self, document, original_uri):
         if (document is None) or (self._cancellation_token.is_cancellation_requested()):
             return
-        self.view.load_document(document)
+        self.view.load_document(document, original_uri)
         if self.callback is not None:
             self.callback()
 
@@ -478,11 +478,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         if self.contentTextCtrl.HasFocus():
             self.tocTreeCtrl.SetFocus()
 
-    def load_document(self, document) -> bool:
+    def load_document(self, document, original_uri=None) -> bool:
         with reader_book_loaded.connected_to(
             self.book_loaded_handler, sender=self.reader
         ):
-            self.reader.set_document(document)
+            self.reader.set_document(document, original_uri=original_uri)
 
     @gui_thread_safe
     def book_loaded_handler(self, sender):
