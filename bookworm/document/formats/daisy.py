@@ -2,16 +2,18 @@
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List
+import urllib.parse as urllib_parse
 import zipfile
 from zipfile import ZipFile
 
 from lxml import etree
 
-from bookworm.document.base import SinglePageDocument, SINGLE_PAGE_DOCUMENT_PAGER
+from bookworm.document.base import LinkTarget, SinglePageDocument, SINGLE_PAGE_DOCUMENT_PAGER
 from bookworm.document import BookMetadata, DocumentCapability as DC, Section
 from bookworm.logger import logger
 from bookworm.structured_text import TextRange
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
+from bookworm.utils import is_external_url
 
 log = logger.getChild(__name__)
 
@@ -136,6 +138,8 @@ class DaisyDocument(SinglePageDocument):
         | DC.METADATA
         | DC.STRUCTURED_NAVIGATION
         | DC.SINGLE_PAGE
+        | DC.LINKS
+        | DC.INTERNAL_ANCHORS
     )
 
     def read(self) -> None:
@@ -151,6 +155,17 @@ class DaisyDocument(SinglePageDocument):
         return self.structure.semantic_elements
 
     
+    def resolve_link(self, link_range) -> LinkTarget:
+        href = urllib_parse.unquote(self.structure.link_targets[link_range])
+        if is_external_url(href):
+            return LinkTarget(url=href, is_external=True)
+        else:
+            for html_id, text_range in self.structure.html_id_ranges.items():
+                if html_id.endswith(href):
+                    return LinkTarget(
+                        url=href, is_external=False, page=None, position=text_range
+                    )
+
     @property
     def toc_tree(self) -> Section:
         return self._toc

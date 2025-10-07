@@ -371,6 +371,7 @@ class EBookReader:
             )
 
     def handle_special_action_for_position(self, position: int) -> bool:
+        log.debug(f"Executing special action in position: {position}")
         for link_range in self.iter_semantic_ranges_for_elements_of_type(
             SemanticElementType.LINK
         ):
