@@ -62,3 +62,4 @@ waitress==3.0.1
 winpaths==0.2
 wxPython==4.2.1
 yarl==1.9.4
+pynput==1.8.1

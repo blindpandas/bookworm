@@ -105,9 +105,10 @@ tts_config_spec = {
         select_spoken_text="boolean(default=False)",
         notify_on_section_end="boolean(default=True)",
         ask_to_switch_voice_to_current_book_language="boolean(default=True)",
+        enable_global_media_keys="boolean(default=False)",
     ),
     "speech": dict(
-        engine="string(default='sapi')",
+        engine="string(default='sapi5')",
         voice="string(default='')",
         rate="integer(default=-1, min=-1, max=100)",
         pitch="integer(default=-1, min=-1, max=100)",

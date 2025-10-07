@@ -70,7 +70,7 @@ class DecryptionRequired(Exception):
 class UriResolver:
     """Retrieves a document given a uri."""
 
-    def __init__(self, uri, num_fallbacks=0):
+    def __init__(self, uri, num_fallbacks=0, original_uri=None):
         if isinstance(uri, str):
             try:
                 self.uri = DocumentUri.from_uri_string(uri)
@@ -79,6 +79,7 @@ class UriResolver:
         else:
             self.uri = uri
         self.num_fallbacks = num_fallbacks
+        self.original_uri = original_uri or self.uri
         doc_format_info = get_document_format_info()
         if (doc_format := self.uri.format) not in doc_format_info:
             raise UnsupportedDocumentError(
@@ -94,12 +95,16 @@ class UriResolver:
 
     def read_document(self):
         try:
-            return self._do_read_document()
+            doc = self._do_read_document()
+            return doc, self.original_uri
+        except ChangeDocument as e:
+            # Propagate the original URI through the conversion chain.
+            return UriResolver(uri=e.new_uri, original_uri=self.original_uri).read_document()
         except:
             if (fallback_uri := self.uri.fallback_uri) is not None:
                 if self.num_fallbacks < 4:
                     return UriResolver(
-                        uri=fallback_uri, num_fallbacks=self.num_fallbacks + 1
+                        uri=fallback_uri, num_fallbacks=self.num_fallbacks + 1, original_uri=self.original_uri
                     ).read_document()
             raise
 
@@ -111,13 +116,8 @@ class UriResolver:
             raise DecryptionRequired
         except DocumentIOError as e:
             raise ResourceDoesNotExist("Failed to load document") from e
-        except ChangeDocument as e:
-            log.debug(
-                f"Changing document from {e.old_uri} to {e.new_uri}. Reason {e.reason}"
-            )
-            return UriResolver(uri=e.new_uri).read_document()
         except Exception as e:
-            if type(e) in PASS_THROUGH__DOCUMENT_EXCEPTIONS:
+            if type(e) in PASS_THROUGH__DOCUMENT_EXCEPTIONS or isinstance(e, ChangeDocument):
                 raise e
             raise ReaderError("Failed to open document") from e
         return document
@@ -148,16 +148,26 @@ class EBookReader:
         self.stored_document_info = None
         self.__state = {}
 
-    def set_document(self, document):
+    def set_document(self, document, original_uri=None):
         self.document = document
         self.current_book = self.document.metadata
         self.__state.setdefault("current_page_index", -1)
         self.set_view_parameters()
         self.current_page = 0
+        
+        # Use the original URI for storage, falling back to the document's URI
+        # if no original URI was passed (i.e., for non-converted files).
+        uri_for_storage = original_uri or self.document.uri
+
+        # Crucially, overwrite the document's current URI with the original one.
+        # This ensures all subsequent operations (recents, pinning, position saving)
+        # use the correct identifier for the file the user actually opened.
+        self.document.uri = uri_for_storage
+
         if self.document.uri.view_args.get("save_last_position", True):
             log.debug("Retrieving last saved reading position from the database")
             self.stored_document_info = DocumentPositionInfo.get_or_create(
-                title=self.current_book.title, uri=self.document.uri
+                title=self.current_book.title, uri=uri_for_storage
             )
         if open_args := self.document.uri.openner_args:
             page = int(open_args.get("page", 0))
@@ -189,8 +199,8 @@ class EBookReader:
         self.view.add_toc_tree(self.document.toc_tree)
 
     def load(self, uri: DocumentUri):
-        document = UriResolver(uri).read_document()
-        self.set_document(document)
+        document, original_uri = UriResolver(uri).read_document()
+        self.set_document(document, original_uri=original_uri)
 
     def unload(self):
         if self.ready:
@@ -375,7 +385,7 @@ class EBookReader:
         for link_range in self.iter_semantic_ranges_for_elements_of_type(
             SemanticElementType.LINK
         ):
-            if position in link_range:
+            if position in range(*link_range):
                 self.navigate_to_link_by_range(link_range)
         try:
             for idx, tbl_range in enumerate(

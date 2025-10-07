@@ -22,6 +22,12 @@ from bookworm.gui.settings import ReconciliationStrategies, SettingsPanel
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
 from bookworm.ocr_engines import OcrRequest
+from bookworm.ocr_engines.base import (
+    OcrError,
+    OcrAuthenticationError,
+    OcrNetworkError,
+    OcrProcessingError,
+)
 from bookworm.resources import sounds
 from bookworm.signals import (
     _signals,
@@ -192,7 +198,8 @@ class OCRMenu(wx.Menu):
 
     def _get_ocr_options_from_dlg(self, last_stored_options=None, **dlg_kw):
         self.service._init_ocr_engine()
-        langs = self.service.current_ocr_engine.get_sorted_languages()
+        engine = self.service.current_ocr_engine
+        langs = engine.get_sorted_languages()
         if not langs:
             wx.MessageBox(
                 # Translators: content of a message
@@ -207,9 +214,10 @@ class OCRMenu(wx.Menu):
         dlg = OCROptionsDialog(
             parent=self.view,
             title=_("OCR Options"),
+            engine=engine,
             languages=langs,
             stored_options=last_stored_options,
-            is_multilingual=self.service.current_ocr_engine.__supports_more_than_one_recognition_language__,
+            is_multilingual=engine.__supports_more_than_one_recognition_language__,
             **dlg_kw,
         )
         self.service.saved_scanned_pages.clear()
@@ -233,6 +241,7 @@ class OCRMenu(wx.Menu):
             image=image,
             image_processing_pipelines=ocr_opts.image_processing_pipelines,
             cookie=reader.current_page,
+            engine_options=ocr_opts.engine_options,
         )
 
         def _ocr_callback(ocr_result):
@@ -262,14 +271,23 @@ class OCRMenu(wx.Menu):
 
     def onAutoScanPages(self, event):
         event.Skip()
-        if self.service.stored_options is None:
-            self._get_ocr_options(force_save=True)
+        # We only need to ask for options if the user is TURNING ON auto-scan
+        # and no options have been stored yet.
+        if self.auto_scan_item.IsChecked() and self.service.stored_options is None:
+            # force_save=True ensures the "store options" checkbox is hidden and on by default
+            opts = self._get_ocr_options(from_cache=False, force_save=True)
+            if opts is None:
+                # User clicked Cancel while setting up auto-scan options.
+                speech.announce(_("Automatic OCR setup canceled."), True)
+                self.auto_scan_item.Check(False)
+                return
+        # Announce the final state of the checkbox
         if self.auto_scan_item.IsChecked():
             speech.announce(_("Automatic OCR is enabled"))
+            if self.view.is_empty():
+                self.onScanCurrentPage(event)
         else:
             speech.announce(_("Automatic OCR is disabled"))
-        if self.view.is_empty():
-            self.onScanCurrentPage(event)
 
     def onScanToTextFile(self, event):
         ocr_opts = self._get_ocr_options(from_cache=False, force_save=True)
@@ -414,9 +432,35 @@ class OCRMenu(wx.Menu):
             return
         try:
             ocr_result = task.result()
-        except Exception as e:
-            log.exception(f"Error getting OCR recognition results.", exc_info=True)
+        except OcrAuthenticationError as e:
             ocr_ended.send(sender=self.view, isfaulted=True)
+            wx.MessageBox(
+                str(e), _("Authentication Error"), style=wx.ICON_ERROR, parent=self.view
+            )
+            return
+        except OcrNetworkError as e:
+            ocr_ended.send(sender=self.view, isfaulted=True)
+            wx.MessageBox(
+                str(e), _("Network Error"), style=wx.ICON_ERROR, parent=self.view
+            )
+            return
+        except OcrProcessingError as e:
+            ocr_ended.send(sender=self.view, isfaulted=True)
+            wx.MessageBox(
+                str(e), _("OCR Service Error"), style=wx.ICON_ERROR, parent=self.view
+            )
+            return
+        except Exception as e:
+            log.exception("An unexpected error occurred during OCR.")
+            ocr_ended.send(sender=self.view, isfaulted=True)
+            wx.MessageBox(
+                _(
+                    "An unexpected error occurred during OCR. Please check the logs for details."
+                ),
+                _("Error"),
+                style=wx.ICON_ERROR,
+                parent=self.view,
+            )
             return
         callback(ocr_result)
         sounds.ocr_end.play()

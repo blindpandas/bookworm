@@ -13,6 +13,7 @@ version = "2025.1"
 version_ex = "2025.1.0.0"
 url = "https://github.com/blindpandas/bookworm"
 website = "https://github.com/blindpandas/bookworm"
+changelog_url = f"{url}/releases/tag/{version}"
 update_url = (
     "https://raw.githubusercontent.com/blindpandas/bookworm/main/update_info.json"
 )

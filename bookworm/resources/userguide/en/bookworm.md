@@ -15,7 +15,7 @@ Bookworm runs on the Microsoft Windows operating system. It works well with your
 * Full text search with customizable search options
 * Advanced and easy to use annotation tools. You can add named bookmarks to mark places of interest in the text for later reference, and you can add comments to capture an interesting thought or create a summary of the content at a particular position in the text. Bookworm allows you to quickly jump to a specific comment and view it. Later, you can export these comments to a text file or HTML document for later use.
 * For PDF documents, Bookworm supports two different styles of viewing pages; plain-text and fully rendered, zoomable, images.
-* Support for using OCR to extract text from scanned documents and images using Windows10 builtin OCR engine. You also  have the option of downloading and using the freely available Tesseract OCR Engine within Bookworm.
+* Support for Optical Character Recognition (OCR) to extract text from scanned documents and images. Bookworm integrates the built-in Windows 10 OCR, the open-source Tesseract engine, the VIVO General OCR, and the powerful Baidu AI Cloud OCR services.
 * Look for term definition in Wikipedia, and read Wikipedia articles from within Bookworm
 * A built-in web article extractor that allows you to open URLs and automatically extract the main article from the page.
 * Document navigation via Table of content is extensively supported for all document formats
@@ -112,6 +112,64 @@ After specifying the correct option according to your needs, you must select the
 After selecting the desired format, a read-only text area appears called "Output File" and is empty by default. You must click the Browse button, or alternatively, use alt+b to open an explorer window to specify the filename and folder where the output file will be saved.
 When specifying a file name and file folder, there is an "Open file after exporting" checkbox that allows Bookworm to automatically open the output file after saving. Clear this check box if you don't want to automatically open the saved file and click OK. The file will be saved in the specified folder and you can open it with either Bookworm or any other text editor, like "Notepad".
 
+## Optical Character Recognition (OCR)
+
+Bookworm can extract text from images and scanned documents using its powerful and flexible OCR features. This is especially useful for making image-based PDFs or pictures of documents fully readable and searchable. Bookworm supports multiple OCR engines, allowing you to choose the one that best suits your needs.
+
+You can access OCR features from the "OCR" menu in the menu bar. The primary functions are:
+* **Scan Current Page (`F4`)**: Performs OCR on the current page of your document.
+* **Automatic OCR (`Ctrl+F4`)**: Automatically performs OCR on each new page as you navigate through a document.
+* **Image To Text...**: Allows you to select an image file from your computer and extract its text.
+
+Bookworm supports the following OCR engines:
+
+### Windows 10/11 OCR
+
+If you are using Windows 10 or a later version, Bookworm can use the high-quality OCR engine that is built directly into the operating system. This is the default engine and requires no additional setup. It provides excellent results, especially for languages that are installed on your system.
+
+### Tesseract OCR Engine
+
+For users on older versions of Windows or those who need support for a wider range of languages, Bookworm supports integration with the Tesseract OCR Engine, a powerful open-source engine maintained by Google.
+
+If Tesseract is not already installed for Bookworm, you can easily download and set it up from within the application:
+1. Go to `File > Preferences...` and select the **OCR** page.
+2. Under the "Tesseract OCR Engine" section, click the "Download Tesseract OCR Engine" button and follow the prompts.
+3. Once installed, you can manage languages by clicking the "Manage Tesseract OCR Languages" button.
+
+### VIVO General OCR Engine (via NVDA-CN)
+
+Through a partnership with VIVO (vivo.com.cn) and the NVDA Chinese Community (NVDACN), Bookworm offers access to the VIVO OCR engine. This service is provided free of charge and delivers high-quality recognition for both Chinese and English content.
+
+To use the VIVO OCR engine, you will need a free NVDA-CN account.
+
+#### Setting Up VIVO OCR
+
+1. **Create an Account**: Go to the NVDA-CN registration page: [https://nvdacn.com/admin/register.php](https://nvdacn.com/admin/register.php).
+    *   **Note**: The registration page is in Chinese. We recommend using your browser's built-in translation feature to complete the form.
+    *   You will be asked for a username, password, and a valid email address. Please store your password securely, as automated password recovery is not yet available.
+2. **Verify Your Email**: Check your inbox for a verification email and click the link inside to activate your account.
+3. **Configure in Bookworm**: Once you have your account, open Bookworm's preferences by navigating to `File > Preferences...` (or by pressing `Ctrl+Shift+P`).
+4. **Enter Your Credentials**: Go to the **OCR** settings page. Here you will find fields to enter your "Username" and "Password" under the "VIVO OCR Engine" section.
+5. **Select the Engine**: After entering your credentials, you can select "VIVO OCR" as your default OCR engine from the "Default OCR Engine" list.
+
+Once configured, the VIVO engine will be used for all OCR operations in Bookworm.
+
+For any account-related issues, you can contact the NVDA-CN team at `support@nvdacn.com`.
+
+### Baidu AI Cloud OCR
+
+For the highest accuracy, especially with mixed Chinese and English text or complex layouts, Bookworm integrates with the Baidu AI Cloud OCR service. This is a web-based service that provides both a **Standard** and a high-precision **Accurate** engine.
+
+To use the Baidu OCR engines, you will need to obtain a free API Key and Secret Key.
+
+#### Setting Up Baidu OCR
+
+1. **Register for an Account**: Visit the [Baidu AI Cloud OCR page](https://ai.baidu.com/tech/ocr/general) to create an account and get your keys. The service offers a generous free tier, which includes thousands of free recognition calls per month.
+2. **Configure in Bookworm**: Once you have your API Key and Secret Key, open Bookworm's preferences by navigating to `File > Preferences...` (or pressing `Ctrl+Shift+P`).
+3. **Enter Your Keys**: Go to the **OCR** settings page. Here you will find fields to enter your "API Key" and "Secret Key" under the "Baidu OCR Engine" section.
+4. **Select the Engine**: After entering your keys, you can select either "Baidu General OCR (Standard)" or "Baidu General OCR (Accurate)" as your default OCR engine in the "Default OCR Engine" list.
+
+Once configured, the Baidu engine will be used for all OCR operations in Bookworm.
 
 ### Reading Aloud
 
@@ -123,6 +181,22 @@ You can configure the speech in two ways:
 
 During reading aloud, you can skip backward or foreword by paragraph by pressing Alt plus the left and right arrow  keys.
 
+### Media keys behavior
+
+The media keys are mapped to core TTS actions:
+
+* **▶️ Play/Pause Key**: Toggles TTS play, pause, and resume.
+* **⏭️ Next Track Key**: Functions as "Fast Forward," jumping to the **next paragraph** (equivalent to `Alt+Right Arrow`).
+* **⏮️ Previous Track Key**: Functions as "Rewind," jumping to the **previous paragraph** (equivalent to `Alt+Left Arrow`).
+
+The feature supports two distinct modes for flexibility:
+
+1.  **Local Mode (Default)**: Media keys are handled only when the Bookworm application window has focus.
+2.  **Global Mode (Opt-in)**: Users can enable this via a new "**Enable global media keys**" checkbox under `Settings > Reading`. This allows them to control playback from anywhere in the OS, even when Bookworm is running in the background.
+
+This setting can be toggled dynamically without restarting the application.
+
+**Note: Media key functionality can be unreliable when multiple media applications are running simultaneously, regardless of whether global mode is on or off.**
 
 ### Configuring The Reading Style
 
