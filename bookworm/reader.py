@@ -384,7 +384,7 @@ class EBookReader:
         for link_range in self.iter_semantic_ranges_for_elements_of_type(
             SemanticElementType.LINK
         ):
-            if position in link_range:
+            if position in range(*link_range):
                 self.navigate_to_link_by_range(link_range)
         try:
             for idx, tbl_range in enumerate(
