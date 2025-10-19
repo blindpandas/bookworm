@@ -48,9 +48,8 @@ jobs:
       - name: Install dependencies and compile resources
         run: |
           python -m venv .env
-          .env\Scripts\activate
-          pip install invoke
-          invoke dev
+          .env\Scripts\pip install invoke
+          .env\Scripts\invoke dev
 
       # Step 5: Build the project
       - name: Build the project
@@ -135,9 +134,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m venv .env
-          .env\Scripts\activate
-          pip install invoke
-          invoke dev
+          .env\Scripts\pip install invoke
+          .env\Scripts\invoke dev
 
       # Step 5: Generate update-info.json
       - name: Generate update-info.json
