@@ -24,7 +24,7 @@ languagecodes==1.0.7
 libloader==0.21
 lru-dict==1.1.8
 lxml==5.2.2
-mammoth==1.7.1
+mammoth==1.11.0
 mistune==0.8.4
 mobi==0.3.3
 more-itertools==10.2.0

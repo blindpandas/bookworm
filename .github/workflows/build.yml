@@ -49,8 +49,14 @@ jobs:
         run: |
           python -m venv .env
           .env\Scripts\activate
-          pip install invoke
+          pip install -r requirements-dev.txt
           invoke dev
+
+      - name: Install NSIS
+        uses: repolevedavaj/install-nsis@v1.1.0
+        with:
+          nsis-version: '3.10'
+
 
       # Step 5: Build the project
       - name: Build the project
@@ -136,7 +142,7 @@ jobs:
         run: |
           python -m venv .env
           .env\Scripts\activate
-          pip install invoke
+          pip install -r requirements-dev.txt
           invoke dev
 
       # Step 5: Generate update-info.json
