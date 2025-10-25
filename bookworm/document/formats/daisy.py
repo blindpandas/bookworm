@@ -160,11 +160,13 @@ class DaisyDocument(SinglePageDocument):
         if is_external_url(href):
             return LinkTarget(url=href, is_external=True)
         else:
-            for html_id, text_range in self.structure.html_id_ranges.items():
-                if html_id.endswith(href):
-                    return LinkTarget(
-                        url=href, is_external=False, page=None, position=text_range
-                    )
+            # we can obtain the target by looking up the anchors map populated in the Structured HTML parser
+            if href.startswith('#'):
+                href = href[1:]
+            text_range = self.structure.anchors[href]
+            return LinkTarget(
+                url=href, is_external=False, page=None, position=text_range
+            )
 
     @property
     def toc_tree(self) -> Section:
