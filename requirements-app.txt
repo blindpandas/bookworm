@@ -80,7 +80,7 @@ unicode-slugify==0.1.5
 Unidecode==1.4.0
 unrar==0.4
 url-normalize==1.4.3
-urllib3==2.4.0
+urllib3==2.5.0
 waitress==3.0.1
 wcwidth==0.2.13
 winpaths==0.2
