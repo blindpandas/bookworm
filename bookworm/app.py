@@ -50,7 +50,7 @@ VERSION_PATTERN = r"""
 """
 
 
-def get_version_info(version_string=version):
+def get_version_info(version_string: str = version) -> dict:
     pattern = re.compile(
         r"^\s*" + VERSION_PATTERN + r"\s*$", re.VERBOSE | re.IGNORECASE
     )
@@ -58,3 +58,8 @@ def get_version_info(version_string=version):
     if not mat:
         raise ValueError
     return mat.groupdict()
+
+def user_agent() -> str:
+    # Wikipedia will reject requests that does not respect their User-Agent policy
+    # see: https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy
+    return f"{name}/{version} ({url}; {author_email})"
