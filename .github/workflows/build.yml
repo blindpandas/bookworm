@@ -30,7 +30,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.11"
           architecture: ${{ matrix.CI_ARCH }}
 
       # Step 3: Cache pip's download directory to speed up dependency resolution.
@@ -50,7 +50,7 @@ jobs:
           python -m venv .env
           .env\Scripts\activate
           pip install -r requirements-dev.txt
-          invoke dev
+          python -m invoke dev
 
       - name: Install NSIS
         uses: repolevedavaj/install-nsis@v1.1.0
@@ -62,16 +62,16 @@ jobs:
       - name: Build the project
         run: |
           .env\Scripts\activate
-          invoke build
-          invoke create-portable
+          python -m invoke build
+          python -m invoke create-portable
 
       # Step 6: Generate translation catalogs and version info (only for x64)
       - name: Generate translation catalogs and version info
         if: matrix.CI_ARCH == 'x64'
         run: |
           .env\Scripts\activate
-          invoke gen-pot
-          invoke update-version-info
+          python -m invoke gen-pot
+          python -m invoke update-version-info
 
       # Step 7: Upload installer artifact
       - name: Upload installer
@@ -135,7 +135,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.11"
 
       # Step 4: Install dependencies
       - name: Install dependencies
@@ -143,13 +143,13 @@ jobs:
           python -m venv .env
           .env\Scripts\activate
           pip install -r requirements-dev.txt
-          invoke dev
+          python -m invoke dev
 
       # Step 5: Generate update-info.json
       - name: Generate update-info.json
         run: |
           .env\Scripts\activate
-          invoke gen-update-info-file
+          python -m invoke gen-update-info-file
 
       # Step 6: Upload update-info.json as an artifact
       - name: Upload update-info.json

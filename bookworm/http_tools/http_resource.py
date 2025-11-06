@@ -11,6 +11,7 @@ from tempfile import SpooledTemporaryFile
 import requests
 
 from bookworm import typehints as t
+from bookworm import app
 from bookworm.logger import logger
 
 log = logger.getChild(__name__)
@@ -144,11 +145,16 @@ class ResourceDownloadRequest:
 @dataclass
 class HttpResource:
     url: str
+    headers: dict[str, str] | None = None
 
     def download(self) -> ResourceDownloadRequest:
         try:
+            headers = self.headers or {}
+            headers.update({
+                'User-Agent': app.user_agent(),
+            })
             log.info(f"Requesting resource: {self.url}")
-            requested_resource = requests.get(self.url, stream=True)
+            requested_resource = requests.get(self.url, headers=headers, stream=True)
             requested_resource.raise_for_status()
         except requests.RequestException as e:
             log.exception(f"Faild to get resource from {self.url}", exc_info=True)

@@ -65,6 +65,11 @@ def get_clean_html(html_string: str) -> (str, BookMetadata):
     if not doc_title:
         html = lxml_html.fromstring(html_string)
         extracted_title = html.xpath("/html/head/title//text()")
+        # Certain pages seem to return a list instead of a string
+        # It may have to do with invalid bytes
+        # An example: https://bw.enabc.net/doc/
+        if isinstance(extracted_title, list) and extracted_title:
+            extracted_title = extracted_title[0]
         doc_title = extracted_title if extracted_title else ""
     doc_metadata = BookMetadata(
         title=doc_title,
