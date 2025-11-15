@@ -34,7 +34,7 @@ def update_content_hashes(session, model):
         except Exception as e:
             print(f"Failed to apply content hash to {doc.title}, {e}")
             continue
-        session.commit()
+    session.commit()
 
 
 def upgrade() -> None:
