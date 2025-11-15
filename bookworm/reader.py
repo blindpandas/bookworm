@@ -149,11 +149,6 @@ class EBookReader:
         session = DocumentPositionInfo.session()
         current_book = doc.metadata
         content_hash = doc.get_content_hash()
-        # In order to keep into account both document URI and content hash, we firstly query for a match for title and document URI
-        # if a match is found we will proceed as normal after updating the document content_hash, assuming the current value is None
-        # If no match is found, we'll perform another query to find if there's a match for the document title and content hash
-        # If a match is found we proceed with that
-        # If no match is found, we create a new entry with title, uri and content hash
         self.__state["ready"] = True
         doc_info = DocumentPositionInfo.query.filter(
             sa.or_(

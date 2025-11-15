@@ -12,6 +12,7 @@ from bookworm.database import init_database
 from bookworm.database.models import Base
 from bookworm.document.elements import Section
 from bookworm.reader import EBookReader
+from bookworm.service.handler import ServiceHandler
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -34,6 +35,7 @@ class DummyView:
         self.insertion_point = 0
         self.state_on_section_change: Section = None
         self.contentTextCtrl = DummyTextCtrl()
+        self.reader = None
 
     def add_toc_tree(self, tree):
         self.toc_tree = tree
@@ -93,4 +95,6 @@ def engine(tmp_path):
 def reader(view, engine):
     setup_config()
     reader = EBookReader(view)
+    view.reader = reader
+    # ServiceHandler(view).register_builtin_services()
     yield reader

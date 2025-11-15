@@ -1,5 +1,8 @@
+from pathlib import Path
+
 import pytest
 
+from bookworm.database import Book, DocumentPositionInfo
 from bookworm.document import create_document
 from bookworm.document.uri import DocumentUri
 
@@ -39,3 +42,41 @@ def test_epub_document_section_at_text_position(asset):
     for text_position, section_title in position_to_section_title.items():
         section = epub.get_section_at_position(text_position)
         assert section.title == section_title
+
+
+def test_opening_reader_creates_book_and_document_info(asset, reader):
+    uri = DocumentUri.from_filename(asset("The Diary of a Nobody.epub"))
+    doc = create_document(uri)
+    content_hash = doc.get_content_hash()
+    reader.set_document(doc)
+    assert Book.query.count() == 1
+    assert DocumentPositionInfo.query.count() == 1
+
+
+def test_opening_existing_document_falls_bac_kto_same_entry(reader, asset):
+    uri = DocumentUri.from_filename(asset("The Diary of a Nobody.epub"))
+    doc = create_document(uri)
+    content_hash = doc.get_content_hash()
+    doc_entry = DocumentPositionInfo.get_or_create(
+        title=doc.metadata.title, uri=uri, content_hash=content_hash
+    )
+    book_entry = Book.get_or_create(
+        title=doc.metadata.title, uri=uri, content_hash=content_hash
+    )
+    reader.set_document(doc)
+    assert DocumentPositionInfo.query.count() == 1
+    assert Book.query.count() == 1
+
+def test_document_with_different_format_and_name_creates_new_entry(asset, reader):
+    path = Path(asset("test.md"))
+    uri = DocumentUri.from_filename(path)
+    reader.load(uri)
+    reader.unload()
+    new_path = Path(path.parent, "test.txt")
+    new_path.write_text(path.read_text())
+    new_uri = DocumentUri.from_filename(new_path)
+    reader.load(new_uri)
+    reader.unload()
+    new_path.unlink(missing_ok=True)
+    assert Book.query.count() == 2
+
