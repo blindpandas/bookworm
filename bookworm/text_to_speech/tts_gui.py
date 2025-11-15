@@ -246,8 +246,10 @@ class SpeechPanel(SettingsPanel):
         except Exception:
             # If instantiation fails, log the error and provide a safe empty list.
             # This allows the UI to continue functioning without crashing.
-            log.exception(f"Failed to instantiate engine '{self.current_engine.name}' to get voices. Voice list will be empty.")
-            self.voices = [] 
+            log.exception(
+                f"Failed to instantiate engine '{self.current_engine.name}' to get voices. Voice list will be empty."
+            )
+            self.voices = []
         self.voice.Clear()
         self.voice.Append([v.display_name for v in self.voices])
         self.reconcile()

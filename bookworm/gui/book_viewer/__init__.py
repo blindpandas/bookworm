@@ -362,7 +362,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             panel, -1, _("Reading progress percentage")
         )
         self.readingProgressSlider = wx.Slider(
-            panel, -1, style=wx.SL_HORIZONTAL  # | wx.SL_LABELS
+            panel,
+            -1,
+            style=wx.SL_HORIZONTAL,  # | wx.SL_LABELS
         )
         self.readingProgressSlider.SetTick(5)
 

@@ -509,28 +509,39 @@ class TextToSpeechService(BookwormService):
             # log the error and attempt to find a working fallback engine.
             log.exception(
                 f"Failed to initialize the selected speech engine '{engine_name}'. Finding a working fallback.",
-                exc_info=True
+                exc_info=True,
             )
             try:
                 FallbackEngine = self.get_engine(by_name=False)
                 self.engine = FallbackEngine()
-                log.info(f"Successfully fell back to and initialized speech engine: {FallbackEngine.name}")
+                log.info(
+                    f"Successfully fell back to and initialized speech engine: {FallbackEngine.name}"
+                )
                 self.config_manager["engine"] = FallbackEngine.name
                 self.config_manager.save()
                 # Translators: The title of a warning dialog that appears when a speech engine fails to load.
                 title = _("Speech Engine Warning")
                 # Translators: The main message of the dialog, explaining that the application automatically
                 # switched to a different, working speech engine.
-                message = _("The previously selected speech engine could not be loaded. Bookworm has automatically switched to '{engine_display_name}'.").format(engine_display_name=_(FallbackEngine.display_name))
-                wx.CallAfter(self.view.notify_user, title, message, icon=wx.ICON_WARNING)
+                message = _(
+                    "The previously selected speech engine could not be loaded. Bookworm has automatically switched to '{engine_display_name}'."
+                ).format(engine_display_name=_(FallbackEngine.display_name))
+                wx.CallAfter(
+                    self.view.notify_user, title, message, icon=wx.ICON_WARNING
+                )
             except Exception:
-                 # If even the fallback engine fails, disable TTS functionality completely.
-                log.exception("CRITICAL: No speech engines could be successfully initialized.", exc_info=True)
+                # If even the fallback engine fails, disable TTS functionality completely.
+                log.exception(
+                    "CRITICAL: No speech engines could be successfully initialized.",
+                    exc_info=True,
+                )
                 self.engine = None
                 # Translators: The title of a critical error dialog.
                 title = _("Critical Speech Error")
                 # Translators: The main message explaining that no speech engines could be loaded at all.
-                message = _("No speech engines could be loaded on this system. Text-to-speech functionality will be disabled.")
+                message = _(
+                    "No speech engines could be loaded on this system. Text-to-speech functionality will be disabled."
+                )
                 wx.CallAfter(self.view.notify_user, title, message, icon=wx.ICON_ERROR)
                 return
         # If an engine was successfully loaded (either primary or fallback), bind its events.
@@ -682,7 +693,7 @@ class TextToSpeechService(BookwormService):
             if engine_name == "sapi":
                 # --- Backward Compatibility Fix ---
                 # Handle old configuration files where the SAPI5 engine was named "sapi".
-                engine_name= "sapi5"
+                engine_name = "sapi5"
             for e in cls.speech_engines:
                 if e.name == engine_name:
                     return e
@@ -700,9 +711,11 @@ class TextToSpeechService(BookwormService):
                 except Exception:
                     # This engine failed to initialize (e.g., due to missing system
                     # components like for OneCore). Log it and try the next one.
-                    log.warning(f"Fallback check failed for engine: {Engine.name}", exc_info=True)
+                    log.warning(
+                        f"Fallback check failed for engine: {Engine.name}",
+                        exc_info=True,
+                    )
                     continue
             # If the loop completes without finding any working engine,
             # return the DummySpeechEngine as the ultimate fallback.
             return DummySpeechEngine
-

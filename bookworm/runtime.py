@@ -2,7 +2,6 @@
 
 """Provides information and functionality needed at runtime."""
 
-
 import multiprocessing
 from enum import Enum, auto
 

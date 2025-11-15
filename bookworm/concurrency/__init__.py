@@ -121,9 +121,9 @@ class QueueProcess(mp.Process):
     def __init__(self, *args, cancellable=True, **kwargs):
         kwargs.setdefault("daemon", True)
         super().__init__(*args, **kwargs)
-        assert inspect.isgeneratorfunction(
-            self._target
-        ), "QueueProcess target should be a generator function."
+        assert inspect.isgeneratorfunction(self._target), (
+            "QueueProcess target should be a generator function."
+        )
         self.cancellable = cancellable
         self.channel = QPChannel()
         self._done_callback = None

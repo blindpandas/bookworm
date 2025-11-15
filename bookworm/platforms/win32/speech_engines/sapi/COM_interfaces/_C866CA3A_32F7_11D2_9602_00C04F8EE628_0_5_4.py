@@ -389,6 +389,7 @@ ISpeechPhraseRules._methods_ = [
 
 class SpResourceManager(CoClass):
     "SpResourceManger"
+
     _reg_clsid_ = GUID("{96749373-3391-11D2-9EE3-00C04F797396}")
     _idlflags_ = ["hidden", "restricted"]
     _typelib_path_ = typelib_path
@@ -851,6 +852,7 @@ ISpeechPhraseElements._methods_ = [
 
 class SpObjectToken(CoClass):
     "SpObjectToken Class"
+
     _reg_clsid_ = GUID("{EF411752-3736-4CB4-9C8C-8EF4CCB58EFE}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -1760,6 +1762,7 @@ DISPID_SpeechCustomStream = c_int  # enum
 
 class SpMMAudioOut(CoClass):
     "SpMMAudioOut Class"
+
     _reg_clsid_ = GUID("{A8C680EB-3D32-11D2-9EE7-00C04F797396}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -1830,6 +1833,7 @@ SpMMAudioOut._com_interfaces_ = [
 
 class SpStream(CoClass):
     "SpStream Class"
+
     _reg_clsid_ = GUID("{715D9C59-4442-11D2-9605-00C04F8EE628}")
     _idlflags_ = ["hidden", "restricted"]
     _typelib_path_ = typelib_path
@@ -2607,6 +2611,7 @@ DISPID_SpeechFileStream = c_int  # enum
 
 class SpSharedRecoContext(CoClass):
     "SpSharedRecoContext Class"
+
     _reg_clsid_ = GUID("{47206204-5ECA-11D2-960F-00C04F8EE628}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -2702,6 +2707,7 @@ ISpeechXMLRecoResult._methods_ = [
 
 class SpVoice(CoClass):
     "SpVoice Class"
+
     _reg_clsid_ = GUID("{96749377-3391-11D2-9EE3-00C04F797396}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -3142,6 +3148,7 @@ DISPID_SpeechPhraseRules = c_int  # enum
 
 class SpNotifyTranslator(CoClass):
     "SpNotify"
+
     _reg_clsid_ = GUID("{E2AE5372-5D40-11D2-960E-00C04F8EE628}")
     _idlflags_ = ["hidden", "restricted"]
     _typelib_path_ = typelib_path
@@ -3638,6 +3645,7 @@ ISpeechRecoGrammar._methods_ = [
 
 class SpShortcut(CoClass):
     "SpShortcut Class"
+
     _reg_clsid_ = GUID("{0D722F1A-9FCF-4E62-96D8-6DF8F01A26AA}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -3712,6 +3720,7 @@ assert alignment(SPPHRASEPROPERTY) == 8, alignment(SPPHRASEPROPERTY)
 
 class SpObjectTokenCategory(CoClass):
     "SpObjectTokenCategory Class"
+
     _reg_clsid_ = GUID("{A910187F-0C7A-45AC-92CC-59EDAFB77B53}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -4271,6 +4280,7 @@ assert alignment(SPWORDLIST) == 4, alignment(SPWORDLIST)
 
 class SpUnCompressedLexicon(CoClass):
     "SpUnCompressedLexicon Class"
+
     _reg_clsid_ = GUID("{C9E37C15-DF92-4727-85D6-72E5EEB6995A}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -4636,6 +4646,7 @@ assert alignment(SPWORD) == 4, alignment(SPWORD)
 
 class SpCompressedLexicon(CoClass):
     "SpCompressedLexicon Class"
+
     _reg_clsid_ = GUID("{90903716-2F42-11D3-9C26-00C04F8EF87C}")
     _idlflags_ = ["hidden", "restricted"]
     _typelib_path_ = typelib_path
@@ -5048,6 +5059,7 @@ SPCONTEXTSTATE = c_int  # enum
 
 class SpInprocRecognizer(CoClass):
     "SpInprocRecognizer Class"
+
     _reg_clsid_ = GUID("{41B89B6B-9399-11D2-9623-00C04F8EE628}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -5531,6 +5543,7 @@ SpeechCategoryVoices = (
 
 class SpSharedRecognizer(CoClass):
     "SpSharedRecognizer Class"
+
     _reg_clsid_ = GUID("{3BEE4890-4FE9-4A37-8C1E-5E7E12791C1F}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -5548,12 +5561,14 @@ SpSharedRecognizer._com_interfaces_ = [
 
 class Library(object):
     "Microsoft Speech Object Library"
+
     name = "SpeechLib"
     _reg_typelib_ = ("{C866CA3A-32F7-11D2-9602-00C04F8EE628}", 5, 4)
 
 
 class SpLexicon(CoClass):
     "SpLexicon Class"
+
     _reg_clsid_ = GUID("{0655E396-25D0-11D3-9C26-00C04F8EF87C}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -5952,6 +5967,7 @@ DISPID_SpeechPhraseElements = c_int  # enum
 
 class SpStreamFormatConverter(CoClass):
     "FormatConverter Class"
+
     _reg_clsid_ = GUID("{7013943A-E2EC-11D2-A086-00C04F8EF9B5}")
     _idlflags_ = ["hidden", "restricted"]
     _typelib_path_ = typelib_path
@@ -7231,6 +7247,7 @@ ISpeechAudioStatus._methods_ = [
 
 class SpMMAudioEnum(CoClass):
     "SpMMAudioEnum Class"
+
     _reg_clsid_ = GUID("{AB1890A0-E91F-11D2-BB91-00C04F8EE6C0}")
     _idlflags_ = ["hidden", "restricted"]
     _typelib_path_ = typelib_path
@@ -7415,6 +7432,7 @@ DISPID_SpeechGrammarRuleState = c_int  # enum
 
 class SpMMAudioIn(CoClass):
     "SpMMAudioIn Class"
+
     _reg_clsid_ = GUID("{CF3D2E50-53F2-11D2-960C-00C04F8EE628}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -8509,6 +8527,7 @@ assert alignment(SPSHORTCUTPAIRLIST) == 4, alignment(SPSHORTCUTPAIRLIST)
 
 class SpPhoneConverter(CoClass):
     "SpPhoneConverter Class"
+
     _reg_clsid_ = GUID("{9185F743-1143-4C28-86B5-BFF14F20E5C8}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -9215,6 +9234,7 @@ ISpeechMemoryStream._methods_ = [
 
 class SpPhoneticAlphabetConverter(CoClass):
     "SpPhoneticAlphabetConverter Class"
+
     _reg_clsid_ = GUID("{4F414126-DFE3-4629-99EE-797978317EAD}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -9287,6 +9307,7 @@ ISpPhoneticAlphabetConverter._methods_ = [
 
 class SpNullPhoneConverter(CoClass):
     "SpNullPhoneConverter Class"
+
     _reg_clsid_ = GUID("{455F24E9-7396-4A16-9715-7C0FDBE3EFE3}")
     _idlflags_ = ["hidden", "restricted"]
     _typelib_path_ = typelib_path
@@ -9444,6 +9465,7 @@ SpeechAudioFormatType = c_int  # enum
 
 class SpTextSelectionInformation(CoClass):
     "SpTextSelectionInformation Class"
+
     _reg_clsid_ = GUID("{0F92030A-CBFD-4AB8-A164-FF5985547FF6}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -9894,6 +9916,7 @@ ISpeechObjectTokens._methods_ = [
 
 class SpPhraseInfoBuilder(CoClass):
     "SpPhraseInfoBuilder Class"
+
     _reg_clsid_ = GUID("{C23FC28D-C55F-4720-8B32-91F73C2BD5D1}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -9918,6 +9941,7 @@ assert alignment(SPRECOGNIZERSTATUS) == 8, alignment(SPRECOGNIZERSTATUS)
 
 class SpAudioFormat(CoClass):
     "SpAudioFormat Class"
+
     _reg_clsid_ = GUID("{9EF96870-E160-4792-820D-48CF0649E4EC}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -9929,6 +9953,7 @@ SpAudioFormat._com_interfaces_ = [ISpeechAudioFormat]
 
 class SpWaveFormatEx(CoClass):
     "SpWaveFormatEx Class"
+
     _reg_clsid_ = GUID("{C79A574C-63BE-44B9-801F-283F87F898BE}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -9940,6 +9965,7 @@ SpWaveFormatEx._com_interfaces_ = [ISpeechWaveFormatEx]
 
 class SpInProcRecoContext(CoClass):
     "SpInProcRecoContext Class"
+
     _reg_clsid_ = GUID("{73AD6842-ACE0-45E8-A4DD-8795881A2C2A}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -9957,6 +9983,7 @@ SpInProcRecoContext._outgoing_interfaces_ = [_ISpeechRecoContextEvents]
 
 class SpCustomStream(CoClass):
     "SpCustomStream Class"
+
     _reg_clsid_ = GUID("{8DBEF13F-1948-4AA8-8CF0-048EEBED95D8}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -10003,6 +10030,7 @@ ISpXMLRecoResult._methods_ = [
 
 class SpFileStream(CoClass):
     "SpFileStream Class"
+
     _reg_clsid_ = GUID("{947812B3-2AE1-4644-BA86-9E90DED7EC91}")
     _idlflags_ = []
     _typelib_path_ = typelib_path
@@ -10014,6 +10042,7 @@ SpFileStream._com_interfaces_ = [ISpeechFileStream, ISpStream]
 
 class SpMemoryStream(CoClass):
     "SpMemoryStream Class"
+
     _reg_clsid_ = GUID("{5FB7EF7D-DFF4-468A-B6B7-2FCBD188F994}")
     _idlflags_ = []
     _typelib_path_ = typelib_path

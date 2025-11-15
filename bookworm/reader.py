@@ -6,11 +6,12 @@ from contextlib import suppress
 from pathlib import Path
 
 from selectolax.parser import HTMLParser
+import sqlalchemy as sa
 
 from bookworm import app, config
 from bookworm import typehints as t
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
-from bookworm.database import DocumentPositionInfo
+from bookworm.database import Book, DocumentPositionInfo
 from bookworm.document import (
     ArchiveContainsMultipleDocuments,
     ArchiveContainsNoDocumentsError,
@@ -99,12 +100,16 @@ class UriResolver:
             return doc, self.original_uri
         except ChangeDocument as e:
             # Propagate the original URI through the conversion chain.
-            return UriResolver(uri=e.new_uri, original_uri=self.original_uri).read_document()
+            return UriResolver(
+                uri=e.new_uri, original_uri=self.original_uri
+            ).read_document()
         except:
             if (fallback_uri := self.uri.fallback_uri) is not None:
                 if self.num_fallbacks < 4:
                     return UriResolver(
-                        uri=fallback_uri, num_fallbacks=self.num_fallbacks + 1, original_uri=self.original_uri
+                        uri=fallback_uri,
+                        num_fallbacks=self.num_fallbacks + 1,
+                        original_uri=self.original_uri,
                     ).read_document()
             raise
 
@@ -117,7 +122,9 @@ class UriResolver:
         except DocumentIOError as e:
             raise ResourceDoesNotExist("Failed to load document") from e
         except Exception as e:
-            if type(e) in PASS_THROUGH__DOCUMENT_EXCEPTIONS or isinstance(e, ChangeDocument):
+            if type(e) in PASS_THROUGH__DOCUMENT_EXCEPTIONS or isinstance(
+                e, ChangeDocument
+            ):
                 raise e
             raise ReaderError("Failed to open document") from e
         return document
@@ -136,6 +143,48 @@ class EBookReader:
         "current_book",
     ]
 
+    def _get_or_create_document_position_info(
+        self, doc: BaseDocument, uri_for_storage: DocumentUri
+    ) -> DocumentPositionInfo:
+        session = DocumentPositionInfo.session()
+        current_book = doc.metadata
+        content_hash = doc.get_content_hash()
+        # In order to keep into account both document URI and content hash, we firstly query for a match for title and document URI
+        # if a match is found we will proceed as normal after updating the document content_hash, assuming the current value is None
+        # If no match is found, we'll perform another query to find if there's a match for the document title and content hash
+        # If a match is found we proceed with that
+        # If no match is found, we create a new entry with title, uri and content hash
+        self.__state["ready"] = True
+        doc_info = DocumentPositionInfo.query.filter(
+            sa.or_(
+                sa.and_(
+                    DocumentPositionInfo.title == current_book.title,
+                    DocumentPositionInfo.uri == uri_for_storage,
+                ),
+                sa.and_(
+                    DocumentPositionInfo.title == current_book.title,
+                    DocumentPositionInfo.content_hash == content_hash,
+                ),
+            )
+        ).first()
+        if doc_info is None:
+            book = Book(
+                title=current_book.title, uri=uri_for_storage, content_hash=content_hash
+            )
+            session.add(book)
+            session.commit()
+            return DocumentPositionInfo.get_or_create(
+                title=current_book.title, uri=uri_for_storage, content_hash=content_hash
+            )
+        else:
+            if doc_info.content_hash is None:
+                doc_info.content_hash = content_hash
+            if doc_info.uri != uri_for_storage:
+                doc_info.uri = uri_for_storage
+            session.add(doc_info)
+            session.commit()
+            return doc_info
+
     # Convenience method: make this available for importers as a staticmethod
     get_document_format_info = staticmethod(get_document_format_info)
 
@@ -148,27 +197,28 @@ class EBookReader:
         self.stored_document_info = None
         self.__state = {}
 
-    def set_document(self, document, original_uri=None):
+    def set_document(
+        self, document: BaseDocument, original_uri: str | None = None
+    ) -> None:
         self.document = document
         self.current_book = self.document.metadata
         self.__state.setdefault("current_page_index", -1)
         self.set_view_parameters()
-        self.current_page = 0
-        
         # Use the original URI for storage, falling back to the document's URI
         # if no original URI was passed (i.e., for non-converted files).
         uri_for_storage = original_uri or self.document.uri
-
         # Crucially, overwrite the document's current URI with the original one.
         # This ensures all subsequent operations (recents, pinning, position saving)
         # use the correct identifier for the file the user actually opened.
         self.document.uri = uri_for_storage
-
+        content_hash = document.get_content_hash()
         if self.document.uri.view_args.get("save_last_position", True):
             log.debug("Retrieving last saved reading position from the database")
-            self.stored_document_info = DocumentPositionInfo.get_or_create(
-                title=self.current_book.title, uri=uri_for_storage
+            self.stored_document_info = self._get_or_create_document_position_info(
+                document, uri_for_storage
             )
+        # the current_page is set after the document position info and related models are created in order to allow dependent services to access the current_book
+        self.current_page = 0
         if open_args := self.document.uri.openner_args:
             page = int(open_args.get("page", 0))
             pos = int(open_args.get("position", 0))
@@ -229,7 +279,7 @@ class EBookReader:
 
     @property
     def ready(self) -> bool:
-        return self.document is not None
+        return self.document is not None and self.__state.get("ready", False) == True
 
     @property
     def active_section(self) -> Section:
