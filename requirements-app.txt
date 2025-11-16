@@ -22,7 +22,7 @@ defusedxml==0.7.1
 demandimport==0.3.4
 diskcache==5.4.0
 docrpy==0.3.0;sys_platform=="win32"
-EbookLib==0.19
+EbookLib==0.20
 ftfy==6.2.0
 fuzzywuzzy==0.18.0
 greenlet==3.2.1
