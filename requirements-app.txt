@@ -22,7 +22,7 @@ defusedxml==0.7.1
 demandimport==0.3.4
 diskcache==5.4.0
 docrpy==0.3.0;sys_platform=="win32"
-EbookLib==0.19
+EbookLib==0.20
 ftfy==6.2.0
 fuzzywuzzy==0.18.0
 greenlet==3.2.1
@@ -80,7 +80,7 @@ unicode-slugify==0.1.5
 Unidecode==1.4.0
 unrar==0.4
 url-normalize==1.4.3
-urllib3==2.5.0
+urllib3==2.6.0
 waitress==3.0.1
 wcwidth==0.2.13
 winpaths==0.2
