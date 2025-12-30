@@ -390,7 +390,7 @@ class SinglePageDocument(BaseDocument):
 
     @lru_cache()
     def get_content_hash(self) -> str:
-        return blake3(self.get_content().encode("utf8")).hexdigest()
+        return blake3(self.get_content().encode()).hexdigest()
 
     def get_page(self, index: int) -> SinglePage:
         return SinglePage(self, index)
