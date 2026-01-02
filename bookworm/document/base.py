@@ -65,7 +65,7 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
             cls.document_classes[cls.format.lower()] = cls
 
     @classmethod
-    def get_document_class_given_format(cls, format):
+    def get_document_class_given_format(cls, format: str) -> BaseDocument:
         return cls.document_classes.get(format.lower())
 
     @classmethod
@@ -78,14 +78,14 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         return frozenset(ext.lstrip("*") for ext in exts)
 
     @classmethod
-    def check(cls):
+    def check(cls) -> bool:
         """Return True if this document format is supported based on the user's environment."""
         return True
 
     def __init__(self, uri):
         self.uri = uri
 
-    def __contains__(self, value: int):
+    def __contains__(self, value: int) -> bool:
         return -1 < value < len(self)
 
     def __getitem__(self, index: int) -> BasePage:
@@ -98,12 +98,12 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         """Support for pickling."""
         return dict(uri=self.uri)
 
-    def __setstate__(self, state):
+    def __setstate__(self, state: dict) -> None:
         """Support for unpickling."""
         self.__dict__.update(state)
         self.read()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"<{self.__class__.__name__}: "
             f"format={self.format}, "
@@ -113,7 +113,7 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         )
 
     @cached_property
-    def reading_options(self):
+    def reading_options(self) -> ReadingOptions:
         reading_mode = int(
             self.uri.openner_args.get("reading_mode", ReadingMode.DEFAULT)
         )
@@ -127,13 +127,24 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         return self.uri.to_uri_string()
 
     @abstractmethod
-    def read(self):
+    def read(self) -> None:
         """
         Perform the actual IO operations for loading the ebook.
         Subclasses should call super to ensure the standard behavior.
         """
 
-    def close(self):
+    def get_content_hash(self) -> str:
+        """
+        Generates the content hash for this document
+        subclasses may override this if necessary, such as in the case of SinglePageDocument
+        """
+        self.read()
+        text = ""
+        for page in self:
+            text += page.get_text()
+        return blake3(text.encode()).hexdigest()
+
+    def close(self) -> None:
         """Perform the actual IO operations for unloading the ebook.
         Subclasses should call super to ensure the standard behavior.
         """
