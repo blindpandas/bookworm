@@ -55,7 +55,6 @@ HIDDEN_IMPORTS = [
     "alembic",
     "numpy",
     "cv2",
-    "pkg_resources.py2_warn",
     "logging.config",
 ]
 for package_with_submodules in HIDDEN_SUBMODULES:

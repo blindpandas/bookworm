@@ -49,6 +49,7 @@ numpy==1.26.4
 odfpy==1.4.1
 olefile==0.47
 opencv-python-headless==4.8.1.78
+packaging>=24.0
 peewee==3.17.5
 Pillow==10.3.0
 platform-utils==1.5.1
