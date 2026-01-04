@@ -59,7 +59,6 @@ def get_version_info(version_string: str = version) -> dict:
         raise ValueError
     return mat.groupdict()
 
-
 def user_agent() -> str:
     # Wikipedia will reject requests that does not respect their User-Agent policy
     # see: https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy

@@ -34,9 +34,9 @@ class AutoCalculatedField(Field):
         auto_gen_column_type: str = "virtual",
         **kwargs,
     ):
-        assert auto_gen_column_type in self.AUTO_GEN_COLUMN_TYPES, (
-            f"auto_gen_column_type must be one of {self.AUTO_GEN_COLUMN_TYPES}"
-        )
+        assert (
+            auto_gen_column_type in self.AUTO_GEN_COLUMN_TYPES
+        ), f"auto_gen_column_type must be one of {self.AUTO_GEN_COLUMN_TYPES}"
         super().__init__(*args, **kwargs)
         self.auto_gen_data_type = auto_gen_data_type
         self.auto_gen_expression = auto_gen_expression

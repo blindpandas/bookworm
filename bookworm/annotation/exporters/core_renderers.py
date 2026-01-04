@@ -199,9 +199,9 @@ class HTMLRenderer(MarkdownRenderer):
         if self.options.include_tags and item.tags:
             # Translators: written to output document when exporting a comment/highlight
             tag_str = _("Tags")
-            self.output.write(f'<p><aside aria-label="{tag_str}">')
+            self.output.write("<p>" f'<aside aria-label="{tag_str}">')
             for tag in item.tags:
                 self.output.write(f"<span># {tag}</span>")
-            self.output.write("</p></aside>")
+            self.output.write("</p>" "</aside>")
             self.add_newline()
         self.output.write("<hr /></section>")

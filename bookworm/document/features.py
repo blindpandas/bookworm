@@ -2,6 +2,7 @@
 
 """Provides the definition for different features related to documents."""
 
+
 from enum import IntEnum, IntFlag, auto
 
 

@@ -4,7 +4,6 @@ from bookworm.database.models import DocumentPositionInfo
 from bookworm.document.uri import DocumentUri
 from conftest import asset, reader, engine, view
 
-
 def test_restore_position_for_converted_document(reader, asset, engine):
     """
     Tests if the last read position is correctly saved using the original URI
@@ -23,7 +22,6 @@ def test_restore_position_for_converted_document(reader, asset, engine):
     assert record.last_page == test_page
     assert record.last_position == test_pos
     assert record.uri == original_uri
-
 
 def test_restore_position_for_directly_supported_document(reader, asset, engine):
     """
@@ -44,7 +42,6 @@ def test_restore_position_for_directly_supported_document(reader, asset, engine)
     assert record.last_position == test_pos
     assert record.uri == epub_uri
 
-
 def test_document_uri_is_corrected_after_conversion(reader, asset):
     """
     Verifies that the `document.uri` attribute on the reader's in-memory document object
@@ -56,7 +53,6 @@ def test_document_uri_is_corrected_after_conversion(reader, asset):
 
     assert reader.document.uri == original_uri
 
-
 def test_restore_position_for_mobi_document(reader, asset, engine):
     """
     Provides an additional test case for another convertible format (.mobi)
@@ -64,12 +60,12 @@ def test_restore_position_for_mobi_document(reader, asset, engine):
     """
     original_uri = DocumentUri.from_filename(asset("epub30-spec.mobi"))
     reader.load(original_uri)
-
+    
     test_page = 0
     test_pos = 100
     reader.go_to_page(test_page, test_pos)
     reader.save_current_position()
-
+    
     record = DocumentPositionInfo.query.one()
     assert record is not None
     assert record.last_page == test_page

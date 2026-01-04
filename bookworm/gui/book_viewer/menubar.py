@@ -350,9 +350,7 @@ class FileMenu(BaseMenu):
                 title=_("{app_name} Preferences").format(app_name=app.display_name),
             )
         except Exception as e:
-            log.exception(
-                "CRITICAL: Failed to instantiate PreferencesDialog.", exc_info=True
-            )
+            log.exception("CRITICAL: Failed to instantiate PreferencesDialog.", exc_info=True)
             return
         with dlg:
             dlg.ShowModal()
@@ -755,9 +753,8 @@ class SearchMenu(BaseMenu):
 
     def go_to_search_result(self, foreword=True):
         result = None
-        page, (sol, eol) = (
-            self.reader.current_page,
-            self.view.get_containing_line(self.view.get_insertion_point()),
+        page, (sol, eol) = self.reader.current_page, self.view.get_containing_line(
+            self.view.get_insertion_point()
         )
         if foreword:
             filter_func = lambda sr: (

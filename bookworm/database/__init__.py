@@ -3,7 +3,6 @@
 """
 Persistent storage using SQLlite3
 """
-
 import os
 from pathlib import Path
 import sqlite3

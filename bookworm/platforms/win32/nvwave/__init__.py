@@ -4,7 +4,8 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
 
-"""Provides a simple Python interface to playing audio using the Windows multimedia waveOut functions, as well as other useful utilities."""
+"""Provides a simple Python interface to playing audio using the Windows multimedia waveOut functions, as well as other useful utilities.
+"""
 
 import threading
 import typing
@@ -240,8 +241,7 @@ class WavePlayer:
         try:
             if isinstance(preferredDevice, str):
                 self._outputDeviceID = outputDeviceNameToID(
-                    preferredDevice,
-                    useDefaultIfInvalid=True,  # fallback to WAVE_MAPPER
+                    preferredDevice, useDefaultIfInvalid=True  # fallback to WAVE_MAPPER
                 )
                 # If default is used, get the appropriate name.
                 self._outputDeviceName = outputDeviceIDToName(self._outputDeviceID)

@@ -330,7 +330,8 @@ def init_lang(c, lang):
     potfile = get_pot_filename()
     locale_dir = PACKAGE_FOLDER / "resources" / "locale"
     c.run(
-        f'pybabel init -D {app.name} -i "{potfile}" -d "{locale_dir}" --locale={lang}'
+        f'pybabel init -D {app.name} -i "{potfile}" '
+        f'-d "{locale_dir}" --locale={lang}'
     )
 
 
@@ -591,7 +592,8 @@ def gen_update_info_file(c):
 
     # Construct the update info dictionary
     update_info = {
-        channel or "": {  # Ensure stable version uses an empty string key
+        channel
+        or "": {  # Ensure stable version uses an empty string key
             "version": app.version,
             "x86_download": x86_download_url,
             "x64_download": x64_download_url,

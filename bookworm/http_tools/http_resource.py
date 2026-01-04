@@ -150,11 +150,9 @@ class HttpResource:
     def download(self) -> ResourceDownloadRequest:
         try:
             headers = self.headers or {}
-            headers.update(
-                {
-                    "User-Agent": app.user_agent(),
-                }
-            )
+            headers.update({
+                'User-Agent': app.user_agent(),
+            })
             log.info(f"Requesting resource: {self.url}")
             requested_resource = requests.get(self.url, headers=headers, stream=True)
             requested_resource.raise_for_status()
