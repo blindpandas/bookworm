@@ -195,6 +195,10 @@ ignore = [
 [tool.ruff.lint.isort]
 known-first-party = ["bookworm"]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-n 3 -q --disable-warnings"
+
 [tool.bookworm.local-dependencies]
 # Dependencies located in packages/
 shared = [

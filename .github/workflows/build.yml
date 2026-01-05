@@ -9,7 +9,6 @@ on:
 
 env:
   PYTHONIOENCODING: utf-8
-  UV_CACHE_DIR: .uv_cache
 
 # Set the permissions of GITHUB_TOKEN
 permissions:
@@ -29,26 +28,23 @@ jobs:
       - name: Check out sources
         uses: actions/checkout@v4
 
-      # Step 2: Set up Python environment with the specified architecture
+      # Step 2: Install uv
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-suffix: ${{ runner.os }}-${{ matrix.CI_ARCH }}
+
+      # Step 3: Set up Python environment with the specified architecture
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           architecture: ${{ matrix.CI_ARCH }}
 
-      # Step 3: Cache uv dependencies
-      - name: Cache uv dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.UV_CACHE_DIR }}
-          key: uv-${{ runner.os }}-${{ matrix.CI_ARCH }}-${{ hashFiles('uv.lock') }}
-          restore-keys: |
-            uv-${{ runner.os }}-${{ matrix.CI_ARCH }}-
-
       # Step 4: Install dependencies and compile resources.
       - name: Install dependencies and compile resources
         run: |
-          pip install uv
           uv sync --locked
           uv run invoke dev
 
@@ -129,25 +125,22 @@ jobs:
           name: Bookworm-bundle-x86
           path: scripts
 
-      # Step 3: Set up Python environment
+      # Step 3: Install uv
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-suffix: ${{ runner.os }}-update-info
+
+      # Step 4: Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # Step 4: Cache uv dependencies
-      - name: Cache uv dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.UV_CACHE_DIR }}
-          key: uv-${{ runner.os }}-update-info-${{ hashFiles('uv.lock') }}
-          restore-keys: |
-            uv-${{ runner.os }}-update-info-
-
       # Step 5: Install dependencies
       - name: Install dependencies
         run: |
-          pip install uv
           uv sync --locked
           uv run invoke dev
 
