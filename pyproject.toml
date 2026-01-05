@@ -150,6 +150,14 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+builtins = ["_"] # Treat the translation functions as builtin so that they are not flagged
+# ignore the generated COM interface 
+exclude = [
+    "bookworm/platforms/win32/speech_engines/sapi/COM_interfaces/_C866CA3A_32F7_11D2_9602_00C04F8EE628_0_5_4.py"
+]
+
+[tool.ruff.analyze]
+detect-string-imports = true
 
 [tool.ruff.lint]
 select = [
@@ -190,7 +198,15 @@ ignore = [
     "PLR0913", # too many arguments
     "PLR2004", # magic value used in comparison
     "SIM108", # if-else-block-instead-of-if-exp
+    # ignore it because there are some sqlalchemy queries that check equality to None
+    "E711",
+    # Ignore it because there are some queries we build with sqlalchemy
+    # Which will use equality to True in their conditions
+    "E712",
 ]
+
+[tool.ruff.lint.flake8-gettext]
+function-names = ["_", "gettext", "ngettext", "ugettext"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["bookworm"]
