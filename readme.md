@@ -1,6 +1,6 @@
 # Bookworm
 
-**Bookworm** is an accessible document reader that enables blind and visually impaired individuals to read documents in an easy and hassle free manor. The main highlights of bookworm are:
+**Bookworm** is an accessible document reader that enables blind and visually impaired individuals to read documents in an easy and hassle free manner. The main highlights of bookworm are:
 
 * Supports over 20 document formats
 * Support for named **bookmarks**. This enables you to mark interesting positions in the text for later reference
@@ -62,6 +62,11 @@ Note: You do **not** need to manually install Python. `uv` will manage the requi
 *   **Format and Lint Code:**
     ```shell
     uv run invoke format-code
+    ```
+
+*   **Run Tests:**
+    ```shell
+    uv run pytest
     ```
 
 *   **Build Installer:**
