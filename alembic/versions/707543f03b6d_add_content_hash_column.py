@@ -27,12 +27,16 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def update_content_hashes(session, model):
     for doc in session.query(model):
+        if doc.content_hash:
+            continue
+
         try:
             document = create_document(doc.uri)
             doc.content_hash = document.get_content_hash()
             session.add(doc)
         except Exception as e:
-            print(f"Failed to apply content hash to {doc.title}, {e}")
+            # Use ascii() to prevent UnicodeEncodeError on Windows GBK consoles
+            print(f"Failed to apply content hash to {ascii(doc.title)}: {ascii(e)}")
             continue
     session.commit()
 
