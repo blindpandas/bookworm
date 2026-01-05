@@ -9,6 +9,7 @@ on:
 
 env:
   PYTHONIOENCODING: utf-8
+  UV_CACHE_DIR: .uv_cache
 
 # Set the permissions of GITHUB_TOKEN
 permissions:
@@ -21,6 +22,8 @@ jobs:
     strategy:
       matrix:
         CI_ARCH: ["x86", "x64"]  # Define architectures to build for
+    env:
+      IAPP_ARCH: ${{ matrix.CI_ARCH }}
     steps:
       # Step 1: Check out the repository
       - name: Check out sources
@@ -33,24 +36,21 @@ jobs:
           python-version: "3.11"
           architecture: ${{ matrix.CI_ARCH }}
 
-      # Step 3: Cache pip's download directory to speed up dependency resolution.
-      - name: Cache Python dependencies
+      # Step 3: Cache uv dependencies
+      - name: Cache uv dependencies
         uses: actions/cache@v4
-        id: cache-pip
         with:
-          path: ~/.cache/pip
-          # The cache key is based on all requirements files. A change in any of them will invalidate the cache.
-          key: ${{ runner.os }}-pip-${{ matrix.CI_ARCH }}-${{ hashFiles('**/requirements*.txt') }}
+          path: ${{ env.UV_CACHE_DIR }}
+          key: uv-${{ runner.os }}-${{ matrix.CI_ARCH }}-${{ hashFiles('uv.lock') }}
           restore-keys: |
-            ${{ runner.os }}-pip-${{ matrix.CI_ARCH }}-
+            uv-${{ runner.os }}-${{ matrix.CI_ARCH }}-
 
       # Step 4: Install dependencies and compile resources.
       - name: Install dependencies and compile resources
         run: |
-          python -m venv .env
-          .env\Scripts\activate
-          pip install -r requirements-dev.txt
-          python -m invoke dev
+          pip install uv
+          uv sync --locked
+          uv run invoke dev
 
       - name: Install NSIS
         uses: repolevedavaj/install-nsis@v1.1.0
@@ -61,17 +61,15 @@ jobs:
       # Step 5: Build the project
       - name: Build the project
         run: |
-          .env\Scripts\activate
-          python -m invoke build
-          python -m invoke create-portable
+          uv run invoke build
+          uv run invoke create-portable
 
       # Step 6: Generate translation catalogs and version info (only for x64)
       - name: Generate translation catalogs and version info
         if: matrix.CI_ARCH == 'x64'
         run: |
-          .env\Scripts\activate
-          python -m invoke gen-pot
-          python -m invoke update-version-info
+          uv run invoke gen-pot
+          uv run invoke update-version-info
 
       # Step 7: Upload installer artifact
       - name: Upload installer
@@ -137,19 +135,26 @@ jobs:
         with:
           python-version: "3.11"
 
-      # Step 4: Install dependencies
+      # Step 4: Cache uv dependencies
+      - name: Cache uv dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.UV_CACHE_DIR }}
+          key: uv-${{ runner.os }}-update-info-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            uv-${{ runner.os }}-update-info-
+
+      # Step 5: Install dependencies
       - name: Install dependencies
         run: |
-          python -m venv .env
-          .env\Scripts\activate
-          pip install -r requirements-dev.txt
-          python -m invoke dev
+          pip install uv
+          uv sync --locked
+          uv run invoke dev
 
       # Step 5: Generate update-info.json
       - name: Generate update-info.json
         run: |
-          .env\Scripts\activate
-          python -m invoke gen-update-info-file
+          uv run invoke gen-update-info-file
 
       # Step 6: Upload update-info.json as an artifact
       - name: Upload update-info.json

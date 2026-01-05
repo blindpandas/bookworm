@@ -1,4 +1,3 @@
-# coding: utf-8
 
 """
 This file contains Bookworm's build system.
@@ -8,7 +7,6 @@ It uses the `invoke` command runner to define and run commands.
 import itertools
 import json
 import os
-import platform
 import shutil
 import subprocess
 import sys
@@ -21,7 +19,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from zipfile import ZIP_LZMA, ZipFile
 
-from invoke import call, task
+from invoke import task
 from invoke.exceptions import UnexpectedExit
 
 PROJECT_ROOT = Path.cwd()
@@ -86,9 +84,7 @@ def _add_envars(context):
     context["offline_run"] = os.environ.get("BOOKWORM_BUILD_OFFLINE", "")
     context["build_folder"] = build_folder
     context["build_folder_content"] = build_folder_content
-    context["pip_timeout"], context["pip_retries"] = (
-        (1, 1) if context["offline_run"] else (15, 5)
-    )
+    context["pip_timeout"], context["pip_retries"] = (1, 1) if context["offline_run"] else (15, 5)
     os.environ.update(
         {
             "IAPP_ARCH": arch,
@@ -123,7 +119,7 @@ def make_env(func):
 @task(name="icons")
 def make_icons(c):
     """Rescale images and embed them in a python module."""
-    from PIL import Image, ImageOps
+    from PIL import Image
     from wx.tools.img2py import img2py
 
     TARGET_SIZE = (24, 24)
@@ -173,23 +169,20 @@ def make_icons(c):
     }
     if not inst_dst.exists():
         inst_dst.mkdir(parents=True, exist_ok=True)
-    make_installer_image(IMAGE_SOURCE_FOLDER / "bookworm.png").save(
-        inst_dst / "bookworm-logo.bmp"
-    )
+    make_installer_image(IMAGE_SOURCE_FOLDER / "bookworm.png").save(inst_dst / "bookworm-logo.bmp")
     for fname, imgsize in inst_imgs.items():
         imgfile = inst_dst.joinpath(fname)
         if not imgfile.exists():
             print(f"Creating image {fname}.")
-            Image.open(IMAGE_SOURCE_FOLDER / "bookworm.png").resize(imgsize).save(
-                imgfile
-            )
+            Image.open(IMAGE_SOURCE_FOLDER / "bookworm.png").resize(imgsize).save(imgfile)
             print(f"Copied image {fname} to the assets folder.")
 
 
 @task
 def format_code(c):
     print("Formatting code to conform to our coding guidelines")
-    c.run("black .")
+    c.run("ruff format .")
+    c.run("ruff check --fix .")
 
 
 @task(name="guide")
@@ -209,9 +202,7 @@ def build_user_guide(c):
         content = markdown(content_md, escape=False)
         page_title = content_md.splitlines()[0].lstrip("#")
         html.write_text(
-            GUIDE_HTML_TEMPLATE.format(
-                lang=lang, title=page_title.strip(), content=content
-            ),
+            GUIDE_HTML_TEMPLATE.format(lang=lang, title=page_title.strip(), content=content),
             encoding="utf8",
         )
         print(f"Built the user guide for language '{lang}'")
@@ -228,11 +219,7 @@ def copy_assets(c):
     files_to_copy = {
         PROJECT_ROOT / "LICENSE": RESOURCES_FOLDER / "license.txt",
         PROJECT_ROOT / "contributors.txt": RESOURCES_FOLDER / "contributors.txt",
-        PROJECT_ROOT
-        / "scripts"
-        / "builder"
-        / "assets"
-        / "bookworm.ico": PACKAGE_FOLDER,
+        PROJECT_ROOT / "scripts" / "builder" / "assets" / "bookworm.ico": PACKAGE_FOLDER,
     }
     for src, dst in files_to_copy.items():
         shutil.copy(src, dst)
@@ -240,9 +227,7 @@ def copy_assets(c):
     ficos_dst = RESOURCES_FOLDER / "icons"
     ficos_dst.mkdir(parents=True, exist_ok=True)
     for img in [i for i in ficos_src.iterdir() if i.suffix == ".png"]:
-        Image.open(img).resize(ICON_SIZE).save(
-            ficos_dst.joinpath(img.name.split(".")[0] + ".ico")
-        )
+        Image.open(img).resize(ICON_SIZE).save(ficos_dst.joinpath(img.name.split(".")[0] + ".ico"))
     bookshelf_ico_src = PROJECT_ROOT / "fullsize_images" / "bookshelf.png"
     bookshelf_ico_dst = PACKAGE_FOLDER / "bookshelf.ico"
     Image.open(bookshelf_ico_src).save(bookshelf_ico_dst)
@@ -287,9 +272,7 @@ def generate_pot(c):
         )
     )
     c.run(f"pybabel extract {args} bookworm")
-    print(
-        "The translation catalog has been generated. You can find it in the scripts folder "
-    )
+    print("The translation catalog has been generated. You can find it in the scripts folder ")
 
 
 @task
@@ -313,10 +296,7 @@ def update_msgs(c):
     locale_dir = PACKAGE_FOLDER / "resources" / "locale"
     potfile = get_pot_filename()
     if list(locale_dir.rglob("*.po")):
-        c.run(
-            f'pybabel update -i "{potfile}" -D {domain} '
-            f'-d "{locale_dir}" --ignore-obsolete'
-        )
+        c.run(f'pybabel update -i "{potfile}" -D {domain} -d "{locale_dir}" --ignore-obsolete')
         print("Done updating message catalogs files.")
     else:
         print("No message catalogs found.")
@@ -329,10 +309,7 @@ def init_lang(c, lang):
     print(f"Creating a language catalog for language '{lang}'...")
     potfile = get_pot_filename()
     locale_dir = PACKAGE_FOLDER / "resources" / "locale"
-    c.run(
-        f'pybabel init -D {app.name} -i "{potfile}" '
-        f'-d "{locale_dir}" --locale={lang}'
-    )
+    c.run(f'pybabel init -D {app.name} -i "{potfile}" -d "{locale_dir}" --locale={lang}')
 
 
 @task
@@ -362,9 +339,7 @@ def clean(c, assets=False, siteconfig=False):
             folders_to_clean.extend(c["folders_to_clean"]["assets"])
         if siteconfig:
             folders_to_clean.append(".appdata")
-        glob_patterns = [
-            (entry, glob(entry)) for entry in folders_to_clean if "*" in entry
-        ]
+        glob_patterns = [(entry, glob(entry)) for entry in folders_to_clean if "*" in entry]
         for entry, glbs in glob_patterns:
             folders_to_clean.remove(entry)
             folders_to_clean.extend(glbs)
@@ -403,15 +378,13 @@ def copy_deps(c):
     # We need all the DLLs in this subdirectory, so let's extend the list
     dlls.extend(
         list(
-            Path(
-                f"C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\DLLs\\{arch}"
-            ).glob("*")
+            Path(f"C:\\Program Files (x86)\\Windows Kits\\10\\Redist\\ucrt\\DLLs\\{arch}").glob("*")
         )
     )
     for dll in dlls:
         try:
             shutil.copy(dll, dist_dir)
-        except Exception as e:
+        except Exception:
             print(f"Failed to copy  {dll} to {dist_dir}")
             continue
     print("Done copying vcredis 2015 ucrt DLLs.")
@@ -437,8 +410,7 @@ def copy_deps(c):
                 "The `BkwRicheditOpts.dll` was not found, and you do not have rust toolchain installed. "
                 "Please install rust or otherwise provide pre-built DLLs in the designated path."
             )
-        else:
-            _build_BkwRicheditOpts_dll(c)
+        _build_BkwRicheditOpts_dll(c)
     shutil.copy(richeditopts_dll_src, richeditopts_dll_dst)
 
     copy_espeak_and_piper_libs()
@@ -447,9 +419,7 @@ def copy_deps(c):
 def copy_espeak_and_piper_libs():
     arch = os.environ["IAPP_ARCH"]
 
-    espeak_dll_src = (
-        PROJECT_ROOT / "scripts" / "dlls" / "espeak-ng" / arch / "espeak-ng.dll"
-    )
+    espeak_dll_src = PROJECT_ROOT / "scripts" / "dlls" / "espeak-ng" / arch / "espeak-ng.dll"
     espeak_data_src = PROJECT_ROOT / "scripts" / "dlls" / "espeak-ng" / "espeak-ng-data"
     espeak_dst = Path(os.environ["IAPP_FROZEN_CONTENT_DIRECTORY"])
 
@@ -460,9 +430,7 @@ def copy_espeak_and_piper_libs():
     onnxruntime_dll_src = (
         PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / arch / "onnxruntime.dll"
     )
-    onnxruntime_notices_src = (
-        PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / "notices"
-    )
+    onnxruntime_notices_src = PROJECT_ROOT / "scripts" / "dlls" / "onnxruntime" / "notices"
     onnxruntime_dst = Path(os.environ["IAPP_FROZEN_CONTENT_DIRECTORY"]) / "onnxruntime"
     onnxruntime_dst.mkdir(parents=True, exist_ok=True)
 
@@ -481,11 +449,7 @@ def _build_BkwRicheditOpts_dll(c):
             arch_richeditopts_src = richeditopts_dll_src / arch
             arch_richeditopts_src.mkdir(parents=True, exist_ok=True)
             shutil.copy(
-                richeditopts_code_src
-                / "target"
-                / target
-                / "release"
-                / "BkwRicheditOpts.dll",
+                richeditopts_code_src / "target" / target / "release" / "BkwRicheditOpts.dll",
                 arch_richeditopts_src / "BkwRicheditOpts.dll",
             )
             print("Done copying `BkwRicheditOpts.dll`")
@@ -566,9 +530,7 @@ def gen_update_info_file(c):
     channel = version_info.get("pre_type", "")  # Stable version if no pre_type
 
     # Define base URLs and file paths for x86 and x64 builds
-    base_url = (
-        f"https://github.com/blindpandas/bookworm/releases/download/{app.version}"
-    )
+    base_url = f"https://github.com/blindpandas/bookworm/releases/download/{app.version}"
     x86_file = f"{app.display_name}-{app.version}-x86-update.bundle"
     x64_file = f"{app.display_name}-{app.version}-x64-update.bundle"
     x86_download_url = f"{base_url}/{x86_file}"
@@ -580,20 +542,15 @@ def gen_update_info_file(c):
 
     # Generate SHA1 hash or use default if file does not exist
     x86_sha1hash = (
-        generate_sha1hash(x86_bundle_path)
-        if x86_bundle_path.exists()
-        else "example_x86_sha1hash"
+        generate_sha1hash(x86_bundle_path) if x86_bundle_path.exists() else "example_x86_sha1hash"
     )
     x64_sha1hash = (
-        generate_sha1hash(x64_bundle_path)
-        if x64_bundle_path.exists()
-        else "example_x64_sha1hash"
+        generate_sha1hash(x64_bundle_path) if x64_bundle_path.exists() else "example_x64_sha1hash"
     )
 
     # Construct the update info dictionary
     update_info = {
-        channel
-        or "": {  # Ensure stable version uses an empty string key
+        channel or "": {  # Ensure stable version uses an empty string key
             "version": app.version,
             "x86_download": x86_download_url,
             "x64_download": x64_download_url,
@@ -623,54 +580,70 @@ def gen_update_info_file(c):
     print(f"Update information file generated at {update_info_file}")
 
 
-def _add_pip_install_args(cmd, context):
-    return "{cmd} --timeout {timeout} --retries {retries}".format(
-        cmd=cmd,
-        timeout=context["pip_timeout"],
-        retries=context["pip_retries"],
-    )
+def _add_install_args(cmd, context):
+    if context.get("offline_run"):
+        return f"{cmd} --offline"
+    return cmd
+
+
 
 
 @task
-@make_env
 def install_local_packages(c):
-    print("Upgrading pip...")
-    try:
-        c.run(_add_pip_install_args("python -m pip install --upgrade pip", c))
-    except UnexpectedExit as e:
-        if not c["offline_run"]:
-            raise e
-    print("Installing local packages")
-    arch = os.environ["IAPP_ARCH"]
-    pkg_names = c["packages_to_install"]
-    packages = pkg_names["pure_python"] or []
-    if sys.platform in pkg_names:
-        platform_packages = pkg_names[sys.platform]
-        pure_python = platform_packages.get("pure_python", [])
-        binary_packages = platform_packages[arch]
-        if pure_python:
-            packages += [Path(sys.platform) / pkg for pkg in pure_python]
-        if binary_packages:
-            packages += [Path(sys.platform) / arch / pkg for pkg in binary_packages]
-    with c.cd(str(PROJECT_ROOT / "packages")):
-        for package in packages:
-            print(f"Installing package {package}")
-            c.run(f"python -m pip install {package}")
+    print("Installing local packages...")
+    import tomllib
+    
+    with open(PROJECT_ROOT / "pyproject.toml", "rb") as f:
+        config = tomllib.load(f)
+    
+    local_deps = config.get("tool", {}).get("bookworm", {}).get("local-dependencies", {})
+    packages_dir = PROJECT_ROOT / "packages"
 
+    # 1. Install shared packages
+    shared_pkgs = local_deps.get("shared", [])
+    for pkg_name in shared_pkgs:
+        pkg_path = packages_dir / pkg_name
+        if pkg_path.exists():
+            print(f"Installing shared package: {pkg_name}")
+            c.run(f"uv pip install {pkg_path}")
+        else:
+            print(f"Warning: Shared package not found: {pkg_path}")
 
-@task(pre=(install_local_packages,))
+    # 2. Install architecture specific packages for Windows
+    if sys.platform == "win32":
+        import struct
+        default_arch = "x64" if struct.calcsize("P") * 8 == 64 else "x86"
+        arch = os.environ.get("IAPP_ARCH", default_arch)
+        print(f"Target architecture: {arch}")
+        win32_conf = local_deps.get("win32", {})
+        arch_packages_dir = packages_dir / "win32" / arch
+        
+        if arch_packages_dir.exists():
+            # Get list of patterns/packages to install
+            pkg_patterns = win32_conf.get("packages", [])
+            for pattern in pkg_patterns:
+                # Find matching wheels in the architecture directory
+                found = list(arch_packages_dir.glob(pattern))
+                if not found:
+                    print(f"Warning: No package found matching '{pattern}' in {arch_packages_dir}")
+                    continue
+                
+                for whl in found:
+                    print(f"Installing {whl.name}...")
+                    c.run(f"uv pip install {whl}")
+        else:
+             print(f"Warning: Architecture specific packages directory not found: {arch_packages_dir}")
+
+@task
 def pip_install(c):
     with c.cd(PROJECT_ROOT):
-        print("Installing application dependencies using pip...")
+        print("Syncing dependencies using uv...")
         try:
-            c.run(
-                _add_pip_install_args(
-                    "python -m pip install -r requirements-dev.txt", c
-                )
-            )
+            c.run(_add_install_args("uv sync", c))
         except UnexpectedExit as e:
             if not c["offline_run"]:
                 raise e
+    install_local_packages(c)
 
 
 @task(
@@ -687,15 +660,15 @@ def pip_install(c):
 )
 def install_bookworm(c):
     with c.cd(str(PROJECT_ROOT)):
-        c.run("python -m pip uninstall bookworm -y -q")
+        c.run("uv pip uninstall bookworm", warn=True)
         if "BK_DEVELOPMENT" in c:
-            c.run("python -m pip install -e .")
+            c.run("uv pip install -e .")
         else:
             print("Building Bookworm wheel.")
             c.run("python setup.py bdist_wheel")
             wheel_path = next(Path(PROJECT_ROOT / "dist").glob("*.whl"))
             print("Installing Bookworm wheel")
-            c.run(f"python -m pip install {wheel_path}", hide="stdout")
+            c.run(f"uv pip install {wheel_path}", hide="stdout")
     print("Finished installing packages.")
 
 
@@ -805,9 +778,13 @@ def create_portable_copy(c):
     print(f"Portable archive created at {port_arch}.")
 
 
-@task(name="dev", pre=(install_bookworm,))
-def prepare_dev_environment(c):
+@task
+def configure_dev(c):
     c["BK_DEVELOPMENT"] = True
+
+
+@task(name="dev", pre=(configure_dev, install_bookworm))
+def prepare_dev_environment(c):
     print("\r\n🎆 Your environment is now ready for Bookworm...")
     print("😊 Happy hacking...")
 

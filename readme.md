@@ -19,63 +19,55 @@ You can keep downloading bookworm from the [releases page](https://github.com/bl
 
 ## Development
 
-If you would like to contribute to the development of *Bookworm*, follow these steps to run Bookworm on your computer:
+If you would like to contribute to the development of *Bookworm*, follow these steps to run Bookworm on your computer.
 
+### Prerequisites
 
-### Required Binaries
+1.  **Git**: Ensure you have Git installed.
+2.  **uv**: This project uses [uv](https://github.com/astral-sh/uv) for dependency management and running tasks. Install it by following the instructions on their website.
+3.  **NSIS** (Optional): Only required if you intend to build the Windows installer. Get it from [NSIS download page](https://nsis.sourceforge.io/Download) and add it to your path.
 
-You need the following binaries to develop Bookworm:
+Note: You do **not** need to manually install Python. `uv` will manage the required Python version (3.11) for you.
 
-1. Python: currently we use Python 3.11 series: Grab the latest version from [python.org](https://www.python.org/downloads/)
-2. GNU win32 tools: the easiest way to get those is to install Git. Since Git comes with these binaries you can simply add them to your path.
-For example, if git was installed to: "C:\Program Files\Git". Then you need to add the following directory to your path: "C:\Program Files\Git\mingw64\bin".
-3. NSIS: for creating Windows installers. Get it from [NSIS download page](https://nsis.sourceforge.io/Download) and add it to your path.
-4. Optionally, you need Visual Studio 2019 with the Windows 10 development workload to compile some libraries.
+### Setup and Run
 
-###  Prepare the source tree
+1.  **Clone the repository:**
+    ```shell
+    git clone https://github.com/blindpandas/bookworm.git
+    cd bookworm
+    ```
 
-Bookworm is composed of many components. To prepare your source tree and run Bookworm for the first time, follow these steps:
+2.  **Initialize the development environment:**
+    This command will sync dependencies, set up the virtual environment, and generate necessary resources (icons, guides, etc.).
+    ```shell
+    uv run invoke dev
+    ```
 
-* Get the source code by cloneing this repo:
-```shell
-git clone https://github.com/blindpandas/bookworm.git
-cd bookworm
-```
-* Create a virtual environment:
-```bash
-python -m venv .env
-.env\\scripts\\activate
-```
-* Install "invoke" : invoke is the command runner we use to define and run the build process. Install it from pip using:
-```bash
-pip install invoke
-```
-* Then run the following command to prepare your development environment:
-```shell
-invoke dev
-```
-This should install the development and application dependencies and prepare the source tree.
-* If everything worked as expected, you can now run Bookworm using the following command:
-```shell
-invoke run
-```
-This should run Bookworm with debug mode enabled. To run the app with debug mode disabled you can do:
-```shell
-invoke run --no-debug
-```
-Another way to run the app is to execute the package directly. In this case, you can turn on debug mode yourself using the "--debug" flag.
-To execute the package, you can do:
-```shell
-py -m bookworm --debug
-```
-* All the build/deployment commands are available in the `tasks.py` script. To view a list of these commands, issue the following in your terminal:
-```shell
-invoke --list
-```
-As an example, to build Bookworm, issue the following command:
-```shell
-invoke build
-```
+3.  **Run Bookworm:**
+    ```shell
+    uv run invoke run
+    ```
+    To run without debug mode:
+    ```shell
+    uv run invoke run --no-debug
+    ```
+
+### Other Commands
+
+*   **List all tasks:**
+    ```shell
+    uv run invoke --list
+    ```
+
+*   **Format and Lint Code:**
+    ```shell
+    uv run invoke format-code
+    ```
+
+*   **Build Installer:**
+    ```shell
+    uv run invoke build
+    ```
 
 If you've found a bug, or you want to contribute your changes back to bookworm, please create an issue or submit a pull request. We welcome any contribution.
 
