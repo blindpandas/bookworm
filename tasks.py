@@ -10,6 +10,7 @@ import os
 import shutil
 import subprocess
 import sys
+import hashlib
 from contextlib import redirect_stdout
 from datetime import datetime
 from functools import wraps
@@ -37,6 +38,22 @@ GUIDE_HTML_TEMPLATE = """
   </body>
   </html>
 """.strip()
+
+
+def generate_sha1hash(content):
+    hasher = hashlib.sha1()
+    is_file_like = hasattr(content, "seek")
+    if not is_file_like:
+        file = open(content, "rb")
+    else:
+        content.seek(0)
+        file = content
+    for chunk in file:
+        hasher.update(chunk)
+    if not is_file_like:
+        file.close()
+    return hasher.hexdigest()
+
 
 
 def invert_image(image_path):
@@ -492,7 +509,6 @@ def bundle_update(c):
 @task
 def update_version_info(c):
     from bookworm import app
-    from bookworm.utils import generate_sha1hash
 
     artifacts_folder = PROJECT_ROOT / "scripts"
     json_file = artifacts_folder / "release-info.json"
@@ -521,7 +537,6 @@ def gen_update_info_file(c):
     including download URLs and SHA1 hashes for x86 and x64 builds.
     """
     from bookworm import app
-    from bookworm.utils import generate_sha1hash
 
     print("Generating update information file...")
 
@@ -540,13 +555,17 @@ def gen_update_info_file(c):
     x86_bundle_path = artifacts_folder / x86_file
     x64_bundle_path = artifacts_folder / x64_file
 
-    # Generate SHA1 hash or use default if file does not exist
-    x86_sha1hash = (
-        generate_sha1hash(x86_bundle_path) if x86_bundle_path.exists() else "example_x86_sha1hash"
-    )
-    x64_sha1hash = (
-        generate_sha1hash(x64_bundle_path) if x64_bundle_path.exists() else "example_x64_sha1hash"
-    )
+    # Generate SHA1 hash or read from .sha1 file
+    def get_hash(bundle_path):
+        if bundle_path.exists():
+            return generate_sha1hash(bundle_path)
+        checksum_file = bundle_path.with_suffix(bundle_path.suffix + ".sha1")
+        if checksum_file.exists():
+            return checksum_file.read_text().strip()
+        return "example_sha1hash"
+
+    x86_sha1hash = get_hash(x86_bundle_path)
+    x64_sha1hash = get_hash(x64_bundle_path)
 
     # Construct the update info dictionary
     update_info = {
@@ -578,6 +597,22 @@ def gen_update_info_file(c):
         json.dump(existing_data, f, indent=2, sort_keys=True)
 
     print(f"Update information file generated at {update_info_file}")
+
+
+@task(name="gen-checksum")
+@make_env
+def generate_checksum_for_bundle(c):
+    """Generate a SHA1 checksum for the update bundle."""
+    env = os.environ
+    fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-{env['IAPP_ARCH']}-update.bundle"
+    path = PROJECT_ROOT / "scripts" / fname
+    if not path.exists():
+        print(f"Error: Bundle file {path} does not exist.")
+        return
+    sha1 = generate_sha1hash(path)
+    checksum_file = path.with_suffix(path.suffix + ".sha1")
+    checksum_file.write_text(sha1)
+    print(f"Checksum for {path.name} saved to {checksum_file}")
 
 
 def _add_install_args(cmd, context):

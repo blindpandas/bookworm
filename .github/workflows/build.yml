@@ -24,25 +24,23 @@ jobs:
     env:
       IAPP_ARCH: ${{ matrix.CI_ARCH }}
     steps:
-      # Step 1: Check out the repository
       - name: Check out sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      # Step 2: Install uv
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
           cache-suffix: ${{ runner.os }}-${{ matrix.CI_ARCH }}
 
-      # Step 3: Set up Python environment with the specified architecture
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           architecture: ${{ matrix.CI_ARCH }}
 
-      # Step 4: Install dependencies and compile resources.
       - name: Install dependencies and compile resources
         run: |
           uv sync --locked
@@ -53,42 +51,42 @@ jobs:
         with:
           nsis-version: '3.11'
 
-
-      # Step 5: Build the project
       - name: Build the project
         run: |
           uv run invoke build
           uv run invoke create-portable
+          uv run invoke gen-checksum
 
-      # Step 6: Generate translation catalogs and version info (only for x64)
       - name: Generate translation catalogs and version info
         if: matrix.CI_ARCH == 'x64'
         run: |
           uv run invoke gen-pot
           uv run invoke update-version-info
 
-      # Step 7: Upload installer artifact
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
           name: Bookworm-setup-${{ matrix.CI_ARCH }}
           path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-setup.exe
 
-      # Step 8: Upload portable version artifact
       - name: Upload portable version
         uses: actions/upload-artifact@v4
         with:
           name: Bookworm-portable-${{ matrix.CI_ARCH }}
           path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-portable.zip
 
-      # Step 9: Upload update bundle artifact
       - name: Upload update bundle
         uses: actions/upload-artifact@v4
         with:
           name: Bookworm-bundle-${{ matrix.CI_ARCH }}
           path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-update.bundle
 
-      # Step 10: Upload translation catalogs (only for x64)
+      - name: Upload update bundle checksum
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bookworm-bundle-checksum-${{ matrix.CI_ARCH }}
+          path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-update.bundle.sha1
+
       - name: Upload translation catalogs
         if: matrix.CI_ARCH == 'x64'
         uses: actions/upload-artifact@v4
@@ -96,7 +94,6 @@ jobs:
           name: translation-catalogs
           path: scripts\*.pot
 
-      # Step 11: Upload release info (only for x64 and non-pull_request)
       - name: Upload release info
         if: matrix.CI_ARCH == 'x64' && startsWith(github.ref, 'refs/tags') && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
@@ -107,49 +104,41 @@ jobs:
   generate_update_info:
     name: Generate update-info.json
     runs-on: windows-latest
-    needs: build  # Wait for the build job to complete
+    needs: build
     steps:
-      # Step 1: Check out the repository
       - name: Check out sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      # Step 2: Download update bundles from both architectures
-      - name: Download update bundle for x64
+      - name: Download update bundle checksums
         uses: actions/download-artifact@v4
         with:
-          name: Bookworm-bundle-x64
+          pattern: Bookworm-bundle-checksum-*
           path: scripts
-      - name: Download update bundle for x86
-        uses: actions/download-artifact@v4
-        with:
-          name: Bookworm-bundle-x86
-          path: scripts
+          merge-multiple: true
 
-      # Step 3: Install uv
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
           cache-suffix: ${{ runner.os }}-update-info
 
-      # Step 4: Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # Step 5: Install dependencies
       - name: Install dependencies
         run: |
-          uv sync --locked
-          uv run invoke dev
+          uv sync --locked --no-install-project --only-group dev
 
-      # Step 5: Generate update-info.json
       - name: Generate update-info.json
+        env:
+          PYTHONPATH: .
         run: |
           uv run invoke gen-update-info-file
 
-      # Step 6: Upload update-info.json as an artifact
       - name: Upload update-info.json
         uses: actions/upload-artifact@v4
         with:
@@ -159,35 +148,26 @@ jobs:
   deploy:
     name: Deploy
     runs-on: windows-latest
-    needs: [build, generate_update_info]  # Wait for build and generate_update_info jobs
+    needs: [build, generate_update_info]
     steps:
-      # Step 1: Download all artifacts from previous jobs
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
 
-      # Step 2: Prepare release assets by moving them into an upload directory
       - name: Prepare release assets
+        shell: pwsh
         run: |
-          mkdir upload
-          echo Listing files in artifacts directory...
-          dir artifacts\
-          echo Moving setup files...
-          move artifacts\Bookworm-setup-x86\* upload\
-          move artifacts\Bookworm-setup-x64\* upload\
-          echo Moving portable files...
-          move artifacts\Bookworm-portable-x86\* upload\
-          move artifacts\Bookworm-portable-x64\* upload\
-          echo Moving bundle files...
-          move artifacts\Bookworm-bundle-x86\* upload\
-          move artifacts\Bookworm-bundle-x64\* upload\
-          if exist artifacts\translation-catalogs\* (move artifacts\translation-catalogs\* upload\) else (echo "No translation catalogs")
-          if exist artifacts\release-info\* (move artifacts\release-info\* upload\) else (echo "No release info")
-          if exist artifacts\update-info\* (move artifacts\update-info\* upload\) else (echo "No update info")
-        shell: cmd
+          New-Item -Path upload -ItemType Directory -Force
+          # Collect all files from artifacts, excluding internal checksum files
+          Get-ChildItem -Path artifacts -Directory | 
+            Where-Object { $_.Name -notlike "*-checksum-*" } | 
+            ForEach-Object {
+              Get-ChildItem -Path $_.FullName -File | Copy-Item -Destination upload
+            }
+          Write-Host "Prepared assets in upload directory:"
+          Get-ChildItem -Path upload | Select-Object Name
 
-      # Step 3: Create a draft release (only when a tag is pushed and not for pull requests)
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags') && github.event_name != 'pull_request'
         uses: ncipollo/release-action@v1
@@ -199,44 +179,39 @@ jobs:
   submit_update_info:
     name: Submit update_info.json to main
     runs-on: windows-latest
-    if: github.event_name == 'release' && github.event.action == 'published'  # Trigger when the release is published
+    if: github.event_name == 'release' && github.event.action == 'published'
     steps:
-      # Step 1: Check out the repository
       - name: Check out sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      # Step 2: Download update_info.json from the release assets
       - name: Download update_info.json from release
+        shell: pwsh
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           $ReleaseAssetsUrl = "${{ github.event.release.assets_url }}"
-          Write-Host "Fetching release assets from: $ReleaseAssetsUrl"
-          $AuthHeader = "token $env:PAT_TOKEN"
           $Headers = @{
             Authorization = "token $env:PAT_TOKEN"
             Accept = "application/vnd.github.v3+json"
           }
           $Assets = Invoke-RestMethod -Headers $Headers -Uri $ReleaseAssetsUrl
           $UpdateInfoAsset = $Assets | Where-Object { $_.name -eq "update_info.json" }
-          if ($UpdateInfoAsset -ne $null) {
-            Write-Host "Downloading update_info.json from: $($UpdateInfoAsset.browser_download_url)"
+          if ($null -ne $UpdateInfoAsset) {
             Invoke-WebRequest -Headers $Headers -Uri $UpdateInfoAsset.browser_download_url -OutFile update_info.json
           } else {
-            Write-Error "update_info.json not found in release assets"
-            exit 1
+            throw "update_info.json not found in release assets"
           }
-        shell: pwsh
 
-      # Step 3: Set up Git user
       - name: Configure Git
+        shell: pwsh
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
 
-      # Step 4: Create Pull Request to main branch
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.PAT_TOKEN }}
           commit-message: 'Update update_info.json after release'
