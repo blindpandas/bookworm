@@ -1,3 +1,0 @@
--r requirements-dev.txt
-
-invoke>=2.2.0
