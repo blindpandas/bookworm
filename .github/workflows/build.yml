@@ -15,9 +15,43 @@ permissions:
   contents: write
 
 jobs:
+  test:
+    name: Test
+    runs-on: windows-latest
+    steps:
+      - name: Check out sources
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-suffix: ${{ runner.os }}-test
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          uv sync --locked --no-install-project
+          uv run invoke install-local-packages
+
+      - name: Generate resources
+        run: |
+          uv run invoke icons
+
+      - name: Run tests
+        run: |
+          uv run pytest
+
   build:
     name: Build
     runs-on: windows-latest
+    needs: test
     strategy:
       matrix:
         CI_ARCH: ["x86", "x64"]  # Define architectures to build for
