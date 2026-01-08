@@ -141,6 +141,7 @@ dev = [
     "pyinstaller==6.10.0",
     "pyinstaller-hooks-contrib==2024.8",
     "pytest==8.2.1",
+    "pytest-github-actions-annotate-failures",
     "pytest-xdist==3.6.1",
     "wheel==0.43.0",
     "ruff>=0.4.0",
