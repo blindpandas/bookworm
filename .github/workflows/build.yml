@@ -51,6 +51,7 @@ jobs:
   build:
     name: Build
     runs-on: windows-latest
+    needs: test
     strategy:
       matrix:
         CI_ARCH: ["x86", "x64"]  # Define architectures to build for
