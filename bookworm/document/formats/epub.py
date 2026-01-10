@@ -18,6 +18,7 @@ import ebooklib.epub
 import fitz
 import more_itertools
 from diskcache import Cache
+from lxml import etree as lxml_etree
 from lxml import html as lxml_html
 from selectolax.parser import HTMLParser
 
@@ -385,10 +386,13 @@ class EpubDocument(SinglePageDocument):
         filename = href.split("#")[0] if "#" in href else href
         html_doc = self.get_epub_html_item_by_href(filename)
         if html_doc is not None:
-            if title_list := lxml_html.fromstring(html_doc.content).xpath(
-                "/html/head/title//text()"
-            ):
-                return title_list[0]
+            try:
+                if title_list := lxml_html.fromstring(html_doc.content).xpath(
+                    "/html/head/title//text()"
+                ):
+                    return title_list[0]
+            except (lxml_etree.ParserError, lxml_etree.XMLSyntaxError, TypeError, ValueError) as e:
+                log.warning(f"Could not parse content for href: {href}. Error: {e}")
         else:
             log.warning(f"Could not resolve href: {href}")
         return ""
