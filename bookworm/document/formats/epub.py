@@ -203,7 +203,7 @@ class EpubDocument(SinglePageDocument):
         return items
 
     def get_epub_html_item_by_href(self, href):
-        if epub_item := self.epub.get_item_with_href("href"):
+        if epub_item := self.epub.get_item_with_href(href):
             return epub_item
         item_name = PurePosixPath(href).name
         return more_itertools.first(
