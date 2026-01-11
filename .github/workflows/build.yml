@@ -20,18 +20,18 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           cache-suffix: ${{ runner.os }}-test
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
@@ -59,18 +59,18 @@ jobs:
       IAPP_ARCH: ${{ matrix.CI_ARCH }}
     steps:
       - name: Check out sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           cache-suffix: ${{ runner.os }}-${{ matrix.CI_ARCH }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           architecture: ${{ matrix.CI_ARCH }}
@@ -98,39 +98,39 @@ jobs:
           uv run invoke update-version-info
 
       - name: Upload installer
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Bookworm-setup-${{ matrix.CI_ARCH }}
           path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-setup.exe
 
       - name: Upload portable version
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Bookworm-portable-${{ matrix.CI_ARCH }}
           path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-portable.zip
 
       - name: Upload update bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Bookworm-bundle-${{ matrix.CI_ARCH }}
           path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-update.bundle
 
       - name: Upload update bundle checksum
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Bookworm-bundle-checksum-${{ matrix.CI_ARCH }}
           path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-update.bundle.sha1
 
       - name: Upload translation catalogs
         if: matrix.CI_ARCH == 'x64'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: translation-catalogs
           path: scripts\*.pot
 
       - name: Upload release info
         if: matrix.CI_ARCH == 'x64' && startsWith(github.ref, 'refs/tags') && github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: release-info
           path: scripts\release-info.json
@@ -142,25 +142,25 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'pull_request'
     steps:
       - name: Check out sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
       - name: Download update bundle checksums
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: Bookworm-bundle-checksum-*
           path: scripts
           merge-multiple: true
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           cache-suffix: ${{ runner.os }}-update-info
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
@@ -175,7 +175,7 @@ jobs:
           uv run invoke gen-update-info-file
 
       - name: Upload update-info.json
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: update-info
           path: update_info.json
@@ -187,7 +187,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'pull_request'
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: artifacts
 
@@ -218,7 +218,7 @@ jobs:
     if: github.event_name == 'release' && github.event.action == 'published'
     steps:
       - name: Check out sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
@@ -247,7 +247,7 @@ jobs:
           git config user.email "action@github.com"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.PAT_TOKEN }}
           commit-message: 'Update update_info.json after release'
@@ -256,3 +256,15 @@ jobs:
           body: 'This Pull Request updates update_info.json after the release is published.'
           labels: 'automation'
           base: main
+
+  publish_winget:
+    name: Publish to Winget
+    runs-on: windows-latest
+    if: github.event_name == 'release' && github.event.action == 'published' && !github.event.release.prerelease
+    steps:
+      - name: Publish to Winget
+        uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: BlindPandasTeam.Bookworm
+          installers-regex: 'Bookworm-.*-setup.exe$'
+          token: ${{ secrets.PAT_TOKEN }}
