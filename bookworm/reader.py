@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import re
 import string
 from contextlib import suppress
 from pathlib import Path
@@ -461,7 +462,93 @@ class EBookReader:
             hidden=False,
         )
 
+    def _improve_table_markup(self, table_markup: str) -> str:
+        tree = HTMLParser(table_markup)
+        table = tree.css_first("table")
+        if not table:
+            return table_markup
+
+        has_caption = table.css_first("caption") is not None
+        sr_caption = '<caption style="position: absolute; width: 1px; height: 1px; overflow: hidden;"></caption>'
+
+        # Check for existing thead
+        if table.css_first("thead"):
+            if not has_caption:
+                return re.sub(r"(<table[^>]*>)", r"\1" + sr_caption, table_markup, count=1, flags=re.IGNORECASE)
+            return table_markup
+
+        # Detection Logic
+        promote_header = False
+        first_row = None
+
+        tbody = table.css_first("tbody")
+        container = tbody if tbody else table
+
+        # Find first row
+        curr = container.child
+        while curr:
+            if curr.tag == "tr":
+                first_row = curr
+                break
+            curr = curr.next
+
+        if first_row:
+            cells = first_row.css("td")
+            if cells and all(c.css_first("strong, b") for c in cells):
+                promote_header = True
+
+        if not promote_header:
+            if not has_caption:
+                return re.sub(r"(<table[^>]*>)", r"\1" + sr_caption, table_markup, count=1, flags=re.IGNORECASE)
+            return table_markup
+
+        # Reconstruction Logic
+        res = []
+        attrs = " ".join([f'{k}="{v}"' for k, v in table.attributes.items()])
+        res.append(f"<table {attrs}>")
+        if not has_caption:
+            res.append(sr_caption)
+
+        header_promoted = False
+        curr = table.child
+        while curr:
+            if curr.tag == "tbody":
+                if not header_promoted:
+                    # Promote header from this first tbody
+                    row_html = first_row.html.replace("<td", "<th").replace("</td>", "</th>")
+                    res.append(f"<thead>{row_html}</thead>")
+                    res.append("<tbody>")
+
+                    # Iterate children to skip the first row
+                    tb_curr = curr.child
+                    skipped_first = False
+                    while tb_curr:
+                        if tb_curr.tag == "tr" and not skipped_first:
+                            skipped_first = True
+                        else:
+                            res.append(tb_curr.html)
+                        tb_curr = tb_curr.next
+                    res.append("</tbody>")
+                    header_promoted = True
+                else:
+                    res.append(curr.html)
+
+            elif curr.tag == "tr" and not tbody:
+                if not header_promoted:
+                    row_html = first_row.html.replace("<td", "<th").replace("</td>", "</th>")
+                    res.append(f"<thead>{row_html}</thead>")
+                    header_promoted = True
+                else:
+                    res.append(curr.html)
+            else:
+                res.append(curr.html)
+            curr = curr.next
+
+        res.append("</table>")
+        return "".join(res)
+
     def _show_table(self, table_markup):
+        table_markup = self._improve_table_markup(table_markup)
         # Translators: title of a message dialog that shows a table as html document
         title = _("Table View")
         if (table_caption := HTMLParser(table_markup).css_first("caption")) is not None:
