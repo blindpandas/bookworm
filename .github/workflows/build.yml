@@ -256,3 +256,15 @@ jobs:
           body: 'This Pull Request updates update_info.json after the release is published.'
           labels: 'automation'
           base: main
+
+  publish_winget:
+    name: Publish to Winget
+    runs-on: windows-latest
+    if: github.event_name == 'release' && github.event.action == 'published' && !github.event.release.prerelease
+    steps:
+      - name: Publish to Winget
+        uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: BlindPandasTeam.Bookworm
+          installers-regex: 'Bookworm-.*-setup.exe$'
+          token: ${{ secrets.PAT_TOKEN }}
