@@ -1,9 +1,15 @@
 import shutil
 from pathlib import Path
 
+from alembic import command
+from alembic.config import Config
 import pytest
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import close_all_sessions
+from sqlalchemy.pool import NullPool
 
 from bookworm.annotation import NoteTaker
+from bookworm.database import init_database
 from bookworm.database.models import (
     Book,
     DocumentPositionInfo,
@@ -14,6 +20,14 @@ from bookworm.database.models import (
 from bookworm.document import create_document
 from bookworm.document.uri import DocumentUri
 from bookworm.gui.book_viewer import recents_manager
+
+
+def _make_alembic_config(db_url):
+    cfg = Config(Path("alembic.ini"))
+    cfg.attributes["configure_logger"] = False
+    cfg.set_main_option("script_location", "alembic")
+    cfg.set_main_option("sqlalchemy.url", db_url)
+    return cfg
 
 
 def test_loading_existing_records_backfills_hashes_and_preserves_annotations(
@@ -60,6 +74,59 @@ def test_loading_existing_records_backfills_hashes_and_preserves_annotations(
     assert Book.query.one().uri == moved_uri
     assert DocumentPositionInfo.query.one().uri == moved_uri
     assert NoteTaker(reader).get_for_page(0).count() == 1
+
+
+def test_content_hash_migration_only_adds_schema(asset, tmp_path):
+    db_path = tmp_path / "migration.db"
+    db_url = f"sqlite:///{db_path}"
+    document_uri = DocumentUri.from_filename(asset("test.md")).to_uri_string()
+
+    command.upgrade(_make_alembic_config(db_url), "52e39c4f7494")
+
+    seed_engine = create_engine(db_url, poolclass=NullPool)
+    with seed_engine.begin() as conn:
+        conn.execute(
+            text("INSERT INTO book (title, uri) VALUES (:title, :uri)"),
+            {"title": "book", "uri": document_uri},
+        )
+        conn.execute(
+            text(
+                "INSERT INTO document_position_info (title, uri, last_page, last_position) "
+                "VALUES (:title, :uri, :last_page, :last_position)"
+            ),
+            {"title": "position", "uri": document_uri, "last_page": 0, "last_position": 0},
+        )
+        conn.execute(
+            text("INSERT INTO recent_document (title, uri) VALUES (:title, :uri)"),
+            {"title": "recent", "uri": document_uri},
+        )
+        conn.execute(
+            text(
+                "INSERT INTO pinned_document (title, uri, is_pinned, pinning_order) "
+                "VALUES (:title, :uri, :is_pinned, :pinning_order)"
+            ),
+            {"title": "pinned", "uri": document_uri, "is_pinned": True, "pinning_order": 0},
+        )
+    seed_engine.dispose()
+
+    migrated_engine = init_database(url=db_url, poolclass=NullPool)
+    try:
+        with migrated_engine.connect() as conn:
+            revision = conn.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
+            assert revision == "707543f03b6d"
+            for table_name in (
+                "book",
+                "document_position_info",
+                "recent_document",
+                "pinned_document",
+            ):
+                content_hashes = conn.execute(
+                    text(f"SELECT content_hash FROM {table_name}")
+                ).scalars().all()
+                assert content_hashes == [None]
+    finally:
+        close_all_sessions()
+        migrated_engine.dispose()
 
 
 def test_filename_derived_titles_follow_moved_paths(reader, tmp_path):

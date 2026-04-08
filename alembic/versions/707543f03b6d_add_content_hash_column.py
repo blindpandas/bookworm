@@ -6,39 +6,17 @@ Create Date: 2025-11-12 19:24:24.038832
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 from alembic import op
-from blake3 import blake3
 import sqlalchemy as sa
-from sqlalchemy import orm
-import bookworm
-from bookworm.database import Book, DocumentPositionInfo, RecentDocument, PinnedDocument
-from bookworm.document import create_document
-from bookworm.document.uri import DocumentUri
 
 
 # revision identifiers, used by Alembic.
 revision: str = "707543f03b6d"
-down_revision: Union[str, None] = "52e39c4f7494"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
-
-
-def update_content_hashes(session, model):
-    for doc in session.query(model):
-        if doc.content_hash:
-            continue
-
-        try:
-            document = create_document(doc.uri)
-            doc.content_hash = document.get_content_hash()
-            session.add(doc)
-        except Exception as e:
-            # Use ascii() to prevent UnicodeEncodeError on Windows GBK consoles
-            print(f"Failed to apply content hash to {ascii(doc.title)}: {ascii(e)}")
-            continue
-    session.commit()
+down_revision: str | None = "52e39c4f7494"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -52,13 +30,6 @@ def upgrade() -> None:
     op.add_column(
         "document_position_info", sa.Column("content_hash", sa.TEXT(), nullable=True)
     )
-
-    bind = op.get_bind()
-    session = orm.Session(bind)
-    update_content_hashes(session, Book)
-    update_content_hashes(session, DocumentPositionInfo)
-    update_content_hashes(session, PinnedDocument)
-    update_content_hashes(session, RecentDocument)
 
 
 def downgrade() -> None:
