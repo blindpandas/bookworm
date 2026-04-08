@@ -144,42 +144,85 @@ class EBookReader:
         "current_book",
     ]
 
+    def _record_matches_document(self, record, uri_for_storage, content_hash):
+        if record.uri == uri_for_storage:
+            return True
+        return (
+            record.content_hash == content_hash
+            and record.uri.format == uri_for_storage.format
+        )
+
+    def _get_matching_document_records(self, model, *, uri_for_storage, content_hash):
+        records = (
+            model.query.filter(
+                sa.or_(model.uri == uri_for_storage, model.content_hash == content_hash)
+            )
+            .order_by(model.id.asc())
+            .all()
+        )
+        return [
+            record
+            for record in records
+            if self._record_matches_document(record, uri_for_storage, content_hash)
+        ]
+
+    def _select_document_record(self, records, uri_for_storage):
+        for record in records:
+            if record.uri == uri_for_storage:
+                return record
+        if records:
+            return records[0]
+
+    def _get_or_create_document_record(
+        self,
+        model,
+        *,
+        title: str,
+        uri_for_storage: DocumentUri,
+        content_hash: str,
+    ):
+        session = model.session()
+        matching_records = self._get_matching_document_records(
+            model,
+            uri_for_storage=uri_for_storage,
+            content_hash=content_hash,
+        )
+        record = self._select_document_record(matching_records, uri_for_storage)
+        if record is None:
+            record = model(
+                title=title,
+                uri=uri_for_storage,
+                content_hash=content_hash,
+            )
+        else:
+            if record.title != title:
+                record.title = title
+            if record.content_hash is None:
+                record.content_hash = content_hash
+            if record.uri != uri_for_storage:
+                record.uri = uri_for_storage
+        session.add(record)
+        session.commit()
+        return record
+
     def _get_or_create_document_position_info(
         self, doc: BaseDocument, uri_for_storage: DocumentUri
     ) -> DocumentPositionInfo:
-        session = DocumentPositionInfo.session()
         current_book = doc.metadata
         content_hash = doc.get_content_hash()
         self.__state["ready"] = True
-        doc_info = DocumentPositionInfo.query.filter(
-            sa.or_(
-                sa.and_(
-                    DocumentPositionInfo.title == current_book.title,
-                    DocumentPositionInfo.uri == uri_for_storage,
-                ),
-                sa.and_(
-                    DocumentPositionInfo.title == current_book.title,
-                    DocumentPositionInfo.content_hash == content_hash,
-                ),
-            )
-        ).first()
-        if doc_info is None:
-            book = Book(
-                title=current_book.title, uri=uri_for_storage, content_hash=content_hash
-            )
-            session.add(book)
-            session.commit()
-            return DocumentPositionInfo.get_or_create(
-                title=current_book.title, uri=uri_for_storage, content_hash=content_hash
-            )
-        else:
-            if doc_info.content_hash is None:
-                doc_info.content_hash = content_hash
-            if doc_info.uri != uri_for_storage:
-                doc_info.uri = uri_for_storage
-            session.add(doc_info)
-            session.commit()
-            return doc_info
+        self._get_or_create_document_record(
+            Book,
+            title=current_book.title,
+            uri_for_storage=uri_for_storage,
+            content_hash=content_hash,
+        )
+        return self._get_or_create_document_record(
+            DocumentPositionInfo,
+            title=current_book.title,
+            uri_for_storage=uri_for_storage,
+            content_hash=content_hash,
+        )
 
     # Convenience method: make this available for importers as a staticmethod
     get_document_format_info = staticmethod(get_document_format_info)
@@ -207,7 +250,6 @@ class EBookReader:
         # This ensures all subsequent operations (recents, pinning, position saving)
         # use the correct identifier for the file the user actually opened.
         self.document.uri = uri_for_storage
-        content_hash = document.get_content_hash()
         if self.document.uri.view_args.get("save_last_position", True):
             log.debug("Retrieving last saved reading position from the database")
             self.stored_document_info = self._get_or_create_document_position_info(

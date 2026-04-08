@@ -8,12 +8,22 @@ log = logger.getChild(__name__)
 
 def get_document_unique(model, document):
     uri = document.uri
+    content_hash = document.get_content_hash()
     for doc in model.query:
-        if uri.is_equal_without_openner_args(doc.uri):
+        if uri.is_equal_without_openner_args(doc.uri) or (
+            doc.content_hash is not None and doc.content_hash == content_hash
+        ):
+            doc.title = document.metadata.title
             doc.uri = uri
+            if doc.content_hash is None:
+                doc.content_hash = content_hash
             model.session.commit()
             return doc
-    return model.get_or_create(title=document.metadata.title, uri=uri)
+    return model.get_or_create(
+        title=document.metadata.title,
+        uri=uri,
+        content_hash=content_hash,
+    )
 
 
 def add_to_recents(document):
