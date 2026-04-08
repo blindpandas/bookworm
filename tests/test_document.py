@@ -5,6 +5,7 @@ import pytest
 from bookworm.database import Book, DocumentPositionInfo
 from bookworm.document import create_document
 from bookworm.document.uri import DocumentUri
+from bookworm.document.formats.pdf import FitzPdfDocument
 
 
 def test_epub_metadata(asset):
@@ -79,4 +80,25 @@ def test_document_with_different_format_and_name_creates_new_entry(asset, reader
     reader.unload()
     new_path.unlink(missing_ok=True)
     assert Book.query.count() == 2
+
+
+def test_reader_set_document_does_not_reread_loaded_pdf(asset, reader, monkeypatch):
+    uri = DocumentUri.from_filename(asset("tagged_sample.pdf"))
+    read_calls = 0
+    original_read = FitzPdfDocument.read
+
+    def counting_read(self, *args, **kwargs):
+        nonlocal read_calls
+        read_calls += 1
+        return original_read(self, *args, **kwargs)
+
+    monkeypatch.setattr(FitzPdfDocument, "read", counting_read)
+
+    document = create_document(uri)
+    assert read_calls == 1
+
+    reader.set_document(document)
+
+    assert read_calls == 1
+    reader.unload()
 

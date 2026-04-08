@@ -147,6 +147,7 @@ class OdfPresentation(BaseDocument):
         return self.get_language(self.html_string, is_html=True)
 
     def read(self):
+        super().read()
         odf_file_path = self.get_file_system_path()
         self.parser = OdfParser(odf_file_path)
         self.html_string = self.parser.as_html

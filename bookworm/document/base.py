@@ -84,6 +84,7 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
 
     def __init__(self, uri):
         self.uri = uri
+        self._is_read = False
 
     def __contains__(self, value: int) -> bool:
         return -1 < value < len(self)
@@ -132,22 +133,28 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         Perform the actual IO operations for loading the ebook.
         Subclasses should call super to ensure the standard behavior.
         """
+        self._is_read = True
 
     def get_content_hash(self) -> str:
         """
         Generates the content hash for this document
         subclasses may override this if necessary, such as in the case of SinglePageDocument
         """
-        self.read()
+        if (content_hash := getattr(self, "_content_hash", None)) is not None:
+            return content_hash
+        if not self._is_read:
+            self.read()
         text = ""
         for page in self:
             text += page.get_text()
-        return blake3(text.encode()).hexdigest()
+        self._content_hash = blake3(text.encode()).hexdigest()
+        return self._content_hash
 
     def close(self) -> None:
         """Perform the actual IO operations for unloading the ebook.
         Subclasses should call super to ensure the standard behavior.
         """
+        self._is_read = False
         gc.collect()
 
     @abstractmethod
