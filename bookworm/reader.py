@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from bookworm import app, config
 from bookworm import typehints as t
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
-from bookworm.database import Book, DocumentPositionInfo
+from bookworm.database import Book, Bookmark, DocumentPositionInfo, Note, Quote
 from bookworm.document import (
     ArchiveContainsMultipleDocuments,
     ArchiveContainsNoDocumentsError,
@@ -142,6 +142,7 @@ class EBookReader:
         "view",
         "__state",
         "current_book",
+        "current_book_record",
     ]
 
     def _record_matches_document(self, record, uri_for_storage, content_hash):
@@ -173,6 +174,30 @@ class EBookReader:
         if records:
             return records[0]
 
+    def _merge_book_records(self, record, duplicates):
+        for duplicate in duplicates:
+            for annotation_model in (Bookmark, Note, Quote):
+                annotation_model.query.filter_by(book_id=duplicate.id).update(
+                    {annotation_model.book_id: record.id},
+                    synchronize_session=False,
+                )
+
+    def _merge_document_position_infos(self, record, duplicates):
+        if record.get_last_position() != (0, 0):
+            return
+        for duplicate in duplicates:
+            if duplicate.get_last_position() != (0, 0):
+                record.last_page, record.last_position = duplicate.get_last_position()
+                return
+
+    def _merge_document_records(self, model, session, record, duplicates):
+        if model is Book:
+            self._merge_book_records(record, duplicates)
+        elif model is DocumentPositionInfo:
+            self._merge_document_position_infos(record, duplicates)
+        for duplicate in duplicates:
+            session.delete(duplicate)
+
     def _get_or_create_document_record(
         self,
         model,
@@ -195,6 +220,10 @@ class EBookReader:
                 content_hash=content_hash,
             )
         else:
+            duplicate_records = [
+                candidate for candidate in matching_records if candidate.id != record.id
+            ]
+            self._merge_document_records(model, session, record, duplicate_records)
             if record.title != title:
                 record.title = title
             if record.content_hash is None:
@@ -211,7 +240,7 @@ class EBookReader:
         current_book = doc.metadata
         content_hash = doc.get_content_hash()
         self.__state["ready"] = True
-        self._get_or_create_document_record(
+        self.current_book_record = self._get_or_create_document_record(
             Book,
             title=current_book.title,
             uri_for_storage=uri_for_storage,
@@ -224,6 +253,20 @@ class EBookReader:
             content_hash=content_hash,
         )
 
+    def get_or_create_current_book_record(self):
+        if self.current_book_record is not None:
+            return self.current_book_record
+        if self.document is None:
+            return
+        current_book = self.document.metadata
+        self.current_book_record = self._get_or_create_document_record(
+            Book,
+            title=current_book.title,
+            uri_for_storage=self.document.uri,
+            content_hash=self.document.get_content_hash(),
+        )
+        return self.current_book_record
+
     # Convenience method: make this available for importers as a staticmethod
     get_document_format_info = staticmethod(get_document_format_info)
 
@@ -234,11 +277,14 @@ class EBookReader:
     def reset(self):
         self.document = None
         self.stored_document_info = None
+        self.current_book_record = None
         self.__state = {}
 
     def set_document(
         self, document: BaseDocument, original_uri: str | None = None
     ) -> None:
+        self.stored_document_info = None
+        self.current_book_record = None
         self.document = document
         self.current_book = self.document.metadata
         self.__state.setdefault("current_page_index", -1)

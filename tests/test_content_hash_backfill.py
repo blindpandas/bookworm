@@ -89,6 +89,62 @@ def test_filename_derived_titles_follow_moved_paths(reader, tmp_path):
     reader.unload()
 
 
+def test_duplicate_hash_matches_are_merged_into_active_document(reader, tmp_path):
+    first_path = tmp_path / "first.txt"
+    second_path = tmp_path / "second.txt"
+    first_path.write_text("same text", encoding="utf-8")
+    second_path.write_text("same text", encoding="utf-8")
+
+    first_uri = DocumentUri.from_filename(first_path)
+    second_uri = DocumentUri.from_filename(second_path)
+    content_hash = create_document(first_uri).get_content_hash()
+
+    first_book = Book.get_or_create(
+        title="first",
+        uri=first_uri,
+        content_hash=content_hash,
+    )
+    second_book = Book.get_or_create(
+        title="second",
+        uri=second_uri,
+        content_hash=content_hash,
+    )
+    first_position_info = DocumentPositionInfo.get_or_create(
+        title="first",
+        uri=first_uri,
+        content_hash=content_hash,
+    )
+    first_position_info.save_position(0, 7)
+    DocumentPositionInfo.get_or_create(
+        title="second",
+        uri=second_uri,
+        content_hash=content_hash,
+    )
+    Note.session().add(
+        Note(
+            title="test",
+            content="test note",
+            page_number=0,
+            position=0,
+            section_title="test section",
+            section_identifier="test-section",
+            book_id=first_book.id,
+        )
+    )
+    Note.session().commit()
+
+    reader.load(second_uri)
+
+    assert Book.query.count() == 1
+    assert Book.query.one().id == second_book.id
+    assert Note.query.one().book_id == second_book.id
+    assert NoteTaker(reader).get_for_page(0).count() == 1
+    assert DocumentPositionInfo.query.count() == 1
+    assert DocumentPositionInfo.query.one().uri == second_uri
+    assert reader.stored_document_info.get_last_position() == (0, 7)
+    reader.unload()
+
+
 @pytest.mark.usefixtures("engine")
 def test_recent_documents_follow_path_changes_after_lazy_hash_backfill(
     asset, tmp_path

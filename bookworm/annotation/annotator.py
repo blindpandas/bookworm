@@ -72,27 +72,11 @@ class Annotator:
         self.reader = reader
         self.session = self.model.session()
 
-    def get_book_by_uri(self, uri, content_hash):
-        return Book.query.filter(
-            sa.or_(Book.uri == uri, Book.content_hash == content_hash)
-        ).one_or_none()
-
     @property
     def current_book(self):
         if not self.reader.ready:
             return
-        current_uri = self.reader.document.uri
-        current_content_hash = self.reader.document.get_content_hash()
-        book = self.get_book_by_uri(current_uri, current_content_hash)
-        if book is None:
-            book = Book(
-                title=self.reader.current_book.title,
-                uri=self.reader.document.uri,
-            )
-            self.session.add(book)
-            self.session.commit()
-            self.session.refresh(book)
-        return book
+        return self.reader.get_or_create_current_book_record()
 
     @classmethod
     def get_books_for_model(cls):
