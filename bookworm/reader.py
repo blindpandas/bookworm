@@ -239,7 +239,6 @@ class EBookReader:
     ) -> DocumentPositionInfo:
         current_book = doc.metadata
         content_hash = doc.get_content_hash()
-        self.__state["ready"] = True
         self.current_book_record = self._get_or_create_document_record(
             Book,
             title=current_book.title,
@@ -325,6 +324,7 @@ class EBookReader:
                 "active_section",
                 self.document.get_section_at_position(self.view.get_insertion_point()),
             )
+        self.__state["ready"] = True
         reader_book_loaded.send(self)
 
     def set_view_parameters(self):

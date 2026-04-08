@@ -1,9 +1,17 @@
 from pathlib import Path
+from functools import cached_property
 
 import pytest
 
 from bookworm.database import Book, DocumentPositionInfo
-from bookworm.document import create_document
+from bookworm.document import (
+    SINGLE_PAGE_DOCUMENT_PAGER,
+    BookMetadata,
+    Section,
+    SinglePageDocument,
+    VirtualDocument,
+    create_document,
+)
 from bookworm.document.uri import DocumentUri
 from bookworm.document.formats.pdf import FitzPdfDocument
 
@@ -100,5 +108,39 @@ def test_reader_set_document_does_not_reread_loaded_pdf(asset, reader, monkeypat
     reader.set_document(document)
 
     assert read_calls == 1
+    reader.unload()
+
+
+def test_virtual_document_is_marked_ready_after_loading(asset, reader):
+    class VirtualTextDocument(VirtualDocument, SinglePageDocument):
+        __internal__ = True
+        format = "test_virtual_document"
+        extensions = ()
+
+        def __init__(self, uri):
+            super(SinglePageDocument, self).__init__(uri)
+            VirtualDocument.__init__(self)
+
+        def read(self):
+            super().read()
+
+        def get_content(self):
+            return "virtual document"
+
+        @cached_property
+        def toc_tree(self):
+            return Section(title="", pager=SINGLE_PAGE_DOCUMENT_PAGER)
+
+        @cached_property
+        def metadata(self):
+            return BookMetadata(title="Virtual Document", author="", publication_year="")
+
+    document = VirtualTextDocument(DocumentUri.from_filename(asset("test.md")))
+    document.read()
+
+    reader.set_document(document)
+
+    assert reader.ready is True
+    assert reader.stored_document_info is None
     reader.unload()
 
