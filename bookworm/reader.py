@@ -323,9 +323,11 @@ class EBookReader:
     ) -> None:
         self.stored_document_info = None
         self.current_book_record = None
+        self.__state["ready"] = False
+        self.__state["current_page_index"] = -1
+        self.__state.pop("active_section", None)
         self.document = document
         self.current_book = self.document.metadata
-        self.__state.setdefault("current_page_index", -1)
         self.set_view_parameters()
         # Use the original URI for storage, falling back to the document's URI
         # if no original URI was passed (i.e., for non-converted files).
@@ -359,9 +361,8 @@ class EBookReader:
                     "Failed to restore last saved reading position", exc_info=True
                 )
         if self.active_section is None:
-            self.__state.setdefault(
-                "active_section",
-                self.document.get_section_at_position(self.view.get_insertion_point()),
+            self.__state["active_section"] = self.document.get_section_at_position(
+                self.view.get_insertion_point()
             )
         self.__state["ready"] = True
         reader_book_loaded.send(self)

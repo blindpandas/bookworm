@@ -140,6 +140,25 @@ def test_reader_unload_closes_partially_initialized_document(asset, reader, monk
     assert reader.ready is False
 
 
+def test_reader_reused_after_successful_load_clears_ready_on_failure(asset, reader):
+    loaded_document = create_document(DocumentUri.from_filename(asset("test.md")))
+    failing_document = create_document(
+        DocumentUri.from_filename(asset("test.md")).create_copy(openner_args={"page": 1})
+    )
+
+    reader.set_document(loaded_document)
+    assert reader.ready is True
+
+    with pytest.raises(PaginationError):
+        reader.set_document(failing_document)
+
+    assert reader.document is failing_document
+    assert reader.ready is False
+
+    loaded_document.close()
+    reader.unload()
+
+
 def test_virtual_document_is_marked_ready_after_loading(asset, reader):
     class VirtualTextDocument(VirtualDocument, SinglePageDocument):
         __internal__ = True
