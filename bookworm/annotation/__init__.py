@@ -56,6 +56,7 @@ class AnnotationService(BookwormService):
         self.view.add_load_handler(
             lambda red: wx.CallAfter(self._check_is_virtual, red)
         )
+        reader_book_loaded.connect(self.on_book_load, sender=self.reader)
         reader_book_unloaded.connect(self.on_book_unload, sender=self.reader)
         reader_page_changed.connect(self.comments_page_handler, sender=self.reader)
         reader_page_changed.connect(
@@ -296,6 +297,12 @@ class AnnotationService(BookwormService):
     def _check_is_virtual(self, sender):
         enable = not sender.document.uri.view_args.get("is_virtual", False)
         self.view.synchronise_menu(self.stateful_menu_ids, enable)
+
+    def on_book_load(self, sender):
+        current_page = sender.get_current_page_object()
+        self.comments_page_handler(sender, current=current_page, prev=None)
+        self.highlight_bookmarked_positions(sender, current=current_page, prev=None)
+        self.highlight_highlighted_text(sender, current=current_page, prev=None)
 
     def on_book_unload(self, sender):
         self.__state.clear()
