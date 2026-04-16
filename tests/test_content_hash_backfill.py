@@ -292,6 +292,67 @@ def test_textless_recent_documents_do_not_merge_by_content_hash(tmp_path):
     assert RecentDocument.query.count() == 2
 
 
+def test_loading_existing_uri_uses_stored_hash_without_recomputing(
+    reader, asset, monkeypatch
+):
+    uri = DocumentUri.from_filename(asset("roman.epub"))
+    document = create_document(uri)
+    content_hash = document.get_content_hash()
+
+    Book.get_or_create(
+        title=document.metadata.title,
+        uri=uri,
+        content_hash=content_hash,
+    )
+    DocumentPositionInfo.get_or_create(
+        title=document.metadata.title,
+        uri=uri,
+        content_hash=content_hash,
+    )
+
+    def fail_get_content_hash():
+        raise AssertionError(
+            "reader should reuse the stored content hash for URI matches"
+        )
+
+    monkeypatch.setattr(document, "get_content_hash", fail_get_content_hash)
+
+    reader.set_document(document)
+
+    assert reader.current_book_record.content_hash == content_hash
+    assert reader.stored_document_info.content_hash == content_hash
+    reader.unload()
+
+
+@pytest.mark.usefixtures("engine")
+def test_recent_documents_with_existing_uri_use_stored_hash_without_recomputing(
+    asset, monkeypatch
+):
+    uri = DocumentUri.from_filename(asset("roman.epub"))
+    document = create_document(uri)
+    content_hash = document.get_content_hash()
+
+    existing_recent = RecentDocument.get_or_create(
+        title=document.metadata.title,
+        uri=uri,
+        content_hash=content_hash,
+    )
+
+    def fail_get_content_hash():
+        raise AssertionError(
+            "recents should reuse the stored content hash for URI matches"
+        )
+
+    monkeypatch.setattr(document, "get_content_hash", fail_get_content_hash)
+
+    try:
+        recents_manager.add_to_recents(document)
+    finally:
+        document.close()
+
+    assert RecentDocument.query.one().id == existing_recent.id
+
+
 @pytest.mark.usefixtures("engine")
 def test_pinned_documents_follow_path_changes_after_lazy_hash_backfill(
     asset, tmp_path

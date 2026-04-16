@@ -7,7 +7,6 @@ from contextlib import suppress
 from pathlib import Path
 
 from selectolax.parser import HTMLParser
-import sqlalchemy as sa
 
 from bookworm import app, config
 from bookworm import typehints as t
@@ -47,6 +46,7 @@ PASS_THROUGH__DOCUMENT_EXCEPTIONS = {
     ArchiveContainsNoDocumentsError,
     ArchiveContainsMultipleDocuments,
 }
+_CONTENT_HASH_UNSET = object()
 
 
 def get_document_format_info():
@@ -155,11 +155,10 @@ class EBookReader:
         )
 
     def _get_matching_document_records(self, model, *, uri_for_storage, content_hash):
-        clauses = [model.uri == uri_for_storage]
-        if content_hash is not None:
-            clauses.append(model.content_hash == content_hash)
+        if content_hash is None:
+            return []
         records = (
-            model.query.filter(sa.or_(*clauses) if len(clauses) > 1 else clauses[0])
+            model.query.filter(model.content_hash == content_hash)
             .order_by(model.id.asc())
             .all()
         )
@@ -175,6 +174,26 @@ class EBookReader:
                 return record
         if records:
             return records[0]
+
+    def _get_document_record_by_uri(self, model, uri_for_storage):
+        return model.query.filter(model.uri == uri_for_storage).one_or_none()
+
+    def _merge_matching_document_records(self, uri_record, hash_matching_records):
+        matching_records = []
+        if uri_record is not None:
+            matching_records.append(uri_record)
+        matching_ids = {
+            record.id
+            for record in matching_records
+            if getattr(record, "id", None) is not None
+        }
+        for record in hash_matching_records:
+            if record.id in matching_ids:
+                continue
+            matching_records.append(record)
+            if record.id is not None:
+                matching_ids.add(record.id)
+        return matching_records
 
     def _merge_book_records(self, record, duplicates):
         for duplicate in duplicates:
@@ -206,15 +225,26 @@ class EBookReader:
         *,
         title: str,
         uri_for_storage: DocumentUri,
-        content_hash: str | None,
+        content_hash_provider: t.Callable[[], str | None],
     ):
         session = model.session()
+        uri_record = self._get_document_record_by_uri(model, uri_for_storage)
+        content_hash = (
+            uri_record.content_hash
+            if uri_record is not None and uri_record.content_hash is not None
+            else content_hash_provider()
+        )
         matching_records = self._get_matching_document_records(
             model,
             uri_for_storage=uri_for_storage,
             content_hash=content_hash,
         )
-        record = self._select_document_record(matching_records, uri_for_storage)
+        matching_records = self._merge_matching_document_records(
+            uri_record, matching_records
+        )
+        record = uri_record or self._select_document_record(
+            matching_records, uri_for_storage
+        )
         if record is None:
             record = model(
                 title=title,
@@ -240,18 +270,25 @@ class EBookReader:
         self, doc: BaseDocument, uri_for_storage: DocumentUri
     ) -> DocumentPositionInfo:
         current_book = doc.metadata
-        content_hash = doc.get_content_hash()
+        content_hash = _CONTENT_HASH_UNSET
+
+        def get_content_hash():
+            nonlocal content_hash
+            if content_hash is _CONTENT_HASH_UNSET:
+                content_hash = doc.get_content_hash()
+            return content_hash
+
         self.current_book_record = self._get_or_create_document_record(
             Book,
             title=current_book.title,
             uri_for_storage=uri_for_storage,
-            content_hash=content_hash,
+            content_hash_provider=get_content_hash,
         )
         return self._get_or_create_document_record(
             DocumentPositionInfo,
             title=current_book.title,
             uri_for_storage=uri_for_storage,
-            content_hash=content_hash,
+            content_hash_provider=get_content_hash,
         )
 
     def get_or_create_current_book_record(self):
@@ -264,7 +301,7 @@ class EBookReader:
             Book,
             title=current_book.title,
             uri_for_storage=self.document.uri,
-            content_hash=self.document.get_content_hash(),
+            content_hash_provider=self.document.get_content_hash,
         )
         return self.current_book_record
 

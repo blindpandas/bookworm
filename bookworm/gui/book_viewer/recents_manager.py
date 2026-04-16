@@ -4,21 +4,42 @@ from bookworm.database import PinnedDocument, RecentDocument
 from bookworm.logger import logger
 
 log = logger.getChild(__name__)
+_CONTENT_HASH_UNSET = object()
+
+
+def _get_document_by_uri(model, uri):
+    for doc in model.query:
+        if uri.is_equal_without_openner_args(doc.uri):
+            return doc
+
+
+def _get_document_by_content_hash(model, content_hash):
+    if content_hash is None:
+        return
+    for doc in model.query:
+        if doc.content_hash == content_hash:
+            return doc
 
 
 def get_document_unique(model, document):
     uri = document.uri
-    content_hash = document.get_content_hash()
-    for doc in model.query:
-        if uri.is_equal_without_openner_args(doc.uri) or (
-            content_hash is not None and doc.content_hash == content_hash
-        ):
-            doc.title = document.metadata.title
-            doc.uri = uri
-            if doc.content_hash is None:
-                doc.content_hash = content_hash
-            model.session.commit()
-            return doc
+    doc = _get_document_by_uri(model, uri)
+    content_hash = (
+        doc.content_hash
+        if doc is not None and doc.content_hash is not None
+        else _CONTENT_HASH_UNSET
+    )
+    if content_hash is _CONTENT_HASH_UNSET:
+        content_hash = document.get_content_hash()
+    if doc is None:
+        doc = _get_document_by_content_hash(model, content_hash)
+    if doc is not None:
+        doc.title = document.metadata.title
+        doc.uri = uri
+        if doc.content_hash is None:
+            doc.content_hash = content_hash
+        model.session.commit()
+        return doc
     return model.get_or_create(
         title=document.metadata.title,
         uri=uri,
