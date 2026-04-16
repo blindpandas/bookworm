@@ -142,6 +142,20 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
             return None
         return blake3(normalized_text.encode()).hexdigest()
 
+    @staticmethod
+    def _hash_document_pages(page_texts: t.Iterable[str]) -> str | None:
+        has_meaningful_text = False
+        hasher = blake3()
+        for page_text in page_texts:
+            encoded_text = page_text.encode()
+            if page_text.strip():
+                has_meaningful_text = True
+            hasher.update(len(encoded_text).to_bytes(8, "big"))
+            hasher.update(encoded_text)
+        if not has_meaningful_text:
+            return None
+        return hasher.hexdigest()
+
     def get_content_hash(self) -> str | None:
         """
         Generates the content hash for this document
@@ -151,10 +165,9 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
             return self._content_hash
         if not self._is_read:
             self.read()
-        text = ""
-        for page in self:
-            text += page.get_text()
-        self._content_hash = self._hash_document_text(text)
+        self._content_hash = self._hash_document_pages(
+            page.get_text() for page in self
+        )
         return self._content_hash
 
     def close(self) -> None:

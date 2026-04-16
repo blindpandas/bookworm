@@ -18,7 +18,7 @@ from bookworm.database.models import (
     PinnedDocument,
     RecentDocument,
 )
-from bookworm.document import create_document
+from bookworm.document import BaseDocument, BasePage, BookMetadata, Pager, Section, create_document
 from bookworm.document.uri import DocumentUri
 from bookworm.gui.book_viewer import recents_manager
 
@@ -35,6 +35,53 @@ def _make_textless_presentation(filename):
     presentation = Presentation()
     presentation.slides.add_slide(presentation.slide_layouts[6])
     presentation.save(filename)
+
+
+class _SyntheticPaginatedPage(BasePage):
+    def get_text(self):
+        return self.document.page_texts[self.index]
+
+
+class _SyntheticPaginatedDocument(BaseDocument):
+    __internal__ = True
+    format = "test_paginated_hash"
+    extensions = ()
+
+    def __init__(self, uri, page_texts, *, title="Paged Document"):
+        super().__init__(uri)
+        self.page_texts = tuple(page_texts)
+        self._metadata = BookMetadata(title=title, author="")
+
+    def __len__(self):
+        return len(self.page_texts)
+
+    def read(self):
+        super().read()
+
+    def get_page(self, index):
+        return _SyntheticPaginatedPage(self, index)
+
+    @property
+    def toc_tree(self):
+        return Section(title=self.metadata.title, pager=Pager(first=0, last=len(self) - 1))
+
+    @property
+    def metadata(self):
+        return self._metadata
+
+
+def _make_synthetic_paginated_document(path, *page_texts, title="Paged Document"):
+    document = _SyntheticPaginatedDocument(
+        DocumentUri(
+            format=_SyntheticPaginatedDocument.format,
+            path=path,
+            openner_args={},
+        ),
+        page_texts,
+        title=title,
+    )
+    document.read()
+    return document
 
 
 def test_loading_existing_records_backfills_hashes_and_preserves_annotations(
@@ -216,6 +263,37 @@ def test_duplicate_hash_matches_are_merged_into_active_document(reader, tmp_path
     assert DocumentPositionInfo.query.count() == 1
     assert DocumentPositionInfo.query.one().uri == second_uri
     assert reader.stored_document_info.get_last_position() == (0, 7)
+    reader.unload()
+
+
+def test_paginated_content_hash_preserves_page_boundaries():
+    first_document = _make_synthetic_paginated_document("first", "alpha", "beta")
+    second_document = _make_synthetic_paginated_document("second", "alphab", "eta")
+    try:
+        assert first_document.get_content_hash() != second_document.get_content_hash()
+    finally:
+        first_document.close()
+        second_document.close()
+
+
+def test_paginated_documents_with_same_flattened_text_do_not_merge(reader):
+    first_document = _make_synthetic_paginated_document(
+        "first", "alpha", "beta", title="Paged Document"
+    )
+    second_document = _make_synthetic_paginated_document(
+        "second", "alphab", "eta", title="Paged Document"
+    )
+
+    reader.set_document(first_document)
+    reader.go_to_page(1, 3)
+    reader.save_current_position()
+    reader.unload()
+
+    reader.set_document(second_document)
+
+    assert Book.query.count() == 2
+    assert DocumentPositionInfo.query.count() == 2
+    assert reader.stored_document_info.get_last_position() == (0, 0)
     reader.unload()
 
 
