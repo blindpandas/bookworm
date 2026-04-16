@@ -104,6 +104,8 @@ def test_comments_are_styled_on_initial_landing_page(asset, reader, view, monkey
     view.contentTextCtrl.EVT_CARET = object()
 
     service = AnnotationService(view)
+    config.conf.spec.update(service.config_spec)
+    config.conf.validate_and_write()
     uri = DocumentUri.from_filename(asset("roman.epub"))
 
     config.conf["annotation"][
