@@ -149,15 +149,17 @@ class EBookReader:
         if record.uri == uri_for_storage:
             return True
         return (
-            record.content_hash == content_hash
+            content_hash is not None
+            and record.content_hash == content_hash
             and record.uri.format == uri_for_storage.format
         )
 
     def _get_matching_document_records(self, model, *, uri_for_storage, content_hash):
+        clauses = [model.uri == uri_for_storage]
+        if content_hash is not None:
+            clauses.append(model.content_hash == content_hash)
         records = (
-            model.query.filter(
-                sa.or_(model.uri == uri_for_storage, model.content_hash == content_hash)
-            )
+            model.query.filter(sa.or_(*clauses) if len(clauses) > 1 else clauses[0])
             .order_by(model.id.asc())
             .all()
         )
@@ -204,7 +206,7 @@ class EBookReader:
         *,
         title: str,
         uri_for_storage: DocumentUri,
-        content_hash: str,
+        content_hash: str | None,
     ):
         session = model.session()
         matching_records = self._get_matching_document_records(

@@ -135,19 +135,26 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         """
         self._is_read = True
 
-    def get_content_hash(self) -> str:
+    @staticmethod
+    def _hash_document_text(text: str) -> str | None:
+        normalized_text = text.strip()
+        if not normalized_text:
+            return None
+        return blake3(normalized_text.encode()).hexdigest()
+
+    def get_content_hash(self) -> str | None:
         """
         Generates the content hash for this document
         subclasses may override this if necessary, such as in the case of SinglePageDocument
         """
-        if (content_hash := getattr(self, "_content_hash", None)) is not None:
-            return content_hash
+        if hasattr(self, "_content_hash"):
+            return self._content_hash
         if not self._is_read:
             self.read()
         text = ""
         for page in self:
             text += page.get_text()
-        self._content_hash = blake3(text.encode()).hexdigest()
+        self._content_hash = self._hash_document_text(text)
         return self._content_hash
 
     def close(self) -> None:
@@ -407,8 +414,11 @@ class SinglePageDocument(BaseDocument):
         """Get the content of this document."""
 
     @lru_cache()
-    def get_content_hash(self) -> str:
-        return blake3(self.get_content().encode()).hexdigest()
+    def get_content_hash(self) -> str | None:
+        if hasattr(self, "_content_hash"):
+            return self._content_hash
+        self._content_hash = self._hash_document_text(self.get_content())
+        return self._content_hash
 
     def get_page(self, index: int) -> SinglePage:
         return SinglePage(self, index)

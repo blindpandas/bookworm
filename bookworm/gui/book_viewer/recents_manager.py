@@ -11,7 +11,7 @@ def get_document_unique(model, document):
     content_hash = document.get_content_hash()
     for doc in model.query:
         if uri.is_equal_without_openner_args(doc.uri) or (
-            doc.content_hash is not None and doc.content_hash == content_hash
+            content_hash is not None and doc.content_hash == content_hash
         ):
             doc.title = document.metadata.title
             doc.uri = uri

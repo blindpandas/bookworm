@@ -3,6 +3,7 @@ from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
+from pptx import Presentation
 import pytest
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import close_all_sessions
@@ -28,6 +29,12 @@ def _make_alembic_config(db_url):
     cfg.set_main_option("script_location", "alembic")
     cfg.set_main_option("sqlalchemy.url", db_url)
     return cfg
+
+
+def _make_textless_presentation(filename):
+    presentation = Presentation()
+    presentation.slides.add_slide(presentation.slide_layouts[6])
+    presentation.save(filename)
 
 
 def test_loading_existing_records_backfills_hashes_and_preserves_annotations(
@@ -212,6 +219,31 @@ def test_duplicate_hash_matches_are_merged_into_active_document(reader, tmp_path
     reader.unload()
 
 
+def test_textless_documents_do_not_merge_by_content_hash(reader, tmp_path):
+    first_path = tmp_path / "first.pptx"
+    second_path = tmp_path / "second.pptx"
+    _make_textless_presentation(first_path)
+    _make_textless_presentation(second_path)
+
+    first_uri = DocumentUri.from_filename(first_path)
+    second_uri = DocumentUri.from_filename(second_path)
+
+    first_doc = create_document(first_uri)
+    try:
+        assert first_doc.get_content_hash() is None
+    finally:
+        first_doc.close()
+
+    reader.load(first_uri)
+    reader.unload()
+    reader.load(second_uri)
+
+    assert Book.query.count() == 2
+    assert DocumentPositionInfo.query.count() == 2
+    assert {record.uri for record in Book.query.all()} == {first_uri, second_uri}
+    reader.unload()
+
+
 @pytest.mark.usefixtures("engine")
 def test_recent_documents_follow_path_changes_after_lazy_hash_backfill(
     asset, tmp_path
@@ -239,6 +271,25 @@ def test_recent_documents_follow_path_changes_after_lazy_hash_backfill(
     recent = RecentDocument.query.one()
     assert recent.id == existing_recent.id
     assert recent.uri == moved_doc.uri
+
+
+@pytest.mark.usefixtures("engine")
+def test_textless_recent_documents_do_not_merge_by_content_hash(tmp_path):
+    first_path = tmp_path / "first.pptx"
+    second_path = tmp_path / "second.pptx"
+    _make_textless_presentation(first_path)
+    _make_textless_presentation(second_path)
+
+    first_doc = create_document(DocumentUri.from_filename(first_path))
+    second_doc = create_document(DocumentUri.from_filename(second_path))
+    try:
+        recents_manager.add_to_recents(first_doc)
+        recents_manager.add_to_recents(second_doc)
+    finally:
+        first_doc.close()
+        second_doc.close()
+
+    assert RecentDocument.query.count() == 2
 
 
 @pytest.mark.usefixtures("engine")
