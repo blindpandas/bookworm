@@ -432,6 +432,51 @@ def test_recent_documents_with_existing_uri_use_stored_hash_without_recomputing(
 
 
 @pytest.mark.usefixtures("engine")
+def test_recent_documents_do_not_merge_across_formats(tmp_path):
+    markdown_path = tmp_path / "shared.md"
+    text_path = tmp_path / "shared.txt"
+    markdown_path.write_text("same text", encoding="utf-8")
+    text_path.write_text("same text", encoding="utf-8")
+
+    markdown_doc = create_document(DocumentUri.from_filename(markdown_path))
+    text_doc = create_document(DocumentUri.from_filename(text_path))
+    try:
+        recents_manager.add_to_recents(markdown_doc)
+        recents_manager.add_to_recents(text_doc)
+    finally:
+        markdown_doc.close()
+        text_doc.close()
+
+    assert RecentDocument.query.count() == 2
+    assert {doc.uri.format for doc in RecentDocument.query.all()} == {"markdown", "txt"}
+
+
+@pytest.mark.usefixtures("engine")
+def test_pinned_documents_do_not_match_across_formats(tmp_path):
+    markdown_path = tmp_path / "shared.md"
+    text_path = tmp_path / "shared.txt"
+    markdown_path.write_text("same text", encoding="utf-8")
+    text_path.write_text("same text", encoding="utf-8")
+
+    markdown_doc = create_document(DocumentUri.from_filename(markdown_path))
+    text_doc = create_document(DocumentUri.from_filename(text_path))
+    try:
+        recents_manager.pin(markdown_doc)
+        assert PinnedDocument.query.count() == 1
+        assert recents_manager.is_pinned(markdown_doc) is True
+        assert recents_manager.is_pinned(text_doc) is False
+    finally:
+        markdown_doc.close()
+        text_doc.close()
+
+    assert PinnedDocument.query.count() == 2
+    assert {doc.uri.format for doc in PinnedDocument.query.all()} == {"markdown", "txt"}
+    assert {doc.uri.format for doc in PinnedDocument.query.filter_by(is_pinned=True).all()} == {
+        "markdown"
+    }
+
+
+@pytest.mark.usefixtures("engine")
 def test_pinned_documents_follow_path_changes_after_lazy_hash_backfill(
     asset, tmp_path
 ):

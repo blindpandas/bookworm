@@ -13,11 +13,11 @@ def _get_document_by_uri(model, uri):
             return doc
 
 
-def _get_document_by_content_hash(model, content_hash):
+def _get_document_by_content_hash(model, content_hash, uri):
     if content_hash is None:
         return
     for doc in model.query:
-        if doc.content_hash == content_hash:
+        if doc.content_hash == content_hash and doc.uri.format == uri.format:
             return doc
 
 
@@ -32,7 +32,7 @@ def get_document_unique(model, document):
     if content_hash is _CONTENT_HASH_UNSET:
         content_hash = document.get_content_hash()
     if doc is None:
-        doc = _get_document_by_content_hash(model, content_hash)
+        doc = _get_document_by_content_hash(model, content_hash, uri)
     if doc is not None:
         doc.title = document.metadata.title
         doc.uri = uri
