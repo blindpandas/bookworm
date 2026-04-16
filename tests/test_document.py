@@ -7,6 +7,7 @@ from bookworm.database import Book, DocumentPositionInfo
 from bookworm.document import (
     SINGLE_PAGE_DOCUMENT_PAGER,
     BookMetadata,
+    PaginationError,
     Section,
     SinglePageDocument,
     VirtualDocument,
@@ -109,6 +110,34 @@ def test_reader_set_document_does_not_reread_loaded_pdf(asset, reader, monkeypat
 
     assert read_calls == 1
     reader.unload()
+
+
+def test_reader_unload_closes_partially_initialized_document(asset, reader, monkeypatch):
+    uri = DocumentUri.from_filename(asset("test.md")).create_copy(
+        openner_args={"page": 1}
+    )
+    document = create_document(uri)
+    close_calls = 0
+    original_close = document.close
+
+    def counting_close():
+        nonlocal close_calls
+        close_calls += 1
+        return original_close()
+
+    monkeypatch.setattr(document, "close", counting_close)
+
+    with pytest.raises(PaginationError):
+        reader.set_document(document)
+
+    assert reader.document is document
+    assert reader.ready is False
+
+    reader.unload()
+
+    assert close_calls == 1
+    assert reader.document is None
+    assert reader.ready is False
 
 
 def test_virtual_document_is_marked_ready_after_loading(asset, reader):

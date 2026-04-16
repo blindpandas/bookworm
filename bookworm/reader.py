@@ -337,21 +337,23 @@ class EBookReader:
         self.set_document(document, original_uri=original_uri)
 
     def unload(self):
-        if self.ready:
-            try:
+        if self.document is None:
+            return
+        try:
+            if self.ready:
                 log.debug("Saving current position.")
                 self.save_current_position()
-                log.debug("Closing current document.")
-                self.document.close()
-            except:
-                log.exception(
-                    "An exception was raised while closing the eBook", exc_info=True
-                )
-                if app.debug:
-                    raise
-            finally:
-                self.reset()
-                reader_book_unloaded.send(self)
+            log.debug("Closing current document.")
+            self.document.close()
+        except:
+            log.exception(
+                "An exception was raised while closing the eBook", exc_info=True
+            )
+            if app.debug:
+                raise
+        finally:
+            self.reset()
+            reader_book_unloaded.send(self)
 
     def save_current_position(self):
         if self.stored_document_info is None:
