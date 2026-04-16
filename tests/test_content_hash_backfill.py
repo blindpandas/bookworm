@@ -352,6 +352,37 @@ def test_recent_documents_follow_path_changes_after_lazy_hash_backfill(
 
 
 @pytest.mark.usefixtures("engine")
+def test_recent_documents_merge_existing_uri_and_hash_duplicates(asset, tmp_path):
+    original_uri = DocumentUri.from_filename(asset("roman.epub"))
+    original_doc = create_document(original_uri)
+    content_hash = original_doc.get_content_hash()
+
+    moved_path = shutil.copy(Path(original_uri.path), tmp_path / "roman.epub")
+    moved_doc = create_document(DocumentUri.from_filename(moved_path))
+    current_recent = RecentDocument.get_or_create(
+        title=moved_doc.metadata.title,
+        uri=moved_doc.uri,
+    )
+    RecentDocument.get_or_create(
+        title=original_doc.metadata.title,
+        uri=original_uri,
+        content_hash=content_hash,
+    )
+
+    try:
+        recents_manager.add_to_recents(moved_doc)
+    finally:
+        original_doc.close()
+        moved_doc.close()
+
+    assert RecentDocument.query.count() == 1
+    merged_recent = RecentDocument.query.one()
+    assert merged_recent.id == current_recent.id
+    assert merged_recent.uri == DocumentUri.from_filename(moved_path)
+    assert merged_recent.content_hash == content_hash
+
+
+@pytest.mark.usefixtures("engine")
 def test_textless_recent_documents_do_not_merge_by_content_hash(tmp_path):
     first_path = tmp_path / "first.pptx"
     second_path = tmp_path / "second.pptx"
@@ -504,3 +535,39 @@ def test_pinned_documents_follow_path_changes_after_lazy_hash_backfill(
     pinned = PinnedDocument.query.one()
     assert pinned.id == existing_pinned.id
     assert pinned.uri == moved_doc.uri
+
+
+@pytest.mark.usefixtures("engine")
+def test_pinned_documents_merge_existing_uri_and_hash_duplicates(asset, tmp_path):
+    original_uri = DocumentUri.from_filename(asset("roman.epub"))
+    original_doc = create_document(original_uri)
+    content_hash = original_doc.get_content_hash()
+
+    moved_path = shutil.copy(Path(original_uri.path), tmp_path / "roman.epub")
+    moved_doc = create_document(DocumentUri.from_filename(moved_path))
+    current_pinned = PinnedDocument.get_or_create(
+        title=moved_doc.metadata.title,
+        uri=moved_doc.uri,
+    )
+    duplicate_pinned = PinnedDocument.get_or_create(
+        title=original_doc.metadata.title,
+        uri=original_uri,
+        content_hash=content_hash,
+    )
+    duplicate_pinned.pin()
+    duplicate_pinned.pinning_order = 7
+    PinnedDocument.session.commit()
+
+    try:
+        assert recents_manager.is_pinned(moved_doc) is True
+    finally:
+        original_doc.close()
+        moved_doc.close()
+
+    assert PinnedDocument.query.count() == 1
+    merged_pinned = PinnedDocument.query.one()
+    assert merged_pinned.id == current_pinned.id
+    assert merged_pinned.uri == DocumentUri.from_filename(moved_path)
+    assert merged_pinned.content_hash == content_hash
+    assert merged_pinned.is_pinned is True
+    assert merged_pinned.pinning_order == 7
