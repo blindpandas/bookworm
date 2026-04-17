@@ -426,7 +426,6 @@ class SinglePageDocument(BaseDocument):
     def get_content(self) -> str:
         """Get the content of this document."""
 
-    @lru_cache()
     def get_content_hash(self) -> str | None:
         if hasattr(self, "_content_hash"):
             return self._content_hash
