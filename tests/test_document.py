@@ -1,5 +1,7 @@
-from pathlib import Path
 from functools import cached_property
+import gc
+from pathlib import Path
+import weakref
 
 import pytest
 
@@ -191,4 +193,43 @@ def test_virtual_document_is_marked_ready_after_loading(asset, reader):
     assert reader.ready is True
     assert reader.stored_document_info is None
     reader.unload()
+
+
+def test_single_page_document_hash_does_not_retain_document_instances(asset):
+    class SyntheticSinglePageDocument(SinglePageDocument):
+        __internal__ = True
+        format = "test_single_page_hash_cache"
+        extensions = ()
+
+        def __init__(self, uri):
+            super().__init__(uri)
+            self.get_content_calls = 0
+
+        def read(self):
+            super().read()
+
+        def get_content(self):
+            self.get_content_calls += 1
+            return "single page document"
+
+        @cached_property
+        def toc_tree(self):
+            return Section(title="", pager=SINGLE_PAGE_DOCUMENT_PAGER)
+
+        @cached_property
+        def metadata(self):
+            return BookMetadata(title="Synthetic Document", author="", publication_year="")
+
+    document = SyntheticSinglePageDocument(DocumentUri.from_filename(asset("test.md")))
+    document.read()
+
+    assert document.get_content_hash() == document.get_content_hash()
+    assert document.get_content_calls == 1
+
+    document_ref = weakref.ref(document)
+    document.close()
+    del document
+    gc.collect()
+
+    assert document_ref() is None
 
