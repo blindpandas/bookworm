@@ -1,0 +1,26 @@
+name: Publish Winget
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag to publish to Winget
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish_winget:
+    name: Publish to Winget
+    runs-on: windows-latest
+    steps:
+      - name: Publish to Winget
+        uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: BlindPandasTeam.Bookworm
+          installers-regex: 'Bookworm-.*-setup.exe$'
+          release-tag: ${{ inputs.release_tag }}
+          fork-user: cary-rowen
+          token: ${{ secrets.PAT_TOKEN }}
