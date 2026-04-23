@@ -19,7 +19,7 @@ Bookworm toimii Windows-käyttöjärjestelmässä. Se toimii hyvin suosittujen r
 * Etsi termien määritelmiä ja lue Wikipedia-artikkeleita.
 * Sisäänrakennettu verkkoartikkelien poimija, jonka avulla voit avata URL-osoitteita ja poimia sivulta automaattisesti pääartikkelin.
 * Sisällysluettelon avulla tapahtuvaa navigointia tuetaan laajasti kaikissa asiakirjamuodoissa.
-* Tuki kirjojen ääneen lukemiselle käyttäen teksti puheeksi -toimintoa, jonka asetuksia voi muokata ääniprofiilien avulla.
+* Tuki kirjojen ääneen lukemiselle teksti puheeksi -toiminnolla, jonka asetuksia voi muokata ääniprofiilien avulla.
 * Tuki tekstin zoomaukselle tavallisia lähennä-, loitonna- ja nollaa-komentoja käyttäen.
 * Tuki minkä tahansa asiakirjamuodon viemiselle pelkkä teksti -muotoon.
 
@@ -33,7 +33,7 @@ Bookworm on saatavana kolmessa muodossa:
 * 64-bittinen asennusohjelma tietokoneille, joissa on 64-bittinen Windows
 * Massamuistiversio muistitikulta käytettäväksi
 
-Jos järjestelmääsi on asennettu vanhoja SAPI 5 -ääniä ja haluat käyttää niitä Bookwormissa, suosittelemme Bookwormin 32-bittisen version asentamista tai 32-bittisen massamuistiversion käyttöä.
+Jos järjestelmääsi on asennettu vanhoja SAPI 5 -puheääniä ja haluat käyttää niitä Bookwormissa, suosittelemme Bookwormin 32-bittisen version asentamista tai 32-bittisen massamuistiversion käyttöä.
 
 Lataa itsellesi sopiva versio. Mikäli valitsit asennettavan version, suorita .exe-tiedosto ja seuraa näytöllä olevia ohjeita. Jos valitsit massamuistiversion, pura pakattu tiedosto haluamaasi kansioon ja käynnistä Bookworm suorittamalla bookworm.exe-tiedosto.
 
@@ -176,8 +176,8 @@ Kun asetukset on määritetty, Baidu-moottoria käytetään kaikissa Bookwormin 
 Bookworm tukee avatun asiakirjan sisällön ääneen lukemista asennettua teksti puheeksi -ääntä käyttäen. Paina F5 aloittaaksesi puhumisen, F6 keskeyttääksesi tai jatkaaksesi ja F7 lopettaaksesi kokonaan.
 
 Voit määrittää puheen kahdella tavalla:
-1. Ääniprofiilia käyttäen: Ääniprofiili sisältää muokkaamasi puheasetukset. Voit ottaa ääniprofiilin käyttöön tai poistaa sen käytöstä milloin tahansa. Ääniprofiilit otetaan käyttöön Puhe-valikosta tai painamalla Ctrl+Vaihto+V. Huom: Bookwormissa on sisäänrakennettuja esimerkkiääniprofiileja.
-2. Yleiset puheasetukset: Näitä asetuksia käytetään oletusarvoisesti, kun mikään ääniprofiili ei ole käytössä. Voit määrittää yleiset puheasetukset sovelluksen asetuksista.
+1. Ääniprofiililla: Ääniprofiili sisältää muokkaamasi puheasetukset. Voit ottaa ääniprofiilin käyttöön tai poistaa sen käytöstä milloin tahansa. Ääniprofiilit otetaan käyttöön Puhe-valikosta tai painamalla Ctrl+Vaihto+V. Huom: Bookwormissa on sisäänrakennettuja esimerkkiääniprofiileja.
+2. Yleisillä puheasetuksilla: Näitä asetuksia käytetään oletusarvoisesti, kun mikään ääniprofiili ei ole käytössä. Voit määrittää yleiset puheasetukset sovelluksen asetuksista.
 
 Voit siirtyä taakse- tai eteenpäin kappale kerrallaan ääneen lukemisen aikana painamalla Alt- sekä vasenta tai oikeaa nuolinäppäintä.
 
