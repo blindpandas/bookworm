@@ -4,13 +4,13 @@ This file contains Bookworm's build system.
 It uses the `invoke` command runner to define and run commands.
 """
 
+import hashlib
 import itertools
 import json
 import os
 import shutil
 import subprocess
 import sys
-import hashlib
 from contextlib import redirect_stdout
 from datetime import datetime
 from functools import wraps
@@ -20,6 +20,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from zipfile import ZIP_LZMA, ZipFile
 
+from bookworm.platforms.win32.update_paths import get_bootstrap_archive_path
 from invoke import task
 from invoke.exceptions import UnexpectedExit
 
@@ -501,7 +502,7 @@ def bundle_update(c):
             archive.write(file, file.relative_to(frozen_dir))
         archive.write(
             PROJECT_ROOT / "scripts" / "executables" / "bootstrap" / "bootstrap.exe",
-            "_internal/bootstrap.exe",
+            get_bootstrap_archive_path(),
         )
     print("Done preparing update bundle.")
 

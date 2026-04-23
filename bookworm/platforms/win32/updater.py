@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import os
 import shutil
 import sys
@@ -7,23 +5,29 @@ import tempfile
 import zipfile
 from contextlib import suppress
 from functools import partial
-from hashlib import sha1
-from pathlib import Path
 
 import win32api
 import win32con
 import win32pdhutil
 import wx
-from requests.exceptions import RequestException
 
-from bookworm import app, config, paths
+from bookworm import app, paths
 from bookworm.commandline_handler import BaseSubcommandHandler, register_subcommand
-from bookworm.gui.components import RobustProgressDialog, SnakDialog
+from bookworm.gui.components import RobustProgressDialog
 from bookworm.http_tools import HttpResource
 from bookworm.logger import logger
+from bookworm.platforms.win32.update_paths import (
+    get_update_target_dir,
+    resolve_bootstrap_path,
+)
 from bookworm.utils import generate_sha1hash
 
 log = logger.getChild(__name__)
+
+
+class BootstrapLaunchError(OSError):
+    def __init__(self, result):
+        super().__init__(f"ShellExecute failed with code {result}")
 
 
 @register_subcommand
@@ -35,7 +39,7 @@ class KillOtherInstancesSubcommand(BaseSubcommandHandler):
         pass
 
     @classmethod
-    def handle_commandline_args(cls, args):
+    def handle_commandline_args(cls, _args):
         kill_other_running_instances()
         return 0
 
@@ -177,14 +181,31 @@ def perform_update(upstream_version_info):
 
 def execute_bootstrap(extraction_dir):
     log.info("Executing bootstrap to complete update.")
-    move_to = extraction_dir.parent
-    shutil.move(str(extraction_dir / "bootstrap.exe"), str(move_to))
-    args = f'"{os.getpid()}" "{extraction_dir}" "{Path(paths.app_path()).parent}" "{sys.executable}"'
-    viewer = wx.GetApp().mainFrame
-    if viewer.reader.ready:
-        viewer.reader.save_current_position()
-    kill_other_running_instances()
-    win32api.ShellExecute(0, "open", str(move_to / "bootstrap.exe"), args, "", 5)
+    try:
+        move_to = extraction_dir.parent
+        bootstrap_path = resolve_bootstrap_path(extraction_dir)
+        target_dir = get_update_target_dir(sys.executable)
+        moved_bootstrap = move_to / "bootstrap.exe"
+        shutil.move(str(bootstrap_path), str(moved_bootstrap))
+        args = f'"{os.getpid()}" "{extraction_dir}" "{target_dir}" "{sys.executable}"'
+        viewer = wx.GetApp().mainFrame
+        if viewer.reader.ready:
+            viewer.reader.save_current_position()
+        kill_other_running_instances()
+        result = win32api.ShellExecute(0, "open", str(moved_bootstrap), args, "", 5)
+        if int(result) <= 32:
+            raise BootstrapLaunchError(result)
+    except Exception:
+        log.exception("Failed to launch bootstrap to complete update.", exc_info=True)
+        wx.MessageBox(
+            _(
+                "The update files were prepared, but Bookworm could not start the final installer step.\n"
+                "Please check the logs for more information."
+            ),
+            _("Error installing update"),
+            style=wx.ICON_ERROR,
+        )
+        return
     log.info("Bootstrap has been executed.")
     sys.exit(0)
 
