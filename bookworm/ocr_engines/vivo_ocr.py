@@ -79,7 +79,7 @@ class VivoOcrEngine(BaseOcrEngine):
         nvdacn_pass = conf.get(VIVO_NVDACN_PASS_CONFIG_KEY)
         if not nvdacn_user or not nvdacn_pass:
             raise OcrAuthenticationError(
-                _("NVDA.cn username and password for Vivo OCR are not configured.")
+                _("nvdacn.com username and password for Vivo OCR are not configured.")
             )
         image_bytes = ocr_request.image.as_bytes(format="JPEG")
         image_b64 = base64.b64encode(image_bytes).decode("utf-8")
