@@ -18,6 +18,7 @@ jobs:
   test:
     name: Test
     runs-on: windows-latest
+    if: github.event_name != 'release'
     steps:
       - name: Check out sources
         uses: actions/checkout@v6
@@ -38,6 +39,7 @@ jobs:
       - name: Install dependencies
         run: |
           uv sync --locked --no-install-project
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           uv run invoke install-local-packages
 
       - name: Generate resources
@@ -52,6 +54,7 @@ jobs:
     name: Build
     runs-on: windows-latest
     needs: test
+    if: github.event_name != 'release'
     strategy:
       matrix:
         CI_ARCH: ["x86", "x64"]  # Define architectures to build for
@@ -78,6 +81,7 @@ jobs:
       - name: Install dependencies and compile resources
         run: |
           uv sync --locked
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           uv run invoke dev
 
       - name: Install NSIS
@@ -88,13 +92,16 @@ jobs:
       - name: Build the project
         run: |
           uv run invoke build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           uv run invoke create-portable
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           uv run invoke gen-checksum
 
       - name: Generate translation catalogs and version info
         if: matrix.CI_ARCH == 'x64'
         run: |
           uv run invoke gen-pot
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           uv run invoke update-version-info
 
       - name: Upload installer
@@ -139,7 +146,7 @@ jobs:
     name: Generate update-info.json
     runs-on: windows-latest
     needs: build
-    if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'pull_request'
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Check out sources
         uses: actions/checkout@v6
@@ -184,7 +191,7 @@ jobs:
     name: Deploy
     runs-on: windows-latest
     needs: [build, generate_update_info]
-    if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'pull_request'
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v8
@@ -220,6 +227,7 @@ jobs:
       - name: Check out sources
         uses: actions/checkout@v6
         with:
+          ref: main
           fetch-depth: 1
 
       - name: Download update_info.json from release
