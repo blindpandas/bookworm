@@ -275,4 +275,5 @@ jobs:
         with:
           identifier: BlindPandasTeam.Bookworm
           installers-regex: 'Bookworm-.*-setup.exe$'
+          fork-user: cary-rowen
           token: ${{ secrets.PAT_TOKEN }}
