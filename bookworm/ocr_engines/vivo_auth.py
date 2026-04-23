@@ -45,7 +45,7 @@ def _fetch_signature_from_service(nvdacn_user, nvdacn_pass, signing_string_bytes
     url = f"{NVDACN_API_URL}?{urllib.parse.urlencode(api_params)}"
     try:
         log.debug(
-            "Requesting Vivo signature from NVDA.cn API for user: %s", nvdacn_user
+            "Requesting Vivo signature from nvdacn.com API for user: %s", nvdacn_user
         )
         response = auth_session.post(url, data=signing_string_bytes, timeout=10)
         response.raise_for_status()

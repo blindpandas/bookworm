@@ -90,6 +90,7 @@ class DocumentBase(Base, GetOrCreateMixin):
     id = sa.Column(sa.Integer, primary_key=True)
     title = sa.Column(sa.String(512), nullable=False)
     uri = sa.Column(DocumentUriDBType(1024), nullable=False, unique=True, index=True)
+    content_hash = sa.Column(sa.TEXT, nullable=True)
 
     @classmethod
     def get_or_create(cls, *args, **kwargs):

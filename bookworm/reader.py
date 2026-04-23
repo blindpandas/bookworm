@@ -11,7 +11,7 @@ from selectolax.parser import HTMLParser
 from bookworm import app, config
 from bookworm import typehints as t
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
-from bookworm.database import DocumentPositionInfo
+from bookworm.database import Book, Bookmark, DocumentPositionInfo, Note, Quote
 from bookworm.document import (
     ArchiveContainsMultipleDocuments,
     ArchiveContainsNoDocumentsError,
@@ -46,6 +46,7 @@ PASS_THROUGH__DOCUMENT_EXCEPTIONS = {
     ArchiveContainsNoDocumentsError,
     ArchiveContainsMultipleDocuments,
 }
+_CONTENT_HASH_UNSET = object()
 
 
 def get_document_format_info():
@@ -100,12 +101,16 @@ class UriResolver:
             return doc, self.original_uri
         except ChangeDocument as e:
             # Propagate the original URI through the conversion chain.
-            return UriResolver(uri=e.new_uri, original_uri=self.original_uri).read_document()
+            return UriResolver(
+                uri=e.new_uri, original_uri=self.original_uri
+            ).read_document()
         except:
             if (fallback_uri := self.uri.fallback_uri) is not None:
                 if self.num_fallbacks < 4:
                     return UriResolver(
-                        uri=fallback_uri, num_fallbacks=self.num_fallbacks + 1, original_uri=self.original_uri
+                        uri=fallback_uri,
+                        num_fallbacks=self.num_fallbacks + 1,
+                        original_uri=self.original_uri,
                     ).read_document()
             raise
 
@@ -118,7 +123,9 @@ class UriResolver:
         except DocumentIOError as e:
             raise ResourceDoesNotExist("Failed to load document") from e
         except Exception as e:
-            if type(e) in PASS_THROUGH__DOCUMENT_EXCEPTIONS or isinstance(e, ChangeDocument):
+            if type(e) in PASS_THROUGH__DOCUMENT_EXCEPTIONS or isinstance(
+                e, ChangeDocument
+            ):
                 raise e
             raise ReaderError("Failed to open document") from e
         return document
@@ -135,7 +142,168 @@ class EBookReader:
         "view",
         "__state",
         "current_book",
+        "current_book_record",
     ]
+
+    def _record_matches_document(self, record, uri_for_storage, content_hash):
+        if record.uri == uri_for_storage:
+            return True
+        return (
+            content_hash is not None
+            and record.content_hash == content_hash
+            and record.uri.format == uri_for_storage.format
+        )
+
+    def _get_matching_document_records(self, model, *, uri_for_storage, content_hash):
+        if content_hash is None:
+            return []
+        records = (
+            model.query.filter(model.content_hash == content_hash)
+            .order_by(model.id.asc())
+            .all()
+        )
+        return [
+            record
+            for record in records
+            if self._record_matches_document(record, uri_for_storage, content_hash)
+        ]
+
+    def _select_document_record(self, records, uri_for_storage):
+        for record in records:
+            if record.uri == uri_for_storage:
+                return record
+        if records:
+            return records[0]
+
+    def _get_document_record_by_uri(self, model, uri_for_storage):
+        return model.query.filter(model.uri == uri_for_storage).one_or_none()
+
+    def _merge_matching_document_records(self, uri_record, hash_matching_records):
+        matching_records = []
+        if uri_record is not None:
+            matching_records.append(uri_record)
+        matching_ids = {
+            record.id
+            for record in matching_records
+            if getattr(record, "id", None) is not None
+        }
+        for record in hash_matching_records:
+            if record.id in matching_ids:
+                continue
+            matching_records.append(record)
+            if record.id is not None:
+                matching_ids.add(record.id)
+        return matching_records
+
+    def _merge_book_records(self, record, duplicates):
+        for duplicate in duplicates:
+            for annotation_model in (Bookmark, Note, Quote):
+                annotation_model.query.filter_by(book_id=duplicate.id).update(
+                    {annotation_model.book_id: record.id},
+                    synchronize_session=False,
+                )
+
+    def _merge_document_position_infos(self, record, duplicates):
+        if record.get_last_position() != (0, 0):
+            return
+        for duplicate in duplicates:
+            if duplicate.get_last_position() != (0, 0):
+                record.last_page, record.last_position = duplicate.get_last_position()
+                return
+
+    def _merge_document_records(self, model, session, record, duplicates):
+        if model is Book:
+            self._merge_book_records(record, duplicates)
+        elif model is DocumentPositionInfo:
+            self._merge_document_position_infos(record, duplicates)
+        for duplicate in duplicates:
+            session.delete(duplicate)
+
+    def _get_or_create_document_record(
+        self,
+        model,
+        *,
+        title: str,
+        uri_for_storage: DocumentUri,
+        content_hash_provider: t.Callable[[], str | None],
+    ):
+        session = model.session()
+        uri_record = self._get_document_record_by_uri(model, uri_for_storage)
+        content_hash = (
+            uri_record.content_hash
+            if uri_record is not None and uri_record.content_hash is not None
+            else content_hash_provider()
+        )
+        matching_records = self._get_matching_document_records(
+            model,
+            uri_for_storage=uri_for_storage,
+            content_hash=content_hash,
+        )
+        matching_records = self._merge_matching_document_records(
+            uri_record, matching_records
+        )
+        record = uri_record or self._select_document_record(
+            matching_records, uri_for_storage
+        )
+        if record is None:
+            record = model(
+                title=title,
+                uri=uri_for_storage,
+                content_hash=content_hash,
+            )
+        else:
+            duplicate_records = [
+                candidate for candidate in matching_records if candidate.id != record.id
+            ]
+            self._merge_document_records(model, session, record, duplicate_records)
+            if record.title != title:
+                record.title = title
+            if record.content_hash is None:
+                record.content_hash = content_hash
+            if record.uri != uri_for_storage:
+                record.uri = uri_for_storage
+        session.add(record)
+        session.commit()
+        return record
+
+    def _get_or_create_document_position_info(
+        self, doc: BaseDocument, uri_for_storage: DocumentUri
+    ) -> DocumentPositionInfo:
+        current_book = doc.metadata
+        content_hash = _CONTENT_HASH_UNSET
+
+        def get_content_hash():
+            nonlocal content_hash
+            if content_hash is _CONTENT_HASH_UNSET:
+                content_hash = doc.get_content_hash()
+            return content_hash
+
+        self.current_book_record = self._get_or_create_document_record(
+            Book,
+            title=current_book.title,
+            uri_for_storage=uri_for_storage,
+            content_hash_provider=get_content_hash,
+        )
+        return self._get_or_create_document_record(
+            DocumentPositionInfo,
+            title=current_book.title,
+            uri_for_storage=uri_for_storage,
+            content_hash_provider=get_content_hash,
+        )
+
+    def get_or_create_current_book_record(self):
+        if self.current_book_record is not None:
+            return self.current_book_record
+        if self.document is None:
+            return
+        current_book = self.document.metadata
+        self.current_book_record = self._get_or_create_document_record(
+            Book,
+            title=current_book.title,
+            uri_for_storage=self.document.uri,
+            content_hash_provider=self.document.get_content_hash,
+        )
+        return self.current_book_record
 
     # Convenience method: make this available for importers as a staticmethod
     get_document_format_info = staticmethod(get_document_format_info)
@@ -147,29 +315,34 @@ class EBookReader:
     def reset(self):
         self.document = None
         self.stored_document_info = None
+        self.current_book_record = None
         self.__state = {}
 
-    def set_document(self, document, original_uri=None):
+    def set_document(
+        self, document: BaseDocument, original_uri: str | None = None
+    ) -> None:
+        self.stored_document_info = None
+        self.current_book_record = None
+        self.__state["ready"] = False
+        self.__state["current_page_index"] = -1
+        self.__state.pop("active_section", None)
         self.document = document
         self.current_book = self.document.metadata
-        self.__state.setdefault("current_page_index", -1)
         self.set_view_parameters()
-        self.current_page = 0
-        
         # Use the original URI for storage, falling back to the document's URI
         # if no original URI was passed (i.e., for non-converted files).
         uri_for_storage = original_uri or self.document.uri
-
         # Crucially, overwrite the document's current URI with the original one.
         # This ensures all subsequent operations (recents, pinning, position saving)
         # use the correct identifier for the file the user actually opened.
         self.document.uri = uri_for_storage
-
         if self.document.uri.view_args.get("save_last_position", True):
             log.debug("Retrieving last saved reading position from the database")
-            self.stored_document_info = DocumentPositionInfo.get_or_create(
-                title=self.current_book.title, uri=uri_for_storage
+            self.stored_document_info = self._get_or_create_document_position_info(
+                document, uri_for_storage
             )
+        # the current_page is set after the document position info and related models are created in order to allow dependent services to access the current_book
+        self.current_page = 0
         if open_args := self.document.uri.openner_args:
             page = int(open_args.get("page", 0))
             pos = int(open_args.get("position", 0))
@@ -188,10 +361,10 @@ class EBookReader:
                     "Failed to restore last saved reading position", exc_info=True
                 )
         if self.active_section is None:
-            self.__state.setdefault(
-                "active_section",
-                self.document.get_section_at_position(self.view.get_insertion_point()),
+            self.__state["active_section"] = self.document.get_section_at_position(
+                self.view.get_insertion_point()
             )
+        self.__state["ready"] = True
         reader_book_loaded.send(self)
 
     def set_view_parameters(self):
@@ -204,21 +377,23 @@ class EBookReader:
         self.set_document(document, original_uri=original_uri)
 
     def unload(self):
-        if self.ready:
-            try:
+        if self.document is None:
+            return
+        try:
+            if self.ready:
                 log.debug("Saving current position.")
                 self.save_current_position()
-                log.debug("Closing current document.")
-                self.document.close()
-            except:
-                log.exception(
-                    "An exception was raised while closing the eBook", exc_info=True
-                )
-                if app.debug:
-                    raise
-            finally:
-                self.reset()
-                reader_book_unloaded.send(self)
+            log.debug("Closing current document.")
+            self.document.close()
+        except:
+            log.exception(
+                "An exception was raised while closing the eBook", exc_info=True
+            )
+            if app.debug:
+                raise
+        finally:
+            self.reset()
+            reader_book_unloaded.send(self)
 
     def save_current_position(self):
         if self.stored_document_info is None:
@@ -230,7 +405,7 @@ class EBookReader:
 
     @property
     def ready(self) -> bool:
-        return self.document is not None
+        return self.document is not None and self.__state.get("ready", False) == True
 
     @property
     def active_section(self) -> Section:

@@ -9,15 +9,15 @@ display_name = "Bookworm"
 description = "The Universally accessible document reader"
 author = "Blind Pandas"
 author_email = "info@blindpandas.com"
-version = "2025.1"
-version_ex = "2025.1.0.0"
+version = "2026.1"
+version_ex = "2026.1.0.0"
 url = "https://github.com/blindpandas/bookworm"
 website = "https://github.com/blindpandas/bookworm"
 changelog_url = f"{url}/releases/tag/{version}"
 update_url = (
     "https://raw.githubusercontent.com/blindpandas/bookworm/main/update_info.json"
 )
-copyright = f"Copyright (c) 2025 {author} and {display_name} contributors."
+copyright = f"Copyright (c) 2026 {author} and {display_name} contributors."
 exit_code = 0
 is_frozen = getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
 arch = "x86" if struct.calcsize("P") == 4 else "x64"

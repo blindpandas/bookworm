@@ -118,7 +118,7 @@ class OcrPanel(SettingsPanel):
         )
         # Translators: the label of a group of controls in the OCR page
         # of the settings related to Vivo OCR engine
-        vivoBox = self.make_static_box(_("Vivo OCR Engine (requires NVDA.cn account)"))
+        vivoBox = self.make_static_box(_("Vivo OCR Engine (requires nvdacn.com account)"))
         # Translators: the label of an edit field for username
         wx.StaticText(vivoBox, -1, _("Username:"))
         wx.TextCtrl(vivoBox, -1, name="ocr.vivo_nvdacn_user").SetSizerProps(expand=True)

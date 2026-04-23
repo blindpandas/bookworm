@@ -1,7 +1,22 @@
+from functools import cached_property
+import gc
+from pathlib import Path
+import weakref
+
 import pytest
 
-from bookworm.document import create_document
+from bookworm.database import Book, DocumentPositionInfo
+from bookworm.document import (
+    SINGLE_PAGE_DOCUMENT_PAGER,
+    BookMetadata,
+    PaginationError,
+    Section,
+    SinglePageDocument,
+    VirtualDocument,
+    create_document,
+)
 from bookworm.document.uri import DocumentUri
+from bookworm.document.formats.pdf import FitzPdfDocument
 
 
 def test_epub_metadata(asset):
@@ -39,3 +54,182 @@ def test_epub_document_section_at_text_position(asset):
     for text_position, section_title in position_to_section_title.items():
         section = epub.get_section_at_position(text_position)
         assert section.title == section_title
+
+
+def test_opening_reader_creates_book_and_document_info(asset, reader):
+    uri = DocumentUri.from_filename(asset("The Diary of a Nobody.epub"))
+    doc = create_document(uri)
+    content_hash = doc.get_content_hash()
+    reader.set_document(doc)
+    assert Book.query.count() == 1
+    assert DocumentPositionInfo.query.count() == 1
+
+
+def test_opening_existing_document_falls_bac_kto_same_entry(reader, asset):
+    uri = DocumentUri.from_filename(asset("The Diary of a Nobody.epub"))
+    doc = create_document(uri)
+    content_hash = doc.get_content_hash()
+    doc_entry = DocumentPositionInfo.get_or_create(
+        title=doc.metadata.title, uri=uri, content_hash=content_hash
+    )
+    book_entry = Book.get_or_create(
+        title=doc.metadata.title, uri=uri, content_hash=content_hash
+    )
+    reader.set_document(doc)
+    assert DocumentPositionInfo.query.count() == 1
+    assert Book.query.count() == 1
+
+def test_document_with_different_format_and_name_creates_new_entry(asset, reader):
+    path = Path(asset("test.md"))
+    uri = DocumentUri.from_filename(path)
+    reader.load(uri)
+    reader.unload()
+    new_path = Path(path.parent, "test.txt")
+    new_path.write_text(path.read_text())
+    new_uri = DocumentUri.from_filename(new_path)
+    reader.load(new_uri)
+    reader.unload()
+    new_path.unlink(missing_ok=True)
+    assert Book.query.count() == 2
+
+
+def test_reader_set_document_does_not_reread_loaded_pdf(asset, reader, monkeypatch):
+    uri = DocumentUri.from_filename(asset("tagged_sample.pdf"))
+    read_calls = 0
+    original_read = FitzPdfDocument.read
+
+    def counting_read(self, *args, **kwargs):
+        nonlocal read_calls
+        read_calls += 1
+        return original_read(self, *args, **kwargs)
+
+    monkeypatch.setattr(FitzPdfDocument, "read", counting_read)
+
+    document = create_document(uri)
+    assert read_calls == 1
+
+    reader.set_document(document)
+
+    assert read_calls == 1
+    reader.unload()
+
+
+def test_reader_unload_closes_partially_initialized_document(asset, reader, monkeypatch):
+    uri = DocumentUri.from_filename(asset("test.md")).create_copy(
+        openner_args={"page": 1}
+    )
+    document = create_document(uri)
+    close_calls = 0
+    original_close = document.close
+
+    def counting_close():
+        nonlocal close_calls
+        close_calls += 1
+        return original_close()
+
+    monkeypatch.setattr(document, "close", counting_close)
+
+    with pytest.raises(PaginationError):
+        reader.set_document(document)
+
+    assert reader.document is document
+    assert reader.ready is False
+
+    reader.unload()
+
+    assert close_calls == 1
+    assert reader.document is None
+    assert reader.ready is False
+
+
+def test_reader_reused_after_successful_load_clears_ready_on_failure(asset, reader):
+    loaded_document = create_document(DocumentUri.from_filename(asset("test.md")))
+    failing_document = create_document(
+        DocumentUri.from_filename(asset("test.md")).create_copy(openner_args={"page": 1})
+    )
+
+    reader.set_document(loaded_document)
+    assert reader.ready is True
+
+    with pytest.raises(PaginationError):
+        reader.set_document(failing_document)
+
+    assert reader.document is failing_document
+    assert reader.ready is False
+
+    loaded_document.close()
+    reader.unload()
+
+
+def test_virtual_document_is_marked_ready_after_loading(asset, reader):
+    class VirtualTextDocument(VirtualDocument, SinglePageDocument):
+        __internal__ = True
+        format = "test_virtual_document"
+        extensions = ()
+
+        def __init__(self, uri):
+            super(SinglePageDocument, self).__init__(uri)
+            VirtualDocument.__init__(self)
+
+        def read(self):
+            super().read()
+
+        def get_content(self):
+            return "virtual document"
+
+        @cached_property
+        def toc_tree(self):
+            return Section(title="", pager=SINGLE_PAGE_DOCUMENT_PAGER)
+
+        @cached_property
+        def metadata(self):
+            return BookMetadata(title="Virtual Document", author="", publication_year="")
+
+    document = VirtualTextDocument(DocumentUri.from_filename(asset("test.md")))
+    document.read()
+
+    reader.set_document(document)
+
+    assert reader.ready is True
+    assert reader.stored_document_info is None
+    reader.unload()
+
+
+def test_single_page_document_hash_does_not_retain_document_instances(asset):
+    class SyntheticSinglePageDocument(SinglePageDocument):
+        __internal__ = True
+        format = "test_single_page_hash_cache"
+        extensions = ()
+
+        def __init__(self, uri):
+            super().__init__(uri)
+            self.get_content_calls = 0
+
+        def read(self):
+            super().read()
+
+        def get_content(self):
+            self.get_content_calls += 1
+            return "single page document"
+
+        @cached_property
+        def toc_tree(self):
+            return Section(title="", pager=SINGLE_PAGE_DOCUMENT_PAGER)
+
+        @cached_property
+        def metadata(self):
+            return BookMetadata(title="Synthetic Document", author="", publication_year="")
+
+    document = SyntheticSinglePageDocument(DocumentUri.from_filename(asset("test.md")))
+    document.read()
+
+    assert document.get_content_hash() == document.get_content_hash()
+    assert document.get_content_calls == 1
+
+    document_ref = weakref.ref(document)
+    document.close()
+    del document
+    gc.collect()
+
+    assert document_ref() is None
+
