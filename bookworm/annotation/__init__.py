@@ -56,6 +56,7 @@ class AnnotationService(BookwormService):
         self.view.add_load_handler(
             lambda red: wx.CallAfter(self._check_is_virtual, red)
         )
+        reader_book_loaded.connect(self.on_book_load, sender=self.reader)
         reader_book_unloaded.connect(self.on_book_unload, sender=self.reader)
         reader_page_changed.connect(self.comments_page_handler, sender=self.reader)
         reader_page_changed.connect(
@@ -297,11 +298,19 @@ class AnnotationService(BookwormService):
         enable = not sender.document.uri.view_args.get("is_virtual", False)
         self.view.synchronise_menu(self.stateful_menu_ids, enable)
 
+    def on_book_load(self, sender):
+        current_page = sender.get_current_page_object()
+        self.comments_page_handler(sender, current=current_page, prev=None)
+        self.highlight_bookmarked_positions(sender, current=current_page, prev=None)
+        self.highlight_highlighted_text(sender, current=current_page, prev=None)
+
     def on_book_unload(self, sender):
         self.__state.clear()
 
     @classmethod
     def comments_page_handler(cls, sender, current, prev):
+        if not sender.ready:
+            return
         comments = NoteTaker(sender)
         comments = comments.get_for_page()
         if comments.count():
@@ -316,6 +325,8 @@ class AnnotationService(BookwormService):
     def highlight_bookmarked_positions(cls, sender, current, prev):
         if not config.conf["annotation"]["use_visuals"]:
             return
+        if not sender.ready:
+            return
         bookmarks = Bookmarker(sender).get_for_page()
         if not bookmarks.count():
             return
@@ -325,6 +336,8 @@ class AnnotationService(BookwormService):
     @classmethod
     def highlight_highlighted_text(cls, sender, current, prev):
         if not config.conf["annotation"]["use_visuals"]:
+            return
+        if not sender.ready:
             return
         quoter = Quoter(sender)
         for_page = quoter.get_for_page()

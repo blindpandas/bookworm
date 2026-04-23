@@ -1,6 +1,6 @@
 from logging.config import fileConfig
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy import pool
 from sqlalchemy.orm import configure_mappers
 
@@ -60,6 +60,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        render_as_batch=True,
     )
 
     with context.begin_transaction():
@@ -74,12 +75,22 @@ def run_migrations_online() -> None:
 
     """
     connectable = create_engine(config.get_main_option("sqlalchemy.url"))
+    # see: https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#sqlite-transactions
+    @event.listens_for(connectable, "connect")
+    def do_connect(dbapi_connection, connection_record):
+        dbapi_connection.isolation_level = None
+
+
+    @event.listens_for(connectable, "begin")
+    def do_begin(conn):
+        conn.exec_driver_sql("BEGIN")    
 
     with connectable.connect() as connection:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
             process_revision_directives=writer,
+            render_as_batch=True,
         )
 
         with context.begin_transaction():

@@ -126,6 +126,7 @@ class PowerpointPresentation(BaseDocument):
         return PowerpointSlide(self.slides[index], self, index)
 
     def read(self):
+        super().read()
         self.pptx_filepath = self.get_file_system_path()
         self.presentation = pptx.Presentation(self.pptx_filepath)
         self.slides = self.presentation.slides
