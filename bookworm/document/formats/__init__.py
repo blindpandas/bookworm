@@ -1,6 +1,7 @@
 # coding: utf-8
 
-from .archive import ArchivedDocument
+#from .archive import ArchivedDocument
+from .daisy import DaisyDocument
 from .epub import EpubDocument
 from .fb2 import FB2Document, FitzFB2Document
 from .html import FileSystemHtmlDocument, WebHtmlDocument
