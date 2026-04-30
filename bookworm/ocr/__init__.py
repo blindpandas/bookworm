@@ -32,6 +32,9 @@ OCR_CONFIG_SPEC = {
         baidu_secret_key='string(default="")',
         vivo_nvdacn_user='string(default="")',
         vivo_nvdacn_pass='string(default="")',
+        glm_ocr_api_key='string(default="")',
+        glm_ocr_mode='option("cloud", "ollama", "local", default="cloud")',
+        glm_ocr_ollama_host='string(default="http://localhost:11434")',
     )
 }
 

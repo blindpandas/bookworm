@@ -127,6 +127,25 @@ class OcrPanel(SettingsPanel):
         wx.TextCtrl(
             vivoBox, -1, name="ocr.vivo_nvdacn_pass", style=wx.TE_PASSWORD
         ).SetSizerProps(expand=True)
+        # Translators: the label of a group of controls in the OCR page
+        # of the settings related to GLM-OCR engine
+        glmBox = self.make_static_box(_("GLM-OCR Engine (Zhipu)"))
+        # Translators: the label of a combobox for selecting GLM-OCR mode
+        wx.StaticText(glmBox, -1, _("Mode:"))
+        self.glmModeChoice = wx.Choice(
+            glmBox, -1, choices=[_("Cloud API"), _("Ollama (Local)"), _("Self-hosted (GPU)")]
+        )
+        self.glmModeChoice.SetSizerProps(expand=True)
+        # Translators: the label of an edit field for API key
+        wx.StaticText(glmBox, -1, _("API Key (for Cloud mode):"))
+        wx.TextCtrl(
+            glmBox, -1, name="ocr.glm_ocr_api_key", style=wx.TE_PASSWORD
+        ).SetSizerProps(expand=True)
+        # Translators: the label of an edit field for Ollama host
+        wx.StaticText(glmBox, -1, _("Ollama Host (for Ollama mode):"))
+        wx.TextCtrl(glmBox, -1, name="ocr.glm_ocr_ollama_host").SetSizerProps(
+            expand=True
+        )
         # Translators: the label of a group of controls in the reading page
         # of the settings related to image enhancement
         miscBox = self.make_static_box(_("Image processing"))
@@ -139,6 +158,8 @@ class OcrPanel(SettingsPanel):
                 name="ocr.enhance_images",
             )
 
+    _GLM_MODE_MAP = ["cloud", "ollama", "local"]
+
     def reconcile(self, strategy=ReconciliationStrategies.load):
         if not any(self._engines):
             return
@@ -146,11 +167,19 @@ class OcrPanel(SettingsPanel):
             self.ocrEngine.SetSelection(
                 self._engines.index(self._service.get_first_available_ocr_engine())
             )
+            mode_val = self.config.get("glm_ocr_mode", "cloud")
+            try:
+                self.glmModeChoice.SetSelection(self._GLM_MODE_MAP.index(mode_val))
+            except ValueError:
+                self.glmModeChoice.SetSelection(0)
         elif strategy is ReconciliationStrategies.save:
             selected_engine = self._engines[self.ocrEngine.GetSelection()]
             if self.config["engine"] != selected_engine.name:
                 self.config["engine"] = selected_engine.name
                 self._service._init_ocr_engine()
+            self.config["glm_ocr_mode"] = self._GLM_MODE_MAP[
+                self.glmModeChoice.GetSelection()
+            ]
         super().reconcile(strategy=strategy)
         if strategy is ReconciliationStrategies.save:
             self._service._init_ocr_engine()
