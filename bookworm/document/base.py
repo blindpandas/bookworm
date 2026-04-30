@@ -339,6 +339,8 @@ class BasePage(metaclass=ABCMeta):
 
     @property
     def semantic_structure(self):
+        if hasattr(self, "_injected_semantic_structure"):
+            return self._injected_semantic_structure
         try:
             semantic_structure = self.get_semantic_structure()
         except NotImplementedError:
