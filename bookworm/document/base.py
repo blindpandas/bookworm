@@ -311,6 +311,14 @@ class BasePage(metaclass=ABCMeta):
         """
         raise NotImplementedError
 
+    def get_embedded_image(self, image_index: int) -> ImageIO:
+        """Return an image embedded in the page content."""
+        raise NotImplementedError
+
+    def get_embedded_image_info(self, image_index: int):
+        """Return metadata for an image embedded in the page content."""
+        raise NotImplementedError
+
     def get_label(self) -> str:
         """Return the page label string (commonly found on PDFs)."""
         return ""
@@ -409,6 +417,12 @@ class SinglePage(BasePage):
     def get_table_markup(self, table_index):
         return self.document.get_document_table_markup(table_index)
 
+    def get_embedded_image(self, image_index: int) -> ImageIO:
+        return self.document.get_document_embedded_image(image_index)
+
+    def get_embedded_image_info(self, image_index: int):
+        return self.document.get_document_embedded_image_info(image_index)
+
     def get_style_info(self):
         return self.document.get_document_style_info()
 
@@ -456,6 +470,12 @@ class SinglePageDocument(BaseDocument):
         raise NotImplementedError
 
     def get_document_table_markup(self, table_index):
+        raise NotImplementedError
+
+    def get_document_embedded_image(self, image_index: int) -> ImageIO:
+        raise NotImplementedError
+
+    def get_document_embedded_image_info(self, image_index: int):
         raise NotImplementedError
 
     def resolve_link(self, text_range):

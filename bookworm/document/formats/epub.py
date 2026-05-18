@@ -33,7 +33,14 @@ from bookworm.utils import format_datetime, is_external_url
 
 from .. import SINGLE_PAGE_DOCUMENT_PAGER, BookMetadata, ChangeDocument
 from .. import DocumentCapability as DC
-from .. import DocumentError, LinkTarget, Section, SinglePageDocument, TreeStackBuilder
+from .. import (
+    DocumentError,
+    DocumentIOError,
+    LinkTarget,
+    Section,
+    SinglePageDocument,
+    TreeStackBuilder,
+)
 
 log = logger.getChild(__name__)
 HTML_FILE_EXTS = {
@@ -134,6 +141,62 @@ class EpubDocument(SinglePageDocument):
 
     def get_document_table_markup(self, table_index):
         return self.structure.get_table_markup(table_index)
+
+    def get_document_embedded_image_info(self, image_index):
+        return self.structure.get_image_info(image_index)
+
+    def get_document_embedded_image(self, image_index) -> ImageIO:
+        image_info = self.get_document_embedded_image_info(image_index)
+        if image_info.src.lower().startswith("data:image/"):
+            try:
+                return ImageIO.from_data_uri(image_info.src)
+            except Exception as e:
+                raise DocumentIOError("Failed to decode embedded image") from e
+        parsed_src = urllib_parse.urlsplit(image_info.src)
+        if parsed_src.scheme or parsed_src.netloc:
+            raise DocumentIOError("Remote images are not supported")
+        href = urllib_parse.unquote(parsed_src.path)
+        if image_item := self.get_epub_image_item_by_href(href):
+            try:
+                return ImageIO.from_bytes(image_item.content)
+            except Exception as e:
+                raise DocumentIOError("Failed to decode embedded image") from e
+        raise DocumentIOError(f"Could not resolve embedded image: {href}")
+
+    def get_epub_image_item_by_href(self, href):
+        candidate_hrefs = (
+            href,
+            href.lstrip("./"),
+            PurePosixPath(href).as_posix(),
+            PurePosixPath(href.lstrip("./")).as_posix(),
+        )
+        for candidate in candidate_hrefs:
+            if image_item := self.epub.get_item_with_href(candidate):
+                return image_item
+        image_name = PurePosixPath(href).name
+        fallback_matches = []
+        for item in self.epub.get_items_of_type(ebooklib.ITEM_IMAGE):
+            item_path = PurePosixPath(item.file_name)
+            if (
+                self._item_path_has_href_suffix(item_path, href)
+                or item_path.name == image_name
+            ):
+                fallback_matches.append(item)
+        if len(fallback_matches) == 1:
+            return fallback_matches[0]
+
+    @staticmethod
+    def _item_path_has_href_suffix(item_path, href):
+        href_parts = tuple(
+            part for part in PurePosixPath(href).parts if part not in {"", "."}
+        )
+        if not href_parts or ".." in href_parts:
+            return False
+        item_parts = PurePosixPath(item_path).parts
+        return (
+            len(href_parts) <= len(item_parts)
+            and item_parts[-len(href_parts) :] == href_parts
+        )
 
     def resolve_link(self, link_range) -> LinkTarget:
         href = urllib_parse.unquote(self.structure.link_targets[link_range])

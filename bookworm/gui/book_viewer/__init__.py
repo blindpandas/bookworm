@@ -39,12 +39,18 @@ from bookworm.signals import (
     reader_book_unloaded,
     reading_position_change,
 )
-from bookworm.structured_text import SEMANTIC_ELEMENT_OUTPUT_OPTIONS, Style, TextRange
+from bookworm.structured_text import (
+    SEMANTIC_ELEMENT_OUTPUT_OPTIONS,
+    SemanticElementType,
+    Style,
+    TextRange,
+)
 from bookworm.utils import gui_thread_safe
 
 from . import recents_manager
 from .menubar import BookRelatedMenuIds, MenubarProvider
 from .navigation import NavigationProvider
+from .render_view import EmbeddedImageDialog
 from .state import StateProvider
 
 log = logger.getChild(__name__)
@@ -69,6 +75,19 @@ STYLE_TO_WX_TEXT_ATTR_STYLES = {
 }
 
 TEXT_CTRL_OFFSET = 1
+
+
+def _get_structural_navigation_speech(text, element_label, element_type):
+    is_generic_image = (
+        element_type is SemanticElementType.FIGURE
+        and text.strip() == f"[{element_label}]"
+    )
+    if is_generic_image:
+        return element_label, ""
+    return _("{text}: {item_type}").format(
+        text=text,
+        item_type=element_label,
+    ), element_label
 
 
 class ResourceLoader:
@@ -689,7 +708,12 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 else (start, stop)
             )
             text = self.get_text_by_range(text_start, text_stop)
-            msg = _("{text}: {item_type}").format(text=text, item_type=_(element_label))
+            element_label = _(element_label)
+            msg, tts_speech_prefix = _get_structural_navigation_speech(
+                text,
+                element_label,
+                actual_element_type,
+            )
             target_position = (
                 start
                 if not move_to_start_of_line
@@ -701,7 +725,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             reading_position_change.send(
                 self,
                 position=start,
-                tts_speech_prefix=_(element_label),
+                tts_speech_prefix=tts_speech_prefix,
             )
         else:
             element_label = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[element_type][0]
@@ -879,6 +903,15 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def show_html_dialog(self, markup, title):
         browseable_message(markup, title=title, is_html=True)
+
+    def show_image_dialog(self, image, title, suggested_filename=None):
+        with EmbeddedImageDialog(
+            self,
+            title=title,
+            image_io=image,
+            suggested_filename=suggested_filename,
+        ) as dlg:
+            dlg.ShowModal()
 
     def get_line_number(self, pos=None):
         # WHY: Use our own gatekeeper if pos is not provided.
