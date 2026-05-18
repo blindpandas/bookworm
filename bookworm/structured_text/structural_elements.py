@@ -47,6 +47,14 @@ class SemanticElementType(IntEnum):
     FIGURE = auto()
 
 
+@attr.s(auto_attribs=True, slots=True, frozen=True)
+class ImageElementInfo:
+    text_range: TextRange
+    src: str
+    label: str
+    suggested_filename: str = ""
+
+
 HEADING_LEVELS = {
     SemanticElementType.HEADING_1,
     SemanticElementType.HEADING_2,
@@ -68,7 +76,7 @@ SEMANTIC_ELEMENT_OUTPUT_OPTIONS = {
     SemanticElementType.LIST: (_("List"), False, True),
     SemanticElementType.QUOTE: (_("Quote"), True, True),
     SemanticElementType.TABLE: (_("Table"), False, True),
-    SemanticElementType.FIGURE: (_("Image"), False, True),
+    SemanticElementType.FIGURE: (_("Image"), False, False),
 }
 
 
@@ -83,9 +91,7 @@ class TextStructureMetadata:
             yield rngs
 
     def get_range(self, element_ranges, forward, anchor):
-        element_ranges.sort()
-        if not forward:
-            element_ranges.reverse()
+        element_ranges = sorted(element_ranges, reverse=not forward)
         for start, stop in element_ranges:
             condition = (
                 start > anchor

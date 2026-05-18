@@ -234,6 +234,7 @@ class ElementKind(enum.IntEnum):
     LIST = SemanticElementType.LIST
     TABLE = SemanticElementType.TABLE
     QUOTE = SemanticElementType.QUOTE
+    FIGURE = SemanticElementType.FIGURE
 
     @property
     def display(self):

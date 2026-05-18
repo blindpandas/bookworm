@@ -6,6 +6,8 @@ from concurrent.futures import ProcessPoolExecutor
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
+from urllib import parse as urllib_parse
+from urllib.request import url2pathname
 
 import requests
 from lxml import etree
@@ -15,6 +17,7 @@ from more_itertools import zip_offset
 from yarl import URL
 
 from bookworm.http_tools import HttpResource
+from bookworm.image_io import ImageIO
 from bookworm.logger import logger
 from bookworm.structured_text import (
     HEADING_LEVELS,
@@ -255,6 +258,74 @@ class BaseHtmlDocument(SinglePageDocument):
 
     def get_document_table_markup(self, table_index):
         return self.structure.get_table_markup(table_index)
+
+    def get_document_embedded_image_info(self, image_index):
+        return self.structure.get_image_info(image_index)
+
+    def get_document_embedded_image(self, image_index) -> ImageIO:
+        image_info = self.get_document_embedded_image_info(image_index)
+        if image_info.src.lower().startswith("data:image/"):
+            try:
+                return ImageIO.from_data_uri(image_info.src)
+            except Exception as e:
+                raise DocumentIOError("Failed to decode embedded image") from e
+        if not self._is_local_image_source(image_info.src):
+            raise DocumentIOError("Remote images are not supported")
+        image_path = self._resolve_image_path(image_info.src)
+        if image := ImageIO.from_filename(image_path, preserve_mode=True):
+            return image
+        raise DocumentIOError(f"Failed to load embedded image: {image_path}")
+
+    @staticmethod
+    def _is_local_image_source(src: str) -> bool:
+        parsed = urllib_parse.urlparse(src)
+        scheme = parsed.scheme.lower()
+        if scheme == "":
+            return not parsed.netloc
+        return scheme == "file" or (len(scheme) == 1 and scheme.isalpha())
+
+    def _resolve_image_path(self, src: str) -> Path:
+        if src.lower().startswith("file:"):
+            return self._file_uri_to_path(src)
+        clean_src = src.split("#", 1)[0].split("?", 1)[0]
+        image_path = Path(urllib_parse.unquote(clean_src))
+        if image_path.is_absolute():
+            return image_path
+        if self._image_base_url:
+            resolved_src = urllib_parse.urljoin(self._image_base_url, src)
+            if not self._is_local_image_source(resolved_src):
+                raise DocumentIOError("Remote images are not supported")
+            return self._local_image_source_to_path(resolved_src)
+        base_path = getattr(self, "filename", None) or self.get_file_system_path()
+        return Path(base_path).parent / image_path
+
+    @staticmethod
+    def _file_uri_to_path(src: str) -> Path:
+        parsed = urllib_parse.urlparse(src)
+        path = f"//{parsed.netloc}{parsed.path}" if parsed.netloc else parsed.path
+        return Path(url2pathname(path))
+
+    @classmethod
+    def _local_image_source_to_path(cls, src: str) -> Path:
+        if src.lower().startswith("file:"):
+            return cls._file_uri_to_path(src)
+        clean_src = src.split("#", 1)[0].split("?", 1)[0]
+        return Path(urllib_parse.unquote(clean_src))
+
+    @cached_property
+    def _image_base_url(self) -> str:
+        try:
+            html = lxml_html.fromstring(self.html_string)
+        except Exception:
+            return ""
+        base_href = get_first_element(html.xpath("//base[@href]/@href"), "").strip()
+        if not base_href:
+            return ""
+        base_path = getattr(self, "filename", None) or self.get_file_system_path()
+        document_base_url = Path(base_path).parent.resolve().as_uri()
+        if not document_base_url.endswith("/"):
+            document_base_url += "/"
+        return urllib_parse.urljoin(document_base_url, base_href)
 
 
 class FileSystemHtmlDocument(BaseHtmlDocument):

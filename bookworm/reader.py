@@ -557,11 +557,37 @@ class EBookReader:
             )
 
     def handle_special_action_for_position(self, position: int) -> bool:
+        page = self.get_current_page_object()
+        image_open_failed = False
+        for idx, image_range in enumerate(
+            self.iter_semantic_ranges_for_elements_of_type(SemanticElementType.FIGURE)
+        ):
+            if position in range(*image_range):
+                try:
+                    image_info = page.get_embedded_image_info(idx)
+                    image = page.get_embedded_image(idx)
+                except (DocumentIOError, IndexError, NotImplementedError):
+                    log.exception("Failed to open embedded image.", exc_info=True)
+                    image_open_failed = True
+                    break
+                else:
+                    self._show_image(image, image_info)
+                    return True
         for link_range in self.iter_semantic_ranges_for_elements_of_type(
             SemanticElementType.LINK
         ):
             if position in range(*link_range):
                 self.navigate_to_link_by_range(link_range)
+                return True
+        if image_open_failed:
+            if notify_user := getattr(self.view, "notify_user", None):
+                notify_user(
+                    _("Image unavailable"),
+                    _("Could not open this image."),
+                )
+            else:
+                self.view.notify_invalid_action()
+            return True
         try:
             for idx, tbl_range in enumerate(
                 self.iter_semantic_ranges_for_elements_of_type(
@@ -569,10 +595,12 @@ class EBookReader:
                 )
             ):
                 if position in range(*tbl_range):
-                    table_markup = self.get_current_page_object().get_table_markup(idx)
+                    table_markup = page.get_table_markup(idx)
                     self._show_table(table_markup)
+                    return True
         except NotImplementedError:
             pass
+        return False
 
     @staticmethod
     def _get_semantic_element_from_page(page, element_type, forward, anchor):
@@ -732,3 +760,14 @@ class EBookReader:
             )
             title = f"{caption_text} · {title}"
         self.view.show_html_dialog(table_markup, title=title)
+
+    def _show_image(self, image, image_info):
+        # Translators: title of a dialog that shows an embedded book image
+        title = _("Image View")
+        if image_info.label:
+            title = f"{image_info.label} - {title}"
+        self.view.show_image_dialog(
+            image,
+            title=title,
+            suggested_filename=image_info.suggested_filename,
+        )
