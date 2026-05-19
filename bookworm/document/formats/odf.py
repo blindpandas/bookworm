@@ -1,9 +1,11 @@
-# coding: utf-8
 
 from __future__ import annotations
 
 import sys
 from functools import lru_cache
+from pathlib import PurePosixPath
+from urllib import parse as urllib_parse
+from zipfile import BadZipFile, ZipFile
 
 from odf import opendocument
 
@@ -13,7 +15,6 @@ sys.modules["opendocument"] = opendocument
 
 from dataclasses import dataclass
 from functools import cached_property
-from pathlib import Path
 
 from bs4 import BeautifulSoup
 from lxml.html import fromstring as ParseHtml
@@ -21,16 +22,25 @@ from lxml.html import tostring as SerializeHtml
 from odf.odf2xhtml import ODF2XHTML
 
 from bookworm import typehints as t
-from bookworm.concurrency import process_worker
+from bookworm.image_io import ImageIO
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
 from bookworm.paths import home_data_path
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 from bookworm.utils import NEWLINE, escape_html, generate_file_md5
 
-from .. import BaseDocument, BasePage, BookMetadata, ChangeDocument
+from .. import (
+    BaseDocument,
+    BasePage,
+    BookMetadata,
+    ChangeDocument,
+    DocumentIOError,
+    DummyDocument,
+    Pager,
+    Section,
+    TreeStackBuilder,
+)
 from .. import DocumentCapability as DC
-from .. import DocumentError, DummyDocument, Pager, Section, TreeStackBuilder
 
 log = logger.getChild(__name__)
 
@@ -99,24 +109,88 @@ class OdpSlide(BasePage):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         html_string = self.section.data["html_content"]
+        self.html_string = html_string
         (
+            self.structure,
             self.text,
+            self.storage_text,
             self.semantic_elements,
             self.style_info,
+            self.text_position_map,
         ) = self.extract_info_and_structure(html_string)
 
     def extract_info_and_structure(self, html_string):
         parsed = StructuredHtmlParser.from_string(html_string)
-        return parsed.get_text(), parsed.semantic_elements, parsed.styled_elements
+        return (
+            parsed,
+            parsed.get_text(),
+            parsed.get_storage_text(),
+            parsed.semantic_elements,
+            parsed.styled_elements,
+            parsed.text_position_map,
+        )
 
     def get_text(self):
         return self.text
+
+    def get_storage_text(self):
+        return self.storage_text
+
+    def get_legacy_text(self):
+        if hasattr(self, "_legacy_text"):
+            return self._legacy_text
+        self._legacy_text = StructuredHtmlParser.from_string(
+            self.html_string,
+            include_images=False,
+        ).get_text()
+        return self._legacy_text
+
+    def get_text_position_map(self):
+        return self.text_position_map
+
+    def iter_content_hash_images(self):
+        return tuple(
+            (
+                storage_range,
+                self._get_embedded_image_content_hash_identity(image_info),
+            )
+            for image_info, storage_range in self.structure.iter_image_storage_ranges()
+        )
+
+    def _get_embedded_image_content_hash_identity(self, image_info):
+        src = image_info.src
+        if src.lower().startswith("data:image/"):
+            try:
+                return ("bytes", ImageIO.data_uri_to_bytes(src))
+            except Exception:
+                log.warning("Failed to hash embedded data URI image.", exc_info=True)
+                return None
+        parsed_src = urllib_parse.urlsplit(src)
+        if parsed_src.scheme or parsed_src.netloc:
+            return ("src", src.strip().encode())
+        return self.document.get_package_image_content_hash_identity(src)
 
     def get_style_info(self) -> dict:
         return self.style_info
 
     def get_semantic_structure(self) -> dict:
         return self.semantic_elements
+
+    def get_embedded_image_info(self, image_index: int):
+        return self.structure.get_image_info(image_index)
+
+    def get_embedded_image(self, image_index: int) -> ImageIO:
+        image_info = self.get_embedded_image_info(image_index)
+        if image_info.src.lower().startswith("data:image/"):
+            try:
+                return ImageIO.from_data_uri(image_info.src)
+            except Exception as e:
+                raise DocumentIOError("Failed to decode embedded image") from e
+        image_bytes = self.document.get_package_image_bytes(image_info.src)
+        try:
+            return ImageIO.from_bytes(image_bytes)
+        except Exception as e:
+            raise DocumentIOError("Failed to decode embedded image") from e
 
 
 class OdfPresentation(BaseDocument):
@@ -180,6 +254,26 @@ class OdfPresentation(BaseDocument):
             author="",
         )
 
+    def get_package_image_bytes(self, src: str) -> bytes:
+        parsed_src = urllib_parse.urlsplit(src)
+        if parsed_src.scheme or parsed_src.netloc:
+            raise DocumentIOError("Remote images are not supported")
+        image_path = PurePosixPath(urllib_parse.unquote(parsed_src.path))
+        if image_path.is_absolute() or ".." in image_path.parts or not image_path.parts:
+            raise DocumentIOError("Invalid ODF package image path")
+        try:
+            with ZipFile(self.get_file_system_path()) as package:
+                return package.read(image_path.as_posix())
+        except (BadZipFile, KeyError, OSError) as e:
+            raise DocumentIOError(f"Could not resolve embedded image: {src}") from e
+
+    def get_package_image_content_hash_identity(self, src: str):
+        try:
+            return ("bytes", self.get_package_image_bytes(src))
+        except DocumentIOError:
+            log.warning(f"Failed to hash ODF package image '{src}'.", exc_info=True)
+            return None
+
     def _generate_slides_from_html(self, html_string):
         retval = {}
         html_body = ParseHtml(html_string).body
@@ -190,7 +284,5 @@ class OdfPresentation(BaseDocument):
                 if slide_title.startswith("page"):
                     slide_title = _("Slide {number}").format(number=idx + 1)
                     legend.text = slide_title
-            retval[slide_title] = BeautifulSoup(
-                SerializeHtml(fieldset), "lxml"
-            ).decode_contents()
+            retval[slide_title] = BeautifulSoup(SerializeHtml(fieldset), "lxml").decode_contents()
         return retval

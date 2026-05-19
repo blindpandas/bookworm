@@ -1,4 +1,3 @@
-# coding: utf-8
 
 from enum import IntEnum
 
@@ -7,7 +6,7 @@ import wx
 from bookworm import speech
 from bookworm.gui.settings import SettingsPanel
 from bookworm.logger import logger
-from bookworm.structured_text import TextRange
+from bookworm.structured_text import CURRENT_POSITION_MODEL_VERSION
 
 from .annotation_dialogs import (
     BookmarksViewer,
@@ -149,40 +148,30 @@ class AnnotationMenu(wx.Menu):
         # Translators: the label of an item in the application menubar
 
         # EventHandlers
-        self.view.Bind(
-            wx.EVT_MENU, self.onAddBookmark, id=AnnotationsMenuIds.addBookmark
-        )
-        self.view.Bind(
-            wx.EVT_MENU, self.onAddNamedBookmark, id=AnnotationsMenuIds.addNamedBookmark
-        )
+        self.view.Bind(wx.EVT_MENU, self.onAddBookmark, id=AnnotationsMenuIds.addBookmark)
+        self.view.Bind(wx.EVT_MENU, self.onAddNamedBookmark, id=AnnotationsMenuIds.addNamedBookmark)
         self.view.Bind(wx.EVT_MENU, self.onAddNote, id=AnnotationsMenuIds.addNote)
-        self.view.Bind(
-            wx.EVT_MENU, self.onQuoteSelection, id=AnnotationsMenuIds.quoteSelection
-        )
-        self.view.Bind(
-            wx.EVT_MENU, self.onViewBookmarks, id=AnnotationsMenuIds.viewBookmarks
-        )
-        self.view.Bind(
-            wx.EVT_MENU, self.onViewNotes, id=StatelessAnnotationsMenuIds.viewNotes
-        )
-        self.view.Bind(
-            wx.EVT_MENU, self.onViewQuotes, id=StatelessAnnotationsMenuIds.viewQuotes
-        )
+        self.view.Bind(wx.EVT_MENU, self.onQuoteSelection, id=AnnotationsMenuIds.quoteSelection)
+        self.view.Bind(wx.EVT_MENU, self.onViewBookmarks, id=AnnotationsMenuIds.viewBookmarks)
+        self.view.Bind(wx.EVT_MENU, self.onViewNotes, id=StatelessAnnotationsMenuIds.viewNotes)
+        self.view.Bind(wx.EVT_MENU, self.onViewQuotes, id=StatelessAnnotationsMenuIds.viewQuotes)
 
     def _add_bookmark(self, name=""):
         bookmarker = Bookmarker(self.reader)
         insertionPoint = self.view.get_insertion_point()
+        storage_insertion_point = self.reader.view_to_storage_position(insertionPoint)
         current_lino = self.view.get_line_number(insertionPoint)
         count = 0
         for bkm in bookmarker.get_for_page(self.reader.current_page):
-            lino = self.view.get_line_number(bkm.position)
+            bookmark_position = self.reader.storage_to_view_position(bkm.position, bkm.page_number)
+            lino = self.view.get_line_number(bookmark_position)
             if lino == current_lino:
                 count += 1
                 bookmarker.delete(bkm.id)
-                self.service.style_bookmark(self.view, bkm.position, enable=False)
+                self.service.style_bookmark(self.view, bookmark_position, enable=False)
         if count and not name:
             return speech.announce(_("Bookmark removed"))
-        Bookmarker(self.reader).create(title=name, position=insertionPoint)
+        Bookmarker(self.reader).create(title=name, position=storage_insertion_point)
         # Translators: spoken message
         speech.announce(_("Bookmark Added"))
         self.service.style_bookmark(self.view, insertionPoint)
@@ -203,15 +192,27 @@ class AnnotationMenu(wx.Menu):
     def onAddNote(self, event):
         _with_tags = wx.GetKeyState(wx.WXK_SHIFT)
         insertionPoint = self.view.get_insertion_point()
+        storage_insertion_point = self.reader.view_to_storage_position(insertionPoint)
         selection_range = self.view.get_selection_range()
         start_pos, end_pos = selection_range.start, selection_range.stop
         # if start_pos and end_pos are equal, there is no selection
         # see: https://docs.wxpython.org/wx.TextEntry.html#wx.TextEntry.GetSelection
+        storage_start_pos = None
+        storage_end_pos = None
         if start_pos == end_pos:
             start_pos, end_pos = (None, None)
+        else:
+            storage_start_pos, storage_end_pos = self.reader.view_to_storage_range(
+                start_pos,
+                end_pos,
+                self.reader.current_page,
+            ).astuple()
         comments = NoteTaker(self.reader)
         if comments.overlaps(
-            start_pos, end_pos, self.reader.current_page, insertionPoint
+            storage_start_pos,
+            storage_end_pos,
+            self.reader.current_page,
+            storage_insertion_point,
         ):
             return self.view.notify_user(
                 _("Error"),
@@ -226,13 +227,13 @@ class AnnotationMenu(wx.Menu):
             style=wx.OK | wx.CANCEL | wx.TE_MULTILINE | wx.CENTER,
         )
         if not comment_text:
-            return
+            return None
         note = comments.create(
             title="",
             content=comment_text,
-            position=insertionPoint,
-            start_pos=start_pos,
-            end_pos=end_pos,
+            position=storage_insertion_point,
+            start_pos=storage_start_pos,
+            end_pos=storage_end_pos,
         )
 
         self.service.style_comment(self.view, insertionPoint)
@@ -256,30 +257,44 @@ class AnnotationMenu(wx.Menu):
         if x == y:
             return speech.announce(_("No selection"))
         selected_text = self.view.get_text_by_range(x, y)
+        storage_range = self.reader.view_to_storage_range(x, y, self.reader.current_page)
         for q in quoter.get_for_page():
-            q_range = TextRange(q.start_pos, q.end_pos)
+            q_range = self.reader.storage_to_view_range(q.start_pos, q.end_pos, q.page_number)
             if (q_range.start == x) and (q_range.stop == y):
                 quoter.delete(q.id)
                 self.service.style_highlight(self.view, x, y, enable=False)
                 # Translators: spoken message
                 return speech.announce(_("Highlight removed"))
-            elif (q.start_pos < x) and (q.end_pos > y):
+            if (q_range.start < x) and (q_range.stop > y):
                 # Translators: spoken message
                 speech.announce(_("Already highlighted"))
                 return wx.Bell()
-            if (x in q_range) or (y in q_range):
-                if x not in q_range:
-                    q.start_pos = x
+            if (q_range.start <= x < q_range.stop) or (q_range.start <= y < q_range.stop):
+                if not (q_range.start <= x < q_range.stop):
+                    q.start_pos = self.reader.view_to_storage_position(
+                        x, q.page_number, affinity="before"
+                    )
+                    q.position_version = CURRENT_POSITION_MODEL_VERSION
                     q.session.commit()
                     self.service.style_highlight(self.view, x, q_range.stop)
                     return speech.announce(_("Highlight extended"))
-                elif y not in q_range:
-                    q.end_pos = y
+                if not (q_range.start <= y < q_range.stop):
+                    q.end_pos = self.reader.view_to_storage_range(
+                        q_range.start,
+                        y,
+                        q.page_number,
+                    ).stop
+                    q.position_version = CURRENT_POSITION_MODEL_VERSION
                     q.session.commit()
                     self.service.style_highlight(self.view, q_range.start, y)
                     # Translators: spoken message
                     return speech.announce(_("Highlight extended"))
-        quote = quoter.create(title="", content=selected_text, start_pos=x, end_pos=y)
+        quote = quoter.create(
+            title="",
+            content=selected_text,
+            start_pos=storage_range.start,
+            end_pos=storage_range.stop,
+        )
         # Translators: spoken message
         speech.announce(_("Selection highlighted"))
         self.service.style_highlight(self.view, x, y)
@@ -307,9 +322,7 @@ class AnnotationMenu(wx.Menu):
             dlg.ShowModal()
 
     def onViewNotes(self, event):
-        Dialog = (
-            CommentsDialog if self.reader.ready else GenericAnnotationWithContentDialog
-        )
+        Dialog = CommentsDialog if self.reader.ready else GenericAnnotationWithContentDialog
         with Dialog(
             parent=self.view,
             title=_("Comments"),
@@ -320,9 +333,7 @@ class AnnotationMenu(wx.Menu):
             dlg.ShowModal()
 
     def onViewQuotes(self, event):
-        Dialog = (
-            QuotesDialog if self.reader.ready else GenericAnnotationWithContentDialog
-        )
+        Dialog = QuotesDialog if self.reader.ready else GenericAnnotationWithContentDialog
         with Dialog(
             parent=self.view,
             title=_("Highlights"),

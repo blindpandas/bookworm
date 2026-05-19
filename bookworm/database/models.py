@@ -1,30 +1,30 @@
-# coding: utf-8
 
 """
 Database models for `Bookworm`.
 """
 
-from datetime import datetime
 import re
+from datetime import datetime
 
 import sqlalchemy as sa
 from sqlalchemy import types
 from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import (
+    Query,
+    class_mapper,
+    declarative_base,
     deferred,
     relationship,
     synonym,
-    class_mapper,
-    mapper,
-    Query,
-    scoped_session,
-    declarative_base,
 )
 
 from bookworm.document.uri import DocumentUri
 from bookworm.logger import logger
+from bookworm.structured_text import (
+    CURRENT_CONTENT_HASH_VERSION,
+    CURRENT_POSITION_MODEL_VERSION,
+)
 
 log = logger.getChild(__name__)
 
@@ -54,7 +54,7 @@ class GetOrCreateMixin:
         return cls(**kwargs)
 
 
-class _QueryProperty(object):
+class _QueryProperty:
     """Convenience property to query a model."""
 
     def __get__(self, obj, type):
@@ -76,9 +76,7 @@ class Model:
         """Convert CamelCase class name to underscores_between_words 
         table name."""
         name = cls.__name__
-        return name[0].lower() + re.sub(
-            r"([A-Z])", lambda m: "_" + m.group(0).lower(), name[1:]
-        )
+        return name[0].lower() + re.sub(r"([A-Z])", lambda m: "_" + m.group(0).lower(), name[1:])
 
 
 Base = declarative_base(cls=Model)
@@ -91,6 +89,9 @@ class DocumentBase(Base, GetOrCreateMixin):
     title = sa.Column(sa.String(512), nullable=False)
     uri = sa.Column(DocumentUriDBType(1024), nullable=False, unique=True, index=True)
     content_hash = sa.Column(sa.TEXT, nullable=True)
+    content_hash_version = sa.Column(
+        sa.Integer, nullable=True, default=CURRENT_CONTENT_HASH_VERSION
+    )
 
     @classmethod
     def get_or_create(cls, *args, **kwargs):
@@ -113,6 +114,7 @@ class DocumentPositionInfo(DocumentBase):
     __tablename__ = "document_position_info"
     last_page = sa.Column(sa.Integer, default=0)
     last_position = sa.Column(sa.Integer, default=0)
+    position_version = sa.Column(sa.Integer, nullable=True, default=CURRENT_POSITION_MODEL_VERSION)
 
     def get_last_position(self):
         return (self.last_page, self.last_position)
@@ -120,14 +122,13 @@ class DocumentPositionInfo(DocumentBase):
     def save_position(self, page, pos):
         self.last_page = page
         self.last_position = pos
+        self.position_version = CURRENT_POSITION_MODEL_VERSION
         self.session.commit()
 
 
 class RecentDocument(DocumentBase):
     __tablename__ = "recent_document"
-    last_opened_on = sa.Column(
-        sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    last_opened_on = sa.Column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def record_open(self):
         self.last_opened_on = datetime.utcnow()
@@ -147,9 +148,7 @@ class RecentDocument(DocumentBase):
 
 class PinnedDocument(DocumentBase):
     __tablename__ = "pinned_document"
-    last_opened_on = sa.Column(
-        sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    last_opened_on = sa.Column(sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_pinned = sa.Column(sa.Boolean, default=False)
     pinning_order = sa.Column(sa.Integer, default=0)
 
@@ -213,9 +212,7 @@ class TaggedMixin:
             # Create the Tag model
             tag_attrs = {
                 "id": sa.Column(sa.Integer, primary_key=True),
-                "title": sa.Column(
-                    sa.String(512), nullable=False, unique=True, index=True
-                ),
+                "title": sa.Column(sa.String(512), nullable=False, unique=True, index=True),
                 "items": relationship(
                     cls,
                     secondary=lambda: cls.__tags_association_table__,
@@ -243,6 +240,7 @@ class AnnotationBase(Base):
     title = sa.Column(sa.String(255), nullable=False)
     page_number = sa.Column(sa.Integer, nullable=False)
     position = sa.Column(sa.Integer, nullable=False, default=0)
+    position_version = sa.Column(sa.Integer, nullable=True, default=CURRENT_POSITION_MODEL_VERSION)
     section_title = sa.Column(sa.String(1024), nullable=False)
     section_identifier = sa.Column(sa.String(1024), nullable=False)
     date_created = sa.Column(sa.DateTime, default=datetime.utcnow)

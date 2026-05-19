@@ -1,14 +1,12 @@
-# coding: utf-8
 
 from dataclasses import astuple, dataclass
 from enum import IntEnum, auto
-from typing import Optional
 
 import sqlalchemy as sa
 
-from bookworm import config
 from bookworm.database.models import Book, Bookmark, Note, Quote
 from bookworm.logger import logger
+from bookworm.structured_text import CURRENT_POSITION_MODEL_VERSION
 
 log = logger.getChild(__name__)
 # The bakery caches query objects to avoid recompiling them into strings in every call
@@ -51,14 +49,12 @@ class AnnotationSortCriteria(IntEnum):
             return query
         sort_fn = sa.asc if asc else sa.desc
         if self is AnnotationSortCriteria.Date:
-            return query.order_by(
-                sort_fn(sa.func.coalesce(model.date_updated, model.date_created))
-            )
-        elif self is AnnotationSortCriteria.Page:
+            return query.order_by(sort_fn(sa.func.coalesce(model.date_updated, model.date_created)))
+        if self is AnnotationSortCriteria.Page:
             return query.order_by(sort_fn(model.page_number))
-        elif self is AnnotationSortCriteria.Book:
+        if self is AnnotationSortCriteria.Book:
             return query.order_by(sort_fn(model.book_id))
-        elif self is AnnotationSortCriteria.Position:
+        if self is AnnotationSortCriteria.Position:
             return query.order_by(sort_fn(model.position))
 
 
@@ -75,7 +71,7 @@ class Annotator:
     @property
     def current_book(self):
         if not self.reader.ready:
-            return
+            return None
         return self.reader.get_or_create_current_book_record()
 
     @classmethod
@@ -113,9 +109,7 @@ class Annotator:
     ):
         filter_criteria = filter_criteria or AnnotationFilterCriteria()
         filter_criteria.book_id = self.current_book.id
-        return self.get_all(
-            filter_criteria=filter_criteria, sort_criteria=sort_criteria, asc=asc
-        )
+        return self.get_all(filter_criteria=filter_criteria, sort_criteria=sort_criteria, asc=asc)
 
     def get_for_page(self, page_number=None, asc=False):
         return self.model.query.filter_by(
@@ -180,6 +174,7 @@ class Annotator:
                 page_number=self.reader.current_page,
                 section_title=section_title,
                 section_identifier=self.reader.active_section.unique_identifier,
+                position_version=CURRENT_POSITION_MODEL_VERSION,
             )
         )
         annot = self.model(**kwargs)
@@ -193,6 +188,8 @@ class Annotator:
             raise LookupError(f"There is no record with id={item_id}.")
         for attr, value in kwargs.items():
             setattr(item, attr, value)
+        if {"position", "start_pos", "end_pos"}.intersection(kwargs):
+            item.position_version = CURRENT_POSITION_MODEL_VERSION
         self.session.add(item)
         self.session.commit()
 
@@ -213,9 +210,7 @@ class TaggedAnnotator(Annotator):
     @classmethod
     def get_tags(cls):
         cls.delete_orphan_tags()
-        return [
-            tag.title for tag in cls.model.Tag.query.order_by(cls.model.Tag.title).all()
-        ]
+        return [tag.title for tag in cls.model.Tag.query.order_by(cls.model.Tag.title).all()]
 
     @classmethod
     def delete_orphan_tags(cls):
@@ -230,7 +225,7 @@ class PositionedAnnotator(TaggedAnnotator):
     """Annotations which are positioned on a specific text range"""
 
     def overlaps(
-        self, start: Optional[int], end: Optional[int], page_number: int, position: int
+        self, start: int | None, end: int | None, page_number: int, position: int
     ) -> bool:
         """
         Determines whether an annotation overlaps with  a given position
