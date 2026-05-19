@@ -184,12 +184,14 @@ class ImageIO:
 
     @classmethod
     def from_data_uri(cls, value: str):
+        return cls.from_bytes(cls.data_uri_to_bytes(value))
+
+    @staticmethod
+    def data_uri_to_bytes(value: str) -> bytes:
         header, encoded = value.split(",", 1)
         if ";base64" in header.lower():
-            data = base64.b64decode(encoded)
-        else:
-            data = unquote_to_bytes(encoded)
-        return cls.from_bytes(data)
+            return base64.b64decode(encoded)
+        return unquote_to_bytes(encoded)
 
     def make_thumbnail(self, width, height, *, exact_fit=False, fil_color="#fff"):
         pil_image = self.to_pil()

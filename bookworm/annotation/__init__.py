@@ -1,4 +1,3 @@
-# coding: utf-8
 
 import wx
 
@@ -45,23 +44,17 @@ class AnnotationService(BookwormService):
 
     def __post_init__(self):
         self.__state = {}
-        self.view.contentTextCtrl.Bind(
-            wx.EVT_KEY_UP, self.onKeyUp, self.view.contentTextCtrl
-        )
+        self.view.contentTextCtrl.Bind(wx.EVT_KEY_UP, self.onKeyUp, self.view.contentTextCtrl)
         self.view.Bind(
             self.view.contentTextCtrl.EVT_CARET,
             self.onCaretMoved,
             id=self.view.contentTextCtrl.GetId(),
         )
-        self.view.add_load_handler(
-            lambda red: wx.CallAfter(self._check_is_virtual, red)
-        )
+        self.view.add_load_handler(lambda red: wx.CallAfter(self._check_is_virtual, red))
         reader_book_loaded.connect(self.on_book_load, sender=self.reader)
         reader_book_unloaded.connect(self.on_book_unload, sender=self.reader)
         reader_page_changed.connect(self.comments_page_handler, sender=self.reader)
-        reader_page_changed.connect(
-            self.highlight_bookmarked_positions, sender=self.reader
-        )
+        reader_page_changed.connect(self.highlight_bookmarked_positions, sender=self.reader)
         reader_page_changed.connect(self.highlight_highlighted_text, sender=self.reader)
 
     def process_menubar(self, menubar):
@@ -142,9 +135,12 @@ class AnnotationService(BookwormService):
                 speech.announce(no_annotation_msg)
                 sounds.invalid.play()
                 return
-            self.reader.go_to_page(bookmark.page_number, bookmark.position)
+            bookmark_position = self.reader.storage_to_view_position(
+                bookmark.position, bookmark.page_number
+            )
+            self.reader.go_to_page(bookmark.page_number, bookmark_position)
             if config.conf["annotation"]["select_bookmarked_line_on_jumping"]:
-                self.view.select_text(*self.view.get_containing_line(bookmark.position))
+                self.view.select_text(*self.view.get_containing_line(bookmark_position))
             # Translators: spoken message when jumping to a bookmark
             msg = _("Bookmark")
             if bookmark.title:
@@ -154,7 +150,7 @@ class AnnotationService(BookwormService):
             )
             reading_position_change.send(
                 self.view,
-                position=bookmark.position,
+                position=bookmark_position,
                 text_to_announce=text_to_announce,
                 tts_speech_prefix=msg,
             )
@@ -174,19 +170,32 @@ class AnnotationService(BookwormService):
                 return
             start_pos, end_pos = (comment.start_pos, comment.end_pos)
             is_whole_line = (start_pos, end_pos) == (None, None)
+            if is_whole_line:
+                comment_position = self.reader.storage_to_view_position(
+                    comment.position, comment.page_number
+                )
+                target_position = comment_position
+                display_range = None
+            else:
+                display_range = self.reader.storage_to_view_range(
+                    start_pos,
+                    end_pos,
+                    comment.page_number,
+                )
+                comment_position = display_range.stop
+                target_position = comment_position
             self.reader.go_to_page(
-                comment.page_number, comment.position if is_whole_line else end_pos
+                comment.page_number,
+                target_position,
             )
             # We do not select whole line comments, See issue#332
             if not is_whole_line:
-                self.view.select_text(start_pos, end_pos)
+                self.view.select_text(display_range.start, display_range.stop)
             reading_position_change.send(
                 self.view,
-                position=comment.position if is_whole_line else end_pos,
+                position=target_position,
                 # Translators: spoken message when jumping to a comment
-                text_to_announce=_("Comment: {comment}").format(
-                    comment=comment.content
-                ),
+                text_to_announce=_("Comment: {comment}").format(comment=comment.content),
             )
             sounds.navigation.play()
         elif event.KeyCode == wx.WXK_F9:
@@ -205,11 +214,16 @@ class AnnotationService(BookwormService):
                 speech.announce(no_annotation_msg)
                 sounds.invalid.play()
                 return
-            self.reader.go_to_page(highlight.page_number, highlight.start_pos)
-            self.view.select_text(highlight.start_pos, highlight.end_pos)
+            display_range = self.reader.storage_to_view_range(
+                highlight.start_pos,
+                highlight.end_pos,
+                highlight.page_number,
+            )
+            self.reader.go_to_page(highlight.page_number, display_range.start)
+            self.view.select_text(display_range.start, display_range.stop)
             reading_position_change.send(
                 self.view,
-                position=highlight.start_pos,
+                position=display_range.start,
                 text_to_announce=_("Highlight"),
             )
             sounds.navigation.play()
@@ -224,31 +238,49 @@ class AnnotationService(BookwormService):
         if not self.reader.ready:
             return
         # Convert the real position from the event to a clean position.
-        # We assume TEXT_CTRL_OFFSET is 1. Using a hardcoded 1 is robust here.
-        clean_position = event.Position - 1
+        clean_position = (
+            self.view.control_to_view_position(event.Position)
+            if hasattr(self.view, "control_to_view_position")
+            else event.Position - 1
+        )
         if clean_position < 0:
             return
         evtdata = {}
         start, end = self.view.get_containing_line(clean_position)
         pos_range = range(start, end)
         for bookmark in Bookmarker(self.reader).get_for_page():
-            if bookmark.position in pos_range:
+            bookmark_position = self.reader.storage_to_view_position(
+                bookmark.position, bookmark.page_number
+            )
+            if bookmark_position in pos_range:
                 evtdata["bookmark"] = True
                 break
         for highlight in Quoter(self.reader).get_for_page():
-            if highlight.start_pos <= clean_position < highlight.end_pos:
+            display_range = self.reader.storage_to_view_range(
+                highlight.start_pos,
+                highlight.end_pos,
+                highlight.page_number,
+            )
+            if display_range.start <= clean_position < display_range.stop:
                 evtdata["highlight"] = True
                 break
-            elif highlight.start_pos in pos_range:
+            if display_range.start in pos_range:
                 evtdata["line_contains_highlight"] = True
                 break
         for comment in NoteTaker(self.reader).get_for_page():
             start_pos, end_pos = (comment.start_pos, comment.end_pos)
-            condition = (
-                (start_pos <= clean_position < end_pos)
-                if (start_pos, end_pos) != (None, None)
-                else comment.position in pos_range
-            )
+            if (start_pos, end_pos) != (None, None):
+                display_range = self.reader.storage_to_view_range(
+                    start_pos,
+                    end_pos,
+                    comment.page_number,
+                )
+                condition = display_range.start <= clean_position < display_range.stop
+            else:
+                condition = (
+                    self.reader.storage_to_view_position(comment.position, comment.page_number)
+                    in pos_range
+                )
             if condition:
                 evtdata["comment"] = True
         wx.CallAfter(self._process_caret_move, evtdata)
@@ -256,13 +288,9 @@ class AnnotationService(BookwormService):
     def _process_caret_move(self, evtdata):
         if not any(evtdata.values()):
             return
-        if config.conf["annotation"][
-            "audable_indication_of_annotations_when_navigating_text"
-        ]:
+        if config.conf["annotation"]["audable_indication_of_annotations_when_navigating_text"]:
             sounds.navigation.play()
-        if config.conf["annotation"][
-            "spoken_indication_of_annotations_when_navigating_text"
-        ]:
+        if config.conf["annotation"]["spoken_indication_of_annotations_when_navigating_text"]:
             to_speak = []
             if "bookmark" in evtdata:
                 # Translators: spoken message indicating the presence of an annotation when the user navigates the text
@@ -281,17 +309,14 @@ class AnnotationService(BookwormService):
 
     def get_annotation(self, annotator_cls, *, foreword):
         if not (annotator := self.__state.get(annotator_cls.__name__)):
-            annotator = self.__state.setdefault(
-                annotator_cls.__name__, annotator_cls(self.reader)
-            )
+            annotator = self.__state.setdefault(annotator_cls.__name__, annotator_cls(self.reader))
         page_number = self.reader.current_page
-        # start, end = self.view.get_containing_line(self.view.get_insertion_point())
         start = self.view.get_insertion_point()
-        end = start
+        storage_start = self.reader.view_to_storage_position(start, page_number)
         if foreword:
-            annot = annotator.get_first_after(page_number, end)
+            annot = annotator.get_first_after(page_number, storage_start)
         else:
-            annot = annotator.get_first_before(page_number, start)
+            annot = annotator.get_first_before(page_number, storage_start)
         return annot
 
     def _check_is_virtual(self, sender):
@@ -314,12 +339,13 @@ class AnnotationService(BookwormService):
         comments = NoteTaker(sender)
         comments = comments.get_for_page()
         if comments.count():
-            if config.conf["annotation"][
-                "audable_indication_of_annotations_when_navigating_text"
-            ]:
+            if config.conf["annotation"]["audable_indication_of_annotations_when_navigating_text"]:
                 wx.CallLater(150, lambda: sounds.has_note.play())
         for comment in comments:
-            cls.style_comment(sender.view, comment.position)
+            comment_position = sender.storage_to_view_position(
+                comment.position, comment.page_number
+            )
+            cls.style_comment(sender.view, comment_position)
 
     @classmethod
     def highlight_bookmarked_positions(cls, sender, current, prev):
@@ -331,7 +357,10 @@ class AnnotationService(BookwormService):
         if not bookmarks.count():
             return
         for bookmark in bookmarks:
-            cls.style_bookmark(sender.view, bookmark.position)
+            bookmark_position = sender.storage_to_view_position(
+                bookmark.position, bookmark.page_number
+            )
+            cls.style_bookmark(sender.view, bookmark_position)
 
     @classmethod
     def highlight_highlighted_text(cls, sender, current, prev):
@@ -344,7 +373,12 @@ class AnnotationService(BookwormService):
         if not for_page.count():
             return
         for quote in for_page:
-            cls.style_highlight(sender.view, quote.start_pos, quote.end_pos)
+            display_range = sender.storage_to_view_range(
+                quote.start_pos,
+                quote.end_pos,
+                quote.page_number,
+            )
+            cls.style_highlight(sender.view, display_range.start, display_range.stop)
 
     @staticmethod
     @gui_thread_safe
@@ -359,11 +393,20 @@ class AnnotationService(BookwormService):
         # We need a new TextAttr object to avoid modifying a shared default style.
         new_attr = wx.TextAttr()
         # We must get the existing style from the REAL position to preserve other attributes.
-        # We assume TEXT_CTRL_OFFSET is 1.
-        view.contentTextCtrl.GetStyle(start + 1, new_attr)
+        real_start = (
+            view.view_to_control_position(start)
+            if hasattr(view, "view_to_control_position")
+            else start + 1
+        )
+        real_end = (
+            view.view_to_control_position(end)
+            if hasattr(view, "view_to_control_position")
+            else end + 1
+        )
+        view.contentTextCtrl.GetStyle(real_start, new_attr)
         new_attr.SetFontUnderlined(enable)
         # We must apply the new style to the REAL, offset positions.
-        view.contentTextCtrl.SetStyle(start + 1, end + 1, new_attr)
+        view.contentTextCtrl.SetStyle(real_start, real_end, new_attr)
 
     @staticmethod
     @gui_thread_safe

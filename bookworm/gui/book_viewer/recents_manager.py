@@ -1,7 +1,8 @@
-# coding: utf-8
 
 from bookworm.database import PinnedDocument, RecentDocument
+from bookworm.document.hash_utils import get_persistent_content_hash
 from bookworm.logger import logger
+from bookworm.structured_text import CURRENT_CONTENT_HASH_VERSION
 
 log = logger.getChild(__name__)
 _CONTENT_HASH_UNSET = object()
@@ -18,7 +19,25 @@ def _get_documents_by_content_hash(model, content_hash, uri):
         return []
     matching_documents = []
     for doc in model.query:
-        if doc.content_hash == content_hash and doc.uri.format == uri.format:
+        if (
+            doc.content_hash == content_hash
+            and doc.content_hash_version == CURRENT_CONTENT_HASH_VERSION
+            and doc.uri.format == uri.format
+        ):
+            matching_documents.append(doc)
+    return matching_documents
+
+
+def _get_legacy_documents_by_content_hash(model, content_hash, uri):
+    if content_hash is None:
+        return []
+    matching_documents = []
+    for doc in model.query:
+        if (
+            doc.content_hash == content_hash
+            and doc.content_hash_version != CURRENT_CONTENT_HASH_VERSION
+            and doc.uri.format == uri.format
+        ):
             matching_documents.append(doc)
     return matching_documents
 
@@ -64,15 +83,27 @@ def get_document_unique(model, document):
     doc = _get_document_by_uri(model, uri)
     content_hash = (
         doc.content_hash
-        if doc is not None and doc.content_hash is not None
+        if doc is not None
+        and doc.content_hash_version == CURRENT_CONTENT_HASH_VERSION
+        and doc.content_hash is not None
         else _CONTENT_HASH_UNSET
     )
     if content_hash is _CONTENT_HASH_UNSET:
         content_hash = document.get_content_hash()
-    matching_documents = _merge_matching_documents(
-        doc,
-        _get_documents_by_content_hash(model, content_hash, uri),
+    legacy_content_hash = document.get_legacy_content_hash()
+    stored_content_hash, stored_content_hash_version = get_persistent_content_hash(
+        content_hash,
+        legacy_content_hash,
     )
+    hash_matching_documents = _get_documents_by_content_hash(model, content_hash, uri)
+    hash_matching_documents.extend(
+        _get_legacy_documents_by_content_hash(
+            model,
+            legacy_content_hash,
+            uri,
+        )
+    )
+    matching_documents = _merge_matching_documents(doc, hash_matching_documents)
     doc = doc or (matching_documents[0] if matching_documents else None)
     if doc is not None:
         duplicates = [candidate for candidate in matching_documents if candidate.id != doc.id]
@@ -80,14 +111,19 @@ def get_document_unique(model, document):
         _delete_duplicate_documents(model, duplicates)
         doc.title = document.metadata.title
         doc.uri = uri
-        if doc.content_hash is None:
-            doc.content_hash = content_hash
+        if (
+            doc.content_hash != stored_content_hash
+            or doc.content_hash_version != stored_content_hash_version
+        ):
+            doc.content_hash = stored_content_hash
+            doc.content_hash_version = stored_content_hash_version
         model.session.commit()
         return doc
     return model.get_or_create(
         title=document.metadata.title,
         uri=uri,
-        content_hash=content_hash,
+        content_hash=stored_content_hash,
+        content_hash_version=stored_content_hash_version,
     )
 
 

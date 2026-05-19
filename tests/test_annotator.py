@@ -1,15 +1,18 @@
-from datetime import datetime, timedelta
 from pathlib import Path
 import shutil
+from types import SimpleNamespace
 
 import pytest
 
 from bookworm import config
 from bookworm.annotation import AnnotationService, NoteTaker
-from bookworm.annotation.annotator import AnnotationSortCriteria
+from bookworm.annotation import annotation_gui
+from bookworm.annotation.annotation_gui import AnnotationMenu
+from bookworm.annotation.annotator import AnnotationSortCriteria, Quoter
 from bookworm.database.models import *
 from bookworm.document.uri import DocumentUri
 from bookworm.signals import reader_book_loaded
+from bookworm.structured_text import SemanticElementType, TextRange
 
 from conftest import asset, reader
 
@@ -128,4 +131,52 @@ def test_comments_are_styled_on_initial_landing_page(asset, reader, view, monkey
     reader.load(uri)
 
     assert styled_positions == [0]
+    reader.unload()
+
+
+def test_extending_highlight_to_before_image_preserves_range_stop(
+    reader, view, tmp_path, monkeypatch
+):
+    html_path = tmp_path / "image.html"
+    html_path.write_text(
+        """
+        <html>
+            <head><title>Book</title></head>
+            <body><p>before <img src="pic.png" alt="Chart"> after text</p></body>
+        </html>
+        """,
+        encoding="utf-8",
+    )
+    reader.load(DocumentUri.from_filename(html_path))
+    image_start, image_stop = reader.document.get_document_semantic_structure()[
+        SemanticElementType.FIGURE
+    ][0]
+    existing_range = reader.view_to_storage_range(0, 2)
+    expected_range = reader.view_to_storage_range(0, image_start)
+    range_with_image = reader.view_to_storage_range(0, image_stop)
+    quote = Quoter(reader).create(
+        title="",
+        content="be",
+        start_pos=existing_range.start,
+        end_pos=existing_range.stop,
+    )
+    view.get_selection_range = lambda: TextRange(1, image_start)
+    view.get_text_by_range = lambda start, stop: reader.get_current_page_object().get_text()[
+        start:stop
+    ]
+    service = SimpleNamespace(style_highlight=lambda *args, **kwargs: None)
+    menu = SimpleNamespace(reader=reader, view=view, service=service)
+    monkeypatch.setattr(annotation_gui.wx, "GetKeyState", lambda key: False)
+    monkeypatch.setattr(annotation_gui.speech, "announce", lambda *args, **kwargs: None)
+
+    AnnotationMenu.onQuoteSelection(menu, None)
+
+    quote = Quoter(reader).get(quote.id)
+    assert quote.end_pos == expected_range.stop
+    assert quote.end_pos != range_with_image.stop
+    assert reader.storage_to_view_range(
+        quote.start_pos,
+        quote.end_pos,
+        quote.page_number,
+    ).astuple() == (0, image_start)
     reader.unload()

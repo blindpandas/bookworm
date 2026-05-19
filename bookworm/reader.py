@@ -1,11 +1,10 @@
-# coding: utf-8
 
 import os
 import re
 import string
 from contextlib import suppress
-from pathlib import Path
 
+import sqlalchemy as sa
 from selectolax.parser import HTMLParser
 
 from bookworm import app, config
@@ -18,18 +17,14 @@ from bookworm.document import (
     BaseDocument,
     BasePage,
     ChangeDocument,
-)
-from bookworm.document import DocumentCapability as DC
-from bookworm.document import (
     DocumentEncryptedError,
-    DocumentError,
     DocumentIOError,
     PaginationError,
     Section,
 )
 from bookworm.document.formats import *
+from bookworm.document.hash_utils import get_persistent_content_hash
 from bookworm.document.uri import DocumentUri
-from bookworm.i18n import is_rtl
 from bookworm.logger import logger
 from bookworm.signals import (
     reader_book_loaded,
@@ -38,7 +33,13 @@ from bookworm.signals import (
     reader_section_changed,
     reading_position_change,
 )
-from bookworm.structured_text import SemanticElementType, TextStructureMetadata
+from bookworm.structured_text import (
+    CURRENT_CONTENT_HASH_VERSION,
+    CURRENT_POSITION_MODEL_VERSION,
+    SemanticElementType,
+    TextRange,
+    TextStructureMetadata,
+)
 
 log = logger.getChild(__name__)
 
@@ -101,9 +102,7 @@ class UriResolver:
             return doc, self.original_uri
         except ChangeDocument as e:
             # Propagate the original URI through the conversion chain.
-            return UriResolver(
-                uri=e.new_uri, original_uri=self.original_uri
-            ).read_document()
+            return UriResolver(uri=e.new_uri, original_uri=self.original_uri).read_document()
         except:
             if (fallback_uri := self.uri.fallback_uri) is not None:
                 if self.num_fallbacks < 4:
@@ -123,9 +122,7 @@ class UriResolver:
         except DocumentIOError as e:
             raise ResourceDoesNotExist("Failed to load document") from e
         except Exception as e:
-            if type(e) in PASS_THROUGH__DOCUMENT_EXCEPTIONS or isinstance(
-                e, ChangeDocument
-            ):
+            if type(e) in PASS_THROUGH__DOCUMENT_EXCEPTIONS or isinstance(e, ChangeDocument):
                 raise e
             raise ReaderError("Failed to open document") from e
         return document
@@ -137,12 +134,12 @@ class EBookReader:
     """
 
     __slots__ = [
-        "document",
-        "stored_document_info",
-        "view",
         "__state",
         "current_book",
         "current_book_record",
+        "document",
+        "stored_document_info",
+        "view",
     ]
 
     def _record_matches_document(self, record, uri_for_storage, content_hash):
@@ -151,6 +148,7 @@ class EBookReader:
         return (
             content_hash is not None
             and record.content_hash == content_hash
+            and record.content_hash_version == CURRENT_CONTENT_HASH_VERSION
             and record.uri.format == uri_for_storage.format
         )
 
@@ -159,6 +157,7 @@ class EBookReader:
             return []
         records = (
             model.query.filter(model.content_hash == content_hash)
+            .filter(model.content_hash_version == CURRENT_CONTENT_HASH_VERSION)
             .order_by(model.id.asc())
             .all()
         )
@@ -167,6 +166,22 @@ class EBookReader:
             for record in records
             if self._record_matches_document(record, uri_for_storage, content_hash)
         ]
+
+    def _get_legacy_matching_document_records(self, model, *, uri_for_storage, legacy_content_hash):
+        if legacy_content_hash is None:
+            return []
+        records = (
+            model.query.filter(model.content_hash == legacy_content_hash)
+            .filter(
+                sa.or_(
+                    model.content_hash_version.is_(None),
+                    model.content_hash_version != CURRENT_CONTENT_HASH_VERSION,
+                )
+            )
+            .order_by(model.id.asc())
+            .all()
+        )
+        return [record for record in records if record.uri.format == uri_for_storage.format]
 
     def _select_document_record(self, records, uri_for_storage):
         for record in records:
@@ -183,9 +198,7 @@ class EBookReader:
         if uri_record is not None:
             matching_records.append(uri_record)
         matching_ids = {
-            record.id
-            for record in matching_records
-            if getattr(record, "id", None) is not None
+            record.id for record in matching_records if getattr(record, "id", None) is not None
         }
         for record in hash_matching_records:
             if record.id in matching_ids:
@@ -209,6 +222,7 @@ class EBookReader:
         for duplicate in duplicates:
             if duplicate.get_last_position() != (0, 0):
                 record.last_page, record.last_position = duplicate.get_last_position()
+                record.position_version = duplicate.position_version
                 return
 
     def _merge_document_records(self, model, session, record, duplicates):
@@ -226,30 +240,48 @@ class EBookReader:
         title: str,
         uri_for_storage: DocumentUri,
         content_hash_provider: t.Callable[[], str | None],
+        legacy_content_hash_provider: t.Callable[[], str | None] | None = None,
     ):
         session = model.session()
         uri_record = self._get_document_record_by_uri(model, uri_for_storage)
-        content_hash = (
-            uri_record.content_hash
-            if uri_record is not None and uri_record.content_hash is not None
-            else content_hash_provider()
+        if (
+            uri_record is not None
+            and uri_record.content_hash_version == CURRENT_CONTENT_HASH_VERSION
+            and uri_record.content_hash is not None
+        ):
+            content_hash = uri_record.content_hash
+        else:
+            content_hash = content_hash_provider()
+        legacy_content_hash = (
+            legacy_content_hash_provider()
+            if legacy_content_hash_provider is not None
+            else None
+        )
+        stored_content_hash, stored_content_hash_version = get_persistent_content_hash(
+            content_hash,
+            legacy_content_hash,
         )
         matching_records = self._get_matching_document_records(
             model,
             uri_for_storage=uri_for_storage,
             content_hash=content_hash,
         )
-        matching_records = self._merge_matching_document_records(
-            uri_record, matching_records
-        )
-        record = uri_record or self._select_document_record(
-            matching_records, uri_for_storage
-        )
+        if legacy_content_hash_provider is not None:
+            matching_records.extend(
+                self._get_legacy_matching_document_records(
+                    model,
+                    uri_for_storage=uri_for_storage,
+                    legacy_content_hash=legacy_content_hash,
+                )
+            )
+        matching_records = self._merge_matching_document_records(uri_record, matching_records)
+        record = uri_record or self._select_document_record(matching_records, uri_for_storage)
         if record is None:
             record = model(
                 title=title,
                 uri=uri_for_storage,
-                content_hash=content_hash,
+                content_hash=stored_content_hash,
+                content_hash_version=stored_content_hash_version,
             )
         else:
             duplicate_records = [
@@ -258,8 +290,12 @@ class EBookReader:
             self._merge_document_records(model, session, record, duplicate_records)
             if record.title != title:
                 record.title = title
-            if record.content_hash is None:
-                record.content_hash = content_hash
+            if (
+                record.content_hash != stored_content_hash
+                or record.content_hash_version != stored_content_hash_version
+            ):
+                record.content_hash = stored_content_hash
+                record.content_hash_version = stored_content_hash_version
             if record.uri != uri_for_storage:
                 record.uri = uri_for_storage
         session.add(record)
@@ -278,32 +314,149 @@ class EBookReader:
                 content_hash = doc.get_content_hash()
             return content_hash
 
+        def get_legacy_content_hash():
+            return doc.get_legacy_content_hash()
+
         self.current_book_record = self._get_or_create_document_record(
             Book,
             title=current_book.title,
             uri_for_storage=uri_for_storage,
             content_hash_provider=get_content_hash,
+            legacy_content_hash_provider=get_legacy_content_hash,
         )
         return self._get_or_create_document_record(
             DocumentPositionInfo,
             title=current_book.title,
             uri_for_storage=uri_for_storage,
             content_hash_provider=get_content_hash,
+            legacy_content_hash_provider=get_legacy_content_hash,
         )
 
     def get_or_create_current_book_record(self):
         if self.current_book_record is not None:
             return self.current_book_record
         if self.document is None:
-            return
+            return None
         current_book = self.document.metadata
         self.current_book_record = self._get_or_create_document_record(
             Book,
             title=current_book.title,
             uri_for_storage=self.document.uri,
             content_hash_provider=self.document.get_content_hash,
+            legacy_content_hash_provider=self.document.get_legacy_content_hash,
         )
         return self.current_book_record
+
+    def _get_page_for_position_mapping(self, page_number=None):
+        page_number = self.current_page if page_number is None else page_number
+        if self.document is None or page_number not in self.document:
+            return None
+        return self.document[page_number]
+
+    def view_to_storage_position(self, pos, page_number=None, affinity="before"):
+        page = self._get_page_for_position_mapping(page_number)
+        if page is None:
+            return max(0, pos)
+        return page.display_to_storage_position(pos, affinity=affinity)
+
+    def storage_to_view_position(self, pos, page_number=None, affinity="before"):
+        page = self._get_page_for_position_mapping(page_number)
+        if page is None:
+            return max(0, pos)
+        return page.storage_to_display_position(pos, affinity=affinity)
+
+    def view_to_storage_range(self, start, stop, page_number=None):
+        page = self._get_page_for_position_mapping(page_number)
+        if page is None:
+            return TextRange(start, stop)
+        return page.display_to_storage_range(start, stop)
+
+    def storage_to_view_range(self, start, stop, page_number=None):
+        page = self._get_page_for_position_mapping(page_number)
+        if page is None:
+            return TextRange(start, stop)
+        return page.storage_to_display_range(start, stop)
+
+    def legacy_view_to_storage_position(self, pos, page_number=None, affinity="before"):
+        page = self._get_page_for_position_mapping(page_number)
+        if page is None:
+            return max(0, pos)
+        return page.legacy_to_storage_position(pos, affinity=affinity)
+
+    def legacy_view_to_storage_range(self, start, stop, page_number=None):
+        page = self._get_page_for_position_mapping(page_number)
+        if page is None:
+            return TextRange(start, stop)
+        return page.legacy_to_storage_range(start, stop)
+
+    def _migrate_current_document_positions(self):
+        if self.document is None or self.current_book_record is None:
+            return
+        session = self.current_book_record.session()
+        has_updates = False
+        if (
+            self.stored_document_info is not None
+            and self.stored_document_info.position_version != CURRENT_POSITION_MODEL_VERSION
+        ):
+            self.stored_document_info.last_position = self.legacy_view_to_storage_position(
+                self.stored_document_info.last_position,
+                self.stored_document_info.last_page,
+                affinity="after",
+            )
+            self.stored_document_info.position_version = CURRENT_POSITION_MODEL_VERSION
+            session.add(self.stored_document_info)
+            has_updates = True
+        for model in (Bookmark, Note, Quote):
+            stale_records = (
+                model.query.filter_by(book_id=self.current_book_record.id)
+                .filter(
+                    sa.or_(
+                        model.position_version.is_(None),
+                        model.position_version != CURRENT_POSITION_MODEL_VERSION,
+                    )
+                )
+                .all()
+            )
+            for record in stale_records:
+                page_number = record.page_number
+                if hasattr(record, "start_pos") and hasattr(record, "end_pos"):
+                    if record.start_pos is not None and record.end_pos is not None:
+                        storage_range = self.legacy_view_to_storage_range(
+                            record.start_pos,
+                            record.end_pos,
+                            page_number,
+                        )
+                        record.start_pos, record.end_pos = storage_range.astuple()
+                        record.position = record.start_pos
+                    elif record.start_pos is not None:
+                        record.start_pos = self.legacy_view_to_storage_position(
+                            record.start_pos,
+                            page_number,
+                            affinity="after",
+                        )
+                        record.position = record.start_pos
+                    elif record.end_pos is not None:
+                        record.end_pos = self.legacy_view_to_storage_range(
+                            0,
+                            record.end_pos,
+                            page_number,
+                        ).stop
+                        record.position = self.legacy_view_to_storage_position(
+                            record.position, page_number, affinity="after"
+                        )
+                    else:
+                        record.position = self.legacy_view_to_storage_position(
+                            record.position, page_number, affinity="after"
+                        )
+                else:
+                    record.position = self.legacy_view_to_storage_position(
+                        record.position, page_number, affinity="after"
+                    )
+                record.position_version = CURRENT_POSITION_MODEL_VERSION
+                session.add(record)
+                has_updates = True
+        if has_updates:
+            session.commit()
 
     # Convenience method: make this available for importers as a staticmethod
     get_document_format_info = staticmethod(get_document_format_info)
@@ -318,9 +471,7 @@ class EBookReader:
         self.current_book_record = None
         self.__state = {}
 
-    def set_document(
-        self, document: BaseDocument, original_uri: str | None = None
-    ) -> None:
+    def set_document(self, document: BaseDocument, original_uri: str | None = None) -> None:
         self.stored_document_info = None
         self.current_book_record = None
         self.__state["ready"] = False
@@ -341,6 +492,7 @@ class EBookReader:
             self.stored_document_info = self._get_or_create_document_position_info(
                 document, uri_for_storage
             )
+        self._migrate_current_document_positions()
         # the current_page is set after the document position info and related models are created in order to allow dependent services to access the current_book
         self.current_page = 0
         if open_args := self.document.uri.openner_args:
@@ -348,18 +500,16 @@ class EBookReader:
             pos = int(open_args.get("position", 0))
             self.go_to_page(page, pos)
             self.view.contentTextCtrl.SetFocus()
-        elif (
-            self.stored_document_info
-            and config.conf["general"]["open_with_last_position"]
-        ):
+        elif self.stored_document_info and config.conf["general"]["open_with_last_position"]:
             try:
                 log.debug("Navigating to the last saved position.")
                 page_number, pos = self.stored_document_info.get_last_position()
-                self.go_to_page(page_number, pos)
-            except:
-                log.exception(
-                    "Failed to restore last saved reading position", exc_info=True
+                self.go_to_page(
+                    page_number,
+                    self.storage_to_view_position(pos, page_number),
                 )
+            except:
+                log.exception("Failed to restore last saved reading position", exc_info=True)
         if self.active_section is None:
             self.__state["active_section"] = self.document.get_section_at_position(
                 self.view.get_insertion_point()
@@ -386,9 +536,7 @@ class EBookReader:
             log.debug("Closing current document.")
             self.document.close()
         except:
-            log.exception(
-                "An exception was raised while closing the eBook", exc_info=True
-            )
+            log.exception("An exception was raised while closing the eBook", exc_info=True)
             if app.debug:
                 raise
         finally:
@@ -400,7 +548,7 @@ class EBookReader:
             return
         self.stored_document_info.save_position(
             self.current_page,
-            self.view.get_insertion_point(),
+            self.view_to_storage_position(self.view.get_insertion_point()),
         )
 
     @property
@@ -481,8 +629,7 @@ class EBookReader:
                 ):
                     self.current_page = next_move
                     return True
-                else:
-                    return False
+                return False
         elif unit == "section":
             this_section = self.active_section
             target = "simple_next" if to == "next" else "simple_prev"
@@ -552,9 +699,7 @@ class EBookReader:
                 self.go_to_page(page_num)
             start, end = nav_stack_top["source_range"]
             self.view.go_to_position(start, end)
-            reading_position_change.send(
-                self.view, position=start, tts_speech_prefix=""
-            )
+            reading_position_change.send(self.view, position=start, tts_speech_prefix="")
 
     def handle_special_action_for_position(self, position: int) -> bool:
         page = self.get_current_page_object()
@@ -573,9 +718,7 @@ class EBookReader:
                 else:
                     self._show_image(image, image_info)
                     return True
-        for link_range in self.iter_semantic_ranges_for_elements_of_type(
-            SemanticElementType.LINK
-        ):
+        for link_range in self.iter_semantic_ranges_for_elements_of_type(SemanticElementType.LINK):
             if position in range(*link_range):
                 self.navigate_to_link_by_range(link_range)
                 return True
@@ -590,9 +733,7 @@ class EBookReader:
             return True
         try:
             for idx, tbl_range in enumerate(
-                self.iter_semantic_ranges_for_elements_of_type(
-                    SemanticElementType.TABLE
-                )
+                self.iter_semantic_ranges_for_elements_of_type(SemanticElementType.TABLE)
             ):
                 if position in range(*tbl_range):
                     table_markup = page.get_table_markup(idx)
@@ -605,11 +746,7 @@ class EBookReader:
     @staticmethod
     def _get_semantic_element_from_page(page, element_type, forward, anchor):
         semantics = TextStructureMetadata(page.semantic_structure)
-        pos_getter = (
-            semantics.get_next_element_pos
-            if forward
-            else semantics.get_prev_element_pos
-        )
+        pos_getter = semantics.get_next_element_pos if forward else semantics.get_prev_element_pos
         return pos_getter(element_type, anchor=anchor)
 
     def get_semantic_element(self, element_type, forward, anchor):
@@ -618,9 +755,7 @@ class EBookReader:
         )
 
     def iter_semantic_ranges_for_elements_of_type(self, element_type):
-        semantics = TextStructureMetadata(
-            self.get_current_page_object().semantic_structure
-        )
+        semantics = TextStructureMetadata(self.get_current_page_object().semantic_structure)
         yield from semantics.iter_ranges(element_type)
 
     def navigate_to_link_by_range(self, link_range):
@@ -628,7 +763,7 @@ class EBookReader:
         if target_info is None:
             log.warning(f"Could not resolve link target: {link_range=}")
             return
-        elif target_info.is_external:
+        if target_info.is_external:
             self.view.go_to_webpage(target_info.url)
         else:
             start, end = target_info.position
@@ -650,9 +785,7 @@ class EBookReader:
         if include_author and self.current_book.author:
             author = self.current_book.author
             # Translators: the title of the window when an e-book is open
-            view_title = _("{title} — by {author}").format(
-                title=view_title, author=author
-            )
+            view_title = _("{title} — by {author}").format(title=view_title, author=author)
         return view_title + f" - {app.display_name}"
 
     @staticmethod
@@ -677,7 +810,13 @@ class EBookReader:
         # Check for existing thead
         if table.css_first("thead"):
             if not has_caption:
-                return re.sub(r"(<table[^>]*>)", r"\1" + sr_caption, table_markup, count=1, flags=re.IGNORECASE)
+                return re.sub(
+                    r"(<table[^>]*>)",
+                    r"\1" + sr_caption,
+                    table_markup,
+                    count=1,
+                    flags=re.IGNORECASE,
+                )
             return table_markup
 
         # Detection Logic
@@ -702,7 +841,13 @@ class EBookReader:
 
         if not promote_header:
             if not has_caption:
-                return re.sub(r"(<table[^>]*>)", r"\1" + sr_caption, table_markup, count=1, flags=re.IGNORECASE)
+                return re.sub(
+                    r"(<table[^>]*>)",
+                    r"\1" + sr_caption,
+                    table_markup,
+                    count=1,
+                    flags=re.IGNORECASE,
+                )
             return table_markup
 
         # Reconstruction Logic
@@ -755,9 +900,7 @@ class EBookReader:
         # Translators: title of a message dialog that shows a table as html document
         title = _("Table View")
         if (table_caption := HTMLParser(table_markup).css_first("caption")) is not None:
-            caption_text = (
-                table_caption.text().strip(string.whitespace).replace("\n", " ")
-            )
+            caption_text = table_caption.text().strip(string.whitespace).replace("\n", " ")
             title = f"{caption_text} · {title}"
         self.view.show_html_dialog(table_markup, title=title)
 

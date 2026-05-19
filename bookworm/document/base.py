@@ -1,33 +1,37 @@
-# coding: utf-8
 
 from __future__ import annotations
 
 import gc
 from abc import ABCMeta, abstractmethod
 from collections.abc import Iterable, Sequence
-from functools import cached_property, lru_cache, wraps
+from functools import cached_property, lru_cache
 from pathlib import Path
 
-from blake3 import blake3
 import pywhatlang
+from blake3 import blake3
 from more_itertools import flatten
 from selectolax.parser import HTMLParser
 
 from bookworm import typehints as t
-from bookworm.concurrency import QueueProcess, call_threaded
+from bookworm.concurrency import QueueProcess
 from bookworm.i18n import LocaleInfo
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
-from bookworm.structured_text import SemanticElementType, Style, TextRange
+from bookworm.structured_text import (
+    CURRENT_CONTENT_HASH_VERSION,
+    SemanticElementType,
+    TEXT_OBJECT_REPLACEMENT_CHAR,
+    TextPositionMap,
+    TextRange,
+)
 from bookworm.utils import (
     get_url_spans,
-    normalize_line_breaks,
     remove_excess_blank_lines,
 )
 
 from . import operations as doctools
 from .elements import *
-from .exceptions import DocumentIOError, PaginationError, UnsupportedDocumentFormatError
+from .exceptions import DocumentIOError
 from .features import DocumentCapability, ReadingMode
 
 log = logger.getChild(__name__)
@@ -115,9 +119,7 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
 
     @cached_property
     def reading_options(self) -> ReadingOptions:
-        reading_mode = int(
-            self.uri.openner_args.get("reading_mode", ReadingMode.DEFAULT)
-        )
+        reading_mode = int(self.uri.openner_args.get("reading_mode", ReadingMode.DEFAULT))
         return ReadingOptions(
             reading_mode=ReadingMode(reading_mode),
         )
@@ -136,25 +138,95 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         self._is_read = True
 
     @staticmethod
+    def _has_hashable_text(text: str) -> bool:
+        return bool(text.replace(TEXT_OBJECT_REPLACEMENT_CHAR, "").strip())
+
+    def iter_content_hash_images(self):
+        return ()
+
+    @staticmethod
     def _hash_document_text(text: str) -> str | None:
         normalized_text = text.strip()
-        if not normalized_text:
+        if not BaseDocument._has_hashable_text(normalized_text):
             return None
         return blake3(normalized_text.encode()).hexdigest()
 
     @staticmethod
-    def _hash_document_pages(page_texts: t.Iterable[str]) -> str | None:
+    def _update_content_hash_segment(hasher, kind: str, payload: bytes) -> None:
+        encoded_kind = kind.encode()
+        hasher.update(len(encoded_kind).to_bytes(2, "big"))
+        hasher.update(encoded_kind)
+        hasher.update(len(payload).to_bytes(8, "big"))
+        hasher.update(payload)
+
+    @classmethod
+    def _hash_document_pages_with_images(cls, pages) -> tuple[str | None, bool]:
         has_meaningful_text = False
-        hasher = blake3()
-        for page_text in page_texts:
-            encoded_text = page_text.encode()
-            if page_text.strip():
+        has_images = False
+        legacy_hasher = blake3()
+        page_records = []
+        for page_index, page in enumerate(pages):
+            storage_text = page.get_storage_text() or ""
+            encoded_text = storage_text.encode()
+            if cls._has_hashable_text(storage_text):
                 has_meaningful_text = True
-            hasher.update(len(encoded_text).to_bytes(8, "big"))
-            hasher.update(encoded_text)
+            legacy_hasher.update(len(encoded_text).to_bytes(8, "big"))
+            legacy_hasher.update(encoded_text)
+            page_records.append((page_index, storage_text, page))
         if not has_meaningful_text:
-            return None
-        return hasher.hexdigest()
+            return None, False
+        structured_hasher = blake3()
+        structured_hasher.update(
+            f"bookworm-content-hash-v{CURRENT_CONTENT_HASH_VERSION}".encode()
+        )
+        has_unresolved_images = False
+        for page_index, storage_text, page in page_records:
+            encoded_text = storage_text.encode()
+            cls._update_content_hash_segment(
+                structured_hasher,
+                "page",
+                page_index.to_bytes(8, "big"),
+            )
+            image_segments = sorted(
+                tuple(page.iter_content_hash_images()),
+                key=lambda segment: (segment[0].start, segment[0].stop),
+            )
+            if not image_segments:
+                cls._update_content_hash_segment(structured_hasher, "text", encoded_text)
+                continue
+            has_images = True
+            cursor = 0
+            text_length = len(storage_text)
+            for storage_range, image_identity in image_segments:
+                start = min(max(storage_range.start, 0), text_length)
+                stop = min(max(storage_range.stop, start), text_length)
+                if start < cursor:
+                    continue
+                cls._update_content_hash_segment(
+                    structured_hasher,
+                    "text",
+                    storage_text[cursor:start].encode(),
+                )
+                if image_identity is None:
+                    has_unresolved_images = True
+                else:
+                    kind, payload = image_identity
+                    cls._update_content_hash_segment(
+                        structured_hasher,
+                        f"image:{kind}",
+                        payload,
+                    )
+                cursor = stop
+            cls._update_content_hash_segment(
+                structured_hasher,
+                "text",
+                storage_text[cursor:].encode(),
+            )
+        if has_unresolved_images:
+            return None, has_images
+        if not has_images:
+            return legacy_hasher.hexdigest(), False
+        return structured_hasher.hexdigest(), True
 
     def get_content_hash(self) -> str | None:
         """
@@ -165,10 +237,48 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
             return self._content_hash
         if not self._is_read:
             self.read()
-        self._content_hash = self._hash_document_pages(
-            page.get_text() for page in self
-        )
+        content_hash, has_images = self._hash_document_pages_with_images(self)
+        self._content_hash = content_hash
+        self._content_hash_has_images = has_images
+        if not has_images:
+            self._legacy_content_hash = content_hash
         return self._content_hash
+
+    def _cache_legacy_content_hash_if_possible(self) -> bool:
+        if hasattr(self, "_legacy_content_hash"):
+            return True
+        if (
+            hasattr(self, "_content_hash")
+            and getattr(self, "_content_hash_has_images", None) is False
+        ):
+            self._legacy_content_hash = self._content_hash
+            return True
+        return False
+
+    @classmethod
+    def _hash_legacy_document_pages(cls, pages) -> str | None:
+        """Hash the pre-image-navigation visible text used by older records."""
+        has_meaningful_text = False
+        hasher = blake3()
+        for page in pages:
+            display_text = page.get_legacy_text() or ""
+            if cls._has_hashable_text(display_text):
+                has_meaningful_text = True
+            encoded_text = display_text.encode()
+            hasher.update(len(encoded_text).to_bytes(8, "big"))
+            hasher.update(encoded_text)
+        if not has_meaningful_text:
+            return None
+        return hasher.hexdigest()
+
+    def get_legacy_content_hash(self) -> str | None:
+        """Return the pre-storage-map hash used by older database records."""
+        if self._cache_legacy_content_hash_if_possible():
+            return self._legacy_content_hash
+        if not self._is_read:
+            self.read()
+        self._legacy_content_hash = self._hash_legacy_document_pages(self)
+        return self._legacy_content_hash
 
     def close(self) -> None:
         """Perform the actual IO operations for unloading the ebook.
@@ -183,9 +293,7 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
 
     def get_page_number_from_page_label(self, page_label):
         if DocumentCapability.PAGE_LABELS not in self.capabilities:
-            raise NotImplementedError(
-                "This feature is not enabled for this class of documents"
-            )
+            raise NotImplementedError("This feature is not enabled for this class of documents")
         for page in self:
             page_label = page_label.lower()
             if page.get_label().lower() == page_label:
@@ -270,7 +378,7 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         try:
             lang_code, confidence, is_reliable = pywhatlang.detect_lang(samples)
         except:
-            log.error(f"Failed to recognize document language", exc_info=True)
+            log.error("Failed to recognize document language", exc_info=True)
         else:
             return LocaleInfo(lang_code).parent
         return LocaleInfo(hint_language)
@@ -303,6 +411,52 @@ class BasePage(metaclass=ABCMeta):
     @abstractmethod
     def get_text(self) -> str:
         """Return the text content or raise NotImplementedError."""
+
+    def get_storage_text(self) -> str:
+        """Return stable text for hashes and persisted positions."""
+        return self.get_text()
+
+    def get_legacy_text(self) -> str:
+        """Return the visible text model used before embedded image placeholders."""
+        return self.get_text()
+
+    def get_text_position_map(self) -> TextPositionMap:
+        return TextPositionMap.identity(len(self.get_text()))
+
+    def get_legacy_text_position_map(self) -> TextPositionMap:
+        if hasattr(self, "_legacy_text_position_map"):
+            return self._legacy_text_position_map
+        legacy_text = self.get_legacy_text()
+        storage_text = self.get_storage_text()
+        self._legacy_text_position_map = TextPositionMap.from_texts(
+            legacy_text,
+            storage_text,
+        )
+        return self._legacy_text_position_map
+
+    def iter_content_hash_images(self):
+        return ()
+
+    def display_to_storage_position(self, pos: int, affinity="before") -> int:
+        return self.get_text_position_map().display_to_storage_position(pos, affinity=affinity)
+
+    def storage_to_display_position(self, pos: int, affinity="before") -> int:
+        return self.get_text_position_map().storage_to_display_position(pos, affinity=affinity)
+
+    def display_to_storage_range(self, start: int, stop: int) -> TextRange:
+        return self.get_text_position_map().display_to_storage_range(start, stop)
+
+    def storage_to_display_range(self, start: int, stop: int) -> TextRange:
+        return self.get_text_position_map().storage_to_display_range(start, stop)
+
+    def legacy_to_storage_position(self, pos: int, affinity="before") -> int:
+        return self.get_legacy_text_position_map().display_to_storage_position(
+            pos,
+            affinity=affinity,
+        )
+
+    def legacy_to_storage_range(self, start: int, stop: int) -> TextRange:
+        return self.get_legacy_text_position_map().display_to_storage_range(start, stop)
 
     def get_image(self, zoom_factor: float) -> ImageIO:
         """
@@ -351,9 +505,7 @@ class BasePage(metaclass=ABCMeta):
             semantic_structure = self.get_semantic_structure()
         except NotImplementedError:
             semantic_structure = {}
-        semantic_link_ranges = semantic_structure.setdefault(
-            SemanticElementType.LINK, []
-        )
+        semantic_link_ranges = semantic_structure.setdefault(SemanticElementType.LINK, [])
         all_link_ranges = [
             *semantic_link_ranges,
             *(
@@ -411,6 +563,39 @@ class SinglePage(BasePage):
     def get_text(self):
         return self.document.get_content()
 
+    def get_storage_text(self):
+        return self.document.get_storage_content()
+
+    def get_legacy_text(self):
+        return self.document.get_legacy_content()
+
+    def get_text_position_map(self):
+        return self.document.get_text_position_map()
+
+    def get_legacy_text_position_map(self):
+        return self.document.get_legacy_text_position_map()
+
+    def iter_content_hash_images(self):
+        return self.document.iter_content_hash_images()
+
+    def display_to_storage_position(self, pos, affinity="before"):
+        return self.document.display_to_storage_position(pos, affinity=affinity)
+
+    def storage_to_display_position(self, pos, affinity="before"):
+        return self.document.storage_to_display_position(pos, affinity=affinity)
+
+    def display_to_storage_range(self, start, stop):
+        return self.document.display_to_storage_range(start, stop)
+
+    def storage_to_display_range(self, start, stop):
+        return self.document.storage_to_display_range(start, stop)
+
+    def legacy_to_storage_position(self, pos, affinity="before"):
+        return self.document.legacy_to_storage_position(pos, affinity=affinity)
+
+    def legacy_to_storage_range(self, start, stop):
+        return self.document.legacy_to_storage_range(start, stop)
+
     def get_semantic_structure(self):
         return self.document.get_document_semantic_structure()
 
@@ -440,11 +625,52 @@ class SinglePageDocument(BaseDocument):
     def get_content(self) -> str:
         """Get the content of this document."""
 
-    def get_content_hash(self) -> str | None:
-        if hasattr(self, "_content_hash"):
-            return self._content_hash
-        self._content_hash = self._hash_document_text(self.get_content())
-        return self._content_hash
+    def get_storage_content(self) -> str:
+        return self.get_content()
+
+    def get_legacy_content(self) -> str:
+        return self.get_content()
+
+    def get_text_position_map(self) -> TextPositionMap:
+        return TextPositionMap.identity(len(self.get_content()))
+
+    def get_legacy_text_position_map(self) -> TextPositionMap:
+        if hasattr(self, "_legacy_text_position_map"):
+            return self._legacy_text_position_map
+        self._legacy_text_position_map = TextPositionMap.from_texts(
+            self.get_legacy_content(),
+            self.get_storage_content(),
+        )
+        return self._legacy_text_position_map
+
+    def display_to_storage_position(self, pos: int, affinity="before") -> int:
+        return self.get_text_position_map().display_to_storage_position(pos, affinity=affinity)
+
+    def storage_to_display_position(self, pos: int, affinity="before") -> int:
+        return self.get_text_position_map().storage_to_display_position(pos, affinity=affinity)
+
+    def display_to_storage_range(self, start: int, stop: int) -> TextRange:
+        return self.get_text_position_map().display_to_storage_range(start, stop)
+
+    def storage_to_display_range(self, start: int, stop: int) -> TextRange:
+        return self.get_text_position_map().storage_to_display_range(start, stop)
+
+    def legacy_to_storage_position(self, pos: int, affinity="before") -> int:
+        return self.get_legacy_text_position_map().display_to_storage_position(
+            pos,
+            affinity=affinity,
+        )
+
+    def legacy_to_storage_range(self, start: int, stop: int) -> TextRange:
+        return self.get_legacy_text_position_map().display_to_storage_range(start, stop)
+
+    def get_legacy_content_hash(self) -> str | None:
+        if self._cache_legacy_content_hash_if_possible():
+            return self._legacy_content_hash
+        if not self._is_read:
+            self.read()
+        self._legacy_content_hash = self._hash_document_text(self.get_legacy_content())
+        return self._legacy_content_hash
 
     def get_page(self, index: int) -> SinglePage:
         return SinglePage(self, index)

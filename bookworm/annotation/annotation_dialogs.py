@@ -1,4 +1,3 @@
-# coding: utf-8
 
 from dataclasses import dataclass
 
@@ -69,15 +68,11 @@ class ViewAndEditAnnotationDialog(SimpleDialog):
         if not self.editable:
             # Translators: label of an edit control in a dialog to view/edit comments/highlights
             wx.StaticText(metadataBox, -1, _("Date Created"))
-            self.createdText = wx.TextCtrl(
-                metadataBox, -1, style=wx.TE_READONLY | wx.TE_MULTILINE
-            )
+            self.createdText = wx.TextCtrl(metadataBox, -1, style=wx.TE_READONLY | wx.TE_MULTILINE)
             self.createdText.SetSizerProps(expand=True)
             # Translators: label of an edit control in a dialog to view/edit comments/highlights
             wx.StaticText(metadataBox, -1, _("Last updated"))
-            self.updatedText = wx.TextCtrl(
-                metadataBox, -1, style=wx.TE_READONLY | wx.TE_MULTILINE
-            )
+            self.updatedText = wx.TextCtrl(metadataBox, -1, style=wx.TE_READONLY | wx.TE_MULTILINE)
             self.updatedText.SetSizerProps(expand=True)
         if self.editable:
             self.Bind(wx.EVT_BUTTON, self.onOk, id=wx.ID_OK)
@@ -131,13 +126,9 @@ class BookmarksViewer(SimpleDialog):
         self.annotationsListCtrl = ImmutableObjectListView(parent, wx.ID_ANY)
         # Translators: text of a button to remove bookmarks
         wx.Button(parent, wx.ID_DELETE, _("&Remove"))
-        self.Bind(
-            wx.EVT_LIST_ITEM_ACTIVATED, self.onItemClick, self.annotationsListCtrl
-        )
+        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onItemClick, self.annotationsListCtrl)
         self.Bind(wx.EVT_LIST_KEY_DOWN, self.onKeyDown, self.annotationsListCtrl)
-        self.Bind(
-            wx.EVT_LIST_END_LABEL_EDIT, self.onEndLabelEdit, self.annotationsListCtrl
-        )
+        self.Bind(wx.EVT_LIST_END_LABEL_EDIT, self.onEndLabelEdit, self.annotationsListCtrl)
         self.Bind(wx.EVT_BUTTON, self.onDelete, id=wx.ID_DELETE)
         wx.FindWindowById(wx.ID_DELETE).Enable(False)
         self._populate_list()
@@ -180,7 +171,8 @@ class BookmarksViewer(SimpleDialog):
             return
         self.reader.go_to_page(item.page_number)
         self.Close()
-        wx.CallAfter(self.parent.set_insertion_point, item.position)
+        display_position = self.reader.storage_to_view_position(item.position, item.page_number)
+        wx.CallAfter(self.parent.set_insertion_point, display_position)
 
     def onKeyDown(self, event):
         item = self.annotationsListCtrl.get_selected()
@@ -190,10 +182,7 @@ class BookmarksViewer(SimpleDialog):
         kcode = event.GetKeyCode()
         if kcode == wx.WXK_F2:
             editCtrl = self.annotationsListCtrl.EditLabel(selected_idx)
-            if (
-                self.annotationsListCtrl.GetItemText(selected_idx)
-                == self._unamed_bookmark_title
-            ):
+            if self.annotationsListCtrl.GetItemText(selected_idx) == self._unamed_bookmark_title:
                 editCtrl.SetValue("")
         elif kcode == wx.WXK_DELETE:
             self.onDelete(event)
@@ -229,15 +218,14 @@ class BookmarksViewer(SimpleDialog):
             self.annotator.delete(item.id)
             self._populate_list()
             if page_number == self.reader.current_page:
-                AnnotationService.style_bookmark(self.Parent, pos, enable=False)
+                display_position = self.reader.storage_to_view_position(pos, page_number)
+                AnnotationService.style_bookmark(self.Parent, display_position, enable=False)
 
 
 class AnnotationFilterPanel(sc.SizedPanel):
     """Filter by several criteria."""
 
-    def __init__(
-        self, *args, annotator, filter_callback, filter_by_book=False, **kwargs
-    ):
+    def __init__(self, *args, annotator, filter_callback, filter_by_book=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.SetSizerProps(expand=True)
         self.SetSizerType("horizontal")
@@ -278,9 +266,7 @@ class AnnotationFilterPanel(sc.SizedPanel):
                 self.bookChoice.Append(book.title, book.id)
         else:
             self.sectionChoice.Clear()
-            self.sectionChoice.AppendItems(
-                [s[0] for s in self.annotator.get_sections()]
-            )
+            self.sectionChoice.AppendItems([s[0] for s in self.annotator.get_sections()])
         self.tagsCombo.Clear()
         self.tagsCombo.AppendItems(self.annotator.get_tags())
 
@@ -317,9 +303,7 @@ class AnnotationWithContentDialog(SimpleDialog):
             # Translators: the title of a column in the comments/highlights list
             ColumnDefn("Page", "center", 150, lambda anot: anot.page_number + 1),
             # Translators: the title of a column in the comments/highlights list
-            ColumnDefn(
-                "Added", "right", 200, lambda a: format_datetime(a.date_created)
-            ),
+            ColumnDefn("Added", "right", 200, lambda a: format_datetime(a.date_created)),
         )
 
     def __init__(self, reader, annotator_cls, *args, can_edit=False, **kwargs):
@@ -391,9 +375,7 @@ class AnnotationWithContentDialog(SimpleDialog):
         self.set_items()
 
     def get_items(self):
-        getter_func = (
-            self.annotator.get_for_book if self.reader.ready else self.annotator.get_all
-        )
+        getter_func = self.annotator.get_for_book if self.reader.ready else self.annotator.get_all
         return getter_func(
             self._filter_and_sort_state.filter_criteria,
             self._filter_and_sort_state.sort_criteria,
@@ -426,9 +408,7 @@ class AnnotationWithContentDialog(SimpleDialog):
     def onSortToggle(self, event):
         if event.IsChecked():
             event.GetEventObject().SetValue(False)
-            self._filter_and_sort_state.sort_criteria = self._sort_toggles[
-                event.GetEventObject()
-            ]
+            self._filter_and_sort_state.sort_criteria = self._sort_toggles[event.GetEventObject()]
         self.on_filter_and_sort_state_changed()
 
     def onSortMethodToggle(self, event):
@@ -469,9 +449,7 @@ class AnnotationWithContentDialog(SimpleDialog):
         if (
             wx.MessageBox(
                 # Translators: content of a message asking the user if they want to delete a comment/highlight
-                _(
-                    "This action can not be reverted.\nAre you sure you want to remove this item?"
-                ),
+                _("This action can not be reverted.\nAre you sure you want to remove this item?"),
                 # Translators: title of a message asking the user if they want to delete a bookmark
                 _("Delete Annotation?"),
                 parent=self,
@@ -510,9 +488,7 @@ class AnnotationWithContentDialog(SimpleDialog):
                     copy_to_clipboard(item.content)
                     sounds.clipboard.play()
             except:
-                log.exception(
-                    "Failed to copy annotation text to the clipboard", evc_info=True
-                )
+                log.exception("Failed to copy annotation text to the clipboard", evc_info=True)
         event.Skip()
 
     def edit_tags(self, item):
@@ -539,9 +515,7 @@ class AnnotationWithContentDialog(SimpleDialog):
             self.export_items(renderer_cls, items, export_options, open_after_export)
 
     def export_items(self, renderer_cls, items, export_options, open_after_export):
-        renderer = renderer_cls(
-            items, export_options, self._filter_and_sort_state.filter_criteria
-        )
+        renderer = renderer_cls(items, export_options, self._filter_and_sort_state.filter_criteria)
         resulting_file = renderer.render_to_file()
         if open_after_export:
             wx.LaunchDefaultApplication(resulting_file)
@@ -552,9 +526,7 @@ class GenericAnnotationWithContentDialog(AnnotationWithContentDialog):
     def column_defn(cls):
         column_defn = list(super().column_defn())
         # Translators: the title of a column in the comments/highlights list
-        column_defn.insert(
-            1, ColumnDefn(_("Book"), "left", 300, lambda a: a.book.title)
-        )
+        column_defn.insert(1, ColumnDefn(_("Book"), "left", 300, lambda a: a.book.title))
         return column_defn
 
     def set_default_state(self):
@@ -563,11 +535,21 @@ class GenericAnnotationWithContentDialog(AnnotationWithContentDialog):
 
     def go_to_item(self, item):
         def book_load_callback():
-            super(GenericAnnotationWithContentDialog, self).go_to_item(item)
+            loaded_item = self.annotator_cls(self.service.reader).get(item.id) or item
+            super(GenericAnnotationWithContentDialog, self).go_to_item(loaded_item)
             if isinstance(self.annotator, NoteTaker):
-                self.service.view.set_insertion_point(item.position)
+                self.service.view.set_insertion_point(
+                    self.service.reader.storage_to_view_position(
+                        loaded_item.position, loaded_item.page_number
+                    )
+                )
             else:
-                self.service.view.select_text(item.start_pos, item.end_pos)
+                display_range = self.service.reader.storage_to_view_range(
+                    loaded_item.start_pos,
+                    loaded_item.end_pos,
+                    loaded_item.page_number,
+                )
+                self.service.view.select_text(display_range.start, display_range.stop)
 
         new_uri = item.book.uri.create_copy(view_args={"add_to_recents": False})
         self.service.view.open_uri(new_uri, callback=book_load_callback)
@@ -576,17 +558,25 @@ class GenericAnnotationWithContentDialog(AnnotationWithContentDialog):
 class CommentsDialog(AnnotationWithContentDialog):
     def go_to_item(self, item):
         super().go_to_item(item)
-        self.service.view.set_insertion_point(item.position)
+        self.service.view.set_insertion_point(
+            self.service.reader.storage_to_view_position(item.position, item.page_number)
+        )
         start_pos, end_pos = (item.start_pos, item.end_pos)
         if (start_pos, end_pos) != (None, None):
             # We have a selection, let's select the text
-            self.service.view.select_text(start_pos, end_pos)
+            display_range = self.service.reader.storage_to_view_range(
+                start_pos, end_pos, item.page_number
+            )
+            self.service.view.select_text(display_range.start, display_range.stop)
 
 
 class QuotesDialog(AnnotationWithContentDialog):
     def go_to_item(self, item):
         super().go_to_item(item)
-        self.service.view.select_text(item.start_pos, item.end_pos)
+        display_range = self.service.reader.storage_to_view_range(
+            item.start_pos, item.end_pos, item.page_number
+        )
+        self.service.view.select_text(display_range.start, display_range.stop)
 
 
 class ExportNotesDialog(SimpleDialog):
@@ -612,14 +602,10 @@ class ExportNotesDialog(SimpleDialog):
         self.includeTagsCheckbox = wx.CheckBox(parent, -1, _("Include tags"))
         # Translators: label of a choice control in a dialog to set export options for comments/highlights
         wx.StaticText(parent, -1, _("Output format:"))
-        self.formatChoice = wx.Choice(
-            parent, -1, choices=[r.display_name for r in renderers]
-        )
+        self.formatChoice = wx.Choice(parent, -1, choices=[r.display_name for r in renderers])
         # Translators: label of an edit control in a dialog to set export options for comments/highlights
         wx.StaticText(parent, -1, _("Output File"))
-        self.outputFileTextCtrl = wx.TextCtrl(
-            parent, -1, style=wx.TE_READONLY | wx.TE_MULTILINE
-        )
+        self.outputFileTextCtrl = wx.TextCtrl(parent, -1, style=wx.TE_READONLY | wx.TE_MULTILINE)
         # Translators: text of a button in a dialog to set export options for comments/highlights
         browseButton = wx.Button(parent, -1, _("&Browse"))
         self.openAfterExportCheckBox = wx.CheckBox(

@@ -1,10 +1,13 @@
+import base64
 import os
+import zipfile
 from functools import cached_property
 from io import BytesIO
+from types import SimpleNamespace
 
+import pytest
 from ebooklib import epub
 from PIL import Image
-import pytest
 
 from bookworm.document import (
     SINGLE_PAGE_DOCUMENT_PAGER,
@@ -17,11 +20,18 @@ from bookworm.document import (
 )
 from bookworm.document.formats.epub import EpubDocument
 from bookworm.document.formats.html import FileSystemHtmlDocument
+from bookworm.document.formats.odf import OdfPresentation
 from bookworm.document.uri import DocumentUri
 from bookworm.gui.book_viewer import _get_structural_navigation_speech
 from bookworm.gui.book_viewer.render_view import EmbeddedImageDialog
 from bookworm.image_io import ImageIO
-from bookworm.structured_text import ImageElementInfo, SemanticElementType, TextRange
+from bookworm.structured_text import (
+    TEXT_OBJECT_REPLACEMENT_CHAR,
+    ImageElementInfo,
+    SemanticElementType,
+    TextPositionMap,
+    TextRange,
+)
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 
 
@@ -187,6 +197,113 @@ def test_structured_html_parser_collects_image_ranges_and_metadata():
     assert parser.get_image_info(0).suggested_filename == "alt.png"
 
 
+def test_structured_html_parser_uses_stable_storage_placeholders():
+    parser = StructuredHtmlParser.from_string(
+        """
+        <html><body>
+            before <img src="images/alt.png" alt="Alt text"> after
+            <img src="images/fallback.png">
+        </body></html>
+        """
+    )
+
+    display_text = parser.get_text()
+    storage_text = parser.get_storage_text()
+    ranges = parser.semantic_elements[SemanticElementType.FIGURE]
+
+    assert [display_text[start:stop] for start, stop in ranges] == [
+        "[Alt text]",
+        "[Image]",
+    ]
+    assert storage_text.count(TEXT_OBJECT_REPLACEMENT_CHAR) == 2
+    for start, stop in ranges:
+        storage_range = parser.display_to_storage_range(start, stop)
+        assert (
+            storage_text[storage_range.start : storage_range.stop] == TEXT_OBJECT_REPLACEMENT_CHAR
+        )
+        assert parser.storage_to_display_range(
+            storage_range.start, storage_range.stop
+        ).astuple() == (start, stop)
+
+
+def test_structured_html_parser_keeps_range_stops_before_following_images():
+    parser = StructuredHtmlParser.from_string(
+        """
+        <html><body>
+            before <img src="images/alt.png" alt="Alt text"> after
+        </body></html>
+        """
+    )
+
+    display_text = parser.get_text()
+    storage_text = parser.get_storage_text()
+    image_start, image_stop = parser.semantic_elements[SemanticElementType.FIGURE][0]
+
+    before_image = parser.display_to_storage_range(0, image_start)
+    assert storage_text[before_image.start : before_image.stop] == display_text[:image_start]
+    assert TEXT_OBJECT_REPLACEMENT_CHAR not in storage_text[before_image.start : before_image.stop]
+    assert parser.storage_to_display_range(before_image.start, before_image.stop).astuple() == (
+        0,
+        image_start,
+    )
+
+    image_and_text = parser.display_to_storage_range(0, image_stop)
+    assert storage_text[image_and_text.start : image_and_text.stop].endswith(
+        TEXT_OBJECT_REPLACEMENT_CHAR
+    )
+
+
+def test_text_position_map_from_texts_preserves_legacy_image_boundaries():
+    legacy_text = "before middle after text\n"
+    storage_text = f"before {TEXT_OBJECT_REPLACEMENT_CHAR} middle {TEXT_OBJECT_REPLACEMENT_CHAR} after text\n"
+    mapper = TextPositionMap.from_texts(legacy_text, storage_text)
+
+    after_text = legacy_text.index("after")
+    second_image = storage_text.index(
+        TEXT_OBJECT_REPLACEMENT_CHAR,
+        storage_text.index(TEXT_OBJECT_REPLACEMENT_CHAR) + 1,
+    )
+    after_text_storage = storage_text.index("after")
+
+    assert mapper.display_to_storage_position(after_text, affinity="before") == second_image
+    assert mapper.display_to_storage_position(after_text, affinity="after") == after_text_storage
+    assert mapper.display_to_storage_range(0, after_text).stop == second_image
+    assert mapper.display_to_storage_range(after_text, after_text + len("after")).start == (
+        after_text_storage
+    )
+
+
+def test_html_legacy_content_hash_uses_pre_image_navigation_text(tmp_path):
+    image_path = tmp_path / "pic.png"
+    image_path.write_bytes(make_png_bytes())
+    html_path = tmp_path / "book.html"
+    html_path.write_text(
+        """
+        <html>
+            <head><title>Book</title></head>
+            <body><p>alpha <img src="pic.png" alt="Picture"> omega</p></body>
+        </html>
+        """,
+        encoding="utf-8",
+    )
+    document = FileSystemHtmlDocument(DocumentUri.from_filename(html_path))
+    document.read()
+
+    try:
+        legacy_parser = StructuredHtmlParser.from_string(
+            html_path.read_text(encoding="utf-8"),
+            include_images=False,
+        )
+        legacy_text = legacy_parser.get_text()
+        assert TEXT_OBJECT_REPLACEMENT_CHAR not in legacy_text
+        assert document.get_legacy_content() == legacy_text
+        assert document.get_legacy_content_hash() == document._hash_document_text(
+            legacy_text
+        )
+    finally:
+        document.close()
+
+
 def test_structured_html_parser_ignores_symbol_only_image_alt_text():
     parser = StructuredHtmlParser.from_string(
         '<html><body><img src="images/pic.png" alt="{%}"></body></html>'
@@ -309,28 +426,14 @@ def test_structured_html_parser_matches_visible_table_image_when_text_repeats():
     assert parser.get_image_info(0).src == "images/shown.png"
 
 
-def test_structured_html_parser_filters_hidden_images_from_metadata():
+def test_structured_html_parser_honors_hidden_attribute_when_filtering_images():
     parser = StructuredHtmlParser.from_string(
         """
         <html><body>
-            <img src="images/hidden.png" alt="Image" style="display:none">
-            <img src="images/shown.png" alt="Image">
-        </body></html>
-        """
-    )
-
-    text = parser.get_text()
-    ranges = parser.semantic_elements[SemanticElementType.FIGURE]
-
-    assert [text[start:stop] for start, stop in ranges] == ["[Image]"]
-    assert parser.get_image_info(0).src == "images/shown.png"
-
-
-def test_structured_html_parser_honors_important_when_filtering_hidden_images():
-    parser = StructuredHtmlParser.from_string(
-        """
-        <html><body>
-            <img src="images/hidden.png" alt="Hidden" style="display: none !important">
+            <img src="images/hidden.png" alt="Hidden" hidden>
+            <div hidden>
+                <img src="images/ancestor-hidden.png" alt="Ancestor hidden">
+            </div>
             <img src="images/shown.png" alt="Shown">
         </body></html>
         """
@@ -343,14 +446,11 @@ def test_structured_html_parser_honors_important_when_filtering_hidden_images():
     assert parser.get_image_info(0).src == "images/shown.png"
 
 
-def test_structured_html_parser_honors_hidden_attribute_when_filtering_images():
+def test_structured_html_parser_honors_important_when_filtering_hidden_images():
     parser = StructuredHtmlParser.from_string(
         """
         <html><body>
-            <img src="images/hidden.png" alt="Hidden" hidden>
-            <div hidden>
-                <img src="images/ancestor-hidden.png" alt="Ancestor hidden">
-            </div>
+            <img src="images/hidden.png" alt="Hidden" style="display: none !important">
             <img src="images/shown.png" alt="Shown">
         </body></html>
         """
@@ -518,7 +618,7 @@ def test_epub_document_resolves_domain_like_package_relative_image(tmp_path):
     document = make_epub_document(
         tmp_path,
         '<html><body><h1>Intro</h1><p><img src="foo.com/pic.png" alt="Picture"></p></body></html>',
-        make_epub_image_item("pic", "foo.com/pic.png", size=(5, 6)),
+        make_epub_image_item("pic", "chapters/foo.com/pic.png", size=(5, 6)),
     )
 
     assert document.get_document_embedded_image(0).size == (5, 6)
@@ -551,8 +651,8 @@ def test_epub_document_does_not_match_embedded_image_by_partial_suffix(tmp_path)
     document = make_epub_document(
         tmp_path,
         '<html><body><h1>Intro</h1><p><img src="cover.png" alt="Cover"></p></body></html>',
-        make_epub_image_item("backcover", "images/backcover.png", size=(3, 4)),
-        make_epub_image_item("cover", "images/cover.png", size=(6, 7)),
+        make_epub_image_item("backcover", "chapters/backcover.png", size=(3, 4)),
+        make_epub_image_item("cover", "chapters/cover.png", size=(6, 7)),
     )
 
     assert document.get_document_embedded_image(0).size == (6, 7)
@@ -564,6 +664,17 @@ def test_epub_document_does_not_choose_ambiguous_basename_fallback(tmp_path):
         '<html><body><h1>Intro</h1><p><img src="pic.png" alt="Picture"></p></body></html>',
         make_epub_image_item("pic1", "images/pic.png", size=(3, 4)),
         make_epub_image_item("pic2", "figures/pic.png", size=(6, 7)),
+    )
+
+    with pytest.raises(DocumentIOError):
+        document.get_document_embedded_image(0)
+
+
+def test_epub_document_does_not_choose_unique_basename_fallback(tmp_path):
+    document = make_epub_document(
+        tmp_path,
+        '<html><body><h1>Intro</h1><p><img src="../missing/pic.png" alt="Picture"></p></body></html>',
+        make_epub_image_item("pic", "images/pic.png", size=(6, 7)),
     )
 
     with pytest.raises(DocumentIOError):
@@ -584,6 +695,143 @@ def test_epub_document_wraps_undecodable_embedded_image(tmp_path):
 
     with pytest.raises(DocumentIOError):
         document.get_document_embedded_image(0)
+
+
+def test_html_content_hash_uses_embedded_image_bytes(tmp_path):
+    def make_document(directory, image_src, image_bytes=None, filename=None):
+        directory.mkdir()
+        if image_bytes is not None:
+            (directory / (filename or image_src)).write_bytes(image_bytes)
+        html_path = directory / "book.html"
+        html_path.write_text(
+            f"""
+            <html>
+                <head><title>Book</title></head>
+                <body><p>alpha <img src="{image_src}" alt="Picture"> omega</p></body>
+            </html>
+            """,
+            encoding="utf-8",
+        )
+        document = FileSystemHtmlDocument(DocumentUri.from_filename(html_path))
+        document.read()
+        return document
+
+    red_image = make_png_bytes(color=(255, 0, 0))
+    blue_image = make_png_bytes(color=(0, 0, 255))
+    first = make_document(tmp_path / "first", "pic.png", red_image)
+    same_image_different_name = make_document(
+        tmp_path / "same", "renamed.png", red_image
+    )
+    different_image = make_document(tmp_path / "different", "pic.png", blue_image)
+    inline_image_src = "data:image/png;base64," + base64.b64encode(red_image).decode("ascii")
+    inline_image = make_document(
+        tmp_path / "inline",
+        inline_image_src,
+        None,
+        filename="inline.png",
+    )
+
+    try:
+        assert first.get_content_hash() == same_image_different_name.get_content_hash()
+        assert first.get_content_hash() == inline_image.get_content_hash()
+        assert first.get_content_hash() != different_image.get_content_hash()
+    finally:
+        first.close()
+        same_image_different_name.close()
+        different_image.close()
+        inline_image.close()
+
+
+def test_html_content_hash_resolves_remote_base_href_for_relative_images(tmp_path):
+    def make_document(directory, base_href):
+        directory.mkdir()
+        html_path = directory / "book.html"
+        html_path.write_text(
+            f"""
+            <html>
+                <head><title>Book</title><base href="{base_href}"></head>
+                <body><p>alpha <img src="pic.png" alt="Picture"> omega</p></body>
+            </html>
+            """,
+            encoding="utf-8",
+        )
+        document = FileSystemHtmlDocument(DocumentUri.from_filename(html_path))
+        document.read()
+        return document
+
+    first = make_document(tmp_path / "first", "https://cdn.example.com/one/")
+    second = make_document(tmp_path / "second", "https://cdn.example.com/two/")
+
+    try:
+        assert first.get_content_hash() is not None
+        assert second.get_content_hash() is not None
+        assert first.get_content_hash() != second.get_content_hash()
+    finally:
+        first.close()
+        second.close()
+
+
+def test_odp_content_hash_uses_package_image_bytes(tmp_path):
+    def make_document(filename, image_bytes):
+        odp_path = tmp_path / filename
+        with zipfile.ZipFile(odp_path, "w") as package:
+            package.writestr("Pictures/pic.png", image_bytes)
+        document = OdfPresentation(DocumentUri.from_filename(odp_path))
+        document.parser = SimpleNamespace(title="Deck")
+        document.slides = {
+            "Slide": '<p>alpha <img src="Pictures/pic.png" alt="Picture"> omega</p>'
+        }
+        document.num_slides = 1
+        document._is_read = True
+        return document
+
+    first = make_document("first.odp", make_png_bytes(color=(255, 0, 0)))
+    second = make_document("second.odp", make_png_bytes(color=(0, 0, 255)))
+
+    try:
+        assert first.get_content_hash() != second.get_content_hash()
+        image_info = first.get_page(0).get_embedded_image_info(0)
+        image = first.get_page(0).get_embedded_image(0)
+        assert image_info.src == "Pictures/pic.png"
+        assert image.size == (3, 2)
+    finally:
+        first.close()
+        second.close()
+
+
+def test_epub_content_hash_uses_embedded_image_bytes(tmp_path):
+    first_dir = tmp_path / "first"
+    second_dir = tmp_path / "second"
+    first_dir.mkdir()
+    second_dir.mkdir()
+    chapter_content = (
+        '<html><body><h1>Intro</h1><p>alpha '
+        '<img src="../images/pic.png" alt="Picture"> omega</p></body></html>'
+    )
+    first = make_epub_document(
+        first_dir,
+        chapter_content,
+        make_epub_image_item(
+            "pic",
+            "images/pic.png",
+            content=make_png_bytes(color=(255, 0, 0)),
+        ),
+    )
+    second = make_epub_document(
+        second_dir,
+        chapter_content,
+        make_epub_image_item(
+            "pic",
+            "images/pic.png",
+            content=make_png_bytes(color=(0, 0, 255)),
+        ),
+    )
+
+    try:
+        assert first.get_content_hash() != second.get_content_hash()
+    finally:
+        first.close()
+        second.close()
 
 
 def test_image_io_serializes_rgba_as_jpeg():
@@ -717,9 +965,7 @@ def test_reader_ctrl_enter_opens_embedded_image(reader, view):
     document = SyntheticImageDocument(
         "[Cover]",
         {SemanticElementType.FIGURE: [(0, 7)]},
-        image_infos=(
-            ImageElementInfo(TextRange(0, 7), "cover.png", "Cover", "cover.png"),
-        ),
+        image_infos=(ImageElementInfo(TextRange(0, 7), "cover.png", "Cover", "cover.png"),),
         images=(ImageIO.from_bytes(make_png_bytes(size=(8, 9))),),
     )
     document.read()
@@ -763,9 +1009,7 @@ def test_reader_ctrl_enter_activates_link_when_embedded_image_fails(reader, view
     assert view.image_dialog_args is None
 
 
-def test_reader_ctrl_enter_uses_document_order_after_backward_image_navigation(
-    reader, view
-):
+def test_reader_ctrl_enter_uses_document_order_after_backward_image_navigation(reader, view):
     document = SyntheticImageDocument(
         "[One]\n[Two]",
         {SemanticElementType.FIGURE: [(0, 5), (6, 11)]},
