@@ -1,7 +1,4 @@
-import os
 from pathlib import Path
-import tempfile
-import time
 
 import pytest
 from sqlalchemy.orm import close_all_sessions
@@ -9,10 +6,8 @@ from sqlalchemy.pool import NullPool
 
 from bookworm.config import setup_config
 from bookworm.database import init_database
-from bookworm.database.models import Base
 from bookworm.document.elements import Section
 from bookworm.reader import EBookReader
-from bookworm.service.handler import ServiceHandler
 
 
 @pytest.fixture(scope="function", autouse=True)

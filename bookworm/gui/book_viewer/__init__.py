@@ -2,14 +2,11 @@
 import math
 import time
 import webbrowser
-from contextlib import contextmanager
 from functools import partial
-from pathlib import Path
 
 import wx
 
 from bookworm import app, config, speech
-from bookworm import typehints as t
 from bookworm.concurrency import CancellationToken, threaded_worker
 from bookworm.document import (
     ArchiveContainsMultipleDocuments,
@@ -43,7 +40,6 @@ from bookworm.structured_text import (
     Style,
     TextRange,
 )
-from bookworm.text_to_speech import TextToSpeechService
 from bookworm.utils import gui_thread_safe
 
 from . import recents_manager

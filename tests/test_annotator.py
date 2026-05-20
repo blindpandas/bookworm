@@ -2,8 +2,6 @@ from pathlib import Path
 import shutil
 from types import SimpleNamespace
 
-import pytest
-
 from bookworm import config
 from bookworm.annotation import AnnotationService, NoteTaker
 from bookworm.annotation import annotation_gui
@@ -11,10 +9,7 @@ from bookworm.annotation.annotation_gui import AnnotationMenu
 from bookworm.annotation.annotator import AnnotationSortCriteria, Quoter
 from bookworm.database.models import *
 from bookworm.document.uri import DocumentUri
-from bookworm.signals import reader_book_loaded
 from bookworm.structured_text import SemanticElementType, TextRange
-
-from conftest import asset, reader
 
 
 def test_notes_can_not_overlap(asset, reader):
@@ -23,7 +18,7 @@ def test_notes_can_not_overlap(asset, reader):
     assert Book.query.count() == 1
     annot = NoteTaker(reader)
     # This should succeed
-    comment = annot.create(
+    annot.create(
         title="test", content="test", position=0, start_pos=0, end_pos=1
     )
     # check if it overlaps at start_pos 0, end_pos 1, page_number 0 and position 0
