@@ -124,7 +124,7 @@ class Annotator:
         )
 
     def get(self, item_id):
-        return self.model.query.get(item_id)
+        return self.session.get(self.model, item_id)
 
     def get_first_after(self, page_number, pos):
         model = self.model

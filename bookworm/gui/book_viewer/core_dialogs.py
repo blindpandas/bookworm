@@ -6,7 +6,6 @@ import threading
 from collections import namedtuple
 from itertools import chain
 
-import more_itertools
 import wx
 import wx.lib.sized_controls as sc
 
@@ -22,7 +21,6 @@ from bookworm.gui.components import (
     ImmutableObjectListView,
     PageRangeControl,
     SimpleDialog,
-    make_sized_static_box,
 )
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
@@ -33,10 +31,6 @@ from bookworm.structured_text import (
     SEMANTIC_ELEMENT_OUTPUT_OPTIONS,
     SemanticElementType,
 )
-from bookworm.utils import gui_thread_safe
-
-from .navigation import NavigationProvider
-
 log = logger.getChild(__name__)
 
 
@@ -150,7 +144,6 @@ class SearchBookDialog(SimpleDialog):
     def addControls(self, parent):
         self.reader = self.parent.reader
         self.is_single_page_document = self.reader.document.is_single_page_document()
-        num_pages = len(self.parent.reader.document)
         recent_terms = config.conf["history"]["recent_terms"]
 
         # Translators: the label of an edit field in the search dialog
@@ -212,9 +205,7 @@ class GoToPageDialog(SimpleDialog):
     def addControls(self, parent):
         page_count = len(self.parent.reader.document)
         # Translators: the label of an edit field in the go to page dialog
-        label = wx.StaticText(
-            parent, -1, _("Page number, of {total}:").format(total=page_count)
-        )
+        wx.StaticText(parent, -1, _("Page number, of {total}:").format(total=page_count))
         self.pageNumberCtrl = EnhancedSpinCtrl(
             parent,
             -1,

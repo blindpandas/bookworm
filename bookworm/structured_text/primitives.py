@@ -59,9 +59,6 @@ class TextRange(Container):
     def __iter__(self):
         return iter((self.start, self.stop))
 
-    def __hash__(self):
-        return hash((self.start, self.stop))
-
     def astuple(self):
         return (self.start, self.stop)
 

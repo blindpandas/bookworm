@@ -3,7 +3,6 @@
 import wx
 import wx.lib.newevent
 
-import bookworm.typehints as t
 from bookworm.logger import logger
 from bookworm.structured_text import SemanticElementType
 from bookworm import config
