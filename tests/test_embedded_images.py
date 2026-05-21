@@ -114,6 +114,7 @@ class SyntheticImageDocument(SinglePageDocument):
         images=(),
         image_error=None,
         link_target=None,
+        table_markup=None,
     ):
         super().__init__(DocumentUri(self.format, "", {}))
         self.text = text
@@ -122,6 +123,7 @@ class SyntheticImageDocument(SinglePageDocument):
         self.images = images
         self.image_error = image_error
         self.link_target = link_target
+        self.table_markup = table_markup
 
     def read(self):
         super().read()
@@ -148,6 +150,8 @@ class SyntheticImageDocument(SinglePageDocument):
         return {}
 
     def get_document_table_markup(self, table_index):
+        if self.table_markup is not None:
+            return self.table_markup
         raise NotImplementedError
 
     def get_document_embedded_image_info(self, image_index):
@@ -1042,6 +1046,31 @@ def test_reader_ctrl_enter_activates_link_when_embedded_image_fails(reader, view
     assert reader.handle_special_action_for_position(0) is True
     assert opened_urls == ["https://example.com"]
     assert invalid_actions == []
+    assert view.image_dialog_args is None
+
+
+def test_reader_ctrl_enter_uses_table_action_when_embedded_image_fails(reader, view):
+    shown_tables = []
+    view.show_html_dialog = lambda markup, title: shown_tables.append((markup, title))
+    view.notify_invalid_action = lambda: pytest.fail("unexpected invalid action")
+    document = SyntheticImageDocument(
+        "[Chart]",
+        {
+            SemanticElementType.FIGURE: [(0, 7)],
+            SemanticElementType.TABLE: [(0, 7)],
+        },
+        image_infos=(
+            ImageElementInfo(TextRange(0, 7), "chart.png", "Chart", "chart.png"),
+        ),
+        image_error=DocumentIOError("Remote images are not supported"),
+        table_markup="<table><tr><td>Chart</td></tr></table>",
+    )
+    document.read()
+    reader.set_document(document)
+
+    assert reader.handle_special_action_for_position(0) is True
+    assert shown_tables
+    assert "table" in shown_tables[0][0].lower()
     assert view.image_dialog_args is None
 
 

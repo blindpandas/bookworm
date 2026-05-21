@@ -722,15 +722,6 @@ class EBookReader:
             if position in range(*link_range):
                 self.navigate_to_link_by_range(link_range)
                 return True
-        if image_open_failed:
-            if notify_user := getattr(self.view, "notify_user", None):
-                notify_user(
-                    _("Image unavailable"),
-                    _("Could not open this image."),
-                )
-            else:
-                self.view.notify_invalid_action()
-            return True
         try:
             for idx, tbl_range in enumerate(
                 self.iter_semantic_ranges_for_elements_of_type(SemanticElementType.TABLE)
@@ -741,6 +732,15 @@ class EBookReader:
                     return True
         except NotImplementedError:
             pass
+        if image_open_failed:
+            if notify_user := getattr(self.view, "notify_user", None):
+                notify_user(
+                    _("Image unavailable"),
+                    _("Could not open this image."),
+                )
+            else:
+                self.view.notify_invalid_action()
+            return True
         return False
 
     @staticmethod
