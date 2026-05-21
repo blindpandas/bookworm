@@ -171,7 +171,7 @@ class AnnotationMenu(wx.Menu):
                 self.service.style_bookmark(self.view, bookmark_position, enable=False)
         if count and not name:
             return speech.announce(_("Bookmark removed"))
-        Bookmarker(self.reader).create(title=name, position=storage_insertion_point)
+        bookmarker.create(title=name, position=storage_insertion_point)
         # Translators: spoken message
         speech.announce(_("Bookmark Added"))
         self.service.style_bookmark(self.view, insertionPoint)

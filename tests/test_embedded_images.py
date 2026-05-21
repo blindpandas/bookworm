@@ -950,7 +950,7 @@ def test_embedded_image_dialog_confirms_normalized_target_overwrite(tmp_path):
 def test_embedded_image_dialog_converts_cmyk_images_for_png_save():
     image = Image.new("CMYK", (2, 2))
 
-    prepared_image = EmbeddedImageDialog.prepare_image_for_save(image, "PNG")
+    prepared_image = ImageIO.prepare_pil_for_save(image, "PNG")
     png_bytes = BytesIO()
     prepared_image.save(png_bytes, format="PNG")
 

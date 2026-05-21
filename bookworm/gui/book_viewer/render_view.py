@@ -292,10 +292,7 @@ class EmbeddedImageDialog(wx.Dialog):
         ):
             return
         try:
-            pil_image = self.prepare_image_for_save(
-                self.image_io.to_pil(),
-                image_format,
-            )
+            pil_image = ImageIO.prepare_pil_for_save(self.image_io.to_pil(), image_format)
             pil_image.save(output_path, format=image_format)
         except Exception:
             log.exception("Failed to save embedded image.", exc_info=True)
@@ -307,24 +304,6 @@ class EmbeddedImageDialog(wx.Dialog):
             )
         else:
             speech.announce(_("Image saved"), True)
-
-    @staticmethod
-    def prepare_image_for_save(pil_image, image_format):
-        if image_format == "JPEG":
-            return pil_image.convert("RGB")
-        if image_format == "PNG" and pil_image.mode not in {
-            "1",
-            "L",
-            "LA",
-            "P",
-            "RGB",
-            "RGBA",
-            "I",
-            "I;16",
-        }:
-            output_mode = "RGBA" if "A" in pil_image.getbands() else "RGB"
-            return pil_image.convert(output_mode)
-        return pil_image
 
     @classmethod
     def get_save_target(cls, path, filter_index):

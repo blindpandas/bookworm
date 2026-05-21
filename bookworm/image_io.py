@@ -143,6 +143,16 @@ class ImageIO:
         pil_image = self.to_pil().convert("RGB")
         return cv2.cvtColor(np.array(pil_image, dtype=np.uint8), cv2.COLOR_RGB2GRAY)
 
+    @staticmethod
+    def prepare_pil_for_save(pil_image: Image.Image, image_format: str) -> Image.Image:
+        image_format = "JPEG" if image_format.upper() == "JPG" else image_format.upper()
+        if image_format == "JPEG" and pil_image.mode != "RGB":
+            return pil_image.convert("RGB")
+        if image_format == "PNG" and pil_image.mode not in PNG_SAVE_MODES:
+            output_mode = "RGBA" if "A" in pil_image.getbands() else "RGB"
+            return pil_image.convert(output_mode)
+        return pil_image
+
     def to_wx_bitmap(self):
         pil_image = self.to_pil()
         if any(band.upper() == "A" for band in pil_image.getbands()):
@@ -168,11 +178,7 @@ class ImageIO:
     def as_bytes(self, *, format="JPEG"):
         buf = io.BytesIO()
         image_format = "JPEG" if format.upper() == "JPG" else format.upper()
-        image = self.to_pil()
-        if image_format == "JPEG" and image.mode != "RGB":
-            image = image.convert("RGB")
-        elif image_format == "PNG" and image.mode not in PNG_SAVE_MODES:
-            image = image.convert("RGBA" if "A" in image.getbands() else "RGB")
+        image = self.prepare_pil_for_save(self.to_pil(), image_format)
         image.save(buf, format=image_format)
         return buf.getvalue()
 
