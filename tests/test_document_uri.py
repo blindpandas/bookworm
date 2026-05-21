@@ -15,3 +15,9 @@ def test_uri_from_filename(asset):
     parsed_uri = uri.from_uri_string(as_str)
     assert uri.path == parsed_uri.path
     assert uri == parsed_uri
+
+
+@pytest.mark.parametrize("filename", ("sample.mobi", "sample.azw", "sample.azw3"))
+def test_uri_from_filename_recognizes_mobi_family(filename):
+    uri = DocumentUri.from_filename(filename)
+    assert uri.format == "mobi"

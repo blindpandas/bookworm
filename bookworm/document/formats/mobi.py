@@ -39,6 +39,7 @@ class MobiDocument(DummyDocument):
     name = _("Kindle eBook")
     extensions = (
         "*.mobi",
+        "*.azw",
         "*.azw3",
     )
     capabilities = DC.ASYNC_READ
