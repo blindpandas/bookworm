@@ -240,16 +240,19 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
         content_hash, has_images = self._hash_document_pages_with_images(self)
         self._content_hash = content_hash
         self._content_hash_has_images = has_images
-        if not has_images:
+        if self._can_reuse_content_hash_as_legacy_hash():
             self._legacy_content_hash = content_hash
         return self._content_hash
+
+    def _can_reuse_content_hash_as_legacy_hash(self) -> bool:
+        return getattr(self, "_content_hash_has_images", None) is False
 
     def _cache_legacy_content_hash_if_possible(self) -> bool:
         if hasattr(self, "_legacy_content_hash"):
             return True
         if (
             hasattr(self, "_content_hash")
-            and getattr(self, "_content_hash_has_images", None) is False
+            and self._can_reuse_content_hash_as_legacy_hash()
         ):
             self._legacy_content_hash = self._content_hash
             return True
@@ -653,6 +656,9 @@ class SinglePageDocument(BaseDocument):
             self.read()
         self._legacy_content_hash = self._hash_document_text(self.get_legacy_content())
         return self._legacy_content_hash
+
+    def _can_reuse_content_hash_as_legacy_hash(self) -> bool:
+        return False
 
     def get_page(self, index: int) -> SinglePage:
         return SinglePage(self, index)

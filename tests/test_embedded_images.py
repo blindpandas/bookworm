@@ -304,6 +304,34 @@ def test_html_legacy_content_hash_uses_pre_image_navigation_text(tmp_path):
         document.close()
 
 
+def test_html_legacy_content_hash_stays_pre_image_navigation_after_current_hash(
+    tmp_path,
+):
+    html_path = tmp_path / "book.html"
+    html_path.write_text(
+        """
+        <html>
+            <head><title>Book</title></head>
+            <body><p>alpha omega</p></body>
+        </html>
+        """,
+        encoding="utf-8",
+    )
+    document = FileSystemHtmlDocument(DocumentUri.from_filename(html_path))
+    document.read()
+
+    try:
+        legacy_text = document.get_legacy_content()
+        current_hash = document.get_content_hash()
+
+        assert document.get_legacy_content_hash() == document._hash_document_text(
+            legacy_text
+        )
+        assert document.get_legacy_content_hash() != current_hash
+    finally:
+        document.close()
+
+
 def test_structured_html_parser_ignores_symbol_only_image_alt_text():
     parser = StructuredHtmlParser.from_string(
         '<html><body><img src="images/pic.png" alt="{%}"></body></html>'
