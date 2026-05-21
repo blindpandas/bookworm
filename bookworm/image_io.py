@@ -17,6 +17,7 @@ np = lazy_module("numpy")
 cv2 = lazy_module("cv2")
 
 log = logger.getChild(__name__)
+PNG_SAVE_MODES = {"1", "L", "LA", "P", "RGB", "RGBA", "I", "I;16"}
 
 
 @dataclass
@@ -170,6 +171,8 @@ class ImageIO:
         image = self.to_pil()
         if image_format == "JPEG" and image.mode != "RGB":
             image = image.convert("RGB")
+        elif image_format == "PNG" and image.mode not in PNG_SAVE_MODES:
+            image = image.convert("RGBA" if "A" in image.getbands() else "RGB")
         image.save(buf, format=image_format)
         return buf.getvalue()
 

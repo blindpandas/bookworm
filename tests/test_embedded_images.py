@@ -842,6 +842,14 @@ def test_image_io_serializes_rgba_as_jpeg():
     assert jpeg_bytes.startswith(b"\xff\xd8")
 
 
+def test_image_io_serializes_cmyk_as_png():
+    image = ImageIO.from_pil(Image.new("CMYK", (2, 2)))
+
+    png_bytes = image.as_bytes(format="PNG")
+
+    assert png_bytes.startswith(b"\x89PNG")
+
+
 def test_image_io_preserves_palette_colors_for_byte_loaded_images():
     image = ImageIO.from_bytes(make_palette_png_bytes())
 
