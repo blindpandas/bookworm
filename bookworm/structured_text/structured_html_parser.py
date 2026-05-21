@@ -82,11 +82,6 @@ SEMANTIC_HTML_ELEMENTS = {
     SemanticElementType.TABLE: {
         "table",
     },
-    # SemanticElementType.FIGURE: {
-    # "img",
-    # "figure",
-    # "picture",
-    # }
 }
 STYLE_HTML_ELEMENTS = {}
 INSCRIPTIS_ANNOTATION_RULES = {t: (k,) for (k, v) in SEMANTIC_HTML_ELEMENTS.items() for t in v}
@@ -231,11 +226,11 @@ class StructuredHtmlParser(Inscriptis):
 
     @classmethod
     def _get_non_alt_image_label(cls, image):
-        for label in (
+        for raw_label in (
             image.attrib.get("title", ""),
             cls._get_figure_caption(image),
         ):
-            label = cls._normalize_image_label(label)
+            label = cls._normalize_image_label(raw_label)
             if label:
                 return label
         return ""
@@ -342,12 +337,12 @@ class StructuredHtmlParser(Inscriptis):
 
     @staticmethod
     def _get_image_label(image):
-        for label in (
+        for raw_label in (
             image.attrib.get("alt", ""),
             image.attrib.get("title", ""),
             StructuredHtmlParser._get_figure_caption(image),
         ):
-            label = StructuredHtmlParser._normalize_image_label(label)
+            label = StructuredHtmlParser._normalize_image_label(raw_label)
             if label:
                 return label
         return _("Image")

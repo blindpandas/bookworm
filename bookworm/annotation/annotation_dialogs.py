@@ -96,7 +96,7 @@ class ViewAndEditAnnotationDialog(SimpleDialog):
 
     def get_values(self):
         tags = [t.strip() for t in self.tagsText.GetValue().split()]
-        return dict(content=self.contentText.GetValue().strip(), tags=tags)
+        return {"content": self.contentText.GetValue().strip(), "tags": tags}
 
     def onOk(self, event):
         self.__saving = True

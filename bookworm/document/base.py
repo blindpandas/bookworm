@@ -101,7 +101,7 @@ class BaseDocument(Sequence, Iterable, metaclass=ABCMeta):
 
     def __getstate__(self) -> dict:
         """Support for pickling."""
-        return dict(uri=self.uri)
+        return {"uri": self.uri}
 
     def __setstate__(self, state: dict) -> None:
         """Support for unpickling."""
@@ -577,24 +577,6 @@ class SinglePage(BasePage):
 
     def iter_content_hash_images(self):
         return self.document.iter_content_hash_images()
-
-    def display_to_storage_position(self, pos, affinity="before"):
-        return self.document.display_to_storage_position(pos, affinity=affinity)
-
-    def storage_to_display_position(self, pos, affinity="before"):
-        return self.document.storage_to_display_position(pos, affinity=affinity)
-
-    def display_to_storage_range(self, start, stop):
-        return self.document.display_to_storage_range(start, stop)
-
-    def storage_to_display_range(self, start, stop):
-        return self.document.storage_to_display_range(start, stop)
-
-    def legacy_to_storage_position(self, pos, affinity="before"):
-        return self.document.legacy_to_storage_position(pos, affinity=affinity)
-
-    def legacy_to_storage_range(self, start, stop):
-        return self.document.legacy_to_storage_range(start, stop)
 
     def get_semantic_structure(self):
         return self.document.get_document_semantic_structure()

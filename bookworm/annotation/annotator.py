@@ -169,13 +169,13 @@ class Annotator:
                 self.reader.view.get_insertion_point()
             ).title
         kwargs.update(
-            dict(
-                book_id=self.current_book.id,
-                page_number=self.reader.current_page,
-                section_title=section_title,
-                section_identifier=self.reader.active_section.unique_identifier,
-                position_version=CURRENT_POSITION_MODEL_VERSION,
-            )
+            {
+                "book_id": self.current_book.id,
+                "page_number": self.reader.current_page,
+                "section_title": section_title,
+                "section_identifier": self.reader.active_section.unique_identifier,
+                "position_version": CURRENT_POSITION_MODEL_VERSION,
+            }
         )
         annot = self.model(**kwargs)
         self.session.add(annot)

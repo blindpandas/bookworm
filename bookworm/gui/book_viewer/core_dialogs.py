@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import enum
 import operator
 import threading

@@ -65,7 +65,6 @@ class EpubDocument(SinglePageDocument):
     def read(self):
         super().read()
         self.epub = ebooklib.epub.read_epub(self.get_file_system_path())
-        self.html_content = self.html_content
         self.structure = StructuredHtmlParser.from_string(self.html_content)
         self._storage_text = self.structure.get_storage_text()
         self._text_position_map = self.structure.text_position_map
@@ -262,7 +261,7 @@ class EpubDocument(SinglePageDocument):
 
     @cached_property
     def epub_html_items(self) -> tuple[str]:
-        items = tuple()
+        items = ()
         if html_items := tuple(self.epub.get_items_of_type(ebooklib.ITEM_DOCUMENT)):
             items = html_items
         else:
@@ -366,7 +365,7 @@ class EpubDocument(SinglePageDocument):
                     pager=SINGLE_PAGE_DOCUMENT_PAGER,
                     level=current_level,
                     parent=parent,
-                    data=dict(href=entry.href.lstrip("./")),
+                    data={"href": entry.href.lstrip("./")},
                 )
                 yield sect
             else:
@@ -376,7 +375,7 @@ class EpubDocument(SinglePageDocument):
                     level=current_level,
                     pager=SINGLE_PAGE_DOCUMENT_PAGER,
                     parent=parent,
-                    data=dict(href=epub_sect.href.lstrip("./")),
+                    data={"href": epub_sect.href.lstrip("./")},
                 )
                 yield sect
                 yield from self.add_toc_entry(

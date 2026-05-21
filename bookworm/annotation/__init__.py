@@ -26,13 +26,13 @@ log = logger.getChild(__name__)
 
 
 ANNOTATION_CONFIG_SPEC = {
-    "annotation": dict(
-        use_visuals="boolean(default=True)",
-        select_bookmarked_line_on_jumping="boolean(default=True)",
-        speak_bookmarks_on_jumping="boolean(default=True)",
-        audable_indication_of_annotations_when_navigating_text="boolean(default=True)",
-        spoken_indication_of_annotations_when_navigating_text="boolean(default=True)",
-    )
+    "annotation": {
+        "use_visuals": "boolean(default=True)",
+        "select_bookmarked_line_on_jumping": "boolean(default=True)",
+        "speak_bookmarks_on_jumping": "boolean(default=True)",
+        "audable_indication_of_annotations_when_navigating_text": "boolean(default=True)",
+        "spoken_indication_of_annotations_when_navigating_text": "boolean(default=True)",
+    }
 }
 
 

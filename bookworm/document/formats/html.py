@@ -105,7 +105,7 @@ class BaseHtmlDocument(SinglePageDocument):
 
     def __getstate__(self) -> dict:
         """Support for pickling."""
-        return super().__getstate__() | dict(html_string=self.html_string)
+        return super().__getstate__() | {"html_string": self.html_string}
 
     def read(self):
         super().read()
