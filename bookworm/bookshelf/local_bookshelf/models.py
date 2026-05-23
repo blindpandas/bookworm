@@ -1,4 +1,3 @@
-# coding: utf-8
 
 import os
 from datetime import datetime
@@ -19,7 +18,6 @@ from bookworm.i18n import LocaleInfo
 from bookworm.paths import db_path
 
 from .database import (
-    AutoCalculatedField,
     AutoOptimizedAPSWDatabase,
     BooleanField,
     DateTimeField,
@@ -94,12 +92,10 @@ class BaseModel(Model):
     @classmethod
     def perform_migrations(cls):
         database = cls._meta.database
-        user_version = (
-            database.connection().cursor().execute("pragma user_version").fetchone()[0]
-        )
+        user_version = database.connection().cursor().execute("pragma user_version").fetchone()[0]
         if user_version == BOOKWORM_BOOKSHELF_SCHEMA_VERSION:
             return
-        elif user_version == 0:
+        if user_version == 0:
             database.connection().cursor().execute(
                 f"PRAGMA user_version={BOOKWORM_BOOKSHELF_SCHEMA_VERSION}"
             )
@@ -113,7 +109,7 @@ class BaseModel(Model):
                 cursor.execute(
                     'ALTER TABLE "document" ADD COLUMN "is_currently_reading" INTEGER DEFAULT  0;'
                 )
-                cursor.execute(f"PRAGMA user_version=2")
+                cursor.execute("PRAGMA user_version=2")
         cls.perform_migrations()
 
 
@@ -200,9 +196,7 @@ class Document(BaseModel):
         backref="documents",
         null=True,
     )
-    metadata = JSONField(
-        json_dumps=ujson.dumps, json_loads=ujson.loads, null=True, default={}
-    )
+    metadata = JSONField(json_dumps=ujson.dumps, json_loads=ujson.loads, null=True, default={})
     in_reading_list = BooleanField(default=False)
     is_currently_reading = BooleanField(default=False)
 
@@ -223,9 +217,7 @@ class Document(BaseModel):
             else:
                 self.category = None
         if tags_names is not None:
-            DocumentTag.delete().where(
-                DocumentTag.document_id == self.get_id()
-            ).execute()
+            DocumentTag.delete().where(DocumentTag.document_id == self.get_id()).execute()
             for tag_name in (t.strip() for t in tags_names if t.strip()):
                 tag, is_tag_created = Tag.get_or_create(name=tag_name)
                 DocumentTag.create(document_id=self.get_id(), tag_id=tag.get_id())
@@ -246,9 +238,10 @@ class Page(BaseModel):
 
     @classmethod
     def get_text_start_position(cls, page_id, text):
-        return (
+        position = (
             cls.select(fn.ABS(fn.INSTR(cls.content, text))).where(cls.id == page_id)
         ).scalar()
+        return max(0, (position or 0) - 1)
 
 
 class DocumentAuthor(BaseModel):
@@ -359,9 +352,7 @@ class DocumentFTSIndex(BaseModel, FTS5Model):
                 cls.page_number,
                 cls.document_id,
                 cls.document_title,
-                column.snippet(
-                    left="", right="", over_length="", max_tokens=snip_length
-                ),
+                column.snippet(left="", right="", over_length="", max_tokens=snip_length),
             )
             .where(column.match(term))
             .order_by(fn.bm25(cls._meta.entity))
@@ -374,9 +365,7 @@ class DocumentFTSIndex(BaseModel, FTS5Model):
         connection = cls._meta.database.connection()
         with connection:
             cursor = connection.cursor()
-            content_matches = cursor.execute(
-                str(cls.perform_search(field_column, term))
-            )
+            content_matches = cursor.execute(str(cls.perform_search(field_column, term)))
             yielded_docs = set()
             for (
                 page_id,

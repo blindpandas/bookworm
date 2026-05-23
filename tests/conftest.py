@@ -1,7 +1,4 @@
-import os
 from pathlib import Path
-import tempfile
-import time
 
 import pytest
 from sqlalchemy.orm import close_all_sessions
@@ -9,10 +6,8 @@ from sqlalchemy.pool import NullPool
 
 from bookworm.config import setup_config
 from bookworm.database import init_database
-from bookworm.database.models import Base
 from bookworm.document.elements import Section
 from bookworm.reader import EBookReader
-from bookworm.service.handler import ServiceHandler
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -33,6 +28,7 @@ class DummyView:
         self.toc_tree = None
         self.input_result = ""
         self.insertion_point = 0
+        self.image_dialog_args = None
         self.state_on_section_change: Section = None
         self.contentTextCtrl = DummyTextCtrl()
         self.reader = None
@@ -67,6 +63,12 @@ class DummyView:
         pass
 
     def show_html_dialog(self, markup: str, title: str) -> None:
+        pass
+
+    def show_image_dialog(self, image, title: str, suggested_filename=None) -> None:
+        self.image_dialog_args = (image, title, suggested_filename)
+
+    def notify_invalid_action(self) -> None:
         pass
 
 

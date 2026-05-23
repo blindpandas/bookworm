@@ -1,9 +1,6 @@
-# coding: utf-8
-
 import wx
 import wx.lib.newevent
 
-import bookworm.typehints as t
 from bookworm.logger import logger
 from bookworm.structured_text import SemanticElementType
 from bookworm import config
@@ -34,7 +31,7 @@ SEMANTIC_MAP = {
     "L": SemanticElementType.LIST,
     "T": SemanticElementType.TABLE,
     "Q": SemanticElementType.QUOTE,
-    # "G": SemanticElementType.FIGURE,
+    "I": SemanticElementType.FIGURE,
 }
 SEMANTIC_MAP |= HEADING_LEVEL_KEY_MAP
 SEMANTIC_KEY_MAP = {ord(k): v for k, v in SEMANTIC_MAP.items()}

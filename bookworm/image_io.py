@@ -1,11 +1,9 @@
-# coding: utf-8
-
 from __future__ import annotations
 
+import base64
 import io
-import importlib
-import tempfile
 from dataclasses import dataclass
+from urllib.parse import unquote_to_bytes
 
 import fitz
 import wx
@@ -19,6 +17,7 @@ np = lazy_module("numpy")
 cv2 = lazy_module("cv2")
 
 log = logger.getChild(__name__)
+PNG_SAVE_MODES = {"1", "L", "LA", "P", "RGB", "RGBA", "I", "I;16"}
 
 
 @dataclass
@@ -57,9 +56,11 @@ class ImageIO:
         return self.from_cv2(cv2.bitwise_not(self.to_cv2()))
 
     @classmethod
-    def from_filename(cls, image_path: t.PathLike) -> "ImageBlueprint":
+    def from_filename(cls, image_path: t.PathLike, *, preserve_mode=False) -> "ImageIO":
         try:
-            pil_image = Image.open(image_path).convert("RGB")
+            pil_image = Image.open(image_path)
+            if not preserve_mode:
+                pil_image = pil_image.convert("RGB")
             return cls.from_pil(pil_image)
         except Exception:
             log.exception(
@@ -67,7 +68,9 @@ class ImageIO:
             )
 
     @classmethod
-    def from_pil(cls, image: Image.Image) -> "ImageBlueprint":
+    def from_pil(cls, image: Image.Image) -> "ImageIO":
+        if image.mode == "P":
+            image = image.convert("RGBA" if "transparency" in image.info else "RGB")
         return cls(
             data=image.tobytes(),
             width=image.width,
@@ -134,13 +137,34 @@ class ImageIO:
         )
 
     def to_pil(self) -> Image.Image:
-        return Image.frombytes("RGB", self.size, self.data)
+        return Image.frombytes(self.mode, self.size, self.data)
 
     def to_cv2(self):
         pil_image = self.to_pil().convert("RGB")
         return cv2.cvtColor(np.array(pil_image, dtype=np.uint8), cv2.COLOR_RGB2GRAY)
 
+    @staticmethod
+    def prepare_pil_for_save(pil_image: Image.Image, image_format: str) -> Image.Image:
+        image_format = "JPEG" if image_format.upper() == "JPG" else image_format.upper()
+        if image_format == "JPEG" and pil_image.mode != "RGB":
+            return pil_image.convert("RGB")
+        if image_format == "PNG" and pil_image.mode not in PNG_SAVE_MODES:
+            output_mode = "RGBA" if "A" in pil_image.getbands() else "RGB"
+            return pil_image.convert(output_mode)
+        return pil_image
+
     def to_wx_bitmap(self):
+        pil_image = self.to_pil()
+        if any(band.upper() == "A" for band in pil_image.getbands()):
+            rgba_image = pil_image.convert("RGBA")
+            red, green, blue, alpha = rgba_image.split()
+            rgb_image = Image.merge("RGB", (red, green, blue))
+            return wx.ImageFromBuffer(
+                self.width,
+                self.height,
+                bytearray(rgb_image.tobytes()),
+                bytearray(alpha.tobytes()),
+            ).ConvertToBitmap()
         img = self.as_rgb()
         return wx.ImageFromBuffer(
             img.width, img.height, bytearray(img.data)
@@ -153,13 +177,26 @@ class ImageIO:
 
     def as_bytes(self, *, format="JPEG"):
         buf = io.BytesIO()
-        self.to_pil().save(buf, format=format)
+        image_format = "JPEG" if format.upper() == "JPG" else format.upper()
+        image = self.prepare_pil_for_save(self.to_pil(), image_format)
+        image.save(buf, format=image_format)
         return buf.getvalue()
 
     @classmethod
     def from_bytes(cls, value):
         img = Image.open(io.BytesIO(value))
         return cls.from_pil(img)
+
+    @classmethod
+    def from_data_uri(cls, value: str):
+        return cls.from_bytes(cls.data_uri_to_bytes(value))
+
+    @staticmethod
+    def data_uri_to_bytes(value: str) -> bytes:
+        header, encoded = value.split(",", 1)
+        if ";base64" in header.lower():
+            return base64.b64decode(encoded)
+        return unquote_to_bytes(encoded)
 
     def make_thumbnail(self, width, height, *, exact_fit=False, fil_color="#fff"):
         pil_image = self.to_pil()
