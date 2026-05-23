@@ -4,7 +4,7 @@ from types import SimpleNamespace
 
 import bookworm.annotation as annotation_module
 from bookworm import config
-from bookworm.annotation import AnnotationService, NoteTaker
+from bookworm.annotation import AnnotationService, Bookmarker, NoteTaker
 from bookworm.annotation import annotation_gui
 from bookworm.annotation.annotation_gui import AnnotationMenu
 from bookworm.annotation.annotator import AnnotationSortCriteria, Quoter
@@ -184,6 +184,68 @@ def test_extending_highlight_to_before_image_preserves_range_stop(
         quote.end_pos,
         quote.page_number,
     ).astuple() == (0, image_start)
+    reader.unload()
+
+
+def test_bookmark_navigation_uses_selected_line_edge(
+    asset, reader, view, monkeypatch
+):
+    def get_containing_line(pos):
+        start = text.rfind("\n", 0, pos) + 1
+        stop = text.find("\n", pos)
+        return start, len(text) if stop == -1 else stop
+
+    uri = DocumentUri.from_filename(asset("roman.epub"))
+    config.conf.spec.update(AnnotationService.config_spec)
+    config.conf.validate_and_write()
+    config.conf["annotation"]["select_bookmarked_line_on_jumping"] = True
+    reader.load(uri)
+    service = AnnotationService.__new__(AnnotationService)
+    service.view = view
+    service.reader = reader
+    service._AnnotationService__state = {}
+    text = reader.get_current_page_object().get_text()
+    first_line_start = text.find("\n") + 1
+    first_line_stop = text.find("\n", first_line_start)
+    bookmark_position = first_line_start + 1
+    next_bookmark_position = text.find("\n", first_line_stop + 1) + 1
+    bookmarker = Bookmarker(reader)
+    bookmarker.create(
+        title="first",
+        position=reader.view_to_storage_position(bookmark_position),
+    )
+    bookmarker.create(
+        title="second",
+        position=reader.view_to_storage_position(next_bookmark_position),
+    )
+    view.selection_range = TextRange(0, 0)
+    view.selected_range = None
+    view.get_selection_range = lambda: view.selection_range
+    view.get_containing_line = get_containing_line
+
+    def select_text(start, stop):
+        view.selected_range = (start, stop)
+        view.selection_range = TextRange(start, stop)
+        view.insertion_point = start
+
+    view.select_text = select_text
+    monkeypatch.setattr(
+        annotation_module.sounds,
+        "navigation",
+        SimpleNamespace(play=lambda *args, **kwargs: None),
+    )
+    monkeypatch.setattr(
+        annotation_module.speech,
+        "announce",
+        lambda *args, **kwargs: None,
+    )
+
+    service.onKeyUp(key_event(annotation_gui.wx.WXK_F2))
+    first_selected_range = view.selected_range
+    service.onKeyUp(key_event(annotation_gui.wx.WXK_F2))
+
+    assert first_selected_range == get_containing_line(bookmark_position)
+    assert view.selected_range == get_containing_line(next_bookmark_position)
     reader.unload()
 
 

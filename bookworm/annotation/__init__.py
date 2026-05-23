@@ -312,6 +312,9 @@ class AnnotationService(BookwormService):
             annotator = self.__state.setdefault(annotator_cls.__name__, annotator_cls(self.reader))
         page_number = self.reader.current_page
         start = self.view.get_insertion_point()
+        selection_range = self.view.get_selection_range()
+        if selection_range.start != selection_range.stop:
+            start = selection_range.stop if foreword else selection_range.start
         storage_start = self.reader.view_to_storage_position(start, page_number)
         if foreword:
             annot = annotator.get_first_after(page_number, storage_start)
