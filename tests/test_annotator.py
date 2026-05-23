@@ -2,6 +2,7 @@ from pathlib import Path
 import shutil
 from types import SimpleNamespace
 
+import bookworm.annotation as annotation_module
 from bookworm import config
 from bookworm.annotation import AnnotationService, NoteTaker
 from bookworm.annotation import annotation_gui
@@ -10,6 +11,15 @@ from bookworm.annotation.annotator import AnnotationSortCriteria, Quoter
 from bookworm.database.models import *
 from bookworm.document.uri import DocumentUri
 from bookworm.structured_text import SemanticElementType, TextRange
+
+
+def key_event(key_code):
+    return SimpleNamespace(
+        KeyCode=key_code,
+        Skip=lambda: None,
+        GetKeyCode=lambda: key_code,
+        GetModifiers=lambda: 0,
+    )
 
 
 def test_notes_can_not_overlap(asset, reader):
@@ -174,4 +184,51 @@ def test_extending_highlight_to_before_image_preserves_range_stop(
         quote.end_pos,
         quote.page_number,
     ).astuple() == (0, image_start)
+    reader.unload()
+
+
+def test_next_highlight_navigation_uses_nearest_start_position(
+    asset, reader, view, monkeypatch
+):
+    uri = DocumentUri.from_filename(asset("roman.epub"))
+    reader.load(uri)
+    service = AnnotationService.__new__(AnnotationService)
+    service.view = view
+    service.reader = reader
+    service._AnnotationService__state = {}
+    view.selection_range = TextRange(0, 0)
+    view.selected_range = None
+    view.get_selection_range = lambda: view.selection_range
+    view.select_text = lambda start, stop: setattr(view, "selected_range", (start, stop))
+    monkeypatch.setattr(
+        annotation_module.sounds,
+        "navigation",
+        SimpleNamespace(play=lambda *args, **kwargs: None),
+    )
+    monkeypatch.setattr(
+        annotation_module.speech,
+        "announce",
+        lambda *args, **kwargs: None,
+    )
+
+    late_range = reader.view_to_storage_range(50, 60)
+    early_range = reader.view_to_storage_range(10, 20)
+    quoter = Quoter(reader)
+    quoter.create(
+        title="late",
+        content="late",
+        start_pos=late_range.start,
+        end_pos=late_range.stop,
+    )
+    quoter.create(
+        title="early",
+        content="early",
+        start_pos=early_range.start,
+        end_pos=early_range.stop,
+    )
+
+    service.onKeyUp(key_event(annotation_gui.wx.WXK_F9))
+
+    assert view.insertion_point == 10
+    assert view.selected_range == (10, 20)
     reader.unload()
