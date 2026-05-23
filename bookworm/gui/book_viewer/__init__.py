@@ -1,17 +1,12 @@
-# coding: utf-8
 
 import math
 import time
 import webbrowser
-from contextlib import contextmanager
 from functools import partial
-from pathlib import Path
 
 import wx
 
-from bookworm.text_to_speech import TextToSpeechService
 from bookworm import app, config, speech
-from bookworm import typehints as t
 from bookworm.concurrency import CancellationToken, threaded_worker
 from bookworm.document import (
     ArchiveContainsMultipleDocuments,
@@ -39,12 +34,18 @@ from bookworm.signals import (
     reader_book_unloaded,
     reading_position_change,
 )
-from bookworm.structured_text import SEMANTIC_ELEMENT_OUTPUT_OPTIONS, Style, TextRange
+from bookworm.structured_text import (
+    SEMANTIC_ELEMENT_OUTPUT_OPTIONS,
+    SemanticElementType,
+    Style,
+    TextRange,
+)
 from bookworm.utils import gui_thread_safe
 
 from . import recents_manager
 from .menubar import BookRelatedMenuIds, MenubarProvider
 from .navigation import NavigationProvider
+from .render_view import EmbeddedImageDialog
 from .state import StateProvider
 
 log = logger.getChild(__name__)
@@ -71,6 +72,18 @@ STYLE_TO_WX_TEXT_ATTR_STYLES = {
 TEXT_CTRL_OFFSET = 1
 
 
+def _get_structural_navigation_speech(text, element_label, element_type):
+    is_generic_image = (
+        element_type is SemanticElementType.FIGURE and text.strip() == f"[{element_label}]"
+    )
+    if is_generic_image:
+        return element_label, ""
+    return _("{text}: {item_type}").format(
+        text=text,
+        item_type=element_label,
+    ), element_label
+
+
 class ResourceLoader:
     """Loads a document into the view."""
 
@@ -83,13 +96,11 @@ class ResourceLoader:
     def init_resolver(self, uri):
         try:
             resolver = UriResolver(uri)
-        except ReaderError as e:
+        except ReaderError:
             log.exception(f"Failed to resolve document uri: {uri}", exc_info=True)
             self.view.notify_user(
                 _("Failed to open document"),
-                _(
-                    "The document you are trying to open could not be opened in Bookworm."
-                ),
+                _("The document you are trying to open could not be opened in Bookworm."),
                 icon=wx.ICON_ERROR,
             )
             return
@@ -99,8 +110,7 @@ class ResourceLoader:
             AsyncSnakDialog(
                 task=partial(resolver.read_document),
                 done_callback=lambda fut: self.resolve_document(fut.result, uri),
-                dismiss_callback=lambda: self._cancellation_token.request_cancellation()
-                or True,
+                dismiss_callback=lambda: self._cancellation_token.request_cancellation() or True,
                 message=_("Opening document, please wait..."),
                 parent=self.view,
             )
@@ -135,9 +145,7 @@ class ResourceLoader:
                 # Translators: the title of an error message
                 _("Document Restricted"),
                 # Translators: the content of an error message
-                _(
-                    "Could not open Document.\nThe document is restricted by the publisher."
-                ),
+                _("Could not open Document.\nThe document is restricted by the publisher."),
                 icon=wx.ICON_ERROR,
             )
         except UnsupportedDocumentError as e:
@@ -161,9 +169,7 @@ class ResourceLoader:
                 # Translators: the title of an error message
                 _("Archive contains no documents"),
                 # Translators: the content of an error message
-                _(
-                    "Bookworm cannot open this archive file.\nThe archive contains no documents."
-                ),
+                _("Bookworm cannot open this archive file.\nThe archive contains no documents."),
                 icon=wx.ICON_ERROR,
             )
         except ArchiveContainsMultipleDocuments as e:
@@ -202,10 +208,7 @@ class ResourceLoader:
                 # Translators: the title of an error message
                 _("Error Openning Document"),
                 # Translators: the content of an error message
-                _(
-                    "Could not open document.\n"
-                    "An unknown error occurred while loading the file."
-                ),
+                _("Could not open document.\nAn unknown error occurred while loading the file."),
                 icon=wx.ICON_ERROR,
             )
         finally:
@@ -254,9 +257,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.createControls()
 
         self.toolbar = self.CreateToolBar()
-        self.toolbar.SetWindowStyle(
-            wx.TB_FLAT | wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_TEXT
-        )
+        self.toolbar.SetWindowStyle(wx.TB_FLAT | wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_TEXT)
         self.statusBar = self.CreateStatusBar()
         self._nav_provider = NavigationProvider(
             ctrl=self.contentTextCtrl,
@@ -271,12 +272,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         # Bind Events
         self.tocTreeCtrl.Bind(wx.EVT_SET_FOCUS, self.onTocTreeFocus, self.tocTreeCtrl)
         self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.onTOCItemClick, self.tocTreeCtrl)
-        self.Bind(
-            wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(-1), id=wx.ID_PREVIEW_ZOOM_OUT
-        )
-        self.Bind(
-            wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(1), id=wx.ID_PREVIEW_ZOOM_IN
-        )
+        self.Bind(wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(-1), id=wx.ID_PREVIEW_ZOOM_OUT)
+        self.Bind(wx.EVT_TOOL, lambda e: self.onTextCtrlZoom(1), id=wx.ID_PREVIEW_ZOOM_IN)
         self.Bind(
             self.contentTextCtrl.EVT_CARET,
             self.onCaretMoved,
@@ -308,9 +305,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         # If global mode is on, only the pynput listener should handle media keys.
         if config.conf["reading"]["enable_global_media_keys"]:
             if key_name:
-                log.debug(
-                    f"Local media key '{key_name}' ignored; global mode is active."
-                )
+                log.debug(f"Local media key '{key_name}' ignored; global mode is active.")
             event.Skip()  # Pass all other keys (like Tab) through.
             return
         # --- Local Mode Handling ---
@@ -358,11 +353,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         )
         self.set_text_view_margins()
         # Translators: label for the reading progress slider
-        readingProgressLabel = wx.StaticText(
-            panel, -1, _("Reading progress percentage")
-        )
+        readingProgressLabel = wx.StaticText(panel, -1, _("Reading progress percentage"))
         self.readingProgressSlider = wx.Slider(
-            panel, -1, style=wx.SL_HORIZONTAL  # | wx.SL_LABELS
+            panel,
+            -1,
+            style=wx.SL_HORIZONTAL,  # | wx.SL_LABELS
         )
         self.readingProgressSlider.SetTick(5)
 
@@ -393,9 +388,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.CenterOnScreen(wx.BOTH)
 
     def finalize_gui_creation(self):
-        opendyslexic_font_filename = fonts_path(
-            "opendyslexic", "OpenDyslexic-Regular.ttf"
-        )
+        opendyslexic_font_filename = fonts_path("opendyslexic", "OpenDyslexic-Regular.ttf")
         wx.Font.AddPrivateFont(str(opendyslexic_font_filename))
         self.set_content_view_font()
         self.add_tools()
@@ -428,9 +421,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         finfo = wx.FontInfo().FaceName(config.conf["appearance"]["font_facename"])
         configured_font = wx.Font(finfo)
         font_point_size = (
-            font_size
-            if font_size is not None
-            else config.conf["appearance"]["font_point_size"]
+            font_size if font_size is not None else config.conf["appearance"]["font_point_size"]
         )
         configured_font.SetPointSize(font_point_size)
         if config.conf["appearance"]["use_bold_font"]:
@@ -479,9 +470,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.tocTreeCtrl.SetFocus()
 
     def load_document(self, document, original_uri=None) -> bool:
-        with reader_book_loaded.connected_to(
-            self.book_loaded_handler, sender=self.reader
-        ):
+        with reader_book_loaded.connected_to(self.book_loaded_handler, sender=self.reader):
             self.reader.set_document(document, original_uri=original_uri)
 
     @gui_thread_safe
@@ -490,9 +479,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def open_uri(self, uri, callback=None):
         self.unloadCurrentEbook()
-        ResourceLoader(
-            self, uri, callback=callback or self.default_book_loaded_callback
-        )
+        ResourceLoader(self, uri, callback=callback or self.default_book_loaded_callback)
 
     def decrypt_document(self, uri):
         if uri.view_args.get("n_attempts"):
@@ -510,12 +497,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             )
         retval = self.get_password_from_user()
         if retval is None:
-            return
-        else:
-            new_uri = uri.create_copy(
-                view_args={"decryption_key": retval, "n_attempts": "1"}
-            )
-            return self.open_uri(new_uri)
+            return None
+        new_uri = uri.create_copy(view_args={"decryption_key": retval, "n_attempts": "1"})
+        return self.open_uri(new_uri)
 
     def open_document(self, document):
         self.unloadCurrentEbook()
@@ -548,8 +532,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def unloadCurrentEbook(self):
         true_unload_opt = (
-            not isinstance(self.reader.document, DummyDocument)
-            and self.reader.document is not None
+            not isinstance(self.reader.document, DummyDocument) and self.reader.document is not None
         )
         self.readingProgressSlider.SetValue(0)
         self.reader.unload()
@@ -596,9 +579,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             current_ratio = (self.reader.current_page + 1) / len(self.reader.document)
         percentage_ratio = math.ceil(current_ratio * 100)
         wx.CallAfter(self.readingProgressSlider.SetValue, percentage_ratio)
-        percentage_display = app.current_language.format_percentage(
-            percentage_ratio / 100
-        )
+        percentage_display = app.current_language.format_percentage(percentage_ratio / 100)
         # Translators: text of reading progress shown in the status bar
         status_text = _("{percentage} completed").format(percentage=percentage_display)
         if existing_status := self.get_statusbar_text():
@@ -664,7 +645,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def navigate_to_structural_element(self, element_type, forward):
         if not self.reader.ready:
             wx.Bell()
-            return
+            return None
         current_insertion_point = self.get_insertion_point()
         pos = self.reader.get_semantic_element(
             element_type,
@@ -684,16 +665,17 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 move_to_start_of_line,
             ) = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[actual_element_type]
             text_start, text_stop = (
-                self.get_containing_line(start + 1)
-                if should_speak_whole_text
-                else (start, stop)
+                self.get_containing_line(start + 1) if should_speak_whole_text else (start, stop)
             )
             text = self.get_text_by_range(text_start, text_stop)
-            msg = _("{text}: {item_type}").format(text=text, item_type=_(element_label))
+            element_label = _(element_label)
+            msg, tts_speech_prefix = _get_structural_navigation_speech(
+                text,
+                element_label,
+                actual_element_type,
+            )
             target_position = (
-                start
-                if not move_to_start_of_line
-                else self.get_containing_line(stop - 1)[0]
+                start if not move_to_start_of_line else self.get_containing_line(start + 1)[0]
             )
             self.set_insertion_point(target_position)
             speech.announce(msg, True)
@@ -701,7 +683,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             reading_position_change.send(
                 self,
                 position=start,
-                tts_speech_prefix=_(element_label),
+                tts_speech_prefix=tts_speech_prefix,
             )
         else:
             element_label = SEMANTIC_ELEMENT_OUTPUT_OPTIONS[element_type][0]
@@ -743,12 +725,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def onSliderValueChanged(self, event):
         target_nav_percentage = event.GetSelection()
         if self.reader.document.is_single_page_document():
-            pos_percentage = math.floor(
-                self.get_last_position() * (target_nav_percentage / 100)
-            )
-            target_position = self.get_start_of_line(
-                self.get_line_number(pos_percentage)
-            )
+            pos_percentage = math.floor(self.get_last_position() * (target_nav_percentage / 100))
+            target_position = self.get_start_of_line(self.get_line_number(pos_percentage))
             self.set_insertion_point(target_position, set_focus_to_text_ctrl=False)
         else:
             page_count = len(self.reader.document)
@@ -757,9 +735,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             )
             self.reader.go_to_page(target_page, set_focus_to_text_ctrl=False)
             target_position = 0
-        percentage_display = app.current_language.format_percentage(
-            target_nav_percentage / 100
-        )
+        percentage_display = app.current_language.format_percentage(target_nav_percentage / 100)
         reading_position_change.send(
             self,
             position=target_position,
@@ -775,9 +751,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.SetIcon(wx.Icon(str(icon_file)))
 
     def set_text_view_margins(self):
-        config_margin = round(
-            1000 * (config.conf["appearance"]["text_view_margins"] / 100)
-        )
+        config_margin = round(1000 * (config.conf["appearance"]["text_view_margins"] / 100))
         margins = wx.Point(config_margin, config_margin)
         self.contentTextCtrl.SetMargins(margins)
 
@@ -796,16 +770,12 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         )
         return password if password else None
 
-    def highlight_range(
-        self, start, end, foreground=wx.NullColour, background=wx.NullColour
-    ):
+    def highlight_range(self, start, end, foreground=wx.NullColour, background=wx.NullColour):
         line_start = self.get_containing_line(start)[0]
         attr = wx.TextAttr()
         self.contentTextCtrl.GetStyle(line_start + TEXT_CTRL_OFFSET, attr)
         attr.SetBackgroundColour(wx.YELLOW)
-        self.contentTextCtrl.SetStyle(
-            start + TEXT_CTRL_OFFSET, end + TEXT_CTRL_OFFSET, attr
-        )
+        self.contentTextCtrl.SetStyle(start + TEXT_CTRL_OFFSET, end + TEXT_CTRL_OFFSET, attr)
 
     def clear_highlight(self, start=0, end=-1):
         textCtrl = self.contentTextCtrl
@@ -823,24 +793,23 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         page = self.reader.get_current_page_object()
         if self.reader.document.is_single_page_document():
             return self.reader.current_book.title
+        page_number = page.number
+        if self.reader.document.uses_chapter_by_chapter_navigation_model():
+            # Translators: the label of the page content text area
+            label_msg = "{chapter}"
         else:
-            page_number = page.number
-            if self.reader.document.uses_chapter_by_chapter_navigation_model():
-                # Translators: the label of the page content text area
-                label_msg = "{chapter}"
-            else:
-                # Translators: the label of the page content text area
-                label_msg = _("Page {page} of {total}")
-                label_msg = f"{label_msg} " + chr(0x00B7) + " {chapter}"
-                if config.conf["general"]["include_page_label"] and (
-                    page_label := page.get_label()
-                ):
-                    page_number = f"{page_number} ({page_label})"
-            return label_msg.format(
-                page=page_number,
-                total=len(self.reader.document),
-                chapter=page.section.title,
-            )
+            # Translators: the label of the page content text area
+            label_msg = _("Page {page} of {total}")
+            label_msg = f"{label_msg} " + chr(0x00B7) + " {chapter}"
+            if config.conf["general"]["include_page_label"] and (
+                page_label := page.get_label()
+            ):
+                page_number = f"{page_number} ({page_label})"
+        return label_msg.format(
+            page=page_number,
+            total=len(self.reader.document),
+            chapter=page.section.title,
+        )
 
     def unselect_text(self):
         self.contentTextCtrl.SelectNone()
@@ -880,6 +849,15 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def show_html_dialog(self, markup, title):
         browseable_message(markup, title=title, is_html=True)
 
+    def show_image_dialog(self, image, title, suggested_filename=None):
+        with EmbeddedImageDialog(
+            self,
+            title=title,
+            image_io=image,
+            suggested_filename=suggested_filename,
+        ) as dlg:
+            dlg.ShowModal()
+
     def get_line_number(self, pos=None):
         # WHY: Use our own gatekeeper if pos is not provided.
         # Convert the clean position to a real one before querying the control.
@@ -894,9 +872,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def select_text(self, fpos, tpos):
         self.contentTextCtrl.SetFocusFromKbd()
-        self.contentTextCtrl.SetSelection(
-            fpos + TEXT_CTRL_OFFSET, tpos + TEXT_CTRL_OFFSET
-        )
+        self.contentTextCtrl.SetSelection(fpos + TEXT_CTRL_OFFSET, tpos + TEXT_CTRL_OFFSET)
 
     def set_insertion_point(self, to, set_focus_to_text_ctrl=True):
         actual_position = to + TEXT_CTRL_OFFSET
@@ -922,6 +898,14 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def get_insertion_point(self):
         return self.contentTextCtrl.GetInsertionPoint() - TEXT_CTRL_OFFSET
 
+    @staticmethod
+    def control_to_view_position(pos):
+        return pos - TEXT_CTRL_OFFSET
+
+    @staticmethod
+    def view_to_control_position(pos):
+        return pos + TEXT_CTRL_OFFSET
+
     def get_last_position(self):
         # WHY: The structure is `\n[content]\n`. The real length is `len(content) + 2`.
         # The clean length is `len(content)`. So we must subtract 2.
@@ -937,9 +921,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             actual_end = self.contentTextCtrl.GetLastPosition() - TEXT_CTRL_OFFSET
         return self.contentTextCtrl.GetRange(actual_start, actual_end)
 
-    def get_text_from_user(
-        self, title, label, style=wx.OK | wx.CANCEL | wx.CENTER, value=""
-    ):
+    def get_text_from_user(self, title, label, style=wx.OK | wx.CANCEL | wx.CENTER, value=""):
         dlg = wx.TextEntryDialog(self, label, title, style=style, value=value)
         if dlg.ShowModal() == wx.ID_OK:
             return dlg.GetValue().strip()

@@ -1,17 +1,25 @@
-from datetime import datetime, timedelta
 from pathlib import Path
 import shutil
+from types import SimpleNamespace
 
-import pytest
-
+import bookworm.annotation as annotation_module
 from bookworm import config
-from bookworm.annotation import AnnotationService, NoteTaker
-from bookworm.annotation.annotator import AnnotationSortCriteria
+from bookworm.annotation import AnnotationService, Bookmarker, NoteTaker
+from bookworm.annotation import annotation_gui
+from bookworm.annotation.annotation_gui import AnnotationMenu
+from bookworm.annotation.annotator import AnnotationSortCriteria, Quoter
 from bookworm.database.models import *
 from bookworm.document.uri import DocumentUri
-from bookworm.signals import reader_book_loaded
+from bookworm.structured_text import SemanticElementType, TextRange
 
-from conftest import asset, reader
+
+def key_event(key_code):
+    return SimpleNamespace(
+        KeyCode=key_code,
+        Skip=lambda: None,
+        GetKeyCode=lambda: key_code,
+        GetModifiers=lambda: 0,
+    )
 
 
 def test_notes_can_not_overlap(asset, reader):
@@ -20,7 +28,7 @@ def test_notes_can_not_overlap(asset, reader):
     assert Book.query.count() == 1
     annot = NoteTaker(reader)
     # This should succeed
-    comment = annot.create(
+    annot.create(
         title="test", content="test", position=0, start_pos=0, end_pos=1
     )
     # check if it overlaps at start_pos 0, end_pos 1, page_number 0 and position 0
@@ -128,4 +136,161 @@ def test_comments_are_styled_on_initial_landing_page(asset, reader, view, monkey
     reader.load(uri)
 
     assert styled_positions == [0]
+    reader.unload()
+
+
+def test_extending_highlight_to_before_image_preserves_range_stop(
+    reader, view, tmp_path, monkeypatch
+):
+    html_path = tmp_path / "image.html"
+    html_path.write_text(
+        """
+        <html>
+            <head><title>Book</title></head>
+            <body><p>before <img src="pic.png" alt="Chart"> after text</p></body>
+        </html>
+        """,
+        encoding="utf-8",
+    )
+    reader.load(DocumentUri.from_filename(html_path))
+    image_start, image_stop = reader.document.get_document_semantic_structure()[
+        SemanticElementType.FIGURE
+    ][0]
+    existing_range = reader.view_to_storage_range(0, 2)
+    expected_range = reader.view_to_storage_range(0, image_start)
+    range_with_image = reader.view_to_storage_range(0, image_stop)
+    quote = Quoter(reader).create(
+        title="",
+        content="be",
+        start_pos=existing_range.start,
+        end_pos=existing_range.stop,
+    )
+    view.get_selection_range = lambda: TextRange(1, image_start)
+    view.get_text_by_range = lambda start, stop: reader.get_current_page_object().get_text()[
+        start:stop
+    ]
+    service = SimpleNamespace(style_highlight=lambda *args, **kwargs: None)
+    menu = SimpleNamespace(reader=reader, view=view, service=service)
+    monkeypatch.setattr(annotation_gui.wx, "GetKeyState", lambda key: False)
+    monkeypatch.setattr(annotation_gui.speech, "announce", lambda *args, **kwargs: None)
+
+    AnnotationMenu.onQuoteSelection(menu, None)
+
+    quote = Quoter(reader).get(quote.id)
+    assert quote.end_pos == expected_range.stop
+    assert quote.end_pos != range_with_image.stop
+    assert reader.storage_to_view_range(
+        quote.start_pos,
+        quote.end_pos,
+        quote.page_number,
+    ).astuple() == (0, image_start)
+    reader.unload()
+
+
+def test_bookmark_navigation_uses_selected_line_edge(
+    asset, reader, view, monkeypatch
+):
+    def get_containing_line(pos):
+        start = text.rfind("\n", 0, pos) + 1
+        stop = text.find("\n", pos)
+        return start, len(text) if stop == -1 else stop
+
+    uri = DocumentUri.from_filename(asset("roman.epub"))
+    config.conf.spec.update(AnnotationService.config_spec)
+    config.conf.validate_and_write()
+    config.conf["annotation"]["select_bookmarked_line_on_jumping"] = True
+    reader.load(uri)
+    service = AnnotationService.__new__(AnnotationService)
+    service.view = view
+    service.reader = reader
+    service._AnnotationService__state = {}
+    text = reader.get_current_page_object().get_text()
+    first_line_start = text.find("\n") + 1
+    first_line_stop = text.find("\n", first_line_start)
+    bookmark_position = first_line_start + 1
+    next_bookmark_position = text.find("\n", first_line_stop + 1) + 1
+    bookmarker = Bookmarker(reader)
+    bookmarker.create(
+        title="first",
+        position=reader.view_to_storage_position(bookmark_position),
+    )
+    bookmarker.create(
+        title="second",
+        position=reader.view_to_storage_position(next_bookmark_position),
+    )
+    view.selection_range = TextRange(0, 0)
+    view.selected_range = None
+    view.get_selection_range = lambda: view.selection_range
+    view.get_containing_line = get_containing_line
+
+    def select_text(start, stop):
+        view.selected_range = (start, stop)
+        view.selection_range = TextRange(start, stop)
+        view.insertion_point = start
+
+    view.select_text = select_text
+    monkeypatch.setattr(
+        annotation_module.sounds,
+        "navigation",
+        SimpleNamespace(play=lambda *args, **kwargs: None),
+    )
+    monkeypatch.setattr(
+        annotation_module.speech,
+        "announce",
+        lambda *args, **kwargs: None,
+    )
+
+    service.onKeyUp(key_event(annotation_gui.wx.WXK_F2))
+    first_selected_range = view.selected_range
+    service.onKeyUp(key_event(annotation_gui.wx.WXK_F2))
+
+    assert first_selected_range == get_containing_line(bookmark_position)
+    assert view.selected_range == get_containing_line(next_bookmark_position)
+    reader.unload()
+
+
+def test_next_highlight_navigation_uses_nearest_start_position(
+    asset, reader, view, monkeypatch
+):
+    uri = DocumentUri.from_filename(asset("roman.epub"))
+    reader.load(uri)
+    service = AnnotationService.__new__(AnnotationService)
+    service.view = view
+    service.reader = reader
+    service._AnnotationService__state = {}
+    view.selection_range = TextRange(0, 0)
+    view.selected_range = None
+    view.get_selection_range = lambda: view.selection_range
+    view.select_text = lambda start, stop: setattr(view, "selected_range", (start, stop))
+    monkeypatch.setattr(
+        annotation_module.sounds,
+        "navigation",
+        SimpleNamespace(play=lambda *args, **kwargs: None),
+    )
+    monkeypatch.setattr(
+        annotation_module.speech,
+        "announce",
+        lambda *args, **kwargs: None,
+    )
+
+    late_range = reader.view_to_storage_range(50, 60)
+    early_range = reader.view_to_storage_range(10, 20)
+    quoter = Quoter(reader)
+    quoter.create(
+        title="late",
+        content="late",
+        start_pos=late_range.start,
+        end_pos=late_range.stop,
+    )
+    quoter.create(
+        title="early",
+        content="early",
+        start_pos=early_range.start,
+        end_pos=early_range.stop,
+    )
+
+    service.onKeyUp(key_event(annotation_gui.wx.WXK_F9))
+
+    assert view.insertion_point == 10
+    assert view.selected_range == (10, 20)
     reader.unload()

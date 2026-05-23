@@ -1,4 +1,3 @@
-# coding: utf-8
 
 from __future__ import annotations
 
@@ -6,8 +5,9 @@ from concurrent.futures import ProcessPoolExecutor
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
+from urllib import parse as urllib_parse
+from urllib.request import url2pathname
 
-import requests
 from lxml import etree
 from lxml import html as lxml_html
 from more_itertools import first as get_first_element
@@ -15,26 +15,22 @@ from more_itertools import zip_offset
 from yarl import URL
 
 from bookworm.http_tools import HttpResource
+from bookworm.image_io import ImageIO
 from bookworm.logger import logger
 from bookworm.structured_text import (
     HEADING_LEVELS,
-    SemanticElementType,
-    Style,
     TextRange,
 )
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 from bookworm.utils import (
-    NEWLINE,
     TextContentDecoder,
     escape_html,
     is_external_url,
-    remove_excess_blank_lines,
 )
 
-from .. import SINGLE_PAGE_DOCUMENT_PAGER, BookMetadata, ChangeDocument
-from .. import DocumentCapability as DC
 from .. import (
-    DocumentError,
+    SINGLE_PAGE_DOCUMENT_PAGER,
+    BookMetadata,
     DocumentIOError,
     LinkTarget,
     ReadingMode,
@@ -42,6 +38,7 @@ from .. import (
     SinglePageDocument,
     TreeStackBuilder,
 )
+from .. import DocumentCapability as DC
 
 log = logger.getChild(__name__)
 # Default cache timeout
@@ -55,7 +52,6 @@ def get_clean_html(html_string: str) -> (str, BookMetadata):
     # Therefore, we run it in a separate process
 
     import trafilatura
-    from trafilatura.external import JT_STOPLIST, custom_justext
 
     html_string = StructuredHtmlParser.normalize_html(html_string)
 
@@ -79,9 +75,7 @@ def get_clean_html(html_string: str) -> (str, BookMetadata):
     )
 
     # Extract the body
-    extracted = trafilatura.extract(
-        html_string, output_format="xml", include_links=True
-    )
+    extracted = trafilatura.extract(html_string, output_format="xml", include_links=True)
     xml_content = etree.fromstring(extracted)
     main_content = xml_content.xpath("main")[0]
     for node in main_content.cssselect("head"):
@@ -89,9 +83,7 @@ def get_clean_html(html_string: str) -> (str, BookMetadata):
     output_template = [
         "<html><body>",
         "<h1>%s</h1>" % (escape_html(doc_metadata.title),),
-        lxml_html.tostring(
-            main_content, pretty_print=False, method="html", encoding="unicode"
-        ),
+        lxml_html.tostring(main_content, pretty_print=False, method="html", encoding="unicode"),
         "</body></html>",
     ]
     return ("".join(output_template), doc_metadata)
@@ -113,15 +105,17 @@ class BaseHtmlDocument(SinglePageDocument):
 
     def __getstate__(self) -> dict:
         """Support for pickling."""
-        return super().__getstate__() | dict(html_string=self.html_string)
+        return super().__getstate__() | {"html_string": self.html_string}
 
     def read(self):
         super().read()
         self._text = None
+        self._storage_text = None
         self._outline = None
         self._metainfo = None
         self._semantic_structure = {}
         self._style_info = {}
+        self._text_position_map = None
         try:
             self.html_string = self.get_html()
         except Exception as e:
@@ -140,6 +134,35 @@ class BaseHtmlDocument(SinglePageDocument):
 
     def get_content(self):
         return self._text
+
+    def get_storage_content(self):
+        return self._storage_text if self._storage_text is not None else self._text
+
+    def get_legacy_content(self):
+        if hasattr(self, "_legacy_content"):
+            return self._legacy_content
+        html = getattr(self, "_parsed_html_content", self.html_string)
+        parser_kwargs = {"include_images": False}
+        if type(html) in (str, bytes):
+            legacy_parser = StructuredHtmlParser.from_string(html, **parser_kwargs)
+        else:
+            legacy_parser = StructuredHtmlParser(html, **parser_kwargs)
+        self._legacy_content = legacy_parser.get_text()
+        return self._legacy_content
+
+    def get_text_position_map(self):
+        return self._text_position_map or super().get_text_position_map()
+
+    def iter_content_hash_images(self):
+        if not getattr(self, "structure", None):
+            return ()
+        return tuple(
+            (
+                storage_range,
+                self._get_embedded_image_content_hash_identity(image_info),
+            )
+            for image_info, storage_range in self.structure.iter_image_storage_ranges()
+        )
 
     def get_document_semantic_structure(self):
         return self._semantic_structure
@@ -168,10 +191,9 @@ class BaseHtmlDocument(SinglePageDocument):
         href = self.link_targets[link_range]
         if is_external_url(href):
             return LinkTarget(url=href, is_external=True)
-        else:
-            _filename, anchor = href.split("#") if "#" in href else (href, None)
-            if anchor := self.anchors.get(anchor, None):
-                return LinkTarget(url=href, is_external=False, position=anchor)
+        _filename, anchor = href.split("#") if "#" in href else (href, None)
+        if anchor := self.anchors.get(anchor, None):
+            return LinkTarget(url=href, is_external=False, position=anchor)
 
     def parse_to_clean_text(self):
         with ProcessPoolExecutor(max_workers=1) as executor:
@@ -179,9 +201,7 @@ class BaseHtmlDocument(SinglePageDocument):
             try:
                 result = task.result()
             except Exception as e:
-                log.exception(
-                    "Failed to parse html string for clean view", exc_info=True
-                )
+                log.exception("Failed to parse html string for clean view", exc_info=True)
                 raise DocumentIOError from e
             html_content, metadata = result
             self._metainfo = metadata
@@ -198,6 +218,7 @@ class BaseHtmlDocument(SinglePageDocument):
         return self.parse_text_and_structure(self.html_string)
 
     def parse_text_and_structure(self, html):
+        self._parsed_html_content = html
         if type(html) in (str, bytes):
             extracted_text_and_info = StructuredHtmlParser.from_string(html)
         else:
@@ -208,6 +229,8 @@ class BaseHtmlDocument(SinglePageDocument):
         self.link_targets = extracted_text_and_info.link_targets
         self.anchors = extracted_text_and_info.anchors
         self._text = text = extracted_text_and_info.get_text()
+        self._storage_text = extracted_text_and_info.get_storage_text()
+        self._text_position_map = extracted_text_and_info.text_position_map
         heading_poses = sorted(
             (
                 (rng, h)
@@ -229,9 +252,7 @@ class BaseHtmlDocument(SinglePageDocument):
                 )
                 stack.push(section)
             all_sections = tuple(root.iter_children())
-            for this_sect, next_sect in zip_offset(
-                all_sections, all_sections, offsets=(0, 1)
-            ):
+            for this_sect, next_sect in zip_offset(all_sections, all_sections, offsets=(0, 1)):
                 this_sect.text_range.stop = next_sect.text_range.start - 1
             last_pos = len(text)
             if all_sections:
@@ -255,6 +276,96 @@ class BaseHtmlDocument(SinglePageDocument):
 
     def get_document_table_markup(self, table_index):
         return self.structure.get_table_markup(table_index)
+
+    def get_document_embedded_image_info(self, image_index):
+        return self.structure.get_image_info(image_index)
+
+    def get_document_embedded_image(self, image_index) -> ImageIO:
+        image_info = self.get_document_embedded_image_info(image_index)
+        if image_info.src.lower().startswith("data:image/"):
+            try:
+                return ImageIO.from_data_uri(image_info.src)
+            except Exception as e:
+                raise DocumentIOError("Failed to decode embedded image") from e
+        if not self._is_local_image_source(image_info.src):
+            raise DocumentIOError("Remote images are not supported")
+        image_path = self._resolve_image_path(image_info.src)
+        if image := ImageIO.from_filename(image_path, preserve_mode=True):
+            return image
+        raise DocumentIOError(f"Failed to load embedded image: {image_path}")
+
+    def _get_embedded_image_content_hash_identity(self, image_info):
+        src = image_info.src
+        if src.lower().startswith("data:image/"):
+            try:
+                return ("bytes", ImageIO.data_uri_to_bytes(src))
+            except Exception:
+                log.warning("Failed to hash embedded data URI image.", exc_info=True)
+                return None
+        parsed_src = urllib_parse.urlparse(src)
+        if not parsed_src.scheme and not parsed_src.netloc and self._image_base_url:
+            src = urllib_parse.urljoin(self._image_base_url, src)
+        if not self._is_local_image_source(src):
+            return ("src", src.strip().encode())
+        try:
+            image_path = self._resolve_image_path(src)
+            return ("bytes", image_path.read_bytes())
+        except Exception:
+            log.warning(
+                f"Failed to hash embedded image from path '{src}'.", exc_info=True
+            )
+            return None
+
+    @staticmethod
+    def _is_local_image_source(src: str) -> bool:
+        parsed = urllib_parse.urlparse(src)
+        scheme = parsed.scheme.lower()
+        if scheme == "":
+            return not parsed.netloc
+        return scheme == "file" or (len(scheme) == 1 and scheme.isalpha())
+
+    def _resolve_image_path(self, src: str) -> Path:
+        if src.lower().startswith("file:"):
+            return self._file_uri_to_path(src)
+        clean_src = src.split("#", 1)[0].split("?", 1)[0]
+        image_path = Path(urllib_parse.unquote(clean_src))
+        if image_path.is_absolute():
+            return image_path
+        if self._image_base_url:
+            resolved_src = urllib_parse.urljoin(self._image_base_url, src)
+            if not self._is_local_image_source(resolved_src):
+                raise DocumentIOError("Remote images are not supported")
+            return self._local_image_source_to_path(resolved_src)
+        base_path = getattr(self, "filename", None) or self.get_file_system_path()
+        return Path(base_path).parent / image_path
+
+    @staticmethod
+    def _file_uri_to_path(src: str) -> Path:
+        parsed = urllib_parse.urlparse(src)
+        path = f"//{parsed.netloc}{parsed.path}" if parsed.netloc else parsed.path
+        return Path(url2pathname(path))
+
+    @classmethod
+    def _local_image_source_to_path(cls, src: str) -> Path:
+        if src.lower().startswith("file:"):
+            return cls._file_uri_to_path(src)
+        clean_src = src.split("#", 1)[0].split("?", 1)[0]
+        return Path(urllib_parse.unquote(clean_src))
+
+    @cached_property
+    def _image_base_url(self) -> str:
+        try:
+            html = lxml_html.fromstring(self.html_string)
+        except Exception:
+            return ""
+        base_href = get_first_element(html.xpath("//base[@href]/@href"), "").strip()
+        if not base_href:
+            return ""
+        base_path = getattr(self, "filename", None) or self.get_file_system_path()
+        document_base_url = Path(base_path).parent.resolve().as_uri()
+        if not document_base_url.endswith("/"):
+            document_base_url += "/"
+        return urllib_parse.urljoin(document_base_url, base_href)
 
 
 class FileSystemHtmlDocument(BaseHtmlDocument):
@@ -301,9 +412,7 @@ class WebHtmlDocument(BaseHtmlDocument):
         )
         current_url_path = URL(url).path
         # Now strip the base_url from internal anchors
-        for maybe_internal_anchor in html_tree.xpath(
-            f"//a[starts-with(@href, '{url}')]"
-        ):
+        for maybe_internal_anchor in html_tree.xpath(f"//a[starts-with(@href, '{url}')]"):
             href = maybe_internal_anchor.get("href")
             if (URL(href).path) != current_url_path:
                 continue

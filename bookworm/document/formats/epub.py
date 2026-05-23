@@ -1,15 +1,12 @@
-# coding: utf-8
 
 from __future__ import annotations
 
 import collections.abc
-import itertools
 import os
 import string
-from contextlib import suppress
 from functools import cached_property, lru_cache
 from io import StringIO
-from pathlib import Path, PurePosixPath
+from pathlib import PurePosixPath
 from urllib import parse as urllib_parse
 
 import dateparser
@@ -29,11 +26,18 @@ from bookworm.logger import logger
 from bookworm.paths import home_data_path
 from bookworm.structured_text import TextRange
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
-from bookworm.utils import format_datetime, is_external_url
+from bookworm.utils import is_external_url
 
-from .. import SINGLE_PAGE_DOCUMENT_PAGER, BookMetadata, ChangeDocument
+from .. import (
+    SINGLE_PAGE_DOCUMENT_PAGER,
+    BookMetadata,
+    DocumentIOError,
+    LinkTarget,
+    Section,
+    SinglePageDocument,
+    TreeStackBuilder,
+)
 from .. import DocumentCapability as DC
-from .. import DocumentError, LinkTarget, Section, SinglePageDocument, TreeStackBuilder
 
 log = logger.getChild(__name__)
 HTML_FILE_EXTS = {
@@ -61,8 +65,9 @@ class EpubDocument(SinglePageDocument):
     def read(self):
         super().read()
         self.epub = ebooklib.epub.read_epub(self.get_file_system_path())
-        self.html_content = self.html_content
         self.structure = StructuredHtmlParser.from_string(self.html_content)
+        self._storage_text = self.structure.get_storage_text()
+        self._text_position_map = self.structure.text_position_map
         self.toc = self.parse_epub()
 
     @property
@@ -86,9 +91,7 @@ class EpubDocument(SinglePageDocument):
             desc = None
         date_value = info.get("date", "")
         if not isinstance(date_value, str):
-            log.warning(
-                f"Unexpected date format: {type(date_value)}. Converting to string."
-            )
+            log.warning(f"Unexpected date format: {type(date_value)}. Converting to string.")
             if isinstance(date_value, (int, float)):
                 date_value = str(date_value)
             else:
@@ -118,13 +121,37 @@ class EpubDocument(SinglePageDocument):
             try:
                 return LocaleInfo(epub_lang)
             except:
-                log.exception(
-                    "Failed to parse epub language `{epub_lang}`", exc_info=True
-                )
+                log.exception("Failed to parse epub language `{epub_lang}`", exc_info=True)
         return self.get_language(self.html_content, is_html=True) or LocaleInfo("en")
 
     def get_content(self):
         return self.structure.get_text()
+
+    def get_storage_content(self):
+        return self._storage_text
+
+    def get_legacy_content(self):
+        if hasattr(self, "_legacy_content"):
+            return self._legacy_content
+        self._legacy_content = StructuredHtmlParser.from_string(
+            self.html_content,
+            include_images=False,
+        ).get_text()
+        return self._legacy_content
+
+    def get_text_position_map(self):
+        return self._text_position_map
+
+    def iter_content_hash_images(self):
+        if not getattr(self, "structure", None):
+            return ()
+        return tuple(
+            (
+                storage_range,
+                self._get_embedded_image_content_hash_identity(image_info),
+            )
+            for image_info, storage_range in self.structure.iter_image_storage_ranges()
+        )
 
     def get_document_semantic_structure(self):
         return self.structure.semantic_elements
@@ -135,22 +162,88 @@ class EpubDocument(SinglePageDocument):
     def get_document_table_markup(self, table_index):
         return self.structure.get_table_markup(table_index)
 
+    def get_document_embedded_image_info(self, image_index):
+        return self.structure.get_image_info(image_index)
+
+    def get_document_embedded_image(self, image_index) -> ImageIO:
+        image_info = self.get_document_embedded_image_info(image_index)
+        if image_info.src.lower().startswith("data:image/"):
+            try:
+                return ImageIO.from_data_uri(image_info.src)
+            except Exception as e:
+                raise DocumentIOError("Failed to decode embedded image") from e
+        parsed_src = urllib_parse.urlsplit(image_info.src)
+        if parsed_src.scheme or parsed_src.netloc:
+            raise DocumentIOError("Remote images are not supported")
+        href = urllib_parse.unquote(parsed_src.path)
+        if image_item := self.get_epub_image_item_by_href(href):
+            try:
+                return ImageIO.from_bytes(image_item.content)
+            except Exception as e:
+                raise DocumentIOError("Failed to decode embedded image") from e
+        raise DocumentIOError(f"Could not resolve embedded image: {href}")
+
+    def _get_embedded_image_content_hash_identity(self, image_info):
+        src = image_info.src
+        if src.lower().startswith("data:image/"):
+            try:
+                return ("bytes", ImageIO.data_uri_to_bytes(src))
+            except Exception:
+                log.warning("Failed to hash embedded data URI image.", exc_info=True)
+                return None
+        parsed_src = urllib_parse.urlsplit(src)
+        if parsed_src.scheme or parsed_src.netloc:
+            return ("src", src.strip().encode())
+        href = urllib_parse.unquote(parsed_src.path)
+        if image_item := self.get_epub_image_item_by_href(href):
+            return ("bytes", image_item.content)
+        return None
+
+    def get_epub_image_item_by_href(self, href):
+        candidate_hrefs = (
+            href,
+            href.lstrip("./"),
+            PurePosixPath(href).as_posix(),
+            PurePosixPath(href.lstrip("./")).as_posix(),
+        )
+        for candidate in candidate_hrefs:
+            if image_item := self.epub.get_item_with_href(candidate):
+                return image_item
+        suffix_matches = []
+        for item in self.epub.get_items_of_type(ebooklib.ITEM_IMAGE):
+            item_path = PurePosixPath(item.file_name)
+            if self._item_path_has_href_suffix(item_path, href):
+                suffix_matches.append(item)
+        if len(suffix_matches) == 1:
+            return suffix_matches[0]
+
+    @staticmethod
+    def _item_path_has_href_suffix(item_path, href):
+        href_parts = tuple(part for part in PurePosixPath(href).parts if part not in {"", "."})
+        if not href_parts or ".." in href_parts:
+            return False
+        item_parts = PurePosixPath(item_path).parts
+        return len(href_parts) <= len(item_parts) and item_parts[-len(href_parts) :] == href_parts
+
     def resolve_link(self, link_range) -> LinkTarget:
         href = urllib_parse.unquote(self.structure.link_targets[link_range])
         if is_external_url(href):
             return LinkTarget(url=href, is_external=True)
-        else:
-            for html_id, text_range in self.structure.html_id_ranges.items():
-                if html_id.endswith(href):
-                    return LinkTarget(
-                        url=href, is_external=False, page=None, position=text_range
-                    )
+        id_ranges = {
+            urllib_parse.unquote(html_id): text_range
+            for html_id, text_range in self.structure.html_id_ranges.items()
+        }
+        if text_range := id_ranges.get(href):
+            return LinkTarget(url=href, is_external=False, page=None, position=text_range)
+        href_with_boundary = f"/{href.removeprefix('./')}"
+        for html_id, text_range in id_ranges.items():
+            if html_id.endswith(href_with_boundary):
+                return LinkTarget(url=href, is_external=False, page=None, position=text_range)
+        return None
 
     def get_cover_image(self):
         if not (
-            cover := more_itertools.first(
-                self.epub.get_items_of_type(ebooklib.ITEM_COVER), None
-            )
+            cover := more_itertools.first(self.epub.get_items_of_type(ebooklib.ITEM_COVER), None)
         ):
             cover = more_itertools.first(
                 filter(
@@ -165,9 +258,7 @@ class EpubDocument(SinglePageDocument):
             with fitz.open(self.get_file_system_path()) as fitz_document:
                 return ImageIO.from_fitz_pixmap(fitz_document.get_page_pixmap(0))
         except:
-            log.warning(
-                "Failed to obtain the cover image for epub document.", exc_info=True
-            )
+            log.warning("Failed to obtain the cover image for epub document.", exc_info=True)
 
     @lru_cache(maxsize=10)
     def get_section_at_position(self, pos):
@@ -178,7 +269,7 @@ class EpubDocument(SinglePageDocument):
 
     @cached_property
     def epub_html_items(self) -> tuple[str]:
-        items = tuple()
+        items = ()
         if html_items := tuple(self.epub.get_items_of_type(ebooklib.ITEM_DOCUMENT)):
             items = html_items
         else:
@@ -244,9 +335,7 @@ class EpubDocument(SinglePageDocument):
                 text_range = None
                 # Strip  punctuation as ebooklib, for some reason, strips those from html_ids
                 for h_id, t_range in id_ranges.items():
-                    if (href == h_id.strip("/")) or (
-                        href == h_id.strip(string.punctuation)
-                    ):
+                    if (href == h_id.strip("/")) or (href == h_id.strip(string.punctuation)):
                         text_range = t_range
                         break
                 if text_range is None and "#" in href:
@@ -256,11 +345,7 @@ class EpubDocument(SinglePageDocument):
                     log.warning(
                         f"Could not determine the starting position for href: {href} and section: {sect!r}"
                     )
-                    text_range = (
-                        stack.top.text_range.astuple()
-                        if stack.top is not root
-                        else (0, 0)
-                    )
+                    text_range = stack.top.text_range.astuple() if stack.top is not root else (0, 0)
                 sect.text_range = TextRange(*text_range)
             stack.push(sect)
         return root
@@ -288,19 +373,17 @@ class EpubDocument(SinglePageDocument):
                     pager=SINGLE_PAGE_DOCUMENT_PAGER,
                     level=current_level,
                     parent=parent,
-                    data=dict(href=entry.href.lstrip("./")),
+                    data={"href": entry.href.lstrip("./")},
                 )
                 yield sect
             else:
                 epub_sect, children = entry
-                num_pages = len(children)
                 sect = Section(
-                    title=epub_sect.title
-                    or self._get_title_for_section(epub_sect.href),
+                    title=epub_sect.title or self._get_title_for_section(epub_sect.href),
                     level=current_level,
                     pager=SINGLE_PAGE_DOCUMENT_PAGER,
                     parent=parent,
-                    data=dict(href=epub_sect.href.lstrip("./")),
+                    data={"href": epub_sect.href.lstrip("./")},
                 )
                 yield sect
                 yield from self.add_toc_entry(
@@ -310,34 +393,26 @@ class EpubDocument(SinglePageDocument):
 
     @cached_property
     def html_content(self):
-        cache = Cache(
-            self._get_cache_directory(), eviction_policy="least-frequently-used"
-        )
+        cache = Cache(self._get_cache_directory(), eviction_policy="least-frequently-used")
         cache_key = self.uri.to_uri_string()
         document_path = self.get_file_system_path()
-        if (
-            cached_html_content := cache.get(cache_key)
-        ) and not cache_utils.is_document_modified(cache_key, document_path, cache):
+        if (cached_html_content := cache.get(cache_key)) and not cache_utils.is_document_modified(
+            cache_key, document_path, cache
+        ):
             return cached_html_content.decode("utf-8")
-        html_content_gen = (
-            (item.file_name, item.content) for item in self.epub_html_items
-        )
+        html_content_gen = ((item.file_name, item.content) for item in self.epub_html_items)
         buf = StringIO()
         for filename, html_content in html_content_gen:
             buf.write(self.prefix_html_ids(filename, html_content))
             buf.write("\n<br/>\n")
-        html_content = self.build_html(
-            title=self.epub.title, body_content=buf.getvalue()
-        )
+        html_content = self.build_html(title=self.epub.title, body_content=buf.getvalue())
         cache.set(cache_key, html_content.encode("utf-8"))
         cache_utils.set_document_modified_time(cache_key, document_path, cache)
         return html_content
 
     def prefix_html_ids(self, filename, html):
         tree = lxml_html.fromstring(html)
-        tree.make_links_absolute(
-            filename, resolve_base_href=False, handle_failures="ignore"
-        )
+        tree.make_links_absolute(filename, resolve_base_href=False, handle_failures="ignore")
         if os.path.splitext(filename)[1] in HTML_FILE_EXTS:
             for node in tree.xpath("//*[@id]"):
                 node.set("id", filename + "#" + node.get("id"))
@@ -359,9 +434,7 @@ class EpubDocument(SinglePageDocument):
             )
         except Exception as exc:
             # Catch other potential errors during head/body processing
-            log.warning(
-                f"Error processing HTML structure (head/body) in {filename}: {exc}"
-            )
+            log.warning(f"Error processing HTML structure (head/body) in {filename}: {exc}")
             raise exc  # Re-raise other unexpected errors
 
         tree.tag = "div"

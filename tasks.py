@@ -676,9 +676,9 @@ def pip_install(c):
         print("Syncing dependencies using uv...")
         try:
             c.run(_add_install_args("uv sync", c))
-        except UnexpectedExit as e:
-            if not c["offline_run"]:
-                raise e
+        except UnexpectedExit:
+            if not c.get("offline_run"):
+                raise
     install_local_packages(c)
 
 
