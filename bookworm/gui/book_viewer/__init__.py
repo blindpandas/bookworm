@@ -675,7 +675,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
                 actual_element_type,
             )
             target_position = (
-                start if not move_to_start_of_line else self.get_containing_line(stop - 1)[0]
+                start if not move_to_start_of_line else self.get_containing_line(start + 1)[0]
             )
             self.set_insertion_point(target_position)
             speech.announce(msg, True)
