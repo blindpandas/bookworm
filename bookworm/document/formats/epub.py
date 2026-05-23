@@ -229,9 +229,17 @@ class EpubDocument(SinglePageDocument):
         href = urllib_parse.unquote(self.structure.link_targets[link_range])
         if is_external_url(href):
             return LinkTarget(url=href, is_external=True)
-        for html_id, text_range in self.structure.html_id_ranges.items():
-            if html_id.endswith(href):
+        id_ranges = {
+            urllib_parse.unquote(html_id): text_range
+            for html_id, text_range in self.structure.html_id_ranges.items()
+        }
+        if text_range := id_ranges.get(href):
+            return LinkTarget(url=href, is_external=False, page=None, position=text_range)
+        href_with_boundary = f"/{href.removeprefix('./')}"
+        for html_id, text_range in id_ranges.items():
+            if html_id.endswith(href_with_boundary):
                 return LinkTarget(url=href, is_external=False, page=None, position=text_range)
+        return None
 
     def get_cover_image(self):
         if not (
