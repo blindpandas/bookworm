@@ -5,6 +5,7 @@ import pytest
 from bookworm.gui import book_viewer
 from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.structured_text import SemanticElementType
+from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 
 
 class StructuralNavigationHarness:
@@ -67,3 +68,39 @@ def test_structural_navigation_moves_multiline_elements_to_first_line(monkeypatc
     BookViewerWindow.navigate_to_structural_element(viewer, element_type, True)
 
     assert viewer.insertion_point == start
+
+
+def test_empty_href_does_not_reassign_previous_link_target():
+    parser = StructuredHtmlParser.from_string(
+        """
+        <html><body>
+            <p>
+                <a href="https://one.example">one</a>
+                <a href="#empty"></a>
+                <span id="empty">target</span>
+            </p>
+        </body></html>
+        """
+    )
+    text = parser.get_text()
+    link_range = next(iter(parser.link_targets))
+
+    assert text[link_range[0] : link_range[1]] == "one"
+    assert parser.link_targets[link_range] == "https://one.example"
+
+
+def test_named_anchor_without_href_is_not_a_semantic_link():
+    parser = StructuredHtmlParser.from_string(
+        """
+        <html><body>
+            <p><a name="spot">anchor text</a> <a href="#spot">jump</a></p>
+        </body></html>
+        """
+    )
+    text = parser.get_text()
+
+    link_texts = [
+        text[start:stop] for start, stop in parser.semantic_elements[SemanticElementType.LINK]
+    ]
+
+    assert link_texts == ["jump"]

@@ -69,7 +69,6 @@ SEMANTIC_HTML_ELEMENTS = {
     },
     SemanticElementType.LINK: {
         "a#href",
-        "a#name",
     },
     SemanticElementType.LIST: {
         "ol",
@@ -148,13 +147,12 @@ class StructuredHtmlParser(Inscriptis):
         start_index = self._get_canvas_index(canvas)
         super()._parse_html_tree(state, tree)
         end_index = self._get_canvas_index(canvas)
-        try:
-            anot = canvas.annotations[-1]
-        except IndexError:
-            pass
-        else:
-            if tree.tag == "a" and (href := tree.attrib.get("href", "")):
-                self.link_range_to_target[(anot.start, anot.end)] = href
+        if (
+            tree.tag == "a"
+            and (href := tree.attrib.get("href", ""))
+            and (anot := self._get_current_link_annotation(canvas, start_index, end_index))
+        ):
+            self.link_range_to_target[(anot.start, anot.end)] = href
         if (anch := tree.attrib.get("id", "")) or (anch := tree.attrib.get("name", "")):
             element_range = (start_index, end_index)
             self.anchors[anch] = element_range
@@ -191,6 +189,17 @@ class StructuredHtmlParser(Inscriptis):
             )
 
         return state.canvas
+
+    @staticmethod
+    def _get_current_link_annotation(canvas, start_index, end_index):
+        for anot in reversed(canvas.annotations):
+            if anot.metadata != SemanticElementType.LINK:
+                continue
+            if start_index <= anot.start and anot.end <= end_index and anot.start < anot.end:
+                return anot
+            if anot.end <= start_index:
+                return None
+        return None
 
     @staticmethod
     def _get_canvas_index(canvas):
