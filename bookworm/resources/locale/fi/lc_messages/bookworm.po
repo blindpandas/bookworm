@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2026-05-23 22:47+0300\n"
-"PO-Revision-Date: 2026-05-23 23:13+0300\n"
+"POT-Creation-Date: 2026-05-24 19:08+0300\n"
+"PO-Revision-Date: 2026-05-24 19:22+0300\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: fi_FI <janikinnunen340@gmail.com>\n"
 "Language: fi\n"
@@ -145,7 +145,7 @@ msgstr "Päivitetty viimeksi"
 #: ../../../../annotation/annotation_dialogs.py:139
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:177
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:245
-#: ../../../../gui/book_viewer/core_dialogs.py:397
+#: ../../../../gui/book_viewer/core_dialogs.py:393
 #: ../../../../gui/settings.py:152 ../../../../ocr/ocr_dialogs.py:486
 #: ../../../../text_to_speech/tts_gui.py:363
 #: ../../../../webservices/wikiworm.py:228
@@ -166,7 +166,7 @@ msgid "&Remove"
 msgstr "&Poista"
 
 #: ../../../../annotation/annotation_dialogs.py:148
-#: ../../../../gui/book_viewer/core_dialogs.py:255
+#: ../../../../gui/book_viewer/core_dialogs.py:251
 msgid "Name"
 msgstr "Nimi"
 
@@ -174,7 +174,7 @@ msgstr "Nimi"
 #: ../../../../annotation/annotation_dialogs.py:338
 #: ../../../../annotation/exporters/core_renderers.py:178
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:196
-#: ../../../../gui/book_viewer/core_dialogs.py:52
+#: ../../../../gui/book_viewer/core_dialogs.py:53
 #: ../../../../gui/book_viewer/render_view.py:32
 msgid "Page"
 msgstr "Sivu"
@@ -182,7 +182,7 @@ msgstr "Sivu"
 #: ../../../../annotation/annotation_dialogs.py:163
 #: ../../../../annotation/annotation_dialogs.py:248
 #: ../../../../annotation/exporters/core_renderers.py:145
-#: ../../../../gui/book_viewer/core_dialogs.py:67
+#: ../../../../gui/book_viewer/core_dialogs.py:68
 msgid "Section"
 msgstr "Luku"
 
@@ -312,7 +312,7 @@ msgid "Open file after exporting"
 msgstr "Avaa tiedosto viennin jälkeen"
 
 #: ../../../../annotation/annotation_dialogs.py:642
-#: ../../../../gui/book_viewer/menubar.py:288
+#: ../../../../gui/book_viewer/menubar.py:287
 #: ../../../../gui/book_viewer/render_view.py:166
 msgid "Save As"
 msgstr "Tallenna nimellä"
@@ -492,7 +492,7 @@ msgid "Highlights"
 msgstr "Korostukset"
 
 #: ../../../../annotation/exporters/core_renderers.py:15
-#: ../../../../gui/book_viewer/menubar.py:292 ../../../../ocr/ocr_menu.py:305
+#: ../../../../gui/book_viewer/menubar.py:291 ../../../../ocr/ocr_menu.py:305
 msgid "Plain Text"
 msgstr "Pelkkä teksti"
 
@@ -602,7 +602,7 @@ msgid "Add New..."
 msgstr "Lisää uusi..."
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:186
-#: ../../../../gui/book_viewer/core_dialogs.py:352
+#: ../../../../gui/book_viewer/core_dialogs.py:348
 msgid "Authors"
 msgstr "Tekijät"
 
@@ -767,7 +767,7 @@ msgstr ""
 "Tämä ei poista nimellä {name} luokiteltua asiakirjaa."
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:520
-#: ../../../../gui/components.py:609 ../../../../ocr/ocr_dialogs.py:599
+#: ../../../../gui/components.py:618 ../../../../ocr/ocr_dialogs.py:599
 #: ../../../../ocr/ocr_dialogs.py:641
 msgid "Confirm"
 msgstr "Vahvista"
@@ -870,7 +870,7 @@ msgstr "Hakukenttä"
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:124
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:190
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:233
-#: ../../../../gui/book_viewer/core_dialogs.py:341
+#: ../../../../gui/book_viewer/core_dialogs.py:337
 msgid "Title"
 msgstr "Nimeke"
 
@@ -964,7 +964,7 @@ msgstr ""
 "Ole hyvä ja yritä uudelleen."
 
 #: ../../../../bookshelf/window.py:237
-#: ../../../../gui/book_viewer/core_dialogs.py:387
+#: ../../../../gui/book_viewer/core_dialogs.py:383
 msgid "&Open"
 msgstr "&Avaa"
 
@@ -1007,7 +1007,7 @@ msgid "&Exit"
 msgstr "&Lopeta"
 
 #: ../../../../bookshelf/window.py:499
-#: ../../../../gui/book_viewer/menubar.py:940
+#: ../../../../gui/book_viewer/menubar.py:999
 msgid "&File"
 msgstr "&Tiedosto"
 
@@ -1060,8 +1060,8 @@ msgstr "XPS-asiakirja"
 msgid "Comic Book Archive"
 msgstr "Comic Book -arkisto"
 
-#: ../../../../document/formats/html.py:214
-#: ../../../../document/formats/html.py:374
+#: ../../../../document/formats/html.py:216
+#: ../../../../document/formats/html.py:379
 msgid "HTML Document"
 msgstr "HTML-asiakirja"
 
@@ -1391,85 +1391,85 @@ msgstr "Sivu {page} / {total}"
 msgid "Opening page: {url}"
 msgstr "Avataan sivua: {url}"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:48
+#: ../../../../gui/book_viewer/core_dialogs.py:49
 msgid "Search Results"
 msgstr "Hakutulokset"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:59
+#: ../../../../gui/book_viewer/core_dialogs.py:60
 msgid "Text"
 msgstr "Teksti"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:75
+#: ../../../../gui/book_viewer/core_dialogs.py:76
 msgid "Search Progress:"
 msgstr "Haun edistyminen:"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:148
+#: ../../../../gui/book_viewer/core_dialogs.py:144
 msgid "Search term:"
 msgstr "Hakuehto:"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:154
+#: ../../../../gui/book_viewer/core_dialogs.py:150
 msgid "Case sensitive"
 msgstr "Sama kirjainkoko"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:156
+#: ../../../../gui/book_viewer/core_dialogs.py:152
 msgid "Match whole word only"
 msgstr "Vain kokonaiset sanat"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:158
+#: ../../../../gui/book_viewer/core_dialogs.py:154
 msgid "Regular expression"
 msgstr "Sääntölauseke"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:206
+#: ../../../../gui/book_viewer/core_dialogs.py:202
 #, python-brace-format
 msgid "Page number, of {total}:"
 msgstr "Sivu (yhteensä {total}):"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:245
+#: ../../../../gui/book_viewer/core_dialogs.py:241
 msgid "Element Type"
 msgstr "Elementin tyyppi"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:250
+#: ../../../../gui/book_viewer/core_dialogs.py:246
 msgid "Elements"
 msgstr "Elementit"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:326
+#: ../../../../gui/book_viewer/core_dialogs.py:322
 msgid "Document Info"
 msgstr "Asiakirjan tiedot"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:355
+#: ../../../../gui/book_viewer/core_dialogs.py:351
 msgid "Author"
 msgstr "Tekijä"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:359
+#: ../../../../gui/book_viewer/core_dialogs.py:355
 msgid "Description"
 msgstr "Kuvaus"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:368
+#: ../../../../gui/book_viewer/core_dialogs.py:364
 msgid "Number of Sections"
 msgstr "Lukujen määrä"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:372
+#: ../../../../gui/book_viewer/core_dialogs.py:368
 msgid "Number of Pages"
 msgstr "Sivumäärä"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:375
+#: ../../../../gui/book_viewer/core_dialogs.py:371
 #: ../../../../ocr/ocr_dialogs.py:554
 msgid "Language"
 msgstr "Kieli"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:378
+#: ../../../../gui/book_viewer/core_dialogs.py:374
 msgid "Publisher"
 msgstr "Julkaisija"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:380
+#: ../../../../gui/book_viewer/core_dialogs.py:376
 msgid "Created at"
 msgstr "Luotu"
 
-#: ../../../../gui/book_viewer/core_dialogs.py:383
+#: ../../../../gui/book_viewer/core_dialogs.py:379
 msgid "Publication Date"
 msgstr "Julkaisupäivämäärä"
 
-#: ../../../../gui/book_viewer/menubar.py:53
+#: ../../../../gui/book_viewer/menubar.py:52
 #, python-brace-format
 msgid ""
 "{display_name}\n"
@@ -1509,52 +1509,52 @@ msgstr ""
 "SOVELTUVUUDESTA TIETTYYN TARKOITUKSEEN.\n"
 "Saat lisätietoja tarkastelemalla koko lisenssiä Ohje-valikosta.\n"
 
-#: ../../../../gui/book_viewer/menubar.py:65
+#: ../../../../gui/book_viewer/menubar.py:64
 msgid ""
 "This release of Bookworm is generously sponsored  by Capeds (www.capeds.net)."
 msgstr "Bookwormin julkaisua sponsoroi Capeds (www.capeds.net)."
 
-#: ../../../../gui/book_viewer/menubar.py:96
+#: ../../../../gui/book_viewer/menubar.py:95
 msgid "Open...\tCtrl-O"
 msgstr "Avaa...\tCtrl+O"
 
-#: ../../../../gui/book_viewer/menubar.py:98
+#: ../../../../gui/book_viewer/menubar.py:97
 msgid "New Window...\tCtrl-N"
 msgstr "Uusi ikkuna...\tCtrl+N"
 
-#: ../../../../gui/book_viewer/menubar.py:103
+#: ../../../../gui/book_viewer/menubar.py:102
 msgid "i&mport"
 msgstr "T&uo"
 
-#: ../../../../gui/book_viewer/menubar.py:105
+#: ../../../../gui/book_viewer/menubar.py:104
 msgid "Import a book from an external resource"
 msgstr "Tuo kirja ulkoisesta resurssista"
 
-#: ../../../../gui/book_viewer/menubar.py:107
+#: ../../../../gui/book_viewer/menubar.py:106
 msgid "&Import QRD file"
 msgstr "Tu&o QRD-tiedosto"
 
-#: ../../../../gui/book_viewer/menubar.py:111
+#: ../../../../gui/book_viewer/menubar.py:110
 msgid "&Pin\tCtrl-P"
 msgstr "&Kiinnitä\tCtrl+P"
 
-#: ../../../../gui/book_viewer/menubar.py:114
+#: ../../../../gui/book_viewer/menubar.py:113
 msgid "&Save As Plain Text..."
 msgstr "&Tallenna pelkkä teksti -muodossa..."
 
-#: ../../../../gui/book_viewer/menubar.py:119
+#: ../../../../gui/book_viewer/menubar.py:118
 msgid "&Close Current Document\tCtrl-W"
 msgstr "&Sulje nykyinen asiakirja\tCtrl+W"
 
-#: ../../../../gui/book_viewer/menubar.py:121
+#: ../../../../gui/book_viewer/menubar.py:120
 msgid "Close the currently open document"
 msgstr "Sulje avoinna oleva asiakirja"
 
-#: ../../../../gui/book_viewer/menubar.py:127
+#: ../../../../gui/book_viewer/menubar.py:126
 msgid "C&lear Documents Cache..."
 msgstr "T&yhjennä asiakirjavälimuisti..."
 
-#: ../../../../gui/book_viewer/menubar.py:130
+#: ../../../../gui/book_viewer/menubar.py:129
 msgid ""
 "Clear the document cache. Helps in fixing some issues with openning "
 "documents."
@@ -1562,222 +1562,222 @@ msgstr ""
 "Tyhjennä asiakirjavälimuisti. Auttaa korjaamaan asiakirjojen avaamisessa "
 "ilmeneviä ongelmia."
 
-#: ../../../../gui/book_viewer/menubar.py:137
+#: ../../../../gui/book_viewer/menubar.py:136
 msgid "Pi&nned Documents"
 msgstr "Kii&nnitetyt asiakirjat"
 
-#: ../../../../gui/book_viewer/menubar.py:139
+#: ../../../../gui/book_viewer/menubar.py:138
 msgid "Opens a list of documents you pinned."
 msgstr "Näyttää kiinnittämiesi asiakirjojen luettelon."
 
-#: ../../../../gui/book_viewer/menubar.py:145
-#: ../../../../gui/book_viewer/menubar.py:159
+#: ../../../../gui/book_viewer/menubar.py:144
+#: ../../../../gui/book_viewer/menubar.py:158
 msgid "Clear list"
 msgstr "Tyhjennä luettelo"
 
-#: ../../../../gui/book_viewer/menubar.py:147
+#: ../../../../gui/book_viewer/menubar.py:146
 msgid "Clear the pinned documents list"
 msgstr "Tyhjennä kiinnitettyjen asiakirjojen luettelo."
 
-#: ../../../../gui/book_viewer/menubar.py:152
+#: ../../../../gui/book_viewer/menubar.py:151
 msgid "&Recently Opened"
 msgstr "&Äskettäin avatut"
 
-#: ../../../../gui/book_viewer/menubar.py:154
+#: ../../../../gui/book_viewer/menubar.py:153
 msgid "Opens a list of recently opened books."
 msgstr "Näyttää äskettäin avattujen kirjojen luettelon."
 
-#: ../../../../gui/book_viewer/menubar.py:161
+#: ../../../../gui/book_viewer/menubar.py:160
 msgid "Clear the recent books list."
 msgstr "Tyhjentää äskettäin avattujen kirjojen luettelon."
 
-#: ../../../../gui/book_viewer/menubar.py:167
+#: ../../../../gui/book_viewer/menubar.py:166
 msgid "&Preferences...\tCtrl-Shift-P"
 msgstr "&Asetukset...\tCtrl+Vaihto+P"
 
-#: ../../../../gui/book_viewer/menubar.py:169
+#: ../../../../gui/book_viewer/menubar.py:168
 msgid "Configure application"
 msgstr "Muuta sovelluksen asetuksia"
 
-#: ../../../../gui/book_viewer/menubar.py:173
+#: ../../../../gui/book_viewer/menubar.py:172
 msgid "Exit"
 msgstr "Lopeta"
 
-#: ../../../../gui/book_viewer/menubar.py:225
+#: ../../../../gui/book_viewer/menubar.py:224
 msgid "Select a document"
 msgstr "Valitse asiakirja"
 
-#: ../../../../gui/book_viewer/menubar.py:249
+#: ../../../../gui/book_viewer/menubar.py:248
 msgid "Import QRD file"
 msgstr "Tuo QRD-tiedosto"
 
-#: ../../../../gui/book_viewer/menubar.py:260
+#: ../../../../gui/book_viewer/menubar.py:259
 msgid "Failed to import QRD file"
 msgstr "QRD-tiedoston tuonti epäonnistui."
 
-#: ../../../../gui/book_viewer/menubar.py:261
+#: ../../../../gui/book_viewer/menubar.py:260
 msgid "The QRD file could not be imported"
 msgstr "QRD-tiedostoa ei voitu tuoda"
 
-#: ../../../../gui/book_viewer/menubar.py:277
+#: ../../../../gui/book_viewer/menubar.py:276
 msgid "Pinned"
 msgstr "Kiinnitetyt"
 
-#: ../../../../gui/book_viewer/menubar.py:281
+#: ../../../../gui/book_viewer/menubar.py:280
 msgid "Unpinned"
 msgstr "Ei-kiinnitetyt"
 
-#: ../../../../gui/book_viewer/menubar.py:307
+#: ../../../../gui/book_viewer/menubar.py:306
 msgid "Exporting Document"
 msgstr "Viedään asiakirjaa"
 
-#: ../../../../gui/book_viewer/menubar.py:309
+#: ../../../../gui/book_viewer/menubar.py:308
 msgid "Converting document to plain text."
 msgstr "Muunnetaan asiakirjaa pelkkä teksti -muotoon."
 
-#: ../../../../gui/book_viewer/menubar.py:327
+#: ../../../../gui/book_viewer/menubar.py:326
 #, python-brace-format
 msgid "Exporting Page {current} of {total}..."
 msgstr "Viedään sivua {current} / {total}..."
 
-#: ../../../../gui/book_viewer/menubar.py:350
+#: ../../../../gui/book_viewer/menubar.py:349
 #, python-brace-format
 msgid "{app_name} Preferences"
 msgstr "{app_name}in asetukset"
 
-#: ../../../../gui/book_viewer/menubar.py:364
+#: ../../../../gui/book_viewer/menubar.py:363
 msgid "Are you sure you want to clear the documents cache?"
 msgstr "Haluatko varmasti tyhjentää asiakirjavälimuistin?"
 
-#: ../../../../gui/book_viewer/menubar.py:366
+#: ../../../../gui/book_viewer/menubar.py:365
 msgid "Clear Documents Cache?"
 msgstr "Tyhjennetäänkö asiakirjavälimuisti?"
 
-#: ../../../../gui/book_viewer/menubar.py:374
+#: ../../../../gui/book_viewer/menubar.py:373
 msgid "Documents cache has been cleared."
 msgstr "Asiakirjavälimuisti on tyhjennetty."
 
-#: ../../../../gui/book_viewer/menubar.py:376 ../../../../gui/settings.py:166
+#: ../../../../gui/book_viewer/menubar.py:375 ../../../../gui/settings.py:166
 #: ../../../../gui/settings.py:184
 #: ../../../../platforms/win32/pandoc_download.py:45
 #: ../../../../platforms/win32/tesseract_download.py:76
 msgid "Success"
 msgstr "Onnistui"
 
-#: ../../../../gui/book_viewer/menubar.py:383
+#: ../../../../gui/book_viewer/menubar.py:382
 msgid "Clearing documents cache..."
 msgstr "Tyhjennetään asiakirjavälimuistia..."
 
-#: ../../../../gui/book_viewer/menubar.py:427
+#: ../../../../gui/book_viewer/menubar.py:426
 msgid "(No recent books)"
 msgstr "(Ei äskettäin avattuja kirjoja)"
 
-#: ../../../../gui/book_viewer/menubar.py:428
+#: ../../../../gui/book_viewer/menubar.py:427
 msgid "No recent books"
 msgstr "Ei äskettäin avattuja kirjoja"
 
-#: ../../../../gui/book_viewer/menubar.py:465
+#: ../../../../gui/book_viewer/menubar.py:464
 msgid "Document &Info..."
 msgstr "Asiakirjan t&iedot..."
 
-#: ../../../../gui/book_viewer/menubar.py:467
+#: ../../../../gui/book_viewer/menubar.py:466
 msgid "Show information about number of chapters, word count..etc."
 msgstr "Näytä kirjan tiedot, kuten lukujen ja sanojen määrä jne."
 
-#: ../../../../gui/book_viewer/menubar.py:472
+#: ../../../../gui/book_viewer/menubar.py:471
 msgid "&Element list...\tCtrl+F7"
 msgstr "&Elementtilista...\tCtrl+F7"
 
-#: ../../../../gui/book_viewer/menubar.py:474
+#: ../../../../gui/book_viewer/menubar.py:473
 msgid "Show a list of semantic elements."
 msgstr "Näytä semanttisten elementtien luettelo."
 
-#: ../../../../gui/book_viewer/menubar.py:479
+#: ../../../../gui/book_viewer/menubar.py:478
 msgid "Change Reading &Mode...\tCtrl-Shift-M"
 msgstr "Muuta lukut&ilaa...\tCtrl+Vaihto+M"
 
-#: ../../../../gui/book_viewer/menubar.py:481
+#: ../../../../gui/book_viewer/menubar.py:480
 msgid "Change the current reading mode."
 msgstr "Muuta nykyistä lukutilaa."
 
-#: ../../../../gui/book_viewer/menubar.py:486
-#: ../../../../gui/book_viewer/menubar.py:1004
+#: ../../../../gui/book_viewer/menubar.py:485
+#: ../../../../gui/book_viewer/menubar.py:1063
 msgid "&Render Page...\tCtrl-R"
 msgstr "&Renderöi sivu...\tCtrl+R"
 
-#: ../../../../gui/book_viewer/menubar.py:488
-#: ../../../../gui/book_viewer/menubar.py:1005
+#: ../../../../gui/book_viewer/menubar.py:487
+#: ../../../../gui/book_viewer/menubar.py:1064
 msgid "View a fully rendered version of this page."
 msgstr "Näytä tämän sivun täysin renderöity versio."
 
-#: ../../../../gui/book_viewer/menubar.py:530
+#: ../../../../gui/book_viewer/menubar.py:529
 msgid "Rendered Page"
 msgstr "Renderöity sivu"
 
-#: ../../../../gui/book_viewer/menubar.py:547
+#: ../../../../gui/book_viewer/menubar.py:546
 msgid "Available reading modes"
 msgstr "Käytettävissä olevat lukutilat"
 
-#: ../../../../gui/book_viewer/menubar.py:548
+#: ../../../../gui/book_viewer/menubar.py:547
 msgid "Select Reading Mode "
 msgstr "Valitse lukutila"
 
-#: ../../../../gui/book_viewer/menubar.py:573
+#: ../../../../gui/book_viewer/menubar.py:572
 msgid "Element List"
 msgstr "Elementtilista"
 
-#: ../../../../gui/book_viewer/menubar.py:600
-#: ../../../../gui/book_viewer/menubar.py:994
+#: ../../../../gui/book_viewer/menubar.py:599
+#: ../../../../gui/book_viewer/menubar.py:1053
 msgid "&Find in Document...\tCtrl-F"
 msgstr "&Etsi asiakirjasta...\tCtrl+F"
 
-#: ../../../../gui/book_viewer/menubar.py:602
-#: ../../../../gui/book_viewer/menubar.py:995
+#: ../../../../gui/book_viewer/menubar.py:601
+#: ../../../../gui/book_viewer/menubar.py:1054
 msgid "Search this document."
 msgstr "Hae tästä asiakirjasta."
 
-#: ../../../../gui/book_viewer/menubar.py:607
+#: ../../../../gui/book_viewer/menubar.py:606
 msgid "Find &Next\tF3"
 msgstr "Etsi &seuraava\tF3"
 
-#: ../../../../gui/book_viewer/menubar.py:609
+#: ../../../../gui/book_viewer/menubar.py:608
 msgid "Find next occurrence."
 msgstr "Etsi seuraava esiintymä."
 
-#: ../../../../gui/book_viewer/menubar.py:614
+#: ../../../../gui/book_viewer/menubar.py:613
 msgid "Find &Previous\tShift-F3"
 msgstr "Etsi e&dellinen\tVaihto+F3"
 
-#: ../../../../gui/book_viewer/menubar.py:616
+#: ../../../../gui/book_viewer/menubar.py:615
 msgid "Find previous occurrence."
 msgstr "Etsi edellinen esiintymä."
 
-#: ../../../../gui/book_viewer/menubar.py:621
+#: ../../../../gui/book_viewer/menubar.py:620
 msgid "&Jump to Line...\tCtrl-L"
 msgstr "S&iirry riville...\tCtrl+L"
 
-#: ../../../../gui/book_viewer/menubar.py:623
+#: ../../../../gui/book_viewer/menubar.py:622
 msgid "Jump to a line within the current page or document"
 msgstr "Jump to a line within the current page or document"
 
-#: ../../../../gui/book_viewer/menubar.py:628
-#: ../../../../gui/book_viewer/menubar.py:988
+#: ../../../../gui/book_viewer/menubar.py:627
+#: ../../../../gui/book_viewer/menubar.py:1047
 msgid "&Go To Page...\tCtrl-G"
 msgstr "S&iirry sivulle...\tCtrl+G"
 
-#: ../../../../gui/book_viewer/menubar.py:630
+#: ../../../../gui/book_viewer/menubar.py:629
 msgid "Go to page"
 msgstr "Siirry sivulle"
 
-#: ../../../../gui/book_viewer/menubar.py:635
+#: ../../../../gui/book_viewer/menubar.py:634
 msgid "&Go To Page By Label...\tCtrl-Shift-G"
 msgstr "Siirry sivulle t&unnisteen perusteella...\tCtrl+Vaihto+G"
 
-#: ../../../../gui/book_viewer/menubar.py:637
+#: ../../../../gui/book_viewer/menubar.py:636
 msgid "Go to a page using its label"
 msgstr "Siirry sivulle sen tunnistetta käyttäen"
 
-#: ../../../../gui/book_viewer/menubar.py:671
+#: ../../../../gui/book_viewer/menubar.py:670
 #, python-brace-format
 msgid ""
 "You are here: {current_line}\n"
@@ -1786,125 +1786,137 @@ msgstr ""
 "Olet tässä: {current_line}\n"
 "Et voi siirtyä edemmäs kuin: {last_line}"
 
-#: ../../../../gui/book_viewer/menubar.py:673
+#: ../../../../gui/book_viewer/menubar.py:672
 msgid "Line number"
 msgstr "Rivinumero"
 
-#: ../../../../gui/book_viewer/menubar.py:674
+#: ../../../../gui/book_viewer/menubar.py:673
 msgid "Jump to line"
 msgstr "Siirry riville"
 
-#: ../../../../gui/book_viewer/menubar.py:687
+#: ../../../../gui/book_viewer/menubar.py:686
 msgid "Go To Page"
 msgstr "Siirry sivulle"
 
-#: ../../../../gui/book_viewer/menubar.py:694
+#: ../../../../gui/book_viewer/menubar.py:693
 msgid "Go To Page By Label"
 msgstr "Siirry sivulle tunnisteen perusteella"
 
-#: ../../../../gui/book_viewer/menubar.py:694
+#: ../../../../gui/book_viewer/menubar.py:693
 msgid "Page Label"
 msgstr "Sivun tunniste"
 
-#: ../../../../gui/book_viewer/menubar.py:702
+#: ../../../../gui/book_viewer/menubar.py:701
 msgid "Search Document"
 msgstr "Hae asiakirjasta"
 
-#: ../../../../gui/book_viewer/menubar.py:728
+#: ../../../../gui/book_viewer/menubar.py:727
 #, python-brace-format
 msgid "Searching For '{term}'"
 msgstr "Haetaan '{term}'"
 
-#: ../../../../gui/book_viewer/menubar.py:743
+#: ../../../../gui/book_viewer/menubar.py:742
 #, python-brace-format
 msgid "Results | {total}"
 msgstr "Tulokset | {total}"
 
-#: ../../../../gui/book_viewer/menubar.py:780
+#: ../../../../gui/book_viewer/menubar.py:819
+#, python-brace-format
+#| msgid "Searching For '{term}'"
+msgid "No next search result for '{term}'"
+msgstr "Hakusanalla {term} ei löydy seuraavaa tulosta"
+
+#: ../../../../gui/book_viewer/menubar.py:822
+#, python-brace-format
+#| msgid "No previous {item}"
+msgid "No previous search result for '{term}'"
+msgstr "Hakusanalla {term} ei löydy edellistä tulosta"
+
+#: ../../../../gui/book_viewer/menubar.py:831
 msgid "Search Result"
 msgstr "Hakutulos"
 
-#: ../../../../gui/book_viewer/menubar.py:818
+#: ../../../../gui/book_viewer/menubar.py:877
 msgid "&User guide...\tF1"
 msgstr "&Käyttöopas...\tF1"
 
-#: ../../../../gui/book_viewer/menubar.py:820
+#: ../../../../gui/book_viewer/menubar.py:879
 msgid "View Bookworm manuals"
 msgstr "Näytä Bookwormin käyttöohje"
 
-#: ../../../../gui/book_viewer/menubar.py:825
+#: ../../../../gui/book_viewer/menubar.py:884
 msgid "What's &New..."
 msgstr "Mitä &uutta..."
 
-#: ../../../../gui/book_viewer/menubar.py:827
+#: ../../../../gui/book_viewer/menubar.py:886
 msgid "View the application's changelog"
 msgstr "Näytä sovelluksen muutosloki"
 
-#: ../../../../gui/book_viewer/menubar.py:832
+#: ../../../../gui/book_viewer/menubar.py:891
 msgid "Bookworm &website..."
 msgstr "Bookwormin v&erkkosivu..."
 
-#: ../../../../gui/book_viewer/menubar.py:834
+#: ../../../../gui/book_viewer/menubar.py:893
 msgid "Visit the official website of Bookworm"
 msgstr "Käy Bookwormin virallisella verkkosivustolla"
 
-#: ../../../../gui/book_viewer/menubar.py:839
+#: ../../../../gui/book_viewer/menubar.py:898
 msgid "&License"
 msgstr "&Lisenssi"
 
-#: ../../../../gui/book_viewer/menubar.py:841
+#: ../../../../gui/book_viewer/menubar.py:900
 msgid "View legal information about this program ."
 msgstr "Näytä tämän ohjelman oikeudelliset tiedot."
 
-#: ../../../../gui/book_viewer/menubar.py:846
+#: ../../../../gui/book_viewer/menubar.py:905
 msgid "Con&tributors"
 msgstr "&Osallistujat"
 
-#: ../../../../gui/book_viewer/menubar.py:848
+#: ../../../../gui/book_viewer/menubar.py:907
 msgid "View a list of notable contributors to the program."
 msgstr ""
 "Näytä merkittävästi ohjelman kehitykseen osallistuneiden henkilöiden "
 "luettelo."
 
-#: ../../../../gui/book_viewer/menubar.py:854
+#: ../../../../gui/book_viewer/menubar.py:913
 msgid "&Restart with debug-mode enabled"
 msgstr "&Käynnistä uudelleen virheenkorjaustilassa"
 
-#: ../../../../gui/book_viewer/menubar.py:856
+#: ../../../../gui/book_viewer/menubar.py:915
 msgid "Restart the program with debug mode enabled to show errors"
 msgstr ""
 "Käynnistä ohjelma uudelleen virheenkorjaustilassa bugien etsimistä varten"
 
-#: ../../../../gui/book_viewer/menubar.py:866
+#: ../../../../gui/book_viewer/menubar.py:925
 msgid "&About Bookworm"
 msgstr "T&ietoa Bookwormista"
 
-#: ../../../../gui/book_viewer/menubar.py:868
+#: ../../../../gui/book_viewer/menubar.py:927
 msgid "Show general information about this program"
 msgstr "Näytä tämän ohjelman yleiset tiedot"
 
-#: ../../../../gui/book_viewer/menubar.py:906
+#: ../../../../gui/book_viewer/menubar.py:965
 #, python-brace-format
 msgid "About {app_name}"
 msgstr "Tietoa {app_name}ista"
 
-#: ../../../../gui/book_viewer/menubar.py:942
+#: ../../../../gui/book_viewer/menubar.py:1001
 msgid "&Search"
 msgstr "&Haku"
 
-#: ../../../../gui/book_viewer/menubar.py:944
+#: ../../../../gui/book_viewer/menubar.py:1003
 msgid "&Document"
 msgstr "&Asiakirja"
 
-#: ../../../../gui/book_viewer/menubar.py:946
+#: ../../../../gui/book_viewer/menubar.py:1005
 msgid "&Help"
 msgstr "&Ohje"
 
-#: ../../../../gui/book_viewer/menubar.py:989
+#: ../../../../gui/book_viewer/menubar.py:1048
 msgid "Jump to a page"
 msgstr "Siirry sivulle"
 
-#: ../../../../gui/book_viewer/menubar.py:1043
+#: ../../../../gui/book_viewer/menubar.py:1102
 msgid "Supported document formats"
 msgstr "Tuetut asiakirjamuodot"
 
@@ -1928,7 +1940,6 @@ msgid "Zoom Out"
 msgstr "Loitonna"
 
 #: ../../../../gui/book_viewer/render_view.py:164
-#| msgid "Font Size"
 msgid "Actual Size"
 msgstr "Todellinen koko"
 
@@ -1951,12 +1962,10 @@ msgstr "Kuva"
 
 #: ../../../../gui/book_viewer/render_view.py:275
 #: ../../../../gui/book_viewer/render_view.py:301
-#| msgid "Save as"
 msgid "Save Image"
 msgstr "Tallenna kuva"
 
 #: ../../../../gui/book_viewer/render_view.py:278
-#| msgid "Image"
 msgid "PNG Image"
 msgstr "PNG-kuva"
 
@@ -1974,14 +1983,10 @@ msgstr "Kuva tallennettu"
 
 #: ../../../../gui/book_viewer/render_view.py:328
 #, python-brace-format
-#| msgid ""
-#| "A version of the selected language model already exists.\n"
-#| "Are you sure you want to replace it?"
 msgid "A file named \"{filename}\" already exists. Do you want to replace it?"
 msgstr "Tiedosto {filename} on jo olemassa. Haluatko korvata sen?"
 
 #: ../../../../gui/book_viewer/render_view.py:333
-#| msgid "Save As"
 msgid "Confirm Save As"
 msgstr "Vahvista nimellä tallennus"
 
@@ -2025,17 +2030,17 @@ msgstr "Tietty luku"
 msgid "Select section:"
 msgstr "Valitse luku:"
 
-#: ../../../../gui/components.py:277 ../../../../gui/components.py:318
+#: ../../../../gui/components.py:286 ../../../../gui/components.py:327
 #: ../../../../gui/settings.py:719
 msgid "OK"
 msgstr "OK"
 
-#: ../../../../gui/components.py:280 ../../../../gui/components.py:321
+#: ../../../../gui/components.py:289 ../../../../gui/components.py:330
 #: ../../../../gui/settings.py:722
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: ../../../../gui/components.py:606
+#: ../../../../gui/components.py:615
 msgid ""
 "This will cancel all the operations in progress.\n"
 "Are you sure you want to abort?"
@@ -3084,9 +3089,6 @@ msgid "Download Completed"
 msgstr "Lataus suoritettu"
 
 #: ../../../../platforms/win32/updater.py:202
-#| msgid ""
-#| "A problem has occured when installing the update.\n"
-#| "Please check the logs for more info."
 msgid ""
 "The update files were prepared, but Bookworm could not start the final "
 "installer step.\n"
@@ -3097,7 +3099,6 @@ msgstr ""
 "Katso lisätietoja lokista."
 
 #: ../../../../reader.py:738
-#| msgid "Update Available"
 msgid "Image unavailable"
 msgstr "Kuva ei ole käytettävissä"
 
@@ -3115,7 +3116,6 @@ msgid "Table View"
 msgstr "Taulukkonäkymä"
 
 #: ../../../../reader.py:909
-#| msgid "Table View"
 msgid "Image View"
 msgstr "Kuvanäkymä"
 
