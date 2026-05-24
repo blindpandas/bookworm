@@ -38,6 +38,7 @@ class SearchResultsDialog(Dialog):
     def __init__(self, highlight_func, num_pages, *args, **kwargs):
         self.highlight_func = highlight_func
         self.num_pages = num_pages
+        self._search_results = []
         self.list_lock = threading.RLock()
         super().__init__(*args, **kwargs)
 
@@ -94,16 +95,10 @@ class SearchResultsDialog(Dialog):
     def onItemClick(self, event):
         idx = self.searchResultsListCtrl.GetFocusedItem()
         if idx != wx.NOT_FOUND:
-            page = (
-                self.searchResultsListCtrl.GetItemText(idx)
-                if not self.reader.document.is_single_page_document()
-                else 1
-            )
-            pos = self.searchResultsListCtrl.GetItemData(idx)
+            result = self._search_results[idx]
             self.Close()
             self.Destroy()
-            self.highlight_func(int(page) - 1, pos)
-            self.parent._last_search_index = idx
+            self.highlight_func(result, idx)
 
     def addResultSet(self, resultset):
         for result in resultset:
@@ -121,6 +116,7 @@ class SearchResultsDialog(Dialog):
 
     def addResultToList(self, result):
         count = self.searchResultsListCtrl.ItemCount
+        self._search_results.append(result)
         page_display_text = (
             str(result.page + 1) if not self.is_single_page_document else ""
         )

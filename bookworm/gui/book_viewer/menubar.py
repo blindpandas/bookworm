@@ -11,7 +11,6 @@ from functools import partial
 from operator import ge, le
 from pathlib import Path
 
-import more_itertools
 import wx
 from slugify import slugify
 
@@ -722,7 +721,7 @@ class SearchMenu(BaseMenu):
         # Translators: the initial title of the search results dialog
         # shown when the search process is not done yet
         dlg = SearchResultsDialog(
-            self.highlight_search_result,
+            self._highlight_search_result_from_dialog,
             num_pages,
             self.view,
             title=_("Searching For '{term}'").format(term=term),
@@ -751,29 +750,81 @@ class SearchMenu(BaseMenu):
             self._latest_search_results = tuple(results)
             self.maintain_state(True)
 
-    def go_to_search_result(self, foreword=True):
-        result = None
-        page, (sol, eol) = self.reader.current_page, self.view.get_containing_line(
-            self.view.get_insertion_point()
-        )
-        if foreword:
-            filter_func = lambda sr: (
-                ((sr.page == page) and (sr.position > eol)) or (sr.page > page)
-            )
-        else:
-            filter_func = lambda sr: (
-                ((sr.page == page) and (sr.position < sol)) or (sr.page < page)
-            )
-        result_iter = filter(filter_func, self._latest_search_results)
+    def _highlight_search_result_from_dialog(self, result, result_index):
+        self._last_search_index = result_index
+        self.highlight_search_result(result)
+
+    def _get_current_search_result_index(self):
+        result_index = self._last_search_index
+        if result_index is None:
+            return None
         try:
-            if foreword:
-                result = more_itertools.first(result_iter)
-            else:
-                result = more_itertools.last(result_iter)
-        except ValueError:
+            result = self._latest_search_results[result_index]
+        except IndexError:
+            return None
+        if result.page != self.reader.current_page:
+            return None
+        if result.position == self.view.get_insertion_point():
+            return result_index
+        with suppress(AttributeError):
+            selection_range = self.view.get_selection_range()
+            if (
+                selection_range.start != selection_range.stop
+                and selection_range == result.match_range
+            ):
+                return result_index
+        return None
+
+    def _get_search_result_candidate(self, foreword=True):
+        if not self._latest_search_results:
+            return None
+        current_result_index = self._get_current_search_result_index()
+        if current_result_index is not None:
+            index = current_result_index + (1 if foreword else -1)
+            if 0 <= index < len(self._latest_search_results):
+                return index, self._latest_search_results[index]
+            return None
+
+        page = self.reader.current_page
+        position = self.view.get_insertion_point()
+        index_range = (
+            range(len(self._latest_search_results))
+            if foreword
+            else range(len(self._latest_search_results) - 1, -1, -1)
+        )
+        for index in index_range:
+            result = self._latest_search_results[index]
+            if (
+                foreword
+                and (
+                    ((result.page == page) and (result.position > position))
+                    or (result.page > page)
+                )
+            ) or (
+                not foreword
+                and (
+                    ((result.page == page) and (result.position < position))
+                    or (result.page < page)
+                )
+            ):
+                return index, result
+        return None
+
+    def go_to_search_result(self, foreword=True):
+        result_candidate = self._get_search_result_candidate(foreword)
+        if result_candidate is None:
             sounds.navigation.play()
+            if foreword:
+                # Translators: spoken message when there is no next search result.
+                msg = _("No next search result for '{term}'")
+            else:
+                # Translators: spoken message when there is no previous search result.
+                msg = _("No previous search result for '{term}'")
+            speech.announce(msg.format(term=self._recent_search_term), True)
         else:
-            self.highlight_search_result(result.page, result.position)
+            result_index, result = result_candidate
+            self._last_search_index = result_index
+            self.highlight_search_result(result)
             reading_position_change.send(
                 self.view,
                 position=result.position,
@@ -788,7 +839,7 @@ class SearchMenu(BaseMenu):
 
     def _reset_search_history(self):
         self._latest_search_results = ()
-        self._last_search_index = 0
+        self._last_search_index = None
         self._recent_search_term = ""
         self._last_search_request = None
 
@@ -802,9 +853,17 @@ class SearchMenu(BaseMenu):
             self.Enable(item_id, enable)
 
     @gui_thread_safe
-    def highlight_search_result(self, page_number, pos):
+    def highlight_search_result(self, result_or_page, pos=None):
+        if pos is None:
+            page_number = result_or_page.page
+            start, end = result_or_page.match_range
+            line_position = result_or_page.position if start == end else None
+        else:
+            page_number = result_or_page
+            line_position = pos
         self.reader.go_to_page(page_number)
-        start, end = self.view.get_containing_line(pos)
+        if line_position is not None:
+            start, end = self.view.get_containing_line(line_position)
         self.view.select_text(start, end)
 
 
