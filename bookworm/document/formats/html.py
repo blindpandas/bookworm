@@ -43,6 +43,8 @@ from .. import DocumentCapability as DC
 log = logger.getChild(__name__)
 # Default cache timeout
 EXPIRE_TIMEOUT = 7 * 24 * 60 * 60
+REMOTE_IMAGES_UNSUPPORTED_ERROR = "Remote images are not supported"
+REMOTE_IMAGE_LOAD_ERROR = "Failed to load remote embedded image"
 
 
 def get_clean_html(html_string: str) -> (str, BookMetadata):
@@ -288,11 +290,14 @@ class BaseHtmlDocument(SinglePageDocument):
             except Exception as e:
                 raise DocumentIOError("Failed to decode embedded image") from e
         if not self._is_local_image_source(image_info.src):
-            raise DocumentIOError("Remote images are not supported")
+            return self._get_remote_embedded_image(image_info.src)
         image_path = self._resolve_image_path(image_info.src)
         if image := ImageIO.from_filename(image_path, preserve_mode=True):
             return image
         raise DocumentIOError(f"Failed to load embedded image: {image_path}")
+
+    def _get_remote_embedded_image(self, _src: str) -> ImageIO:
+        raise DocumentIOError(REMOTE_IMAGES_UNSUPPORTED_ERROR)
 
     def _get_embedded_image_content_hash_identity(self, image_info):
         src = image_info.src
@@ -334,7 +339,7 @@ class BaseHtmlDocument(SinglePageDocument):
         if self._image_base_url:
             resolved_src = urllib_parse.urljoin(self._image_base_url, src)
             if not self._is_local_image_source(resolved_src):
-                raise DocumentIOError("Remote images are not supported")
+                raise DocumentIOError(REMOTE_IMAGES_UNSUPPORTED_ERROR)
             return self._local_image_source_to_path(resolved_src)
         base_path = getattr(self, "filename", None) or self.get_file_system_path()
         return Path(base_path).parent / image_path
@@ -422,3 +427,12 @@ class WebHtmlDocument(BaseHtmlDocument):
 
     def parse_html(self):
         return self.parse_to_clean_text()
+
+    def _get_remote_embedded_image(self, src: str) -> ImageIO:
+        try:
+            image = ImageIO.from_bytes(HttpResource(src).download().get_bytes())
+        except Exception as e:
+            raise DocumentIOError(REMOTE_IMAGE_LOAD_ERROR) from e
+        if image:
+            return image
+        raise DocumentIOError(REMOTE_IMAGE_LOAD_ERROR)
