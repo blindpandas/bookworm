@@ -12,6 +12,8 @@ from io import StringIO
 import attr
 import regex as re
 
+from bookworm.structured_text import TextRange
+
 NEWLINE = "\n"
 
 
@@ -39,6 +41,11 @@ class SearchResult:
     page: int
     position: int
     section: str
+    match_range: TextRange = None
+
+    def __attrs_post_init__(self):
+        if self.match_range is None:
+            self.match_range = TextRange(self.position, self.position)
 
 
 def search(pattern, text):
@@ -53,7 +60,7 @@ def search(pattern, text):
         if len(snip) > 3:
             snip.pop(0)
             snip.pop(-1)
-        yield (start, " ".join(snip))
+        yield (TextRange(start, end), " ".join(snip))
 
 
 def export_to_plain_text(doc, target_filename):
@@ -82,9 +89,15 @@ def search_book(doc, request):
         for n in range(request.from_page, request.to_page + 1):
             resultset = []
             sect = doc[n].section.title
-            for pos, snip in search(pattern, doc.get_page_content(n)):
+            for match_range, snip in search(pattern, doc.get_page_content(n)):
                 resultset.append(
-                    SearchResult(excerpt=snip, page=n, position=pos, section=sect)
+                    SearchResult(
+                        excerpt=snip,
+                        page=n,
+                        position=match_range.start,
+                        section=sect,
+                        match_range=match_range,
+                    )
                 )
             yield resultset
     finally:
@@ -93,11 +106,20 @@ def search_book(doc, request):
 
 def search_single_page_document(text, request):
     pattern = _make_search_re_pattern(request)
-    start_pos, stop_pos = request.text_range
-    for pos, snip in search(pattern, text):
-        actual_text_pos = start_pos + pos
+    start_pos = request.text_range.start
+    for match_range, snip in search(pattern, text):
+        actual_match_range = TextRange(
+            start_pos + match_range.start,
+            start_pos + match_range.stop,
+        )
         yield [
-            SearchResult(excerpt=snip, page=0, position=actual_text_pos, section=""),
+            SearchResult(
+                excerpt=snip,
+                page=0,
+                position=actual_match_range.start,
+                section="",
+                match_range=actual_match_range,
+            ),
         ]
 
 

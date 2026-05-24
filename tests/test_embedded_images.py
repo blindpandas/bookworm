@@ -18,8 +18,9 @@ from bookworm.document import (
     Section,
     SinglePageDocument,
 )
+from bookworm.document.formats import html as html_format
 from bookworm.document.formats.epub import EpubDocument
-from bookworm.document.formats.html import FileSystemHtmlDocument
+from bookworm.document.formats.html import FileSystemHtmlDocument, WebHtmlDocument
 from bookworm.document.formats.odf import OdfPresentation
 from bookworm.document.uri import DocumentUri
 from bookworm.gui.book_viewer import _get_structural_navigation_speech
@@ -91,6 +92,19 @@ def make_epub_document(tmp_path, chapter_content, *items):
     epub.write_epub(epub_path, book, {})
     document = EpubDocument(DocumentUri.from_filename(epub_path))
     document.read()
+    return document
+
+
+def make_web_html_document(html):
+    document = WebHtmlDocument(
+        DocumentUri(
+            format="webpage",
+            path="https://example.com/page",
+            openner_args={},
+        )
+    )
+    document.html_string = html
+    document.parse_to_full_text()
     return document
 
 
@@ -630,6 +644,31 @@ def test_html_document_rejects_protocol_relative_embedded_image(tmp_path):
 
     with pytest.raises(DocumentIOError, match="Remote images"):
         document.get_document_embedded_image(0)
+
+
+def test_web_html_document_opens_remote_embedded_image(monkeypatch):
+    image_url = "https://cdn.example.com/diagram.png"
+    downloaded_urls = []
+
+    class FakeHttpResource:
+        def __init__(self, url):
+            downloaded_urls.append(url)
+
+        def download(self):
+            return SimpleNamespace(get_bytes=lambda: make_png_bytes(size=(4, 5)))
+
+    monkeypatch.setattr(html_format, "HttpResource", FakeHttpResource)
+    document = make_web_html_document(
+        f'<html><head><title>Web</title></head><body>'
+        f'<img src="{image_url}" alt="Diagram"></body></html>'
+    )
+
+    image_info = document.get_document_embedded_image_info(0)
+    image = document.get_document_embedded_image(0)
+
+    assert image_info.src == image_url
+    assert downloaded_urls == [image_url]
+    assert image.size == (4, 5)
 
 
 def test_epub_document_resolves_package_embedded_image(tmp_path):

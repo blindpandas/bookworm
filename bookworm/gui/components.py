@@ -172,19 +172,28 @@ class PageRangeControl(sc.SizedPanel):
         return from_page, to_page
 
     def get_text_range(self) -> Optional[TextRange]:
-        # #170: Search results were not showing for documents which had no TOC.
-        # if there is only 1 section we assume that it is the full document and return its text range
-        # This actually turns out to fix #195 as well which was most likely a regression from the change that fixed the search results for text documents
-        if len(self.doc) == 1:
-            return self.doc.toc_tree.text_range
         if selected_item := self.sectionChoice.GetSelection():
             section = self.sectionChoice.GetClientData(selected_item)
-            start_pos, stop_pos = section.text_range
-            if section.has_children:
-                stop_pos = section.last_child.text_range.stop
-            return TextRange(start_pos, stop_pos)
-        else:
+            return self._get_text_range_for_section(section)
+        return self.doc.toc_tree.text_range
+
+    def _get_text_range_for_section(self, section):
+        if section is self.doc.toc_tree or section.text_range is None:
             return self.doc.toc_tree.text_range
+        start_pos = section.text_range.start
+        stop_pos = self.doc.toc_tree.text_range.stop
+        descendants = {id(child) for child in section.iter_children()}
+        sections = tuple(self.doc.toc_tree.iter_children())
+        for _section_index, candidate in enumerate(sections):
+            if candidate is section:
+                break
+        else:
+            return TextRange(*section.text_range)
+        for next_section in sections[_section_index + 1 :]:
+            if id(next_section) not in descendants and next_section.text_range is not None:
+                stop_pos = next_section.text_range.start
+                break
+        return TextRange(start_pos, max(start_pos, stop_pos))
 
 
 class ImageViewControl(wx.Control):
