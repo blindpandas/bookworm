@@ -1,14 +1,13 @@
-from pathlib import Path
 import shutil
+from pathlib import Path
 from types import SimpleNamespace
 
 import bookworm.annotation as annotation_module
 from bookworm import config
-from bookworm.annotation import AnnotationService, Bookmarker, NoteTaker
-from bookworm.annotation import annotation_gui
+from bookworm.annotation import AnnotationService, Bookmarker, NoteTaker, annotation_gui
 from bookworm.annotation.annotation_gui import AnnotationMenu
 from bookworm.annotation.annotator import AnnotationSortCriteria, Quoter
-from bookworm.database.models import *
+from bookworm.database.models import Book
 from bookworm.document.uri import DocumentUri
 from bookworm.structured_text import SemanticElementType, TextRange
 
@@ -184,6 +183,102 @@ def test_extending_highlight_to_before_image_preserves_range_stop(
         quote.end_pos,
         quote.page_number,
     ).astuple() == (0, image_start)
+    reader.unload()
+
+
+def make_highlight_test_document(reader, tmp_path):
+    html_path = tmp_path / "highlight.html"
+    html_path.write_text(
+        """
+        <html>
+            <head><title>Book</title></head>
+            <body><p>alpha beta gamma delta</p></body>
+        </html>
+        """,
+        encoding="utf-8",
+    )
+    reader.load(DocumentUri.from_filename(html_path))
+    return reader.get_current_page_object().get_text()
+
+
+def run_quote_selection(reader, view, monkeypatch, start, stop):
+    view.get_selection_range = lambda: TextRange(start, stop)
+    view.get_text_by_range = lambda selected_start, selected_stop: (
+        reader.get_current_page_object().get_text()[selected_start:selected_stop]
+    )
+    style_calls = []
+    service = SimpleNamespace(
+        style_highlight=lambda *args, **kwargs: style_calls.append((args, kwargs))
+    )
+    menu = SimpleNamespace(reader=reader, view=view, service=service)
+    monkeypatch.setattr(annotation_gui.wx, "GetKeyState", lambda key: False)
+    monkeypatch.setattr(annotation_gui.speech, "announce", lambda *args, **kwargs: None)
+
+    AnnotationMenu.onQuoteSelection(menu, None)
+
+    return style_calls
+
+
+def test_extending_highlight_backward_to_existing_stop_updates_existing_quote(
+    reader, view, tmp_path, monkeypatch
+):
+    text = make_highlight_test_document(reader, tmp_path)
+    old_start = text.index("gamma")
+    old_stop = text.index(" delta")
+    new_start = text.index("beta")
+    quoter = Quoter(reader)
+    old_storage_range = reader.view_to_storage_range(old_start, old_stop)
+    quote = quoter.create(
+        title="",
+        content=text[old_start:old_stop],
+        start_pos=old_storage_range.start,
+        end_pos=old_storage_range.stop,
+    )
+
+    run_quote_selection(reader, view, monkeypatch, new_start, old_stop)
+
+    quotes = quoter.get_for_page().all()
+    assert len(quotes) == 1
+    quote = quoter.get(quote.id)
+    assert reader.storage_to_view_range(
+        quote.start_pos,
+        quote.end_pos,
+        quote.page_number,
+    ).astuple() == (new_start, old_stop)
+    reader.unload()
+
+
+def test_adjacent_highlight_before_existing_quote_creates_separate_quote(
+    reader, view, tmp_path, monkeypatch
+):
+    text = make_highlight_test_document(reader, tmp_path)
+    old_start = text.index("gamma")
+    old_stop = text.index(" delta")
+    adjacent_start = text.index("beta")
+    quoter = Quoter(reader)
+    old_storage_range = reader.view_to_storage_range(old_start, old_stop)
+    quote = quoter.create(
+        title="",
+        content=text[old_start:old_stop],
+        start_pos=old_storage_range.start,
+        end_pos=old_storage_range.stop,
+    )
+
+    run_quote_selection(reader, view, monkeypatch, adjacent_start, old_start)
+
+    quotes = quoter.get_for_page().all()
+    assert len(quotes) == 2
+    original_quote = quoter.get(quote.id)
+    assert reader.storage_to_view_range(
+        original_quote.start_pos,
+        original_quote.end_pos,
+        original_quote.page_number,
+    ).astuple() == (old_start, old_stop)
+    assert any(
+        reader.storage_to_view_range(q.start_pos, q.end_pos, q.page_number).astuple()
+        == (adjacent_start, old_start)
+        for q in quotes
+    )
     reader.unload()
 
 
