@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from concurrent.futures import ProcessPoolExecutor
@@ -10,10 +9,12 @@ from urllib.request import url2pathname
 
 from lxml import etree
 from lxml import html as lxml_html
+from mediawiki import MediaWiki
 from more_itertools import first as get_first_element
 from more_itertools import zip_offset
 from yarl import URL
 
+from bookworm import app
 from bookworm.http_tools import HttpResource
 from bookworm.image_io import ImageIO
 from bookworm.logger import logger
@@ -45,6 +46,9 @@ log = logger.getChild(__name__)
 EXPIRE_TIMEOUT = 7 * 24 * 60 * 60
 REMOTE_IMAGES_UNSUPPORTED_ERROR = "Remote images are not supported"
 REMOTE_IMAGE_LOAD_ERROR = "Failed to load remote embedded image"
+WIKIPEDIA_ARTICLE_SOURCE_MARKER = 'name="bookworm-source" content="wikipedia-article"'
+WIKIPEDIA_HOST_SUFFIX = ".wikipedia.org"
+WIKIPEDIA_MOBILE_HOST_SUFFIX = ".m.wikipedia.org"
 
 
 def get_clean_html(html_string: str) -> (str, BookMetadata):
@@ -404,6 +408,8 @@ class WebHtmlDocument(BaseHtmlDocument):
         if (html_string := getattr(self, "html_string", None)) is not None:
             return html_string
         url = self.uri.path
+        if html_string := self._get_wikipedia_article_html(url):
+            return html_string
         try:
             req = HttpResource(url).download()
         except ConnectionError as e:
@@ -426,6 +432,8 @@ class WebHtmlDocument(BaseHtmlDocument):
         return lxml_html.tostring(html_tree, encoding="unicode")
 
     def parse_html(self):
+        if self._is_wikipedia_article_html(self.html_string):
+            return self.parse_to_full_text()
         return self.parse_to_clean_text()
 
     def _get_remote_embedded_image(self, src: str) -> ImageIO:
@@ -436,3 +444,96 @@ class WebHtmlDocument(BaseHtmlDocument):
         if image:
             return image
         raise DocumentIOError(REMOTE_IMAGE_LOAD_ERROR)
+
+    @classmethod
+    def _get_wikipedia_article_html(cls, url):
+        article_info = cls._get_wikipedia_article_info(url)
+        if article_info is None:
+            return None
+        language, title = article_info
+        try:
+            page = MediaWiki(lang=language, user_agent=app.user_agent()).page(
+                title=title,
+                auto_suggest=False,
+                preload=False,
+            )
+            article_html = page.html
+        except Exception:
+            log.warning(
+                f"Failed to retrieve Wikipedia article HTML for url: {url}",
+                exc_info=True,
+            )
+            return None
+        return cls._build_wikipedia_article_html(page.title, article_html, page.url)
+
+    @classmethod
+    def _get_wikipedia_article_info(cls, url):
+        try:
+            parsed_url = URL(url)
+        except ValueError:
+            return None
+        language = cls._get_wikipedia_language(parsed_url)
+        path = parsed_url.raw_path
+        if not language or parsed_url.query_string or not path.startswith("/wiki/"):
+            return None
+        title = urllib_parse.unquote(path.removeprefix("/wiki/")).strip()
+        return (language, title) if title else None
+
+    @staticmethod
+    def _get_wikipedia_language(parsed_url):
+        if parsed_url.scheme not in {"http", "https"}:
+            return ""
+        host = parsed_url.host or ""
+        if host.endswith(WIKIPEDIA_MOBILE_HOST_SUFFIX):
+            language = host.removesuffix(WIKIPEDIA_MOBILE_HOST_SUFFIX)
+        elif host.endswith(WIKIPEDIA_HOST_SUFFIX):
+            language = host.removesuffix(WIKIPEDIA_HOST_SUFFIX)
+        else:
+            return ""
+        return "" if not language or "." in language or language == "www" else language
+
+    @staticmethod
+    def _normalize_wikipedia_fragment(fragment):
+        return urllib_parse.quote(urllib_parse.unquote(fragment), safe="")
+
+    @classmethod
+    def _build_wikipedia_article_html(cls, title, article_html, page_url):
+        escaped_title = escape_html(title)
+        html_tree = lxml_html.fromstring(
+            f"<html><head><meta {WIKIPEDIA_ARTICLE_SOURCE_MARKER}>"
+            f"<title>{escaped_title} - Wikipedia</title></head>"
+            f"<body><h1>{escaped_title}</h1>{article_html}</body></html>"
+        )
+        html_tree.make_links_absolute(
+            base_url=page_url,
+            resolve_base_href=True,
+            handle_failures="discard",
+        )
+        current_url = URL(page_url)
+        for element in html_tree.xpath("//*[@id or @name]"):
+            for attr in ("id", "name"):
+                if anchor := element.get(attr):
+                    element.set(
+                        attr,
+                        cls._normalize_wikipedia_fragment(anchor),
+                    )
+        for maybe_internal_anchor in html_tree.xpath("//a[@href]"):
+            href = maybe_internal_anchor.get("href")
+            try:
+                target_url = URL(href)
+            except Exception:
+                continue
+            if (
+                target_url.host == current_url.host
+                and target_url.path == current_url.path
+                and target_url.fragment
+            ):
+                maybe_internal_anchor.set(
+                    "href",
+                    f"#{cls._normalize_wikipedia_fragment(target_url.fragment)}",
+                )
+        return lxml_html.tostring(html_tree, encoding="unicode")
+
+    @staticmethod
+    def _is_wikipedia_article_html(html_string):
+        return WIKIPEDIA_ARTICLE_SOURCE_MARKER in html_string

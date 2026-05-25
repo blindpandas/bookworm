@@ -104,3 +104,43 @@ def test_named_anchor_without_href_is_not_a_semantic_link():
     ]
 
     assert link_texts == ["jump"]
+
+
+def test_table_links_without_reliable_targets_are_not_semantic_links():
+    parser = StructuredHtmlParser.from_string(
+        """
+        <html><body>
+            <table>
+                <tr>
+                    <td><a href="https://example.com/table">table link</a></td>
+                </tr>
+            </table>
+        </body></html>
+        """
+    )
+
+    assert parser.link_targets == {}
+    assert SemanticElementType.LINK not in parser.semantic_elements
+    assert len(parser.semantic_elements[SemanticElementType.TABLE]) == 1
+
+
+def test_table_links_do_not_misalign_with_non_rendered_links():
+    parser = StructuredHtmlParser.from_string(
+        """
+        <html><body>
+            <table>
+                <tr>
+                    <td>
+                        <a href="https://example.com/hidden">
+                            <span style="display:none">hidden</span>
+                        </a>
+                        <a href="https://example.com/visible">visible link</a>
+                    </td>
+                </tr>
+            </table>
+        </body></html>
+        """
+    )
+
+    assert parser.link_targets == {}
+    assert SemanticElementType.LINK not in parser.semantic_elements
