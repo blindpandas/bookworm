@@ -265,30 +265,28 @@ class AnnotationMenu(wx.Menu):
                 self.service.style_highlight(self.view, x, y, enable=False)
                 # Translators: spoken message
                 return speech.announce(_("Highlight removed"))
-            if (q_range.start < x) and (q_range.stop > y):
+            if q_range.start <= x and y <= q_range.stop:
                 # Translators: spoken message
                 speech.announce(_("Already highlighted"))
                 return wx.Bell()
-            if (q_range.start <= x < q_range.stop) or (q_range.start <= y < q_range.stop):
-                if not (q_range.start <= x < q_range.stop):
+            if x < q_range.stop and y > q_range.start:
+                new_start = min(x, q_range.start)
+                new_stop = max(y, q_range.stop)
+                if new_start != q_range.start:
                     q.start_pos = self.reader.view_to_storage_position(
-                        x, q.page_number, affinity="before"
+                        new_start, q.page_number, affinity="before"
                     )
-                    q.position_version = CURRENT_POSITION_MODEL_VERSION
-                    q.session.commit()
-                    self.service.style_highlight(self.view, x, q_range.stop)
-                    return speech.announce(_("Highlight extended"))
-                if not (q_range.start <= y < q_range.stop):
+                if new_stop != q_range.stop:
                     q.end_pos = self.reader.view_to_storage_range(
-                        q_range.start,
-                        y,
+                        new_start,
+                        new_stop,
                         q.page_number,
                     ).stop
-                    q.position_version = CURRENT_POSITION_MODEL_VERSION
-                    q.session.commit()
-                    self.service.style_highlight(self.view, q_range.start, y)
-                    # Translators: spoken message
-                    return speech.announce(_("Highlight extended"))
+                q.position_version = CURRENT_POSITION_MODEL_VERSION
+                q.session.commit()
+                self.service.style_highlight(self.view, new_start, new_stop)
+                # Translators: spoken message
+                return speech.announce(_("Highlight extended"))
         quote = quoter.create(
             title="",
             content=selected_text,
