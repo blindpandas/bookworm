@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import re
@@ -296,7 +295,7 @@ class StructuredHtmlParser(Inscriptis):
             start_index,
             end_index,
         )
-        for image_info, annotation in zip(table_image_infos, image_annotations):
+        for image_info, annotation in zip(table_image_infos, image_annotations, strict=False):
             text_range = self._get_placeholder_range_from_annotation(
                 text,
                 annotation,
@@ -433,6 +432,15 @@ class StructuredHtmlParser(Inscriptis):
         annotations = {}
         for anot in self.get_annotations():
             if anot.metadata == IMAGE_ANNOTATION:
+                continue
+            if (
+                anot.metadata == SemanticElementType.LINK
+                and (
+                    anot.start,
+                    anot.end,
+                )
+                not in self.link_range_to_target
+            ):
                 continue
             annotations.setdefault(anot.metadata, []).append((anot.start, anot.end))
         if self._image_elements:
