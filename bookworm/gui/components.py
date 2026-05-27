@@ -198,6 +198,8 @@ class PageRangeControl(sc.SizedPanel):
 
 class ImageViewControl(wx.Control):
     def __init__(self, *args, **kwargs):
+        self.center_image = kwargs.pop("center_image", False)
+        self.image_background_colour = kwargs.pop("image_background_colour", "white")
         super().__init__(*args, **kwargs)
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
         # Bind events
@@ -211,10 +213,15 @@ class ImageViewControl(wx.Control):
     def OnPaint(self, event):
         bmp, width, height = self.data
         dc = wx.BufferedPaintDC(self)
-        dc.SetBackground(wx.Brush("white"))
+        dc.SetBackground(wx.Brush(self.image_background_colour))
         dc.Clear()
         gc = wx.GraphicsContext.Create(dc)
-        gc.DrawBitmap(bmp, 0, 0, width, height)
+        x = y = 0
+        if self.center_image:
+            client_width, client_height = self.GetClientSize()
+            x = max(0, round((client_width - width) / 2))
+            y = max(0, round((client_height - height) / 2))
+        gc.DrawBitmap(bmp, x, y, width, height)
 
     def RenderImage(self, bmp, width, height):
         self.SetInitialSize(wx.Size(width, height))
