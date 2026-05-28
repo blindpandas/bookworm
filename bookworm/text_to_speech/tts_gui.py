@@ -119,6 +119,13 @@ class ReadingPanel(SettingsPanel):
             miscBox,
             -1,
             # Translators: the label of a checkbox
+            _("Play a sound when the cursor reaches an image"),
+            name="reading.play_image_earcon_when_navigating_text",
+        )
+        wx.CheckBox(
+            miscBox,
+            -1,
+            # Translators: the label of a checkbox
             _("Enable global media keys (Play/Pause, Next, Previous)"),
             name="reading.enable_global_media_keys",
         )
