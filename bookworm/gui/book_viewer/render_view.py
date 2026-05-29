@@ -128,8 +128,9 @@ class EmbeddedImageDialog(wx.Dialog):
     """Show an image embedded in a book."""
 
     ID_RESET_ZOOM = wx.NewIdRef()
-    MIN_ZOOM = 0.1
+    MIN_ZOOM = 0.01
     MAX_ZOOM = 10.0
+    INITIAL_VIEW_PADDING = 24
     SAVE_FORMAT_CHOICES = (("PNG", ".png"), ("JPEG", ".jpg"))
 
     def __init__(
@@ -150,8 +151,14 @@ class EmbeddedImageDialog(wx.Dialog):
             suggested_filename
         )
         self.scaling_factor = 0.2
+        self._initial_zoom_factor = 1.0
         self._zoom_factor = 1.0
         self._build_controls()
+        self._initial_zoom_factor = self.get_initial_zoom_factor(
+            self.image_io.size,
+            self._get_initial_viewport_size(),
+        )
+        self._zoom_factor = self._initial_zoom_factor
         self.setDialogImage()
         self.Bind(wx.EVT_CHAR_HOOK, self.onCharHook)
         self.CenterOnParent()
@@ -173,7 +180,12 @@ class EmbeddedImageDialog(wx.Dialog):
         self.scroll = scrolled.ScrolledPanel(self, -1, name=_("Image"), style=0)
         self.scroll.SetTransparent(0)
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.imageCtrl = ImageViewControl(self.scroll, -1)
+        self.imageCtrl = ImageViewControl(
+            self.scroll,
+            -1,
+            center_image=True,
+            image_background_colour=self.GetBackgroundColour(),
+        )
         panel_sizer.Add(self.imageCtrl, 1, wx.CENTER | wx.BOTH)
         self.scroll.SetSizer(panel_sizer)
         sizer.Add(self.scroll, 1, wx.EXPAND)
@@ -197,6 +209,29 @@ class EmbeddedImageDialog(wx.Dialog):
             filename = f"{filename}.png"
         return filename
 
+    def _get_initial_viewport_size(self):
+        self.Layout()
+        viewport_size = self.scroll.GetClientSize()
+        width, height = viewport_size[0], viewport_size[1]
+        if width <= 1 or height <= 1:
+            client_size = self.GetClientSize()
+            width, height = client_size[0], client_size[1]
+        return width, height
+
+    @classmethod
+    def get_initial_zoom_factor(cls, image_size, viewport_size):
+        image_width, image_height = image_size
+        viewport_width, viewport_height = viewport_size
+        if min(image_width, image_height, viewport_width, viewport_height) <= 0:
+            return 1.0
+        available_width = max(1, viewport_width - cls.INITIAL_VIEW_PADDING)
+        available_height = max(1, viewport_height - cls.INITIAL_VIEW_PADDING)
+        return min(
+            1.0,
+            available_width / image_width,
+            available_height / image_height,
+        )
+
     @property
     def scroll_rate_x(self):
         return max(1, round(self.imageCtrl.Size[0] * 0.05))
@@ -209,15 +244,20 @@ class EmbeddedImageDialog(wx.Dialog):
         if val == 0:
             self.zoom_factor = 1.0
         else:
-            self.zoom_factor += val * self.scaling_factor
+            self.zoom_factor = self._get_next_zoom_factor(val)
 
     @property
     def zoom_factor(self):
         return self._zoom_factor
 
+    @property
+    def minimum_zoom_factor(self):
+        return min(self.MIN_ZOOM, self._initial_zoom_factor)
+
     @zoom_factor.setter
     def zoom_factor(self, value):
-        if (value < self.MIN_ZOOM) or (value > self.MAX_ZOOM):
+        value = min(self.MAX_ZOOM, max(self.minimum_zoom_factor, value))
+        if value == self._zoom_factor:
             return
         self._zoom_factor = value
         self.setDialogImage(reset_scroll_pos=False)
@@ -228,6 +268,12 @@ class EmbeddedImageDialog(wx.Dialog):
         speech.announce(
             _("Zoom is at {factor} percent").format(factor=int(value * 100))
         )
+
+    def _get_next_zoom_factor(self, val):
+        zoom_step = 1 + self.scaling_factor
+        if val > 0:
+            return self.zoom_factor * zoom_step
+        return self.zoom_factor / zoom_step
 
     def setDialogImage(self, reset_scroll_pos=True):
         image = self.getRenderedImage()

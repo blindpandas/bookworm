@@ -985,6 +985,65 @@ def test_image_io_uses_wx_alpha_buffer_for_images_with_alpha(
     }
 
 
+def test_embedded_image_dialog_initial_zoom_fits_large_images():
+    zoom_factor = EmbeddedImageDialog.get_initial_zoom_factor(
+        image_size=(2400, 1200),
+        viewport_size=(700, 500),
+    )
+
+    assert zoom_factor == pytest.approx(
+        (700 - EmbeddedImageDialog.INITIAL_VIEW_PADDING) / 2400
+    )
+
+
+@pytest.mark.parametrize(
+    "image_size",
+    [
+        (100000, 100),
+        (100, 100000),
+    ],
+)
+def test_embedded_image_dialog_initial_zoom_fits_extreme_aspect_ratios(image_size):
+    viewport_size = (700, 500)
+
+    zoom_factor = EmbeddedImageDialog.get_initial_zoom_factor(
+        image_size=image_size,
+        viewport_size=viewport_size,
+    )
+    rendered_width = max(1, round(image_size[0] * zoom_factor))
+    rendered_height = max(1, round(image_size[1] * zoom_factor))
+
+    assert zoom_factor < EmbeddedImageDialog.MIN_ZOOM
+    assert rendered_width <= viewport_size[0] - EmbeddedImageDialog.INITIAL_VIEW_PADDING
+    assert rendered_height <= viewport_size[1] - EmbeddedImageDialog.INITIAL_VIEW_PADDING
+
+
+def test_embedded_image_dialog_initial_zoom_keeps_small_images_at_actual_size():
+    assert (
+        EmbeddedImageDialog.get_initial_zoom_factor(
+            image_size=(96, 96),
+            viewport_size=(700, 500),
+        )
+        == 1.0
+    )
+
+
+def test_embedded_image_dialog_allows_initial_fit_below_manual_zoom_minimum():
+    dialog = EmbeddedImageDialog.__new__(EmbeddedImageDialog)
+    dialog._initial_zoom_factor = 0.005
+
+    assert dialog.minimum_zoom_factor == 0.005
+
+
+def test_embedded_image_dialog_zoom_steps_are_proportional():
+    dialog = EmbeddedImageDialog.__new__(EmbeddedImageDialog)
+    dialog.scaling_factor = 0.2
+    dialog._zoom_factor = 0.05
+
+    assert dialog._get_next_zoom_factor(1) == pytest.approx(0.06)
+    assert dialog._get_next_zoom_factor(-1) == pytest.approx(0.05 / 1.2)
+
+
 def test_embedded_image_dialog_normalizes_save_format_suffix():
     output_path, image_format = EmbeddedImageDialog.get_save_target("cover.webp", 0)
     assert output_path.name == "cover.png"

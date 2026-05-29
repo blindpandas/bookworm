@@ -294,6 +294,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self._no_open_book_status = _("Press (Ctrl + O) to open a document")
         self._has_text_zoom = False
         self.__latest_structured_navigation_position = None
+        self.__skip_next_image_earcon_position = None
         self.set_status(self._no_open_book_status)
         StateProvider.__init__(self)
         MenubarProvider.__init__(self)
@@ -590,6 +591,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         event.Skip(True)
         if not self.reader.ready:
             return
+        clean_position = self.control_to_view_position(event.Position)
+        self._process_image_earcon_for_position(clean_position)
         threaded_worker.submit(self._after_caret_moved)
         if (
             config.conf["general"]["use_continuous_reading"]
@@ -608,6 +611,31 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             log.exception("Failed to save current position", exc_info=True)
         if self.reader.document.is_single_page_document():
             self.update_reading_progress()
+
+    def _process_image_earcon_for_position(self, position):
+        skip_position = getattr(
+            self, "_BookViewerWindow__skip_next_image_earcon_position", None
+        )
+        if skip_position is not None:
+            self.__skip_next_image_earcon_position = None
+            if skip_position == (self.reader.current_page, position):
+                return
+        if (
+            config.conf["reading"]["play_image_earcon_when_navigating_text"]
+            and self._is_position_in_or_on_line_with_image(position)
+        ):
+            sounds.image.play()
+
+    def _is_position_in_or_on_line_with_image(self, position):
+        if position < 0:
+            return False
+        line_start, line_stop = self.get_containing_line(position)
+        for start, stop in self.reader.iter_semantic_ranges_for_elements_of_type(
+            SemanticElementType.FIGURE
+        ):
+            if start < line_stop and stop > line_start:
+                return True
+        return False
 
     def onTocTreeFocus(self, event):
         event.Skip(True)
@@ -677,6 +705,11 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             target_position = (
                 start if not move_to_start_of_line else self.get_containing_line(start + 1)[0]
             )
+            if actual_element_type is SemanticElementType.FIGURE:
+                self.__skip_next_image_earcon_position = (
+                    self.reader.current_page,
+                    target_position,
+                )
             self.set_insertion_point(target_position)
             speech.announce(msg, True)
             sounds.structured_navigation.play()
