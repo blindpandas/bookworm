@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2026-05-24 19:08+0300\n"
-"PO-Revision-Date: 2026-05-24 19:22+0300\n"
+"POT-Creation-Date: 2026-05-29 14:06+0300\n"
+"PO-Revision-Date: 2026-05-29 14:14+0300\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: fi_FI <janikinnunen340@gmail.com>\n"
 "Language: fi\n"
@@ -119,7 +119,7 @@ msgstr "Sisältää kommentin"
 #: ../../../../annotation/annotation_dialogs.py:58
 #: ../../../../annotation/annotation_dialogs.py:253
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:126
-#: ../../../../gui/book_viewer/__init__.py:350
+#: ../../../../gui/book_viewer/__init__.py:351
 msgid "Content"
 msgstr "Sisältö"
 
@@ -147,7 +147,7 @@ msgstr "Päivitetty viimeksi"
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:245
 #: ../../../../gui/book_viewer/core_dialogs.py:393
 #: ../../../../gui/settings.py:152 ../../../../ocr/ocr_dialogs.py:486
-#: ../../../../text_to_speech/tts_gui.py:363
+#: ../../../../text_to_speech/tts_gui.py:370
 #: ../../../../webservices/wikiworm.py:228
 msgid "&Close"
 msgstr "&Sulje"
@@ -161,7 +161,7 @@ msgid "Saved Bookmarks"
 msgstr "Tallennetut kirjanmerkit"
 
 #: ../../../../annotation/annotation_dialogs.py:128
-#: ../../../../ocr/ocr_dialogs.py:525 ../../../../text_to_speech/tts_gui.py:357
+#: ../../../../ocr/ocr_dialogs.py:525 ../../../../text_to_speech/tts_gui.py:364
 msgid "&Remove"
 msgstr "&Poista"
 
@@ -239,7 +239,7 @@ msgid "&View..."
 msgstr "&Näytä..."
 
 #: ../../../../annotation/annotation_dialogs.py:362
-#: ../../../../text_to_speech/tts_gui.py:355
+#: ../../../../text_to_speech/tts_gui.py:362
 msgid "&Edit..."
 msgstr "&Muokkaa..."
 
@@ -313,7 +313,7 @@ msgstr "Avaa tiedosto viennin jälkeen"
 
 #: ../../../../annotation/annotation_dialogs.py:642
 #: ../../../../gui/book_viewer/menubar.py:287
-#: ../../../../gui/book_viewer/render_view.py:166
+#: ../../../../gui/book_viewer/render_view.py:173
 msgid "Save As"
 msgstr "Tallenna nimellä"
 
@@ -427,7 +427,7 @@ msgstr "Kirjanmerkin nimi:"
 #: ../../../../ocr/ocr_menu.py:460
 #: ../../../../platforms/win32/pandoc_download.py:63
 #: ../../../../platforms/win32/tesseract_download.py:96
-#: ../../../../text_to_speech/tts_gui.py:461
+#: ../../../../text_to_speech/tts_gui.py:468
 #: ../../../../webservices/wikiworm.py:183
 msgid "Error"
 msgstr "Virhe"
@@ -449,7 +449,7 @@ msgid "Tag Comment"
 msgstr "Merkitse kommentti tunnisteella"
 
 #: ../../../../annotation/annotation_gui.py:246
-#: ../../../../annotation/annotation_gui.py:307
+#: ../../../../annotation/annotation_gui.py:305
 msgid "Tags:"
 msgstr "Tunnisteet:"
 
@@ -465,29 +465,28 @@ msgstr "Korostus poistettu"
 msgid "Already highlighted"
 msgstr "On jo korostettu"
 
-#: ../../../../annotation/annotation_gui.py:280
-#: ../../../../annotation/annotation_gui.py:291
+#: ../../../../annotation/annotation_gui.py:289
 msgid "Highlight extended"
 msgstr "Korostus laajennettu"
 
-#: ../../../../annotation/annotation_gui.py:299
+#: ../../../../annotation/annotation_gui.py:297
 msgid "Selection highlighted"
 msgstr "Valinta korostettu"
 
-#: ../../../../annotation/annotation_gui.py:305
+#: ../../../../annotation/annotation_gui.py:303
 msgid "Tag Highlight"
 msgstr "Merkitse korostus tunnisteella"
 
-#: ../../../../annotation/annotation_gui.py:320
+#: ../../../../annotation/annotation_gui.py:318
 #, python-brace-format
 msgid "Bookmarks | {book}"
 msgstr "Kirjanmerkit | {book}"
 
-#: ../../../../annotation/annotation_gui.py:328
+#: ../../../../annotation/annotation_gui.py:326
 msgid "Comments"
 msgstr "Kommentit"
 
-#: ../../../../annotation/annotation_gui.py:339
+#: ../../../../annotation/annotation_gui.py:337
 msgid "Highlights"
 msgstr "Korostukset"
 
@@ -767,7 +766,7 @@ msgstr ""
 "Tämä ei poista nimellä {name} luokiteltua asiakirjaa."
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:520
-#: ../../../../gui/components.py:618 ../../../../ocr/ocr_dialogs.py:599
+#: ../../../../gui/components.py:625 ../../../../ocr/ocr_dialogs.py:599
 #: ../../../../ocr/ocr_dialogs.py:641
 msgid "Confirm"
 msgstr "Vahvista"
@@ -859,7 +858,7 @@ msgid "Select a folder:"
 msgstr "Valitse kansio:"
 
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:116
-#: ../../../../gui/book_viewer/__init__.py:441
+#: ../../../../gui/book_viewer/__init__.py:442
 msgid "Search"
 msgstr "Hae"
 
@@ -1060,8 +1059,8 @@ msgstr "XPS-asiakirja"
 msgid "Comic Book Archive"
 msgstr "Comic Book -arkisto"
 
-#: ../../../../document/formats/html.py:216
-#: ../../../../document/formats/html.py:379
+#: ../../../../document/formats/html.py:220
+#: ../../../../document/formats/html.py:383
 msgid "HTML Document"
 msgstr "HTML-asiakirja"
 
@@ -1290,35 +1289,35 @@ msgstr "Poistetaanko luetteloista?"
 msgid "Press (Ctrl + O) to open a document"
 msgstr "Avaa asiakirja painamalla Ctrl+O"
 
-#: ../../../../gui/book_viewer/__init__.py:334
+#: ../../../../gui/book_viewer/__init__.py:335
 msgid "Table of Contents"
 msgstr "Sisällysluettelo"
 
-#: ../../../../gui/book_viewer/__init__.py:356
+#: ../../../../gui/book_viewer/__init__.py:357
 msgid "Reading progress percentage"
 msgstr "Lukemisen edistymisprosentti"
 
-#: ../../../../gui/book_viewer/__init__.py:438
+#: ../../../../gui/book_viewer/__init__.py:439
 msgid "Open"
 msgstr "Avaa"
 
-#: ../../../../gui/book_viewer/__init__.py:443
+#: ../../../../gui/book_viewer/__init__.py:444
 msgid "Mode"
 msgstr "Tila"
 
-#: ../../../../gui/book_viewer/__init__.py:446
+#: ../../../../gui/book_viewer/__init__.py:447
 msgid "Small"
 msgstr "Pieni"
 
-#: ../../../../gui/book_viewer/__init__.py:448
+#: ../../../../gui/book_viewer/__init__.py:449
 msgid "Big"
 msgstr "Suuri"
 
-#: ../../../../gui/book_viewer/__init__.py:489
+#: ../../../../gui/book_viewer/__init__.py:490
 msgid "Incorrect Password"
 msgstr "Väärä salasana"
 
-#: ../../../../gui/book_viewer/__init__.py:493
+#: ../../../../gui/book_viewer/__init__.py:494
 msgid ""
 "The password you provided is incorrect.\n"
 "Please try again with the correct password."
@@ -1326,47 +1325,47 @@ msgstr ""
 "Antamasi salasana on väärä.\n"
 "Yritä uudelleen kirjoittamalla oikea salasana."
 
-#: ../../../../gui/book_viewer/__init__.py:549
+#: ../../../../gui/book_viewer/__init__.py:550
 msgid "Document closed."
 msgstr "Asiakirja suljettu."
 
-#: ../../../../gui/book_viewer/__init__.py:584
+#: ../../../../gui/book_viewer/__init__.py:585
 #, python-brace-format
 msgid "{percentage} completed"
 msgstr "{percentage} luettu"
 
-#: ../../../../gui/book_viewer/__init__.py:642
+#: ../../../../gui/book_viewer/__init__.py:670
 msgid "Document content"
 msgstr "Asiakirjan sisältö"
 
-#: ../../../../gui/book_viewer/__init__.py:691
+#: ../../../../gui/book_viewer/__init__.py:724
 #, python-brace-format
 msgid "No next {item}"
 msgstr "Ei seuraavaa {item}"
 
-#: ../../../../gui/book_viewer/__init__.py:693
+#: ../../../../gui/book_viewer/__init__.py:726
 #, python-brace-format
 msgid "No previous {item}"
 msgstr "Ei edellistä {item}"
 
-#: ../../../../gui/book_viewer/__init__.py:709
+#: ../../../../gui/book_viewer/__init__.py:742
 msgid "The font size has been Increased"
 msgstr "Fonttikokoa on suurennettu"
 
-#: ../../../../gui/book_viewer/__init__.py:715
+#: ../../../../gui/book_viewer/__init__.py:748
 msgid "The font size has been decreased"
 msgstr "Fonttikokoa on pienennetty"
 
-#: ../../../../gui/book_viewer/__init__.py:719
+#: ../../../../gui/book_viewer/__init__.py:752
 msgid "The font size has been reset"
 msgstr "Fonttikoko on nollattu"
 
-#: ../../../../gui/book_viewer/__init__.py:743
+#: ../../../../gui/book_viewer/__init__.py:776
 #, python-brace-format
 msgid "Reading progress: {percentage}"
 msgstr "Lukemisen edistyminen: {percentage}"
 
-#: ../../../../gui/book_viewer/__init__.py:763
+#: ../../../../gui/book_viewer/__init__.py:796
 msgid ""
 "This document is encrypted with a password.\n"
 "You need to provide the password in order to access its content.\n"
@@ -1376,17 +1375,17 @@ msgstr ""
 "Tarvitset salasanan sen lukemiseen.\n"
 "Kirjoita salasana ja paina Enteriä."
 
-#: ../../../../gui/book_viewer/__init__.py:768
+#: ../../../../gui/book_viewer/__init__.py:801
 msgid "Enter Password"
 msgstr "Kirjoita salasana"
 
-#: ../../../../gui/book_viewer/__init__.py:802
+#: ../../../../gui/book_viewer/__init__.py:835
 #: ../../../../text_to_speech/__init__.py:324
 #, python-brace-format
 msgid "Page {page} of {total}"
 msgstr "Sivu {page} / {total}"
 
-#: ../../../../gui/book_viewer/__init__.py:930
+#: ../../../../gui/book_viewer/__init__.py:963
 #, python-brace-format
 msgid "Opening page: {url}"
 msgstr "Avataan sivua: {url}"
@@ -1822,13 +1821,11 @@ msgstr "Tulokset | {total}"
 
 #: ../../../../gui/book_viewer/menubar.py:819
 #, python-brace-format
-#| msgid "Searching For '{term}'"
 msgid "No next search result for '{term}'"
 msgstr "Hakusanalla {term} ei löydy seuraavaa tulosta"
 
 #: ../../../../gui/book_viewer/menubar.py:822
 #, python-brace-format
-#| msgid "No previous {item}"
 msgid "No previous search result for '{term}'"
 msgstr "Hakusanalla {term} ei löydy edellistä tulosta"
 
@@ -1921,7 +1918,7 @@ msgid "Supported document formats"
 msgstr "Tuetut asiakirjamuodot"
 
 #: ../../../../gui/book_viewer/render_view.py:88
-#: ../../../../gui/book_viewer/render_view.py:229
+#: ../../../../gui/book_viewer/render_view.py:269
 #, python-brace-format
 msgid "Zoom is at {factor} percent"
 msgstr "Zoomaustaso on {factor} prosenttia"
@@ -1931,74 +1928,74 @@ msgstr "Zoomaustaso on {factor} prosenttia"
 msgid "Page {}"
 msgstr "Sivu {}"
 
-#: ../../../../gui/book_viewer/render_view.py:162
+#: ../../../../gui/book_viewer/render_view.py:169
 msgid "Zoom In"
 msgstr "Lähennä"
 
-#: ../../../../gui/book_viewer/render_view.py:163
+#: ../../../../gui/book_viewer/render_view.py:170
 msgid "Zoom Out"
 msgstr "Loitonna"
 
-#: ../../../../gui/book_viewer/render_view.py:164
+#: ../../../../gui/book_viewer/render_view.py:171
 msgid "Actual Size"
 msgstr "Todellinen koko"
 
-#: ../../../../gui/book_viewer/render_view.py:167
+#: ../../../../gui/book_viewer/render_view.py:174
 msgid "Copy"
 msgstr "Kopioi"
 
-#: ../../../../gui/book_viewer/render_view.py:169
+#: ../../../../gui/book_viewer/render_view.py:176
 #: ../../../../resources/readium_js_viewer_lite/scripts/mathjax/MathJax.js:9039
 msgid "Close"
 msgstr "Sulje"
 
-#: ../../../../gui/book_viewer/render_view.py:173
+#: ../../../../gui/book_viewer/render_view.py:180
 #: ../../../../ocr/ocr_dialogs.py:294
 #: ../../../../structured_text/structural_elements.py:72
-#: ../../../../structured_text/structured_html_parser.py:357
-#: ../../../../structured_text/structured_html_parser.py:384
+#: ../../../../structured_text/structured_html_parser.py:356
+#: ../../../../structured_text/structured_html_parser.py:383
 msgid "Image"
 msgstr "Kuva"
 
-#: ../../../../gui/book_viewer/render_view.py:275
-#: ../../../../gui/book_viewer/render_view.py:301
+#: ../../../../gui/book_viewer/render_view.py:321
+#: ../../../../gui/book_viewer/render_view.py:347
 msgid "Save Image"
 msgstr "Tallenna kuva"
 
-#: ../../../../gui/book_viewer/render_view.py:278
+#: ../../../../gui/book_viewer/render_view.py:324
 msgid "PNG Image"
 msgstr "PNG-kuva"
 
-#: ../../../../gui/book_viewer/render_view.py:279
+#: ../../../../gui/book_viewer/render_view.py:325
 msgid "JPEG Image"
 msgstr "JPEG-kuva"
 
-#: ../../../../gui/book_viewer/render_view.py:300
+#: ../../../../gui/book_viewer/render_view.py:346
 msgid "Could not save this image."
 msgstr "Tätä kuvaa ei voitu tallentaa."
 
-#: ../../../../gui/book_viewer/render_view.py:306
+#: ../../../../gui/book_viewer/render_view.py:352
 msgid "Image saved"
 msgstr "Kuva tallennettu"
 
-#: ../../../../gui/book_viewer/render_view.py:328
+#: ../../../../gui/book_viewer/render_view.py:374
 #, python-brace-format
 msgid "A file named \"{filename}\" already exists. Do you want to replace it?"
 msgstr "Tiedosto {filename} on jo olemassa. Haluatko korvata sen?"
 
-#: ../../../../gui/book_viewer/render_view.py:333
+#: ../../../../gui/book_viewer/render_view.py:379
 msgid "Confirm Save As"
 msgstr "Vahvista nimellä tallennus"
 
-#: ../../../../gui/book_viewer/render_view.py:361
+#: ../../../../gui/book_viewer/render_view.py:407
 msgid "Could not copy this image."
 msgstr "Tätä kuvaa ei voitu kopioida."
 
-#: ../../../../gui/book_viewer/render_view.py:362
+#: ../../../../gui/book_viewer/render_view.py:408
 msgid "Copy Image"
 msgstr "Kopioi kuva"
 
-#: ../../../../gui/book_viewer/render_view.py:367
+#: ../../../../gui/book_viewer/render_view.py:413
 msgid "Image copied to clipboard"
 msgstr "Kuva kopioitu leikepöydälle"
 
@@ -2030,17 +2027,17 @@ msgstr "Tietty luku"
 msgid "Select section:"
 msgstr "Valitse luku:"
 
-#: ../../../../gui/components.py:286 ../../../../gui/components.py:327
+#: ../../../../gui/components.py:293 ../../../../gui/components.py:334
 #: ../../../../gui/settings.py:719
 msgid "OK"
 msgstr "OK"
 
-#: ../../../../gui/components.py:289 ../../../../gui/components.py:330
+#: ../../../../gui/components.py:296 ../../../../gui/components.py:337
 #: ../../../../gui/settings.py:722
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: ../../../../gui/components.py:615
+#: ../../../../gui/components.py:622
 msgid ""
 "This will cancel all the operations in progress.\n"
 "Are you sure you want to abort?"
@@ -3229,7 +3226,7 @@ msgstr "Lukeminen"
 
 #: ../../../../text_to_speech/__init__.py:176
 #: ../../../../text_to_speech/__init__.py:187
-#: ../../../../text_to_speech/tts_gui.py:162
+#: ../../../../text_to_speech/tts_gui.py:169
 msgid "Voice"
 msgstr "Ääni"
 
@@ -3331,15 +3328,15 @@ msgstr ""
 msgid "Incompatible TTS Voice Detected"
 msgstr "Yhteensopimaton teksti puheeksi -ääni havaittu"
 
-#: ../../../../text_to_speech/tts_config.py:126
+#: ../../../../text_to_speech/tts_config.py:127
 msgid "Human-like"
 msgstr "Ihmismäinen"
 
-#: ../../../../text_to_speech/tts_config.py:137
+#: ../../../../text_to_speech/tts_config.py:138
 msgid "Deep Reading"
 msgstr "Syväluku"
 
-#: ../../../../text_to_speech/tts_config.py:148
+#: ../../../../text_to_speech/tts_config.py:149
 msgid "Express"
 msgstr "Pikaluku"
 
@@ -3393,18 +3390,22 @@ msgstr "Pyydä vaihtamaan puheääneen, joka tukee nykyisen kirjan kieltä"
 
 #: ../../../../text_to_speech/tts_gui.py:108
 msgid "Highlight spoken text"
-msgstr "Korosta puhuttu teksti"
+msgstr "Korosta puhuttava teksti"
 
 #: ../../../../text_to_speech/tts_gui.py:115
 msgid "Select spoken text"
-msgstr "Valitse puhuttu teksti"
+msgstr "Valitse puhuttava teksti"
 
 #: ../../../../text_to_speech/tts_gui.py:122
+msgid "Play a sound when the cursor reaches an image"
+msgstr "Ilmaise kuvat äänimerkillä"
+
+#: ../../../../text_to_speech/tts_gui.py:129
 msgid "Enable global media keys (Play/Pause, Next, Previous)"
 msgstr ""
 "Ota käyttöön yleiset medianäppäimet (Toista/Keskeytä, Seuraava, Edellinen)"
 
-#: ../../../../text_to_speech/tts_gui.py:131
+#: ../../../../text_to_speech/tts_gui.py:138
 msgid ""
 "Note: Media key functionality can be unreliable when multiple media "
 "applications are running simultaneously, regardless of whether global mode "
@@ -3414,91 +3415,91 @@ msgstr ""
 "medianäppäinten toiminta voi olla epäluotettavaa riippumatta siitä, onko "
 "yleistila käytössä vai ei."
 
-#: ../../../../text_to_speech/tts_gui.py:165
+#: ../../../../text_to_speech/tts_gui.py:172
 msgid "Speech Engine:"
 msgstr "Puhemoottori:"
 
-#: ../../../../text_to_speech/tts_gui.py:170
+#: ../../../../text_to_speech/tts_gui.py:177
 msgid "Change..."
 msgstr "Vaihda..."
 
-#: ../../../../text_to_speech/tts_gui.py:173
+#: ../../../../text_to_speech/tts_gui.py:180
 msgid "Select Voice:"
 msgstr "Valitse ääni:"
 
-#: ../../../../text_to_speech/tts_gui.py:176
+#: ../../../../text_to_speech/tts_gui.py:183
 msgid "Speech Rate:"
 msgstr "Puhenopeus:"
 
-#: ../../../../text_to_speech/tts_gui.py:182
+#: ../../../../text_to_speech/tts_gui.py:189
 msgid "Voice Pitch:"
 msgstr "Äänenkorkeus:"
 
-#: ../../../../text_to_speech/tts_gui.py:188
+#: ../../../../text_to_speech/tts_gui.py:195
 msgid "Speech Volume:"
 msgstr "Puheen voimakkuus:"
 
-#: ../../../../text_to_speech/tts_gui.py:195
+#: ../../../../text_to_speech/tts_gui.py:202
 msgid "Pauses"
 msgstr "Tauot"
 
-#: ../../../../text_to_speech/tts_gui.py:198
+#: ../../../../text_to_speech/tts_gui.py:205
 msgid "Additional Pause At Sentence End (Ms)"
 msgstr "Lisätauko lauseen lopussa (Ms)"
 
-#: ../../../../text_to_speech/tts_gui.py:203
+#: ../../../../text_to_speech/tts_gui.py:210
 msgid "Additional Pause At Paragraph End (Ms)"
 msgstr "Lisätauko kappaleen lopussa (Ms)"
 
-#: ../../../../text_to_speech/tts_gui.py:208
+#: ../../../../text_to_speech/tts_gui.py:215
 msgid "End of Page Pause (ms)"
 msgstr "Tauko sivun lopussa (ms)"
 
-#: ../../../../text_to_speech/tts_gui.py:217
+#: ../../../../text_to_speech/tts_gui.py:224
 msgid "End of Section Pause (ms)"
 msgstr "Tauko luvun lopussa (ms)"
 
-#: ../../../../text_to_speech/tts_gui.py:271
+#: ../../../../text_to_speech/tts_gui.py:278
 msgid "Speech Engine"
 msgstr "Puhemoottori"
 
-#: ../../../../text_to_speech/tts_gui.py:320
+#: ../../../../text_to_speech/tts_gui.py:327
 #, python-brace-format
 msgid "Voice Profile: {profile}"
 msgstr "Ääniprofiili: {profile}"
 
-#: ../../../../text_to_speech/tts_gui.py:347
+#: ../../../../text_to_speech/tts_gui.py:354
 msgid "Select Voice Profile:"
 msgstr "Valitse ääniprofiili:"
 
-#: ../../../../text_to_speech/tts_gui.py:353
+#: ../../../../text_to_speech/tts_gui.py:360
 msgid "&Activate"
 msgstr "&Ota käyttöön"
 
-#: ../../../../text_to_speech/tts_gui.py:359
+#: ../../../../text_to_speech/tts_gui.py:366
 msgid "&New Profile..."
 msgstr "&Uusi profiili..."
 
-#: ../../../../text_to_speech/tts_gui.py:393
+#: ../../../../text_to_speech/tts_gui.py:400
 #, python-brace-format
 msgid "{profile} (active)"
 msgstr "{profile} (käytössä)"
 
-#: ../../../../text_to_speech/tts_gui.py:443
+#: ../../../../text_to_speech/tts_gui.py:450
 msgid "Profile Name:"
 msgstr "Profiilin nimi:"
 
-#: ../../../../text_to_speech/tts_gui.py:445
+#: ../../../../text_to_speech/tts_gui.py:452
 msgid "New Voice Profile"
 msgstr "Uusi ääniprofiili"
 
-#: ../../../../text_to_speech/tts_gui.py:458
+#: ../../../../text_to_speech/tts_gui.py:465
 msgid ""
 "A voice profile with the same name already exists. Please select another "
 "name."
 msgstr "Samanniminen ääniprofiili on jo olemassa. Valitse toinen nimi."
 
-#: ../../../../text_to_speech/tts_gui.py:484
+#: ../../../../text_to_speech/tts_gui.py:491
 #, python-brace-format
 msgid ""
 "Voice profile {profile} is the active profile.\n"
@@ -3509,11 +3510,11 @@ msgstr ""
 "Poista se ensin käytöstä valitsemalla Puhe-valikosta Poista käytöstä "
 "nykyinen ääniprofiili."
 
-#: ../../../../text_to_speech/tts_gui.py:490
+#: ../../../../text_to_speech/tts_gui.py:497
 msgid "Cannot Remove Profile"
 msgstr "Profiilia ei voi poistaa"
 
-#: ../../../../text_to_speech/tts_gui.py:497
+#: ../../../../text_to_speech/tts_gui.py:504
 #, python-brace-format
 msgid ""
 "Are you sure you want to remove voice profile {profile}?\n"
@@ -3522,71 +3523,71 @@ msgstr ""
 "Haluatko varmasti poistaa ääniprofiilin {profile}?\n"
 "Poistoa ei voi perua."
 
-#: ../../../../text_to_speech/tts_gui.py:501
+#: ../../../../text_to_speech/tts_gui.py:508
 msgid "Remove Voice Profile?"
 msgstr "Poistetaanko ääniprofiili?"
 
-#: ../../../../text_to_speech/tts_gui.py:524
+#: ../../../../text_to_speech/tts_gui.py:531
 msgid "Select Speech Engine:"
 msgstr "Valitse puhemoottori:"
 
-#: ../../../../text_to_speech/tts_gui.py:553
+#: ../../../../text_to_speech/tts_gui.py:560
 msgid "&Play\tF5"
 msgstr "&Toista\tF5"
 
-#: ../../../../text_to_speech/tts_gui.py:555
+#: ../../../../text_to_speech/tts_gui.py:562
 msgid "Start reading aloud"
 msgstr "Aloita ääneen lukeminen"
 
-#: ../../../../text_to_speech/tts_gui.py:560
+#: ../../../../text_to_speech/tts_gui.py:567
 msgid "Pa&use/Resume\tF6"
 msgstr "Keske&ytä/jatka\tF6"
 
-#: ../../../../text_to_speech/tts_gui.py:562
+#: ../../../../text_to_speech/tts_gui.py:569
 msgid "Pause/Resume reading aloud"
 msgstr "Keskeytä/jatka ääneen lukemista"
 
-#: ../../../../text_to_speech/tts_gui.py:567
+#: ../../../../text_to_speech/tts_gui.py:574
 msgid "&Stop\tF7"
 msgstr "&Pysäytä\tF7"
 
-#: ../../../../text_to_speech/tts_gui.py:569
+#: ../../../../text_to_speech/tts_gui.py:576
 msgid "Stop reading aloud"
 msgstr "Pysäytä ääneen lukeminen"
 
-#: ../../../../text_to_speech/tts_gui.py:574
+#: ../../../../text_to_speech/tts_gui.py:581
 msgid "&Rewind\tAlt-LeftArrow"
 msgstr "Kelaa t&aaksepäin\tAlt+Vasen nuoli"
 
-#: ../../../../text_to_speech/tts_gui.py:576
+#: ../../../../text_to_speech/tts_gui.py:583
 msgid "Skip to previous paragraph"
 msgstr "Siirry edelliseen kappaleeseen"
 
-#: ../../../../text_to_speech/tts_gui.py:581
+#: ../../../../text_to_speech/tts_gui.py:588
 msgid "&Fast Forward\tAlt-RightArrow"
 msgstr "Kelaa &eteenpäin\tAlt+Oikea nuoli"
 
-#: ../../../../text_to_speech/tts_gui.py:583
+#: ../../../../text_to_speech/tts_gui.py:590
 msgid "Skip to next paragraph"
 msgstr "Siirry seuraavaan kappaleeseen"
 
-#: ../../../../text_to_speech/tts_gui.py:588
+#: ../../../../text_to_speech/tts_gui.py:595
 msgid "&Voice Profiles\tCtrl-Shift-V"
 msgstr "&Ääniprofiilit\tCtrl+Vaihto+V"
 
-#: ../../../../text_to_speech/tts_gui.py:590
+#: ../../../../text_to_speech/tts_gui.py:597
 msgid "Manage voice profiles."
 msgstr "Hallitse ääniprofiileja."
 
-#: ../../../../text_to_speech/tts_gui.py:595
+#: ../../../../text_to_speech/tts_gui.py:602
 msgid "&Deactivate Active Voice Profile"
 msgstr "P&oista käytöstä nykyinen ääniprofiili"
 
-#: ../../../../text_to_speech/tts_gui.py:597
+#: ../../../../text_to_speech/tts_gui.py:604
 msgid "Deactivate the active voice profile."
 msgstr "Poista käytöstä nykyinen ääniprofiili."
 
-#: ../../../../text_to_speech/tts_gui.py:650
+#: ../../../../text_to_speech/tts_gui.py:657
 msgid "Voice Profiles"
 msgstr "Ääniprofiilit"
 

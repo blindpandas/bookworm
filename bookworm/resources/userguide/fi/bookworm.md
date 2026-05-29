@@ -209,8 +209,8 @@ Näiden asetusten avulla Bookwormissa voi hienosäätää puheasetusten lisäksi
 * Puhu sivunumero: Teksti puheeksi -ääni lukee jokaisen sivun numeron siirtyessäsi sille.
 * Ilmoita lukujen loppumisesta: Teksti puheeksi -ääni ilmoittaa, kun luku on luettu.
 * Pyydä vaihtamaan ääneen, joka puhuu nykyisen kirjan kieltä: Tämä asetus määrittää, varoittaako Bookworm yhteensopimattomasta äänestä, mikä tapahtuu oletusarvoisesti, jos valitun teksti puheeksi -äänen kieli on eri kuin avoimen asiakirjan.
-* Korosta puhuttu teksti: Jos tämä asetus on käytössä, senhetkinen puhuttu teksti korostetaan visuaalisesti.
-* Valitse puhuttu teksti: Jos tämä asetus on käytössä, senhetkinen puhuttu teksti valitaan. Näin voit esim. painaa Ctrl+C kopioidaksesi puhutun kappaleen.
+* Korosta puhuttava teksti: Jos tämä asetus on käytössä, senhetkinen puhuttava teksti korostetaan visuaalisesti.
+* Valitse puhuttava teksti: Jos tämä asetus on käytössä, senhetkinen puhuttava teksti valitaan. Näin voit esim. painaa Ctrl+C kopioidaksesi puhuttavan kappaleen.
 
 
 
