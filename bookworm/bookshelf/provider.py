@@ -10,11 +10,8 @@ import attr
 from bookworm import typehints as t
 from bookworm.document import DocumentInfo
 from bookworm.image_io import ImageIO
-from bookworm.logger import logger
 from bookworm.paths import images_path
 from bookworm.signals import _signals
-
-log = logger.getChild(__name__)
 
 
 sources_updated = _signals.signal("bookshelf/source_updated")
@@ -120,7 +117,7 @@ class MetaSource(Source):
     """Represents a source that merely groups other sources."""
 
     def get_item_count(self):
-        return len([item for item in self.get_items() if item.is_valid()])
+        return sum(1 for item in self.get_items() if item.is_valid())
 
     def get_item_actions(self, item):
         raise NotImplementedError

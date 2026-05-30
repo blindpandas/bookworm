@@ -4,7 +4,7 @@ import typing
 
 from peewee import *
 from peewee import ColumnBase, EnclosedNodeList, NodeList
-from playhouse.apsw_ext import APSWDatabase, BooleanField, DateTimeField
+from playhouse.apsw_ext import APSWDatabase, DateTimeField as DateTimeField
 
 from bookworm.document.uri import DocumentUri
 from bookworm.image_io import ImageIO
@@ -99,8 +99,6 @@ class SqliteViewSchemaManager(SchemaManager):
     def _create_table(self, safe=True, **options):
         if not getattr(self.model, "view_select_builder", None):
             raise TypeError("view_select_builder method is required on view tables.")
-        meta = self.model._meta
-        columns = {field.column_name for field in meta.sorted_fields}
         is_temp = options.pop("temporary", False)
         ctx = self._create_context()
         ctx.literal("CREATE TEMPORARY VIEW " if is_temp else "CREATE VIEW ")
