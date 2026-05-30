@@ -6,9 +6,8 @@ import asyncio
 import threading
 from functools import wraps
 
-import bookworm.typehints as t
 from bookworm.logger import logger
-from bookworm.signals import app_shuttingdown, app_starting
+from bookworm.signals import app_shuttingdown
 
 log = logger.getChild(__name__)
 
@@ -36,7 +35,6 @@ def start_asyncio_event_loop():
         return
 
     def _thread_target():
-        global ASYNCIO_EVENT_LOOP
         log.info("Starting asyncio event loop")
         asyncio.set_event_loop(ASYNCIO_EVENT_LOOP)
         ASYNCIO_EVENT_LOOP.run_forever()

@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import logging
-import platform
 from functools import wraps
 from pathlib import Path
 

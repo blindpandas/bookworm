@@ -5,7 +5,6 @@ from logging.handlers import RotatingFileHandler
 import sys
 
 from bookworm import app, paths
-from bookworm.runtime import IS_IN_MAIN_PROCESS
 
 APP_LOG_FILE = app.name
 ERROR_LOG_FILE = "error"

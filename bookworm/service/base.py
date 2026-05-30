@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import wx
 
 from bookworm import typehints as t
-from bookworm.logger import logger
 
-log = logger.getChild(__name__)
+if TYPE_CHECKING:
+    from bookworm.gui.book_viewer import BookViewerWindow
+    from bookworm.gui.settings import SettingsPanel
 
 
 class BookwormService:
@@ -18,7 +21,7 @@ class BookwormService:
     has_gui: bool = False
     config_spec: t.Dict[str, str] = None
 
-    def __init__(self, view: "BookViewer"):
+    def __init__(self, view: BookViewerWindow):
         self.view = view
         self.reader = view.reader
         self.__post_init__()
@@ -43,7 +46,7 @@ class BookwormService:
 
     def get_settings_panels(
         self,
-    ) -> t.Iterable[t.Tuple[int, str, "bookworm.gui.settings.SettingPanel", str]]:
+    ) -> t.Iterable[t.Tuple[int, str, type[SettingsPanel], str]]:
         """Return a list of SettingsPanelBlueprint."""
         return ()
 
