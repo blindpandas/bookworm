@@ -1,4 +1,3 @@
-
 import math
 import time
 import webbrowser
@@ -45,6 +44,7 @@ from bookworm.utils import gui_thread_safe
 from . import recents_manager
 from .menubar import BookRelatedMenuIds, MenubarProvider
 from .navigation import NavigationProvider
+from .position_mapping import TextCtrlPositionMap
 from .render_view import EmbeddedImageDialog
 from .state import StateProvider
 
@@ -68,8 +68,6 @@ STYLE_TO_WX_TEXT_ATTR_STYLES = {
     Style.DISPLAY_3: (wx.TextAttr.SetFontWeight, (400,)),
     Style.DISPLAY_4: (wx.TextAttr.SetFontWeight, (200,)),
 }
-
-TEXT_CTRL_OFFSET = 1
 
 
 def _get_structural_navigation_speech(text, element_label, element_type):
@@ -295,6 +293,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self._has_text_zoom = False
         self.__latest_structured_navigation_position = None
         self.__skip_next_image_earcon_position = None
+        self._text_position_map = TextCtrlPositionMap("")
         self.set_status(self._no_open_book_status)
         StateProvider.__init__(self)
         MenubarProvider.__init__(self)
@@ -507,6 +506,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.reader.set_document(document)
 
     def set_content(self, content):
+        self._text_position_map = TextCtrlPositionMap(content)
         self.contentTextCtrl.Freeze()
         if self._has_text_zoom:
             current_style = wx.TextAttr(self.contentTextCtrl.GetDefaultStyle())
@@ -514,12 +514,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             current_font_size = current_style.Font.GetPointSize()
         else:
             current_font_size = None
-        self.contentTextCtrl.SetValue("\n\n")
-        self.contentTextCtrl.SetInsertionPoint(1)
-        self.contentTextCtrl.SetDefaultStyle(
-            self.get_content_view_text_style(font_size=current_font_size)
-        )
-        self.contentTextCtrl.WriteText(content)
+        content_style = self.get_content_view_text_style(font_size=current_font_size)
+        self.contentTextCtrl.SetValue(self._text_position_map.to_text_ctrl_value())
+        self.contentTextCtrl.SetStyle(0, self.contentTextCtrl.GetLastPosition(), content_style)
+        self.contentTextCtrl.SetDefaultStyle(content_style)
         self.set_insertion_point(0)
         self.contentTextCtrl.Thaw()
 
@@ -613,17 +611,14 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             self.update_reading_progress()
 
     def _process_image_earcon_for_position(self, position):
-        skip_position = getattr(
-            self, "_BookViewerWindow__skip_next_image_earcon_position", None
-        )
+        skip_position = getattr(self, "_BookViewerWindow__skip_next_image_earcon_position", None)
         if skip_position is not None:
             self.__skip_next_image_earcon_position = None
             if skip_position == (self.reader.current_page, position):
                 return
-        if (
-            config.conf["reading"]["play_image_earcon_when_navigating_text"]
-            and self._is_position_in_or_on_line_with_image(position)
-        ):
+        if config.conf["reading"][
+            "play_image_earcon_when_navigating_text"
+        ] and self._is_position_in_or_on_line_with_image(position):
             sounds.image.play()
 
     def _is_position_in_or_on_line_with_image(self, position):
@@ -806,14 +801,18 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
     def highlight_range(self, start, end, foreground=wx.NullColour, background=wx.NullColour):
         line_start = self.get_containing_line(start)[0]
         attr = wx.TextAttr()
-        self.contentTextCtrl.GetStyle(line_start + TEXT_CTRL_OFFSET, attr)
+        self.contentTextCtrl.GetStyle(self.view_to_control_position(line_start), attr)
         attr.SetBackgroundColour(wx.YELLOW)
-        self.contentTextCtrl.SetStyle(start + TEXT_CTRL_OFFSET, end + TEXT_CTRL_OFFSET, attr)
+        self.contentTextCtrl.SetStyle(
+            self.view_to_control_position(start),
+            self.view_to_control_position(end),
+            attr,
+        )
 
     def clear_highlight(self, start=0, end=-1):
         textCtrl = self.contentTextCtrl
-        actual_start = start + TEXT_CTRL_OFFSET
-        actual_end = end if end < 0 else end + TEXT_CTRL_OFFSET
+        actual_start = self.view_to_control_position(start)
+        actual_end = end if end < 0 else self.view_to_control_position(end)
         if end < 0 or end >= self.get_last_position():
             actual_end = textCtrl.GetLastPosition()
         attr = wx.TextAttr()
@@ -834,9 +833,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             # Translators: the label of the page content text area
             label_msg = _("Page {page} of {total}")
             label_msg = f"{label_msg} " + chr(0x00B7) + " {chapter}"
-            if config.conf["general"]["include_page_label"] and (
-                page_label := page.get_label()
-            ):
+            if config.conf["general"]["include_page_label"] and (page_label := page.get_label()):
                 page_number = f"{page_number} ({page_label})"
         return label_msg.format(
             page=page_number,
@@ -853,7 +850,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         # If nothing is selected, start can be -1. Handle this gracefully.
         if start == -1:
             return TextRange(self.get_insertion_point(), self.get_insertion_point())
-        return TextRange(start - TEXT_CTRL_OFFSET, end - TEXT_CTRL_OFFSET)
+        return TextRange(
+            self.control_to_view_position(start),
+            self.control_to_view_position(end),
+        )
 
     def get_containing_line(self, pos):
         """
@@ -864,9 +864,12 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         # 1. Convert clean input position to a real position for the control.
         # 2. Get the real line boundaries from the control.
         # 3. Convert the real boundaries back to clean boundaries for the caller.
-        real_pos = pos + TEXT_CTRL_OFFSET
+        real_pos = self.view_to_control_position(pos)
         real_start, real_end = self.contentTextCtrl.GetContainingLine(real_pos)
-        return real_start - TEXT_CTRL_OFFSET, real_end - TEXT_CTRL_OFFSET
+        return (
+            self.control_to_view_position(real_start),
+            self.control_to_view_position(real_end),
+        )
 
     def set_text_direction(self, rtl=False):
         style = self.contentTextCtrl.GetDefaultStyle()
@@ -892,23 +895,26 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             dlg.ShowModal()
 
     def get_line_number(self, pos=None):
-        # WHY: Use our own gatekeeper if pos is not provided.
-        # Convert the clean position to a real one before querying the control.
-        pos = pos or self.get_insertion_point()
-        __, __, line_number = self.contentTextCtrl.PositionToXY(pos + TEXT_CTRL_OFFSET)
+        if pos is None:
+            pos = self.get_insertion_point()
+        control_pos = self.view_to_control_position(pos)
+        __, __, line_number = self.contentTextCtrl.PositionToXY(control_pos)
         return line_number
 
     def get_start_of_line(self, line_number):
         # WHY: Get the real position from the control, then convert to clean.
         real_pos = self.contentTextCtrl.XYToPosition(0, line_number)
-        return max(0, real_pos - TEXT_CTRL_OFFSET)
+        return max(0, self.control_to_view_position(real_pos))
 
     def select_text(self, fpos, tpos):
         self.contentTextCtrl.SetFocusFromKbd()
-        self.contentTextCtrl.SetSelection(fpos + TEXT_CTRL_OFFSET, tpos + TEXT_CTRL_OFFSET)
+        self.contentTextCtrl.SetSelection(
+            self.view_to_control_position(fpos),
+            self.view_to_control_position(tpos),
+        )
 
     def set_insertion_point(self, to, set_focus_to_text_ctrl=True):
-        actual_position = to + TEXT_CTRL_OFFSET
+        actual_position = self.view_to_control_position(to)
         self.contentTextCtrl.ShowPosition(actual_position)
         self.contentTextCtrl.SetInsertionPoint(actual_position)
         if set_focus_to_text_ctrl:
@@ -925,34 +931,26 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             attr_func(style, *args)
             for start, stop in style_info[style_type]:
                 self.contentTextCtrl.SetStyle(
-                    start + TEXT_CTRL_OFFSET, stop + TEXT_CTRL_OFFSET, style
+                    self.view_to_control_position(start),
+                    self.view_to_control_position(stop),
+                    style,
                 )
 
     def get_insertion_point(self):
-        return self.contentTextCtrl.GetInsertionPoint() - TEXT_CTRL_OFFSET
+        return self.control_to_view_position(self.contentTextCtrl.GetInsertionPoint())
 
-    @staticmethod
-    def control_to_view_position(pos):
-        return pos - TEXT_CTRL_OFFSET
+    def control_to_view_position(self, pos):
+        return self._text_position_map.control_to_view_position(pos)
 
-    @staticmethod
-    def view_to_control_position(pos):
-        return pos + TEXT_CTRL_OFFSET
+    def view_to_control_position(self, pos):
+        return self._text_position_map.view_to_control_position(pos)
 
     def get_last_position(self):
-        # WHY: The structure is `\n[content]\n`. The real length is `len(content) + 2`.
-        # The clean length is `len(content)`. So we must subtract 2.
-        # We don't use the offset constant here because we are accounting for
-        # the character at the beginning AND the one at the end.
-        return self.contentTextCtrl.GetLastPosition() - 2
+        return self._text_position_map.last_position
 
     def get_text_by_range(self, start, end):
         """Get text by indexes. If end is less than 0 return the text from `start` to the end of the text."""
-        actual_start = start + TEXT_CTRL_OFFSET
-        actual_end = end if end < 0 else end + TEXT_CTRL_OFFSET
-        if end >= self.get_last_position():
-            actual_end = self.contentTextCtrl.GetLastPosition() - TEXT_CTRL_OFFSET
-        return self.contentTextCtrl.GetRange(actual_start, actual_end)
+        return self._text_position_map.get_text_by_range(start, end)
 
     def get_text_from_user(self, title, label, style=wx.OK | wx.CANCEL | wx.CENTER, value=""):
         dlg = wx.TextEntryDialog(self, label, title, style=style, value=value)

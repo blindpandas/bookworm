@@ -183,6 +183,15 @@ class EBookReader:
         )
         return [record for record in records if record.uri.format == uri_for_storage.format]
 
+    def _has_legacy_document_records(self, model, uri_for_storage):
+        records = model.query.filter(
+            sa.or_(
+                model.content_hash_version.is_(None),
+                model.content_hash_version != CURRENT_CONTENT_HASH_VERSION,
+            )
+        )
+        return any(record.uri.format == uri_for_storage.format for record in records)
+
     def _select_document_record(self, records, uri_for_storage):
         for record in records:
             if record.uri == uri_for_storage:
@@ -252,10 +261,12 @@ class EBookReader:
             content_hash = uri_record.content_hash
         else:
             content_hash = content_hash_provider()
+        should_check_legacy_records = legacy_content_hash_provider is not None and (
+            content_hash is None
+            or self._has_legacy_document_records(model, uri_for_storage)
+        )
         legacy_content_hash = (
-            legacy_content_hash_provider()
-            if legacy_content_hash_provider is not None
-            else None
+            legacy_content_hash_provider() if should_check_legacy_records else None
         )
         stored_content_hash, stored_content_hash_version = get_persistent_content_hash(
             content_hash,
@@ -266,7 +277,7 @@ class EBookReader:
             uri_for_storage=uri_for_storage,
             content_hash=content_hash,
         )
-        if legacy_content_hash_provider is not None:
+        if should_check_legacy_records:
             matching_records.extend(
                 self._get_legacy_matching_document_records(
                     model,
