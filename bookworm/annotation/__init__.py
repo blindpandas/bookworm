@@ -1,4 +1,3 @@
-
 import wx
 
 from bookworm import config, speech
@@ -238,11 +237,7 @@ class AnnotationService(BookwormService):
         if not self.reader.ready:
             return
         # Convert the real position from the event to a clean position.
-        clean_position = (
-            self.view.control_to_view_position(event.Position)
-            if hasattr(self.view, "control_to_view_position")
-            else event.Position - 1
-        )
+        clean_position = self.view.control_to_view_position(event.Position)
         if clean_position < 0:
             return
         evtdata = {}
@@ -396,16 +391,8 @@ class AnnotationService(BookwormService):
         # We need a new TextAttr object to avoid modifying a shared default style.
         new_attr = wx.TextAttr()
         # We must get the existing style from the REAL position to preserve other attributes.
-        real_start = (
-            view.view_to_control_position(start)
-            if hasattr(view, "view_to_control_position")
-            else start + 1
-        )
-        real_end = (
-            view.view_to_control_position(end)
-            if hasattr(view, "view_to_control_position")
-            else end + 1
-        )
+        real_start = view.view_to_control_position(start)
+        real_end = view.view_to_control_position(end)
         view.contentTextCtrl.GetStyle(real_start, new_attr)
         new_attr.SetFontUnderlined(enable)
         # We must apply the new style to the REAL, offset positions.
