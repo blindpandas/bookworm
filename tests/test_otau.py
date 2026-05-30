@@ -5,13 +5,13 @@ from bookworm.otau import UpdateChannel, is_newer_version
 
 def test_is_not_valid_identifier():
     with pytest.raises(TypeError):
-        channel = UpdateChannel("test")
+        UpdateChannel("test")
 
 
 def test_is_valid_identifier():
     valid_identifiers = ("", "a", "b", "rc")
     for identifier in valid_identifiers:
-        channel = UpdateChannel(identifier)
+        UpdateChannel(identifier)
 
 
 def test_is_major_version():
