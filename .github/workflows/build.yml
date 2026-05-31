@@ -230,7 +230,7 @@ jobs:
           ref: main
           fetch-depth: 1
 
-      - name: Download update_info.json from release
+      - name: Download and merge update_info.json from release
         shell: pwsh
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
@@ -240,13 +240,32 @@ jobs:
             Authorization = "token $env:PAT_TOKEN"
             Accept = "application/vnd.github.v3+json"
           }
+          $ReleaseUpdateInfoFile = Join-Path $env:RUNNER_TEMP "release_update_info.json"
           $Assets = Invoke-RestMethod -Headers $Headers -Uri $ReleaseAssetsUrl
           $UpdateInfoAsset = $Assets | Where-Object { $_.name -eq "update_info.json" }
           if ($null -ne $UpdateInfoAsset) {
-            Invoke-WebRequest -Headers $Headers -Uri $UpdateInfoAsset.browser_download_url -OutFile update_info.json
+            Invoke-WebRequest -Headers $Headers -Uri $UpdateInfoAsset.browser_download_url -OutFile $ReleaseUpdateInfoFile
           } else {
             throw "update_info.json not found in release assets"
           }
+          $ExistingUpdateInfo = Get-Content -Raw update_info.json | ConvertFrom-Json -AsHashtable
+          $ReleaseUpdateInfo = Get-Content -Raw $ReleaseUpdateInfoFile | ConvertFrom-Json -AsHashtable
+          $MergedUpdateInfo = [ordered]@{}
+          foreach ($channel in $ExistingUpdateInfo.Keys) {
+            $MergedUpdateInfo[$channel] = $ExistingUpdateInfo[$channel]
+          }
+          foreach ($channel in $ReleaseUpdateInfo.Keys) {
+            $MergedUpdateInfo[$channel] = $ReleaseUpdateInfo[$channel]
+          }
+          foreach ($channel in $ExistingUpdateInfo.Keys) {
+            if (-not $MergedUpdateInfo.Contains($channel)) {
+              throw "Merged update_info.json is missing existing channel '$channel'"
+            }
+          }
+          if (-not $MergedUpdateInfo.Contains("")) {
+            throw "Merged update_info.json is missing the stable update channel"
+          }
+          $MergedUpdateInfo | ConvertTo-Json -Depth 8 | Set-Content -Path update_info.json -Encoding utf8
 
       - name: Configure Git
         shell: pwsh
