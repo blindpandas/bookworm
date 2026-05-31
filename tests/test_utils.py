@@ -1,5 +1,3 @@
-import pytest
-
 from bookworm.utils import get_url_spans
 
 

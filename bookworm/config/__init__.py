@@ -47,7 +47,7 @@ class ConfigProvider:
         validated = self.config.validate(
             self.validator, copy=True, preserve_errors=True
         )
-        if validated == True:
+        if validated is True:
             self.config.write()
         else:
             log.error("Failed to validate config.")
@@ -66,6 +66,5 @@ def setup_config():
 
 
 def save():
-    global conf
     if conf is not None:
         conf.config.write()
