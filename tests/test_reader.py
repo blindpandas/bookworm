@@ -55,6 +55,23 @@ def test_document_uri_is_corrected_after_conversion(reader, asset):
     assert reader.document.uri == original_uri
 
 
+def test_fallback_uri_does_not_override_saved_position(reader, tmp_path):
+    path = tmp_path / "book.txt"
+    path.write_text("0123456789abcdef", encoding="utf-8")
+    uri = DocumentUri.from_filename(path)
+    uri.fallback_uri = DocumentUri.from_filename(path)
+
+    reader.load(uri)
+    reader.go_to_page(0, 7)
+    reader.save_current_position()
+    reader.unload()
+
+    reader.load(uri)
+
+    assert reader.view.get_insertion_point() == 7
+    reader.unload()
+
+
 def test_restore_position_for_mobi_document(reader, asset, engine):
     """
     Provides an additional test case for another convertible format (.mobi)

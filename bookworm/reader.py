@@ -506,7 +506,8 @@ class EBookReader:
         self._migrate_current_document_positions()
         # the current_page is set after the document position info and related models are created in order to allow dependent services to access the current_book
         self.current_page = 0
-        if open_args := self.document.uri.openner_args:
+        open_args = self.document.uri.openner_args
+        if any(key in open_args for key in ("page", "position")):
             page = int(open_args.get("page", 0))
             pos = int(open_args.get("position", 0))
             self.go_to_page(page, pos)
