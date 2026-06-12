@@ -573,12 +573,15 @@ class EBookReader:
 
     @active_section.setter
     def active_section(self, value: Section):
+        self.set_active_section(value)
+
+    def set_active_section(self, value: Section, *, update_view: bool = True):
         if (self.active_section is not None) and (
             value.unique_identifier == self.active_section.unique_identifier
         ):
             return
         self.__state["active_section"] = value
-        if self.document.has_toc_tree():
+        if update_view and self.document.has_toc_tree():
             self.view.set_state_on_section_change(value)
         reader_section_changed.send(self, active=value)
 
@@ -683,6 +686,9 @@ class EBookReader:
     def go_to_first_of_section(self, section: Section = None):
         section = section or self.active_section
         self.current_page = section.pager.first
+        if self.document.is_single_page_document() and section.text_range is not None:
+            target_pos = self.view.get_containing_line(section.text_range.start + 1)[0]
+            self.view.set_insertion_point(target_pos)
 
     def go_to_last_of_section(self, section: Section = None):
         section = section or self.active_section
