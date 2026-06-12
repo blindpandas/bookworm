@@ -295,11 +295,16 @@ class EmbeddedImageDialog(wx.Dialog):
     def onCharHook(self, event):
         keycode = event.GetKeyCode()
         modifiers = event.GetModifiers()
-        if keycode == wx.WXK_ESCAPE:
+        if keycode == wx.WXK_ESCAPE or (
+            keycode == ord("C") and modifiers == wx.MOD_ALT
+        ):
             self.Close()
             return
         if modifiers != wx.MOD_CONTROL:
             event.Skip()
+            return
+        if keycode == ord("W"):
+            self.Close()
             return
         if keycode == ord("="):
             self.set_zoom(1)

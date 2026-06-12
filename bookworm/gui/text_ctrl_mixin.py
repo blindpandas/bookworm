@@ -8,11 +8,11 @@ from bookworm import config
 log = logger.getChild(__name__)
 
 
-NAV_FOREWORD_KEYS = {
-    wx.WXK_SPACE,
+ACTION_ACTIVATION_KEYS = {
     wx.WXK_RETURN,
     wx.WXK_NUMPAD_ENTER,
 }
+NAV_FOREWORD_KEYS = ACTION_ACTIVATION_KEYS | {wx.WXK_SPACE}
 NAV_BACKWORD_KEYS = {
     wx.WXK_BACK,
 }
@@ -97,6 +97,13 @@ class ContentViewCtrlMixin(wx.TextCtrl):
             event.GetKeyCode() == wx.WXK_WINDOWS_MENU
         ):
             # This event is redundant
+            return True
+        # Keep native RichEdit from beeping; KEY_UP still runs the activation.
+        elif (
+            evtType == wx.EVT_CHAR_HOOK.typeId
+            and event.GetModifiers() == wx.MOD_CONTROL
+            and event.GetKeyCode() in ACTION_ACTIVATION_KEYS
+        ):
             return True
         elif (
             isinstance(event, wx.KeyEvent)
