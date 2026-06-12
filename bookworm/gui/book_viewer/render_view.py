@@ -166,14 +166,18 @@ class EmbeddedImageDialog(wx.Dialog):
     def _build_controls(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
         toolbar = wx.ToolBar(self, -1, style=wx.TB_FLAT | wx.TB_HORIZONTAL)
-        self._add_tool(toolbar, wx.ID_ZOOM_IN, _("Zoom In"), wx.ART_PLUS)
-        self._add_tool(toolbar, wx.ID_ZOOM_OUT, _("Zoom Out"), wx.ART_MINUS)
-        self._add_tool(toolbar, self.ID_RESET_ZOOM, _("Actual Size"), wx.ART_GO_HOME)
+        self._add_tool(toolbar, wx.ID_ZOOM_IN, _("Zoom In"), wx.ART_PLUS, "Ctrl+=")
+        self._add_tool(toolbar, wx.ID_ZOOM_OUT, _("Zoom Out"), wx.ART_MINUS, "Ctrl+-")
+        self._add_tool(
+            toolbar, self.ID_RESET_ZOOM, _("Actual Size"), wx.ART_GO_HOME, "Ctrl+0"
+        )
         toolbar.AddSeparator()
-        self._add_tool(toolbar, wx.ID_SAVE, _("Save As"), wx.ART_FILE_SAVE)
-        self._add_tool(toolbar, wx.ID_COPY, _("Copy"), wx.ART_COPY)
+        self._add_tool(toolbar, wx.ID_SAVE, _("Save As"), wx.ART_FILE_SAVE, "Ctrl+S")
+        self._add_tool(toolbar, wx.ID_COPY, _("Copy"), wx.ART_COPY, "Ctrl+C")
         toolbar.AddSeparator()
-        self._add_tool(toolbar, wx.ID_CLOSE, _("Close"), wx.ART_CLOSE)
+        self._add_tool(
+            toolbar, wx.ID_CLOSE, _("Close"), wx.ART_CLOSE, "Esc, Ctrl+W, Alt+C"
+        )
         toolbar.Realize()
         sizer.Add(toolbar, 0, wx.EXPAND)
 
@@ -198,10 +202,11 @@ class EmbeddedImageDialog(wx.Dialog):
         self.Bind(wx.EVT_TOOL, self.onCopyImage, id=wx.ID_COPY)
         self.Bind(wx.EVT_TOOL, lambda event: self.Close(), id=wx.ID_CLOSE)
 
-    def _add_tool(self, toolbar, tool_id, label, art_id):
+    def _add_tool(self, toolbar, tool_id, label, art_id, shortcut=None):
         bitmap = wx.ArtProvider.GetBitmap(art_id, wx.ART_TOOLBAR, (16, 16))
         toolbar.AddTool(tool_id, label, bitmap)
-        toolbar.SetToolShortHelp(tool_id, label)
+        short_help = label if shortcut is None else f"{label} ({shortcut})"
+        toolbar.SetToolShortHelp(tool_id, short_help)
 
     def _normalize_suggested_filename(self, suggested_filename):
         filename = Path(suggested_filename or "image.png").name or "image.png"
