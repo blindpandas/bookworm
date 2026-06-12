@@ -107,6 +107,7 @@ tts_config_spec = {
         ask_to_switch_voice_to_current_book_language="boolean(default=True)",
         enable_global_media_keys="boolean(default=False)",
         play_image_earcon_when_navigating_text="boolean(default=True)",
+        include_empty_alt_images_in_image_navigation="boolean(default=True)",
     ),
     "speech": dict(
         engine="string(default='sapi5')",
