@@ -78,6 +78,16 @@ class ReadingPanel(SettingsPanel):
             choices=[_("Cursor position"), _("Beginning of page")],
         )
         # Translators: the label of a group of controls in the reading page
+        # related to structural navigation.
+        navigationBox = self.make_static_box(_("Navigation"))
+        wx.CheckBox(
+            navigationBox,
+            -1,
+            # Translators: the label of a checkbox
+            _("Include images with empty alternative text in image navigation"),
+            name="reading.include_empty_alt_images_in_image_navigation",
+        )
+        # Translators: the label of a group of controls in the reading page
         # of the settings related to behavior during reading  aloud
         miscBox = self.make_static_box(_("During Reading Aloud"))
         wx.CheckBox(
