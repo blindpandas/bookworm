@@ -8,14 +8,13 @@ import wx
 from bookworm.commandline_handler import run_subcommand_in_a_new_process
 from bookworm.concurrency import call_threaded, threaded_worker
 from bookworm.document import DocumentIOError
-from bookworm.gui.settings import ReconciliationStrategies, SettingsPanel
+from bookworm.gui.settings import SettingsPanel
 from bookworm.logger import logger
 from bookworm.signals import reader_book_loaded
 
 from .local_bookshelf.dialogs import EditDocumentClassificationDialog
 from .local_bookshelf.models import Document
 from .local_bookshelf.tasks import issue_add_document_request
-from .window import BookshelfWindow
 
 log = logger.getChild(__name__)
 
@@ -123,5 +122,5 @@ class BookshelfMenu(wx.Menu):
         wx.CallAfter(
             self.Enable,
             StatefulBookshelfMenuIds.add_current_book_to_shelf,
-            not Document.select().where(Document.uri == sender.document.uri).count(),
+            not Document.select().where(Document.uri == sender.document.uri).exists(),
         )

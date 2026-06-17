@@ -3,7 +3,7 @@
 from io import StringIO
 
 config_spec = StringIO(
-    f"""
+    """
 [general]
     language = string(default="default")
     announce_ui_messages = boolean(default=True)

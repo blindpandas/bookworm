@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import codecs
 from functools import lru_cache
-from io import BytesIO, StringIO
+from io import BytesIO
 from xml.sax.saxutils import escape
 
 import attr
@@ -62,7 +62,7 @@ class TextContentDecoder:
     @classmethod
     def from_filename(
         cls,
-        filename: os.PathLike,
+        filename: t.PathLike,
         prefered_encoding="utf-8",
         fallback_encoding=FALLBACK_ENCODING,
     ):
@@ -70,7 +70,7 @@ class TextContentDecoder:
             return cls(file.read(), prefered_encoding, fallback_encoding)
 
     def get_text(self):
-        text, encoding = self.get_text_and_explain()
+        text, _ = self.get_text_and_explain()
         return text
 
     def get_text_and_explain(self) -> tuple[str, str]:

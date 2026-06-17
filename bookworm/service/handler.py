@@ -38,10 +38,9 @@ BUILTIN_SERVICES = (
 class ServiceHandler:
     """A singleton to manage services."""
 
-    registered_services = []
-
     def __init__(self, view):
         self.view = view
+        self.registered_services = []
         app_shuttingdown.connect(self.on_shutdown, weak=False)
 
     def register_builtin_services(self):

@@ -6,9 +6,7 @@ import inspect
 import multiprocessing as mp
 import os
 import sys
-import threading
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-from contextlib import suppress
+from concurrent.futures import Future, ProcessPoolExecutor, ThreadPoolExecutor
 from enum import IntEnum
 from functools import partial, wraps
 from traceback import format_exception
@@ -17,7 +15,7 @@ import attr
 
 import bookworm.typehints as t
 from bookworm.logger import logger
-from bookworm.signals import app_shuttingdown, app_starting
+from bookworm.signals import app_shuttingdown
 
 log = logger.getChild(__name__)
 
@@ -37,7 +35,7 @@ def _shutdown_concurrent_workers(sender):
     process_worker.shutdown(wait=False)
 
 
-def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., "Future"]:
+def call_threaded(func: t.Callable[..., None]) -> t.Callable[..., Future]:
     """Call `func` in a separate thread. It wraps the function
     in another function that returns a `concurrent.futures.Future`
     object when called.
@@ -158,7 +156,7 @@ class QueueProcess(mp.Process):
                     gen.close()
         except StopIteration:
             self.channel.done()
-        except Exception as e:
+        except Exception:
             self.channel.exception(*sys.exc_info())
 
     def close(self):

@@ -3,10 +3,8 @@
 import wx
 from more_itertools import first_true
 
-from bookworm import app, paths
+from bookworm import paths
 from bookworm.logger import logger
-
-from .localeinfo import LocaleInfo
 
 log = logger.getChild(__name__)
 

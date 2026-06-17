@@ -2,10 +2,11 @@ from types import SimpleNamespace
 
 import pytest
 
+from bookworm.document import SINGLE_PAGE_DOCUMENT_PAGER, Section
 from bookworm.gui import book_viewer
 from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.gui.book_viewer.position_mapping import TextCtrlPositionMap
-from bookworm.structured_text import SemanticElementType
+from bookworm.structured_text import SemanticElementType, TextRange
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 
 
@@ -33,6 +34,19 @@ class SetContentHarness(PositionMappingHarness):
     def get_content_view_text_style(self, font_size=None):
         assert font_size is None
         return self.content_style
+
+
+class TocFocusHarness:
+    def __init__(self, insertion_point, reader):
+        self.insertion_point = insertion_point
+        self.reader = reader
+        self.selected_sections = []
+
+    def get_insertion_point(self):
+        return self.insertion_point
+
+    def tocTreeSetSelection(self, section):  # noqa: N802
+        self.selected_sections.append(section)
 
 
 class StyleRecordingTextCtrl:
@@ -93,6 +107,21 @@ class ContainingLineTextCtrl:
         return self.line_start, self.line_end
 
 
+class FakeFocusEvent:
+    def __init__(self):
+        self.skipped = False
+        self.focused = False
+
+    def Skip(self, skip=True):  # noqa: N802
+        self.skipped = skip
+
+    def GetEventObject(self):  # noqa: N802
+        return self
+
+    def SetFocus(self):  # noqa: N802
+        self.focused = True
+
+
 def line_bounds(text, pos):
     pos = max(0, min(pos, len(text)))
     start = text.rfind("\n", 0, pos) + 1
@@ -104,6 +133,48 @@ def line_bounds(text, pos):
 
 def noop(*_args, **_kwargs):
     pass
+
+
+def make_section(title, start, stop):
+    return Section(
+        title=title,
+        pager=SINGLE_PAGE_DOCUMENT_PAGER,
+        text_range=TextRange(start, stop),
+    )
+
+
+def test_toc_focus_syncs_tree_without_moving_single_page_reading_position():
+    old_section = make_section("Old", 0, 10)
+    current_section = make_section("Current", 40, 80)
+    insertion_point = 50
+
+    class FakeReader:
+        ready = True
+        active_section = old_section
+
+        def __init__(self):
+            self.set_active_section_calls = []
+            self.document = SimpleNamespace(
+                is_single_page_document=lambda: True,
+                get_section_at_position=lambda _position: current_section,
+            )
+
+        def set_active_section(self, section, update_view=True):
+            self.set_active_section_calls.append((section, update_view))
+            self.active_section = section
+
+    reader = FakeReader()
+    viewer = TocFocusHarness(insertion_point, reader)
+    event = FakeFocusEvent()
+
+    BookViewerWindow.onTocTreeFocus(viewer, event)
+
+    assert event.skipped
+    assert event.focused
+    assert reader.active_section is current_section
+    assert reader.set_active_section_calls == [(current_section, False)]
+    assert viewer.selected_sections == [current_section]
+    assert viewer.insertion_point == insertion_point
 
 
 def test_position_mapping_handles_non_bmp_rich_edit_offsets():

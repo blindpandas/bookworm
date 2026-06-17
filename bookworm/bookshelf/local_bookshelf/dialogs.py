@@ -16,13 +16,10 @@ from bookworm.gui.components import (
     SimpleDialog,
     make_sized_static_box,
 )
-from bookworm.logger import logger
 from bookworm.reader import EBookReader
 from bookworm.resources import sounds
 
-from .models import Category, Document, DocumentTag, Page, Tag
-
-log = logger.getChild(__name__)
+from .models import Category, Page
 
 
 class EditDocumentClassificationDialog(SimpleDialog):
@@ -66,7 +63,7 @@ class EditDocumentClassificationDialog(SimpleDialog):
             self.categoryCombo.SetStringSelection(self.given_category)
 
     def ShowModal(self):
-        if (retval := super().ShowModal()) == wx.ID_OK:
+        if super().ShowModal() == wx.ID_OK:
             return (
                 self.categoryCombo.GetValue().strip(),
                 tuple(tg.strip() for tg in self.tagsTextCtrl.GetValue().split(" ")),
@@ -99,7 +96,7 @@ class AddFolderToLocalBookshelfDialog(SimpleDialog):
         self.addToFTSCheckbox.SetValue(True)
 
     def ShowModal(self):
-        if (retval := super().ShowModal()) == wx.ID_OK:
+        if super().ShowModal() == wx.ID_OK:
             selected_folder = self.folderCtrl.GetValue()
             if os.path.isdir(selected_folder):
                 return (
@@ -128,7 +125,7 @@ class SearchBookshelfDialog(SimpleDialog):
         self.shouldSearchInContent.SetValue(True)
 
     def ShowModal(self):
-        if (retval := super().ShowModal()) == wx.ID_OK:
+        if super().ShowModal() == wx.ID_OK:
             search_query = self.searchQueryTextCtrl.GetValue()
             if not search_query.strip():
                 return

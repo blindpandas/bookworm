@@ -634,17 +634,17 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def onTocTreeFocus(self, event):
         event.Skip(True)
-        if not self.reader.document.is_single_page_document():
+        if not self.reader.ready or not self.reader.document.is_single_page_document():
             return
+        insertion_point = self.get_insertion_point()
         condition = (
-            self.reader.ready
-            and self.reader.active_section is not None
-            and self.get_insertion_point() not in self.reader.active_section.text_range
+            self.reader.active_section is not None
+            and insertion_point not in self.reader.active_section.text_range
         )
         if condition:
-            self.reader.active_section = self.reader.document.get_section_at_position(
-                self.get_insertion_point()
-            )
+            section = self.reader.document.get_section_at_position(insertion_point)
+            self.reader.set_active_section(section, update_view=False)
+            self.tocTreeSetSelection(section)
             event.GetEventObject().SetFocus()
 
     def onTOCItemClick(self, event):

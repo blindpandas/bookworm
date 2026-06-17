@@ -3,13 +3,10 @@
 import gettext
 import locale as pylocale
 import os
-from collections import OrderedDict
-from contextlib import suppress
 from pathlib import Path
 
 from bookworm import app, config, paths
 from bookworm.logger import logger
-from bookworm.signals import app_started
 from bookworm.user import get_user_locale
 from bookworm.user import set_app_locale as _set_app_locale
 
@@ -54,7 +51,7 @@ def get_available_locales(force_update=False):
 
 def set_locale(locale_identifier):
     log.debug(f"Setting application locale to {locale_identifier}.")
-    available_locales = tuple(get_available_locales().values())
+    get_available_locales()
     if locale_identifier in _AVAILABLE_LOCALES:
         localeinfo = _AVAILABLE_LOCALES[locale_identifier]
     else:
@@ -70,10 +67,10 @@ def set_locale(locale_identifier):
         os.environ["LANG"] = localeinfo.pylang
         _set_app_locale(localeinfo)
         app.current_language = localeinfo
-    except Exception as e:
+    except Exception:
         if lang != "en":
             log.error(
-                f"An error was occured while initializing i18n system.", exc_info=True
+                "An error was occured while initializing i18n system.", exc_info=True
             )
         os.environ["LANG"] = "en"
         _set_app_locale(LocaleInfo("en"))

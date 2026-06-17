@@ -61,7 +61,7 @@ class UpdateInfo(RootModel[t.Dict[UpdateChannel, VersionInfo]]):
 
     @property
     def channels(self) -> Tuple[UpdateChannel]:
-        return tuple(self.root.keys())
+        return tuple(self.root)
 
     def get_update_info_for_channel(self, channel_identifier: str) -> VersionInfo:
         if channel_identifier is None:
