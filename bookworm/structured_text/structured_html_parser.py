@@ -93,12 +93,24 @@ INSCRIPTIS_CONFIG = ParserConfig(
 )
 
 
+def should_include_empty_alt_images_in_navigation():
+    try:
+        from bookworm import config
+
+        return config.conf["reading"].as_bool(
+            "include_empty_alt_images_in_image_navigation"
+        )
+    except (AttributeError, KeyError, TypeError, ValueError):
+        return True
+
+
 class StructuredHtmlParser(Inscriptis):
     """Subclass of ```inscriptis.Inscriptis``` to provide the position of structural elements."""
 
     __slots__ = [
         "_display_text",
         "_image_elements",
+        "_include_empty_alt_images",
         "_storage_text",
         "_table_elements",
         "_text_position_map",
@@ -121,19 +133,27 @@ class StructuredHtmlParser(Inscriptis):
         html_string = ftfy.fix_text(html_string, config)
         return remove_excess_blank_lines(html_string)
 
-    def __init__(self, *args, include_images=True, **kwargs):
+    def __init__(self, *args, include_images=True, include_empty_alt_images=None, **kwargs):
         self.link_range_to_target = {}
         self.anchors = {}
         self.html_id_ranges = {}
         self.styled_elements = {}
         self._table_elements = []
         self._image_elements = []
+        self._include_empty_alt_images = (
+            should_include_empty_alt_images_in_navigation()
+            if include_empty_alt_images is None
+            else bool(include_empty_alt_images)
+        )
         self._display_text = ""
         self._storage_text = ""
         self._text_position_map = TextPositionMap.identity(0)
         kwargs.setdefault("config", INSCRIPTIS_CONFIG)
         if include_images and args:
-            self._prepare_image_elements(args[0])
+            self._prepare_image_elements(
+                args[0],
+                include_empty_alt_images=self._include_empty_alt_images,
+            )
         super().__init__(*args, **kwargs)
         self._display_text = remove_excess_blank_lines(INSCRIPTIS_GET_TEXT(self))
         self._storage_text, self._text_position_map = TextPositionMap.from_collapsed_ranges(
@@ -168,7 +188,10 @@ class StructuredHtmlParser(Inscriptis):
         if (
             tree.tag == "img"
             and (src := tree.attrib.get("src", ""))
-            and self._is_navigable_image(tree)
+            and self._is_navigable_image(
+                tree,
+                include_empty_alt_images=self._include_empty_alt_images,
+            )
         ):
             label = self._get_image_label(tree)
             placeholder = self._get_image_placeholder(label)
@@ -208,20 +231,23 @@ class StructuredHtmlParser(Inscriptis):
             return 0
 
     @classmethod
-    def _prepare_image_elements(cls, tree):
+    def _prepare_image_elements(cls, tree, *, include_empty_alt_images=False):
         for image in tree.iter("img"):
-            if not cls._is_navigable_image(image):
+            if not cls._is_navigable_image(
+                image,
+                include_empty_alt_images=include_empty_alt_images,
+            ):
                 continue
             label = cls._get_image_label(image)
             placeholder = cls._get_image_placeholder(label)
             image.text = placeholder if image.text is None else f"{placeholder} {image.text}"
 
     @classmethod
-    def _is_navigable_image(cls, image):
+    def _is_navigable_image(cls, image, *, include_empty_alt_images=False):
         return (
             bool(image.attrib.get("src", ""))
             and not cls._is_hidden_image(image)
-            and not cls._is_decorative_image(image)
+            and (include_empty_alt_images or not cls._is_decorative_image(image))
         )
 
     @classmethod
@@ -307,7 +333,14 @@ class StructuredHtmlParser(Inscriptis):
             image_info.text_range.stop = text_range.stop
 
     def _get_table_image_infos(self, table):
-        table_image_count = sum(1 for image in table.iter("img") if self._is_navigable_image(image))
+        table_image_count = sum(
+            1
+            for image in table.iter("img")
+            if self._is_navigable_image(
+                image,
+                include_empty_alt_images=self._include_empty_alt_images,
+            )
+        )
         if not table_image_count:
             return ()
         return self._image_elements[-table_image_count:]
@@ -394,16 +427,27 @@ class StructuredHtmlParser(Inscriptis):
         return html_content
 
     @classmethod
-    def from_string(cls, html_string, *, include_images=True):
+    def from_string(cls, html_string, *, include_images=True, include_empty_alt_images=None):
         html_content = cls.preprocess_html_string(html_string)
         return cls(
             html_parser.fromstring(html_content),
             include_images=include_images,
+            include_empty_alt_images=include_empty_alt_images,
         )
 
     @classmethod
-    def from_lxml_html_tree(cls, lxml_html_tree, *, include_images=True):
-        return cls(lxml_html_tree, include_images=include_images)
+    def from_lxml_html_tree(
+        cls,
+        lxml_html_tree,
+        *,
+        include_images=True,
+        include_empty_alt_images=None,
+    ):
+        return cls(
+            lxml_html_tree,
+            include_images=include_images,
+            include_empty_alt_images=include_empty_alt_images,
+        )
 
     def get_text(self):
         return self._display_text

@@ -381,7 +381,8 @@ def test_structured_html_parser_skips_images_with_empty_alt_text():
             <img src="images/decorative.png" alt="">
             <img src="images/content.png" alt="Content">
         </body></html>
-        """
+        """,
+        include_empty_alt_images=False,
     )
 
     text = parser.get_text()
@@ -389,6 +390,23 @@ def test_structured_html_parser_skips_images_with_empty_alt_text():
 
     assert [text[start:stop] for start, stop in ranges] == ["[Content]"]
     assert parser.get_image_info(0).src == "images/content.png"
+
+
+def test_structured_html_parser_includes_images_with_empty_alt_text_by_default():
+    parser = StructuredHtmlParser.from_string(
+        """
+        <html><body>
+            <img src="images/empty.png" alt="">
+            <img src="images/content.png" alt="Content">
+        </body></html>
+        """
+    )
+
+    text = parser.get_text()
+    ranges = parser.semantic_elements[SemanticElementType.FIGURE]
+
+    assert [text[start:stop] for start, stop in ranges] == ["[Image]", "[Content]"]
+    assert parser.get_image_info(0).src == "images/empty.png"
 
 
 def test_structured_html_parser_keeps_empty_alt_images_with_title():
@@ -526,7 +544,8 @@ def test_structured_html_parser_keeps_figure_ranges_and_image_info_in_lockstep()
                 </tr>
             </table>
         </body></html>
-        """
+        """,
+        include_empty_alt_images=False,
     )
 
     text = parser.get_text()
