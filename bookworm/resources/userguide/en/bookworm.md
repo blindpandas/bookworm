@@ -28,6 +28,8 @@ Bookworm runs on the Microsoft Windows operating system. It works well with scre
 
 To install and run Bookworm on your computer, visit the [Bookworm releases page](https://github.com/blindpandas/bookworm/releases) and download the latest release.
 
+Current builds require Windows 8.1 or later. Windows 7 and earlier are not supported.
+
 Bookworm comes in three flavors:
 
 * 32-bit installer for computers running 32-bit or 64-bit Windows
