@@ -19,6 +19,10 @@
 Bookworm's official website is currently no more. The domain which has worked up until now has currently not been renewed, and as such bookworm will no longer be provided there until further notice. We urge you not to interact with that domain, as we're no longer in charge of it.
 You can keep downloading bookworm from the [releases page](https://github.com/blindpandas/bookworm/releases) for the most recent ones.
 
+## Supported Platforms
+
+Bookworm is distributed for Microsoft Windows. Current builds require Windows 8.1 or later because Bookworm is built with Python 3.11. Windows 7 and earlier are not supported.
+
 ## Development
 
 If you would like to contribute to the development of *Bookworm*, follow these steps to run Bookworm on your computer.
