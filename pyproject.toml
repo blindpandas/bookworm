@@ -7,7 +7,7 @@ name = "bookworm"
 description = "The universally accessible document reader"
 readme = "readme.md"
 requires-python = ">=3.11"
-license = "GPL-2.0-only"
+license = "GPL-2.0-or-later"
 authors = [
     {name = "Blind Pandas Team", email = "info@blindpandas.org"}
 ]
@@ -25,6 +25,7 @@ classifiers = [
     "Operating System :: Microsoft :: Windows :: Windows 11 ",
     "Operating System :: POSIX :: Linux ",
     "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
     "Topic :: Adaptive Technologies",
     "Topic :: Desktop Environment :: Gnome",
     "Topic :: Education",

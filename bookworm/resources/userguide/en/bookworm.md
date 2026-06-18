@@ -362,4 +362,4 @@ To keep yourself updated with the latest news about Bookworm, visit the [Bookwor
 
 ## License
 
-**Bookworm** is copyright (c) 2026 Blind Pandas and Bookworm contributors. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2026 Blind Pandas and Bookworm contributors. It is licensed under the [GNU General Public License version 2 or later](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
