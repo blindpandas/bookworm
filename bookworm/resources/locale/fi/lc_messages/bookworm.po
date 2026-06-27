@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2026-06-18 08:43+0300\n"
-"PO-Revision-Date: 2026-06-18 22:10+0300\n"
+"PO-Revision-Date: 2026-06-28 00:53+0300\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: fi_FI <janikinnunen340@gmail.com>\n"
 "Language: fi\n"
@@ -110,7 +110,7 @@ msgstr "Korostus lisätty"
 
 #: ../../../../annotation/__init__.py:298
 msgid "Line contains highlight"
-msgstr "Rivi sisältää korostuksen"
+msgstr "Rivillä on korostus"
 
 #: ../../../../annotation/__init__.py:301
 msgid "Has comment"
@@ -339,7 +339,7 @@ msgstr "Puhu kirjanmerkki sen kohdalle siirryttäessä"
 
 #: ../../../../annotation/annotation_gui.py:55
 msgid "Select the bookmarked line when jumping"
-msgstr "Valitse kirjanmerkiksi lisätty rivi sen kohdalle siirryttäessä"
+msgstr "Valitse kirjanmerkin sisältävä rivi sen kohdalle siirryttäessä"
 
 #: ../../../../annotation/annotation_gui.py:62
 msgid "Use visual styles to indicate annotations"
@@ -434,7 +434,7 @@ msgstr "Virhe"
 
 #: ../../../../annotation/annotation_gui.py:220
 msgid "Another note is currently overlapping the selected position."
-msgstr "Toinen muistiinpano on tällä hetkellä valitun sijainnin päällä."
+msgstr "Valitussa kohdassa on jo muistiinpano."
 
 #: ../../../../annotation/annotation_gui.py:224
 msgid "New Comment"
@@ -446,7 +446,7 @@ msgstr "Kommentti:"
 
 #: ../../../../annotation/annotation_gui.py:244
 msgid "Tag Comment"
-msgstr "Merkitse kommentti tunnisteella"
+msgstr "Lisää kommenttiin tunniste"
 
 #: ../../../../annotation/annotation_gui.py:246
 #: ../../../../annotation/annotation_gui.py:305
@@ -475,7 +475,7 @@ msgstr "Valinta korostettu"
 
 #: ../../../../annotation/annotation_gui.py:303
 msgid "Tag Highlight"
-msgstr "Merkitse korostus tunnisteella"
+msgstr "Lisää korostukseen tunniste"
 
 #: ../../../../annotation/annotation_gui.py:318
 #, python-brace-format
@@ -504,7 +504,7 @@ msgstr "Luku: {section_title}"
 #: ../../../../annotation/exporters/core_renderers.py:32
 #, python-brace-format
 msgid "Tagged: {tag}"
-msgstr "Merkitty tunnisteella: {tag}"
+msgstr "Tunniste lisätty: {tag}"
 
 #: ../../../../annotation/exporters/core_renderers.py:42
 msgid "End of File"
@@ -523,11 +523,11 @@ msgstr "Markdown"
 #: ../../../../annotation/exporters/core_renderers.py:94
 #, python-brace-format
 msgid "Tagged: {tags}"
-msgstr "Merkitty tunnisteilla: {tags}"
+msgstr "Tunnisteet lisätty: {tags}"
 
 #: ../../../../annotation/exporters/core_renderers.py:126
 msgid "Tagged"
-msgstr "Merkitty tunnisteella"
+msgstr "Tunniste lisätty"
 
 #: ../../../../annotation/exporters/core_renderers.py:137
 msgid "HTML"
@@ -572,11 +572,11 @@ msgstr "Äskettäin lisätyt"
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:117
 msgid "Currently Reading"
-msgstr "Luen tällä hetkellä"
+msgstr "Luettavana"
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:126
 msgid "Want to Read"
-msgstr "Haluan lukea"
+msgstr "Luettavaksi"
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:135
 msgid "Favorites"
@@ -627,12 +627,12 @@ msgstr "Poista virheelliset asiakirjat..."
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:224
 msgid "Import Documents To Bookshelf"
-msgstr "Tuo asiakirjoja kirjahyllyyn"
+msgstr "Tuo kirjahyllyyn asiakirjoja"
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:240
 #: ../../../../bookshelf/local_bookshelf/__init__.py:649
 msgid "Edit reading list/collections"
-msgstr "Muokkaa lukulistaa/kokoelmia"
+msgstr "Muokkaa lukulistaa tai kokoelmia"
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:257
 msgid "Importing document..."
@@ -680,7 +680,7 @@ msgstr "Kirjahyllystä hakeminen epäonnistui,"
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:397
 msgid "Full Text Search Results"
-msgstr "Koko tekstin hakutulokset"
+msgstr "Tekstin hakutulokset"
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:408
 msgid ""
@@ -694,10 +694,10 @@ msgid ""
 msgstr ""
 "Kaikista paikalliseen kirjahyllyyn lisäämistäsi asiakirjoista luodaan "
 "kopiot.\n"
-"Toiminnon jälkeen voit avata kirjahyllyyn tallentamiasi asiakirjoja, vaikka "
-"olisit poistanut tai siirtänyt alkuperäiset tiedostot .\n"
+"Tämän toiminnon suoritettuasi voit avata kirjahyllyyn tallentamiasi "
+"asiakirjoja, vaikka olisit poistanut tai siirtänyt alkuperäiset tiedostot.\n"
 "\n"
-"Tämä toiminto luo kaksoiskappaleet kaikista lisäämistäsi asiakirjoista."
+"Lisäämistäsi asiakirjoista luodaan kaksoiskappaleet."
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:411
 msgid "Bundle Documents?"
@@ -727,8 +727,8 @@ msgid ""
 "This action will clear invalid documents from your bookshelf.\n"
 "Invalid documents are the documents which no longer exist on your computer."
 msgstr ""
-"Tämä toiminto poistaa virheelliset asiakirjat kirjahyllystä.\n"
-"Virheelliset asiakirjat ovat sellaisia, joita ei enää ole tietokoneellasi."
+"Tämä toiminto poistaa kirjahyllystä virheelliset asiakirjat.\n"
+"Ne ovat sellaisia, joita ei enää ole tietokoneellasi."
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:475
 msgid "Clear Invalid Documents?"
@@ -793,23 +793,23 @@ msgstr "Lisää uusi"
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:575
 msgid "&Edit reading list / collections..."
-msgstr "&Muokkaa lukulistaa/kokoelmia..."
+msgstr "&Muokkaa lukulistaa tai kokoelmia..."
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:581
 msgid "Remove from &currently reading"
-msgstr "Poista &luen tällä hetkellä -listalta"
+msgstr "Poista &luettavana-listalta"
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:584
 msgid "Add to &currently reading"
-msgstr "Lisää l&uen tällä hetkellä -listalle"
+msgstr "Lisää l&uettavana-listalle"
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:591
 msgid "Remove from &want to read"
-msgstr "Poista &haluan lukea -listalta"
+msgstr "Poista luettava&ksi-listalta"
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:594
 msgid "Add to &want to read"
-msgstr "Lisää h&aluan lukea -listalle"
+msgstr "Lisää luett&avaksi-listalle"
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:601
 msgid "Remove from &favorites"
@@ -830,8 +830,8 @@ msgid ""
 "Title: {title}\n"
 "This will remove the document from all tags and categories."
 msgstr ""
-"Haluatko varmasti poistaa tämän asiakirjan kirjahyllystäsi?\n"
-"Title: {title}\n"
+"Haluatko varmasti poistaa kirjahyllystä tämän asiakirjan?\n"
+"Nimi: {title}\n"
 "Asiakirja poistetaan kaikista tunnisteista ja kategorioista."
 
 #: ../../../../bookshelf/local_bookshelf/__init__.py:680
@@ -850,7 +850,7 @@ msgstr "Lukulista"
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:52
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:94
 msgid "Add to full-text search index"
-msgstr "Lisää kokotekstin hakuindeksiin"
+msgstr "Lisää koko tekstin hakuindeksiin"
 
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:81
 msgid "Select a folder:"
@@ -870,27 +870,27 @@ msgstr "Hakukenttä"
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:230
 #: ../../../../gui/book_viewer/core_dialogs.py:337
 msgid "Title"
-msgstr "Nimeke"
+msgstr "Nimi"
 
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:155
 msgid "Title matches"
-msgstr "Nimekeosumat"
+msgstr "Hakutulokset nimistä"
 
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:158
 msgid "Title Matches"
-msgstr "Nimeke täsmää"
+msgstr "Hakutulokset nimistä"
 
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:165
 msgid "Content matches"
-msgstr "Sisältöosumat"
+msgstr "Hakutulokset tekstisisällöstä"
 
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:168
 msgid "Content Matches"
-msgstr "Sisältö täsmää"
+msgstr "Hakutulokset tekstisisällöstä"
 
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:184
 msgid "Snippet"
-msgstr "Katkelma"
+msgstr "Tekstikatkelma"
 
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:228
 msgid "File Name"
@@ -968,15 +968,15 @@ msgstr "&Avaa"
 
 #: ../../../../bookshelf/window.py:242
 msgid "Open in &system viewer"
-msgstr "Avaa &järjestelmän katseluohjelmassa"
+msgstr "Avaa &oletusarvoisessa katseluohjelmassa"
 
 #: ../../../../bookshelf/window.py:247
 msgid "Edit &title"
-msgstr "Muokkaa &nimekettä"
+msgstr "Muokkaa &nimeä"
 
 #: ../../../../bookshelf/window.py:300
 msgid "No matching documents"
-msgstr "Vastaavia asiakirjoja ei ole"
+msgstr "Ei hakutuloksia"
 
 #: ../../../../bookshelf/window.py:354 ../../../../bookshelf/window.py:366
 msgid "Retrieving items..."
@@ -1015,7 +1015,7 @@ msgstr "Lukemisen oletustila"
 
 #: ../../../../document/features.py:54
 msgid "Reading order"
-msgstr "Lukemisjärjestys"
+msgstr "Lukujärjestys"
 
 #: ../../../../document/features.py:55
 msgid "Physical layout"
@@ -1027,7 +1027,7 @@ msgstr "Sivutettu"
 
 #: ../../../../document/features.py:57
 msgid "Chapter by chapter"
-msgstr "Luku kerrallaan"
+msgstr "Luvuittain"
 
 #: ../../../../document/features.py:58
 msgid "Clean text"
@@ -1073,11 +1073,11 @@ msgstr "Kindle-e-kirja"
 
 #: ../../../../document/formats/odf.py:91
 msgid "Open Document Text"
-msgstr "Open Document -asiakirja"
+msgstr "ODT-asiakirja"
 
 #: ../../../../document/formats/odf.py:201
 msgid "Open Document Presentation"
-msgstr "Open Document -esitys"
+msgstr "ODP-esitys"
 
 #: ../../../../document/formats/odf.py:285
 #: ../../../../document/formats/powerpoint.py:156
@@ -1087,7 +1087,7 @@ msgstr "Dia {number}"
 
 #: ../../../../document/formats/pandoc.py:38
 msgid "Rich Text Document"
-msgstr "Rich Text -asiakirja"
+msgstr "RTF-asiakirja"
 
 #: ../../../../document/formats/pandoc.py:47
 msgid "Docbook Document"
@@ -1111,7 +1111,7 @@ msgstr "Unix-käsikirjan sivu"
 
 #: ../../../../document/formats/pdf.py:79
 msgid "Portable Document (PDF)"
-msgstr "Portable Document -asiakirja (PDF)"
+msgstr "PDF-asiakirja"
 
 #: ../../../../document/formats/plain_text.py:31
 msgid "Plain Text File"
@@ -1186,7 +1186,7 @@ msgstr "Asiakirjan avaaminen ei onnistu"
 
 #: ../../../../gui/book_viewer/__init__.py:101
 msgid "The document you are trying to open could not be opened in Bookworm."
-msgstr "Asiakirjaa, jota yrität avata, ei voitu avata Bookwormissa."
+msgstr "Tätä asiakirjaa ei voitu avata Bookwormissa."
 
 #: ../../../../gui/book_viewer/__init__.py:112
 msgid "Opening document, please wait..."
@@ -1502,7 +1502,7 @@ msgstr ""
 "muokata Free Software Foundationin julkaiseman GNU General Public License "
 "-lisenssin, joko versio 2:n tai valinnan mukaan minkä tahansa uudemman "
 "version ehtojen mukaisesti.\n"
-"Tätä ohjelmaa jaetaan siinä toivossa, että siitä on hyötyä, mutta ILMAN "
+"Tätä sovellusta jaetaan siinä toivossa, että siitä on hyötyä, mutta ILMAN "
 "MITÄÄN TAKUUTA; ilman edes oletettua takuuta MYYNTIKELPOISUUDESTA tai "
 "SOVELTUVUUDESTA TIETTYYN TARKOITUKSEEN.\n"
 "Saat lisätietoja lukemalla koko lisenssin Ohje-valikosta.\n"
@@ -1557,8 +1557,8 @@ msgid ""
 "Clear the document cache. Helps in fixing some issues with openning "
 "documents."
 msgstr ""
-"Tyhjennä asiakirjavälimuisti. Auttaa korjaamaan asiakirjojen avaamisessa "
-"ilmeneviä ongelmia."
+"Tyhjennä asiakirjavälimuisti, joka auttaa korjaamaan asiakirjojen "
+"avaamisessa ilmeneviä ongelmia."
 
 #: ../../../../gui/book_viewer/menubar.py:136
 msgid "Pi&nned Documents"
@@ -1692,11 +1692,11 @@ msgstr "Näytä semanttisten elementtien luettelo."
 
 #: ../../../../gui/book_viewer/menubar.py:478
 msgid "Change Reading &Mode...\tCtrl-Shift-M"
-msgstr "Muuta lukut&ilaa...\tCtrl+Vaihto+M"
+msgstr "Vaihda lukut&ilaa...\tCtrl+Vaihto+M"
 
 #: ../../../../gui/book_viewer/menubar.py:480
 msgid "Change the current reading mode."
-msgstr "Muuta nykyistä lukutilaa."
+msgstr "Vaihda nykyistä lukutilaa."
 
 #: ../../../../gui/book_viewer/menubar.py:485
 #: ../../../../gui/book_viewer/menubar.py:1063
@@ -1781,8 +1781,8 @@ msgid ""
 "You are here: {current_line}\n"
 "You can't go further than: {last_line}"
 msgstr ""
-"Olet tässä: {current_line}\n"
-"Et voi siirtyä edemmäs kuin: {last_line}"
+"Olet rivillä: {current_line}\n"
+"Viimeinen mahdollinen rivi: {last_line}"
 
 #: ../../../../gui/book_viewer/menubar.py:672
 msgid "Line number"
@@ -1811,7 +1811,7 @@ msgstr "Hae asiakirjasta"
 #: ../../../../gui/book_viewer/menubar.py:727
 #, python-brace-format
 msgid "Searching For '{term}'"
-msgstr "Haetaan hakusanalla '{term}'"
+msgstr "Haetaan hakusanalla \"{term}\""
 
 #: ../../../../gui/book_viewer/menubar.py:742
 #, python-brace-format
@@ -1821,12 +1821,12 @@ msgstr "Tulokset | {total}"
 #: ../../../../gui/book_viewer/menubar.py:819
 #, python-brace-format
 msgid "No next search result for '{term}'"
-msgstr "Hakusanalla {term} ei löydy seuraavaa tulosta"
+msgstr "Hakusanalla \"{term}\" ei löydy seuraavaa tulosta"
 
 #: ../../../../gui/book_viewer/menubar.py:822
 #, python-brace-format
 msgid "No previous search result for '{term}'"
-msgstr "Hakusanalla {term} ei löydy edellistä tulosta"
+msgstr "Hakusanalla \"{term}\" ei löydy edellistä tulosta"
 
 #: ../../../../gui/book_viewer/menubar.py:831
 msgid "Search Result"
@@ -1862,7 +1862,7 @@ msgstr "&Lisenssi"
 
 #: ../../../../gui/book_viewer/menubar.py:900
 msgid "View legal information about this program ."
-msgstr "Näytä tämän ohjelman oikeudelliset tiedot"
+msgstr "Näytä tämän sovelluksen oikeudelliset tiedot"
 
 #: ../../../../gui/book_viewer/menubar.py:905
 msgid "Con&tributors"
@@ -1880,8 +1880,7 @@ msgstr "Käynnistä uudelleen vi&anmääritystilassa"
 
 #: ../../../../gui/book_viewer/menubar.py:915
 msgid "Restart the program with debug mode enabled to show errors"
-msgstr ""
-"Käynnistä sovellus uudelleen vianmääritystilassa virheiden etsimistä varten"
+msgstr "Käynnistä sovellus uudelleen vianmääritystilassa virheiden etsimiseksi"
 
 #: ../../../../gui/book_viewer/menubar.py:925
 msgid "&About Bookworm"
@@ -2055,9 +2054,8 @@ msgid ""
 "Windows Explorer, it will be opened in Bookworm by default."
 msgstr ""
 "Tässä valintaikkunassa voit määrittää tiedostokytkennät.\n"
-"Tiedostojen kytkeminen Bookwormiin tarkoittaa, että ne avataan "
-"oletusarvoisesti Bookwormissa, kun napsautat niitä Windowsin "
-"Resurssienhallinnassa."
+"Tiedostojen kytkeminen Bookwormiin tarkoittaa, että se avaa ne "
+"oletusarvoisesti, kun napsautat niitä Windowsin Resurssienhallinnassa."
 
 #: ../../../../gui/settings.py:72
 msgid "Associate all"
@@ -2065,49 +2063,49 @@ msgstr "Kytke kaikki"
 
 #: ../../../../gui/settings.py:73
 msgid "Use Bookworm to open all supported document formats"
-msgstr "Avaa kaikki tuetut asiakirjat Bookwormilla"
+msgstr "Kytke kaikki tuetut tiedostotyypit avautumaan Bookwormilla"
 
 #: ../../../../gui/settings.py:87
 msgid "Dissociate all supported file types"
-msgstr "Poista tuettujen tiedostotyyppien kytkennät"
+msgstr "Poista kaikki kytkennät"
 
 #: ../../../../gui/settings.py:88
 msgid "Remove previously associated file types"
-msgstr "Poista aiemmin kytketyt tiedostotyypit"
+msgstr "Poista kaikkien tuettujen tiedostotyyppien kytkennät"
 
 #: ../../../../gui/settings.py:105
 #, python-brace-format
 msgid "Dissociate files of type {format}"
-msgstr "Poista kytkentä tiedostoista, joiden tyyppi on {format}"
+msgstr "Poista kytkennät {format}-tiedostoista"
 
 #: ../../../../gui/settings.py:108
 #, python-brace-format
 msgid ""
 "Dissociate files with {ext} extension so they no longer open in Bookworm"
 msgstr ""
-"Poistaa kytkennän {ext}-päätteisistä tiedostoista, jotta ne eivät enää "
-"avaudu Bookwormissa"
+"Poista kytkennät {ext}-päätteisistä tiedostoista, jotta ne eivät enää avaudu "
+"Bookwormilla"
 
 #: ../../../../gui/settings.py:115
 #, python-brace-format
 msgid "Associate files of type {format}"
-msgstr "Kytke tiedostot, joiden tyyppi on {format}"
+msgstr "Kytke {format}-tiedostot"
 
 #: ../../../../gui/settings.py:118
 #, python-brace-format
 msgid "Associate files with {ext} extension so they always open in Bookworm"
-msgstr "Kytke {ext}-päätteiset tiedostot avautumaan aina Bookwormissa"
+msgstr "Kytke {ext}-päätteiset tiedostot avautumaan aina Bookwormilla"
 
 #: ../../../../gui/settings.py:162
 #, python-brace-format
 msgid "Files of type {format} have been associated with Bookworm."
-msgstr "Tyypin {format} tiedostot on kytketty Bookwormiin."
+msgstr "{format}-tiedostot on kytketty Bookwormiin."
 
 #: ../../../../gui/settings.py:176
 msgid "All supported file types have been set to open by default in Bookworm."
 msgstr ""
 "Kaikki tuetut tiedostotyypit on määritetty avautumaan oletusarvoisesti "
-"Bookwormissa."
+"Bookwormilla."
 
 #: ../../../../gui/settings.py:180
 msgid "All registered file associations have been removed."
@@ -2139,7 +2137,7 @@ msgstr "Ilmaise sivunvaihdot merkkiäänellä"
 
 #: ../../../../gui/settings.py:293
 msgid "Include page label in page title"
-msgstr "Lisää sivun tunniste sivun otsikkoon"
+msgstr "Lisää sivun tunniste sen otsikkoon"
 
 #: ../../../../gui/settings.py:300
 msgid "Use file name instead of book title"
@@ -2207,7 +2205,7 @@ msgstr "Käytä tekstityylejä"
 
 #: ../../../../gui/settings.py:427
 msgid "Enable text wrapping (requires restart)"
-msgstr "Ota tekstin rivitys käyttöön"
+msgstr "Tekstin rivitys"
 
 #: ../../../../gui/settings.py:430
 msgid "Text view margins percentage"
@@ -2266,7 +2264,7 @@ msgid ""
 "Update Pandoc to the latest version to improve performance and conversion "
 "quality."
 msgstr ""
-"Päivitä Pandoc viimeisimpään versioon suorituskyvyn ja muunnoslaadun "
+"Päivitä Pandoc uusimpaan versioon suorituskyvyn ja muunnoslaadun "
 "parantamiseksi."
 
 #: ../../../../gui/settings.py:554 ../../../../gui/settings.py:559
@@ -2284,7 +2282,7 @@ msgstr "Pandocia ladataan"
 #: ../../../../gui/settings.py:571 ../../../../ocr/ocr_dialogs.py:164
 #: ../../../../ocr/ocr_dialogs.py:614
 msgid "Getting download information..."
-msgstr "Haetaan lataustietoja..."
+msgstr "Lataustietoja haetaan..."
 
 #: ../../../../gui/settings.py:584 ../../../../ocr/ocr_dialogs.py:197
 msgid "Checking for updates. Please wait..."
@@ -2333,7 +2331,7 @@ msgstr "Odota, kun vanhaa Pandocin versiota poistetaan..."
 
 #: ../../../../gui/settings.py:639
 msgid "Your version of Pandoc is up to date."
-msgstr "Pandocin versio on ajan tasalla."
+msgstr "Pandoc on ajan tasalla."
 
 #: ../../../../gui/settings.py:641 ../../../../ocr/ocr_dialogs.py:227
 msgid "No updates"
@@ -2373,7 +2371,7 @@ msgstr "Tekstintunnistuksen asetukset"
 
 #: ../../../../ocr/ocr_dialogs.py:71
 msgid "Default OCR Engine"
-msgstr "Tekstintunnistuksen oletusmoottori"
+msgstr "Oletusmoottori"
 
 #: ../../../../ocr/ocr_dialogs.py:78
 #: ../../../../ocr_engines/tesseract_ocr_engine/__init__.py:25
@@ -2383,7 +2381,7 @@ msgstr "Tesseract OCR"
 
 #: ../../../../ocr/ocr_dialogs.py:83
 msgid "Download Tesseract OCR Engine"
-msgstr "Lataa Tesseract OCR -tekstintunnistusmoottori"
+msgstr "Lataa Tesseract OCR"
 
 #: ../../../../ocr/ocr_dialogs.py:85
 msgid "Get a free, high-quality OCR engine that supports over 100 languages."
@@ -2422,7 +2420,7 @@ msgstr "Salainen avain:"
 
 #: ../../../../ocr/ocr_dialogs.py:121
 msgid "Vivo OCR Engine (requires nvdacn.com account)"
-msgstr "Vivo OCR (edellyttää NVDA.cn-tiliä)"
+msgstr "Vivo OCR"
 
 #: ../../../../ocr/ocr_dialogs.py:123
 msgid "Username:"
@@ -2438,7 +2436,7 @@ msgstr "Kuvan käsittely"
 
 #: ../../../../ocr/ocr_dialogs.py:138
 msgid "Enable default image enhancement filters"
-msgstr "Ota käyttöön oletusarvoiset kuvanparannussuodattimet"
+msgstr "Käytä oletusarvoisia kuvanparannussuodattimia"
 
 #: ../../../../ocr/ocr_dialogs.py:162
 msgid "Downloading Tesseract OCR Engine"
@@ -2446,15 +2444,15 @@ msgstr "Ladataan Tesseract OCR -tekstintunnistusmoottoria"
 
 #: ../../../../ocr/ocr_dialogs.py:175
 msgid "Manage Tesseract OCR Engine Languages"
-msgstr "Hallitse Tesseract OCR -tekstintunnistusmoottorin kieliä"
+msgstr "Hallitse Tesseract OCR:n kieliä"
 
 #: ../../../../ocr/ocr_dialogs.py:187
 msgid ""
 "Bookworm will now restart to complete the installation of the Tesseract OCR "
 "Engine."
 msgstr ""
-"Bookworm käynnistyy nyt uudelleen suorittaakseen loppuun Tesseract OCR "
-"-tekstintunnistusmoottorin asennuksen."
+"Bookworm käynnistyy nyt uudelleen suorittaakseen loppuun Tesseract OCR:n "
+"asennuksen."
 
 #: ../../../../ocr/ocr_dialogs.py:207
 msgid ""
@@ -2463,14 +2461,14 @@ msgid ""
 "accuracy and performance.\n"
 "Would you like to update to the new version?"
 msgstr ""
-"Tesseract OCR -tekstintunnistusmoottorin uusi versio on ladattavissa.\n"
+"Tesseract OCR:n uusi versio on ladattavissa.\n"
 "Päivittäminen on erittäin suositeltavaa parhaan tarkkuuden ja suorituskyvyn "
-"saavuttamiseksi.\n"
+"varmistamiseksi.\n"
 "Haluatko päivittää uuteen versioon?"
 
 #: ../../../../ocr/ocr_dialogs.py:210
 msgid "Update Tesseract OCr Engine?"
-msgstr "Päivitä Tesseract OCR -tekstintunnistusmoottori?"
+msgstr "Tesseract OCR:n päivitys"
 
 #: ../../../../ocr/ocr_dialogs.py:219
 msgid "Removing old Tesseract version. Please wait..."
@@ -2478,13 +2476,11 @@ msgstr "Odota, kun vanhaa Tesseract OCR:n versiota poistetaan..."
 
 #: ../../../../ocr/ocr_dialogs.py:225
 msgid "Your version of Tesseract OCR engine is up to date."
-msgstr "Tesseract OCR -tekstintunnistusmoottorin versio on ajan tasalla."
+msgstr "Tesseract OCR on ajan tasalla."
 
 #: ../../../../ocr/ocr_dialogs.py:236
 msgid "Failed to check for updates for Tesseract OCr engine."
-msgstr ""
-"Tesseract OCR -tekstintunnistusmoottorin päivitysten tarkistaminen "
-"epäonnistui."
+msgstr "Tesseract OCR:n päivitysten tarkistaminen epäonnistui."
 
 #: ../../../../ocr/ocr_dialogs.py:273
 msgid "Recognition Language"
@@ -2508,7 +2504,7 @@ msgstr "Saatu kuvan resoluutio:"
 
 #: ../../../../ocr/ocr_dialogs.py:299
 msgid "Enable image enhancements"
-msgstr "Ota käyttöön kuvanparannukset"
+msgstr "Käytä kuvanparannuksia"
 
 #: ../../../../ocr/ocr_dialogs.py:304
 msgid "Engine Specific Options"
@@ -2532,11 +2528,11 @@ msgstr "Binarisointi"
 
 #: ../../../../ocr/ocr_dialogs.py:436
 msgid "Split two-in-one scans to individual pages"
-msgstr "Jaa  vastakkaiset sivut yksittäisiksi"
+msgstr "Jaa aukeamat erillisiksi sivuiksi"
 
 #: ../../../../ocr/ocr_dialogs.py:439
 msgid "Combine images"
-msgstr "Yhdistä kuvat"
+msgstr "Kuvien yhdistäminen"
 
 #: ../../../../ocr/ocr_dialogs.py:440
 msgid "Blurring"
@@ -2556,7 +2552,7 @@ msgstr "Laajennus"
 
 #: ../../../../ocr/ocr_dialogs.py:444
 msgid "Sharpen image"
-msgstr "Terävöitä kuva"
+msgstr "Kuvan terävöitys"
 
 #: ../../../../ocr/ocr_dialogs.py:445
 msgid "Invert colors"
@@ -2564,7 +2560,7 @@ msgstr "Käänteiset värit"
 
 #: ../../../../ocr/ocr_dialogs.py:448
 msgid "Debug"
-msgstr "Virheenkorjaus"
+msgstr "Vianmääritys"
 
 #: ../../../../ocr/ocr_dialogs.py:467
 msgid "Installed Languages"
@@ -2603,12 +2599,12 @@ msgid ""
 "A version of the selected language model already exists.\n"
 "Are you sure you want to replace it?"
 msgstr ""
-"Valitun kielimallin versio on jo olemassa.\n"
+"Valittu kielimalli on jo ladattu.\n"
 "Haluatko varmasti korvata sen?"
 
 #: ../../../../ocr/ocr_dialogs.py:612
 msgid "Downloading Language"
-msgstr "Ladataan kieltä"
+msgstr "Kieltä ladataan"
 
 #: ../../../../ocr/ocr_dialogs.py:637
 #, python-brace-format
@@ -2639,7 +2635,7 @@ msgid ""
 "Failed to download language data.\n"
 "Please check your internet connection."
 msgstr ""
-"Kielidatan lataaminen epäonnistui.\n"
+"Kielitietojen lataus epäonnistui.\n"
 "Tarkista internet-yhteytesi."
 
 #: ../../../../ocr/ocr_dialogs.py:685
@@ -2647,7 +2643,7 @@ msgid ""
 "Failed to install language data.\n"
 "Please try again later."
 msgstr ""
-"Kielidatan asentaminen epäonnistui.\n"
+"Kielitietojen asennus epäonnistui.\n"
 "Yritä myöhemmin uudelleen."
 
 #: ../../../../ocr/ocr_menu.py:92
@@ -2673,7 +2669,7 @@ msgstr "Suorita tekstintunnistus automaattisesti sivua käännettäessä."
 
 #: ../../../../ocr/ocr_menu.py:142
 msgid "&Change OCR Options..."
-msgstr "Muuta tekstintunnistuksen asetuksia..."
+msgstr "&Muuta tekstintunnistuksen asetuksia..."
 
 #: ../../../../ocr/ocr_menu.py:144
 msgid "Change OCR options"
@@ -2693,15 +2689,15 @@ msgstr "Kuva tekstiksi..."
 
 #: ../../../../ocr/ocr_menu.py:158
 msgid "Run OCR on an image."
-msgstr "Suorita tekstintunnistus kuvalle."
+msgstr "Suorita kuvalle tekstintunnistus."
 
 #: ../../../../ocr/ocr_menu.py:207
 msgid ""
 "No language for OCR is present.\n"
 "Please checkout Bookworm user manual to learn how to add new languages."
 msgstr ""
-"Tekstintunnistuksen kieltä ei ole.\n"
-"Katso Bookwormin käyttöoppaasta, miten tekstintunnistuksen kieliä lisätään."
+"Tekstintunnistuksen kieliä ei ole asennettu.\n"
+"Katso Bookwormin käyttöoppaasta ohjeet kielien lisäämiseen."
 
 #: ../../../../ocr/ocr_menu.py:210
 msgid "No Languages for OCR"
@@ -2737,7 +2733,7 @@ msgstr "Skannataan sivuja"
 
 #: ../../../../ocr/ocr_menu.py:320
 msgid "Preparing book"
-msgstr "Valmistellaan kirjaa"
+msgstr "Kirjaa valmistellaan"
 
 #: ../../../../ocr/ocr_menu.py:346
 #, python-brace-format
@@ -2746,7 +2742,7 @@ msgid ""
 "Extracted text was written to: {file}"
 msgstr ""
 "{total} sivua käsitelty onnistuneesti.\n"
-"Purettu teksti tallennettiin tiedostoon: {file}"
+"Poimittu teksti on tallennettu tiedostoon: {file}"
 
 #: ../../../../ocr/ocr_menu.py:348
 msgid "OCR Completed"
@@ -2754,7 +2750,7 @@ msgstr "Tekstintunnistus suoritettu"
 
 #: ../../../../ocr/ocr_menu.py:362
 msgid "Portable Network Graphics"
-msgstr "Portable Network Graphics"
+msgstr "PNG-kuvat"
 
 #: ../../../../ocr/ocr_menu.py:363
 msgid "JPEG images"
@@ -2762,11 +2758,11 @@ msgstr "JPEG-kuvat"
 
 #: ../../../../ocr/ocr_menu.py:364
 msgid "Bitmap images"
-msgstr "Bittikarttakuvat"
+msgstr "BMP-kuvat"
 
 #: ../../../../ocr/ocr_menu.py:365
 msgid "Tiff graphics"
-msgstr "Tiff-kuvat"
+msgstr "TIFF-kuvat"
 
 #: ../../../../ocr/ocr_menu.py:371
 msgid "All supported image formats"
@@ -2783,13 +2779,13 @@ msgid ""
 "{filename}.\n"
 "Please make sure the file exists and the data contained in is not corrupted."
 msgstr ""
-"Kuvaa ei voitu ladata tiedostosta\n"
+"Kuvaa ei voitu avata tiedostosta\n"
 "{filename}.\n"
 "Varmista, että tiedosto on olemassa ja ettei se ole vahingoittunut."
 
 #: ../../../../ocr/ocr_menu.py:395
 msgid "Could not load image file"
-msgstr "Kuvatiedostoa ei voitu ladata"
+msgstr "Kuvatiedostoa ei voitu avata"
 
 #: ../../../../ocr/ocr_menu.py:438
 msgid "Authentication Error"
@@ -2802,7 +2798,7 @@ msgstr "Verkkovirhe"
 
 #: ../../../../ocr/ocr_menu.py:450
 msgid "OCR Service Error"
-msgstr "Tekstintunnistuspalvelun virhe"
+msgstr "Virhe tekstintunnistuspalvelussa"
 
 #: ../../../../ocr/ocr_menu.py:458
 msgid ""
@@ -2821,7 +2817,7 @@ msgstr "Tekstintunnistus peruutettu"
 
 #: ../../../../ocr_engines/baidu_ocr.py:88
 msgid "Auto-detect and correct image direction"
-msgstr "Tunnista automaattisesti kuvan suunta ja korjaa se"
+msgstr "Tunnista ja korjaa kuvan suunta automaattisesti"
 
 #: ../../../../ocr_engines/baidu_ocr.py:93
 msgid "Attempt to reconstruct paragraphs"
@@ -2836,14 +2832,12 @@ msgid ""
 "Could not get Baidu access token. Please check your network connection and "
 "ensure your API Key and Secret Key are correct."
 msgstr ""
-"Baidun käyttöoikeustunnusta ei voitu hakea. Tarkista verkkoyhteytesi ja "
-"varmista, että API- ja salainen avain ovat oikein."
+"Baidun käyttöoikeustunnusta ei voitu hakea. Tarkista internet-yhteytesi "
+"toimivuus ja varmista, että API- ja salainen avain ovat oikein."
 
 #: ../../../../ocr_engines/baidu_ocr.py:262
 msgid "A network error occurred while calling the Baidu OCR API."
-msgstr ""
-"Baidu OCR -tekstintunnistusmoottorin rajapintaa kutsuttaessa tapahtui "
-"verkkovirhe."
+msgstr "Baidu OCR:n rajapintaa kutsuttaessa tapahtui verkkovirhe."
 
 #: ../../../../ocr_engines/baidu_ocr.py:268
 msgid "Baidu OCR failed: "
@@ -2867,7 +2861,7 @@ msgstr "Vivo General OCR"
 
 #: ../../../../ocr_engines/vivo_ocr.py:61
 msgid "Enable Enhanced Recognition (slower, supports rotation)"
-msgstr "Ota käyttöön parannettu tunnistus (hitaampi, tukee kiertoa)"
+msgstr "Käytä laajennettua tunnistusta"
 
 #: ../../../../ocr_engines/vivo_ocr.py:82
 msgid "nvdacn.com username and password for Vivo OCR are not configured."
@@ -2877,9 +2871,7 @@ msgstr ""
 
 #: ../../../../ocr_engines/vivo_ocr.py:114
 msgid "A network error occurred while calling the Vivo OCR API."
-msgstr ""
-"Vivo OCR -tekstintunnistusmoottorin rajapintaa kutsuttaessa tapahtui "
-"verkkovirhe."
+msgstr "Vivo OCR:n rajapintaa kutsuttaessa tapahtui verkkovirhe."
 
 #: ../../../../ocr_engines/vivo_ocr.py:122
 msgid "Vivo OCR failed: "
@@ -2908,17 +2900,18 @@ msgid ""
 "Bookworm is on its way, so wait for it. Rest assured, we will notify you "
 "when it is released."
 msgstr ""
-"Onneksi olkoon, sinulla on jo viimeisin versio.\n"
-"Bookwormia parannellaan yötä päivää. Seuraava versio on jo tulossa. Voit "
-"olla varma, että saat ilmoituksen, kun se julkaistaan."
+"Onneksi olkoon, käytössäsi on jo Bookwormin uusin versio.\n"
+"Työskentelemme taukoamatta kehittääksemme Bookwormia entistäkin paremmaksi. "
+"Seuraava versio on jo tekeillä – malta siis vielä hetki. Ilmoitamme heti, "
+"kun päivitys on julkaistu."
 
 #: ../../../../otau.py:160
 msgid "No Update"
-msgstr "Ei päivitystä"
+msgstr "Päivitystä ei saatavilla"
 
 #: ../../../../otau.py:185
 msgid "&Check for updates"
-msgstr "&Tarkista päivitykset"
+msgstr "Tarkista &päivitykset"
 
 #: ../../../../otau.py:187
 msgid "Update the application"
@@ -2936,7 +2929,7 @@ msgstr ""
 "Uusi Bookwormin versio on saatavilla.\n"
 "\tAsennettu versio: {current}\n"
 "\tUusi versio: {new}\n"
-"Tarkista Bookwormin ohjeesta, miten päivitys suoritetaan."
+"Katso Bookwormin käyttöoppaasta ohjeet päivityksen suorittamiseen."
 
 #: ../../../../platforms/linux/updater.py:22
 msgid "Update Available"
@@ -2968,8 +2961,8 @@ msgid ""
 "Could not add Pandoc.\n"
 "Please try again."
 msgstr ""
-"Pandocia ei voitu lisätä.\n"
-"Ole hyvä ja yritä uudelleen."
+"Pandocia ei voitu asentaa.\n"
+"Yritä uudelleen."
 
 #: ../../../../platforms/win32/speech_engines/espeak/__init__.py:74
 msgid "eSpeak NG"
@@ -2985,14 +2978,14 @@ msgstr "Piper Neural TTS"
 
 #: ../../../../platforms/win32/tesseract_download.py:78
 msgid "Tesseract engine downloaded successfully"
-msgstr "Tesseract-tekstintunnistusmoottori ladattu onnistuneesti"
+msgstr "Tesseract OCR -tekstintunnistusmoottori ladattu onnistuneesti"
 
 #: ../../../../platforms/win32/tesseract_download.py:87
 msgid ""
 "Could not download Tesseract OCR Engine.\n"
 "Please check your internet and try again."
 msgstr ""
-"Tesseract-tekstintunnistusmoottoria ei voitu ladata.\n"
+"Tesseract OCR -tekstintunnistusmoottoria ei voitu ladata.\n"
 "Tarkista internet-yhteytesi toimivuus ja yritä sitten uudelleen."
 
 #: ../../../../platforms/win32/tesseract_download.py:97
@@ -3000,7 +2993,7 @@ msgid ""
 "Could not install the Tesseract OCR engine.\n"
 "Please try again."
 msgstr ""
-"Tesseract-tekstintunnistusmoottoria ei voitu asentaa.\n"
+"Tesseract OCR -tekstintunnistusmoottoria ei voitu asentaa.\n"
 "Yritä myöhemmin uudelleen."
 
 #: ../../../../platforms/win32/updater.py:79
@@ -3022,7 +3015,7 @@ msgstr "Bookwormin päivitys"
 
 #: ../../../../platforms/win32/updater.py:95
 msgid "Downloading Update"
-msgstr "Ladataan päivitystä"
+msgstr "Päivitystä ladataan"
 
 #: ../../../../platforms/win32/updater.py:97
 msgid "Downloading update bundle"
@@ -3034,7 +3027,7 @@ msgid ""
 "Make sure you are connected to the internet, or try again at a later time."
 msgstr ""
 "Päivitystä ladattaessa tapahtui verkkovirhe.\n"
-"Varmista, että olet yhteydessä internetiin, tai yritä myöhemmin uudelleen."
+"Tarkista internet-yhteytesi toimivuus tai yritä myöhemmin uudelleen."
 
 #: ../../../../platforms/win32/updater.py:138
 msgid ""
@@ -3073,8 +3066,8 @@ msgid ""
 "The application will be restarted in order to complete the update process.\n"
 "Click the OK button to continue."
 msgstr ""
-"Päivitys on ladattu onnistuneesti, ja se on valmiina asennettavaksi.\n"
-"Sovellus käynnistetään uudelleen, jotta päivitys voidaan suorittaa loppuun.\n"
+"Päivitys on ladattu onnistuneesti ja valmiina asennettavaksi.\n"
+"Sovellus käynnistetään uudelleen päivityksen viimeistelemiseksi.\n"
 "Jatka napsauttamalla OK-painiketta."
 
 #: ../../../../platforms/win32/updater.py:176
@@ -3102,7 +3095,7 @@ msgstr "Tätä kuvaa ei voitu avata."
 #: ../../../../reader.py:806
 #, python-brace-format
 msgid "{title} — by {author}"
-msgstr "{title} — {author}"
+msgstr "{title} – {author}"
 
 #: ../../../../reader.py:919
 msgid "Table View"
@@ -3279,7 +3272,7 @@ msgstr ""
 
 #: ../../../../text_to_speech/__init__.py:531
 msgid "Critical Speech Error"
-msgstr "Kriittinen puhemoottorin virhe"
+msgstr "Kriittinen virhe puhemoottorissa"
 
 #: ../../../../text_to_speech/__init__.py:533
 msgid ""
@@ -3379,7 +3372,7 @@ msgstr "Salli siirtyminen kuviin, joilla ei ole vaihtoehtoista tekstiä"
 
 #: ../../../../text_to_speech/tts_gui.py:92
 msgid "During Reading Aloud"
-msgstr "Ääneen lukeminen"
+msgstr "Ääneen luettaessa"
 
 #: ../../../../text_to_speech/tts_gui.py:97
 msgid "Speak page number"
@@ -3391,7 +3384,7 @@ msgstr "Ilmoita lukujen loppumisesta"
 
 #: ../../../../text_to_speech/tts_gui.py:111
 msgid "Ask to switch to a voice that speaks the language of the current book"
-msgstr "Pyydä vaihtamaan puheääneen, joka tukee nykyisen kirjan kieltä"
+msgstr "Pyydä vaihtamaan nykyisen kirjan kieltä tukevaan puheääneen"
 
 #: ../../../../text_to_speech/tts_gui.py:118
 msgid "Highlight spoken text"
@@ -3511,8 +3504,8 @@ msgid ""
 "menu item from the speech menu."
 msgstr ""
 "Ääniprofiili {profile} on käytössä.\n"
-"Poista se ensin käytöstä valitsemalla Puhe-valikosta Poista käytöstä "
-"nykyinen ääniprofiili."
+"Poista se ensin käytöstä valitsemalla Puhe-valikosta Poista nykyinen "
+"ääniprofiili käytöstä."
 
 #: ../../../../text_to_speech/tts_gui.py:507
 msgid "Cannot Remove Profile"
@@ -3529,7 +3522,7 @@ msgstr ""
 
 #: ../../../../text_to_speech/tts_gui.py:518
 msgid "Remove Voice Profile?"
-msgstr "Poistetaanko ääniprofiili?"
+msgstr "Ääniprofiilin poistaminen"
 
 #: ../../../../text_to_speech/tts_gui.py:541
 msgid "Select Speech Engine:"
@@ -3640,8 +3633,8 @@ msgid ""
 "Could not connect to Wikipedia at the moment.\\Please make sure that you're "
 "connected to the internet or try again later."
 msgstr ""
-"Wikipediaan ei tällä hetkellä saada yhteyttä.\\Varmista, että olet "
-"yhteydessä internetiin tai yritä myöhemmin uudelleen."
+"Wikipediaan ei saada tällä hetkellä yhteyttä.\\Tarkista internet-yhteytesi "
+"toimivuus tai yritä myöhemmin uudelleen."
 
 #: ../../../../webservices/wikiworm.py:160
 msgid "Page not found"
@@ -3653,11 +3646,11 @@ msgstr "Annetulla hakusanalla ei löytynyt Wikipedia-sivua."
 
 #: ../../../../webservices/wikiworm.py:168
 msgid "Matches"
-msgstr "Osumat"
+msgstr "Hakutulokset"
 
 #: ../../../../webservices/wikiworm.py:169
 msgid "Multiple Matches Found"
-msgstr "Useita osumia löytyi"
+msgstr "Useita hakutuloksia löytyi"
 
 #: ../../../../webservices/wikiworm.py:184
 msgid "Failed to get term definition from Wikipedia."
