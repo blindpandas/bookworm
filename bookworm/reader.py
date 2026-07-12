@@ -919,7 +919,8 @@ class EBookReader:
         title = _("Table View")
         if (table_caption := HTMLParser(table_markup).css_first("caption")) is not None:
             caption_text = table_caption.text().strip(string.whitespace).replace("\n", " ")
-            title = f"{caption_text} · {title}"
+            if caption_text:
+                title = f"{caption_text} · {title}"
         self.view.show_html_dialog(table_markup, title=title)
 
     def _show_image(self, image, image_info):

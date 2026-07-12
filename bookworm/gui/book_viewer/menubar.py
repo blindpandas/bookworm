@@ -28,6 +28,7 @@ from bookworm.gui.book_viewer.core_dialogs import (
     SearchBookDialog,
     SearchResultsDialog,
 )
+from bookworm.gui.browseable_message import close_browseable_messages
 from bookworm.gui.components import AsyncSnakDialog, RobustProgressDialog
 from bookworm.gui.settings import PreferencesDialog
 from bookworm.i18n import is_rtl
@@ -1031,6 +1032,7 @@ class MenubarProvider:
     def onClose(self, evt):
         try:
             self.unloadCurrentEbook()
+            close_browseable_messages()
             self.Destroy()
             evt.Skip()
         except:
