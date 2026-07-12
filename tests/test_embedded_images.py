@@ -1188,6 +1188,7 @@ def test_reader_ctrl_enter_uses_table_action_when_embedded_image_fails(reader, v
     assert reader.handle_special_action_for_position(0) is True
     assert shown_tables
     assert "table" in shown_tables[0][0].lower()
+    assert shown_tables[0][1] == "Table View"
     assert view.image_dialog_args is None
 
 

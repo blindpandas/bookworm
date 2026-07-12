@@ -79,6 +79,7 @@ dependencies = [
     "msoffcrypto-tool==5.4.2",
     "multidict==6.4.3",
     "neosynth==3.2.0;sys_platform=='win32'",
+    "nh3==0.3.2",
     "numpy==1.26.4",
     "odfpy==1.4.1",
     "olefile==0.47",
