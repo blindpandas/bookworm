@@ -2,20 +2,26 @@
 
 **Bookworm** is an accessible document reader that enables blind and visually impaired individuals to read documents in an easy and hassle free manner. The main highlights of bookworm are:
 
-* Supports over 20 document formats
-* Support for named **bookmarks**. This enables you to mark interesting positions in the text for later reference
-* Support for adding comments to capture an interesting thought or create a summary of the content at a particular position in the text. Bookworm allows you to quickly jump to a specific comment and view it. Later, you can export these comments to a text file or HTML document for later use.
-* Two different styles of viewing pages; plain-text and fully rendered, zoomable, images.
-* Full text search with customizable search options
-* Book navigation via Table of content is extensively supported for all document formats
-* Support for reading books aloud using Text-to-speech, with configurable voice parameters.
-* The ability to customize  text-to-speech with voice profiles. Each voice profile configures the style of the speech, and you can freely activate/deactivate a voice profile anytime.
-* Support for standard zoom-in/zoom-out/reset commands. This is supported in the textual view and the rendered page view.
+* Supports over 20 document formats, including EPUB, PDF, MOBI, Microsoft Word documents, HTML, plain text, and Markdown.
+* Support for named **bookmarks**, comments, and highlights. You can quickly jump between annotations and export comments or highlights to plain text, HTML, or Markdown.
+* Structured navigation with single-letter commands for headings, links, lists, tables, quotes, and figures, plus an element list for browsing supported semantic content.
+* Two different styles of viewing pages: plain text and fully rendered, zoomable images for formats that support graphical rendering.
+* Full text search with customizable search options, including regular expressions and page or section ranges.
+* Book navigation via table of contents is extensively supported for document formats that provide one.
+* Bookworm Bookshelf for organizing local documents, importing files or folders, searching titles and indexed content, and bundling documents for offline use.
+* Web services for opening URLs in Bookworm, extracting readable article text, and looking up terms in Wikipedia.
+* Optical Character Recognition (OCR) for scanned documents and images, with support for Windows OCR, Tesseract, VIVO, and Baidu OCR engines where available.
+* Support for reading books aloud using text-to-speech, with configurable voice parameters and voice profiles.
+* Support for standard zoom-in, zoom-out, and reset commands in the textual view and rendered page view.
 * Support for exporting any document format to a plain text file.
 
 ## **IMPORTANT**
 Bookworm's official website is currently no more. The domain which has worked up until now has currently not been renewed, and as such bookworm will no longer be provided there until further notice. We urge you not to interact with that domain, as we're no longer in charge of it.
 You can keep downloading bookworm from the [releases page](https://github.com/blindpandas/bookworm/releases) for the most recent ones.
+
+## Supported Platforms
+
+Bookworm is distributed for Microsoft Windows. Current builds require Windows 8.1 or later because Bookworm is built with Python 3.11. Windows 7 and earlier are not supported.
 
 ## Development
 
@@ -66,7 +72,7 @@ Note: You do **not** need to manually install Python. `uv` will manage the requi
 
 *   **Run Tests:**
     ```shell
-    uv run pytest
+    uv run --no-sync pytest
     ```
 
 *   **Build Installer:**
@@ -78,4 +84,4 @@ If you've found a bug, or you want to contribute your changes back to bookworm, 
 
 ## License
 
-**Bookworm** is copyright (c) 2019-2025 Blind Pandas Team. It is licensed under the [GNU General Public License](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
+**Bookworm** is copyright (c) 2026 Blind Pandas and Bookworm contributors. It is licensed under the [GNU General Public License version 2 or later](https://github.com/blindpandas/bookworm/blob/master/LICENSE).
