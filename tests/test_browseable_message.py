@@ -141,9 +141,9 @@ def test_html_message_dialog_routes_actions_and_external_links(monkeypatch):
     )
     monkeypatch.setattr(wx, "LaunchDefaultBrowser", opened.append)
 
-    copy_event = FakeWebViewEvent("nvda-action://copy")
+    copy_event = FakeWebViewEvent("nvda-action://copy/")
     browseable_message_module.HtmlMessageDialog._on_navigating(dialog, copy_event)
-    close_event = FakeWebViewEvent("nvda-action://close")
+    close_event = FakeWebViewEvent("nvda-action://close/")
     browseable_message_module.HtmlMessageDialog._on_navigating(dialog, close_event)
     link_event = FakeWebViewEvent("https://example.com/path")
     browseable_message_module.HtmlMessageDialog._on_navigating(dialog, link_event)

@@ -230,7 +230,7 @@ class HtmlMessageDialog(wx.Dialog):
             return
         event.Veto()
         if lower_url.startswith(self._ACTION_URL_PREFIX):
-            action = url[len(self._ACTION_URL_PREFIX) :]
+            action = url[len(self._ACTION_URL_PREFIX) :].rstrip("/")
             if action == "close":
                 self.Close()
             elif handler := self._action_handlers.get(action):
