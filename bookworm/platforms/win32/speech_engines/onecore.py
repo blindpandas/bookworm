@@ -37,7 +37,7 @@ RATE_MAP = {
     RateSpec.slow: range(20, 40),
     RateSpec.medium: range(40, 60),
     RateSpec.fast: range(60, 80),
-    RateSpec.extra_fast: range(80, 100),
+    RateSpec.extra_fast: range(80, 101),
 }
 
 
@@ -79,8 +79,7 @@ class EventSink:
 
 @dataclass(slots=True, frozen=True)
 class PlaybackTask:
-    audio: bytes
-    bookmarks: tuple
+    ssml: str
     generation: int
 
 
@@ -106,6 +105,12 @@ def wait_for_async_operation(operation):
     return operation.get_results()
 
 
+def cancel_async_operation(operation):
+    if operation is not None:
+        with suppress(OSError):
+            operation.cancel()
+
+
 class OcSpeechEngine(BaseSpeechEngine):
     name = "onecore"
     display_name = _("One-core Synthesizer")
@@ -122,6 +127,7 @@ class OcSpeechEngine(BaseSpeechEngine):
         self._task_queue = queue.Queue()
         self._players = {}
         self._player = None
+        self._operation = None
         self._generation = 0
         self._closed = False
         self._rate = 1 / 0.06
@@ -157,11 +163,15 @@ class OcSpeechEngine(BaseSpeechEngine):
             self._closed = True
             self._generation += 1
             self._resume_event.set()
-            if self._player is not None:
-                self._player.stop()
+            player = self._player
+            operation = self._operation
+            self._player = None
             self._clear_task_queue()
             self._task_queue.put(None)
             self.event_sink.on_state_changed(SynthState.ready)
+        cancel_async_operation(operation)
+        if player is not None:
+            player.stop()
         self._thread.join()
         for player in self._players.values():
             player.close()
@@ -193,7 +203,7 @@ class OcSpeechEngine(BaseSpeechEngine):
 
     @voice.setter
     def voice(self, value):
-        if not any(voice.id == value.id for voice in self.get_voices()):
+        if value is None or not any(voice.id == value.id for voice in self.get_voices()):
             raise ValueError(INVALID_VOICE)
         self._voice_id = value.id
 
@@ -239,27 +249,28 @@ class OcSpeechEngine(BaseSpeechEngine):
     def preprocess_utterance(self, utterance):
         if not self._prosody_supported:
             styled_utterance = SpeechUtterance()
-            with styled_utterance.set_style(SpeechStyle(rate=self.rate)):
+            with styled_utterance.set_style(SpeechStyle(rate=self._rate_spec)):
                 styled_utterance.add(utterance)
             utterance = styled_utterance
-        return self.speech_converter.convert(utterance)
+        return self.speech_converter.convert(utterance, localeinfo=self.voice.language)
 
     def speak_utterance(self, ssml):
         with self._lock:
             if self._closed:
                 return
+            self._generation += 1
             generation = self._generation
-        audio, bookmarks = self._synthesize(ssml)
+            player = self._player
+            operation = self._operation
+            self._clear_task_queue()
+            self._resume_event.set()
+        cancel_async_operation(operation)
+        if player is not None:
+            player.stop()
         with self._lock:
             if self._closed or generation != self._generation:
                 return
-            self._generation += 1
-            generation = self._generation
-            if self._player is not None:
-                self._player.stop()
-            self._clear_task_queue()
-            self._resume_event.set()
-            self._task_queue.put(PlaybackTask(audio, bookmarks, generation))
+            self._task_queue.put(PlaybackTask(ssml, generation))
             self.event_sink.on_state_changed(SynthState.busy)
 
     def stop(self):
@@ -267,10 +278,18 @@ class OcSpeechEngine(BaseSpeechEngine):
             if self._closed:
                 return
             self._generation += 1
+            generation = self._generation
             self._resume_event.set()
-            if self._player is not None:
-                self._player.stop()
+            player = self._player
+            operation = self._operation
             self._clear_task_queue()
+        cancel_async_operation(operation)
+        if player is not None:
+            player.stop()
+        with self._lock:
+            if self._closed or generation != self._generation:
+                return
+            self._player = None
             self.event_sink.on_state_changed(SynthState.ready)
 
     def pause(self):
@@ -298,7 +317,7 @@ class OcSpeechEngine(BaseSpeechEngine):
             raise NotImplementedError
         self.event_handlers.setdefault(event, []).append(handler)
 
-    def _synthesize(self, ssml):
+    def _synthesize(self, ssml, generation):
         synthesizer = SpeechSynthesizer()
         stream = None
         try:
@@ -311,17 +330,19 @@ class OcSpeechEngine(BaseSpeechEngine):
             options = synthesizer.options
             if self._prosody_supported:
                 options.speaking_rate = self._rate * 0.06
-            options.audio_pitch = self._pitch / 50
-            options.audio_volume = self._volume / 100
+                options.audio_pitch = self._pitch / 50
+                options.audio_volume = self._volume / 100
             with suppress(AttributeError, OSError):
                 options.appended_silence = SpeechAppendedSilence.MIN
                 options.punctuation_silence = SpeechPunctuationSilence.MIN
             operation = synthesizer.synthesize_ssml_to_stream_async(ssml)
             try:
-                stream = wait_for_async_operation(operation)
+                stream = self._wait_for_operation(operation, generation)
             finally:
                 with suppress(OSError):
                     operation.close()
+            if stream is None:
+                return None
             bookmarks = tuple(
                 (marker.time.total_seconds(), marker.text)
                 for marker in stream.markers
@@ -335,7 +356,10 @@ class OcSpeechEngine(BaseSpeechEngine):
                 InputStreamOptions.NONE,
             )
             try:
-                return bytes(memoryview(wait_for_async_operation(read_operation))), bookmarks
+                buffer = self._wait_for_operation(read_operation, generation)
+                if buffer is None:
+                    return None
+                return bytes(memoryview(buffer)), bookmarks
             finally:
                 with suppress(OSError):
                     read_operation.close()
@@ -351,16 +375,19 @@ class OcSpeechEngine(BaseSpeechEngine):
                 self._task_queue.task_done()
                 return
             try:
-                self._play_audio(task)
+                synthesized = self._synthesize(task.ssml, task.generation)
+                if synthesized is not None and self._is_current(task.generation):
+                    self._play_audio(task.generation, *synthesized)
             except Exception:
                 if self._is_current(task.generation):
                     log.exception("Error playing OneCore speech")
             finally:
                 self._task_queue.task_done()
-            wx.CallAfter(self._finish_if_current, task.generation)
+            if self._is_current(task.generation):
+                wx.CallAfter(self._finish_if_current, task.generation)
 
-    def _play_audio(self, task):
-        with wave.open(io.BytesIO(task.audio), "rb") as wav_file:
+    def _play_audio(self, generation, audio, bookmarks):
+        with wave.open(io.BytesIO(audio), "rb") as wav_file:
             if wav_file.getcomptype() != "NONE":
                 raise ValueError(COMPRESSED_AUDIO)
             channels = wav_file.getnchannels()
@@ -369,20 +396,20 @@ class OcSpeechEngine(BaseSpeechEngine):
             pcm = wav_file.readframes(wav_file.getnframes())
         player = self._get_or_create_player(channels, frame_rate, sample_width * 8)
         with self._lock:
-            if task.generation != self._generation:
+            if generation != self._generation:
                 return
             self._player = player
         for segment, bookmark in split_audio_at_bookmarks(
             pcm,
             frame_size=channels * sample_width,
             frame_rate=frame_rate,
-            bookmarks=task.bookmarks,
+            bookmarks=bookmarks,
         ):
             self._resume_event.wait()
-            if not self._is_current(task.generation):
+            if not self._is_current(generation):
                 return
             callback = (
-                partial(self._handle_bookmark, task.generation, bookmark) if bookmark else None
+                partial(self._handle_bookmark, generation, bookmark) if bookmark else None
             )
             if segment:
                 player.feed(segment, onDone=callback)
@@ -392,8 +419,9 @@ class OcSpeechEngine(BaseSpeechEngine):
         player.idle()
 
     def _handle_bookmark(self, generation, bookmark):
-        if self._is_current(generation):
-            self.event_sink.on_bookmark_reached(bookmark)
+        with self._lock:
+            if not self._closed and generation == self._generation:
+                self.event_sink.on_bookmark_reached(bookmark)
 
     def _finish_if_current(self, generation):
         if self._is_current(generation):
@@ -409,6 +437,21 @@ class OcSpeechEngine(BaseSpeechEngine):
                 buffered=True,
             )
         return self._players[key]
+
+    def _wait_for_operation(self, operation, generation):
+        with self._lock:
+            is_current = not self._closed and generation == self._generation
+            if is_current:
+                self._operation = operation
+        if not is_current:
+            cancel_async_operation(operation)
+            return None
+        try:
+            return wait_for_async_operation(operation)
+        finally:
+            with self._lock:
+                if self._operation is operation:
+                    self._operation = None
 
     def _is_current(self, generation):
         with self._lock:

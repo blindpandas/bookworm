@@ -412,8 +412,6 @@ class TextInfo:
         index = bisect.bisect_right(markers, pos)
         if index < len(markers):
             return marker_map[markers[index]]
-        if index >= len(markers) and markers:
-            return marker_map[markers[-1]]
         raise LookupError(f"Could not find a paragraph located at the right of position {pos}")
 
     def get_paragraph_to_the_left_of(self, pos):
@@ -424,7 +422,7 @@ class TextInfo:
             raise LookupError(f"Could not find a paragraph located at the left of position {pos}")
         index = bisect.bisect_left(markers, pos)
         if index == 0:
-            return marker_map[markers[0]]
+            raise LookupError(f"Could not find a paragraph located at the left of position {pos}")
         if index > 0:
             return marker_map[markers[index - 1]]
         raise LookupError(f"Could not find a paragraph located at the left of position {pos}")

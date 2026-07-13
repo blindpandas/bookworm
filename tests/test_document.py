@@ -54,6 +54,9 @@ def test_epub_document_section_at_text_position(asset):
     for text_position, section_title in position_to_section_title.items():
         section = epub.get_section_at_position(text_position)
         assert section.title == section_title
+    assert epub.get_section_at_position(len(epub.get_content()) - 1) is (
+        epub.start_positions_for_sections[-1][1]
+    )
 
 
 def test_opening_reader_creates_book_and_document_info(asset, reader):
@@ -232,4 +235,3 @@ def test_single_page_document_hash_does_not_retain_document_instances(asset):
     gc.collect()
 
     assert document_ref() is None
-
