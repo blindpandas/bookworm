@@ -1,4 +1,3 @@
-import asyncio
 import io
 import platform
 import queue
@@ -100,6 +99,13 @@ def split_audio_at_bookmarks(audio, *, frame_size, frame_rate, bookmarks):
     yield audio[cursor:], None
 
 
+def wait_for_async_operation(operation):
+    completed = threading.Event()
+    operation.completed = lambda _operation, _status: completed.set()
+    completed.wait()
+    return operation.get_results()
+
+
 class OcSpeechEngine(BaseSpeechEngine):
     name = "onecore"
     display_name = _("One-core Synthesizer")
@@ -145,11 +151,17 @@ class OcSpeechEngine(BaseSpeechEngine):
         return platform.version().startswith("10")
 
     def close(self):
-        if self._closed:
-            return
-        self.stop()
-        self._closed = True
-        self._task_queue.put(None)
+        with self._lock:
+            if self._closed:
+                return
+            self._closed = True
+            self._generation += 1
+            self._resume_event.set()
+            if self._player is not None:
+                self._player.stop()
+            self._clear_task_queue()
+            self._task_queue.put(None)
+            self.event_sink.on_state_changed(SynthState.ready)
         self._thread.join()
         for player in self._players.values():
             player.close()
@@ -236,29 +248,30 @@ class OcSpeechEngine(BaseSpeechEngine):
         with self._lock:
             if self._closed:
                 return
+            generation = self._generation
         audio, bookmarks = self._synthesize(ssml)
+        with self._lock:
+            if self._closed or generation != self._generation:
+                return
+            self._generation += 1
+            generation = self._generation
+            if self._player is not None:
+                self._player.stop()
+            self._clear_task_queue()
+            self._resume_event.set()
+            self._task_queue.put(PlaybackTask(audio, bookmarks, generation))
+            self.event_sink.on_state_changed(SynthState.busy)
+
+    def stop(self):
         with self._lock:
             if self._closed:
                 return
             self._generation += 1
-            generation = self._generation
-            player = self._player
-        if player is not None:
-            player.stop()
-        self._clear_task_queue()
-        self._resume_event.set()
-        self._task_queue.put(PlaybackTask(audio, bookmarks, generation))
-        self.event_sink.on_state_changed(SynthState.busy)
-
-    def stop(self):
-        with self._lock:
-            self._generation += 1
-            player = self._player
-        self._resume_event.set()
-        if player is not None:
-            player.stop()
-        self._clear_task_queue()
-        self.event_sink.on_state_changed(SynthState.ready)
+            self._resume_event.set()
+            if self._player is not None:
+                self._player.stop()
+            self._clear_task_queue()
+            self.event_sink.on_state_changed(SynthState.ready)
 
     def pause(self):
         if self.state is not SynthState.busy:
@@ -286,9 +299,6 @@ class OcSpeechEngine(BaseSpeechEngine):
         self.event_handlers.setdefault(event, []).append(handler)
 
     def _synthesize(self, ssml):
-        return asyncio.run(self._synthesize_async(ssml))
-
-    async def _synthesize_async(self, ssml):
         synthesizer = SpeechSynthesizer()
         stream = None
         try:
@@ -308,7 +318,7 @@ class OcSpeechEngine(BaseSpeechEngine):
                 options.punctuation_silence = SpeechPunctuationSilence.MIN
             operation = synthesizer.synthesize_ssml_to_stream_async(ssml)
             try:
-                stream = await operation
+                stream = wait_for_async_operation(operation)
             finally:
                 with suppress(OSError):
                     operation.close()
@@ -325,7 +335,7 @@ class OcSpeechEngine(BaseSpeechEngine):
                 InputStreamOptions.NONE,
             )
             try:
-                return bytes(memoryview(await read_operation)), bookmarks
+                return bytes(memoryview(wait_for_async_operation(read_operation))), bookmarks
             finally:
                 with suppress(OSError):
                     read_operation.close()

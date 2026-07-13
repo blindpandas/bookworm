@@ -82,3 +82,35 @@ def test_onecore_synthesizes_ssml_and_dispatches_bookmarks(monkeypatch):
         assert any(player.audio for player in engine._players.values())
     finally:
         engine.close()
+
+
+def test_stop_discards_speech_that_is_still_synthesizing(monkeypatch):
+    engine = onecore.OcSpeechEngine()
+    synthesis_started = threading.Event()
+    finish_synthesis = threading.Event()
+
+    def synthesize(_ssml):
+        synthesis_started.set()
+        assert finish_synthesis.wait(10)
+        return b"", ()
+
+    monkeypatch.setattr(engine, "_synthesize", synthesize)
+    utterance = SpeechUtterance()
+    utterance.add_text("Discard this speech")
+    speaker = threading.Thread(target=engine.speak, args=(utterance,))
+
+    try:
+        speaker.start()
+        assert synthesis_started.wait(10)
+        engine.stop()
+        finish_synthesis.set()
+        speaker.join(10)
+
+        assert not speaker.is_alive()
+        assert engine.state is SynthState.ready
+        assert engine._task_queue.empty()
+    finally:
+        finish_synthesis.set()
+        speaker.join(10)
+        engine.close()
+        engine.stop()
