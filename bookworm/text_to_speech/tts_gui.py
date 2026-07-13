@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from contextlib import suppress
 from enum import IntEnum
 
 import wx
@@ -256,15 +257,19 @@ class SpeechPanel(SettingsPanel):
         engine_name = engine_name or self.config["engine"]
         self.current_engine = self.service.get_engine(engine_name)
         self.engineInfoText.SetValue(_(self.current_engine.display_name))
+        temp_engine_instance = None
         try:
             temp_engine_instance = self.current_engine()
             self.voices = temp_engine_instance.get_voices()
-            temp_engine_instance.close()  # Immediately release any resources.
         except Exception:
             # If instantiation fails, log the error and provide a safe empty list.
             # This allows the UI to continue functioning without crashing.
             log.exception(f"Failed to instantiate engine '{self.current_engine.name}' to get voices. Voice list will be empty.")
-            self.voices = [] 
+            self.voices = []
+        finally:
+            if temp_engine_instance is not None:
+                with suppress(Exception):
+                    temp_engine_instance.close()
         self.voice.Clear()
         self.voice.Append([v.display_name for v in self.voices])
         self.reconcile()
@@ -432,7 +437,7 @@ class VoiceProfileDialog(SimpleDialog):
     def activate_profile(self, profile_name):
         if profile_name not in self.config_manager.profiles:
             return
-        self.config_manager.active_profile = self.config_manager.profiles[profile_name]
+        self.config_manager.set_active_profile(profile_name)
         if self.service.reader.ready:
             self.service.initialize_engine()
         self.service.view.menuBar.FindItemById(
@@ -669,14 +674,12 @@ class SpeechMenu(wx.Menu):
 
     def onDeactivateVoiceProfile(self, event):
         config_manager = self.service.config_manager
-        config_manager.active_profile = None
-        self.service.configure_engine()
+        config_manager.set_active_profile()
+        if self.service.reader.ready:
+            self.service.initialize_engine()
         self.menubar.FindItemById(
             StatelessSpeechMenuIds.deactivateActiveVoiceProfile
         ).Enable(False)
-        self.service.stop_speech()
-        self.service.initialize_engine()
-        self.service.speak_page(start_pos=self.view.get_insertion_point())
 
     def onKeyUp(self, event):
         event.Skip(True)
