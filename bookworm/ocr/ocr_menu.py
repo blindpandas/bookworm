@@ -34,15 +34,11 @@ from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,
     reader_page_changed,
+    should_auto_navigate_to_next_page,
 )
 from bookworm.utils import gui_thread_safe
 
 from .ocr_dialogs import OCROptionsDialog
-
-try:
-    from bookworm.text_to_speech import should_auto_navigate_to_next_page
-except ImportError:
-    should_auto_navigate_to_next_page = None
 
 
 log = logger.getChild(__name__)
@@ -118,6 +114,7 @@ class OCRMenu(wx.Menu):
         self.service = service
         self.view = service.view
         self._ocr_cancelled = threading.Event()
+        self._automatic_ocr_futures = {}
         image2textId = wx.NewIdRef()
 
         # Add menu items
@@ -174,31 +171,27 @@ class OCRMenu(wx.Menu):
         reader_page_changed.connect(
             self._on_reader_page_changed, sender=self.service.reader
         )
-        if should_auto_navigate_to_next_page:
-            should_auto_navigate_to_next_page.connect(
-                self.on_should_auto_navigate_to_next_page, sender=self.view
-            )
+        should_auto_navigate_to_next_page.connect(
+            self.on_should_auto_navigate_to_next_page, sender=self.view
+        )
 
     def _get_ocr_options(self, from_cache=True, **dlg_kw):
-        last_stored_opts = self.service.stored_options
-        if not from_cache:
-            self.service.stored_options = None
-            self.service.saved_scanned_pages.clear()
-        if self.service.stored_options is not None:
+        if from_cache and self.service.stored_options is not None:
             return self.service.stored_options
-        else:
-            opts = self._get_ocr_options_from_dlg(
-                last_stored_options=last_stored_opts, **dlg_kw
-            )
-            if opts is not None and opts.store_options:
-                self.service.stored_options = opts
-            else:
-                self.service.stored_options = None
-            return opts
+        engine, opts = self._get_ocr_options_from_dlg(
+            last_stored_options=self.service.stored_options,
+            **dlg_kw,
+        )
+        if opts is None:
+            return None
+        self._cancel_automatic_ocr()
+        self.service.current_ocr_engine = engine
+        self.service.saved_scanned_pages.clear()
+        self.service.stored_options = opts if opts.store_options else None
+        return opts
 
     def _get_ocr_options_from_dlg(self, last_stored_options=None, **dlg_kw):
-        self.service._init_ocr_engine()
-        engine = self.service.current_ocr_engine
+        engine = self.service.get_first_available_ocr_engine()
         langs = engine.get_sorted_languages()
         if not langs:
             wx.MessageBox(
@@ -210,7 +203,7 @@ class OCRMenu(wx.Menu):
                 _("No Languages for OCR"),
                 style=wx.ICON_ERROR,
             )
-            return
+            return engine, None
         dlg = OCROptionsDialog(
             parent=self.view,
             title=_("OCR Options"),
@@ -220,8 +213,7 @@ class OCRMenu(wx.Menu):
             is_multilingual=engine.__supports_more_than_one_recognition_language__,
             **dlg_kw,
         )
-        self.service.saved_scanned_pages.clear()
-        return dlg.ShowModal()
+        return engine, dlg.ShowModal()
 
     def onScanCurrentPage(self, event):
         self._ocr_cancelled.clear()
@@ -230,19 +222,11 @@ class OCRMenu(wx.Menu):
             return speech.announce(_("Canceled"), True)
         reader = self.service.reader
         if reader.current_page in self.service.saved_scanned_pages:
-            self.view.set_content(self.service.saved_scanned_pages[reader.current_page])
+            self._show_cached_ocr(reader.current_page)
+            if self.auto_scan_item.IsChecked():
+                self._ensure_automatic_ocr(reader.current_page + 1)
             return
-        image = reader.document.get_page_image(
-            reader.current_page,
-            ocr_opts.zoom_factor,
-        )
-        ocr_request = OcrRequest(
-            languages=ocr_opts.languages,
-            image=image,
-            image_processing_pipelines=ocr_opts.image_processing_pipelines,
-            cookie=reader.current_page,
-            engine_options=ocr_opts.engine_options,
-        )
+        ocr_request = self._make_page_ocr_request(reader.current_page, ocr_opts)
 
         def _ocr_callback(ocr_result):
             page_number = ocr_result.cookie
@@ -251,23 +235,111 @@ class OCRMenu(wx.Menu):
             if page_number == self.view.reader.current_page:
                 self.view.set_content(content)
                 self.view.set_text_direction(ocr_request.language.is_rtl)
+                if self.auto_scan_item.IsChecked():
+                    self._ensure_automatic_ocr(page_number + 1)
 
         self._run_ocr(ocr_request, _ocr_callback)
 
-    def _run_ocr(self, ocr_request, callback):
+    def _make_page_ocr_request(self, page_number, ocr_opts):
+        image = self.service.reader.document.get_page_image(
+            page_number,
+            ocr_opts.zoom_factor,
+        )
+        return OcrRequest(
+            languages=ocr_opts.languages,
+            image=image,
+            image_processing_pipelines=ocr_opts.image_processing_pipelines,
+            cookie=page_number,
+            engine_options=ocr_opts.engine_options,
+        )
+
+    def _run_ocr(self, ocr_request, callback, engine=None):
         ocr_started.send(sender=self.view)
         # Show a modal dialog
         sounds.ocr_start.play()
         future_callback = functools.partial(self._process_ocr_result, callback)
+        engine = engine or self.service.current_ocr_engine
         self._wait_dlg = AsyncSnakDialog(
             task=functools.partial(
-                self.service.current_ocr_engine.preprocess_and_recognize, ocr_request
+                engine.preprocess_and_recognize,
+                ocr_request,
             ),
             done_callback=future_callback,
             message=_("Running OCR, please wait..."),
             dismiss_callback=self._on_ocr_cancelled,
             parent=self.view,
         )
+
+    def _show_cached_ocr(self, page_number, set_focus_to_text_ctrl=True):
+        self.view.set_content(
+            self.service.saved_scanned_pages[page_number],
+            set_focus_to_text_ctrl,
+        )
+        if options := self.service.stored_options:
+            self.view.set_text_direction(options.languages[0].is_rtl)
+
+    def _announce_automatic_ocr_failure(self, page_number):
+        if page_number == self.service.reader.current_page:
+            speech.announce(_("Automatic OCR failed."))
+
+    def _ensure_automatic_ocr(self, page_number):
+        reader = self.service.reader
+        document = reader.document
+        if not self.auto_scan_item.IsChecked() or page_number not in document:
+            return
+        if page_number in self.service.saved_scanned_pages:
+            distance = page_number - reader.current_page
+            if distance == 0:
+                self._show_cached_ocr(page_number)
+            if distance in (0, 1):
+                self._ensure_automatic_ocr(page_number + 1)
+            return
+        key = (document, page_number)
+        if key in self._automatic_ocr_futures:
+            return
+        ocr_opts = self.service.stored_options
+        if ocr_opts is None:
+            return
+        try:
+            ocr_request = self._make_page_ocr_request(page_number, ocr_opts)
+        except Exception:
+            log.exception("Could not prepare automatic OCR for page %s.", page_number + 1)
+            self._announce_automatic_ocr_failure(page_number)
+            return
+        future = threaded_worker.submit(
+            self.service.current_ocr_engine.preprocess_and_recognize,
+            ocr_request,
+        )
+        self._automatic_ocr_futures[key] = future
+        future.add_done_callback(functools.partial(self._process_automatic_ocr_result, key))
+
+    @gui_thread_safe
+    def _process_automatic_ocr_result(self, key, task):
+        if self._automatic_ocr_futures.get(key) is not task:
+            return
+        self._automatic_ocr_futures.pop(key)
+        document, page_number = key
+        reader = self.service.reader
+        if document is not reader.document or not self.auto_scan_item.IsChecked():
+            return
+        try:
+            ocr_result = task.result()
+        except Exception:
+            log.exception("Automatic OCR failed for page %s.", page_number + 1)
+            self._announce_automatic_ocr_failure(page_number)
+            return
+        self.service.saved_scanned_pages[page_number] = ocr_result.recognized_text
+        distance = page_number - reader.current_page
+        if distance == 0:
+            self._show_cached_ocr(page_number, set_focus_to_text_ctrl=False)
+        if distance in (0, 1):
+            self._ensure_automatic_ocr(page_number + 1)
+
+    def _cancel_automatic_ocr(self, keep=()):
+        for key, future in list(self._automatic_ocr_futures.items()):
+            if key not in keep:
+                future.cancel()
+                self._automatic_ocr_futures.pop(key)
 
     def onAutoScanPages(self, event):
         event.Skip()
@@ -286,13 +358,21 @@ class OCRMenu(wx.Menu):
             speech.announce(_("Automatic OCR is enabled"))
             if self.view.is_empty():
                 self.onScanCurrentPage(event)
+            else:
+                self._ensure_automatic_ocr(self.service.reader.current_page + 1)
         else:
+            self._cancel_automatic_ocr()
             speech.announce(_("Automatic OCR is disabled"))
 
     def onScanToTextFile(self, event):
         ocr_opts = self._get_ocr_options(from_cache=False, force_save=True)
         if ocr_opts is None:
             return
+        if self.auto_scan_item.IsChecked():
+            page_number = self.service.reader.current_page
+            self._ensure_automatic_ocr(
+                page_number if self.view.is_empty() else page_number + 1
+            )
         # Get output file path
         filename = f"{self.view.reader.current_book.title}.txt"
         saveExportedFD = wx.FileDialog(
@@ -354,7 +434,12 @@ class OCRMenu(wx.Menu):
             wx.CallAfter(self.view.contentTextCtrl.SetFocus)
 
     def onChangeOCROptions(self, event):
-        self._get_ocr_options(from_cache=False)
+        opts = self._get_ocr_options(
+            from_cache=False,
+            force_save=self.auto_scan_item.IsChecked(),
+        )
+        if opts is not None and self.auto_scan_item.IsChecked():
+            self._ensure_automatic_ocr(self.service.reader.current_page)
 
     def onScanImageFile(self, event):
         wildcard = []
@@ -396,7 +481,7 @@ class OCRMenu(wx.Menu):
                     style=wx.ICON_ERROR,
                 )
                 return
-            options = self._get_ocr_options_from_dlg(force_save=True)
+            engine, options = self._get_ocr_options_from_dlg(force_save=True)
             if not options:
                 return
 
@@ -411,7 +496,7 @@ class OCRMenu(wx.Menu):
                     ocr_result=ocr_result,
                     image_name=Path(filename).stem,
                 )
-                wx.CallAfter(self.view.load_document, recog_document)
+                wx.CallAfter(self.view.open_document, recog_document)
 
             factor = options.zoom_factor
             resized_image = image.to_pil().resize(
@@ -421,8 +506,9 @@ class OCRMenu(wx.Menu):
                 languages=options.languages,
                 image=ImageIO.from_pil(resized_image),
                 image_processing_pipelines=options.image_processing_pipelines,
+                engine_options=options.engine_options,
             )
-            self._run_ocr(ocr_request, _ocr_callback)
+            self._run_ocr(ocr_request, _ocr_callback, engine=engine)
 
     @gui_thread_safe
     def _process_ocr_result(self, callback, task):
@@ -480,13 +566,28 @@ class OCRMenu(wx.Menu):
             self.Enable(item_id, can_render)
 
     def _on_reader_unloaded(self, sender):
+        self._cancel_automatic_ocr()
         self.service.stored_options = None
         self.service.saved_scanned_pages.clear()
         self.auto_scan_item.Check(False)
 
     def _on_reader_page_changed(self, sender, current, prev):
         if self.auto_scan_item.IsChecked():
-            self.onScanCurrentPage(None)
+            document = sender.document
+            self._cancel_automatic_ocr(
+                {(document, page) for page in range(current.index, current.index + 3)}
+            )
+            self._ensure_automatic_ocr(current.index)
 
     def on_should_auto_navigate_to_next_page(self, sender):
-        return not self.auto_scan_item.IsChecked()
+        if not self.auto_scan_item.IsChecked():
+            return True
+        reader = self.service.reader
+        current_page = reader.current_page
+        if sender.is_empty() and current_page not in self.service.saved_scanned_pages:
+            return False
+        next_page = current_page + 1
+        return (
+            next_page not in reader.document
+            or next_page in self.service.saved_scanned_pages
+        )

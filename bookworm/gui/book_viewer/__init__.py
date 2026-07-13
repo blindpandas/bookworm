@@ -32,6 +32,7 @@ from bookworm.signals import (
     reader_book_loaded,
     reader_book_unloaded,
     reading_position_change,
+    should_auto_navigate_to_next_page,
 )
 from bookworm.structured_text import (
     SEMANTIC_ELEMENT_OUTPUT_OPTIONS,
@@ -503,9 +504,9 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def open_document(self, document):
         self.unloadCurrentEbook()
-        self.reader.set_document(document)
+        self.load_document(document)
 
-    def set_content(self, content):
+    def set_content(self, content, set_focus_to_text_ctrl=True):
         self._text_position_map = TextCtrlPositionMap(content)
         self.contentTextCtrl.Freeze()
         if self._has_text_zoom:
@@ -518,7 +519,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         self.contentTextCtrl.SetValue(self._text_position_map.to_text_ctrl_value())
         self.contentTextCtrl.SetStyle(0, self.contentTextCtrl.GetLastPosition(), content_style)
         self.contentTextCtrl.SetDefaultStyle(content_style)
-        self.set_insertion_point(0)
+        self.set_insertion_point(0, set_focus_to_text_ctrl)
         self.contentTextCtrl.Thaw()
 
     def set_title(self, title):
@@ -596,10 +597,15 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             config.conf["general"]["use_continuous_reading"]
             and event.Position == self.contentTextCtrl.GetLastPosition()
         ):
-            if (time.monotonic() - self._last_page_turn_time) <= 0.75:
-                return
-            self.reader.go_to_next()
-            self._last_page_turn_time = time.monotonic()
+            should_navigate = all(
+                retval
+                for _, retval in should_auto_navigate_to_next_page.send(self)
+            )
+            if should_navigate:
+                if (time.monotonic() - self._last_page_turn_time) <= 0.75:
+                    return
+                self.reader.go_to_next()
+                self._last_page_turn_time = time.monotonic()
         wx.CallAfter(keep_awake)
 
     def _after_caret_moved(self):
