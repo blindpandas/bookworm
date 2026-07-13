@@ -59,7 +59,10 @@ HIDDEN_IMPORTS = [
     "logging.config",
     "winrt.windows.foundation",
     "winrt.windows.foundation.collections",
+    "winrt.windows.globalization",
+    "winrt.windows.graphics.imaging",
     "winrt.windows.media",
+    "winrt.windows.media.ocr",
     "winrt.windows.media.speechsynthesis",
     "winrt.windows.storage.streams",
 ]
