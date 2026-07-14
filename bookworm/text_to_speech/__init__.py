@@ -22,6 +22,7 @@ from bookworm.signals import (
     reader_book_unloaded,
     reader_page_changed,
     reading_position_change,
+    should_auto_navigate_to_next_page,
 )
 from bookworm.speech_engines import TTS_ENGINES
 from bookworm.speechdriver import DummySpeechEngine, speech_engine_state_changed
@@ -48,9 +49,6 @@ from .tts_gui import (
 log = logger.getChild(__name__)
 
 # Custom signals
-should_auto_navigate_to_next_page = _signals.signal(
-    "tts/should-auto-navigate-to-next-page"
-)
 restart_speech = _signals.signal("tts/restart-speech")
 
 # Utterance types

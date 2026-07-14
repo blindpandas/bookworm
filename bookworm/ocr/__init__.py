@@ -104,5 +104,6 @@ class OCRService(_OCRManagerMixin, BookwormService):
         return OCR_KEYBOARD_SHORTCUTS
 
     def shutdown(self):
+        self.menu._cancel_automatic_ocr()
         if (dlg := getattr(self.menu, "_wait_dlg", None)) is not None:
             dlg.Dismiss()
