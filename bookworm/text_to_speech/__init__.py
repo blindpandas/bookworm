@@ -22,6 +22,7 @@ from bookworm.signals import (
     reader_book_unloaded,
     reader_page_changed,
     reading_position_change,
+    should_auto_navigate_to_next_page,
 )
 from bookworm.speech_engines import TTS_ENGINES
 from bookworm.speechdriver import DummySpeechEngine, speech_engine_state_changed
@@ -48,9 +49,6 @@ from .tts_gui import (
 log = logger.getChild(__name__)
 
 # Custom signals
-should_auto_navigate_to_next_page = _signals.signal(
-    "tts/should-auto-navigate-to-next-page"
-)
 restart_speech = _signals.signal("tts/restart-speech")
 
 # Utterance types
@@ -105,6 +103,8 @@ class TextToSpeechService(BookwormService):
         self.initialize_state()
 
     def initialize_state(self):
+        self._speech_session = getattr(self, "_speech_session", 0) + 1
+        self._pause_on_speech_start = False
         self.utterance_queue = deque()
         self.text_info = None
         self._whole_page_text_info = None
@@ -112,6 +112,11 @@ class TextToSpeechService(BookwormService):
 
     def _on_app_started(self, sender):
         log.debug("App has started, setting up initial listener state.")
+        self.config_manager.restore_active_profile()
+        self.menu.Enable(
+            StatelessSpeechMenuIds.deactivateActiveVoiceProfile,
+            self.config_manager.active_profile is not None,
+        )
         self._update_listener_state()
 
     def shutdown(self):
@@ -192,13 +197,13 @@ class TextToSpeechService(BookwormService):
         return SPEECH_KEYBOARD_SHORTCUTS
 
     def stop_speech(self, user_requested=False):
-        self.initialize_state()
         self.engine.stop()
+        self.initialize_state()
         if user_requested:
             setattr(self, "_requested_play", False)
 
     def encode_bookmark(self, data):
-        payload = msgpack.dumps(data)
+        payload = msgpack.dumps({**data, "s": self._speech_session})
         return b64encode(payload).decode("ascii")
 
     def decode_bookmark(self, payload):
@@ -217,14 +222,28 @@ class TextToSpeechService(BookwormService):
     def play_or_resume(self):
         if not self.is_engine_ready:
             self.initialize_engine()
+        if not self.is_engine_ready:
+            wx.Bell()
+            return
         state = self.engine.state
         if state is SynthState.busy:
             wx.Bell()
             return
         if state is SynthState.paused:
+            self._pause_on_speech_start = False
             self.engine.resume()
             # Translators: a message that is announced when the speech is resumed
             speech.announce(_("Resumed"))
+            return
+        if getattr(self, "_requested_play", False):
+            if self._pause_on_speech_start:
+                self._pause_on_speech_start = False
+                if self.engine.state is SynthState.paused:
+                    self.engine.resume()
+                # Translators: a message that is announced when the speech is resumed
+                speech.announce(_("Resumed"))
+            else:
+                wx.Bell()
             return
         setattr(self, "_requested_play", True)
         self.speak_page()
@@ -239,14 +258,30 @@ class TextToSpeechService(BookwormService):
             # Translators: a message that is announced when the speech is paused
             speech.announce(_("Paused"))
         elif state is SynthState.paused:
+            self._pause_on_speech_start = False
             self.engine.resume()
             # Translators: a message that is announced when the speech is resumed
             speech.announce(_("Resumed"))
+        elif getattr(self, "_requested_play", False):
+            pause_requested = not self._pause_on_speech_start
+            self._pause_on_speech_start = pause_requested
+            if pause_requested and self.engine.state is SynthState.busy:
+                self._pause_on_speech_start = False
+                self.engine.pause()
+            elif (
+                not pause_requested and self.engine.state is SynthState.paused
+            ):
+                self.engine.resume()
+            # Translators: a message announced when pending speech is paused or resumed
+            speech.announce(_("Paused") if pause_requested else _("Resumed"))
         else:
             self.play_or_resume()
 
     def stop_playback(self):
-        if self.is_engine_ready and self.engine.state is not SynthState.ready:
+        if self.is_engine_ready and (
+            self.engine.state is not SynthState.ready
+            or getattr(self, "_requested_play", False)
+        ):
             self.stop_speech(user_requested=True)
             # Translators: a message that is announced when the speech is stopped
             speech.announce(_("Stopped"))
@@ -254,69 +289,99 @@ class TextToSpeechService(BookwormService):
             wx.Bell()
 
     def fastforward(self):
-        if not self.is_engine_ready or self.text_info is None:
-            wx.Bell()
-            return
-        was_speaking = self.engine.state is SynthState.busy
-        if was_speaking:
-            self.engine.stop()
-        insertion_point = self.view.get_insertion_point()
-        try:
-            p_range = self.text_info.get_paragraph_to_the_right_of(insertion_point)
-            self.view.set_insertion_point(p_range.start)
-            if was_speaking:
-                self.initialize_state()
-                self.speak_page(start_pos=p_range.start)
-            else:
-                sounds.navigation.play()
-        except LookupError:
-            wx.Bell()
+        self._seek_paragraph(forward=True)
 
     def rewind(self):
-        if not self.is_engine_ready:
+        self._seek_paragraph(forward=False)
+
+    def _seek_paragraph(self, *, forward):
+        if not self.is_engine_ready or (forward and self.text_info is None):
             wx.Bell()
             return
-        was_speaking = self.engine.state is SynthState.busy
-        if was_speaking:
-            self.engine.stop()
-        if self._whole_page_text_info is None:
-            full_text = self.view.get_text_by_range(0, -1)
-            self._whole_page_text_info = TextInfo(full_text)
+        previous_state = self.engine.state
+        was_reading = previous_state is not SynthState.ready or getattr(
+            self, "_requested_play", False
+        )
+        was_paused = previous_state is SynthState.paused or getattr(
+            self, "_pause_on_speech_start", False
+        )
+        text_info = self.text_info
+        if not forward:
+            if self._whole_page_text_info is None:
+                full_text = self.view.get_text_by_range(0, -1)
+                self._whole_page_text_info = TextInfo(f"{full_text}\n")
+            text_info = self._whole_page_text_info
         insertion_point = self.view.get_insertion_point()
         try:
-            p_range = self._whole_page_text_info.get_paragraph_to_the_left_of(
-                insertion_point
+            get_paragraph = (
+                text_info.get_paragraph_to_the_right_of
+                if forward
+                else text_info.get_paragraph_to_the_left_of
             )
-            self.view.set_insertion_point(p_range.start)
-            if was_speaking:
-                self.initialize_state()
-                self.speak_page(start_pos=p_range.start)
-            else:
-                sounds.navigation.play()
+            target_position = get_paragraph(insertion_point).start
         except LookupError:
-            wx.Bell()
+            step = 1 if forward else -1
+            if self.reader.current_page + step not in self.reader.document:
+                wx.Bell()
+                return
+            if was_reading:
+                self.stop_speech()
+            self._requested_play = False
+            navigate = self.reader.go_to_next if forward else self.reader.go_to_prev
+            if not navigate():
+                wx.Bell()
+                return
+            full_text = self.view.get_text_by_range(0, -1)
+            page_text_info = TextInfo(f"{full_text}\n")
+            paragraphs = page_text_info.paragraphs
+            target_position = (
+                paragraphs[0 if forward else -1][1].start if paragraphs else 0
+            )
+        else:
+            if was_reading:
+                self.stop_speech()
+        self.view.set_insertion_point(target_position)
+        if not was_reading:
+            self._requested_play = False
+            sounds.navigation.play()
+            return
+        self._requested_play = True
+        self._pause_on_speech_start = was_paused
+        self.speak_page(start_pos=target_position, init_state=False)
 
     def on_restart_speech(self, sender, start_speech_from, speech_prefix=None):
-        if (not self.is_engine_ready) or (self.engine.state is not SynthState.busy):
+        if not self.is_engine_ready or not getattr(self, "_requested_play", False):
             return
+        was_paused = self.engine.state is SynthState.paused or getattr(
+            self, "_pause_on_speech_start", False
+        )
         self.stop_speech()
         if speech_prefix:
             with self.queue_speech_utterance() as utterance:
                 utterance.add_text(speech_prefix)
                 utterance.add_pause(PauseSpec.extra_small)
+        self._pause_on_speech_start = was_paused
         self.speak_page(start_pos=start_speech_from, init_state=False)
 
     def on_reader_unload(self, sender):
         self.close()
+        self._requested_play = False
 
     def _change_page_for_tts(self, sender, current, prev):
         if not self.is_engine_ready:
             return
+        previous_state = self.engine.state
+        was_paused = previous_state is SynthState.paused or getattr(
+            self, "_pause_on_speech_start", False
+        )
+        if previous_state is not SynthState.ready or getattr(
+            self, "_requested_play", False
+        ):
+            self.engine.stop()
         self.initialize_state()
         self._whole_page_text_info = None
-        if self.engine.state is not SynthState.ready:
-            self.engine.stop()
         if getattr(self, "_requested_play", False):
+            self._pause_on_speech_start = was_paused
             if config.conf["reading"]["speak_page_number"]:
                 with self.queue_speech_utterance() as utterance:
                     utterance.add_text(
@@ -350,17 +415,17 @@ class TextToSpeechService(BookwormService):
         page_is_the_last_of_its_section = (
             not self.reader.document.is_single_page_document()
             and page.is_last_of_section
+            and not page.section.is_root
             and not page.section.has_children
         )
-        if page.section.is_root:
-            utterance.add_audio(sounds.section_end.path)
-            # Translators: a message to speak at the end of the document
-            utterance.add_audio(sounds.section_end.path)
-            utterance.add_text(_("End of document."))
         if page_is_the_last_of_its_section:
             self.configure_end_of_section_utterance(utterance, page.section)
         else:
             utterance.add_pause(self.config_manager["end_of_page_pause"])
+        if page.index == len(self.reader.document) - 1:
+            utterance.add_audio(sounds.section_end.path)
+            # Translators: a message to speak at the end of the document
+            utterance.add_text(_("End of document."))
         utterance.add_bookmark(
             self.encode_bookmark(
                 {
@@ -369,8 +434,6 @@ class TextToSpeechService(BookwormService):
                 }
             )
         )
-        utterance.add_pause(50)
-        utterance.add_bookmark(self.encode_bookmark({"t": UT_SECTION_END}))
 
     def configure_end_of_section_utterance(self, utterance, section):
         if config.conf["reading"]["notify_on_section_end"]:
@@ -404,9 +467,6 @@ class TextToSpeechService(BookwormService):
         with self.queue_speech_utterance() as utterance:
             self.configure_end_page_utterance(utterance, page)
         utterance.add_pause(PauseSpec.extra_small)
-        if self.reader.document.is_single_page_document():
-            # Translators: spoken message at the end of the document
-            utterance.add_text(_("End of document"))
         self.engine.speak(self.utterance_queue.pop())
 
     def add_text_utterances(self, text_info):
@@ -419,12 +479,15 @@ class TextToSpeechService(BookwormService):
                 if is_single_page_document:
                     text_pos = sum(text_range.astuple()) / 2
                     sect = self.reader.document.get_section_at_position(text_pos)
-                    if _last_known_section != sect:
+                    if _last_known_section is not sect:
                         if (_last_known_section is not None) and (
                             sect.parent is not _last_known_section
                         ):
                             self.configure_end_of_section_utterance(
-                                utterance, sect.simple_prev
+                                utterance, _last_known_section
+                            )
+                            utterance.add_bookmark(
+                                self.encode_bookmark({"t": UT_SECTION_END})
                             )
                         _last_known_section = sect
                 utterance.add_bookmark(
@@ -451,6 +514,8 @@ class TextToSpeechService(BookwormService):
 
     @gui_thread_safe
     def process_bookmark(self, bookmark):
+        if bookmark.get("s") != self._speech_session:
+            return
         bookmark_type = bookmark["t"]
         if bookmark_type == UT_END:
             try:
@@ -463,12 +528,14 @@ class TextToSpeechService(BookwormService):
             self.view.set_insertion_point(p_start)
             if config.conf["reading"]["highlight_spoken_text"]:
                 self.view.highlight_range(p_start, p_end)
+                self._highlighted_ranges.add((p_start, p_end))
             if config.conf["reading"]["select_spoken_text"]:
                 self.view.select_text(p_start, p_end)
-            self._highlighted_ranges.add((p_start, p_end))
         elif bookmark_type == UT_PARAGRAPH_END:
-            if config.conf["reading"]["highlight_spoken_text"]:
-                self.view.clear_highlight(*bookmark["txr"])
+            text_range = tuple(bookmark["txr"])
+            if text_range in self._highlighted_ranges:
+                self.view.clear_highlight(*text_range)
+                self._highlighted_ranges.discard(text_range)
             if config.conf["reading"]["select_spoken_text"]:
                 self.view.unselect_text()
         elif bookmark_type == UT_PAGE_END:
@@ -477,97 +544,132 @@ class TextToSpeechService(BookwormService):
                 for func, retval in should_auto_navigate_to_next_page.send(self.view)
             )
             if not should_navigate:
+                self._requested_play = False
                 return
             is_last_of_section = bookmark["isl"]
             tts_reading_mode = config.conf["reading"]["reading_mode"]
-            if tts_reading_mode < 2:
-                if (tts_reading_mode == 1) and is_last_of_section:
-                    return
-                navigated = self.reader.go_to_next()
-                if navigated:
-                    self.speak_page()
+            if tts_reading_mode >= 2 or (
+                tts_reading_mode == 1 and is_last_of_section
+            ):
+                self._requested_play = False
+                return
+            if not self.reader.go_to_next():
+                self._requested_play = False
+        elif bookmark_type == UT_SECTION_END:
+            if config.conf["reading"]["reading_mode"] == 1:
+                self.stop_speech(user_requested=True)
 
     def initialize_engine(self):
         engine_name = self.config_manager["engine"]
         last_known_state = (
             SynthState.ready if not self.is_engine_ready else self.engine.state
         )
-        # If the requested engine is already loaded, just re-configure it and exit.
-        if self.is_engine_ready and self.engine.name == engine_name:
-            self.configure_engine(last_known_state)
-            return
-        # Close any currently active engine before initializing a new one.
-        if self.is_engine_ready:
-            self.close()
-        # Attempt to load the user's configured speech engine first.
-        try:
-            Engine = self.get_engine(engine_name, by_name=True)
-            self.engine = Engine()
-            log.info(f"Successfully initialized speech engine: {engine_name}")
-        except Exception:
-            # If the primary engine fails (e.g., due to an OSError for a missing component),
-            # log the error and attempt to find a working fallback engine.
-            log.exception(
-                f"Failed to initialize the selected speech engine '{engine_name}'. Finding a working fallback.",
-                exc_info=True
-            )
+        was_reading = last_known_state is not SynthState.ready or getattr(
+            self, "_requested_play", False
+        )
+        was_paused = last_known_state is SynthState.paused or getattr(
+            self, "_pause_on_speech_start", False
+        )
+        reuse_engine = self.is_engine_ready and self.engine.name == engine_name
+        if not reuse_engine:
+            # Close any currently active engine before initializing a new one.
+            if self.is_engine_ready:
+                self.close()
+            # Attempt to load the user's configured speech engine first.
             try:
-                FallbackEngine = self.get_engine(by_name=False)
-                self.engine = FallbackEngine()
-                log.info(f"Successfully fell back to and initialized speech engine: {FallbackEngine.name}")
-                self.config_manager["engine"] = FallbackEngine.name
-                self.config_manager.save()
-                # Translators: The title of a warning dialog that appears when a speech engine fails to load.
-                title = _("Speech Engine Warning")
-                # Translators: The main message of the dialog, explaining that the application automatically
-                # switched to a different, working speech engine.
-                message = _("The previously selected speech engine could not be loaded. Bookworm has automatically switched to '{engine_display_name}'.").format(engine_display_name=_(FallbackEngine.display_name))
-                wx.CallAfter(self.view.notify_user, title, message, icon=wx.ICON_WARNING)
+                Engine = self.get_engine(engine_name, by_name=True)
+                self.engine = Engine()
+                log.info(f"Successfully initialized speech engine: {engine_name}")
             except Exception:
-                 # If even the fallback engine fails, disable TTS functionality completely.
-                log.exception("CRITICAL: No speech engines could be successfully initialized.", exc_info=True)
-                self.engine = None
-                # Translators: The title of a critical error dialog.
-                title = _("Critical Speech Error")
-                # Translators: The main message explaining that no speech engines could be loaded at all.
-                message = _("No speech engines could be loaded on this system. Text-to-speech functionality will be disabled.")
-                wx.CallAfter(self.view.notify_user, title, message, icon=wx.ICON_ERROR)
-                return
-        # If an engine was successfully loaded (either primary or fallback), bind its events.
-        if self.is_engine_ready:
+                # If the primary engine fails, try to find a working fallback.
+                log.exception(
+                    f"Failed to initialize the selected speech engine '{engine_name}'. Finding a working fallback.",
+                    exc_info=True,
+                )
+                try:
+                    FallbackEngine = self.get_engine(by_name=False)
+                    self.engine = FallbackEngine()
+                    log.info(
+                        f"Successfully fell back to and initialized speech engine: {FallbackEngine.name}"
+                    )
+                    self.config_manager["engine"] = FallbackEngine.name
+                    self.config_manager.save()
+                    # Translators: The title of a warning dialog shown when an engine fails.
+                    title = _("Speech Engine Warning")
+                    # Translators: Explains that Bookworm selected a working fallback engine.
+                    message = _(
+                        "The previously selected speech engine could not be loaded. Bookworm has automatically switched to '{engine_display_name}'."
+                    ).format(engine_display_name=_(FallbackEngine.display_name))
+                    wx.CallAfter(
+                        self.view.notify_user, title, message, icon=wx.ICON_WARNING
+                    )
+                except Exception:
+                    # If even the fallback engine fails, disable TTS functionality completely.
+                    log.exception(
+                        "CRITICAL: No speech engines could be successfully initialized.",
+                        exc_info=True,
+                    )
+                    self.engine = None
+                    # Translators: The title of a critical error dialog.
+                    title = _("Critical Speech Error")
+                    # Translators: Explains that no speech engine could be loaded.
+                    message = _(
+                        "No speech engines could be loaded on this system. Text-to-speech functionality will be disabled."
+                    )
+                    wx.CallAfter(
+                        self.view.notify_user, title, message, icon=wx.ICON_ERROR
+                    )
+                    self._requested_play = False
+                    self._pause_on_speech_start = False
+                    return
+            # If an engine was successfully loaded, bind its events.
             self.engine.bind(EngineEvent.state_changed, self.on_state_changed)
             self.engine.bind(EngineEvent.bookmark_reached, self.on_bookmark_reached)
-            self.configure_engine(last_known_state)
-            self._try_set_tts_language()
-
-    def configure_engine(self, last_known_state=SynthState.ready):
-        if not self.is_engine_ready:
+        if not self.configure_engine():
+            self.close()
+            self._requested_play = False
             return
-        if self.engine.state is not SynthState.ready:
+        if self.reader.ready:
+            self._try_set_tts_language()
+        if self.reader.ready and was_reading:
+            self._requested_play = True
+            self._pause_on_speech_start = was_paused
+            self.speak_page(init_state=False)
+
+    def configure_engine(self):
+        if not self.is_engine_ready:
+            return False
+        if self.engine.state is not SynthState.ready or getattr(
+            self, "_requested_play", False
+        ):
             self.engine.stop()
+            self.initialize_state()
         try:
             self.engine.configure(self.config_manager)
         except ValueError:
             self.config_manager.restore_defaults()
             self.config_manager.save()
-            if self.engine.get_first_available_voice() is None:
-                self.reader.view.notify_user(
-                    # Translators: the title of a message telling the user that no TTS voice found
-                    _("No TTS Voices"),
-                    # Translators: a message telling the user that no TTS voice found
-                    _(
-                        "A valid Text-to-speech voice was not found for the current speech engine.\n"
-                        "Text-to-speech functionality will be disabled."
-                    ),
-                )
-                return
-        if self.reader.ready and last_known_state is SynthState.busy:
-            self.speak_page()
+        if (
+            self.engine.voice is None
+            and self.engine._get_first_available_voice() is None
+        ):
+            self.reader.view.notify_user(
+                # Translators: the title of a message telling the user that no TTS voice found
+                _("No TTS Voices"),
+                # Translators: a message telling the user that no TTS voice found
+                _(
+                    "A valid Text-to-speech voice was not found for the current speech engine.\n"
+                    "Text-to-speech functionality will be disabled."
+                ),
+            )
+            return False
+        return True
 
     def _try_set_tts_language(self):
         if not config.conf["reading"]["ask_to_switch_voice_to_current_book_language"]:
             return
-        if self.engine.voice.speaks_language(
+        voice = self.engine.voice
+        if voice is None or voice.speaks_language(
             self.reader.document.language, strict=False
         ):
             return
@@ -601,11 +703,11 @@ class TextToSpeechService(BookwormService):
                 self.engine.voice = voice_for_lang[0]
 
     def close(self):
-        self.initialize_state()
         if self.engine is not None:
             self.engine.stop()
             self.engine.close()
             self.engine = None
+        self.initialize_state()
 
     @property
     def is_engine_ready(self):
@@ -620,6 +722,9 @@ class TextToSpeechService(BookwormService):
     def on_state_changed(self, sender, state):
         speech_engine_state_changed.send(self.view, service=self, state=state)
         self.on_engine_state_changed(state)
+        if state is SynthState.busy and self._pause_on_speech_start:
+            self._pause_on_speech_start = False
+            self.engine.pause()
 
     def on_bookmark_reached(self, sender, bookmark):
         self.process_bookmark(self.decode_bookmark(bookmark))
@@ -705,4 +810,3 @@ class TextToSpeechService(BookwormService):
             # If the loop completes without finding any working engine,
             # return the DummySpeechEngine as the ultimate fallback.
             return DummySpeechEngine
-

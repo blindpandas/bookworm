@@ -76,7 +76,8 @@ class BaseSpeechEngine(metaclass=ABCMeta):
             try:
                 self.set_voice_from_string(engine_config["voice"])
             except ValueError:
-                self.voice = self.get_first_available_voice()
+                if self._get_first_available_voice() is None:
+                    raise
         try:
             if engine_config["rate"] != -1:
                 self.rate = engine_config["rate"]
@@ -187,20 +188,26 @@ class BaseSpeechEngine(metaclass=ABCMeta):
                 return
         raise ValueError(f"Invalid voice {voice_ident}")
 
-    @classmethod
-    def get_first_available_voice(cls, language: LocaleInfo = None):
-        _test_engine = cls()
+    def _get_first_available_voice(self, language: LocaleInfo = None):
         voices = (
-            _test_engine.get_voices_by_language(language=language)
+            self.get_voices_by_language(language=language)
             if language is not None
-            else _test_engine.get_voices()
+            else self.get_voices()
         )
         for voice in voices:
             try:
-                _test_engine.set_voice_from_string(voice.id)
+                self.set_voice_from_string(voice.id)
                 return voice
             except ValueError:
                 continue
+
+    @classmethod
+    def get_first_available_voice(cls, language: LocaleInfo = None):
+        test_engine = cls()
+        try:
+            return test_engine._get_first_available_voice(language)
+        finally:
+            test_engine.close()
 
     def preprocess_utterance(self, utterance):
         """Return engine-specific speech utterance (if necessary)."""

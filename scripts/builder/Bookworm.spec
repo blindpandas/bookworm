@@ -50,12 +50,21 @@ HIDDEN_SUBMODULES = [
     "odf",
     "trafilatura",
     "justext",
+    "winrt",
 ]
 HIDDEN_IMPORTS = [
     "alembic",
     "numpy",
     "cv2",
     "logging.config",
+    "winrt.windows.foundation",
+    "winrt.windows.foundation.collections",
+    "winrt.windows.globalization",
+    "winrt.windows.graphics.imaging",
+    "winrt.windows.media",
+    "winrt.windows.media.ocr",
+    "winrt.windows.media.speechsynthesis",
+    "winrt.windows.storage.streams",
 ]
 for package_with_submodules in HIDDEN_SUBMODULES:
     HIDDEN_IMPORTS += collect_submodules(package_with_submodules)

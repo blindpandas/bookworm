@@ -360,8 +360,7 @@ class EpubDocument(SinglePageDocument):
                 sect_starting_poses, sect_starting_poses, offsets=(0, 1), longest=True
             )
         )
-        data[-1] = list(data[-1])
-        data[-1][1] = data[-1][0]
+        data[-1] = (data[-1][0], (len(self.get_content()), None))
         return [((i[0], j[0]), i[1]) for i, j in data]
 
     def add_toc_entry(self, entries, parent):

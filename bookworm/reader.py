@@ -576,9 +576,7 @@ class EBookReader:
         self.set_active_section(value)
 
     def set_active_section(self, value: Section, *, update_view: bool = True):
-        if (self.active_section is not None) and (
-            value.unique_identifier == self.active_section.unique_identifier
-        ):
+        if value is self.active_section:
             return
         self.__state["active_section"] = value
         if update_view and self.document.has_toc_tree():
@@ -647,14 +645,18 @@ class EBookReader:
                 return False
         elif unit == "section":
             this_section = self.active_section
+            if this_section is None:
+                return False
             target = "simple_next" if to == "next" else "simple_prev"
-            self.active_section = getattr(self.active_section, target)
             if this_section.is_root and to == "next":
-                self.active_section = this_section.first_child
-            navigated = this_section is not self.active_section
-            if navigated:
-                self.go_to_first_of_section()
-            return navigated
+                target_section = this_section.first_child
+            else:
+                target_section = getattr(this_section, target)
+            if target_section is None or target_section is this_section:
+                return False
+            self.active_section = target_section
+            self.go_to_first_of_section()
+            return True
 
     def perform_wormhole_navigation(
         self, *, page, start, end, last_position: tuple[int, int] = None
@@ -919,7 +921,8 @@ class EBookReader:
         title = _("Table View")
         if (table_caption := HTMLParser(table_markup).css_first("caption")) is not None:
             caption_text = table_caption.text().strip(string.whitespace).replace("\n", " ")
-            title = f"{caption_text} · {title}"
+            if caption_text:
+                title = f"{caption_text} · {title}"
         self.view.show_html_dialog(table_markup, title=title)
 
     def _show_image(self, image, image_info):

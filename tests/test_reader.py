@@ -59,6 +59,35 @@ def test_go_to_first_of_section_ignores_missing_single_page_section_range(reader
     assert reader.view.get_insertion_point() == 7
 
 
+def test_section_navigation_stops_cleanly_at_the_end(reader):
+    section = make_section("Last", 0, 10)
+    reader._EBookReader__state = {"active_section": section}
+
+    assert reader.navigate(to="next", unit="section") is False
+    assert reader.active_section is section
+
+
+def test_section_navigation_handles_duplicate_single_page_titles(reader):
+    root = make_section("Document", 0, 30)
+    first = make_section("Repeated", 0, 10)
+    second = make_section("Repeated", 20, 30)
+    root.append(first)
+    root.append(second)
+    reader.document = SimpleNamespace(
+        has_toc_tree=lambda: False,
+        is_single_page_document=lambda: True,
+    )
+    reader._EBookReader__state = {
+        "active_section": first,
+        "current_page_index": 0,
+    }
+    reader.view.get_containing_line = lambda _position: (20, 30)
+
+    assert reader.navigate(to="next", unit="section") is True
+    assert reader.active_section is second
+    assert reader.view.get_insertion_point() == 20
+
+
 def test_restore_position_for_converted_document(reader, asset, engine):
     """
     Tests if the last read position is correctly saved using the original URI

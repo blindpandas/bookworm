@@ -510,6 +510,7 @@ class WavePlayer:
         """Stop playback."""
         if self._minBufferSize:
             self._buffer = b""
+        failed = False
         with self._waveout_lock:
             if not self._waveout:
                 return
@@ -524,7 +525,12 @@ class WavePlayer:
                 # so trigger it to be sure that sync isn't blocking on 'waitForSingleObject'.
                 windll.kernel32.SetEvent(self._waveout_event)
                 if not success:
-                    return
+                    failed = True
+        if failed:
+            with self._lock:
+                self._prev_whdr = None
+                self._prevOnDone = None
+            return
         # Unprepare the previous buffer and close the output device if appropriate.
         self._idleUnbuffered()
         self._prevOnDone = None

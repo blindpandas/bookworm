@@ -91,7 +91,7 @@ class AnnotationService(BookwormService):
                 0,
                 (
                     0,
-                    _("Highlight Selection\tCtrl-Shift-H"),
+                    _("Highlight Selection\tCtrl-H"),
                     _("Highlight and save selected text."),
                     AnnotationsMenuIds.quoteSelection,
                 ),
