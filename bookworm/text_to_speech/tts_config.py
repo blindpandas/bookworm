@@ -30,6 +30,9 @@ class TTSConfigManager:
         self.refresh_voice_profiles()
 
     def refresh_voice_profiles(self):
+        active_profile_name = (
+            self.active_profile["name"] if self.active_profile is not None else None
+        )
         self.profiles.clear()
         if not self._profile_path.exists():
             self._profile_path.mkdir()
@@ -41,6 +44,20 @@ class TTSConfigManager:
             except ConfigObjError:
                 continue
             self.profiles[profile["name"]] = profile
+        self.active_profile = self.profiles.get(active_profile_name)
+
+    def restore_active_profile(self):
+        profile_name = config.conf["voice_profiles"]["active"]
+        self.active_profile = self.profiles.get(profile_name)
+        if profile_name and self.active_profile is None:
+            self.set_active_profile()
+
+    def set_active_profile(self, profile_name=None):
+        self.active_profile = self.profiles.get(profile_name)
+        config.conf["voice_profiles"]["active"] = (
+            self.active_profile["name"] if self.active_profile is not None else ""
+        )
+        config.save()
 
     def create_voice_profile(self, name):
         if name in self.profiles:
@@ -83,9 +100,17 @@ class TTSConfigManager:
 
     def __setitem__(self, key, value):
         if self.active_profile is not None:
-            self.active_profile[key] = value
+            self.active_profile["speech"][key] = value
         else:
             config.conf["speech"][key] = value
+
+    def restore_defaults(self):
+        speech_config = (
+            self.active_profile["speech"]
+            if self.active_profile is not None
+            else config.conf["speech"]
+        )
+        speech_config.restore_defaults()
 
     def save(self):
         for profile in self.profiles.values():
@@ -95,6 +120,7 @@ class TTSConfigManager:
 
 # Specs
 tts_config_spec = {
+    "voice_profiles": dict(active="string(default='')"),
     "reading": dict(
         # 0: entire book, 1: current section, 2: current_page
         reading_mode="integer(default=0, min=0, max=2)",

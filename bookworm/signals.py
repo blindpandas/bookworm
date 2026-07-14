@@ -22,6 +22,9 @@ reader_book_loaded = _signals.signal("reader/loaded")
 reader_book_unloaded = _signals.signal("reader/unloaded")
 reader_page_changed = _signals.signal("reader/page_changed")
 reader_section_changed = _signals.signal("reader/section_changed")
+should_auto_navigate_to_next_page = _signals.signal(
+    "tts/should-auto-navigate-to-next-page"
+)
 
 # Configuration
 config_updated = _signals.signal("config/updated")
