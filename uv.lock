@@ -364,7 +364,7 @@ requires-dist = [
     { name = "dateparser", specifier = "==1.2.0" },
     { name = "defusedxml", specifier = "==0.7.1" },
     { name = "demandimport", specifier = "==0.3.4" },
-    { name = "diskcache", specifier = "==5.4.0" },
+    { name = "diskcache", specifier = "==5.6.3" },
     { name = "ebooklib", specifier = "==0.20" },
     { name = "ftfy", specifier = "==6.2.0" },
     { name = "fuzzywuzzy", specifier = "==0.18.0" },
@@ -764,11 +764,11 @@ sdist = { url = "https://files.pythonhosted.org/packages/8e/94/7057121c217309e67
 
 [[package]]
 name = "diskcache"
-version = "5.4.0"
+version = "5.6.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/c7/34/d23a9bc5b2a84917879b977f00fdb97a7700b186a32bf7b0cf5f29f4c2d9/diskcache-5.4.0.tar.gz", hash = "sha256:8879eb8c9b4a2509a5e633d2008634fb2b0b35c2b36192d89655dbde02419644", size = 47628, upload-time = "2021-12-31T03:55:02.458Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3f/21/1c1ffc1a039ddcc459db43cc108658f32c57d271d7289a2794e401d0fdb6/diskcache-5.6.3.tar.gz", hash = "sha256:2c3a3fa2743d8535d832ec61c2054a1641f41775aa7c556758a109941e33e4fc", size = 67916, upload-time = "2023-08-31T06:12:00.316Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a1/c4/80d38cf6852ba87f8b506a91f18b3a485c668f452700689add960d7e2ecc/diskcache-5.4.0-py3-none-any.whl", hash = "sha256:af3ec6d7f167bbef7b6c33d9ee22f86d3e8f2dd7131eb7c4703d8d91ccdc0cc4", size = 44997, upload-time = "2021-12-31T03:55:00.35Z" },
+    { url = "https://files.pythonhosted.org/packages/3f/27/4570e78fc0bf5ea0ca45eb1de3818a23787af9b390c0b0a0033a1b8236f9/diskcache-5.6.3-py3-none-any.whl", hash = "sha256:5e31b2d5fbad117cc363ebaf6b689474db18a1f6438bc82358b024abd4c2ca19", size = 45550, upload-time = "2023-08-31T06:11:58.822Z" },
 ]
 
 [[package]]

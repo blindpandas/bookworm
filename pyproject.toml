@@ -54,7 +54,7 @@ dependencies = [
     "dateparser==1.2.0",
     "defusedxml==0.7.1",
     "demandimport==0.3.4",
-    "diskcache==5.4.0",
+    "diskcache==5.6.3",
     "EbookLib==0.20",
     "ftfy==6.2.0",
     "fuzzywuzzy==0.18.0",
