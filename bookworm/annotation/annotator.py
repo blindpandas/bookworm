@@ -6,10 +6,32 @@ import sqlalchemy as sa
 
 from bookworm.database.models import Book, Bookmark, Note, Quote
 from bookworm.logger import logger
-from bookworm.structured_text import CURRENT_POSITION_MODEL_VERSION
+from bookworm.structured_text import (
+    CURRENT_POSITION_MODEL_VERSION,
+    LEGACY_CONTENT_HASH_VERSION,
+    LEGACY_POSITION_MODEL_VERSION,
+)
 
 log = logger.getChild(__name__)
 # The bakery caches query objects to avoid recompiling them into strings in every call
+
+
+def _position_version_clause(model, include_unmigrated=False):
+    if not include_unmigrated:
+        return model.position_version == CURRENT_POSITION_MODEL_VERSION
+    return sa.or_(
+        model.position_version.is_(None),
+        model.position_version.in_(
+            (LEGACY_POSITION_MODEL_VERSION, CURRENT_POSITION_MODEL_VERSION)
+        ),
+    )
+
+
+def _legacy_position_version_clause(model):
+    return sa.or_(
+        model.position_version.is_(None),
+        model.position_version == LEGACY_POSITION_MODEL_VERSION,
+    )
 
 
 @dataclass
@@ -74,19 +96,31 @@ class Annotator:
             return None
         return self.reader.get_or_create_current_book_record()
 
+    @property
+    def current_query(self):
+        return self.session.query(self.model).filter_by(
+            book_id=self.current_book.id,
+            position_version=CURRENT_POSITION_MODEL_VERSION,
+        )
+
     @classmethod
-    def get_books_for_model(cls):
+    def get_books_for_model(cls, include_unmigrated=False):
         return (
-            Book.query.filter(Book.id.in_(sa.select([cls.model.book_id])))
+            Book.query.filter(
+                Book.id.in_(
+                    sa.select([cls.model.book_id]).where(
+                        _position_version_clause(cls.model, include_unmigrated)
+                    )
+                )
+            )
             .order_by(Book.title.asc())
             .all()
         )
 
     def get_sections(self):
         return (
-            self.model.session.query(self.model.section_title)
+            self.current_query.with_entities(self.model.section_title)
             .distinct()
-            .filter(self.model.book == self.current_book)
             .order_by(self.model.page_number)
             .all()
         )
@@ -97,34 +131,132 @@ class Annotator:
         filter_criteria=None,
         sort_criteria=AnnotationSortCriteria.Date,
         asc=False,
+        include_unmigrated=False,
     ):
         model = cls.model
-        query = model.query
+        query = model.query.filter(_position_version_clause(model, include_unmigrated))
         if filter_criteria is not None:
             query = filter_criteria.filter_query(model, query)
         return sort_criteria.sort_query(model, query, asc=asc).all()
 
+    def _get_legacy_book_ids(self):
+        document = self.reader.document
+        if document is None:
+            return []
+        records = (
+            Book.query.filter(Book.content_hash.is_not(None))
+            .filter(
+                sa.or_(
+                    Book.content_hash_version.is_(None),
+                    Book.content_hash_version == LEGACY_CONTENT_HASH_VERSION,
+                )
+            )
+            .all()
+        )
+        records = [
+            record for record in records if record.uri.format == document.uri.format
+        ]
+        if not records:
+            return []
+        legacy_content_hash = document.get_legacy_content_hash()
+        if legacy_content_hash is None:
+            return []
+        return [
+            record.id
+            for record in records
+            if record.content_hash == legacy_content_hash
+        ]
+
+    def _management_query(self):
+        current_book_id = self.current_book.id
+        legacy_book_ids = [
+            book_id for book_id in self._get_legacy_book_ids() if book_id != current_book_id
+        ]
+        query = self.session.query(self.model)
+        current_book_clause = sa.and_(
+            self.model.book_id == current_book_id,
+            _position_version_clause(self.model, include_unmigrated=True),
+        )
+        if not legacy_book_ids:
+            return query.filter(current_book_clause)
+        return query.filter(
+            sa.or_(
+                current_book_clause,
+                sa.and_(
+                    self.model.book_id.in_(legacy_book_ids),
+                    _legacy_position_version_clause(self.model),
+                ),
+            )
+        )
+
     def get_for_book(
-        self, filter_criteria=None, sort_criteria=AnnotationSortCriteria.Page, asc=True
+        self,
+        filter_criteria=None,
+        sort_criteria=AnnotationSortCriteria.Page,
+        asc=True,
+        include_unmigrated=False,
     ):
         filter_criteria = filter_criteria or AnnotationFilterCriteria()
-        filter_criteria.book_id = self.current_book.id
-        return self.get_all(filter_criteria=filter_criteria, sort_criteria=sort_criteria, asc=asc)
+        query = self._management_query() if include_unmigrated else self.current_query
+        query = filter_criteria.filter_query(self.model, query)
+        return sort_criteria.sort_query(self.model, query, asc=asc).all()
 
     def get_for_page(self, page_number=None, asc=False):
-        return self.model.query.filter_by(
-            book_id=self.current_book.id,
+        return self.current_query.filter_by(
             page_number=page_number or self.reader.current_page,
         )
 
     def get_for_section(self, section_ident=None, asc=False):
         section_ident = section_ident or self.reader.active_section.unique_identifier
-        return self.model.query.filter_by(
-            book_id=self.current_book.id, section_identifier=section_ident
-        )
+        return self.current_query.filter_by(section_identifier=section_ident)
 
     def get(self, item_id):
         return self.session.get(self.model, item_id)
+
+    @staticmethod
+    def needs_relocation(item):
+        return item.position_version in (None, LEGACY_POSITION_MODEL_VERSION)
+
+    def relocate(self, item_id):
+        item = self.get(item_id)
+        if item is None or not self.needs_relocation(item):
+            raise ValueError(_("Only annotations marked for repositioning can be relocated."))
+        current_book = self.current_book
+        if item.book_id not in {current_book.id, *self._get_legacy_book_ids()}:
+            raise ValueError(_("The annotation does not belong to the current document."))
+
+        insertion_point = self.reader.view.get_insertion_point()
+        selection = self.reader.view.get_selection_range()
+        has_selection = selection.start != selection.stop
+        if self.model is Quote and not has_selection:
+            raise ValueError(_("Select text before relocating a highlight."))
+
+        section = (
+            self.reader.document.get_section_at_position(insertion_point)
+            if self.reader.document.is_single_page_document()
+            else self.reader.active_section
+        )
+        item.book_id = current_book.id
+        item.page_number = self.reader.current_page
+        item.section_title = section.title
+        item.section_identifier = section.unique_identifier
+        item.position_version = CURRENT_POSITION_MODEL_VERSION
+
+        if self.model is Bookmark:
+            item.position = self.reader.view_to_storage_position(insertion_point)
+        elif has_selection:
+            storage_range = self.reader.view_to_storage_range(
+                selection.start, selection.stop
+            )
+            item.position = storage_range.start
+            item.start_pos, item.end_pos = storage_range.astuple()
+        else:
+            item.position = self.reader.view_to_storage_position(insertion_point)
+            item.start_pos = item.end_pos = None
+
+        self.session.add(item)
+        self.session.commit()
+        return item
 
     def get_first_after(self, page_number, pos):
         model = self.model
@@ -136,8 +268,7 @@ class Annotator:
             model.page_number > page_number,
         )
         return (
-            self.session.query(model)
-            .filter_by(book_id=self.current_book.id)
+            self.current_query
             .filter(sa.or_(*clauses))
             .order_by(model.page_number.asc(), model.position.asc())
             .first()
@@ -153,8 +284,7 @@ class Annotator:
             model.page_number < page_number,
         )
         return (
-            self.session.query(model)
-            .filter_by(book_id=self.current_book.id)
+            self.current_query
             .filter(sa.or_(*clauses))
             .order_by(model.page_number.desc())
             .order_by(model.position.desc())
@@ -260,8 +390,7 @@ class PositionedAnnotator(TaggedAnnotator):
             ),
         ]
         return (
-            self.session.query(model)
-            .filter_by(book_id=self.current_book.id)
+            self.current_query
             .filter(sa.or_(*clauses))
             .one_or_none()
             is not None
@@ -295,8 +424,7 @@ class NoteTaker(PositionedAnnotator):
         )
 
         return (
-            self.session.query(model)
-            .filter_by(book_id=self.current_book.id)
+            self.current_query
             .filter(sa.or_(*clauses))
             # Sort first by page number, then by the effective position to find the correct next note.
             .order_by(model.page_number.asc(), effective_pos.asc())
@@ -323,8 +451,7 @@ class NoteTaker(PositionedAnnotator):
         )
 
         return (
-            self.session.query(model)
-            .filter_by(book_id=self.current_book.id)
+            self.current_query
             .filter(sa.or_(*clauses))
             # Sort in descending order to find the nearest previous note.
             .order_by(model.page_number.desc(), effective_pos.desc())
@@ -347,8 +474,7 @@ class Quoter(TaggedAnnotator):
             model.page_number > page_number,
         )
         return (
-            self.session.query(model)
-            .filter_by(book_id=self.current_book.id)
+            self.current_query
             .filter(sa.or_(*clauses))
             .order_by(model.page_number.asc(), model.start_pos.asc())
             .first()
@@ -364,8 +490,7 @@ class Quoter(TaggedAnnotator):
             model.page_number < page_number,
         )
         return (
-            self.session.query(model)
-            .filter_by(book_id=self.current_book.id)
+            self.current_query
             .filter(sa.or_(*clauses))
             .order_by(model.page_number.desc())
             .order_by(model.end_pos.desc())

@@ -16,6 +16,8 @@ from pytqsm import segment as segment_sentences
 from bookworm import typehints as t
 
 TEXT_OBJECT_REPLACEMENT_CHAR = "\ufffc"
+LEGACY_POSITION_MODEL_VERSION = 1
+LEGACY_CONTENT_HASH_VERSION = 1
 CURRENT_POSITION_MODEL_VERSION = 2
 CURRENT_CONTENT_HASH_VERSION = 2
 
@@ -82,6 +84,10 @@ class TextPositionReplacement:
         return self.storage_stop - self.storage_start
 
 
+class TextPositionMappingError(ValueError):
+    """Raised when two text models cannot be mapped without guessing."""
+
+
 @attr.s(auto_attribs=True, slots=True, frozen=True)
 class TextPositionMap:
     """Maps user-visible text offsets to stable storage offsets."""
@@ -143,42 +149,56 @@ class TextPositionMap:
 
     @classmethod
     def from_texts(cls, display_text, storage_text):
-        """Build a position map between two mostly-identical text models."""
+        """Map texts that differ only in whitespace and storage image markers."""
         if display_text == storage_text:
             return cls.identity(len(display_text))
+        if TEXT_OBJECT_REPLACEMENT_CHAR in display_text:
+            raise TextPositionMappingError
         display_length = len(display_text)
         storage_length = len(storage_text)
         replacements = []
         display_cursor = 0
         storage_cursor = 0
-        while display_cursor < display_length and storage_cursor < storage_length:
-            if display_text[display_cursor] == storage_text[storage_cursor]:
+        while display_cursor < display_length or storage_cursor < storage_length:
+            if (
+                display_cursor < display_length
+                and storage_cursor < storage_length
+                and display_text[display_cursor] == storage_text[storage_cursor]
+            ):
                 display_cursor += 1
                 storage_cursor += 1
                 continue
-            display_anchor, storage_anchor = cls._find_alignment_anchor(
-                display_text,
-                storage_text,
-                display_cursor,
-                storage_cursor,
-            )
+
+            display_start = display_cursor
+            storage_start = storage_cursor
+            while display_cursor < display_length and display_text[display_cursor].isspace():
+                display_cursor += 1
+            while storage_cursor < storage_length and (
+                storage_text[storage_cursor].isspace()
+                or storage_text[storage_cursor] == TEXT_OBJECT_REPLACEMENT_CHAR
+            ):
+                storage_cursor += 1
+
+            if display_cursor < display_length and storage_cursor < storage_length:
+                if display_text[display_cursor] != storage_text[storage_cursor]:
+                    raise TextPositionMappingError
+            elif display_cursor != display_length or storage_cursor != storage_length:
+                raise TextPositionMappingError
+
+            while (
+                display_cursor > display_start
+                and storage_cursor > storage_start
+                and display_text[display_cursor - 1] == storage_text[storage_cursor - 1]
+            ):
+                display_cursor -= 1
+                storage_cursor -= 1
+
             replacements.append(
                 TextPositionReplacement(
-                    display_start=display_cursor,
-                    display_stop=display_anchor,
-                    storage_start=storage_cursor,
-                    storage_stop=storage_anchor,
-                )
-            )
-            display_cursor = display_anchor
-            storage_cursor = storage_anchor
-        if display_cursor < display_length or storage_cursor < storage_length:
-            replacements.append(
-                TextPositionReplacement(
-                    display_start=display_cursor,
-                    display_stop=display_length,
-                    storage_start=storage_cursor,
-                    storage_stop=storage_length,
+                    display_start=display_start,
+                    display_stop=display_cursor,
+                    storage_start=storage_start,
+                    storage_stop=storage_cursor,
                 )
             )
         return cls(
@@ -186,58 +206,6 @@ class TextPositionMap:
             storage_length=storage_length,
             replacements=tuple(replacements),
         )
-
-    @staticmethod
-    def _find_alignment_anchor(display_text, storage_text, display_start, storage_start):
-        anchor_lengths = (48, 32, 24, 16, 12, 8, 6, 4, 3, 2, 1)
-        search_window = 4096
-        display_length = len(display_text)
-        storage_length = len(storage_text)
-        best = None
-        for anchor_length in anchor_lengths:
-            if display_start + anchor_length <= display_length:
-                display_offset_limit = min(
-                    search_window,
-                    display_length - display_start - anchor_length,
-                )
-                storage_limit = min(
-                    storage_length,
-                    storage_start + search_window + anchor_length,
-                )
-                for display_offset in range(display_offset_limit + 1):
-                    if best is not None and display_offset > best[0]:
-                        break
-                    anchor_start = display_start + display_offset
-                    anchor = display_text[anchor_start : anchor_start + anchor_length]
-                    storage_anchor = storage_text.find(anchor, storage_start, storage_limit)
-                    if storage_anchor != -1:
-                        score = display_offset + (storage_anchor - storage_start)
-                        candidate = (score, -anchor_length, anchor_start, storage_anchor)
-                        if best is None or candidate < best:
-                            best = candidate
-            if storage_start + anchor_length <= storage_length:
-                storage_offset_limit = min(
-                    search_window,
-                    storage_length - storage_start - anchor_length,
-                )
-                display_limit = min(
-                    display_length,
-                    display_start + search_window + anchor_length,
-                )
-                for storage_offset in range(storage_offset_limit + 1):
-                    if best is not None and storage_offset > best[0]:
-                        break
-                    anchor_start = storage_start + storage_offset
-                    anchor = storage_text[anchor_start : anchor_start + anchor_length]
-                    display_anchor = display_text.find(anchor, display_start, display_limit)
-                    if display_anchor != -1:
-                        score = storage_offset + (display_anchor - display_start)
-                        candidate = (score, -anchor_length, display_anchor, anchor_start)
-                        if best is None or candidate < best:
-                            best = candidate
-        if best is not None:
-            return best[2], best[3]
-        return display_length, storage_length
 
     @staticmethod
     def _clamp(pos):

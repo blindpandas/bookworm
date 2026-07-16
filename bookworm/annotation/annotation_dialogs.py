@@ -14,12 +14,19 @@ from bookworm.gui.components import (
 )
 from bookworm.logger import logger
 from bookworm.resources import sounds
+from bookworm.structured_text import LEGACY_POSITION_MODEL_VERSION
 from bookworm.utils import format_datetime
 
 from .annotator import AnnotationFilterCriteria, AnnotationSortCriteria, NoteTaker
 from .exporters import ExportOptions, renderers
 
 log = logger.getChild(__name__)
+
+
+def _annotation_status(annotation):
+    if annotation.position_version in (None, LEGACY_POSITION_MODEL_VERSION):
+        return _("Needs repositioning")
+    return _("Current")
 
 
 @dataclass
@@ -31,9 +38,8 @@ class FilterAndSortState:
     @classmethod
     def create_default(cls, annotator):
         has_book = annotator.current_book is not None
-        book_id = annotator.current_book.id if has_book else None
         return cls(
-            filter_criteria=AnnotationFilterCriteria(book_id=book_id),
+            filter_criteria=AnnotationFilterCriteria(book_id=None),
             sort_criteria=(
                 AnnotationSortCriteria.Page if has_book else AnnotationSortCriteria.Date
             ),
@@ -124,11 +130,14 @@ class BookmarksViewer(SimpleDialog):
         # Translators: label of a list control containing bookmarks
         wx.StaticText(parent, -1, _("Saved Bookmarks"))
         self.annotationsListCtrl = ImmutableObjectListView(parent, wx.ID_ANY)
+        # Translators: relocate a bookmark that could not be migrated automatically.
+        relocateButton = wx.Button(parent, -1, _("Relocate &Here"))
         # Translators: text of a button to remove bookmarks
         wx.Button(parent, wx.ID_DELETE, _("&Remove"))
         self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.onItemClick, self.annotationsListCtrl)
         self.Bind(wx.EVT_LIST_KEY_DOWN, self.onKeyDown, self.annotationsListCtrl)
         self.Bind(wx.EVT_LIST_END_LABEL_EDIT, self.onEndLabelEdit, self.annotationsListCtrl)
+        self.Bind(wx.EVT_BUTTON, self.onRelocate, relocateButton)
         self.Bind(wx.EVT_BUTTON, self.onDelete, id=wx.ID_DELETE)
         wx.FindWindowById(wx.ID_DELETE).Enable(False)
         self._populate_list()
@@ -141,7 +150,7 @@ class BookmarksViewer(SimpleDialog):
         return btnsizer
 
     def _populate_list(self, focus_target=0):
-        annotations = self.annotator.get_for_book()
+        annotations = self.annotator.get_for_book(include_unmigrated=True)
         column_defn = [
             ColumnDefn(
                 # Translators: the title of a column in the bookmarks list
@@ -157,6 +166,13 @@ class BookmarksViewer(SimpleDialog):
                 150,
                 lambda bk: bk.page_number + 1,
             ),
+            ColumnDefn(
+                # Translators: migration state of a saved bookmark.
+                _("Status"),
+                "left",
+                180,
+                _annotation_status,
+            ),
         ]
         if self.reader.document.has_toc_tree():
             # Translators: the title of a column in the bookmarks list
@@ -169,6 +185,8 @@ class BookmarksViewer(SimpleDialog):
         item = self.annotationsListCtrl.get_selected()
         if item is None:
             return
+        if self.annotator.needs_relocation(item):
+            return wx.Bell()
         self.reader.go_to_page(item.page_number)
         self.Close()
         display_position = self.reader.storage_to_view_position(item.position, item.page_number)
@@ -195,6 +213,16 @@ class BookmarksViewer(SimpleDialog):
                 item_id=self.annotationsListCtrl.get_selected().id, title=newTitle
             )
 
+    def onRelocate(self, event):
+        item = self.annotationsListCtrl.get_selected()
+        if item is None:
+            return wx.Bell()
+        try:
+            self.annotator.relocate(item.id)
+        except ValueError:
+            return wx.Bell()
+        self._populate_list()
+
     def onDelete(self, event):
         from . import AnnotationService
 
@@ -215,9 +243,10 @@ class BookmarksViewer(SimpleDialog):
             == wx.YES
         ):
             page_number, pos = item.page_number, item.position
+            needs_relocation = self.annotator.needs_relocation(item)
             self.annotator.delete(item.id)
             self._populate_list()
-            if page_number == self.reader.current_page:
+            if not needs_relocation and page_number == self.reader.current_page:
                 display_position = self.reader.storage_to_view_position(pos, page_number)
                 AnnotationService.style_bookmark(self.Parent, display_position, enable=False)
 
@@ -262,7 +291,7 @@ class AnnotationFilterPanel(sc.SizedPanel):
     def update_choices(self):
         if self.filter_by_book:
             self.bookChoice.Clear()
-            for book in self.annotator.get_books_for_model():
+            for book in self.annotator.get_books_for_model(include_unmigrated=True):
                 self.bookChoice.Append(book.title, book.id)
         else:
             self.sectionChoice.Clear()
@@ -304,6 +333,8 @@ class AnnotationWithContentDialog(SimpleDialog):
             ColumnDefn("Page", "center", 150, lambda anot: anot.page_number + 1),
             # Translators: the title of a column in the comments/highlights list
             ColumnDefn("Added", "right", 200, lambda a: format_datetime(a.date_created)),
+            # Translators: migration state of a comment or highlight.
+            ColumnDefn(_("Status"), "left", 180, _annotation_status),
         )
 
     def __init__(self, reader, annotator_cls, *args, can_edit=False, **kwargs):
@@ -361,6 +392,10 @@ class AnnotationWithContentDialog(SimpleDialog):
             # Translators: text of a button in a dialog to view comments/highlights
             wx.Button(self.buttonPanel, wx.ID_EDIT, _("&Edit..."))
             self.Bind(wx.EVT_BUTTON, self.onEdit, id=wx.ID_EDIT)
+        if self.reader.ready:
+            # Translators: relocate a comment or highlight that could not be migrated automatically.
+            relocateButton = wx.Button(self.buttonPanel, -1, _("Relocate &Here"))
+            self.Bind(wx.EVT_BUTTON, self.onRelocate, relocateButton)
         # Translators: text of a button in a dialog to view comments/highlights
         wx.Button(self.buttonPanel, wx.ID_DELETE, _("&Delete..."))
         # Translators: text of a button in a dialog to view comments/highlights
@@ -380,6 +415,7 @@ class AnnotationWithContentDialog(SimpleDialog):
             self._filter_and_sort_state.filter_criteria,
             self._filter_and_sort_state.sort_criteria,
             self._filter_and_sort_state.asc,
+            include_unmigrated=True,
         )
 
     def set_items(self, items=None):
@@ -421,6 +457,8 @@ class AnnotationWithContentDialog(SimpleDialog):
     def onItemClick(self, event):
         item = self.itemsView.get_selected()
         if item is not None:
+            if self.annotator.needs_relocation(item):
+                return self.view_or_edit(is_viewing=True)
             self.Close()
             self.go_to_item(item)
 
@@ -470,6 +508,23 @@ class AnnotationWithContentDialog(SimpleDialog):
             self.annotator.update(item.id, **updates)
             self.filterPanel.update_choices()
             self.set_items()
+
+    def onRelocate(self, event):
+        item = self.itemsView.get_selected()
+        if item is None:
+            return wx.Bell()
+        try:
+            self.annotator.relocate(item.id)
+        except ValueError as error:
+            wx.MessageBox(
+                str(error),
+                _("Unable to Relocate Annotation"),
+                parent=self,
+                style=wx.OK | wx.ICON_WARNING,
+            )
+            return
+        self.filterPanel.update_choices()
+        self.set_items(self.get_items())
 
     def onKeyDown(self, event):
         item = self.itemsView.get_selected()
@@ -536,6 +591,18 @@ class GenericAnnotationWithContentDialog(AnnotationWithContentDialog):
     def go_to_item(self, item):
         def book_load_callback():
             loaded_item = self.annotator_cls(self.service.reader).get(item.id) or item
+            current_book = self.service.reader.current_book_record
+            if current_book is None or loaded_item.book_id != current_book.id:
+                wx.MessageBox(
+                    _(
+                        "This annotation belongs to different content than the file "
+                        "currently stored at this location."
+                    ),
+                    _("Unable to Navigate to Annotation"),
+                    parent=self.service.view,
+                    style=wx.OK | wx.ICON_WARNING,
+                )
+                return
             super(GenericAnnotationWithContentDialog, self).go_to_item(loaded_item)
             if isinstance(self.annotator, NoteTaker):
                 self.service.view.set_insertion_point(
