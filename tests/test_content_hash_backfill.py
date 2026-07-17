@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from alembic.config import Config
 from pptx import Presentation
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import close_all_sessions
 from sqlalchemy.pool import NullPool
 
@@ -26,8 +26,11 @@ from bookworm.gui.book_viewer import recents_manager
 from bookworm.structured_text import (
     CURRENT_CONTENT_HASH_VERSION,
     CURRENT_POSITION_MODEL_VERSION,
-    SemanticElementType,
+    LEGACY_CONTENT_HASH_VERSION,
+    LEGACY_POSITION_MODEL_VERSION,
     TEXT_OBJECT_REPLACEMENT_CHAR,
+    SemanticElementType,
+    TextPositionMappingError,
 )
 
 
@@ -480,9 +483,7 @@ def test_reader_merges_legacy_records_when_current_hash_is_unavailable(
         reader.unload()
 
 
-def test_legacy_ranges_ending_before_images_migrate_without_including_images(
-    reader, tmp_path
-):
+def test_legacy_ranges_ending_before_images_migrate_without_including_images(reader, tmp_path):
     html_path = tmp_path / "image.html"
     html_path.write_text(
         """
@@ -633,7 +634,7 @@ def test_content_hash_migration_only_adds_schema(asset, tmp_path):
     try:
         with migrated_engine.connect() as conn:
             revision = conn.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
-            assert revision == "b743b2dbd3a1"
+            assert revision == "c7f4e1a2b9d6"
             for table_name in (
                 "book",
                 "document_position_info",
@@ -656,6 +657,19 @@ def test_content_hash_migration_only_adds_schema(asset, tmp_path):
                 .all()
             )
             assert position_versions == [None]
+        inspector = inspect(migrated_engine)
+        for table_name, expected_unique in (
+            ("book", False),
+            ("document_position_info", True),
+            ("recent_document", True),
+            ("pinned_document", True),
+        ):
+            uri_index = next(
+                index
+                for index in inspector.get_indexes(table_name)
+                if index["column_names"] == ["uri"]
+            )
+            assert bool(uri_index["unique"]) is expected_unique
     finally:
         close_all_sessions()
         migrated_engine.dispose()
@@ -688,6 +702,155 @@ def test_filename_derived_titles_follow_moved_paths(reader, tmp_path):
     reader.unload()
 
 
+def test_same_uri_replaced_content_keeps_old_annotations(reader, tmp_path):
+    path = tmp_path / "replaced.txt"
+    path.write_text("first document text", encoding="utf-8")
+    uri = DocumentUri.from_filename(path)
+
+    reader.load(uri)
+    old_book_id = reader.current_book_record.id
+    old_note = NoteTaker(reader).create(
+        title="old note",
+        content="keep me",
+        position=2,
+    )
+    reader.view.set_insertion_point(5)
+    reader.unload()
+
+    path.write_text("completely different replacement", encoding="utf-8")
+    reader.load(uri)
+
+    assert Book.query.count() == 2
+    assert reader.current_book_record.id != old_book_id
+    assert Note.query.one().id == old_note.id
+    assert Note.query.one().book_id == old_book_id
+    assert NoteTaker(reader).get_for_page(0).count() == 0
+    assert DocumentPositionInfo.query.count() == 1
+    assert reader.stored_document_info.get_last_position() == (0, 0)
+    assert reader.stored_document_info.content_hash == reader.document.get_content_hash()
+
+    reader.view.set_insertion_point(3)
+    reader.save_current_position()
+    assert reader.stored_document_info.get_last_position() == (0, 3)
+    reader.unload()
+
+
+def test_mapping_failure_resets_hashless_position_and_keeps_annotations(
+    reader, tmp_path, monkeypatch
+):
+    path = tmp_path / "mapping-failure.txt"
+    path.write_text("text used for mapping recovery", encoding="utf-8")
+    uri = DocumentUri.from_filename(path)
+    document = create_document(uri)
+    document.read()
+    section = document.get_page(0).section
+    session = Book.session()
+    book = Book(
+        title=document.metadata.title,
+        uri=uri,
+        content_hash=None,
+        content_hash_version=LEGACY_CONTENT_HASH_VERSION,
+    )
+    session.add(book)
+    session.flush()
+    session.add_all(
+        (
+            DocumentPositionInfo(
+                title=document.metadata.title,
+                uri=uri,
+                content_hash=None,
+                content_hash_version=LEGACY_CONTENT_HASH_VERSION,
+                last_page=0,
+                last_position=8,
+                position_version=LEGACY_POSITION_MODEL_VERSION,
+            ),
+            Note(
+                title="legacy note",
+                content="keep me",
+                page_number=0,
+                position=8,
+                section_title=section.title,
+                section_identifier=section.unique_identifier,
+                book_id=book.id,
+                position_version=LEGACY_POSITION_MODEL_VERSION,
+            ),
+        )
+    )
+    session.commit()
+
+    def fail_mapping(*args, **kwargs):
+        raise TextPositionMappingError("cannot map exactly")
+
+    monkeypatch.setattr(type(reader), "legacy_view_to_storage_position", fail_mapping)
+    reader.set_document(document)
+
+    assert reader.stored_document_info.get_last_position() == (0, 0)
+    assert reader.stored_document_info.position_version == CURRENT_POSITION_MODEL_VERSION
+    assert Note.query.one().position_version == LEGACY_POSITION_MODEL_VERSION
+    reader.view.set_insertion_point(3)
+    reader.save_current_position()
+    assert reader.stored_document_info.get_last_position() == (0, 3)
+    reader.unload()
+
+
+def test_mapping_failure_does_not_overwrite_future_position_version(reader, tmp_path, monkeypatch):
+    path = tmp_path / "future-position.txt"
+    path.write_text("future position data", encoding="utf-8")
+    uri = DocumentUri.from_filename(path)
+    document = create_document(uri)
+    document.read()
+    content_hash = document.get_content_hash()
+    section = document.get_page(0).section
+    session = Book.session()
+    book = Book(
+        title=document.metadata.title,
+        uri=uri,
+        content_hash=content_hash,
+        content_hash_version=CURRENT_CONTENT_HASH_VERSION,
+    )
+    session.add(book)
+    session.flush()
+    future_position = DocumentPositionInfo(
+        title=document.metadata.title,
+        uri=uri,
+        content_hash=content_hash,
+        content_hash_version=99,
+        last_page=7,
+        last_position=8,
+        position_version=99,
+    )
+    session.add_all(
+        (
+            future_position,
+            Note(
+                title="legacy note",
+                content="keep me",
+                page_number=0,
+                position=1,
+                section_title=section.title,
+                section_identifier=section.unique_identifier,
+                book_id=book.id,
+                position_version=LEGACY_POSITION_MODEL_VERSION,
+            ),
+        )
+    )
+    session.commit()
+
+    def fail_mapping(*args, **kwargs):
+        raise TextPositionMappingError("cannot map exactly")
+
+    monkeypatch.setattr(type(reader), "legacy_view_to_storage_position", fail_mapping)
+    reader.set_document(document)
+
+    assert reader.stored_document_info is None
+    session.refresh(future_position)
+    assert future_position.content_hash_version == 99
+    assert future_position.position_version == 99
+    assert future_position.get_last_position() == (7, 8)
+    assert Note.query.one().position_version == LEGACY_POSITION_MODEL_VERSION
+    reader.unload()
+
+
 def test_duplicate_hash_matches_are_merged_into_active_document(reader, tmp_path):
     first_path = tmp_path / "first.txt"
     second_path = tmp_path / "second.txt"
@@ -717,7 +880,8 @@ def test_duplicate_hash_matches_are_merged_into_active_document(reader, tmp_path
     DocumentPositionInfo.get_or_create(
         title="second",
         uri=second_uri,
-        content_hash=content_hash,
+        content_hash=None,
+        content_hash_version=CURRENT_CONTENT_HASH_VERSION,
     )
     Note.session().add(
         Note(
@@ -980,7 +1144,7 @@ def test_textless_recent_documents_do_not_merge_by_content_hash(tmp_path):
     assert RecentDocument.query.count() == 2
 
 
-def test_loading_existing_uri_uses_stored_hash_without_recomputing(reader, asset, monkeypatch):
+def test_loading_existing_uri_recomputes_current_hash(reader, asset, monkeypatch):
     uri = DocumentUri.from_filename(asset("roman.epub"))
     document = create_document(uri)
     content_hash = document.get_content_hash()
@@ -998,20 +1162,25 @@ def test_loading_existing_uri_uses_stored_hash_without_recomputing(reader, asset
         content_hash_version=CURRENT_CONTENT_HASH_VERSION,
     )
 
-    def fail_get_content_hash():
-        raise AssertionError("reader should reuse the stored content hash for URI matches")
+    calls = 0
 
-    monkeypatch.setattr(document, "get_content_hash", fail_get_content_hash)
+    def get_content_hash():
+        nonlocal calls
+        calls += 1
+        return content_hash
+
+    monkeypatch.setattr(document, "get_content_hash", get_content_hash)
 
     reader.set_document(document)
 
     assert reader.current_book_record.content_hash == content_hash
     assert reader.stored_document_info.content_hash == content_hash
+    assert calls == 1
     reader.unload()
 
 
 @pytest.mark.usefixtures("engine")
-def test_recent_documents_with_existing_uri_use_stored_hash_without_recomputing(asset, monkeypatch):
+def test_recent_documents_with_existing_uri_recompute_current_hash(asset, monkeypatch):
     uri = DocumentUri.from_filename(asset("roman.epub"))
     document = create_document(uri)
     content_hash = document.get_content_hash()
@@ -1023,10 +1192,14 @@ def test_recent_documents_with_existing_uri_use_stored_hash_without_recomputing(
         content_hash_version=CURRENT_CONTENT_HASH_VERSION,
     )
 
-    def fail_get_content_hash():
-        raise AssertionError("recents should reuse the stored content hash for URI matches")
+    calls = 0
 
-    monkeypatch.setattr(document, "get_content_hash", fail_get_content_hash)
+    def get_content_hash():
+        nonlocal calls
+        calls += 1
+        return content_hash
+
+    monkeypatch.setattr(document, "get_content_hash", get_content_hash)
 
     try:
         recents_manager.add_to_recents(document)
@@ -1034,6 +1207,7 @@ def test_recent_documents_with_existing_uri_use_stored_hash_without_recomputing(
         document.close()
 
     assert RecentDocument.query.one().id == existing_recent.id
+    assert calls == 1
 
 
 @pytest.mark.usefixtures("engine")

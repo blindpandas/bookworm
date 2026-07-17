@@ -36,7 +36,10 @@ from bookworm.signals import (
 from bookworm.structured_text import (
     CURRENT_CONTENT_HASH_VERSION,
     CURRENT_POSITION_MODEL_VERSION,
+    LEGACY_CONTENT_HASH_VERSION,
+    LEGACY_POSITION_MODEL_VERSION,
     SemanticElementType,
+    TextPositionMappingError,
     TextRange,
     TextStructureMetadata,
 )
@@ -142,16 +145,6 @@ class EBookReader:
         "view",
     ]
 
-    def _record_matches_document(self, record, uri_for_storage, content_hash):
-        if record.uri == uri_for_storage:
-            return True
-        return (
-            content_hash is not None
-            and record.content_hash == content_hash
-            and record.content_hash_version == CURRENT_CONTENT_HASH_VERSION
-            and record.uri.format == uri_for_storage.format
-        )
-
     def _get_matching_document_records(self, model, *, uri_for_storage, content_hash):
         if content_hash is None:
             return []
@@ -164,7 +157,16 @@ class EBookReader:
         return [
             record
             for record in records
-            if self._record_matches_document(record, uri_for_storage, content_hash)
+            if record.uri.format == uri_for_storage.format
+            and (
+                model is not DocumentPositionInfo
+                or record.position_version
+                in (
+                    None,
+                    LEGACY_POSITION_MODEL_VERSION,
+                    CURRENT_POSITION_MODEL_VERSION,
+                )
+            )
         ]
 
     def _get_legacy_matching_document_records(self, model, *, uri_for_storage, legacy_content_hash):
@@ -175,19 +177,32 @@ class EBookReader:
             .filter(
                 sa.or_(
                     model.content_hash_version.is_(None),
-                    model.content_hash_version != CURRENT_CONTENT_HASH_VERSION,
+                    model.content_hash_version == LEGACY_CONTENT_HASH_VERSION,
                 )
             )
             .order_by(model.id.asc())
             .all()
         )
-        return [record for record in records if record.uri.format == uri_for_storage.format]
+        return [
+            record
+            for record in records
+            if record.uri.format == uri_for_storage.format
+            and (
+                model is not DocumentPositionInfo
+                or record.position_version
+                in (
+                    None,
+                    LEGACY_POSITION_MODEL_VERSION,
+                    CURRENT_POSITION_MODEL_VERSION,
+                )
+            )
+        ]
 
     def _has_legacy_document_records(self, model, uri_for_storage):
         records = model.query.filter(
             sa.or_(
                 model.content_hash_version.is_(None),
-                model.content_hash_version != CURRENT_CONTENT_HASH_VERSION,
+                model.content_hash_version == LEGACY_CONTENT_HASH_VERSION,
             )
         )
         return any(record.uri.format == uri_for_storage.format for record in records)
@@ -199,23 +214,8 @@ class EBookReader:
         if records:
             return records[0]
 
-    def _get_document_record_by_uri(self, model, uri_for_storage):
-        return model.query.filter(model.uri == uri_for_storage).one_or_none()
-
-    def _merge_matching_document_records(self, uri_record, hash_matching_records):
-        matching_records = []
-        if uri_record is not None:
-            matching_records.append(uri_record)
-        matching_ids = {
-            record.id for record in matching_records if getattr(record, "id", None) is not None
-        }
-        for record in hash_matching_records:
-            if record.id in matching_ids:
-                continue
-            matching_records.append(record)
-            if record.id is not None:
-                matching_ids.add(record.id)
-        return matching_records
+    def _get_document_records_by_uri(self, model, uri_for_storage):
+        return model.query.filter(model.uri == uri_for_storage).order_by(model.id.asc()).all()
 
     def _merge_book_records(self, record, duplicates):
         for duplicate in duplicates:
@@ -226,13 +226,19 @@ class EBookReader:
                 )
 
     def _merge_document_position_infos(self, record, duplicates):
-        if record.get_last_position() != (0, 0):
-            return
-        for duplicate in duplicates:
-            if duplicate.get_last_position() != (0, 0):
-                record.last_page, record.last_position = duplicate.get_last_position()
-                record.position_version = duplicate.position_version
-                return
+        candidates = [record, *duplicates]
+        for versions in (
+            (CURRENT_POSITION_MODEL_VERSION,),
+            (None, LEGACY_POSITION_MODEL_VERSION),
+        ):
+            for candidate in candidates:
+                if (
+                    candidate.position_version in versions
+                    and candidate.get_last_position() != (0, 0)
+                ):
+                    record.last_page, record.last_position = candidate.get_last_position()
+                    record.position_version = candidate.position_version
+                    return
 
     def _merge_document_records(self, model, session, record, duplicates):
         if model is Book:
@@ -252,15 +258,7 @@ class EBookReader:
         legacy_content_hash_provider: t.Callable[[], str | None] | None = None,
     ):
         session = model.session()
-        uri_record = self._get_document_record_by_uri(model, uri_for_storage)
-        if (
-            uri_record is not None
-            and uri_record.content_hash_version == CURRENT_CONTENT_HASH_VERSION
-            and uri_record.content_hash is not None
-        ):
-            content_hash = uri_record.content_hash
-        else:
-            content_hash = content_hash_provider()
+        content_hash = content_hash_provider()
         should_check_legacy_records = legacy_content_hash_provider is not None and (
             content_hash is None
             or self._has_legacy_document_records(model, uri_for_storage)
@@ -272,21 +270,59 @@ class EBookReader:
             content_hash,
             legacy_content_hash,
         )
-        matching_records = self._get_matching_document_records(
+        current_records = self._get_matching_document_records(
             model,
             uri_for_storage=uri_for_storage,
             content_hash=content_hash,
         )
+        legacy_records = []
         if should_check_legacy_records:
-            matching_records.extend(
-                self._get_legacy_matching_document_records(
-                    model,
-                    uri_for_storage=uri_for_storage,
-                    legacy_content_hash=legacy_content_hash,
-                )
+            legacy_records = self._get_legacy_matching_document_records(
+                model,
+                uri_for_storage=uri_for_storage,
+                legacy_content_hash=legacy_content_hash,
             )
-        matching_records = self._merge_matching_document_records(uri_record, matching_records)
-        record = uri_record or self._select_document_record(matching_records, uri_for_storage)
+        current_record_ids = {record.id for record in current_records}
+        matching_records = current_records + [
+            candidate
+            for candidate in legacy_records
+            if candidate.id not in current_record_ids
+        ]
+        record = self._select_document_record(current_records, uri_for_storage)
+        if record is None:
+            record = self._select_document_record(legacy_records, uri_for_storage)
+        uri_records = self._get_document_records_by_uri(model, uri_for_storage)
+        if record is None:
+            record = self._select_document_record(
+                [
+                    candidate
+                    for candidate in uri_records
+                    if candidate.content_hash is None
+                    and candidate.content_hash_version
+                    in (
+                        None,
+                        LEGACY_CONTENT_HASH_VERSION,
+                        CURRENT_CONTENT_HASH_VERSION,
+                    )
+                ],
+                uri_for_storage,
+            )
+        if model is DocumentPositionInfo and uri_records:
+            uri_record = uri_records[0]
+            if record is None or record.id != uri_record.id:
+                record = uri_record
+                if (
+                    stored_content_hash is not None
+                    and uri_record.id not in {candidate.id for candidate in matching_records}
+                ):
+                    record.last_page = 0
+                    record.last_position = 0
+                    record.position_version = CURRENT_POSITION_MODEL_VERSION
+        if record is None and stored_content_hash is None:
+            record = self._select_document_record(
+                uri_records,
+                uri_for_storage,
+            )
         if record is None:
             record = model(
                 title=title,
@@ -310,12 +346,56 @@ class EBookReader:
             if record.uri != uri_for_storage:
                 record.uri = uri_for_storage
         session.add(record)
-        session.commit()
+        session.flush()
         return record
+
+    def _get_or_create_current_document_position_info(
+        self, doc: BaseDocument, uri_for_storage: DocumentUri
+    ) -> DocumentPositionInfo | None:
+        current_book = doc.metadata
+        self.current_book_record = self._get_or_create_document_record(
+            Book,
+            title=current_book.title,
+            uri_for_storage=uri_for_storage,
+            content_hash_provider=doc.get_content_hash,
+        )
+        if not self._can_use_document_position_info(uri_for_storage):
+            return None
+        position_info = self._get_or_create_document_record(
+            DocumentPositionInfo,
+            title=current_book.title,
+            uri_for_storage=uri_for_storage,
+            content_hash_provider=doc.get_content_hash,
+        )
+        position_info.last_page = 0
+        position_info.last_position = 0
+        position_info.position_version = CURRENT_POSITION_MODEL_VERSION
+        return position_info
+
+    def _can_use_document_position_info(self, uri_for_storage):
+        uri_position_records = self._get_document_records_by_uri(
+            DocumentPositionInfo,
+            uri_for_storage,
+        )
+        if not uri_position_records:
+            return True
+        uri_position_record = uri_position_records[0]
+        if uri_position_record.content_hash_version not in (
+            None,
+            LEGACY_CONTENT_HASH_VERSION,
+            CURRENT_CONTENT_HASH_VERSION,
+        ) or uri_position_record.position_version not in (
+            None,
+            LEGACY_POSITION_MODEL_VERSION,
+            CURRENT_POSITION_MODEL_VERSION,
+        ):
+            log.warning("Ignoring reading position written by a newer text model version")
+            return False
+        return True
 
     def _get_or_create_document_position_info(
         self, doc: BaseDocument, uri_for_storage: DocumentUri
-    ) -> DocumentPositionInfo:
+    ) -> DocumentPositionInfo | None:
         current_book = doc.metadata
         content_hash = _CONTENT_HASH_UNSET
 
@@ -335,6 +415,8 @@ class EBookReader:
             content_hash_provider=get_content_hash,
             legacy_content_hash_provider=get_legacy_content_hash,
         )
+        if not self._can_use_document_position_info(uri_for_storage):
+            return None
         return self._get_or_create_document_record(
             DocumentPositionInfo,
             title=current_book.title,
@@ -356,6 +438,7 @@ class EBookReader:
             content_hash_provider=self.document.get_content_hash,
             legacy_content_hash_provider=self.document.get_legacy_content_hash,
         )
+        self.current_book_record.session().commit()
         return self.current_book_record
 
     def _get_page_for_position_mapping(self, page_number=None):
@@ -404,10 +487,10 @@ class EBookReader:
         if self.document is None or self.current_book_record is None:
             return
         session = self.current_book_record.session()
-        has_updates = False
         if (
             self.stored_document_info is not None
-            and self.stored_document_info.position_version != CURRENT_POSITION_MODEL_VERSION
+            and self.stored_document_info.position_version
+            in (None, LEGACY_POSITION_MODEL_VERSION)
         ):
             self.stored_document_info.last_position = self.legacy_view_to_storage_position(
                 self.stored_document_info.last_position,
@@ -416,14 +499,13 @@ class EBookReader:
             )
             self.stored_document_info.position_version = CURRENT_POSITION_MODEL_VERSION
             session.add(self.stored_document_info)
-            has_updates = True
         for model in (Bookmark, Note, Quote):
             stale_records = (
                 model.query.filter_by(book_id=self.current_book_record.id)
                 .filter(
                     sa.or_(
                         model.position_version.is_(None),
-                        model.position_version != CURRENT_POSITION_MODEL_VERSION,
+                        model.position_version == LEGACY_POSITION_MODEL_VERSION,
                     )
                 )
                 .all()
@@ -465,9 +547,6 @@ class EBookReader:
                     )
                 record.position_version = CURRENT_POSITION_MODEL_VERSION
                 session.add(record)
-                has_updates = True
-        if has_updates:
-            session.commit()
 
     # Convenience method: make this available for importers as a staticmethod
     get_document_format_info = staticmethod(get_document_format_info)
@@ -500,10 +579,28 @@ class EBookReader:
         self.document.uri = uri_for_storage
         if self.document.uri.view_args.get("save_last_position", True):
             log.debug("Retrieving last saved reading position from the database")
-            self.stored_document_info = self._get_or_create_document_position_info(
-                document, uri_for_storage
-            )
-        self._migrate_current_document_positions()
+            session = Book.session()
+            try:
+                self.stored_document_info = self._get_or_create_document_position_info(
+                    document, uri_for_storage
+                )
+                self._migrate_current_document_positions()
+                session.commit()
+            except TextPositionMappingError:
+                session.rollback()
+                log.warning(
+                    "Legacy reading positions could not be mapped exactly; "
+                    "opening the document from the beginning",
+                    exc_info=True,
+                )
+                self.stored_document_info = self._get_or_create_current_document_position_info(
+                    document,
+                    uri_for_storage,
+                )
+                session.commit()
+            except Exception:
+                session.rollback()
+                raise
         # the current_page is set after the document position info and related models are created in order to allow dependent services to access the current_book
         self.current_page = 0
         open_args = self.document.uri.openner_args

@@ -370,11 +370,19 @@ class StructuredHtmlParser(Inscriptis):
         )
 
     def iter_image_storage_ranges(self):
-        for image_info in self._get_visible_image_elements():
-            yield image_info, self.display_to_storage_range(
-                image_info.text_range.start,
-                image_info.text_range.stop,
+        storage_ranges = {
+            (replacement.display_start, replacement.display_stop): TextRange(
+                replacement.storage_start,
+                replacement.storage_stop,
             )
+            for replacement in self._text_position_map.replacements
+        }
+        for image_info in self._get_visible_image_elements():
+            display_range = image_info.text_range.astuple()
+            storage_range = storage_ranges.get(display_range)
+            if storage_range is None:
+                storage_range = self.display_to_storage_range(*display_range)
+            yield image_info, storage_range
 
     @staticmethod
     def _get_image_label(image):

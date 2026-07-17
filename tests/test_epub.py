@@ -1,10 +1,13 @@
+import os
 from pathlib import Path
+from unittest.mock import Mock
 
+from diskcache import Cache
 from ebooklib import epub
-import pytest
 
-from bookworm.document.uri import DocumentUri
+from bookworm.document import cache_utils
 from bookworm.document.formats.epub import EpubDocument
+from bookworm.document.uri import DocumentUri
 
 
 def temp_book(title: str = "Sample book") -> epub.EpubBook:
@@ -101,3 +104,62 @@ def test_internal_link_resolution_prefers_exact_href_over_suffix_match(tmp_path)
     start, stop = target.position
 
     assert text[start:stop].strip() == "Right target"
+
+
+def test_legacy_content_uses_disk_cache(asset, tmp_path, monkeypatch):
+    monkeypatch.setattr(EpubDocument, "_get_cache_directory", lambda _: tmp_path / "cache")
+    uri = DocumentUri.from_filename(asset("The Diary of a Nobody.epub"))
+    first_document = EpubDocument(uri)
+    first_document.read()
+    legacy_content = first_document.get_legacy_content()
+
+    second_document = EpubDocument(uri)
+    second_document.read()
+    monkeypatch.setattr(
+        EpubDocument,
+        "_parse_html_content",
+        Mock(side_effect=AssertionError("legacy content should be loaded from disk cache")),
+    )
+
+    assert second_document.get_legacy_content() == legacy_content
+
+
+def test_legacy_cache_uses_the_html_that_was_parsed(asset, tmp_path, monkeypatch):
+    monkeypatch.setattr(EpubDocument, "_get_cache_directory", lambda _: tmp_path / "cache")
+    epub_path = tmp_path / "book.epub"
+    epub_path.write_bytes(Path(asset("epub30-spec.epub")).read_bytes())
+    original_mtime = epub_path.stat().st_mtime
+    uri = DocumentUri.from_filename(epub_path)
+    original_document = EpubDocument(uri)
+    original_document.read()
+
+    epub_path.write_bytes(Path(asset("roman.epub")).read_bytes())
+    os.utime(epub_path, (original_mtime + 2, original_mtime + 2))
+    original_legacy_content = original_document.get_legacy_content()
+    replacement_document = EpubDocument(uri)
+    replacement_document.read()
+
+    assert replacement_document.get_legacy_content() != original_legacy_content
+
+
+def test_epub_cache_failures_fall_back_to_in_memory_parsing(asset, tmp_path, monkeypatch):
+    cache_directory = tmp_path / "cache"
+    monkeypatch.setattr(EpubDocument, "_get_cache_directory", lambda _: cache_directory)
+    uri = DocumentUri.from_filename(asset("The Diary of a Nobody.epub"))
+    original_document = EpubDocument(uri)
+    original_document.read()
+    expected_content = original_document.get_content()
+    expected_legacy_content = original_document.get_legacy_content()
+    with Cache(cache_directory) as cache:
+        cache.set(original_document._legacy_content_cache_key, b"\xff")
+    monkeypatch.setattr(
+        cache_utils,
+        "is_document_modified",
+        Mock(side_effect=OSError("cache validation failed")),
+    )
+
+    replacement_document = EpubDocument(uri)
+    replacement_document.read()
+
+    assert replacement_document.get_content() == expected_content
+    assert replacement_document.get_legacy_content() == expected_legacy_content

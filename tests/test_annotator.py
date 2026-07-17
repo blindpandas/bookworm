@@ -2,14 +2,22 @@ import shutil
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
+
 import bookworm.annotation as annotation_module
 from bookworm import config
 from bookworm.annotation import AnnotationService, Bookmarker, NoteTaker, annotation_gui
 from bookworm.annotation.annotation_gui import AnnotationMenu
 from bookworm.annotation.annotator import AnnotationSortCriteria, Quoter
-from bookworm.database.models import Book
+from bookworm.database.models import Book, Bookmark, Note, Quote
 from bookworm.document.uri import DocumentUri
-from bookworm.structured_text import SemanticElementType, TextRange
+from bookworm.structured_text import (
+    CURRENT_POSITION_MODEL_VERSION,
+    LEGACY_CONTENT_HASH_VERSION,
+    LEGACY_POSITION_MODEL_VERSION,
+    SemanticElementType,
+    TextRange,
+)
 
 
 def key_event(key_code):
@@ -84,6 +92,12 @@ def test_notes_respect_sort_criteria(asset, reader):
     print(expected_titles)
     assert titles == expected_titles
 
+    legacy_note = annotator.create(title="legacy", content="legacy", position=0)
+    legacy_note.position_version = None
+    annotator.session.commit()
+
+    assert legacy_note not in annotator.get_all()
+
 
 def test_annotations_refer_to_same_document_in_different_path(asset, reader):
     path = Path(asset("roman.epub"))
@@ -100,6 +114,93 @@ def test_annotations_refer_to_same_document_in_different_path(asset, reader):
     assert annotator.get_for_page(0).count() == 1
     reader.unload()
     shutil.rmtree(new_path)
+
+
+def test_legacy_annotations_can_be_viewed_and_relocated(reader, view, tmp_path):
+    current_path = tmp_path / "current.txt"
+    current_path.write_text("alpha beta gamma delta", encoding="utf-8")
+    reader.load(DocumentUri.from_filename(current_path))
+    current_book_id = reader.current_book_record.id
+    section = reader.active_section
+
+    legacy_book = Book(
+        title="Legacy copy",
+        uri=DocumentUri.from_filename(tmp_path / "old.txt"),
+        content_hash=reader.document.get_legacy_content_hash(),
+        content_hash_version=LEGACY_CONTENT_HASH_VERSION,
+    )
+    session = Book.session()
+    session.add(legacy_book)
+    session.flush()
+    bookmark = Bookmark(
+        title="bookmark",
+        page_number=0,
+        position=1,
+        section_title=section.title,
+        section_identifier=section.unique_identifier,
+        book_id=legacy_book.id,
+        position_version=LEGACY_POSITION_MODEL_VERSION,
+    )
+    note = Note(
+        title="note",
+        content="note content",
+        page_number=0,
+        position=1,
+        start_pos=None,
+        end_pos=None,
+        section_title=section.title,
+        section_identifier=section.unique_identifier,
+        book_id=legacy_book.id,
+        position_version=LEGACY_POSITION_MODEL_VERSION,
+    )
+    quote = Quote(
+        title="quote",
+        content="quote content",
+        page_number=0,
+        position=1,
+        start_pos=1,
+        end_pos=2,
+        section_title=section.title,
+        section_identifier=section.unique_identifier,
+        book_id=legacy_book.id,
+        position_version=LEGACY_POSITION_MODEL_VERSION,
+    )
+    session.add_all((bookmark, note, quote))
+    session.commit()
+
+    bookmarker = Bookmarker(reader)
+    note_taker = NoteTaker(reader)
+    quoter = Quoter(reader)
+    assert bookmarker.get_for_book() == []
+    assert note_taker.get_for_book() == []
+    assert quoter.get_for_book() == []
+    assert bookmarker.get_for_book(include_unmigrated=True) == [bookmark]
+    assert note_taker.get_for_book(include_unmigrated=True) == [note]
+    assert quoter.get_for_book(include_unmigrated=True) == [quote]
+    assert note in NoteTaker.get_all(include_unmigrated=True)
+    assert quote in Quoter.get_all(include_unmigrated=True)
+
+    view.insertion_point = 6
+    view.selection_range = TextRange(6, 6)
+    view.get_selection_range = lambda: view.selection_range
+    with pytest.raises(ValueError, match="Select text"):
+        quoter.relocate(quote.id)
+
+    view.selection_range = TextRange(6, 10)
+    expected_range = reader.view_to_storage_range(6, 10)
+    bookmarker.relocate(bookmark.id)
+    note_taker.relocate(note.id)
+    quoter.relocate(quote.id)
+
+    assert bookmark.book_id == current_book_id
+    assert bookmark.position == reader.view_to_storage_position(6)
+    for item in (bookmark, note, quote):
+        assert item.position_version == CURRENT_POSITION_MODEL_VERSION
+        assert item.book_id == current_book_id
+    for item in (note, quote):
+        assert item.position == expected_range.start
+        assert (item.start_pos, item.end_pos) == expected_range.astuple()
+    reader.unload()
 
 
 def test_comments_are_styled_on_initial_landing_page(asset, reader, view, monkeypatch):
