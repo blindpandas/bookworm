@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2026-07-17 16:22+0300\n"
-"PO-Revision-Date: 2026-07-17 17:04+0300\n"
+"POT-Creation-Date: 2026-07-17 17:10+0300\n"
+"PO-Revision-Date: 2026-07-17 19:13+0300\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: fi_FI <janikinnunen340@gmail.com>\n"
 "Language: fi\n"
@@ -116,33 +116,41 @@ msgstr "Rivillä on korostus"
 msgid "Has comment"
 msgstr "Sisältää kommentin"
 
-#: ../../../../annotation/annotation_dialogs.py:58
-#: ../../../../annotation/annotation_dialogs.py:253
+#: ../../../../annotation/annotation_dialogs.py:28
+msgid "Needs repositioning"
+msgstr "Vaatii sijainnin korjausta"
+
+#: ../../../../annotation/annotation_dialogs.py:29
+msgid "Current"
+msgstr "Nykyinen"
+
+#: ../../../../annotation/annotation_dialogs.py:64
+#: ../../../../annotation/annotation_dialogs.py:282
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:123
 #: ../../../../gui/book_viewer/__init__.py:351
 msgid "Content"
 msgstr "Sisältö"
 
-#: ../../../../annotation/annotation_dialogs.py:62
+#: ../../../../annotation/annotation_dialogs.py:68
 msgid "Metadata"
 msgstr "Metatiedot"
 
-#: ../../../../annotation/annotation_dialogs.py:65
-#: ../../../../annotation/annotation_dialogs.py:499
+#: ../../../../annotation/annotation_dialogs.py:71
+#: ../../../../annotation/annotation_dialogs.py:554
 #: ../../../../annotation/exporters/core_renderers.py:201
 msgid "Tags"
 msgstr "Tunnisteet"
 
-#: ../../../../annotation/annotation_dialogs.py:70
+#: ../../../../annotation/annotation_dialogs.py:76
 msgid "Date Created"
 msgstr "Luontipäivämäärä"
 
-#: ../../../../annotation/annotation_dialogs.py:74
+#: ../../../../annotation/annotation_dialogs.py:80
 msgid "Last updated"
 msgstr "Päivitetty viimeksi"
 
-#: ../../../../annotation/annotation_dialogs.py:86
-#: ../../../../annotation/annotation_dialogs.py:139
+#: ../../../../annotation/annotation_dialogs.py:92
+#: ../../../../annotation/annotation_dialogs.py:148
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:174
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:242
 #: ../../../../gui/book_viewer/core_dialogs.py:393
@@ -152,26 +160,31 @@ msgstr "Päivitetty viimeksi"
 msgid "&Close"
 msgstr "&Sulje"
 
-#: ../../../../annotation/annotation_dialogs.py:120
+#: ../../../../annotation/annotation_dialogs.py:126
 msgid "[Unnamed Bookmark]"
 msgstr "[Nimetön kirjanmerkki]"
 
-#: ../../../../annotation/annotation_dialogs.py:125
+#: ../../../../annotation/annotation_dialogs.py:131
 msgid "Saved Bookmarks"
 msgstr "Tallennetut kirjanmerkit"
 
-#: ../../../../annotation/annotation_dialogs.py:128
+#: ../../../../annotation/annotation_dialogs.py:134
+#: ../../../../annotation/annotation_dialogs.py:397
+msgid "Relocate &Here"
+msgstr "Siirrä t&änne"
+
+#: ../../../../annotation/annotation_dialogs.py:136
 #: ../../../../ocr/ocr_dialogs.py:525 ../../../../text_to_speech/tts_gui.py:379
 msgid "&Remove"
 msgstr "&Poista"
 
-#: ../../../../annotation/annotation_dialogs.py:148
+#: ../../../../annotation/annotation_dialogs.py:157
 #: ../../../../gui/book_viewer/core_dialogs.py:251
 msgid "Name"
 msgstr "Nimi"
 
-#: ../../../../annotation/annotation_dialogs.py:155
-#: ../../../../annotation/annotation_dialogs.py:338
+#: ../../../../annotation/annotation_dialogs.py:164
+#: ../../../../annotation/annotation_dialogs.py:369
 #: ../../../../annotation/exporters/core_renderers.py:178
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:193
 #: ../../../../gui/book_viewer/core_dialogs.py:53
@@ -179,14 +192,19 @@ msgstr "Nimi"
 msgid "Page"
 msgstr "Sivu"
 
-#: ../../../../annotation/annotation_dialogs.py:163
-#: ../../../../annotation/annotation_dialogs.py:248
+#: ../../../../annotation/annotation_dialogs.py:171
+#: ../../../../annotation/annotation_dialogs.py:337
+msgid "Status"
+msgstr "Tila"
+
+#: ../../../../annotation/annotation_dialogs.py:179
+#: ../../../../annotation/annotation_dialogs.py:277
 #: ../../../../annotation/exporters/core_renderers.py:145
 #: ../../../../gui/book_viewer/core_dialogs.py:68
 msgid "Section"
 msgstr "Luku"
 
-#: ../../../../annotation/annotation_dialogs.py:208
+#: ../../../../annotation/annotation_dialogs.py:236
 msgid ""
 "This action can not be reverted.\n"
 "Are you sure you want to remove this bookmark?"
@@ -194,72 +212,72 @@ msgstr ""
 "Toimintoa ei voi kumota.\n"
 "Haluatko varmasti poistaa tämän kirjanmerkin?"
 
-#: ../../../../annotation/annotation_dialogs.py:211
+#: ../../../../annotation/annotation_dialogs.py:239
 msgid "Remove Bookmark?"
 msgstr "Kirjanmerkin poistaminen"
 
-#: ../../../../annotation/annotation_dialogs.py:237
-#: ../../../../annotation/annotation_dialogs.py:344
-#: ../../../../annotation/annotation_dialogs.py:529
+#: ../../../../annotation/annotation_dialogs.py:266
+#: ../../../../annotation/annotation_dialogs.py:375
+#: ../../../../annotation/annotation_dialogs.py:584
 #: ../../../../annotation/exporters/core_renderers.py:143
 msgid "Book"
 msgstr "Kirja"
 
-#: ../../../../annotation/annotation_dialogs.py:242
+#: ../../../../annotation/annotation_dialogs.py:271
 #: ../../../../annotation/exporters/core_renderers.py:147
 msgid "Tag"
 msgstr "Tunniste"
 
-#: ../../../../annotation/annotation_dialogs.py:258
+#: ../../../../annotation/annotation_dialogs.py:287
 msgid "&Apply"
 msgstr "&Käytä"
 
-#: ../../../../annotation/annotation_dialogs.py:321
+#: ../../../../annotation/annotation_dialogs.py:352
 msgid "Filter By"
 msgstr "Suodatusperuste"
 
-#: ../../../../annotation/annotation_dialogs.py:330
+#: ../../../../annotation/annotation_dialogs.py:361
 msgid "Sort By"
 msgstr "Lajitteluperuste"
 
-#: ../../../../annotation/annotation_dialogs.py:336
+#: ../../../../annotation/annotation_dialogs.py:367
 msgid "Date"
 msgstr "Päivämäärä"
 
-#: ../../../../annotation/annotation_dialogs.py:340
+#: ../../../../annotation/annotation_dialogs.py:371
 msgid "Position"
 msgstr "Sijainti"
 
-#: ../../../../annotation/annotation_dialogs.py:350
+#: ../../../../annotation/annotation_dialogs.py:381
 msgid "Ascending"
 msgstr "Nouseva"
 
-#: ../../../../annotation/annotation_dialogs.py:359
+#: ../../../../annotation/annotation_dialogs.py:390
 msgid "&View..."
 msgstr "&Näytä..."
 
-#: ../../../../annotation/annotation_dialogs.py:362
+#: ../../../../annotation/annotation_dialogs.py:393
 #: ../../../../text_to_speech/tts_gui.py:377
 msgid "&Edit..."
 msgstr "&Muokkaa..."
 
-#: ../../../../annotation/annotation_dialogs.py:365
+#: ../../../../annotation/annotation_dialogs.py:400
 msgid "&Delete..."
 msgstr "&Poista..."
 
-#: ../../../../annotation/annotation_dialogs.py:367
+#: ../../../../annotation/annotation_dialogs.py:402
 msgid "E&xport..."
 msgstr "V&ie..."
 
-#: ../../../../annotation/annotation_dialogs.py:435
+#: ../../../../annotation/annotation_dialogs.py:473
 msgid "Editing"
 msgstr "Muokataan"
 
-#: ../../../../annotation/annotation_dialogs.py:435
+#: ../../../../annotation/annotation_dialogs.py:473
 msgid "View"
 msgstr "Näytä"
 
-#: ../../../../annotation/annotation_dialogs.py:452
+#: ../../../../annotation/annotation_dialogs.py:490
 msgid ""
 "This action can not be reverted.\n"
 "Are you sure you want to remove this item?"
@@ -267,51 +285,67 @@ msgstr ""
 "Toimintoa ei voi kumota.\n"
 "Haluatko varmasti poistaa tämän merkinnän?"
 
-#: ../../../../annotation/annotation_dialogs.py:454
+#: ../../../../annotation/annotation_dialogs.py:492
 msgid "Delete Annotation?"
 msgstr "Merkinnän poistaminen"
 
-#: ../../../../annotation/annotation_dialogs.py:497
+#: ../../../../annotation/annotation_dialogs.py:521
+msgid "Unable to Relocate Annotation"
+msgstr "Merkinnän siirtäminen ei onnistu"
+
+#: ../../../../annotation/annotation_dialogs.py:552
 msgid "Edit Tags"
 msgstr "Muokkaa tunnisteita"
 
-#: ../../../../annotation/annotation_dialogs.py:510
+#: ../../../../annotation/annotation_dialogs.py:565
 msgid "Export Options"
 msgstr "Viennin asetukset"
 
-#: ../../../../annotation/annotation_dialogs.py:588
+#: ../../../../annotation/annotation_dialogs.py:598
+msgid ""
+"This annotation belongs to different content than the file currently stored "
+"at this location."
+msgstr ""
+"Tämä merkintä liittyy eri sisältöön kuin tiedosto, joka tässä sijainnissa on."
+
+#: ../../../../annotation/annotation_dialogs.py:601
+#| msgid "Use visual styles to indicate annotations"
+msgid "Unable to Navigate to Annotation"
+msgstr "Merkintään siirtyminen ei onnistu"
+
+#: ../../../../annotation/annotation_dialogs.py:655
 msgid "Include book title"
 msgstr "Sisällytä kirjan nimi"
 
-#: ../../../../annotation/annotation_dialogs.py:593
+#: ../../../../annotation/annotation_dialogs.py:660
 msgid "Include section title"
 msgstr "Sisällytä luvun nimi"
 
-#: ../../../../annotation/annotation_dialogs.py:599
+#: ../../../../annotation/annotation_dialogs.py:666
 msgid "Include  page number"
 msgstr "Sisällytä sivunumero"
 
-#: ../../../../annotation/annotation_dialogs.py:602
+#: ../../../../annotation/annotation_dialogs.py:669
 msgid "Include tags"
 msgstr "Sisällytä tunnisteet"
 
-#: ../../../../annotation/annotation_dialogs.py:604
+#: ../../../../annotation/annotation_dialogs.py:671
 msgid "Output format:"
 msgstr "Tulostiedoston muoto:"
 
-#: ../../../../annotation/annotation_dialogs.py:607
+#: ../../../../annotation/annotation_dialogs.py:674
 msgid "Output File"
 msgstr "Tulostiedosto"
 
-#: ../../../../annotation/annotation_dialogs.py:610
+#: ../../../../annotation/annotation_dialogs.py:677
 msgid "&Browse"
 msgstr "&Selaa"
 
-#: ../../../../annotation/annotation_dialogs.py:615
+#: ../../../../annotation/annotation_dialogs.py:682
 msgid "Open file after exporting"
 msgstr "Avaa tiedosto viennin jälkeen"
 
-#: ../../../../annotation/annotation_dialogs.py:642
+#: ../../../../annotation/annotation_dialogs.py:709
 #: ../../../../gui/book_viewer/menubar.py:288
 #: ../../../../gui/book_viewer/render_view.py:175
 msgid "Save As"
@@ -489,6 +523,19 @@ msgstr "Kommentit"
 #: ../../../../annotation/annotation_gui.py:337
 msgid "Highlights"
 msgstr "Korostukset"
+
+#: ../../../../annotation/annotator.py:223
+msgid "Only annotations marked for repositioning can be relocated."
+msgstr ""
+"Merkintää voi siirtää vain, jos sen sijainti on merkitty korjattavaksi."
+
+#: ../../../../annotation/annotator.py:226
+msgid "The annotation does not belong to the current document."
+msgstr "Tämä merkintä ei liity nykyiseen asiakirjaan."
+
+#: ../../../../annotation/annotator.py:232
+msgid "Select text before relocating a highlight."
+msgstr "Valitse tekstiä ennen korostuksen siirtämistä."
 
 #: ../../../../annotation/exporters/core_renderers.py:15
 #: ../../../../gui/book_viewer/menubar.py:292 ../../../../ocr/ocr_menu.py:385
@@ -1950,8 +1997,8 @@ msgstr "Sulje"
 #: ../../../../gui/book_viewer/render_view.py:184
 #: ../../../../ocr/ocr_dialogs.py:294
 #: ../../../../structured_text/structural_elements.py:72
-#: ../../../../structured_text/structured_html_parser.py:389
-#: ../../../../structured_text/structured_html_parser.py:416
+#: ../../../../structured_text/structured_html_parser.py:397
+#: ../../../../structured_text/structured_html_parser.py:424
 msgid "Image"
 msgstr "Kuva"
 
@@ -3096,24 +3143,24 @@ msgstr ""
 "asennusohjelman viimeistä vaihetta.\n"
 "Katso lisätietoja lokista."
 
-#: ../../../../reader.py:758
+#: ../../../../reader.py:855
 msgid "Image unavailable"
 msgstr "Kuva ei ole käytettävissä"
 
-#: ../../../../reader.py:759
+#: ../../../../reader.py:856
 msgid "Could not open this image."
 msgstr "Tätä kuvaa ei voitu avata."
 
-#: ../../../../reader.py:808
+#: ../../../../reader.py:905
 #, python-brace-format
 msgid "{title} — by {author}"
 msgstr "{title} – {author}"
 
-#: ../../../../reader.py:921
+#: ../../../../reader.py:1018
 msgid "Table View"
 msgstr "Taulukkonäkymä"
 
-#: ../../../../reader.py:930
+#: ../../../../reader.py:1027
 msgid "Image View"
 msgstr "Kuvanäkymä"
 
