@@ -1,7 +1,7 @@
-
 from __future__ import annotations
 
 import collections.abc
+import hashlib
 import os
 import string
 from functools import cached_property, lru_cache
@@ -65,7 +65,7 @@ class EpubDocument(SinglePageDocument):
     def read(self):
         super().read()
         self.epub = ebooklib.epub.read_epub(self.get_file_system_path())
-        self.structure = StructuredHtmlParser.from_string(self.html_content)
+        self.structure = self._parse_html_content()
         self._storage_text = self.structure.get_storage_text()
         self._text_position_map = self.structure.text_position_map
         self.toc = self.parse_epub()
@@ -130,13 +130,39 @@ class EpubDocument(SinglePageDocument):
     def get_storage_content(self):
         return self._storage_text
 
+    def _parse_html_content(self, *, include_images=True):
+        normalized_html_content = StructuredHtmlParser.preprocess_html_string(self.html_content)
+        self._legacy_content_cache_key = (
+            f"legacy-text-v1:{hashlib.sha256(normalized_html_content.encode('utf-8')).hexdigest()}"
+        )
+        return StructuredHtmlParser.from_lxml_html_tree(
+            lxml_html.fromstring(normalized_html_content),
+            include_images=include_images,
+        )
+
     def get_legacy_content(self):
         if hasattr(self, "_legacy_content"):
             return self._legacy_content
-        self._legacy_content = StructuredHtmlParser.from_string(
-            self.html_content,
-            include_images=False,
-        ).get_text()
+        try:
+            with Cache(
+                self._get_cache_directory(), eviction_policy="least-frequently-used"
+            ) as cache:
+                if (cached_legacy_content := cache.get(self._legacy_content_cache_key)) is not None:
+                    self._legacy_content = cached_legacy_content.decode("utf-8")
+                    return self._legacy_content
+        except Exception:
+            log.warning("Failed to read cached legacy EPUB text.", exc_info=True)
+        self._legacy_content = self._parse_html_content(include_images=False).get_text()
+        try:
+            with Cache(
+                self._get_cache_directory(), eviction_policy="least-frequently-used"
+            ) as cache:
+                cache.set(
+                    self._legacy_content_cache_key,
+                    self._legacy_content.encode("utf-8"),
+                )
+        except Exception:
+            log.warning("Failed to cache legacy EPUB text.", exc_info=True)
         return self._legacy_content
 
     def get_text_position_map(self):
@@ -392,21 +418,32 @@ class EpubDocument(SinglePageDocument):
 
     @cached_property
     def html_content(self):
-        cache = Cache(self._get_cache_directory(), eviction_policy="least-frequently-used")
         cache_key = self.uri.to_uri_string()
         document_path = self.get_file_system_path()
-        if (cached_html_content := cache.get(cache_key)) and not cache_utils.is_document_modified(
-            cache_key, document_path, cache
-        ):
-            return cached_html_content.decode("utf-8")
+        try:
+            with Cache(
+                self._get_cache_directory(), eviction_policy="least-frequently-used"
+            ) as cache:
+                if (
+                    cached_html_content := cache.get(cache_key)
+                ) and not cache_utils.is_document_modified(cache_key, document_path, cache):
+                    return cached_html_content.decode("utf-8")
+        except Exception:
+            log.warning("Failed to read cached EPUB HTML.", exc_info=True)
         html_content_gen = ((item.file_name, item.content) for item in self.epub_html_items)
         buf = StringIO()
         for filename, html_content in html_content_gen:
             buf.write(self.prefix_html_ids(filename, html_content))
             buf.write("\n<br/>\n")
         html_content = self.build_html(title=self.epub.title, body_content=buf.getvalue())
-        cache.set(cache_key, html_content.encode("utf-8"))
-        cache_utils.set_document_modified_time(cache_key, document_path, cache)
+        try:
+            with Cache(
+                self._get_cache_directory(), eviction_policy="least-frequently-used"
+            ) as cache:
+                cache.set(cache_key, html_content.encode("utf-8"))
+                cache_utils.set_document_modified_time(cache_key, document_path, cache)
+        except Exception:
+            log.warning("Failed to cache EPUB HTML.", exc_info=True)
         return html_content
 
     def prefix_html_ids(self, filename, html):
