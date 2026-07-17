@@ -244,6 +244,32 @@ def test_structured_html_parser_uses_stable_storage_placeholders():
         ).astuple() == (start, stop)
 
 
+def test_image_storage_ranges_do_not_depend_on_image_order(monkeypatch):
+    parser = StructuredHtmlParser.from_string(
+        """
+        <html><body>
+            <img src="images/first.png" alt="First image">
+            <img src="images/second.png" alt="Second image">
+        </body></html>
+        """
+    )
+    expected = {
+        image_info.src: parser.display_to_storage_range(*image_info.text_range)
+        for image_info in parser._get_visible_image_elements()
+    }
+    parser._image_elements.reverse()
+    monkeypatch.setattr(
+        StructuredHtmlParser,
+        "display_to_storage_range",
+        lambda *_args, **_kwargs: pytest.fail("exact image ranges should not require a scan"),
+    )
+
+    assert {
+        image_info.src: storage_range
+        for image_info, storage_range in parser.iter_image_storage_ranges()
+    } == expected
+
+
 def test_structured_html_parser_keeps_range_stops_before_following_images():
     parser = StructuredHtmlParser.from_string(
         """
