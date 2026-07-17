@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2026-07-17 17:10+0300\n"
-"PO-Revision-Date: 2026-07-18 00:33+0300\n"
+"PO-Revision-Date: 2026-07-18 00:44+0300\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: fi_FI <janikinnunen340@gmail.com>\n"
 "Language: fi\n"
@@ -1090,7 +1090,7 @@ msgstr "Pakattu tiedosto"
 
 #: ../../../../document/formats/epub.py:52
 msgid "Electronic Publication (EPUB)"
-msgstr "Elektroninen julkaisu (ePub)"
+msgstr "Elektroninen julkaisu (EPUB)"
 
 #: ../../../../document/formats/fb2.py:23
 #: ../../../../document/formats/fb2.py:34
@@ -1186,7 +1186,7 @@ msgstr "Avaa &selaimessa"
 
 #: ../../../../epub_serve/__init__.py:44
 msgid "Open the current EPUB book in the browser"
-msgstr "Avaa nykyinen ePub-kirja selaimessa"
+msgstr "Avaa nykyinen EPUB-kirja selaimessa"
 
 #: ../../../../epub_serve/__init__.py:61
 msgid "Openning in web viewer..."
@@ -1194,11 +1194,11 @@ msgstr "Avataan selaimessa..."
 
 #: ../../../../epub_serve/__init__.py:81
 msgid "Failed to launch web viewer"
-msgstr "Selainnäkymän avaaminen ei onnistunut"
+msgstr "Selaimen avaaminen ei onnistunut"
 
 #: ../../../../epub_serve/__init__.py:82
 msgid "An error occurred while opening the web viewer. Please try again."
-msgstr "Selainnäkymää avattaessa tapahtui virhe. Yritä uudelleen."
+msgstr "Selainta avattaessa tapahtui virhe. Yritä uudelleen."
 
 #: ../../../../epub_serve/webapp.py:148
 msgid "404 Not Found"
