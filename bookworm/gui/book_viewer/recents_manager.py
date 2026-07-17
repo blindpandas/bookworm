@@ -4,10 +4,12 @@ import sqlalchemy as sa
 from bookworm.database import PinnedDocument, RecentDocument
 from bookworm.document.hash_utils import get_persistent_content_hash
 from bookworm.logger import logger
-from bookworm.structured_text import CURRENT_CONTENT_HASH_VERSION
+from bookworm.structured_text import (
+    CURRENT_CONTENT_HASH_VERSION,
+    LEGACY_CONTENT_HASH_VERSION,
+)
 
 log = logger.getChild(__name__)
-_CONTENT_HASH_UNSET = object()
 
 
 def _get_document_by_uri(model, uri):
@@ -37,7 +39,7 @@ def _get_legacy_documents_by_content_hash(model, content_hash, uri):
     for doc in model.query:
         if (
             doc.content_hash == content_hash
-            and doc.content_hash_version != CURRENT_CONTENT_HASH_VERSION
+            and doc.content_hash_version in (None, LEGACY_CONTENT_HASH_VERSION)
             and doc.uri.format == uri.format
         ):
             matching_documents.append(doc)
@@ -48,7 +50,7 @@ def _has_legacy_documents(model, uri):
     documents = model.query.filter(
         sa.or_(
             model.content_hash_version.is_(None),
-            model.content_hash_version != CURRENT_CONTENT_HASH_VERSION,
+            model.content_hash_version == LEGACY_CONTENT_HASH_VERSION,
         )
     )
     return any(doc.uri.format == uri.format for doc in documents)
@@ -93,15 +95,13 @@ def _delete_duplicate_documents(model, duplicates):
 def get_document_unique(model, document):
     uri = document.uri
     doc = _get_document_by_uri(model, uri)
-    content_hash = (
-        doc.content_hash
-        if doc is not None
-        and doc.content_hash_version == CURRENT_CONTENT_HASH_VERSION
-        and doc.content_hash is not None
-        else _CONTENT_HASH_UNSET
-    )
-    if content_hash is _CONTENT_HASH_UNSET:
-        content_hash = document.get_content_hash()
+    if doc is not None and doc.content_hash_version not in (
+        None,
+        LEGACY_CONTENT_HASH_VERSION,
+        CURRENT_CONTENT_HASH_VERSION,
+    ):
+        return doc
+    content_hash = document.get_content_hash()
     should_check_legacy_documents = content_hash is None or _has_legacy_documents(
         model, uri
     )

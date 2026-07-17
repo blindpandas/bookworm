@@ -104,6 +104,7 @@ class DocumentBase(Base, GetOrCreateMixin):
 
 class Book(DocumentBase):
     __tablename__ = "book"
+    uri = sa.Column(DocumentUriDBType(1024), nullable=False, index=True)
 
     @property
     def identifier(self):
