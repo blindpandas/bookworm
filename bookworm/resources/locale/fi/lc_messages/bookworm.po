@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
 "POT-Creation-Date: 2026-07-17 17:10+0300\n"
-"PO-Revision-Date: 2026-07-17 19:13+0300\n"
+"PO-Revision-Date: 2026-07-18 00:33+0300\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: fi_FI <janikinnunen340@gmail.com>\n"
 "Language: fi\n"
@@ -3276,7 +3276,7 @@ msgstr "Lukeminen"
 #: ../../../../text_to_speech/__init__.py:192
 #: ../../../../text_to_speech/tts_gui.py:180
 msgid "Voice"
-msgstr "Puheääni"
+msgstr "Puhe"
 
 #: ../../../../text_to_speech/__init__.py:189
 msgid "Back"
