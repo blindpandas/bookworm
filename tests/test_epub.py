@@ -74,13 +74,26 @@ def test_internal_link_resolution_prefers_exact_href_over_suffix_match(tmp_path)
     )
     link_chapter = epub_chapter(
         "link.xhtml",
-        '<p><a href="chap.xhtml#same">Go exact target</a></p>',
+        '<p><a href="chap.xhtml#same">Go exact target</a></p>'
+        '<p><a href="OEBPS/chap.xhtml#same">Go normalized target</a></p>'
+        '<p><a href="BOOK/chapter.xhtml#same">Missing fragment</a></p>',
     )
     right_target = epub_chapter(
         "chap.xhtml",
         '<h1 id="same">Right target</h1><p>Right body</p>',
     )
-    for item in (wrong_target, link_chapter, right_target):
+    missing_fragment_target = epub_chapter("chapter.xhtml", "<h1>Root target</h1>")
+    wrong_fragment_target = epub_chapter(
+        "vol/chapter.xhtml",
+        '<h1 id="same">Wrong fragment target</h1>',
+    )
+    for item in (
+        wrong_target,
+        link_chapter,
+        right_target,
+        missing_fragment_target,
+        wrong_fragment_target,
+    ):
         book.add_item(item)
     book.add_item(epub.EpubNcx())
     book.add_item(epub.EpubNav())
@@ -88,22 +101,96 @@ def test_internal_link_resolution_prefers_exact_href_over_suffix_match(tmp_path)
         epub.Link("link.xhtml", "Link", "link"),
         epub.Link("chap.xhtml#same", "Right", "right"),
     )
-    book.spine = ["nav", wrong_target, link_chapter, right_target]
+    book.spine = [
+        "nav",
+        wrong_target,
+        link_chapter,
+        right_target,
+        missing_fragment_target,
+        wrong_fragment_target,
+    ]
     epub_path = tmp_path / "suffix_match.epub"
     epub.write_epub(epub_path, book, {})
     document = EpubDocument(DocumentUri.from_filename(epub_path))
     document.read()
     text = document.get_content()
-    link_range = next(
+    for href, label in (
+        ("chap.xhtml#same", "Go exact target"),
+        ("OEBPS/chap.xhtml#same", "Go normalized target"),
+    ):
+        link_range = next(
+            text_range
+            for text_range, target_href in document.structure.link_targets.items()
+            if target_href == href and text[text_range[0] : text_range[1]] == label
+        )
+        target = document.resolve_link(link_range)
+        start, stop = target.position
+
+        assert target.url == href
+        assert text[start:stop].strip() == "Right target"
+
+    missing_fragment_range = next(
         text_range
-        for text_range, href in document.structure.link_targets.items()
-        if href == "chap.xhtml#same" and text[text_range[0] : text_range[1]] == "Go exact target"
+        for text_range, target_href in document.structure.link_targets.items()
+        if target_href == "BOOK/chapter.xhtml#same"
     )
+    assert document.resolve_link(missing_fragment_range) is None
 
-    target = document.resolve_link(link_range)
-    start, stop = target.position
 
-    assert text[start:stop].strip() == "Right target"
+def test_toc_resolution_matches_unique_manifest_path_suffix(tmp_path, monkeypatch):
+    book = epub.EpubBook()
+    book.set_title("nested navigation")
+    book.set_language("en")
+    chapter = epub_chapter(
+        "Text/chapter.xhtml",
+        '<h1 id="part">Target heading</h1><p>Target body</p>',
+    )
+    basename_collision = epub_chapter(
+        "chapter.xhtml",
+        '<h1 id="part">Wrong heading</h1>',
+    )
+    book.add_item(basename_collision)
+    book.add_item(chapter)
+    book.add_item(epub.EpubNcx())
+    book.add_item(epub.EpubNav())
+    book.toc = (epub.Link("Text/chapter.xhtml#part", "Target", "target"),)
+    book.spine = ["nav", basename_collision, chapter]
+    epub_path = tmp_path / "nested_navigation.epub"
+    epub.write_epub(epub_path, book, {})
+    monkeypatch.setattr(EpubDocument, "_get_cache_directory", lambda _: tmp_path / "cache")
+    document = EpubDocument(DocumentUri.from_filename(epub_path))
+    document.read()
+    document.epub.toc = (epub.Link("../BOOK/Text/chapter.xhtml#part", "Target", "target"),)
+
+    section = next(document.parse_epub().iter_children())
+
+    assert document.get_content()[section.text_range.as_slice()].strip() == "Target heading"
+
+
+def test_epub_html_href_suffix_match_must_be_unique():
+    book = epub.EpubBook()
+    first = epub_chapter("vol1/chapter.xhtml", "<p>First</p>")
+    second = epub_chapter("vol2/chapter.xhtml", "<p>Second</p>")
+    book.add_item(first)
+    book.add_item(second)
+    document = EpubDocument(None)
+    document.epub = book
+    document.__dict__["epub_html_items"] = (first, second)
+
+    assert (
+        document._resolve_epub_html_href("../BOOK/vol2/chapter.xhtml?cache=1#part%201")
+        == "vol2/chapter.xhtml#part%201"
+    )
+    assert document._resolve_epub_html_href("chapter.xhtml#part") is None
+    assert document._resolve_epub_html_href("https://example.com/chapter.xhtml") is None
+    assert document._resolve_epub_html_href("https://[invalid/chapter.xhtml") is None
+
+    root = epub_chapter("chapter.xhtml", "<p>Root</p>")
+    book.add_item(root)
+    document.__dict__["epub_html_items"] = (root, first, second)
+    assert (
+        document._resolve_epub_html_href("../vol2/chapter.xhtml#part") == "vol2/chapter.xhtml#part"
+    )
 
 
 def test_legacy_content_uses_disk_cache(asset, tmp_path, monkeypatch):
