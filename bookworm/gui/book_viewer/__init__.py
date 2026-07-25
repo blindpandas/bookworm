@@ -413,9 +413,8 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
 
     def set_content_view_font(self):
         configured_text_style = self.get_content_view_text_style()
-        self.contentTextCtrl.SetStyle(
-            0, self.contentTextCtrl.GetLastPosition(), configured_text_style
-        )
+        self.contentTextCtrl.set_default_text_font(configured_text_style.Font)
+        self.contentTextCtrl.set_all_text_font(configured_text_style.Font)
         self.contentTextCtrl.SetDefaultStyle(configured_text_style)
 
     def get_content_view_text_style(self, *, font_size=None):
@@ -516,8 +515,10 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
         else:
             current_font_size = None
         content_style = self.get_content_view_text_style(font_size=current_font_size)
+        default_font_set = self.contentTextCtrl.set_default_text_font(content_style.Font)
         self.contentTextCtrl.SetValue(self._text_position_map.to_text_ctrl_value())
-        self.contentTextCtrl.SetStyle(0, self.contentTextCtrl.GetLastPosition(), content_style)
+        if not default_font_set:
+            self.contentTextCtrl.set_all_text_font(content_style.Font)
         self.contentTextCtrl.SetDefaultStyle(content_style)
         self.set_insertion_point(0, set_focus_to_text_ctrl)
         self.contentTextCtrl.Thaw()
@@ -598,8 +599,7 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             and event.Position == self.contentTextCtrl.GetLastPosition()
         ):
             should_navigate = all(
-                retval
-                for _, retval in should_auto_navigate_to_next_page.send(self)
+                retval for _, retval in should_auto_navigate_to_next_page.send(self)
             )
             if should_navigate:
                 if (time.monotonic() - self._last_page_turn_time) <= 0.75:
@@ -728,31 +728,29 @@ class BookViewerWindow(wx.Frame, MenubarProvider, StateProvider):
             speech.announce(msg.format(item=_(element_label)), True)
 
     def onTextCtrlZoom(self, direction, announce=True):
-        self._has_text_zoom = True
-        last_pos = self.contentTextCtrl.GetLastPosition()
         existing_style = wx.TextAttr()
         self.contentTextCtrl.GetStyle(0, existing_style)
-        new_style = wx.TextAttr(existing_style)
-        font = new_style.Font
+        font = existing_style.Font
         size = font.GetPointSize()
         if direction == 1:
             if size > 64:
                 return wx.Bell()
-            new_style.Font = font.MakeLarger()
+            new_point_size = font.MakeLarger().GetPointSize()
             # Translators: a message telling the user that the font size has been increased
             msg = _("The font size has been Increased")
         elif direction == -1:
             if size < 8:
                 return wx.Bell()
-            new_style.Font = font.MakeSmaller()
+            new_point_size = font.MakeSmaller().GetPointSize()
             # Translators: a message telling the user that the font size has been decreased
             msg = _("The font size has been decreased")
         else:
-            new_style = self.contentTextCtrl.GetDefaultStyle()
+            new_point_size = self.contentTextCtrl.GetDefaultStyle().Font.GetPointSize()
             # Translators: a message telling the user that the font size has been reset
             msg = _("The font size has been reset")
-            self._has_text_zoom = False
-        self.contentTextCtrl.SetStyle(0, last_pos, new_style)
+        if not self.contentTextCtrl.set_all_text_point_size(new_point_size):
+            return wx.Bell()
+        self._has_text_zoom = direction != 0
         if announce:
             speech.announce(msg)
 

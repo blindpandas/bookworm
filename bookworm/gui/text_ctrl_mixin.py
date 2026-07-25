@@ -1,9 +1,9 @@
 import wx
 import wx.lib.newevent
 
+from bookworm import config
 from bookworm.logger import logger
 from bookworm.structured_text import SemanticElementType
-from bookworm import config
 
 log = logger.getChild(__name__)
 
@@ -79,6 +79,24 @@ class ContentViewCtrlMixin(wx.TextCtrl):
     def SetControlLabel(self, label_text: str) -> None:
         self.controlLabel.SetLabel(label_text)
 
+    def set_all_text_font(self, font: wx.Font) -> bool:
+        """Apply a base font to all existing text."""
+        style = wx.TextAttr()
+        style.SetFontFaceName(font.GetFaceName())
+        style.SetFontPointSize(font.GetPointSize())
+        style.SetFontWeight(font.GetWeight())
+        return self.SetStyle(0, self.GetLastPosition(), style)
+
+    def set_default_text_font(self, font: wx.Font) -> bool:
+        """Set the base font used for subsequently assigned text."""
+        return self.SetFont(font)
+
+    def set_all_text_point_size(self, point_size: int) -> bool:
+        """Change only the point size of all existing text."""
+        style = wx.TextAttr()
+        style.SetFontPointSize(point_size)
+        return self.SetStyle(0, self.GetLastPosition(), style)
+
     def GetContainingLine(self, position):
         _, col, lino = self.PositionToXY(position)
         left = position - col
@@ -93,9 +111,7 @@ class ContentViewCtrlMixin(wx.TextCtrl):
         elif evtType == wx.EVT_RIGHT_UP.typeId:
             wx.PostEvent(self, self.ContextMenuEvent(self.GetId(), fromMouse=True))
             return True
-        elif evtType == wx.EVT_KEY_UP.typeId and (
-            event.GetKeyCode() == wx.WXK_WINDOWS_MENU
-        ):
+        elif evtType == wx.EVT_KEY_UP.typeId and (event.GetKeyCode() == wx.WXK_WINDOWS_MENU):
             # This event is redundant
             return True
         # Keep native RichEdit from beeping; KEY_UP still runs the activation.
@@ -111,9 +127,7 @@ class ContentViewCtrlMixin(wx.TextCtrl):
             and event.GetKeyCode() in NAVIGATION_KEYS
         ):
             if evtType == wx.EVT_CHAR_HOOK.typeId:
-                wx.QueueEvent(
-                    self, self.ContentNavigationEvent(KeyCode=event.GetKeyCode())
-                )
+                wx.QueueEvent(self, self.ContentNavigationEvent(KeyCode=event.GetKeyCode()))
             return True
         elif (
             evtType == wx.EVT_CHAR_HOOK.typeId

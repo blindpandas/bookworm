@@ -1,15 +1,130 @@
 use libc::c_int;
-use std::mem::size_of;
+use std::{mem::size_of, slice};
 use windows::Win32::Foundation::{HWND, LPARAM, WPARAM};
 use windows::Win32::UI::Controls::RichEdit::{
-    CFE_LINK, CFM_LINK, CHARFORMATW, CHARRANGE, EM_EXGETSEL, EM_EXSETSEL, EM_GETEVENTMASK,
-    EM_SETCHARFORMAT, EM_SETEVENTMASK, ENM_SELCHANGE, EN_SELCHANGE, SCF_SELECTION, SELCHANGE,
-    SEL_EMPTY,
+    CFE_BOLD, CFE_LINK, CFM_BOLD, CFM_CHARSET, CFM_FACE, CFM_LINK, CFM_SIZE, CHARFORMATW,
+    CHARRANGE, EM_EXGETSEL, EM_EXSETSEL, EM_GETEVENTMASK, EM_SETCHARFORMAT, EM_SETEVENTMASK,
+    ENM_SELCHANGE, EN_SELCHANGE, SCF_ALL, SCF_DEFAULT, SCF_SELECTION, SELCHANGE, SEL_EMPTY,
 };
 use windows::Win32::UI::Controls::NMHDR;
 use windows::Win32::UI::WindowsAndMessaging::SendMessageW;
 
 type Position = c_int;
+const MAX_FACE_NAME_CODE_UNITS: usize = 31;
+// wx.FontInfo().FaceName(...) uses these LOGFONT defaults on Windows.
+const DEFAULT_CHARSET: u8 = 1;
+const DEFAULT_PITCH_AND_FAMILY: u8 = 32;
+
+fn send_character_format(handle: isize, scope: u32, chr_format: &mut CHARFORMATW) -> i32 {
+    let result = unsafe {
+        SendMessageW(
+            HWND(handle),
+            EM_SETCHARFORMAT,
+            WPARAM(scope as usize),
+            LPARAM(chr_format as *mut CHARFORMATW as isize),
+        )
+    };
+    i32::from(result.0 != 0)
+}
+
+fn point_size_to_twips(point_size: c_int) -> Option<c_int> {
+    if point_size <= 0 {
+        return None;
+    }
+    point_size.checked_mul(20)
+}
+
+fn set_text_font(
+    handle: isize,
+    face_utf16: *const u16,
+    face_length: u32,
+    point_size: c_int,
+    bold: c_int,
+    scope: u32,
+) -> i32 {
+    let face_length = face_length as usize;
+    let Some(height) = point_size_to_twips(point_size) else {
+        return -1;
+    };
+    if handle == 0
+        || face_utf16.is_null()
+        || face_length == 0
+        || face_length > MAX_FACE_NAME_CODE_UNITS
+        || !matches!(bold, 0 | 1)
+    {
+        return -1;
+    }
+    let face = unsafe { slice::from_raw_parts(face_utf16, face_length) };
+    if face.contains(&0) {
+        return -1;
+    }
+    let mut chr_format = CHARFORMATW {
+        cbSize: size_of::<CHARFORMATW>() as u32,
+        // Supplying the charset lets RichEdit bind fallback fonts for glyphs
+        // that are not present in the configured face.
+        dwMask: CFM_FACE | CFM_SIZE | CFM_BOLD | CFM_CHARSET,
+        dwEffects: if bold == 1 {
+            CFE_BOLD
+        } else {
+            Default::default()
+        },
+        yHeight: height,
+        bCharSet: DEFAULT_CHARSET,
+        bPitchAndFamily: DEFAULT_PITCH_AND_FAMILY,
+        ..Default::default()
+    };
+    chr_format.szFaceName[..face_length].copy_from_slice(face);
+    send_character_format(handle, scope, &mut chr_format)
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "C" fn Bkw_SetAllTextFont(
+    handle: isize,
+    face_utf16: *const u16,
+    face_length: u32,
+    point_size: c_int,
+    bold: c_int,
+) -> i32 {
+    set_text_font(handle, face_utf16, face_length, point_size, bold, SCF_ALL)
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "C" fn Bkw_SetDefaultTextFont(
+    handle: isize,
+    face_utf16: *const u16,
+    face_length: u32,
+    point_size: c_int,
+    bold: c_int,
+) -> i32 {
+    set_text_font(
+        handle,
+        face_utf16,
+        face_length,
+        point_size,
+        bold,
+        SCF_DEFAULT,
+    )
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "C" fn Bkw_SetAllTextPointSize(handle: isize, point_size: c_int) -> i32 {
+    let Some(height) = point_size_to_twips(point_size) else {
+        return -1;
+    };
+    if handle == 0 {
+        return -1;
+    }
+    let mut chr_format = CHARFORMATW {
+        cbSize: size_of::<CHARFORMATW>() as u32,
+        dwMask: CFM_SIZE,
+        yHeight: height,
+        ..Default::default()
+    };
+    send_character_format(handle, SCF_ALL, &mut chr_format)
+}
 
 #[no_mangle]
 #[allow(non_snake_case)]
@@ -24,7 +139,7 @@ pub extern "C" fn Bkw_FormatRangeAsLink(
         cpMax: end_pos,
     };
     let mut chr_format: CHARFORMATW = CHARFORMATW {
-        cbSize: u32::try_from(size_of::<CHARFORMATW>()).unwrap(),
+        cbSize: size_of::<CHARFORMATW>() as u32,
         dwMask: CFM_LINK,
         dwEffects: CFE_LINK,
         ..Default::default()
