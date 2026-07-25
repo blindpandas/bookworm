@@ -3,6 +3,7 @@ from __future__ import annotations
 import collections.abc
 import hashlib
 import os
+import posixpath
 import string
 from functools import cached_property, lru_cache
 from io import StringIO
@@ -252,16 +253,21 @@ class EpubDocument(SinglePageDocument):
         return len(href_parts) <= len(item_parts) and item_parts[-len(href_parts) :] == href_parts
 
     def resolve_link(self, link_range) -> LinkTarget:
-        href = urllib_parse.unquote(self.structure.link_targets[link_range])
+        raw_href = self.structure.link_targets[link_range]
+        href = urllib_parse.unquote(raw_href)
         if is_external_url(href):
             return LinkTarget(url=href, is_external=True)
+        resolved_href = self._resolve_epub_html_href(raw_href)
+        lookup_href = urllib_parse.unquote(resolved_href or raw_href)
         id_ranges = {
             urllib_parse.unquote(html_id): text_range
             for html_id, text_range in self.structure.html_id_ranges.items()
         }
-        if text_range := id_ranges.get(href):
+        if text_range := id_ranges.get(lookup_href):
             return LinkTarget(url=href, is_external=False, page=None, position=text_range)
-        href_with_boundary = f"/{href.removeprefix('./')}"
+        if resolved_href is not None:
+            return None
+        href_with_boundary = f"/{lookup_href.removeprefix('./')}"
         for html_id, text_range in id_ranges.items():
             if html_id.endswith(href_with_boundary):
                 return LinkTarget(url=href, is_external=False, page=None, position=text_range)
@@ -321,17 +327,49 @@ class EpubDocument(SinglePageDocument):
         return items
 
     def get_epub_html_item_by_href(self, href):
+        href = posixpath.normpath(href)
         if epub_item := self.epub.get_item_with_href(href):
             return epub_item
-        item_name = PurePosixPath(href).name
-        return more_itertools.first(
-            (
-                item
-                for item in self.epub_html_items
-                if PurePosixPath(item.file_name).name == item_name
-            ),
-            None,
-        )
+        href_parts = PurePosixPath(href).parts
+        while href_parts and href_parts[0] == "..":
+            href_parts = href_parts[1:]
+        relative_href = PurePosixPath(*href_parts).as_posix()
+        if relative_href != href and (epub_item := self.epub.get_item_with_href(relative_href)):
+            return epub_item
+        # ponytail: this linear manifest scan is tiny for normal EPUBs; index paths if it profiles hot.
+        suffix_matches = [
+            (self._path_suffix_match_length(item.file_name, relative_href), item)
+            for item in self.epub_html_items
+        ]
+        best_length = max((length for length, _item in suffix_matches), default=0)
+        best_matches = [item for length, item in suffix_matches if length == best_length]
+        if best_length and len(best_matches) == 1:
+            return best_matches[0]
+        return None
+
+    @staticmethod
+    def _path_suffix_match_length(first, second):
+        first_parts = PurePosixPath(posixpath.normpath(first)).parts
+        second_parts = PurePosixPath(posixpath.normpath(second)).parts
+        suffix_length = 0
+        for first_part, second_part in zip(reversed(first_parts), reversed(second_parts)):
+            if first_part != second_part:
+                break
+            suffix_length += 1
+        return suffix_length if suffix_length == min(len(first_parts), len(second_parts)) else 0
+
+    def _resolve_epub_html_href(self, href):
+        try:
+            parsed_href = urllib_parse.urlsplit(href)
+        except ValueError:
+            return None
+        if parsed_href.scheme or parsed_href.netloc or not parsed_href.path:
+            return None
+        path = urllib_parse.unquote(parsed_href.path)
+        if epub_item := self.get_epub_html_item_by_href(path):
+            fragment = parsed_href.fragment
+            return f"{epub_item.file_name}#{fragment}" if fragment else epub_item.file_name
+        return None
 
     def parse_epub(self):
         root = Section(
@@ -398,7 +436,7 @@ class EpubDocument(SinglePageDocument):
                     pager=SINGLE_PAGE_DOCUMENT_PAGER,
                     level=current_level,
                     parent=parent,
-                    data={"href": entry.href.lstrip("./")},
+                    data={"href": self._resolve_epub_html_href(entry.href) or entry.href},
                 )
                 yield sect
             else:
@@ -408,7 +446,7 @@ class EpubDocument(SinglePageDocument):
                     level=current_level,
                     pager=SINGLE_PAGE_DOCUMENT_PAGER,
                     parent=parent,
-                    data={"href": epub_sect.href.lstrip("./")},
+                    data={"href": self._resolve_epub_html_href(epub_sect.href) or epub_sect.href},
                 )
                 yield sect
                 yield from self.add_toc_entry(
