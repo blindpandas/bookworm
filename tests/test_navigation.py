@@ -1,3 +1,4 @@
+import sys
 from types import SimpleNamespace
 
 import pytest
@@ -6,8 +7,13 @@ from bookworm.document import SINGLE_PAGE_DOCUMENT_PAGER, Section
 from bookworm.gui import book_viewer
 from bookworm.gui.book_viewer import BookViewerWindow
 from bookworm.gui.book_viewer.position_mapping import TextCtrlPositionMap
+from bookworm.gui.contentview_ctrl import ContentViewCtrl
+from bookworm.gui.text_ctrl_mixin import ContentViewCtrlMixin
 from bookworm.structured_text import SemanticElementType, TextRange
 from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
+
+if sys.platform == "win32":
+    from bookworm.platforms.win32.controls import richedit
 
 
 class StructuralNavigationHarness:
@@ -24,6 +30,7 @@ class PositionMappingHarness:
 
 class SetContentHarness(PositionMappingHarness):
     set_content = BookViewerWindow.set_content
+    set_content_view_font = BookViewerWindow.set_content_view_font
     set_insertion_point = BookViewerWindow.set_insertion_point
 
     def __init__(self, content_style):
@@ -53,6 +60,7 @@ class StyleRecordingTextCtrl:
     def __init__(self):
         self.calls = []
         self.value = ""
+        self.default_font_result = True
 
     def Freeze(self):
         self.calls.append(("Freeze",))
@@ -62,6 +70,18 @@ class StyleRecordingTextCtrl:
 
     def SetDefaultStyle(self, style):
         self.calls.append(("SetDefaultStyle", style))
+
+    def set_all_text_font(self, font):
+        self.calls.append(("set_all_text_font", font))
+        return True
+
+    def set_default_text_font(self, font):
+        self.calls.append(("set_default_text_font", font))
+        return self.default_font_result
+
+    def set_all_text_point_size(self, point_size):
+        self.calls.append(("set_all_text_point_size", point_size))
+        return True
 
     def SetValue(self, value):
         self.value = value
@@ -225,20 +245,173 @@ def test_get_line_number_uses_raw_caret_when_position_is_omitted():
     assert viewer.contentTextCtrl.position_queries == [0]
 
 
-def test_set_content_reapplies_text_style_after_setting_control_value():
+@pytest.mark.parametrize("default_font_result", [True, False])
+def test_set_content_sets_font_before_control_value(default_font_result):
     text = "intro \U0001d445\U0001d446"
-    content_style = object()
+    font = object()
+    content_style = SimpleNamespace(Font=font)
     viewer = SetContentHarness(content_style)
+    viewer.contentTextCtrl.default_font_result = default_font_result
 
     viewer.set_content(text)
 
     text_ctrl_value = TextCtrlPositionMap(text).to_text_ctrl_value()
     assert viewer.contentTextCtrl.value == text_ctrl_value
-    assert viewer.contentTextCtrl.calls[1:4] == [
+    expected_calls = [
+        ("set_default_text_font", font),
         ("SetValue", text_ctrl_value),
-        ("SetStyle", 0, len(text_ctrl_value), content_style),
+    ]
+    if not default_font_result:
+        expected_calls.append(("set_all_text_font", font))
+    expected_calls.append(("SetDefaultStyle", content_style))
+    assert viewer.contentTextCtrl.calls[1 : 1 + len(expected_calls)] == expected_calls
+
+
+def test_set_content_view_font_updates_existing_and_default_text_styles():
+    font = object()
+    content_style = SimpleNamespace(Font=font)
+    viewer = SetContentHarness(content_style)
+
+    viewer.set_content_view_font()
+
+    assert viewer.contentTextCtrl.calls == [
+        ("set_default_text_font", font),
+        ("set_all_text_font", font),
         ("SetDefaultStyle", content_style),
     ]
+
+
+class FakeZoomFont:
+    def __init__(self, point_size):
+        self.point_size = point_size
+
+    def GetPointSize(self):  # noqa: N802
+        return self.point_size
+
+    def MakeLarger(self):  # noqa: N802
+        return FakeZoomFont(self.point_size + 2)
+
+    def MakeSmaller(self):  # noqa: N802
+        return FakeZoomFont(self.point_size - 2)
+
+
+class ZoomRecordingTextCtrl:
+    def __init__(self, point_size=12, default_point_size=11, result=True):
+        self.font = FakeZoomFont(point_size)
+        self.default_style = SimpleNamespace(Font=FakeZoomFont(default_point_size))
+        self.result = result
+        self.calls = []
+
+    def GetStyle(self, position, style):  # noqa: N802
+        style.Font = self.font
+        self.calls.append(("GetStyle", position))
+        return True
+
+    def GetDefaultStyle(self):  # noqa: N802
+        self.calls.append(("GetDefaultStyle",))
+        return self.default_style
+
+    def set_all_text_point_size(self, point_size):
+        self.calls.append(("set_all_text_point_size", point_size))
+        return self.result
+
+
+@pytest.mark.parametrize(
+    ("direction", "expected_point_size", "expected_has_zoom"),
+    [
+        (1, 14, True),
+        (-1, 10, True),
+        (0, 11, False),
+    ],
+)
+def test_text_zoom_changes_only_the_point_size(
+    monkeypatch, direction, expected_point_size, expected_has_zoom
+):
+    text_ctrl = ZoomRecordingTextCtrl()
+    viewer = SimpleNamespace(contentTextCtrl=text_ctrl, _has_text_zoom=False)
+    announcements = []
+    monkeypatch.setattr(book_viewer.wx, "TextAttr", lambda: SimpleNamespace(Font=None))
+    monkeypatch.setattr(book_viewer.speech, "announce", announcements.append)
+
+    BookViewerWindow.onTextCtrlZoom(viewer, direction)
+
+    assert text_ctrl.calls[-1] == ("set_all_text_point_size", expected_point_size)
+    assert viewer._has_text_zoom is expected_has_zoom
+    assert len(announcements) == 1
+
+
+def test_text_zoom_does_not_announce_when_formatting_fails(monkeypatch):
+    text_ctrl = ZoomRecordingTextCtrl(result=False)
+    viewer = SimpleNamespace(contentTextCtrl=text_ctrl, _has_text_zoom=False)
+    announcements = []
+    bells = []
+    monkeypatch.setattr(book_viewer.wx, "TextAttr", lambda: SimpleNamespace(Font=None))
+    monkeypatch.setattr(book_viewer.speech, "announce", announcements.append)
+    monkeypatch.setattr(book_viewer.wx, "Bell", lambda: bells.append(True))
+
+    BookViewerWindow.onTextCtrlZoom(viewer, 1)
+
+    assert viewer._has_text_zoom is False
+    assert announcements == []
+    assert bells == [True]
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="RichEdit is Windows-specific")
+@pytest.mark.parametrize(
+    ("method_name", "panel_method_name", "value"),
+    [
+        ("set_all_text_font", "set_all_text_font", object()),
+        ("set_default_text_font", "set_default_text_font", object()),
+        ("set_all_text_point_size", "set_all_text_point_size", 14),
+    ],
+)
+def test_native_text_formatting_failure_uses_wx_fallback(
+    monkeypatch, method_name, panel_method_name, value
+):
+    ctrl = ContentViewCtrl.__new__(ContentViewCtrl)
+    ctrl.panel = SimpleNamespace(**{panel_method_name: lambda _value: False})
+    fallback_calls = []
+    warnings = []
+    monkeypatch.setattr(
+        ContentViewCtrlMixin,
+        method_name,
+        lambda _self, fallback_value: fallback_calls.append(fallback_value) or True,
+    )
+    monkeypatch.setattr(richedit.log, "warning", lambda *args: warnings.append(args))
+
+    assert getattr(ctrl, method_name)(value)
+    assert getattr(ctrl, method_name)(value)
+    assert fallback_calls == [value, value]
+    assert len(warnings) == 1
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="RichEdit is Windows-specific")
+@pytest.mark.parametrize(
+    ("face_name", "accepted"),
+    [
+        ("A" * 29 + "\U0001f600", True),
+        ("A" * 30 + "\U0001f600", False),
+    ],
+)
+def test_native_font_formatter_counts_face_length_in_utf16_code_units(face_name, accepted):
+    native_calls = []
+    panel = SimpleNamespace(
+        _set_all_text_font=lambda *args: native_calls.append(args) or 1,
+        text_ctrl=SimpleNamespace(GetHandle=lambda: 1),
+    )
+    font = SimpleNamespace(
+        IsOk=lambda: True,
+        GetFaceName=lambda: face_name,
+        GetPointSize=lambda: 12,
+        GetWeight=lambda: book_viewer.wx.FONTWEIGHT_NORMAL,
+    )
+
+    result = richedit.WNDProcPanel._call_text_font_formatter(panel, panel._set_all_text_font, font)
+
+    assert result is accepted
+    assert len(native_calls) == int(accepted)
+    if accepted:
+        assert native_calls[0][2] == 31
 
 
 @pytest.mark.parametrize(
