@@ -1,10 +1,10 @@
 {
   "": {
-    "version": "2026.1",
-    "x64_download": "https://github.com/blindpandas/bookworm/releases/download/2026.1/Bookworm-2026.1-x64-update.bundle",
-    "x64_sha1hash": "177c7cb84f62ad7fee90668f8c684aa3b5291d57",
-    "x86_download": "https://github.com/blindpandas/bookworm/releases/download/2026.1/Bookworm-2026.1-x86-update.bundle",
-    "x86_sha1hash": "1f77d15b38a3befcef23d5c03528c3212c82fdf8"
+    "version": "2026.2",
+    "x64_download": "https://github.com/blindpandas/bookworm/releases/download/2026.2/Bookworm-2026.2-x64-update.bundle",
+    "x64_sha1hash": "1c4ff7cc0de14afc042e7ec2b9c4f20722bc10f6",
+    "x86_download": "https://github.com/blindpandas/bookworm/releases/download/2026.2/Bookworm-2026.2-x86-update.bundle",
+    "x86_sha1hash": "75423f335a87c8560b926e97feb3a0f36b2aead1"
   },
   "a": {
     "version": "2026.2a2",
