@@ -8,6 +8,7 @@ from ebooklib import epub
 from bookworm.document import cache_utils
 from bookworm.document.formats.epub import EpubDocument
 from bookworm.document.uri import DocumentUri
+from bookworm.structured_text.structured_html_parser import StructuredHtmlParser
 
 
 def temp_book(title: str = "Sample book") -> epub.EpubBook:
@@ -209,6 +210,21 @@ def test_legacy_content_uses_disk_cache(asset, tmp_path, monkeypatch):
     )
 
     assert second_document.get_legacy_content() == legacy_content
+
+
+def test_epub_html_cache_reuses_preprocessed_content(asset, tmp_path, monkeypatch):
+    monkeypatch.setattr(EpubDocument, "_get_cache_directory", lambda _: tmp_path / "cache")
+    preprocess = Mock(wraps=StructuredHtmlParser.preprocess_html_string)
+    monkeypatch.setattr(StructuredHtmlParser, "preprocess_html_string", preprocess)
+    uri = DocumentUri.from_filename(asset("The Diary of a Nobody.epub"))
+
+    first_document = EpubDocument(uri)
+    first_document.read()
+    second_document = EpubDocument(uri)
+    second_document.read()
+
+    assert second_document.get_content() == first_document.get_content()
+    assert preprocess.call_count == 1
 
 
 def test_legacy_cache_uses_the_html_that_was_parsed(asset, tmp_path, monkeypatch):
