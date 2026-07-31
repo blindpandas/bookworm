@@ -4393,3 +4393,53 @@ msgstr "复制(&C)"
 #: bookworm/ocr/ocr_menu.py:283
 msgid "Automatic OCR failed."
 msgstr "自动 OCR 失败。"
+
+#. Translators: the title of a column in the comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:329
+msgid "Excerpt"
+msgstr "摘录"
+
+#. Translators: the title of a column in the comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:335
+msgid "Added"
+msgstr "添加日期"
+
+#. Translators: spoken message when the current document does not
+#. support structural navigation
+#: bookworm/gui/book_viewer/navigation.py:140
+msgid "Not supported in this document."
+msgstr "当前文档不支持此功能。"
+
+#: bookworm/ocr_engines/baidu_ocr.py:130
+msgid "API Key or Secret Key is not configured."
+msgstr "尚未配置 API Key 或 Secret Key。"
+
+#: bookworm/ocr_engines/baidu_ocr.py:147
+msgid "Invalid API Key or Secret Key."
+msgstr "API Key 或 Secret Key 无效。"
+
+#: bookworm/ocr_engines/baidu_ocr.py:160
+msgid "Received an invalid response from Baidu token endpoint."
+msgstr "百度令牌服务返回了无效响应。"
+
+#: bookworm/ocr_engines/baidu_ocr.py:268 bookworm/ocr_engines/vivo_auth.py:57
+#: bookworm/ocr_engines/vivo_ocr.py:118
+msgid "Unknown API error"
+msgstr "未知 API 错误"
+
+#: bookworm/ocr_engines/vivo_auth.py:65
+#, python-brace-format
+msgid "NVDACN API Error: {error_message} (Code: {error_code})"
+msgstr "NVDACN API 错误：{error_message}（代码：{error_code}）"
+
+#: bookworm/ocr_engines/vivo_auth.py:75
+msgid "NVDACN API connection failed"
+msgstr "无法连接 NVDACN API"
+
+#: bookworm/ocr_engines/vivo_auth.py:77
+msgid "Invalid response from NVDACN API"
+msgstr "NVDACN API 返回了无效响应"
+
+#: bookworm/platforms/win32/speech_engines/sapi/_sapi.py:95
+msgid "Microsoft Speech API version 5 (SAPI 5)"
+msgstr "Microsoft 语音 API 版本 5 (SAPI 5)"
