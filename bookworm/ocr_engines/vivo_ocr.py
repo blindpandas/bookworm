@@ -115,7 +115,7 @@ class VivoOcrEngine(BaseOcrEngine):
             ) from e
         error_code = response_data.get("error_code")
         if error_code != 0:
-            error_msg = response_data.get("error_msg", "Unknown API error")
+            error_msg = response_data.get("error_msg", _("Unknown API error"))
             log.error(
                 f"Vivo OCR API returned an error: {error_msg} (code: {error_code})"
             )

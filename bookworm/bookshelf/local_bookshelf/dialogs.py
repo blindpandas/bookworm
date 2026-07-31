@@ -209,7 +209,7 @@ class SearchResultsPage(sc.SizedPanel):
             openner_args=dict(page=page, position=position)
         )
         # Translators: spoken message
-        speech.announce("Openning document...")
+        speech.announce(_("Opening document, please wait..."))
         sounds.navigation.play()
         EBookReader.open_document_in_a_new_instance(uri)
 

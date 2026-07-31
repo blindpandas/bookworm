@@ -255,7 +255,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
     def _do_open_document(self, document_info):
         sounds.navigation.play()
         # Translators: spoken message when activating a document
-        speech.announce("Openning document...")
+        speech.announce(_("Opening document, please wait..."))
         uri = self.source.resolve_item_uri(document_info)
         EBookReader.open_document_in_a_new_instance(uri)
 
@@ -264,7 +264,7 @@ class BookshelfResultsPage(BookshelfNotebookPage):
         wx.LaunchDefaultApplication(str(uri.path))
         sounds.navigation.play()
         # Translators: spoken message when activating a document
-        speech.announce("Openning document...")
+        speech.announce(_("Opening document, please wait..."))
 
     def _do_show_document_info(self, document_info):
         with DocumentInfoDialog(

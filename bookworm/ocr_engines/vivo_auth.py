@@ -54,7 +54,7 @@ def _fetch_signature_from_service(nvdacn_user, nvdacn_pass, signing_string_bytes
             log.info("Successfully fetched Vivo signature for user: %s", nvdacn_user)
             return result["data"]
         else:
-            error_message = result.get("data", "Unknown API error")
+            error_message = result.get("data", _("Unknown API error"))
             log.error(
                 "NVDACN signature API returned a business error for user %s: %s (Code: %s)",
                 nvdacn_user,
@@ -62,7 +62,9 @@ def _fetch_signature_from_service(nvdacn_user, nvdacn_pass, signing_string_bytes
                 result.get("code"),
             )
             raise OcrAuthenticationError(
-                f"NVDACN API Error: {error_message} (Code: {result.get('code')})"
+                _("NVDACN API Error: {error_message} (Code: {error_code})").format(
+                    error_message=error_message, error_code=result.get("code")
+                )
             )
     except requests.exceptions.RequestException as e:
         log.error(
@@ -70,9 +72,9 @@ def _fetch_signature_from_service(nvdacn_user, nvdacn_pass, signing_string_bytes
             nvdacn_user,
             exc_info=True,
         )
-        raise OcrNetworkError("NVDACN API connection failed") from e
+        raise OcrNetworkError(_("NVDACN API connection failed")) from e
     except (json.JSONDecodeError, KeyError, TypeError) as e:
-        raise OcrAuthenticationError("Invalid response from NVDACN API") from e
+        raise OcrAuthenticationError(_("Invalid response from NVDACN API")) from e
 
 
 def gen_sign_headers(nvdacn_user, nvdacn_pass, method, uri, query):

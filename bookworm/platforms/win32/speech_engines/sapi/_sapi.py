@@ -92,7 +92,7 @@ class SapiEventSink(object):
 
 class SapiSpeechEngine(BaseSpeechEngine):
     name = "sapi5"
-    display_name = "Microsoft Speech API version 5 (SAPI 5}"
+    display_name = _("Microsoft Speech API version 5 (SAPI 5)")
     default_rate = 50
     default_volume = 75
     COM_CLASS: t.ClassVar = "SAPI.SPVoice"
