@@ -137,7 +137,7 @@ class NavigationProvider:
         elif not self.reader.document.supports_structural_navigation():
             # Translators: spoken message when the current document does not
             # support structural navigation
-            speech.announce("Not supported in this document.")
+            speech.announce(_("Not supported in this document."))
             return
         self.view.navigate_to_structural_element(
             element_type=event.SemanticElementType, forward=event.Forward

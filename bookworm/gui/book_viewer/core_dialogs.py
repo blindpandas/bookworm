@@ -88,7 +88,7 @@ class SearchResultsDialog(Dialog):
     def getButtons(self, parent):
         btnsizer = wx.StdDialogButtonSizer()
         # Translators: the label of a button to close the dialog
-        btnsizer.AddButton(wx.Button(parent, wx.ID_CANCEL, "&Close"))
+        btnsizer.AddButton(wx.Button(parent, wx.ID_CANCEL, _("&Close")))
         btnsizer.Realize()
         return btnsizer
 

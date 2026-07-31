@@ -126,7 +126,9 @@ class _BaiduOcrBase(BaseOcrEngine):
         It either returns a valid token string (which gets cached) or raises an exception.
         """
         if not api_key or not api_secret:
-            raise OcrAuthenticationError("API Key or Secret Key is not configured.")
+            raise OcrAuthenticationError(
+                _("API Key or Secret Key is not configured.")
+            )
         log.debug("Requesting new Baidu access token.")
         token_url = (
             "https://aip.baidubce.com/oauth/2.0/token"
@@ -142,7 +144,7 @@ class _BaiduOcrBase(BaseOcrEngine):
                 log.error(
                     f"Failed to get Baidu access_token from response: {response_data}"
                 )
-                raise OcrAuthenticationError("Invalid API Key or Secret Key.")
+                raise OcrAuthenticationError(_("Invalid API Key or Secret Key."))
             log.debug("Successfully fetched Baidu access token.")
             return access_token
         except requests.exceptions.RequestException as e:
@@ -155,7 +157,7 @@ class _BaiduOcrBase(BaseOcrEngine):
         except (KeyError, json.JSONDecodeError) as e:
             log.exception("Failed to parse Baidu access token response.")
             raise OcrProcessingError(
-                "Received an invalid response from Baidu token endpoint."
+                _("Received an invalid response from Baidu token endpoint.")
             ) from e
 
     @classmethod
@@ -263,7 +265,7 @@ class _BaiduOcrBase(BaseOcrEngine):
             ) from e
 
         if "error_code" in response_data:
-            error_msg = response_data.get("error_msg", "Unknown API error")
+            error_msg = response_data.get("error_msg", _("Unknown API error"))
             log.error(f"Baidu OCR API returned an error: {error_msg}")
             raise OcrProcessingError(_("Baidu OCR failed: ") + error_msg)
         # Only on success, process the result

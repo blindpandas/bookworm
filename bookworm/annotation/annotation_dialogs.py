@@ -326,13 +326,13 @@ class AnnotationWithContentDialog(SimpleDialog):
     def column_defn(cls):
         return (
             # Translators: the title of a column in the comments/highlights list
-            ColumnDefn("Excerpt", "left", 250, lambda a: a.content[:20]),
+            ColumnDefn(_("Excerpt"), "left", 250, lambda a: a.content[:20]),
             # Translators: the title of a column in the comments/highlights list
-            ColumnDefn("Section", "left", 200, "section_title"),
+            ColumnDefn(_("Section"), "left", 200, "section_title"),
             # Translators: the title of a column in the comments/highlights list
-            ColumnDefn("Page", "center", 150, lambda anot: anot.page_number + 1),
+            ColumnDefn(_("Page"), "center", 150, lambda anot: anot.page_number + 1),
             # Translators: the title of a column in the comments/highlights list
-            ColumnDefn("Added", "right", 200, lambda a: format_datetime(a.date_created)),
+            ColumnDefn(_("Added"), "right", 200, lambda a: format_datetime(a.date_created)),
             # Translators: migration state of a comment or highlight.
             ColumnDefn(_("Status"), "left", 180, _annotation_status),
         )

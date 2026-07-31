@@ -32,7 +32,7 @@ jobs:
           cache-suffix: ${{ runner.os }}-test
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
 
@@ -73,7 +73,7 @@ jobs:
           cache-suffix: ${{ runner.os }}-${{ matrix.CI_ARCH }}
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           architecture: ${{ matrix.CI_ARCH }}
@@ -176,7 +176,7 @@ jobs:
           cache-suffix: ${{ runner.os }}-update-info
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
 
