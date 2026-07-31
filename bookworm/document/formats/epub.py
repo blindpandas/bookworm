@@ -132,7 +132,7 @@ class EpubDocument(SinglePageDocument):
         return self._storage_text
 
     def _parse_html_content(self, *, include_images=True):
-        normalized_html_content = StructuredHtmlParser.preprocess_html_string(self.html_content)
+        normalized_html_content = self.html_content
         self._legacy_content_cache_key = (
             f"legacy-text-v1:{hashlib.sha256(normalized_html_content.encode('utf-8')).hexdigest()}"
         )
@@ -456,7 +456,7 @@ class EpubDocument(SinglePageDocument):
 
     @cached_property
     def html_content(self):
-        cache_key = self.uri.to_uri_string()
+        cache_key = f"preprocessed-html-v1:{self.uri.to_uri_string()}"
         document_path = self.get_file_system_path()
         try:
             with Cache(
@@ -473,7 +473,9 @@ class EpubDocument(SinglePageDocument):
         for filename, html_content in html_content_gen:
             buf.write(self.prefix_html_ids(filename, html_content))
             buf.write("\n<br/>\n")
-        html_content = self.build_html(title=self.epub.title, body_content=buf.getvalue())
+        html_content = StructuredHtmlParser.preprocess_html_string(
+            self.build_html(title=self.epub.title, body_content=buf.getvalue())
+        )
         try:
             with Cache(
                 self._get_cache_directory(), eviction_policy="least-frequently-used"
