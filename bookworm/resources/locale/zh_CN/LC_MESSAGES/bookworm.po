@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2026-07-12 12:44+0800\n"
-"PO-Revision-Date: 2026-07-12 12:59+0800\n"
+"POT-Creation-Date: 2026-07-31 20:01+0800\n"
+"PO-Revision-Date: 2026-07-31 20:06+0800\n"
 "Last-Translator: Cary-rowen <manchen_0528@outlook.com>\n"
 "Language: zh_CN\n"
 "Language-Team: Cary-Rowen <manchen_0528@outlook.com>\n"
@@ -4333,3 +4333,113 @@ msgstr "搜索关键词"
 #: bookworm/webservices/wikiworm.py:263
 msgid "Choose Wikipedia language"
 msgstr "选择维基百科语言"
+
+#: bookworm/annotation/annotation_dialogs.py:28
+msgid "Needs repositioning"
+msgstr "需要重新定位"
+
+#: bookworm/annotation/annotation_dialogs.py:29
+msgid "Current"
+msgstr "当前"
+
+#. Translators: relocate an annotation that could not be migrated automatically.
+#: bookworm/annotation/annotation_dialogs.py:134
+#: bookworm/annotation/annotation_dialogs.py:397
+msgid "Relocate &Here"
+msgstr "重新定位到此处(&H)"
+
+#. Translators: migration state of an annotation.
+#: bookworm/annotation/annotation_dialogs.py:171
+#: bookworm/annotation/annotation_dialogs.py:337
+msgid "Status"
+msgstr "状态"
+
+#: bookworm/annotation/annotation_dialogs.py:521
+msgid "Unable to Relocate Annotation"
+msgstr "无法重新定位注解"
+
+#: bookworm/annotation/annotation_dialogs.py:598
+msgid ""
+"This annotation belongs to different content than the file currently stored "
+"at this location."
+msgstr "此注解所属内容与当前存储在该位置的文件不同。"
+
+#: bookworm/annotation/annotation_dialogs.py:601
+msgid "Unable to Navigate to Annotation"
+msgstr "无法跳转到注解"
+
+#: bookworm/annotation/annotator.py:223
+msgid "Only annotations marked for repositioning can be relocated."
+msgstr "只有标记为“需要重新定位”的注解才能重新定位。"
+
+#: bookworm/annotation/annotator.py:226
+msgid "The annotation does not belong to the current document."
+msgstr "该注解不属于当前文档。"
+
+#: bookworm/annotation/annotator.py:232
+msgid "Select text before relocating a highlight."
+msgstr "重新定位高亮前，请先选择文本。"
+
+#. Translators: Reported when the content of a browseable message is copied to the clipboard.
+#: bookworm/gui/browseable_message.py:264
+msgid "Copied to clipboard"
+msgstr "已复制到剪贴板"
+
+#. Translators: The label of a button to copy the text of the window to the clipboard.
+#: bookworm/gui/browseable_message.py:299
+msgid "&Copy"
+msgstr "复制(&C)"
+
+#: bookworm/ocr/ocr_menu.py:283
+msgid "Automatic OCR failed."
+msgstr "自动 OCR 失败。"
+
+#. Translators: the title of a column in the comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:329
+msgid "Excerpt"
+msgstr "摘录"
+
+#. Translators: the title of a column in the comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:335
+msgid "Added"
+msgstr "添加日期"
+
+#. Translators: spoken message when the current document does not
+#. support structural navigation
+#: bookworm/gui/book_viewer/navigation.py:140
+msgid "Not supported in this document."
+msgstr "当前文档不支持此功能。"
+
+#: bookworm/ocr_engines/baidu_ocr.py:130
+msgid "API Key or Secret Key is not configured."
+msgstr "尚未配置 API Key 或 Secret Key。"
+
+#: bookworm/ocr_engines/baidu_ocr.py:147
+msgid "Invalid API Key or Secret Key."
+msgstr "API Key 或 Secret Key 无效。"
+
+#: bookworm/ocr_engines/baidu_ocr.py:160
+msgid "Received an invalid response from Baidu token endpoint."
+msgstr "百度令牌服务返回了无效响应。"
+
+#: bookworm/ocr_engines/baidu_ocr.py:268 bookworm/ocr_engines/vivo_auth.py:57
+#: bookworm/ocr_engines/vivo_ocr.py:118
+msgid "Unknown API error"
+msgstr "未知 API 错误"
+
+#: bookworm/ocr_engines/vivo_auth.py:65
+#, python-brace-format
+msgid "NVDACN API Error: {error_message} (Code: {error_code})"
+msgstr "NVDACN API 错误：{error_message}（代码：{error_code}）"
+
+#: bookworm/ocr_engines/vivo_auth.py:75
+msgid "NVDACN API connection failed"
+msgstr "无法连接 NVDACN API"
+
+#: bookworm/ocr_engines/vivo_auth.py:77
+msgid "Invalid response from NVDACN API"
+msgstr "NVDACN API 返回了无效响应"
+
+#: bookworm/platforms/win32/speech_engines/sapi/_sapi.py:95
+msgid "Microsoft Speech API version 5 (SAPI 5)"
+msgstr "Microsoft 语音 API 版本 5 (SAPI 5)"
