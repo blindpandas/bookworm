@@ -43,6 +43,58 @@ def test_chapter_order_is_unchanged_with_roman_numbers(asset):
     assert spine == items
 
 
+def test_chapters_follow_spine_when_navigation_document_is_not_in_spine(
+    asset, tmp_path, monkeypatch
+):
+    cache_directory = tmp_path / "cache"
+    monkeypatch.setattr(EpubDocument, "_get_cache_directory", lambda _: cache_directory)
+    epub_path = Path(asset("bookworm-order-bug-sample.epub"))
+    uri = DocumentUri.from_filename(epub_path)
+    old_cache_key = f"preprocessed-html-v1:{uri.to_uri_string()}"
+    with Cache(cache_directory) as cache:
+        cache.set(old_cache_key, b"<html><body>stale cached content</body></html>")
+        cache_utils.set_document_modified_time(old_cache_key, epub_path, cache)
+
+    document = EpubDocument(uri)
+    document.read()
+
+    assert [item.id for item in document.epub_html_items] == [
+        item_id for item_id, _linear in document.epub.spine
+    ]
+    assert document.get_content().startswith("Chapter 1")
+    assert "Contents" not in document.get_content()
+    assert "stale cached content" not in document.get_content()
+
+
+def test_epub_html_items_tolerate_malformed_spine():
+    book = epub.EpubBook()
+    first = epub.EpubHtml(uid="first", file_name="first.xhtml")
+    second = epub.EpubHtml(uid="second", file_name="second.xhtml")
+    notes = epub.EpubHtml(uid="notes", file_name="notes.xhtml")
+    nav = epub.EpubNav()
+    for item in (first, second, notes, nav):
+        book.add_item(item)
+    book.spine = [("OPS/second", "yes"), ("missing", "yes"), ("first", "yes")]
+    document = EpubDocument(None)
+    document.epub = book
+
+    assert [item.id for item in document.epub_html_items] == [
+        "second",
+        "first",
+        "notes",
+    ]
+
+    book.spine = [("missing", "yes")]
+    fallback_document = EpubDocument(None)
+    fallback_document.epub = book
+    assert [item.id for item in fallback_document.epub_html_items] == [
+        "first",
+        "second",
+        "notes",
+        "nav",
+    ]
+
+
 def test_modified_epub_modifies_cache(asset):
     book = temp_book()
     epub.write_epub(asset("test.epub"), book, {})
