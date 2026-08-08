@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bookworm 2022.1b1\n"
 "Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
-"POT-Creation-Date: 2026-07-17 17:10+0300\n"
-"PO-Revision-Date: 2026-07-18 00:44+0300\n"
+"POT-Creation-Date: 2026-07-31 18:33+0300\n"
+"PO-Revision-Date: 2026-07-31 18:51+0300\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: fi_FI <janikinnunen340@gmail.com>\n"
 "Language: fi\n"
@@ -153,6 +153,7 @@ msgstr "Päivitetty viimeksi"
 #: ../../../../annotation/annotation_dialogs.py:148
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:174
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:242
+#: ../../../../gui/book_viewer/core_dialogs.py:91
 #: ../../../../gui/book_viewer/core_dialogs.py:393
 #: ../../../../gui/browseable_message.py:313 ../../../../gui/settings.py:152
 #: ../../../../ocr/ocr_dialogs.py:486 ../../../../text_to_speech/tts_gui.py:385
@@ -184,6 +185,7 @@ msgid "Name"
 msgstr "Nimi"
 
 #: ../../../../annotation/annotation_dialogs.py:164
+#: ../../../../annotation/annotation_dialogs.py:333
 #: ../../../../annotation/annotation_dialogs.py:369
 #: ../../../../annotation/exporters/core_renderers.py:178
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:193
@@ -199,6 +201,7 @@ msgstr "Tila"
 
 #: ../../../../annotation/annotation_dialogs.py:179
 #: ../../../../annotation/annotation_dialogs.py:277
+#: ../../../../annotation/annotation_dialogs.py:331
 #: ../../../../annotation/exporters/core_renderers.py:145
 #: ../../../../gui/book_viewer/core_dialogs.py:68
 msgid "Section"
@@ -231,6 +234,14 @@ msgstr "Tunniste"
 #: ../../../../annotation/annotation_dialogs.py:287
 msgid "&Apply"
 msgstr "&Käytä"
+
+#: ../../../../annotation/annotation_dialogs.py:329
+msgid "Excerpt"
+msgstr "Katkelma"
+
+#: ../../../../annotation/annotation_dialogs.py:335
+msgid "Added"
+msgstr "Lisätty"
 
 #: ../../../../annotation/annotation_dialogs.py:352
 msgid "Filter By"
@@ -309,7 +320,6 @@ msgstr ""
 "Tämä merkintä liittyy eri sisältöön kuin tiedosto, joka tässä sijainnissa on."
 
 #: ../../../../annotation/annotation_dialogs.py:601
-#| msgid "Use visual styles to indicate annotations"
 msgid "Unable to Navigate to Annotation"
 msgstr "Merkintään siirtyminen ei onnistu"
 
@@ -904,7 +914,7 @@ msgid "Select a folder:"
 msgstr "Valitse kansio:"
 
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:113
-#: ../../../../gui/book_viewer/__init__.py:442
+#: ../../../../gui/book_viewer/__init__.py:441
 msgid "Search"
 msgstr "Etsi"
 
@@ -938,6 +948,12 @@ msgstr "Tekstisisällön hakutulokset"
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:184
 msgid "Snippet"
 msgstr "Tekstikatkelma"
+
+#: ../../../../bookshelf/local_bookshelf/dialogs.py:212
+#: ../../../../bookshelf/window.py:258 ../../../../bookshelf/window.py:267
+#: ../../../../gui/book_viewer/__init__.py:113
+msgid "Opening document, please wait..."
+msgstr "Odota, kun asiakirjaa avataan..."
 
 #: ../../../../bookshelf/local_bookshelf/dialogs.py:228
 msgid "File Name"
@@ -1088,7 +1104,7 @@ msgstr "Koko teksti"
 msgid "Archive File"
 msgstr "Pakattu tiedosto"
 
-#: ../../../../document/formats/epub.py:52
+#: ../../../../document/formats/epub.py:53
 msgid "Electronic Publication (EPUB)"
 msgstr "Elektroninen julkaisu (EPUB)"
 
@@ -1235,10 +1251,6 @@ msgstr "Asiakirjan avaaminen ei onnistunut"
 msgid "The document you are trying to open could not be opened in Bookworm."
 msgstr "Tätä asiakirjaa ei voitu avata Bookwormissa."
 
-#: ../../../../gui/book_viewer/__init__.py:113
-msgid "Opening document, please wait..."
-msgstr "Odota, kun asiakirjaa avataan..."
-
 #: ../../../../gui/book_viewer/__init__.py:131
 msgid "Document not found"
 msgstr "Asiakirjaa ei löydy"
@@ -1343,27 +1355,27 @@ msgstr "Sisällysluettelo"
 msgid "Reading progress percentage"
 msgstr "Lukemisen edistymisprosentti"
 
-#: ../../../../gui/book_viewer/__init__.py:439
+#: ../../../../gui/book_viewer/__init__.py:438
 msgid "Open"
 msgstr "Avaa"
 
-#: ../../../../gui/book_viewer/__init__.py:444
+#: ../../../../gui/book_viewer/__init__.py:443
 msgid "Mode"
 msgstr "Tila"
 
-#: ../../../../gui/book_viewer/__init__.py:447
+#: ../../../../gui/book_viewer/__init__.py:446
 msgid "Small"
 msgstr "Pieni"
 
-#: ../../../../gui/book_viewer/__init__.py:449
+#: ../../../../gui/book_viewer/__init__.py:448
 msgid "Big"
 msgstr "Suuri"
 
-#: ../../../../gui/book_viewer/__init__.py:490
+#: ../../../../gui/book_viewer/__init__.py:489
 msgid "Incorrect Password"
 msgstr "Väärä salasana"
 
-#: ../../../../gui/book_viewer/__init__.py:494
+#: ../../../../gui/book_viewer/__init__.py:493
 msgid ""
 "The password you provided is incorrect.\n"
 "Please try again with the correct password."
@@ -1371,11 +1383,11 @@ msgstr ""
 "Antamasi salasana on väärä.\n"
 "Yritä uudelleen kirjoittamalla oikea salasana."
 
-#: ../../../../gui/book_viewer/__init__.py:549
+#: ../../../../gui/book_viewer/__init__.py:550
 msgid "Document closed."
 msgstr "Asiakirja suljettu."
 
-#: ../../../../gui/book_viewer/__init__.py:584
+#: ../../../../gui/book_viewer/__init__.py:585
 #, python-brace-format
 msgid "{percentage} completed"
 msgstr "{percentage} luettu"
@@ -1394,24 +1406,24 @@ msgstr "Ei seuraavaa kohdetta: {item}"
 msgid "No previous {item}"
 msgstr "Ei edellistä kohdetta: {item}"
 
-#: ../../../../gui/book_viewer/__init__.py:743
+#: ../../../../gui/book_viewer/__init__.py:740
 msgid "The font size has been Increased"
 msgstr "Fontin kokoa on suurennettu"
 
-#: ../../../../gui/book_viewer/__init__.py:749
+#: ../../../../gui/book_viewer/__init__.py:746
 msgid "The font size has been decreased"
 msgstr "Fontin kokoa on pienennetty"
 
-#: ../../../../gui/book_viewer/__init__.py:753
+#: ../../../../gui/book_viewer/__init__.py:750
 msgid "The font size has been reset"
 msgstr "Fontin oletuskoko on palautettu"
 
-#: ../../../../gui/book_viewer/__init__.py:777
+#: ../../../../gui/book_viewer/__init__.py:775
 #, python-brace-format
 msgid "Reading progress: {percentage}"
 msgstr "Lukemisen edistyminen: {percentage}"
 
-#: ../../../../gui/book_viewer/__init__.py:797
+#: ../../../../gui/book_viewer/__init__.py:795
 msgid ""
 "This document is encrypted with a password.\n"
 "You need to provide the password in order to access its content.\n"
@@ -1421,17 +1433,17 @@ msgstr ""
 "Sen lukemiseen tarvitaan salasana.\n"
 "Kirjoita salasana ja paina Enter."
 
-#: ../../../../gui/book_viewer/__init__.py:802
+#: ../../../../gui/book_viewer/__init__.py:800
 msgid "Enter Password"
 msgstr "Kirjoita salasana"
 
-#: ../../../../gui/book_viewer/__init__.py:840
+#: ../../../../gui/book_viewer/__init__.py:838
 #: ../../../../text_to_speech/__init__.py:389
 #, python-brace-format
 msgid "Page {page} of {total}"
 msgstr "Sivu {page} / {total}"
 
-#: ../../../../gui/book_viewer/__init__.py:967
+#: ../../../../gui/book_viewer/__init__.py:965
 #, python-brace-format
 msgid "Opening page: {url}"
 msgstr "Avataan sivua {url}"
@@ -1961,6 +1973,11 @@ msgstr "Siirry sivulle"
 #: ../../../../gui/book_viewer/menubar.py:1104
 msgid "Supported document formats"
 msgstr "Tuetut asiakirjamuodot"
+
+#: ../../../../gui/book_viewer/navigation.py:140
+#| msgid "Search this document."
+msgid "Not supported in this document."
+msgstr "Ei tueta tässä asiakirjassa."
 
 #: ../../../../gui/book_viewer/render_view.py:88
 #: ../../../../gui/book_viewer/render_view.py:274
@@ -2886,7 +2903,15 @@ msgstr "Yritä rakentaa kappaleet uudelleen"
 msgid "Recognize text with multiple directions"
 msgstr "Tunnista monisuuntainen teksti"
 
-#: ../../../../ocr_engines/baidu_ocr.py:152
+#: ../../../../ocr_engines/baidu_ocr.py:130
+msgid "API Key or Secret Key is not configured."
+msgstr "Rajapinta- tai salaista avainta ei ole määritetty."
+
+#: ../../../../ocr_engines/baidu_ocr.py:147
+msgid "Invalid API Key or Secret Key."
+msgstr "Rajapinta- tai salainen avain on virheellinen."
+
+#: ../../../../ocr_engines/baidu_ocr.py:154
 msgid ""
 "Could not get Baidu access token. Please check your network connection and "
 "ensure your API Key and Secret Key are correct."
@@ -2894,25 +2919,49 @@ msgstr ""
 "Baidun käyttöoikeustunnusta ei voitu hakea. Tarkista internet-yhteytesi "
 "toimivuus ja varmista, että rajapinta- ja salainen avain ovat oikein."
 
-#: ../../../../ocr_engines/baidu_ocr.py:262
+#: ../../../../ocr_engines/baidu_ocr.py:160
+msgid "Received an invalid response from Baidu token endpoint."
+msgstr "Baidun palvelin vastasi virheellisesti."
+
+#: ../../../../ocr_engines/baidu_ocr.py:264
 msgid "A network error occurred while calling the Baidu OCR API."
 msgstr "Baidu OCR -palvelun rajapintaa kutsuttaessa tapahtui verkkovirhe."
 
 #: ../../../../ocr_engines/baidu_ocr.py:268
+#: ../../../../ocr_engines/vivo_auth.py:57
+#: ../../../../ocr_engines/vivo_ocr.py:118
+#| msgid "Unknown Author"
+msgid "Unknown API error"
+msgstr "Tuntematon rajapintavirhe"
+
+#: ../../../../ocr_engines/baidu_ocr.py:270
 msgid "Baidu OCR failed: "
 msgstr "Baidu OCR -tekstintunnistus ei onnistunut: "
 
-#: ../../../../ocr_engines/baidu_ocr.py:282
+#: ../../../../ocr_engines/baidu_ocr.py:284
 msgid "Baidu General OCR (Standard)"
 msgstr "Baidu General OCR (vakio)"
 
-#: ../../../../ocr_engines/baidu_ocr.py:309
+#: ../../../../ocr_engines/baidu_ocr.py:311
 msgid "Baidu General OCR (Accurate)"
 msgstr "Baidu General OCR (tarkka)"
 
-#: ../../../../ocr_engines/baidu_ocr.py:328
+#: ../../../../ocr_engines/baidu_ocr.py:330
 msgid "Auto Detect"
 msgstr "Automaattinen tunnistus"
+
+#: ../../../../ocr_engines/vivo_auth.py:65
+#, python-brace-format
+msgid "NVDACN API Error: {error_message} (Code: {error_code})"
+msgstr "Virhe NVDACN-rajapinnassa: {error_message} (koodi {error_code})"
+
+#: ../../../../ocr_engines/vivo_auth.py:75
+msgid "NVDACN API connection failed"
+msgstr "NVDACN-rajapintaan ei saatu yhteyttä"
+
+#: ../../../../ocr_engines/vivo_auth.py:77
+msgid "Invalid response from NVDACN API"
+msgstr "NVDACN-rajapinta vastasi virheellisesti"
 
 #: ../../../../ocr_engines/vivo_ocr.py:34
 msgid "Vivo General OCR"
@@ -3034,6 +3083,10 @@ msgstr "OneCore-syntetisaattori"
 #: ../../../../platforms/win32/speech_engines/piper/__init__.py:201
 msgid "Piper Neural TTS"
 msgstr "Piper Neural TTS"
+
+#: ../../../../platforms/win32/speech_engines/sapi/_sapi.py:95
+msgid "Microsoft Speech API version 5 (SAPI 5)"
+msgstr "SAPI 5"
 
 #: ../../../../platforms/win32/tesseract_download.py:78
 msgid "Tesseract engine downloaded successfully"
