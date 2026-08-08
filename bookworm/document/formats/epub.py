@@ -301,7 +301,6 @@ class EpubDocument(SinglePageDocument):
 
     @cached_property
     def epub_html_items(self) -> tuple[str]:
-        items = ()
         if html_items := tuple(self.epub.get_items_of_type(ebooklib.ITEM_DOCUMENT)):
             items = html_items
         else:
@@ -311,19 +310,34 @@ class EpubDocument(SinglePageDocument):
                     self.epub.items,
                 )
             )
-        # Previously the chapters order wouldn't respect the table of content
-        # In most cases this is not an issue
-        # However this poses a problem when the chapters do not follow a conventional numeric scheme but rather use something like roman numbers
-        # As reported in issue 243
-        # We will now sort the items obtained earlier based on the position that the chapter itself occupies in the TOC
-        spine = [x[0].split("/")[-1] for x in self.epub.spine]
-        log.debug(spine)
-        try:
-            items = sorted(items, key=lambda x: spine.index(x.id))
-        except ValueError:
-            log.warn(
-                "Failed to order chapters based on the table of content. Order may be inconsistent"
+        items_by_id = {item.id: item for item in items}
+        ordered_items = []
+        ordered_item_ids = set()
+        unresolved_item_ids = []
+        for item_id, _linear in self.epub.spine:
+            item = items_by_id.get(item_id)
+            if item is None and item_id:
+                item = items_by_id.get(item_id.rsplit("/", 1)[-1])
+            if item is None:
+                unresolved_item_ids.append(item_id)
+                continue
+            ordered_items.append(item)
+            ordered_item_ids.add(item.id)
+        if ordered_items:
+            if unresolved_item_ids:
+                log.warning(
+                    "Could not resolve some EPUB spine documents as HTML: %s",
+                    unresolved_item_ids,
+                )
+            ordered_items.extend(
+                item
+                for item in items
+                if item.id not in ordered_item_ids and not isinstance(item, ebooklib.epub.EpubNav)
             )
+            return tuple(ordered_items)
+        # Preserve support for malformed EPUBs whose spine has no usable HTML entries.
+        if self.epub.spine:
+            log.warning("Could not resolve any EPUB spine documents as HTML; using manifest order")
         return items
 
     def get_epub_html_item_by_href(self, href):
@@ -456,7 +470,7 @@ class EpubDocument(SinglePageDocument):
 
     @cached_property
     def html_content(self):
-        cache_key = f"preprocessed-html-v1:{self.uri.to_uri_string()}"
+        cache_key = f"preprocessed-html-v2:{self.uri.to_uri_string()}"
         document_path = self.get_file_system_path()
         try:
             with Cache(
