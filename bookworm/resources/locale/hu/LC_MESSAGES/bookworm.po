@@ -1,0 +1,4558 @@
+    # Hungarian translations for Bookworm.
+# Copyright (C) 2026 Blind Pandas
+# This file is distributed under the same license as the Bookworm project.
+# Hermann Tibor, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Bookworm 2026.2\n"
+"Report-Msgid-Bugs-To: ibnomer2011@hotmail.com\n"
+"POT-Creation-Date: 2026-08-18 06:48+0000\n"
+"PO-Revision-Date: 2026-09-05 15:41+0200\n"
+"Last-Translator: Hermann Tibor\n"
+"Language: hu\n"
+"Language-Team: Hungarian\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#. Translators: the content of a message indicating a connection error
+#: bookworm/otau.py:120
+msgid "We couldn't access the internet right now. Please try again later."
+msgstr "Jelenleg nincs internetkapcsolat. Próbálja meg később újra."
+
+#. Translators: the title of a message indicating a connection error
+#. Translators: the title of a message indicating a failure in downloading an
+#. update
+#: bookworm/ocr/ocr_menu.py:530 bookworm/otau.py:122
+#: bookworm/platforms/win32/updater.py:123
+msgid "Network Error"
+msgstr "Hálózati hiba"
+
+#. Translators: the content of a message indicating an error while updating the
+#. app
+#: bookworm/otau.py:133
+msgid ""
+"We have faced a technical problem while checking for updates. Please try "
+"again later."
+msgstr ""
+"Technikai hiba történt a frissítések keresése közben. Próbálja meg később "
+"újra."
+
+#. Translators: the title of a message indicating an error while updating the
+#. app
+#: bookworm/otau.py:136
+msgid "Error Checking For Updates"
+msgstr "Hiba a frissítések keresése közben"
+
+#. Translators: the content of a message indicating that there is no new
+#. version
+#: bookworm/otau.py:154
+msgid ""
+"Congratulations, you have already got the latest version of Bookworm.\n"
+"We are working day and night on making Bookworm better. The next version of "
+"Bookworm is on its way, so wait for it. Rest assured, we will notify you "
+"when it is released."
+msgstr ""
+"Ön már a Bookworm legújabb verzióját használja.\n"
+"Folyamatosan dolgozunk a Bookworm továbbfejlesztésén. A következő verzió már"
+" készül; megjelenésekor értesítjük Önt."
+
+#. Translators: the title of a message indicating that there is no new version
+#: bookworm/otau.py:160
+msgid "No Update"
+msgstr "Nincs elérhető frissítés"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/otau.py:185
+msgid "&Check for updates"
+msgstr "Frissítések kere&sése"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/otau.py:187
+msgid "Update the application"
+msgstr "Az alkalmazás frissítése"
+
+#: bookworm/reader.py:855
+msgid "Image unavailable"
+msgstr "A kép nem érhető el"
+
+#: bookworm/reader.py:856
+msgid "Could not open this image."
+msgstr "A kép nem nyitható meg."
+
+#. Translators: the title of the window when an e-book is open
+#: bookworm/reader.py:905
+#, python-brace-format
+msgid "{title} — by {author}"
+msgstr "{title} — {author}"
+
+#. Translators: title of a message dialog that shows a table as html document
+#: bookworm/reader.py:1018
+msgid "Table View"
+msgstr "Táblázatnézet"
+
+#. Translators: title of a dialog that shows an embedded book image
+#: bookworm/reader.py:1027
+msgid "Image View"
+msgstr "Képnézet"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/__init__.py:62
+msgid "&Annotation"
+msgstr "&Jelölések"
+
+#: bookworm/annotation/__init__.py:70
+msgid "&Bookmark...\tCtrl-B"
+msgstr "&Könyvjelző...\tCtrl-B"
+
+#: bookworm/annotation/__init__.py:71 bookworm/annotation/__init__.py:77
+msgid "Bookmark the current location"
+msgstr "Könyvjelző hozzáadása az aktuális helyhez"
+
+#: bookworm/annotation/__init__.py:76
+msgid "&Named Bookmark...\tCtrl-Shift-B"
+msgstr "&Elnevezett könyvjelző...\tCtrl-Shift-B"
+
+#: bookworm/annotation/__init__.py:82
+msgid "Co&mment...\tCtrl-m"
+msgstr "&Megjegyzés...\tCtrl-m"
+
+#: bookworm/annotation/__init__.py:83
+msgid "Add a comment at the current location"
+msgstr "Megjegyzés hozzáadása az aktuális helyhez"
+
+#: bookworm/annotation/__init__.py:94
+msgid "Highlight Selection\tCtrl-H"
+msgstr "Kijelölés kiemelése\tCtrl-H"
+
+#: bookworm/annotation/__init__.py:95
+msgid "Highlight and save selected text."
+msgstr "A kijelölt szöveg kiemelése és mentése."
+
+#. Translators: the label of a button in the application toolbar
+#. Translators: spoken message when jumping to a bookmark
+#: bookworm/annotation/__init__.py:104 bookworm/annotation/__init__.py:144
+msgid "Bookmark"
+msgstr "Könyvjelző"
+
+#. Translators: the label of a button in the application toolbar
+#: bookworm/annotation/__init__.py:106
+msgid "Comment"
+msgstr "Megjegyzés"
+
+#. Translators: the label of a page in the settings dialog
+#. Translators: label for a aria region containing annotation
+#. used when exporting annotations to HTML
+#: bookworm/annotation/__init__.py:116
+#: bookworm/annotation/exporters/core_renderers.py:171
+msgid "Annotation"
+msgstr "Jelölés"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:129
+msgid "No next bookmark"
+msgstr "Nincs következő könyvjelző"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:132
+msgid "No previous bookmark"
+msgstr "Nincs előző könyvjelző"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:162
+msgid "No next comment"
+msgstr "Nincs következő megjegyzés"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:165
+msgid "No previous comment"
+msgstr "Nincs előző megjegyzés"
+
+#. Translators: spoken message when jumping to a comment
+#: bookworm/annotation/__init__.py:197
+#, python-brace-format
+msgid "Comment: {comment}"
+msgstr "Megjegyzés: {comment}"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:208
+msgid "No next highlight"
+msgstr "Nincs következő kiemelés"
+
+#. Translators: spoken message
+#: bookworm/annotation/__init__.py:211
+msgid "No previous highlight"
+msgstr "Nincs előző kiemelés"
+
+#: bookworm/annotation/__init__.py:226
+msgid "Highlight"
+msgstr "Kiemelés"
+
+#. Translators: spoken message indicating the presence of an annotation when
+#. the user navigates the text
+#: bookworm/annotation/__init__.py:292
+msgid "Bookmarked"
+msgstr "Könyvjelző található itt"
+
+#. Translators: spoken message indicating the presence of an annotation when
+#. the user navigates the text
+#: bookworm/annotation/__init__.py:295
+msgid "Highlighted"
+msgstr "Kiemelve"
+
+#. Translators: spoken message indicating the presence of an annotation when
+#. the user navigates the text
+#: bookworm/annotation/__init__.py:298
+msgid "Line contains highlight"
+msgstr "A sor kiemelést tartalmaz"
+
+#. Translators: Text that appears when only a comment is present
+#: bookworm/annotation/__init__.py:301
+msgid "Has comment"
+msgstr "Megjegyzés található itt"
+
+#: bookworm/annotation/annotation_dialogs.py:28
+msgid "Needs repositioning"
+msgstr "Áthelyezés szükséges"
+
+#: bookworm/annotation/annotation_dialogs.py:29
+msgid "Current"
+msgstr "Aktuális"
+
+#. Translators: label of an edit control in the dialog
+#. of viewing or editing a comment/highlight
+#. Translators: label of an edit control to filter annotations by content
+#. Translators: label of a check box that enables/disables searching document
+#. content when searching the bookshelf
+#. Translators: the label of the text area which shows the
+#. content of the current page
+#: bookworm/annotation/annotation_dialogs.py:64
+#: bookworm/annotation/annotation_dialogs.py:282
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:123
+#: bookworm/gui/book_viewer/__init__.py:351
+msgid "Content"
+msgstr "Tartalom"
+
+#. Translators: header of a group of controls in a dialog to view/edit
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:68
+msgid "Metadata"
+msgstr "Metaadatok"
+
+#. Translators: label of an edit control in a dialog to view/edit
+#. comments/highlights
+#. Translators: label of an edit control that allows the user to edit the tag
+#. set of a comment/highlight
+#. Translators: written to output document when exporting a comment/highlight
+#: bookworm/annotation/annotation_dialogs.py:71
+#: bookworm/annotation/annotation_dialogs.py:554
+#: bookworm/annotation/exporters/core_renderers.py:201
+msgid "Tags"
+msgstr "Címkék"
+
+#. Translators: label of an edit control in a dialog to view/edit
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:76
+msgid "Date Created"
+msgstr "Létrehozás dátuma"
+
+#. Translators: label of an edit control in a dialog to view/edit
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:80
+msgid "Last updated"
+msgstr "Legutóbbi módosítás"
+
+#. Translators: the label of a button to close a dialog
+#. Translators: the label of the cancel button in a dialog
+#. Translators: The label of a button that closes the browseable message
+#. window.
+#. Translators: the label of a button to close the dialog
+#. Translators: the label of the close button in a dialog
+#: bookworm/annotation/annotation_dialogs.py:92
+#: bookworm/annotation/annotation_dialogs.py:148
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:174
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:242
+#: bookworm/gui/book_viewer/core_dialogs.py:91
+#: bookworm/gui/book_viewer/core_dialogs.py:393
+#: bookworm/gui/browseable_message.py:313 bookworm/gui/settings.py:152
+#: bookworm/ocr/ocr_dialogs.py:486 bookworm/text_to_speech/tts_gui.py:385
+#: bookworm/webservices/wikiworm.py:228
+msgid "&Close"
+msgstr "&Bezárás"
+
+#. Translators: label for unnamed bookmarks shown
+#. when editing a single bookmark which has no name
+#: bookworm/annotation/annotation_dialogs.py:126
+msgid "[Unnamed Bookmark]"
+msgstr "[Névtelen könyvjelző]"
+
+#. Translators: label of a list control containing bookmarks
+#: bookworm/annotation/annotation_dialogs.py:131
+msgid "Saved Bookmarks"
+msgstr "Mentett könyvjelzők"
+
+#. Translators: relocate a bookmark that could not be migrated automatically.
+#. Translators: relocate a comment or highlight that could not be migrated
+#. automatically.
+#: bookworm/annotation/annotation_dialogs.py:134
+#: bookworm/annotation/annotation_dialogs.py:397
+msgid "Relocate &Here"
+msgstr "Áthelyezés &ide"
+
+#. Translators: text of a button to remove bookmarks
+#. Translators: text of a button to remove a language from Tesseract OCR Engine
+#. Translators: the label of a button to remove a voice profile
+#: bookworm/annotation/annotation_dialogs.py:136 bookworm/ocr/ocr_dialogs.py:525
+#: bookworm/text_to_speech/tts_gui.py:379
+msgid "&Remove"
+msgstr "&Eltávolítás"
+
+#. Translators: the title of a column in the bookmarks list
+#: bookworm/annotation/annotation_dialogs.py:157
+#: bookworm/gui/book_viewer/core_dialogs.py:251
+msgid "Name"
+msgstr "Név"
+
+#. Translators: the title of a column in the bookmarks list
+#. Translators: the title of a column in the comments/highlights list
+#. Translators: text of a toggle button to sort comments/highlights list
+#. Translators: header of a column in a list control in a dialog showing a list
+#. of search results of matching document pages
+#. Translators: the title of a column in the search results list
+#. Translators: the label of the image of a page in a dialog to render the
+#. current page
+#: bookworm/annotation/annotation_dialogs.py:164
+#: bookworm/annotation/annotation_dialogs.py:333
+#: bookworm/annotation/annotation_dialogs.py:369
+#: bookworm/annotation/exporters/core_renderers.py:178
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:193
+#: bookworm/gui/book_viewer/core_dialogs.py:53
+#: bookworm/gui/book_viewer/render_view.py:32
+msgid "Page"
+msgstr "Oldal"
+
+#. Translators: migration state of a saved bookmark.
+#. Translators: migration state of a comment or highlight.
+#: bookworm/annotation/annotation_dialogs.py:171
+#: bookworm/annotation/annotation_dialogs.py:337
+msgid "Status"
+msgstr "Állapot"
+
+#. Translators: the title of a column in the bookmarks list
+#. Translators: label of an editable combobox to filter annotations by section
+#. Translators: the title of a column in the comments/highlights list
+#. Translators: the title of a column in the search results list
+#. showing the title of the chapter in which this occurrence was found
+#: bookworm/annotation/annotation_dialogs.py:179
+#: bookworm/annotation/annotation_dialogs.py:277
+#: bookworm/annotation/annotation_dialogs.py:331
+#: bookworm/annotation/exporters/core_renderers.py:145
+#: bookworm/gui/book_viewer/core_dialogs.py:68
+msgid "Section"
+msgstr "Fejezet"
+
+#. Translators: content of a message asking the user if they want to delete a
+#. bookmark
+#: bookworm/annotation/annotation_dialogs.py:236
+msgid ""
+"This action can not be reverted.\n"
+"Are you sure you want to remove this bookmark?"
+msgstr ""
+"A művelet nem vonható vissza.\n"
+"Biztosan eltávolítja ezt a könyvjelzőt?"
+
+#. Translators: title of a message asking the user if they want to delete a
+#. bookmark
+#: bookworm/annotation/annotation_dialogs.py:239
+msgid "Remove Bookmark?"
+msgstr "Eltávolítja a könyvjelzőt?"
+
+#. Translators: label of an editable combobox to filter annotations by book
+#. Translators: text of a toggle button to sort comments/highlights list
+#. Translators: the title of a column in the comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:266
+#: bookworm/annotation/annotation_dialogs.py:375
+#: bookworm/annotation/annotation_dialogs.py:584
+#: bookworm/annotation/exporters/core_renderers.py:143
+msgid "Book"
+msgstr "Könyv"
+
+#. Translators: label of an editable combobox to filter annotations by tag
+#: bookworm/annotation/annotation_dialogs.py:271
+#: bookworm/annotation/exporters/core_renderers.py:147
+msgid "Tag"
+msgstr "Címke"
+
+#. Translators: text of a button to apply chosen filters in a dialog to view
+#. user's comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:287
+msgid "&Apply"
+msgstr "&Alkalmaz"
+
+#. Translators: the title of a column in the comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:329
+msgid "Excerpt"
+msgstr "Részlet"
+
+#. Translators: the title of a column in the comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:335
+msgid "Added"
+msgstr "Hozzáadás dátuma"
+
+#. Translators: header of a group of controls in a dialog to view user's
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:352
+msgid "Filter By"
+msgstr "Szűrés"
+
+#. Translators: header of a group of controls in a dialog to view user's
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:361
+msgid "Sort By"
+msgstr "Rendezés"
+
+#. Translators: text of a toggle button to sort comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:367
+msgid "Date"
+msgstr "Dátum"
+
+#. Translators: text of a toggle button to sort comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:371
+msgid "Position"
+msgstr "Pozíció"
+
+#. Translators: text of a toggle button to sort comments/highlights list
+#: bookworm/annotation/annotation_dialogs.py:381
+msgid "Ascending"
+msgstr "Növekvő sorrend"
+
+#. Translators: text of a button in a dialog to view comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:390
+msgid "&View..."
+msgstr "&Megtekintés..."
+
+#. Translators: text of a button in a dialog to view comments/highlights
+#. Translators: the label of a button to edit a voice profile
+#: bookworm/annotation/annotation_dialogs.py:393
+#: bookworm/text_to_speech/tts_gui.py:377
+msgid "&Edit..."
+msgstr "&Szerkesztés..."
+
+#. Translators: text of a button in a dialog to view comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:400
+msgid "&Delete..."
+msgstr "&Törlés..."
+
+#. Translators: text of a button in a dialog to view comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:402
+msgid "E&xport..."
+msgstr "&Exportálás..."
+
+#. Translators: title of a dialog to view or edit a single comment/highlight
+#: bookworm/annotation/annotation_dialogs.py:473
+msgid "Editing"
+msgstr "Szerkesztés"
+
+#: bookworm/annotation/annotation_dialogs.py:473
+msgid "View"
+msgstr "Megtekintés"
+
+#. Translators: content of a message asking the user if they want to delete a
+#. comment/highlight
+#: bookworm/annotation/annotation_dialogs.py:490
+msgid ""
+"This action can not be reverted.\n"
+"Are you sure you want to remove this item?"
+msgstr ""
+"A művelet nem vonható vissza.\n"
+"Biztosan eltávolítja ezt az elemet?"
+
+#. Translators: title of a message asking the user if they want to delete a
+#. bookmark
+#: bookworm/annotation/annotation_dialogs.py:492
+msgid "Delete Annotation?"
+msgstr "Törli a jelölést?"
+
+#: bookworm/annotation/annotation_dialogs.py:521
+msgid "Unable to Relocate Annotation"
+msgstr "A jelölés nem helyezhető át"
+
+#. Translators: title of a dialog that allows the user to edit the tag set of a
+#. comment/highlight
+#: bookworm/annotation/annotation_dialogs.py:552
+msgid "Edit Tags"
+msgstr "Címkék szerkesztése"
+
+#. Translators: title of a dialog that allows the user to customize
+#. how comments/highlights are exported
+#: bookworm/annotation/annotation_dialogs.py:565
+msgid "Export Options"
+msgstr "Exportálási beállítások"
+
+#: bookworm/annotation/annotation_dialogs.py:598
+msgid ""
+"This annotation belongs to different content than the file currently stored "
+"at this location."
+msgstr ""
+"Ez a jelölés más tartalomhoz tartozik, mint az ezen a helyen jelenleg tárolt"
+" fájl."
+
+#: bookworm/annotation/annotation_dialogs.py:601
+msgid "Unable to Navigate to Annotation"
+msgstr "Nem lehet a jelöléshez ugrani"
+
+#. Translators: label of a checkbox in a dialog to set export options for
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:655
+msgid "Include book title"
+msgstr "A könyv címének feltüntetése"
+
+#: bookworm/annotation/annotation_dialogs.py:660
+msgid "Include section title"
+msgstr "A fejezet címének feltüntetése"
+
+#: bookworm/annotation/annotation_dialogs.py:666
+msgid "Include  page number"
+msgstr "Az oldalszám feltüntetése"
+
+#. Translators: label of a checkbox in a dialog to set export options for
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:669
+msgid "Include tags"
+msgstr "A címkék feltüntetése"
+
+#. Translators: label of a choice control in a dialog to set export options for
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:671
+msgid "Output format:"
+msgstr "Kimeneti formátum:"
+
+#. Translators: label of an edit control in a dialog to set export options for
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:674
+msgid "Output File"
+msgstr "Kimeneti fájl"
+
+#. Translators: text of a button in a dialog to set export options for
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:677
+msgid "&Browse"
+msgstr "&Tallózás"
+
+#. Translators: label of a checkbox in a dialog to set export options for
+#. comments/highlights
+#: bookworm/annotation/annotation_dialogs.py:682
+msgid "Open file after exporting"
+msgstr "Fájl megnyitása exportálás után"
+
+#. Translators: the title of a save file dialog asking the user for a filename
+#. to export annotations to
+#. Translators: the title of a dialog to save the exported book
+#: bookworm/annotation/annotation_dialogs.py:709
+#: bookworm/gui/book_viewer/menubar.py:288
+#: bookworm/gui/book_viewer/render_view.py:175
+msgid "Save As"
+msgstr "Mentés másként"
+
+#. Translators: the title of a group of controls in the settings dialog
+#: bookworm/annotation/annotation_gui.py:27
+msgid "When navigating text"
+msgstr "Navigálás a szövegben"
+
+#. Translators: the label of a checkbox
+#: bookworm/annotation/annotation_gui.py:32
+msgid "Play a sound to indicate the presence of annotations"
+msgstr "Jelölések jelzése hanggal"
+
+#. Translators: the label of a checkbox
+#: bookworm/annotation/annotation_gui.py:39
+msgid "Speak a message to indicate the presence of annotations"
+msgstr "Jelölések jelzése beszéddel"
+
+#. Translators: the title of a group of controls in the settings dialog
+#: bookworm/annotation/annotation_gui.py:43
+msgid "Miscellaneous settings"
+msgstr "Egyéb beállítások"
+
+#. Translators: the label of a checkbox
+#: bookworm/annotation/annotation_gui.py:48
+msgid "Speak the bookmark when jumping"
+msgstr "Könyvjelző bemondása ráugráskor"
+
+#. Translators: the label of a checkbox
+#: bookworm/annotation/annotation_gui.py:55
+msgid "Select the bookmarked line when jumping"
+msgstr "A könyvjelzőt tartalmazó sor kijelölése ráugráskor"
+
+#. Translators: the label of a checkbox
+#: bookworm/annotation/annotation_gui.py:62
+msgid "Use visual styles to indicate annotations"
+msgstr "Jelölések megjelenítése vizuális stílusokkal"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:101
+msgid "Add &Bookmark\tCtrl-B"
+msgstr "&Könyvjelző hozzáadása\tCtrl-B"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:103
+msgid "Add a bookmark at the current position"
+msgstr "Könyvjelző hozzáadása az aktuális helyhez"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:108
+msgid "Add &Named Bookmark...\tCtrl-Shift-B"
+msgstr "&Elnevezett könyvjelző hozzáadása...\tCtrl-Shift-B"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:110
+msgid "Add a named bookmark at the current position"
+msgstr "Elnevezett könyvjelző hozzáadása az aktuális helyhez"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:115
+msgid "Add Co&mment...\tCtrl-M"
+msgstr "&Megjegyzés hozzáadása...\tCtrl-M"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:117
+msgid "Add a comment at the current position"
+msgstr "Megjegyzés hozzáadása az aktuális helyhez"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:122
+msgid "&Highlight Selection\tCtrl-H"
+msgstr "Kijelölés k&iemelése\tCtrl-H"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:124
+msgid "Highlight selected text and save it."
+msgstr "A kijelölt szöveg kiemelése és mentése."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:129
+msgid "Saved &Bookmarks..."
+msgstr "Mentett kö&nyvjelzők..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:131
+msgid "View added bookmarks"
+msgstr "A hozzáadott könyvjelzők megtekintése"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:136
+msgid "Saved Co&mments..."
+msgstr "Mentett meg&jegyzések..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:138
+msgid "View, edit, and remove comments."
+msgstr "Megjegyzések megtekintése, szerkesztése és eltávolítása."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:143
+msgid "Saved &Highlights..."
+msgstr "Mentett kieme&lések..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/annotation/annotation_gui.py:145
+msgid "View saved highlights."
+msgstr "A mentett kiemelések megtekintése."
+
+#: bookworm/annotation/annotation_gui.py:173
+msgid "Bookmark removed"
+msgstr "Könyvjelző eltávolítva"
+
+#. Translators: spoken message
+#: bookworm/annotation/annotation_gui.py:176
+msgid "Bookmark Added"
+msgstr "Könyvjelző hozzáadva"
+
+#. Translators: title of a dialog
+#: bookworm/annotation/annotation_gui.py:185
+msgid "Add Named Bookmark"
+msgstr "Elnevezett könyvjelző hozzáadása"
+
+#. Translators: label of a text entry
+#: bookworm/annotation/annotation_gui.py:187
+msgid "Bookmark name:"
+msgstr "Könyvjelző neve:"
+
+#. Translators: title of a message indicating an error
+#. Translators: title of a message shown when importing documents to the
+#. bookshelf has failed
+#. Translators: title  of a message shown when importing documents from a
+#. folder to the bookshelf has failed
+#. Translators: title of a message shown when searching bookshelf has failed
+#. Translators: title of a list control colum showing errors encountered when
+#. bundling documents
+#. Translators: title of a message box
+#. Translators: title of a messagebox
+#. Translators: the title of a message telling the user that an error has
+#. occurred
+#: bookworm/annotation/annotation_gui.py:218
+#: bookworm/bookshelf/local_bookshelf/__init__.py:290
+#: bookworm/bookshelf/local_bookshelf/__init__.py:336
+#: bookworm/bookshelf/local_bookshelf/__init__.py:382
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:226
+#: bookworm/bookshelf/window.py:197 bookworm/gui/settings.py:652
+#: bookworm/ocr/ocr_dialogs.py:238 bookworm/ocr/ocr_dialogs.py:683
+#: bookworm/ocr/ocr_menu.py:546 bookworm/platforms/win32/pandoc_download.py:63
+#: bookworm/platforms/win32/tesseract_download.py:96
+#: bookworm/text_to_speech/tts_gui.py:483 bookworm/webservices/wikiworm.py:183
+msgid "Error"
+msgstr "Hiba"
+
+#: bookworm/annotation/annotation_gui.py:220
+msgid "Another note is currently overlapping the selected position."
+msgstr "Egy másik jelölés már átfedi a kijelölt helyet."
+
+#. Translators: the title of a dialog to add a comment
+#: bookworm/annotation/annotation_gui.py:224
+msgid "New Comment"
+msgstr "Új megjegyzés"
+
+#. Translators: the label of an edit field to enter a comment
+#: bookworm/annotation/annotation_gui.py:226
+msgid "Comment:"
+msgstr "Megjegyzés:"
+
+#. Translators: title of a dialog
+#: bookworm/annotation/annotation_gui.py:244
+msgid "Tag Comment"
+msgstr "Megjegyzés címkézése"
+
+#. Translators: label of a text entry
+#: bookworm/annotation/annotation_gui.py:246
+#: bookworm/annotation/annotation_gui.py:305
+msgid "Tags:"
+msgstr "Címkék:"
+
+#: bookworm/annotation/annotation_gui.py:258
+msgid "No selection"
+msgstr "Nincs kijelölt szöveg"
+
+#. Translators: spoken message
+#: bookworm/annotation/annotation_gui.py:267
+msgid "Highlight removed"
+msgstr "Kiemelés eltávolítva"
+
+#. Translators: spoken message
+#: bookworm/annotation/annotation_gui.py:270
+msgid "Already highlighted"
+msgstr "Már ki van emelve"
+
+#. Translators: spoken message
+#: bookworm/annotation/annotation_gui.py:289
+msgid "Highlight extended"
+msgstr "Kiemelés kibővítve"
+
+#. Translators: spoken message
+#: bookworm/annotation/annotation_gui.py:297
+msgid "Selection highlighted"
+msgstr "A kijelölt szöveg kiemelve"
+
+#. Translators: title of a dialog
+#: bookworm/annotation/annotation_gui.py:303
+msgid "Tag Highlight"
+msgstr "Kiemelés címkézése"
+
+#. Translators: the title of a dialog to view bookmarks
+#: bookworm/annotation/annotation_gui.py:318
+#, python-brace-format
+msgid "Bookmarks | {book}"
+msgstr "Könyvjelzők | {book}"
+
+#: bookworm/annotation/annotation_gui.py:326
+msgid "Comments"
+msgstr "Megjegyzések"
+
+#: bookworm/annotation/annotation_gui.py:337
+msgid "Highlights"
+msgstr "Kiemelések"
+
+#: bookworm/annotation/annotator.py:223
+msgid "Only annotations marked for repositioning can be relocated."
+msgstr "Csak azok a jelölések helyezhetők át, amelyeknél áthelyezés szükséges."
+
+#: bookworm/annotation/annotator.py:226
+msgid "The annotation does not belong to the current document."
+msgstr "A jelölés nem az aktuális dokumentumhoz tartozik."
+
+#: bookworm/annotation/annotator.py:232
+msgid "Select text before relocating a highlight."
+msgstr "A kiemelés áthelyezése előtt jelöljön ki szöveget."
+
+#. Translators: written to output document when exporting a comment/highlight
+#. Translators: a name of a file format
+#. Translators: file type in a save as dialog
+#: bookworm/annotation/exporters/core_renderers.py:15
+#: bookworm/gui/book_viewer/menubar.py:292 bookworm/ocr/ocr_menu.py:385
+msgid "Plain Text"
+msgstr "Egyszerű szöveg"
+
+#: bookworm/annotation/exporters/core_renderers.py:27
+#: bookworm/annotation/exporters/core_renderers.py:90
+#, python-brace-format
+msgid "Section: {section_title}"
+msgstr "Fejezet: {section_title}"
+
+#. Translators: written to output document when exporting files
+#: bookworm/annotation/exporters/core_renderers.py:32
+#, python-brace-format
+msgid "Tagged: {tag}"
+msgstr "Címke: {tag}"
+
+#. Translators: written to the end of the plain-text file when exporting
+#. comments or highlights
+#: bookworm/annotation/exporters/core_renderers.py:42
+msgid "End of File"
+msgstr "Fájl vége"
+
+#: bookworm/annotation/exporters/core_renderers.py:52
+#: bookworm/annotation/exporters/core_renderers.py:113
+#, python-brace-format
+msgid "Page {number}"
+msgstr "{number}. oldal"
+
+#. Translators: the name of a document file format
+#: bookworm/annotation/exporters/core_renderers.py:74
+msgid "Markdown"
+msgstr "Markdown"
+
+#: bookworm/annotation/exporters/core_renderers.py:94
+#, python-brace-format
+msgid "Tagged: {tags}"
+msgstr "Címkék: {tags}"
+
+#. Translators: written to output document when exporting a comment/highlight
+#: bookworm/annotation/exporters/core_renderers.py:126
+msgid "Tagged"
+msgstr "Címkézve"
+
+#. Translators: the name of a document file format
+#: bookworm/annotation/exporters/core_renderers.py:137
+msgid "HTML"
+msgstr "HTML"
+
+#: bookworm/annotation/exporters/core_renderers.py:156
+msgid "Exported Annotations"
+msgstr "Exportált jelölések"
+
+#. Translators: label of a button to copy the annotation to the clipboard
+#. used when exporting annotations to HTML
+#: bookworm/annotation/exporters/core_renderers.py:186
+msgid "Copy to clipboard"
+msgstr "Másolás a vágólapra"
+
+#. Translators: the label of a page in the settings dialog
+#: bookworm/bookshelf/__init__.py:56
+msgid "Bookshelf"
+msgstr "Könyvespolc"
+
+#. Translators: the label of an item in the application menubar
+#. Translators: the label of the bookshelf sub menu found in the file menu of
+#. the application
+#: bookworm/bookshelf/__init__.py:66
+msgid "Boo&kshelf"
+msgstr "Könyves&polc"
+
+#. Translators: the label of a group of controls in the bookshelf page in the
+#. preferences dialog
+#. Translators: the name of a book shelf type.
+#. This bookshelf type is stored in a local database
+#: bookworm/bookshelf/local_bookshelf/__init__.py:67
+#: bookworm/bookshelf/viewer_integration.py:35
+msgid "Local Bookshelf"
+msgstr "Helyi könyvespolc"
+
+#. Translators: the label of a checkbox
+#: bookworm/bookshelf/viewer_integration.py:40
+msgid "Automatically add opened books to the local bookshelf"
+msgstr "A megnyitott könyvek automatikus hozzáadása a helyi könyvespolchoz"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/bookshelf/viewer_integration.py:53
+msgid "&Open Bookshelf"
+msgstr "Könyvespolc &megnyitása"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/bookshelf/viewer_integration.py:55
+msgid "Open your bookshelf"
+msgstr "A könyvespolc megnyitása"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/bookshelf/viewer_integration.py:60
+msgid "&Add to local bookshelf..."
+msgstr "&Hozzáadás a helyi könyvespolchoz..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/bookshelf/viewer_integration.py:62
+msgid "Add the current book to the local bookshelf"
+msgstr "Az aktuális könyv hozzáadása a helyi könyvespolchoz"
+
+#. Translators: content of a message indicating failure to add the current
+#. document to the bookshelf
+#: bookworm/bookshelf/viewer_integration.py:93
+msgid ""
+"You can not add this document to Bookshelf.\n"
+"The document should exist locally in your computer."
+msgstr ""
+"Ez a dokumentum nem adható hozzá a könyvespolchoz.\n"
+"A dokumentumnak helyben, ezen a számítógépen kell lennie."
+
+#. Translators: title of a message indicating failure to add the current
+#. document to the bookshelf
+#: bookworm/bookshelf/viewer_integration.py:96
+msgid "Can not add document"
+msgstr "A dokumentum nem adható hozzá"
+
+#. Translators: title of a dialog to select reading list and collections for a
+#. document when adding it to the bookshelf
+#: bookworm/bookshelf/viewer_integration.py:103
+msgid "Reading list and collections"
+msgstr "Olvasási lista és gyűjtemények"
+
+#: bookworm/bookshelf/window.py:56
+#, python-brace-format
+msgid "{name} ({count})"
+msgstr "{name} ({count})"
+
+#. Translators: label of a text box to filter documents in bookshelf
+#: bookworm/bookshelf/window.py:79
+msgid "Filter documents..."
+msgstr "Dokumentumok szűrése..."
+
+#. Translators: label of the bookshelf document list. This label is shown when
+#. the documents are being loaded from the database
+#: bookworm/bookshelf/window.py:85
+msgid "Loading items"
+msgstr "Dokumentumok betöltése"
+
+#. Translators: content of a message shown when the bookshelf fails to load and
+#. show documents
+#: bookworm/bookshelf/window.py:195
+msgid ""
+"Failed to retrieve documents.\n"
+"Please try again."
+msgstr ""
+"Nem sikerült betölteni a dokumentumokat.\n"
+"Próbálja meg újra."
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#. Translators: the label of the close button in a dialog
+#: bookworm/bookshelf/window.py:237 bookworm/gui/book_viewer/core_dialogs.py:383
+msgid "&Open"
+msgstr "&Megnyitás"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/window.py:242
+msgid "Open in &system viewer"
+msgstr "Megnyitás a &rendszer alapértelmezett alkalmazásával"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/window.py:247
+msgid "Edit &title"
+msgstr "&Cím szerkesztése"
+
+#. Translators: spoken message when activating a document
+#. Translators: spoken message
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:212
+#: bookworm/bookshelf/window.py:258 bookworm/bookshelf/window.py:267
+#: bookworm/gui/book_viewer/__init__.py:113
+msgid "Opening document, please wait..."
+msgstr "A dokumentum megnyitása folyamatban van. Kérjük, várjon..."
+
+#. Translators: spoken message when no matching documents were found when
+#. filtering the document list
+#: bookworm/bookshelf/window.py:300
+msgid "No matching documents"
+msgstr "Nincs a szűrésnek megfelelő dokumentum"
+
+#. Translators: message shown when loading documents in the bookshelf
+#: bookworm/bookshelf/window.py:354 bookworm/bookshelf/window.py:366
+msgid "Retrieving items..."
+msgstr "Dokumentumok betöltése..."
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/window.py:391
+msgid "Document &info..."
+msgstr "Dokumentum &adatai..."
+
+#. Translators: label of the combo box showing a list of bookshelf providers.
+#. Currently, only the Local Bookshelf provider is implemented. In the future,
+#. other providers may be added, such as Bookshare and Pocket.
+#: bookworm/bookshelf/window.py:422
+msgid "Provider"
+msgstr "Szolgáltató"
+
+#. Translators: label of the bookshelf tree that shows reading lists and
+#. collections and other categories
+#. Translators: label of the settings categories list box
+#: bookworm/bookshelf/window.py:429 bookworm/bookshelf/window.py:435
+#: bookworm/gui/settings.py:695
+msgid "Categories"
+msgstr "Kategóriák"
+
+#. Translators: title of Bookshelf window
+#: bookworm/bookshelf/window.py:472
+#, python-brace-format
+msgid "Bookworm Bookshelf: {name}"
+msgstr "Bookworm Könyvespolc: {name}"
+
+#. Translators: label of a menu item to exit the application
+#: bookworm/bookshelf/window.py:496
+msgid "&Exit"
+msgstr "&Kilépés"
+
+#. Translators: lable of the file menu in the menu bar
+#. Translators: the label of an item in the application menubar
+#: bookworm/bookshelf/window.py:499 bookworm/gui/book_viewer/menubar.py:1000
+msgid "&File"
+msgstr "&Fájl"
+
+#. Translators: the label of a menu item to remove a bookshelf reading list or
+#. collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:76
+msgid "Remove..."
+msgstr "Eltávolítás..."
+
+#. Translators: the label of a menu item to change the name of a bookshelf
+#. reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:81
+msgid "Edit name..."
+msgstr "Név szerkesztése..."
+
+#. Translators: the label of a menu item to remove all documents under a
+#. specific bookshelf reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:86
+msgid "Clear documents..."
+msgstr "Dokumentumok eltávolítása..."
+
+#. Translators: the name of a category in the bookshelf for recently added
+#. documents
+#: bookworm/bookshelf/local_bookshelf/__init__.py:110
+msgid "Recently Added"
+msgstr "Legutóbb hozzáadottak"
+
+#. Translators: the name of a category in the bookshelf for documents currently
+#. being read by the user
+#: bookworm/bookshelf/local_bookshelf/__init__.py:117
+msgid "Currently Reading"
+msgstr "Jelenleg olvasom"
+
+#. Translators: the name of a category in the bookshelf for documents the user
+#. wants to read
+#: bookworm/bookshelf/local_bookshelf/__init__.py:126
+msgid "Want to Read"
+msgstr "El szeretném olvasni"
+
+#. Translators: the name of a category in the bookshelf for documents favored
+#. by the user
+#: bookworm/bookshelf/local_bookshelf/__init__.py:135
+msgid "Favorites"
+msgstr "Kedvencek"
+
+#. Translators: the name of a category in the bookshelf which contains the
+#. user's reading lists
+#: bookworm/bookshelf/local_bookshelf/__init__.py:145
+msgid "Reading Lists"
+msgstr "Olvasási listák"
+
+#. Translators: the name of a category in the bookshelf which contains the
+#. user's collections
+#. Translators: label of a text box for entering a document's collections
+#: bookworm/bookshelf/local_bookshelf/__init__.py:150
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:48
+msgid "Collections"
+msgstr "Gyűjtemények"
+
+#. Translators: the name of a reading list in the bookshelf which contains
+#. documents that do not have any category assigned to them
+#. Translators: the label of a page in the settings dialog
+#: bookworm/bookshelf/local_bookshelf/__init__.py:158 bookworm/gui/settings.py:663
+msgid "General"
+msgstr "Általános"
+
+#. Translators: the label of a menu item in the bookshelf to add a new reading
+#. list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:167
+msgid "Add New..."
+msgstr "Új olvasási lista vagy gyűjtemény..."
+
+#. Translators: the name of a category in the bookshelf that lists the authors
+#. of the documents stored in the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:186
+#: bookworm/gui/book_viewer/core_dialogs.py:348
+msgid "Authors"
+msgstr "Szerzők"
+
+#. Translators: the label of a menu item in the bookshelf file menu to import
+#. documents to the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:197
+msgid "Import Documents...\tCtrl+O"
+msgstr "Dokumentumok importálása...\tCtrl+O"
+
+#. Translators: the label of a menu item in the bookshelf file menu to import
+#. an entire folder to the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:202
+msgid "Import documents from folder..."
+msgstr "Dokumentumok importálása mappából..."
+
+#. Translators: the label of a menu item in the bookshelf file menu to search
+#. documents contained in the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:206
+msgid "Search Bookshelf..."
+msgstr "Keresés a könyvespolcon..."
+
+#. Translators: the label of a menu item in the bookshelf file menu to copy the
+#. files added to the bookshelf to a private folder that blongs to Bookworm.
+#. This is important to make the bookshelf works with  portable copies, or if
+#. the user wants to move or rename added documents
+#: bookworm/bookshelf/local_bookshelf/__init__.py:209
+msgid "Bundle Documents..."
+msgstr "Dokumentumok helyi másolatainak elkészítése..."
+
+#. Translators: the label of a menu item in the bookshelf file menu to clear
+#. documents that no longer exist in the file system
+#: bookworm/bookshelf/local_bookshelf/__init__.py:212
+msgid "Clear invalid documents..."
+msgstr "Érvénytelen dokumentumok eltávolítása..."
+
+#. Translators: the title of a file dialog to browse to a document
+#: bookworm/bookshelf/local_bookshelf/__init__.py:224
+msgid "Import Documents To Bookshelf"
+msgstr "Dokumentumok importálása a könyvespolcra"
+
+#. Translators: the title of a dialog to edit the document's reading list or
+#. collection
+#. Translators: title of a dialog to change the reading list or collection for
+#. a document
+#: bookworm/bookshelf/local_bookshelf/__init__.py:240
+#: bookworm/bookshelf/local_bookshelf/__init__.py:649
+msgid "Edit reading list/collections"
+msgstr "Olvasási lista és gyűjtemények szerkesztése"
+
+#. Translators: a message shown when Bookworm is importing documents to the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:257
+msgid "Importing document..."
+msgstr "Dokumentum importálása..."
+
+#. Translators: a message shown when Bookworm is importing documents to the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:260
+msgid "Importing documents..."
+msgstr "Dokumentumok importálása..."
+
+#. Translators: content of a message shown when importing documents to the
+#. bookshelf has failed
+#: bookworm/bookshelf/local_bookshelf/__init__.py:288
+msgid "Failed to import document. Please try again."
+msgstr "Nem sikerült importálni a dokumentumot. Próbálja meg újra."
+
+#. Translators: title of a dialog to import an entire folder to the bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:301
+msgid "Import Documents From Folder"
+msgstr "Dokumentumok importálása mappából"
+
+#. Translators: a message shown when importing an entire folder to the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:315
+msgid "Importing documents from folder. Please wait..."
+msgstr "Dokumentumok importálása mappából. Kérjük, várjon..."
+
+#. Translators: content of a message shown when importing documents from a
+#. folder to the bookshelf is successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:324
+msgid "Documents imported from folder."
+msgstr "A mappa dokumentumainak importálása befejeződött."
+
+#. Translators: title of a message shown when importing documents from a folder
+#. to the bookshelf is successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:326
+msgid "Operation Completed"
+msgstr "Művelet befejezve"
+
+#. Translators: content of a message shown when importing documents from a
+#. folder to the bookshelf has failed
+#: bookworm/bookshelf/local_bookshelf/__init__.py:334
+msgid "Failed to import documents from folder."
+msgstr "Nem sikerült importálni a dokumentumokat a mappából."
+
+#. Translators: title of a dialog to search bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:344
+msgid "Search Bookshelf"
+msgstr "Keresés a könyvespolcon"
+
+#. Translators: a message shown while searching bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:357
+msgid "Searching bookshelf..."
+msgstr "Keresés a könyvespolcon..."
+
+#. Translators: content of a message shown when searching bookshelf has failed
+#: bookworm/bookshelf/local_bookshelf/__init__.py:380
+msgid "Failed to search bookshelf,"
+msgstr "Nem sikerült keresni a könyvespolcon."
+
+#. Translators: title of a dialog that shows bookshelf search results. It
+#. searches documents by title and content, hence full-text
+#: bookworm/bookshelf/local_bookshelf/__init__.py:397
+msgid "Full Text Search Results"
+msgstr "Teljes szöveges keresés eredményei"
+
+#. Translators: content of a message to confirm the bundling of documents added
+#. to bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:408
+msgid ""
+"This will create copies of all of the documents you have added to your Local"
+" Bookshelf.\n"
+"After this operation, you can open documents stored in your bookshelf, even "
+"if you have deleted or moved the original documents.\n"
+"\n"
+"Please note that this action will create duplicate copies of all of your "
+"added documents."
+msgstr ""
+"A művelet helyi másolatot készít a könyvespolchoz hozzáadott minden "
+"dokumentumról.\n"
+"Ezután a könyvespolcon tárolt dokumentumokat akkor is megnyithatja, ha az "
+"eredeti fájlokat áthelyezte vagy törölte.\n"
+"\n"
+"Ne feledje, hogy a művelet minden hozzáadott dokumentumról külön másolatot "
+"hoz létre."
+
+#. Translators: title of a message to confirm the bundling of documents added
+#. to bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:411
+msgid "Bundle Documents?"
+msgstr "Elkészíti a dokumentumok helyi másolatait?"
+
+#. Translators: a message shown when bundling documents added to bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:419
+msgid "Bundling documents. Please wait..."
+msgstr "Helyi másolatok készítése. Kérjük, várjon..."
+
+#. Translators: content of a message when bundling of documents is successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:448
+#, python-brace-format
+msgid "Bundled {num_documents} files."
+msgstr "{num_documents} fájl helyi másolata elkészült."
+
+#. Translators: title of a message when bundling of documents is successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:450
+msgid "Done"
+msgstr "Kész"
+
+#. Translators: title of a dialog that shows titles and paths of documents
+#. which have not been bundled successfully
+#: bookworm/bookshelf/local_bookshelf/__init__.py:459
+#, python-brace-format
+msgid "Bundle Results: {num_succesfull} successfull, {num_faild} faild"
+msgstr "{num_succesfull} fájl másolása sikerült, {num_faild} fájlé nem"
+
+#. Translators: content of a message to confirm the clearing of documents
+#. which have been added to bookshelf, but they have been moved, renamed, or
+#. deleted
+#: bookworm/bookshelf/local_bookshelf/__init__.py:471
+msgid ""
+"This action will clear invalid documents from your bookshelf.\n"
+"Invalid documents are the documents which no longer exist on your computer."
+msgstr ""
+"A művelet eltávolítja az érvénytelen dokumentumokat a könyvespolcról.\n"
+"Érvénytelen az a dokumentum, amelynek eredeti fájlja már nem található a "
+"számítógépen."
+
+#. Translators: title of a message to confirm the clearing of documents
+#. which have been added to bookshelf, but they have been moved, renamed, or
+#. deleted
+#: bookworm/bookshelf/local_bookshelf/__init__.py:475
+msgid "Clear Invalid Documents?"
+msgstr "Eltávolítja az érvénytelen dokumentumokat?"
+
+#. Translators: label of a text box to change the name of a reading list or
+#. collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:490
+msgid "New name:"
+msgstr "Új név:"
+
+#. Translators: title of a dialog to change the name of a reading list or
+#. collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:492
+msgid "Edit Name"
+msgstr "Név szerkesztése"
+
+#. Translators: content of a message when changing the name of a reading list
+#. or collection was not successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:503
+#, python-brace-format
+msgid ""
+"The given name {name} already exists.\n"
+"Please choose another name."
+msgstr ""
+"Már létezik „{name}” nevű elem.\n"
+"Válasszon másik nevet."
+
+#. Translators: title of a message when changing the name of a reading list or
+#. collection was not successful
+#: bookworm/bookshelf/local_bookshelf/__init__.py:506
+msgid "Duplicate name"
+msgstr "A név már létezik"
+
+#. Translators: content of a message to confirm the removal of a reading list
+#. or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:517
+#, python-brace-format
+msgid ""
+"Are you sure you want to remove {name}?\n"
+"This will not remove document classified under {name}."
+msgstr ""
+"Biztosan eltávolítja ezt a listát vagy gyűjteményt: „{name}”?\n"
+"A „{name}” alá sorolt dokumentumok megmaradnak."
+
+#. Translators: title of a message to confirm the removal of a reading list or
+#. collection
+#. Translators: title of a message box
+#. Translators: title of a messagebox
+#: bookworm/bookshelf/local_bookshelf/__init__.py:520
+#: bookworm/gui/components.py:625 bookworm/ocr/ocr_dialogs.py:599
+#: bookworm/ocr/ocr_dialogs.py:641
+msgid "Confirm"
+msgstr "Megerősítés"
+
+#. Translators: content of a message to confirm the removal of all documents
+#. classified under a specific reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:532
+#, python-brace-format
+msgid ""
+"Are you sure you want to clear all documents classified under {name}?\n"
+"This will remove those documents from your bookshelf."
+msgstr ""
+"Biztosan eltávolít minden, a „{name}” alá sorolt dokumentumot?\n"
+"A művelet eltávolítja ezeket a dokumentumokat a könyvespolcról."
+
+#. Translators: title of a message to confirm the removal of all documents
+#. classified under a specific reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:535
+msgid "Clear All Documents"
+msgstr "Minden dokumentum eltávolítása"
+
+#. Translators: label of a text box for the name of a new reading list or
+#. collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:548
+msgid "Enter name:"
+msgstr "Név:"
+
+#. Translators: title of a dialog  for adding a new reading list or collection
+#: bookworm/bookshelf/local_bookshelf/__init__.py:550
+msgid "Add New"
+msgstr "Új olvasási lista vagy gyűjtemény"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:575
+msgid "&Edit reading list / collections..."
+msgstr "&Olvasási lista és gyűjtemények szerkesztése..."
+
+#: bookworm/bookshelf/local_bookshelf/__init__.py:581
+msgid "Remove from &currently reading"
+msgstr "Eltávolítás a &Jelenleg olvasom listáról"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:584
+msgid "Add to &currently reading"
+msgstr "Hozzáadás a &Jelenleg olvasom listához"
+
+#: bookworm/bookshelf/local_bookshelf/__init__.py:591
+msgid "Remove from &want to read"
+msgstr "Eltávolítás az &El szeretném olvasni listáról"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:594
+msgid "Add to &want to read"
+msgstr "Hozzáadás az &El szeretném olvasni listához"
+
+#: bookworm/bookshelf/local_bookshelf/__init__.py:601
+msgid "Remove from &favorites"
+msgstr "Eltávolítás a &Kedvencek közül"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:604
+msgid "Add to &favorites"
+msgstr "Hozzáadás a &Kedvencekhez"
+
+#. Translators: label of an item in the context menu of a document in the
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:610
+msgid "&Remove from bookshelf"
+msgstr "Eltávolítás a köny&vespolcról"
+
+#. Translators: content of a message to confirm the removal of this document
+#. from bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:677
+#, python-brace-format
+msgid ""
+"Are you sure you want to remove this document from your bookshelf?\n"
+"Title: {title}\n"
+"This will remove the document from all tags and categories."
+msgstr ""
+"Biztosan eltávolítja ezt a dokumentumot a könyvespolcról?\n"
+"Cím: {title}\n"
+"A művelet a dokumentumot minden címkéből és kategóriából eltávolítja."
+
+#. Translators: title of a message to confirm the removal of this document from
+#. bookshelf
+#: bookworm/bookshelf/local_bookshelf/__init__.py:680
+msgid "Remove From Bookshelf?"
+msgstr "Eltávolítja a könyvespolcról?"
+
+#. Translators: the name of a category under the Authors category. This
+#. category shows documents for which  author info is not available
+#: bookworm/bookshelf/local_bookshelf/__init__.py:712
+msgid "Unknown Author"
+msgstr "Ismeretlen szerző"
+
+#. Translators: label of a combo box for choosing a document's reading list
+#. Translators: label of a button
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:44
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:87
+msgid "Reading List"
+msgstr "Olvasási lista"
+
+#. Translators: label of a check box
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:52
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:94
+msgid "Add to full-text search index"
+msgstr "Hozzáadás a teljes szöveges keresési indexhez"
+
+#. Translators: label of an edit control for entering the path to a folder to
+#. import to the bookshelf
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:81
+msgid "Select a folder:"
+msgstr "Mappa kiválasztása:"
+
+#. Translators: label of a text box for entering a search term
+#. Translators: the label of a button in the application toolbar
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:113
+#: bookworm/gui/book_viewer/__init__.py:441
+msgid "Search"
+msgstr "Keresés"
+
+#. Translators: title of a group of controls to select which document field to
+#. search in when searching bookshelf
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:117
+msgid "Search Field"
+msgstr "Keresés helye"
+
+#. Translators: label of a check box that enables/disables searching document
+#. title when searching the bookshelf
+#. Translators: header of a column in a list control in a dialog showing a list
+#. of search results of matching document titles
+#. Translators: title of a list control colum showing the document titles  of
+#. documents not bundled due to errors when bundling documents
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:121
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:187
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:230
+#: bookworm/gui/book_viewer/core_dialogs.py:337
+msgid "Title"
+msgstr "Cím"
+
+#. Translators: label of a list showing search results of documents with title
+#. matching the given  search query
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:155
+msgid "Title matches"
+msgstr "Találatok a címben"
+
+#. Translators: the label of a tab in a tabl control in a dialog showing a list
+#. of search results in the bookshelf
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:158
+msgid "Title Matches"
+msgstr "Találatok a címben"
+
+#. Translators: label of a list showing search results of content matching the
+#. given  search query
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:165
+msgid "Content matches"
+msgstr "Találatok a tartalomban"
+
+#. Translators: the label of a tab in a tabl control in a dialog showing a list
+#. of search results in the bookshelf
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:168
+msgid "Content Matches"
+msgstr "Találatok a tartalomban"
+
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:184
+msgid "Snippet"
+msgstr "Szövegrészlet"
+
+#. Translators: title of a list control colum showing the file names of files
+#. not bundled due to errors when bundling documents
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:228
+msgid "File Name"
+msgstr "Fájlnév"
+
+#. Translators: label of a list control showing file copy errors
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:233
+msgid "Errors"
+msgstr "Hibák"
+
+#. Translators: label shown in a list control indicating the failure to copy
+#. the document when bundling documents
+#: bookworm/bookshelf/local_bookshelf/dialogs.py:236
+msgid "Failed to copy document"
+msgstr "Nem sikerült másolatot készíteni a dokumentumról"
+
+#: bookworm/document/features.py:53
+msgid "Default reading mode"
+msgstr "Alapértelmezett olvasási mód"
+
+#: bookworm/document/features.py:54
+msgid "Reading order"
+msgstr "Olvasási sorrend"
+
+#: bookworm/document/features.py:55
+msgid "Physical layout"
+msgstr "Fizikai elrendezés"
+
+#: bookworm/document/features.py:56
+msgid "Paginated"
+msgstr "Lapozott"
+
+#: bookworm/document/features.py:57
+msgid "Chapter by chapter"
+msgstr "Fejezetenként"
+
+#: bookworm/document/features.py:58
+msgid "Clean text"
+msgstr "Tisztított szöveg"
+
+#: bookworm/document/features.py:59
+msgid "Full text"
+msgstr "Teljes szöveg"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/archive.py:45
+msgid "Archive File"
+msgstr "Archívum"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/epub.py:53
+msgid "Electronic Publication (EPUB)"
+msgstr "Elektronikus kiadvány (EPUB)"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/fb2.py:23 bookworm/document/formats/fb2.py:34
+msgid "Fiction Book (FB2)"
+msgstr "FictionBook (FB2)"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/fitz.py:180
+msgid "XPS Document"
+msgstr "XPS-dokumentum"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/fitz.py:187
+msgid "Comic Book Archive"
+msgstr "Képregényarchívum"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/html.py:220 bookworm/document/formats/html.py:383
+msgid "HTML Document"
+msgstr "HTML-dokumentum"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/markdown.py:19
+msgid "Markdown File"
+msgstr "Markdown-fájl"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/mobi.py:39
+msgid "Kindle eBook"
+msgstr "Kindle e-könyv"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/odf.py:91
+msgid "Open Document Text"
+msgstr "OpenDocument-szövegdokumentum"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/odf.py:201
+msgid "Open Document Presentation"
+msgstr "OpenDocument-bemutató"
+
+#: bookworm/document/formats/odf.py:285
+#: bookworm/document/formats/powerpoint.py:156
+#, python-brace-format
+msgid "Slide {number}"
+msgstr "{number}. dia"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:38
+msgid "Rich Text Document"
+msgstr "Formázott szöveges dokumentum (RTF)"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:47
+msgid "Docbook Document"
+msgstr "DocBook-dokumentum"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:56
+msgid "Jupyter notebook"
+msgstr "Jupyter-jegyzetfüzet"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:65
+msgid "LaTeX Document"
+msgstr "LaTeX-dokumentum"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:74
+msgid "Text2Tags Document"
+msgstr "Text2Tags-dokumentum"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pandoc.py:83
+msgid "Unix manual page"
+msgstr "Unix-kézikönyvoldal"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/pdf.py:79
+msgid "Portable Document (PDF)"
+msgstr "PDF-dokumentum"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/plain_text.py:31
+msgid "Plain Text File"
+msgstr "Egyszerű szövegfájl"
+
+#: bookworm/document/formats/powerpoint.py:85
+msgid "Slide Notes"
+msgstr "Dia jegyzetei"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/powerpoint.py:115
+msgid "PowerPoint Presentation"
+msgstr "PowerPoint-bemutató"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/word.py:45
+msgid "Word Document"
+msgstr "Word-dokumentum"
+
+#. Translators: the name of a document file format
+#: bookworm/document/formats/word.py:139
+msgid "Word 97 - 2003 Document"
+msgstr "Word 97–2003-dokumentum"
+
+#: bookworm/epub_serve/__init__.py:43
+msgid "Open in &web Viewer"
+msgstr "Megnyitás &webes megjelenítőben"
+
+#: bookworm/epub_serve/__init__.py:44
+msgid "Open the current EPUB book in the browser"
+msgstr "Az aktuális EPUB-könyv megnyitása a böngészőben"
+
+#: bookworm/epub_serve/__init__.py:61
+msgid "Openning in web viewer..."
+msgstr "Megnyitás a webes megjelenítőben..."
+
+#: bookworm/epub_serve/__init__.py:81
+msgid "Failed to launch web viewer"
+msgstr "Nem sikerült elindítani a webes megjelenítőt"
+
+#: bookworm/epub_serve/__init__.py:82
+msgid "An error occurred while opening the web viewer. Please try again."
+msgstr "Hiba történt a webes megjelenítő megnyitásakor. Próbálja meg újra."
+
+#: bookworm/epub_serve/webapp.py:148
+msgid "404 Not Found"
+msgstr "404 – Az oldal nem található"
+
+#: bookworm/epub_serve/webapp.py:150
+msgid ""
+"The book you are trying to access does not exist or has been closed. Please "
+"make sure you opened the book from within Bookworm. All URLs are temporary "
+"and may not work after you close the page."
+msgstr ""
+"A megnyitni kívánt könyv nem létezik, vagy már nincs megnyitva. Győződjön "
+"meg arról, hogy a könyvet a Bookwormból nyitotta meg. Az URL-címek "
+"ideiglenesek, ezért az oldal bezárása után előfordulhat, hogy már nem "
+"működnek."
+
+#: bookworm/epub_serve/webapp.py:188
+msgid "Failed to load content"
+msgstr "Nem sikerült betölteni a tartalmat"
+
+#: bookworm/epub_serve/webapp.py:190
+msgid "Cannot retreive content. Probably the eBook has been closed."
+msgstr ""
+"Nem sikerült lekérni a tartalmat. Valószínűleg az e-könyv már nincs "
+"megnyitva."
+
+#. Translators: Reported when the content of a browseable message is copied to
+#. the clipboard.
+#: bookworm/gui/browseable_message.py:264
+msgid "Copied to clipboard"
+msgstr "A vágólapra másolva"
+
+#. Translators: The title for the dialog used to present general messages in
+#. browse mode.
+#: bookworm/gui/browseable_message.py:282
+msgid "Message"
+msgstr "Üzenet"
+
+#. Translators: The label of a button to copy the text of the window to the
+#. clipboard.
+#: bookworm/gui/browseable_message.py:299
+msgid "&Copy"
+msgstr "&Másolás"
+
+#. Translators: the title of a group of controls in the search dialog
+#: bookworm/gui/components.py:104
+msgid "Search Range"
+msgstr "Keresési tartomány"
+
+#. Translators: the label of a radio button in the search dialog
+#: bookworm/gui/components.py:106
+msgid "Page Range"
+msgstr "Oldaltartomány"
+
+#. Translators: the label of an edit field in the search dialog
+#. to enter the page from which the search will start
+#: bookworm/gui/components.py:112
+msgid "From:"
+msgstr "Kezdő oldal:"
+
+#. Translators: the label of an edit field in the search dialog
+#. to enter the page number at which the search will stop
+#: bookworm/gui/components.py:118
+msgid "To:"
+msgstr "Záró oldal:"
+
+#. Translators: the label of a radio button in the search dialog
+#: bookworm/gui/components.py:123
+msgid "Specific section"
+msgstr "Adott fejezet"
+
+#. Translators: the label of a combobox in the search dialog
+#. to choose the section to which the search will be confined
+#: bookworm/gui/components.py:126
+msgid "Select section:"
+msgstr "Fejezet kiválasztása:"
+
+#. Translators: the label of the OK button in a dialog
+#: bookworm/gui/components.py:293 bookworm/gui/components.py:334
+#: bookworm/gui/settings.py:719
+msgid "OK"
+msgstr "OK"
+
+#. Translators: the lable of the cancel button in a dialog
+#. Translators: the label of the cancel button in a dialog
+#: bookworm/gui/components.py:296 bookworm/gui/components.py:337
+#: bookworm/gui/settings.py:722
+msgid "Cancel"
+msgstr "Mégse"
+
+#. Translators: content of a message to confirm the closing of a progress
+#. dialog
+#: bookworm/gui/components.py:622
+msgid ""
+"This will cancel all the operations in progress.\n"
+"Are you sure you want to abort?"
+msgstr ""
+"Ezzel minden folyamatban lévő művelet megszakad.\n"
+"Biztosan megszakítja őket?"
+
+#. Translators: the title of the file associations dialog
+#: bookworm/gui/settings.py:48
+msgid "Bookworm File Associations"
+msgstr "A Bookworm fájltársításai"
+
+#: bookworm/gui/settings.py:61
+msgid ""
+"This dialog will help you to set up file associations.\n"
+"Associating files with Bookworm means that when you click on a file in "
+"Windows Explorer, it will be opened in Bookworm by default."
+msgstr ""
+"Ebben a párbeszédpanelen állíthatja be a fájltársításokat.\n"
+"Ha egy fájltípust a Bookwormhoz társít, a Windows Fájlkezelőben az adott "
+"típusú fájl megnyitásakor alapértelmezés szerint a Bookworm indul el."
+
+#: bookworm/gui/settings.py:72
+msgid "Associate all"
+msgstr "Összes társítása"
+
+#: bookworm/gui/settings.py:73
+msgid "Use Bookworm to open all supported document formats"
+msgstr "A Bookworm használata minden támogatott dokumentumformátum megnyitásához"
+
+#: bookworm/gui/settings.py:87
+msgid "Dissociate all supported file types"
+msgstr "Minden támogatott fájltípus társításának megszüntetése"
+
+#: bookworm/gui/settings.py:88
+msgid "Remove previously associated file types"
+msgstr "A korábban létrehozott fájltársítások eltávolítása"
+
+#. Translators: the main label of a button
+#: bookworm/gui/settings.py:105
+#, python-brace-format
+msgid "Dissociate files of type {format}"
+msgstr "{format} típusú fájlok társításának megszüntetése"
+
+#. Translators: the note of a button
+#: bookworm/gui/settings.py:108
+#, python-brace-format
+msgid "Dissociate files with {ext} extension so they no longer open in Bookworm"
+msgstr ""
+"A „{ext}” kiterjesztés társításának megszüntetése, hogy az ilyen fájlok "
+"többé ne a Bookwormban nyíljanak meg"
+
+#. Translators: the main label of a button
+#: bookworm/gui/settings.py:115
+#, python-brace-format
+msgid "Associate files of type {format}"
+msgstr "{format} típusú fájlok társítása"
+
+#. Translators: the note of a button
+#: bookworm/gui/settings.py:118
+#, python-brace-format
+msgid "Associate files with {ext} extension so they always open in Bookworm"
+msgstr ""
+"A „{ext}” kiterjesztés társítása a Bookwormhoz, hogy az ilyen fájlok mindig "
+"ebben nyíljanak meg"
+
+#. Translators: the text of a message indicating successful file association
+#: bookworm/gui/settings.py:162
+#, python-brace-format
+msgid "Files of type {format} have been associated with Bookworm."
+msgstr "Sikerült társítani a Bookwormhoz a következő fájltípust: {format}."
+
+#. Translators: the title of a message indicating successful file association
+#. Translators: the title of a message indicating successful removal of file
+#. association
+#. Translators: title of a message box
+#: bookworm/gui/book_viewer/menubar.py:376 bookworm/gui/settings.py:166
+#: bookworm/gui/settings.py:184 bookworm/platforms/win32/pandoc_download.py:45
+#: bookworm/platforms/win32/tesseract_download.py:76
+msgid "Success"
+msgstr "Sikeres művelet"
+
+#. Translators: the text of a message indicating successful removal of file
+#. associations
+#: bookworm/gui/settings.py:176
+msgid "All supported file types have been set to open by default in Bookworm."
+msgstr ""
+"Minden támogatott fájltípus alapértelmezett megnyitó alkalmazása a Bookworm "
+"lett."
+
+#. Translators: the text of a message indicating successful removal of file
+#. associations
+#: bookworm/gui/settings.py:180
+msgid "All registered file associations have been removed."
+msgstr "Minden regisztrált fájltársítás megszűnt."
+
+#. Translators: the title of a group of controls in the
+#. general settings page related to the UI
+#: bookworm/gui/settings.py:264
+msgid "User Interface"
+msgstr "Felhasználói felület"
+
+#. Translators: the label of a combobox containing display languages.
+#: bookworm/gui/settings.py:266
+msgid "Display Language:"
+msgstr "Felület nyelve:"
+
+#. Translators: the title of a group of controls shown in the
+#. general settings page related to spoken feedback
+#: bookworm/gui/settings.py:271
+msgid "Spoken feedback"
+msgstr "Beszédvisszajelzés"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:276
+msgid "Speak user interface messages"
+msgstr "A felhasználói felület üzeneteinek bemondása"
+
+#. Translators: the title of a group of controls shown in the
+#. general settings page related to miscellaneous settings
+#: bookworm/gui/settings.py:281
+msgid "Miscellaneous"
+msgstr "Egyéb"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:286
+msgid "Play pagination sound"
+msgstr "Hangjelzés lejátszása lapozáskor"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:293
+msgid "Include page label in page title"
+msgstr "Az oldalcímke feltüntetése az oldal címében"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:300
+msgid "Use file name instead of book title"
+msgstr "Fájlnév használata a könyv címe helyett"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:307
+msgid "Show reading progress percentage"
+msgstr "Olvasási előrehaladás megjelenítése százalékban"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:314
+msgid "Open recently opened books from the last position"
+msgstr "A nemrég megnyitott könyvek olvasásának folytatása a legutóbbi pozíciótól"
+
+#. Translators: the label of a checkbox to enable continuous reading
+#: bookworm/gui/settings.py:322
+msgid ""
+"Try to support the screen reader's continuous reading mode by automatically "
+"turning pages (may not work in some cases)"
+msgstr ""
+"A képernyőolvasó folyamatos felolvasásának támogatása automatikus lapozással"
+" (bizonyos esetekben nem működik)"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:330
+msgid "Automatically check for updates"
+msgstr "Frissítések automatikus keresése"
+
+#. Translators: the title of a group of controls shown in the
+#. general settings page related to file associations
+#: bookworm/gui/settings.py:336
+msgid "File Associations"
+msgstr "Fájltársítások"
+
+#. Translators: the label of a button
+#: bookworm/gui/settings.py:341
+msgid "Manage File &Associations"
+msgstr "Fájl&társítások kezelése"
+
+#. Translators: the content of a message asking the user to restart
+#: bookworm/gui/settings.py:372
+msgid ""
+"You have changed the display language of Bookworm.\n"
+"For this setting to fully take effect, you need to restart the application.\n"
+"Would you like to restart the application right now?"
+msgstr ""
+"Megváltoztatta a Bookworm felületének nyelvét.\n"
+"Ahhoz, hogy a módosítás teljesen érvénybe lépjen, újra kell indítani az "
+"alkalmazást.\n"
+"Szeretné most újraindítani az alkalmazást?"
+
+#. Translators: the title of a message telling the user
+#. that the display language have been changed
+#: bookworm/gui/settings.py:378
+msgid "Language Changed"
+msgstr "A felület nyelve megváltozott"
+
+#. Translators: the title of a group of controls in the
+#. appearance settings page related to the UI
+#: bookworm/gui/settings.py:400
+msgid "General Appearance"
+msgstr "Általános megjelenés"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:405
+msgid "Maximize the application window upon startup"
+msgstr "Az alkalmazásablak maximalizálása indításkor"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:412
+msgid "Show the application's toolbar"
+msgstr "Az alkalmazás eszköztárának megjelenítése"
+
+#: bookworm/gui/settings.py:415
+msgid "Text Styling"
+msgstr "Szövegformázás"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:420
+msgid "Apply text styling (when available)"
+msgstr "Szövegformázás alkalmazása, ha rendelkezésre áll"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:427
+msgid "Enable text wrapping (requires restart)"
+msgstr "Automatikus sortörés engedélyezése (újraindítás szükséges)"
+
+#: bookworm/gui/settings.py:430
+msgid "Text view margins percentage"
+msgstr "A szöveges nézet margói százalékban"
+
+#. Translators: the title of a group of controls in the
+#. appearance settings page related to the font
+#: bookworm/gui/settings.py:434
+msgid "Font"
+msgstr "Betűtípus"
+
+#. Translators: label of a checkbox
+#: bookworm/gui/settings.py:439
+msgid "Use Open-&dyslexic font"
+msgstr "Open&Dyslexic betűtípus használata"
+
+#. Translators: label of a combobox
+#: bookworm/gui/settings.py:443
+msgid "Font Face"
+msgstr "Betűcsalád"
+
+#. Translators: label of an static
+#: bookworm/gui/settings.py:450
+msgid "Font Size"
+msgstr "Betűméret"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/settings.py:456
+msgid "Bold style"
+msgstr "Félkövér stílus"
+
+#. Translators: the content of a message asking the user to restart
+#: bookworm/gui/settings.py:489
+msgid ""
+"You have changed the text wrapping setting.\n"
+"For this setting to fully take effect, you need to restart the application.\n"
+"Would you like to restart the application right now?"
+msgstr ""
+"Megváltoztatta az automatikus sortörés beállítását.\n"
+"Ahhoz, hogy a módosítás teljesen érvénybe lépjen, újra kell indítani az "
+"alkalmazást.\n"
+"Szeretné most újraindítani?"
+
+#. Translators: the title of a message telling the user
+#. that the text wrapping setting has been changed
+#: bookworm/gui/settings.py:495
+msgid "Text Wrapping Changed"
+msgstr "Az automatikus sortörés beállítása megváltozott"
+
+#. Translators: label of a button
+#: bookworm/gui/settings.py:533
+msgid "Download Pandoc: The universal document converter"
+msgstr "Pandoc letöltése – univerzális dokumentumátalakító"
+
+#. Translators: description of a button
+#: bookworm/gui/settings.py:536
+msgid ""
+"Add support for additional document formats including RTF and Word 2003 "
+"documents."
+msgstr ""
+"További dokumentumformátumok, köztük az RTF- és Word 2003-dokumentumok "
+"támogatása."
+
+#. Translators: label of a button
+#: bookworm/gui/settings.py:545
+msgid "Update Pandoc (the universal document converter)"
+msgstr "Pandoc frissítése – univerzális dokumentumátalakító"
+
+#. Translators: description of a button
+#: bookworm/gui/settings.py:548
+msgid ""
+"Update Pandoc to the latest version to improve performance and conversion "
+"quality."
+msgstr ""
+"A nagyobb teljesítmény és a jobb minőségű dokumentumátalakítás érdekében "
+"frissítse a Pandocot a legújabb verzióra."
+
+#. Translators: the title of a group of controls in the
+#. advanced settings page
+#. Translators: label of a button
+#: bookworm/gui/settings.py:554 bookworm/gui/settings.py:559
+msgid "Reset Settings"
+msgstr "Beállítások visszaállítása"
+
+#. Translators: description of a button
+#: bookworm/gui/settings.py:561
+msgid "Reset Bookworm's settings to their defaults"
+msgstr "A Bookworm alapértelmezett beállításainak visszaállítása"
+
+#. Translators: title of a progress dialog
+#: bookworm/gui/settings.py:569
+msgid "Downloading Pandoc"
+msgstr "Pandoc letöltése"
+
+#. Translators: message of a progress dialog
+#. Translators: content of a progress dialog
+#: bookworm/gui/settings.py:571 bookworm/ocr/ocr_dialogs.py:164
+#: bookworm/ocr/ocr_dialogs.py:614
+msgid "Getting download information..."
+msgstr "Letöltési információk lekérése..."
+
+#. Translators: message of a dialog
+#: bookworm/gui/settings.py:584 bookworm/ocr/ocr_dialogs.py:197
+msgid "Checking for updates. Please wait..."
+msgstr "Frissítések keresése. Kérjük, várjon..."
+
+#. Translators: content of a message box
+#: bookworm/gui/settings.py:593
+msgid ""
+"You will lose  all of your custom settings.\n"
+"Are you sure you want to restore all settings to their default values?"
+msgstr ""
+"Minden egyéni beállítása elvész.\n"
+"Biztosan visszaállítja az összes beállítást az alapértelmezett értékekre?"
+
+#. Translators: title of a message box
+#: bookworm/gui/settings.py:596
+msgid "Reset Settings?"
+msgstr "Visszaállítja a beállításokat?"
+
+#. Translators: title of a message box
+#: bookworm/gui/settings.py:609 bookworm/ocr/ocr_dialogs.py:184
+msgid "Restart Required"
+msgstr "Újraindítás szükséges"
+
+#. Translators: content of a message box
+#: bookworm/gui/settings.py:611
+msgid "Bookworm will now restart to complete the installation of Pandoc."
+msgstr "A Bookworm most újraindul a Pandoc telepítésének befejezéséhez."
+
+#. Translators: content of a message box
+#: bookworm/gui/settings.py:621
+msgid ""
+"A new version of Pandoc is available for download.\n"
+"It is strongly recommended to update to the latest version for the best "
+"performance and conversion quality.\n"
+"Would you like to update to the new version?"
+msgstr ""
+"A Pandoc új verziója érhető el.\n"
+"Az optimális teljesítmény és dokumentumátalakítási minőség érdekében "
+"kifejezetten javasolt a legújabb verzió használata.\n"
+"Szeretne frissíteni az új verzióra?"
+
+#. Translators: title of a message box
+#: bookworm/gui/settings.py:624
+msgid "Update Pandoc?"
+msgstr "Frissíti a Pandocot?"
+
+#. Translators: message of a dialog
+#: bookworm/gui/settings.py:633
+msgid "Removing old Pandoc version. Please wait..."
+msgstr "A Pandoc korábbi verziójának eltávolítása. Kérjük, várjon..."
+
+#. Translators: content of a message box
+#: bookworm/gui/settings.py:639
+msgid "Your version of Pandoc is up to date."
+msgstr "A Pandoc naprakész."
+
+#. Translators: title of a message box
+#: bookworm/gui/settings.py:641 bookworm/ocr/ocr_dialogs.py:227
+msgid "No updates"
+msgstr "Nincs elérhető frissítés"
+
+#. Translators: content of a message box
+#: bookworm/gui/settings.py:649
+msgid "Failed to check for updates. Please check your internet connection."
+msgstr "Nem sikerült frissítéseket keresni. Ellenőrizze az internetkapcsolatot."
+
+#. Translators: the label of a page in the settings dialog
+#: bookworm/gui/settings.py:665
+msgid "Appearance"
+msgstr "Megjelenés"
+
+#. Translators: the label of a page in the settings dialog
+#: bookworm/gui/settings.py:667
+msgid "Advanced"
+msgstr "Speciális"
+
+#. Translators: the label of the apply button in a dialog
+#: bookworm/gui/settings.py:724
+msgid "Apply"
+msgstr "Alkalmaz"
+
+#: bookworm/gui/book_viewer/__init__.py:80
+#, python-brace-format
+msgid "{text}: {item_type}"
+msgstr "{text}: {item_type}"
+
+#: bookworm/gui/book_viewer/__init__.py:101
+msgid "Failed to open document"
+msgstr "Nem sikerült megnyitni a dokumentumot"
+
+#: bookworm/gui/book_viewer/__init__.py:102
+msgid "The document you are trying to open could not be opened in Bookworm."
+msgstr "A Bookworm nem tudta megnyitni a kiválasztott dokumentumot."
+
+#. Translators: the title of an error message
+#: bookworm/gui/book_viewer/__init__.py:131
+msgid "Document not found"
+msgstr "A dokumentum nem található"
+
+#. Translators: the content of an error message
+#: bookworm/gui/book_viewer/__init__.py:133
+msgid ""
+"Could not open Document.\n"
+"The document does not exist."
+msgstr ""
+"A dokumentum nem nyitható meg.\n"
+"A megadott dokumentum nem létezik."
+
+#. Translators: the title of an error message
+#: bookworm/gui/book_viewer/__init__.py:145
+msgid "Document Restricted"
+msgstr "Korlátozott hozzáférésű dokumentum"
+
+#. Translators: the content of an error message
+#: bookworm/gui/book_viewer/__init__.py:147
+msgid ""
+"Could not open Document.\n"
+"The document is restricted by the publisher."
+msgstr ""
+"A dokumentum nem nyitható meg.\n"
+"A kiadó korlátozta a dokumentumhoz való hozzáférést."
+
+#. Translators: the title of a message shown
+#. when the format of the e-book is not supported
+#: bookworm/gui/book_viewer/__init__.py:157
+msgid "Unsupported Document Format"
+msgstr "Nem támogatott dokumentumformátum"
+
+#. Translators: the content of a message shown
+#. when the format of the e-book is not supported
+#: bookworm/gui/book_viewer/__init__.py:160
+msgid "The format of the given document is not supported by Bookworm."
+msgstr "A Bookworm nem támogatja a megadott dokumentum formátumát."
+
+#. Translators: the title of an error message
+#: bookworm/gui/book_viewer/__init__.py:169
+msgid "Archive contains no documents"
+msgstr "Az archívum egyetlen dokumentumot sem tartalmaz"
+
+#. Translators: the content of an error message
+#: bookworm/gui/book_viewer/__init__.py:171
+msgid ""
+"Bookworm cannot open this archive file.\n"
+"The archive contains no documents."
+msgstr ""
+"A Bookworm nem tudja megnyitni ezt az archívumot.\n"
+"Az archívum egyetlen dokumentumot sem tartalmaz."
+
+#: bookworm/gui/book_viewer/__init__.py:178
+msgid "Documents"
+msgstr "Dokumentumok"
+
+#: bookworm/gui/book_viewer/__init__.py:179
+msgid "Multiple documents found"
+msgstr "Több dokumentum található"
+
+#. Translators: the title of an error message
+#: bookworm/gui/book_viewer/__init__.py:193
+msgid "Error Opening Document"
+msgstr "Hiba a dokumentum megnyitásakor"
+
+#. Translators: the content of an error message
+#: bookworm/gui/book_viewer/__init__.py:196
+msgid ""
+"Could not open file\n"
+".Either the file  has been damaged during download, or it has been corrupted"
+" in some other way."
+msgstr ""
+"A fájl nem nyitható meg.\n"
+"Lehet, hogy a letöltés során megsérült, vagy más okból sérült."
+
+#. Translators: the title of an error message
+#: bookworm/gui/book_viewer/__init__.py:208
+msgid "Error Openning Document"
+msgstr "Hiba a dokumentum megnyitásakor"
+
+#. Translators: the content of an error message
+#: bookworm/gui/book_viewer/__init__.py:210
+msgid ""
+"Could not open document.\n"
+"An unknown error occurred while loading the file."
+msgstr ""
+"A dokumentum nem nyitható meg.\n"
+"Ismeretlen hiba történt a fájl betöltése közben."
+
+#. Translators: content of a message
+#: bookworm/gui/book_viewer/__init__.py:220
+msgid ""
+"Failed to open document.\n"
+"Would you like to remove its entry from the 'recent documents' and 'pinned "
+"documents' lists?"
+msgstr ""
+"Nem sikerült megnyitni a dokumentumot.\n"
+"Szeretné eltávolítani a dokumentum bejegyzését a „Legutóbb megnyitott” és a "
+"„Rögzített dokumentumok” listáról?"
+
+#. Translators: title of a message box
+#: bookworm/gui/book_viewer/__init__.py:223
+msgid "Remove from lists?"
+msgstr "Eltávolítja a listákról?"
+
+#. Translators: the text of the status bar when no book is currently open.
+#. It is being used also as a label for the page content text area when no book
+#. is opened.
+#: bookworm/gui/book_viewer/__init__.py:293
+msgid "Press (Ctrl + O) to open a document"
+msgstr "Dokumentum megnyitásához nyomja meg a Ctrl+O billentyűkombinációt"
+
+#. Translators: the label of the table-of-contents tree
+#: bookworm/gui/book_viewer/__init__.py:335
+msgid "Table of Contents"
+msgstr "Tartalomjegyzék"
+
+#. Translators: label for the reading progress slider
+#: bookworm/gui/book_viewer/__init__.py:357
+msgid "Reading progress percentage"
+msgstr "Olvasási előrehaladás százalékban"
+
+#. Translators: the label of a button in the application toolbar
+#: bookworm/gui/book_viewer/__init__.py:438
+msgid "Open"
+msgstr "Megnyitás"
+
+#. Translators: the label of a button in the application toolbar
+#: bookworm/gui/book_viewer/__init__.py:443
+msgid "Mode"
+msgstr "Mód"
+
+#. Translators: the label of a button in the application toolbar
+#: bookworm/gui/book_viewer/__init__.py:446
+msgid "Small"
+msgstr "Kicsi"
+
+#. Translators: the label of a button in the application toolbar
+#: bookworm/gui/book_viewer/__init__.py:448
+msgid "Big"
+msgstr "Nagy"
+
+#. Translators: title of a message telling the user that they entered an
+#. incorrect
+#. password for opening the book
+#: bookworm/gui/book_viewer/__init__.py:489
+msgid "Incorrect Password"
+msgstr "Helytelen jelszó"
+
+#. Translators: content of a message telling the user that they entered an
+#. incorrect
+#. password for opening the book
+#: bookworm/gui/book_viewer/__init__.py:493
+msgid ""
+"The password you provided is incorrect.\n"
+"Please try again with the correct password."
+msgstr ""
+"A megadott jelszó helytelen.\n"
+"Próbálja meg újra a helyes jelszóval."
+
+#. Translators: spoken message when the document has been closed
+#: bookworm/gui/book_viewer/__init__.py:550
+msgid "Document closed."
+msgstr "A dokumentum bezárva."
+
+#. Translators: text of reading progress shown in the status bar
+#: bookworm/gui/book_viewer/__init__.py:585
+#, python-brace-format
+msgid "{percentage} completed"
+msgstr "Elolvasva: {percentage}"
+
+#. Translators: label of content text control when the currently opened
+#. document is a single page document
+#: bookworm/gui/book_viewer/__init__.py:671
+msgid "Document content"
+msgstr "Dokumentum tartalma"
+
+#: bookworm/gui/book_viewer/__init__.py:725
+#, python-brace-format
+msgid "No next {item}"
+msgstr "Nincs következő {item}"
+
+#: bookworm/gui/book_viewer/__init__.py:727
+#, python-brace-format
+msgid "No previous {item}"
+msgstr "Nincs előző {item}"
+
+#. Translators: a message telling the user that the font size has been
+#. increased
+#: bookworm/gui/book_viewer/__init__.py:740
+msgid "The font size has been Increased"
+msgstr "A betűméret növelve"
+
+#. Translators: a message telling the user that the font size has been
+#. decreased
+#: bookworm/gui/book_viewer/__init__.py:746
+msgid "The font size has been decreased"
+msgstr "A betűméret csökkentve"
+
+#. Translators: a message telling the user that the font size has been reset
+#: bookworm/gui/book_viewer/__init__.py:750
+msgid "The font size has been reset"
+msgstr "A betűméret visszaállítva"
+
+#: bookworm/gui/book_viewer/__init__.py:775
+#, python-brace-format
+msgid "Reading progress: {percentage}"
+msgstr "Olvasási előrehaladás: {percentage}"
+
+#. Translators: the content of a dialog asking the user
+#. for the password to decrypt the current e-book
+#: bookworm/gui/book_viewer/__init__.py:795
+msgid ""
+"This document is encrypted with a password.\n"
+"You need to provide the password in order to access its content.\n"
+"Please provide the password and press enter."
+msgstr ""
+"Ez a dokumentum jelszóval titkosított.\n"
+"A tartalom eléréséhez meg kell adnia a jelszót.\n"
+"Írja be a jelszót, majd nyomja meg az Enter billentyűt."
+
+#. Translators: the title of a dialog asking the user to enter a password to
+#. decrypt the e-book
+#: bookworm/gui/book_viewer/__init__.py:800
+msgid "Enter Password"
+msgstr "Jelszó megadása"
+
+#. Translators: the label of the page content text area
+#. Translators: a message to announce when navigating to another page
+#: bookworm/gui/book_viewer/__init__.py:838
+#: bookworm/text_to_speech/__init__.py:389
+#, python-brace-format
+msgid "Page {page} of {total}"
+msgstr "{page}. oldal, összesen {total} oldal"
+
+#: bookworm/gui/book_viewer/__init__.py:965
+#, python-brace-format
+msgid "Opening page: {url}"
+msgstr "Oldal megnyitása: {url}"
+
+#. Translators: the label of a list of search results
+#: bookworm/gui/book_viewer/core_dialogs.py:49
+msgid "Search Results"
+msgstr "Keresési eredmények"
+
+#. Translators: the title of a column in the search results list showing
+#. an excerpt of the text of the search result
+#: bookworm/gui/book_viewer/core_dialogs.py:60
+msgid "Text"
+msgstr "Szöveg"
+
+#. Translators: the label of a progress bar indicating the progress of the
+#. search process
+#: bookworm/gui/book_viewer/core_dialogs.py:76
+msgid "Search Progress:"
+msgstr "Keresés előrehaladása:"
+
+#. Translators: the label of an edit field in the search dialog
+#: bookworm/gui/book_viewer/core_dialogs.py:144
+msgid "Search term:"
+msgstr "Keresendő szöveg:"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/book_viewer/core_dialogs.py:150
+msgid "Case sensitive"
+msgstr "Kis- és nagybetűk megkülönböztetése"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/book_viewer/core_dialogs.py:152
+msgid "Match whole word only"
+msgstr "Csak teljes szavak keresése"
+
+#. Translators: the label of a checkbox
+#: bookworm/gui/book_viewer/core_dialogs.py:154
+msgid "Regular expression"
+msgstr "Reguláris kifejezés"
+
+#. Translators: the label of an edit field in the go to page dialog
+#: bookworm/gui/book_viewer/core_dialogs.py:202
+#, python-brace-format
+msgid "Page number, of {total}:"
+msgstr "Oldalszám (összesen {total} oldal):"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:241
+msgid "Element Type"
+msgstr "Elemtípus"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:246
+msgid "Elements"
+msgstr "Elemek"
+
+#. Translators: title of a dialog
+#: bookworm/gui/book_viewer/core_dialogs.py:322
+msgid "Document Info"
+msgstr "Dokumentum adatai"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:351
+msgid "Author"
+msgstr "Szerző"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:355
+msgid "Description"
+msgstr "Leírás"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:364
+msgid "Number of Sections"
+msgstr "Fejezetek száma"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:368
+msgid "Number of Pages"
+msgstr "Oldalak száma"
+
+#. Translators: the title of a column in the Tesseract language list
+#: bookworm/gui/book_viewer/core_dialogs.py:371 bookworm/ocr/ocr_dialogs.py:554
+msgid "Language"
+msgstr "Nyelv"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:374
+msgid "Publisher"
+msgstr "Kiadó"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:376
+msgid "Created at"
+msgstr "Létrehozás dátuma"
+
+#: bookworm/gui/book_viewer/core_dialogs.py:379
+msgid "Publication Date"
+msgstr "Megjelenés dátuma"
+
+#. Translators: the content of the about message
+#: bookworm/gui/book_viewer/menubar.py:53
+#, python-brace-format
+msgid ""
+"{display_name}\n"
+"Version: {version}\n"
+"Website: {website}\n"
+"\n"
+"{display_name} is an advanced and accessible document reader that enables "
+"blind and visually impaired individuals to read documents in an easy, "
+"accessible, and hassle-free manor. It is being developed by {author} with "
+"some contributions from the community.\n"
+"\n"
+"{copyright}\n"
+"{display_name} is free software; you can redistribute it and/or modify it "
+"under the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.\n"
+"This program is distributed in the hope that it will be useful, but WITHOUT "
+"ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
+"FITNESS FOR A PARTICULAR PURPOSE.\n"
+"For further details, you can view the full licence from the help menu.\n"
+msgstr ""
+"{display_name}\n"
+"Verzió: {version}\n"
+"Webhely: {website}\n"
+"\n"
+"A {display_name} korszerű, akadálymentes dokumentumolvasó, amellyel a vak és"
+" gyengénlátó felhasználók könnyen és kényelmesen olvashatják "
+"dokumentumaikat. A programot {author} fejleszti, a közösség több tagjának "
+"közreműködésével.\n"
+"\n"
+"{copyright}\n"
+"A {display_name} szabad szoftver; a Free Software Foundation által közzétett"
+" GNU General Public License 2. verziójának vagy – választása szerint – "
+"bármely későbbi verziójának feltételei szerint terjesztheti és/vagy "
+"módosíthatja.\n"
+"A programot abban a reményben terjesztjük, hogy hasznos lesz, de MINDEN "
+"EGYÉB GARANCIA NÉLKÜL; az ELADHATÓSÁGRA vagy VALAMELY CÉLRA VALÓ "
+"ALKALMAZHATÓSÁGRA vonatkozó hallgatólagos garanciát sem vállalunk.\n"
+"További részletekért tekintse meg a licenc teljes szövegét a Súgó menüben.\n"
+
+#: bookworm/gui/book_viewer/menubar.py:65
+msgid "This release of Bookworm is generously sponsored  by Capeds (www.capeds.net)."
+msgstr ""
+"A Bookworm ezen kiadása a Capeds (www.capeds.net) nagylelkű támogatásával "
+"készült."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:96
+msgid "Open...\tCtrl-O"
+msgstr "Megnyitás...\tCtrl-O"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:98
+msgid "New Window...\tCtrl-N"
+msgstr "Új ablak...\tCtrl-N"
+
+#: bookworm/gui/book_viewer/menubar.py:103
+msgid "i&mport"
+msgstr "&Importálás"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:105
+msgid "Import a book from an external resource"
+msgstr "Könyv importálása külső forrásból"
+
+#: bookworm/gui/book_viewer/menubar.py:107
+msgid "&Import QRD file"
+msgstr "QRD-fájl &importálása"
+
+#: bookworm/gui/book_viewer/menubar.py:111
+msgid "&Pin\tCtrl-P"
+msgstr "&Rögzítés\tCtrl-P"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:114
+msgid "&Save As Plain Text..."
+msgstr "Mentés &egyszerű szövegként..."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:119
+msgid "&Close Current Document\tCtrl-W"
+msgstr "Aktuális dokumentum be&zárása\tCtrl-W"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:121
+msgid "Close the currently open document"
+msgstr "Az aktuálisan megnyitott dokumentum bezárása"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:127
+msgid "C&lear Documents Cache..."
+msgstr "Dokumentum-gyorsítótár &törlése..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:130
+msgid ""
+"Clear the document cache. Helps in fixing some issues with openning "
+"documents."
+msgstr ""
+"A dokumentum-gyorsítótár törlése. Segíthet a dokumentumok megnyitásával "
+"kapcsolatos egyes problémák elhárításában."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:137
+msgid "Pi&nned Documents"
+msgstr "Rögzített &dokumentumok"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:139
+msgid "Opens a list of documents you pinned."
+msgstr "A rögzített dokumentumok listájának megnyitása."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:145 bookworm/gui/book_viewer/menubar.py:159
+msgid "Clear list"
+msgstr "Lista ürítése"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:147
+msgid "Clear the pinned documents list"
+msgstr "A rögzített dokumentumok listájának ürítése"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:152
+msgid "&Recently Opened"
+msgstr "&Legutóbb megnyitott"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:154
+msgid "Opens a list of recently opened books."
+msgstr "A legutóbb megnyitott dokumentumok listájának megnyitása."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:161
+msgid "Clear the recent books list."
+msgstr "A legutóbb megnyitott dokumentumok listájának ürítése."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:167
+msgid "&Preferences...\tCtrl-Shift-P"
+msgstr "&Beállítások...\tCtrl-Shift-P"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:169
+msgid "Configure application"
+msgstr "Az alkalmazás beállítása"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:173
+msgid "Exit"
+msgstr "Kilépés"
+
+#. Translators: the title of a file dialog to browse to a document
+#: bookworm/gui/book_viewer/menubar.py:225
+msgid "Select a document"
+msgstr "Dokumentum kiválasztása"
+
+#: bookworm/gui/book_viewer/menubar.py:249
+msgid "Import QRD file"
+msgstr "QRD-fájl importálása"
+
+#: bookworm/gui/book_viewer/menubar.py:260
+msgid "Failed to import QRD file"
+msgstr "Nem sikerült importálni a QRD-fájlt"
+
+#: bookworm/gui/book_viewer/menubar.py:261
+msgid "The QRD file could not be imported"
+msgstr "A QRD-fájl nem importálható"
+
+#: bookworm/gui/book_viewer/menubar.py:277
+msgid "Pinned"
+msgstr "Rögzítve"
+
+#: bookworm/gui/book_viewer/menubar.py:281
+msgid "Unpinned"
+msgstr "Rögzítés feloldva"
+
+#. Translators: the title of a dialog showing
+#. the progress of book export process
+#: bookworm/gui/book_viewer/menubar.py:307
+msgid "Exporting Document"
+msgstr "Dokumentum exportálása"
+
+#. Translators: the message of a dialog showing the progress of book export
+#: bookworm/gui/book_viewer/menubar.py:309
+msgid "Converting document to plain text."
+msgstr "A dokumentum átalakítása egyszerű szöveggé."
+
+#. Translators: a message shown when the book is being exported
+#: bookworm/gui/book_viewer/menubar.py:327
+#, python-brace-format
+msgid "Exporting Page {current} of {total}..."
+msgstr "{current}. oldal exportálása, összesen {total}..."
+
+#. Translators: the title of the application preferences dialog
+#: bookworm/gui/book_viewer/menubar.py:350
+#, python-brace-format
+msgid "{app_name} Preferences"
+msgstr "{app_name} – Beállítások"
+
+#. Translators: content of a message
+#: bookworm/gui/book_viewer/menubar.py:364
+msgid "Are you sure you want to clear the documents cache?"
+msgstr "Biztosan törli a dokumentum-gyorsítótárat?"
+
+#. Translators: title of a message box
+#: bookworm/gui/book_viewer/menubar.py:366
+msgid "Clear Documents Cache?"
+msgstr "Törli a dokumentum-gyorsítótárat?"
+
+#. Translators: content of a message box
+#: bookworm/gui/book_viewer/menubar.py:374
+msgid "Documents cache has been cleared."
+msgstr "A dokumentum-gyorsítótár törlése befejeződött."
+
+#. Translators: content of a message in a message box
+#: bookworm/gui/book_viewer/menubar.py:383
+msgid "Clearing documents cache..."
+msgstr "A dokumentum-gyorsítótár törlése folyamatban..."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:427
+msgid "(No recent books)"
+msgstr "(Nincsenek nemrég megnyitott dokumentumok)"
+
+#: bookworm/gui/book_viewer/menubar.py:428
+msgid "No recent books"
+msgstr "Nincsenek nemrég megnyitott dokumentumok"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:465
+msgid "Document &Info..."
+msgstr "Dokumentum &adatai..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:467
+msgid "Show information about number of chapters, word count..etc."
+msgstr ""
+"A dokumentum adatainak, például a fejezetek és a szavak számának "
+"megjelenítése."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:472
+msgid "&Element list...\tCtrl+F7"
+msgstr "&Elemlista...\tCtrl+F7"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:474
+msgid "Show a list of semantic elements."
+msgstr "A szemantikai elemek listájának megjelenítése."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:479
+msgid "Change Reading &Mode...\tCtrl-Shift-M"
+msgstr "Olvasási &mód módosítása...\tCtrl-Shift-M"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:481
+msgid "Change the current reading mode."
+msgstr "Az aktuális olvasási mód módosítása."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:486
+#: bookworm/gui/book_viewer/menubar.py:1065
+msgid "&Render Page...\tCtrl-R"
+msgstr "Oldal &grafikus megjelenítése...\tCtrl-R"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:488
+#: bookworm/gui/book_viewer/menubar.py:1066
+msgid "View a fully rendered version of this page."
+msgstr "Az oldal teljes grafikus megjelenítése."
+
+#: bookworm/gui/book_viewer/menubar.py:530
+msgid "Rendered Page"
+msgstr "Grafikus oldalnézet"
+
+#: bookworm/gui/book_viewer/menubar.py:547
+msgid "Available reading modes"
+msgstr "Elérhető olvasási módok"
+
+#: bookworm/gui/book_viewer/menubar.py:548
+msgid "Select Reading Mode "
+msgstr "Olvasási mód kiválasztása "
+
+#: bookworm/gui/book_viewer/menubar.py:573
+msgid "Element List"
+msgstr "Elemlista"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:600
+#: bookworm/gui/book_viewer/menubar.py:1055
+msgid "&Find in Document...\tCtrl-F"
+msgstr "Keresés a &dokumentumban...\tCtrl-F"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:602
+#: bookworm/gui/book_viewer/menubar.py:1056
+msgid "Search this document."
+msgstr "Keresés ebben a dokumentumban."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:607
+msgid "Find &Next\tF3"
+msgstr "Következő &keresése\tF3"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:609
+msgid "Find next occurrence."
+msgstr "A következő előfordulás megkeresése."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:614
+msgid "Find &Previous\tShift-F3"
+msgstr "&Előző keresése\tShift-F3"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:616
+msgid "Find previous occurrence."
+msgstr "Az előző előfordulás megkeresése."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:621
+msgid "&Jump to Line...\tCtrl-L"
+msgstr "Ugrás so&rra...\tCtrl-L"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:623
+msgid "Jump to a line within the current page or document"
+msgstr "Ugrás az aktuális oldal vagy dokumentum megadott sorára"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:628
+#: bookworm/gui/book_viewer/menubar.py:1049
+msgid "&Go To Page...\tCtrl-G"
+msgstr "Ugrás &oldalra...\tCtrl-G"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:630
+msgid "Go to page"
+msgstr "Ugrás oldalra"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:635
+msgid "&Go To Page By Label...\tCtrl-Shift-G"
+msgstr "Ugrás oldalra oldal&címke alapján...\tCtrl-Shift-G"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:637
+msgid "Go to a page using its label"
+msgstr "Ugrás oldalra oldalcímke alapján"
+
+#: bookworm/gui/book_viewer/menubar.py:671
+#, python-brace-format
+msgid ""
+"You are here: {current_line}\n"
+"You can't go further than: {last_line}"
+msgstr ""
+"Aktuális sor: {current_line}\n"
+"Az utolsó elérhető sor: {last_line}"
+
+#: bookworm/gui/book_viewer/menubar.py:673
+msgid "Line number"
+msgstr "Sorszám"
+
+#: bookworm/gui/book_viewer/menubar.py:674
+msgid "Jump to line"
+msgstr "Ugrás sorra"
+
+#. Translators: the title of the go to page dialog
+#: bookworm/gui/book_viewer/menubar.py:687
+msgid "Go To Page"
+msgstr "Ugrás oldalra"
+
+#: bookworm/gui/book_viewer/menubar.py:694
+msgid "Go To Page By Label"
+msgstr "Ugrás oldalra oldalcímke alapján"
+
+#: bookworm/gui/book_viewer/menubar.py:694
+msgid "Page Label"
+msgstr "Oldalcímke"
+
+#. Translators: the title of the search dialog
+#: bookworm/gui/book_viewer/menubar.py:702
+msgid "Search Document"
+msgstr "Keresés a dokumentumban"
+
+#: bookworm/gui/book_viewer/menubar.py:728
+#, python-brace-format
+msgid "Searching For '{term}'"
+msgstr "Keresés: „{term}”"
+
+#. Translators: message to announce the number of search results
+#. also used as the final title of the search results dialog
+#: bookworm/gui/book_viewer/menubar.py:743
+#, python-brace-format
+msgid "Results | {total}"
+msgstr "Találatok | {total}"
+
+#. Translators: spoken message when there is no next search result.
+#: bookworm/gui/book_viewer/menubar.py:820
+#, python-brace-format
+msgid "No next search result for '{term}'"
+msgstr "Nincs következő találat: „{term}”"
+
+#. Translators: spoken message when there is no previous search result.
+#: bookworm/gui/book_viewer/menubar.py:823
+#, python-brace-format
+msgid "No previous search result for '{term}'"
+msgstr "Nincs előző találat: „{term}”"
+
+#: bookworm/gui/book_viewer/menubar.py:832
+msgid "Search Result"
+msgstr "Keresési találat"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:878
+msgid "&User guide...\tF1"
+msgstr "&Felhasználói kézikönyv...\tF1"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:880
+msgid "View Bookworm manuals"
+msgstr "A Bookworm felhasználói kézikönyvének megtekintése"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:885
+msgid "What's &New..."
+msgstr "Új&donságok..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:887
+msgid "View the application's changelog"
+msgstr "Az alkalmazás változásnaplójának megtekintése"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:892
+msgid "Bookworm &website..."
+msgstr "A Bookworm &webhelye..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:894
+msgid "Visit the official website of Bookworm"
+msgstr "A Bookworm hivatalos webhelyének megnyitása"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:899
+msgid "&License"
+msgstr "&Licenc"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:901
+msgid "View legal information about this program ."
+msgstr "A programra vonatkozó jogi információk megtekintése."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:906
+msgid "Con&tributors"
+msgstr "&Közreműködők"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:908
+msgid "View a list of notable contributors to the program."
+msgstr "A program jelentősebb közreműködőinek megtekintése."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:914
+msgid "&Restart with debug-mode enabled"
+msgstr "Újraindítás &hibakeresési módban"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:916
+msgid "Restart the program with debug mode enabled to show errors"
+msgstr "A program újraindítása hibakeresési módban a hibák megjelenítéséhez"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:926
+msgid "&About Bookworm"
+msgstr "A &Bookworm névjegye"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:928
+msgid "Show general information about this program"
+msgstr "Általános információk megjelenítése a programról"
+
+#. Translators: the title of the about dialog
+#: bookworm/gui/book_viewer/menubar.py:966
+#, python-brace-format
+msgid "About {app_name}"
+msgstr "{app_name} névjegye"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:1002
+msgid "&Search"
+msgstr "&Keresés"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:1004
+msgid "&Document"
+msgstr "&Dokumentum"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/gui/book_viewer/menubar.py:1006
+msgid "&Help"
+msgstr "&Súgó"
+
+#: bookworm/gui/book_viewer/menubar.py:1050
+msgid "Jump to a page"
+msgstr "Ugrás oldalra"
+
+#: bookworm/gui/book_viewer/menubar.py:1104
+msgid "Supported document formats"
+msgstr "Támogatott dokumentumformátumok"
+
+#. Translators: spoken message when the current document does not
+#. support structural navigation
+#: bookworm/gui/book_viewer/navigation.py:140
+msgid "Not supported in this document."
+msgstr "Ez a funkció ebben a dokumentumban nem használható."
+
+#: bookworm/gui/book_viewer/render_view.py:88
+#: bookworm/gui/book_viewer/render_view.py:274
+#, python-brace-format
+msgid "Zoom is at {factor} percent"
+msgstr "Nagyítás: {factor} százalék"
+
+#: bookworm/gui/book_viewer/render_view.py:100
+#, python-brace-format
+msgid "Page {}"
+msgstr "{}. oldal"
+
+#: bookworm/gui/book_viewer/render_view.py:169
+msgid "Zoom In"
+msgstr "Nagyítás"
+
+#: bookworm/gui/book_viewer/render_view.py:170
+msgid "Zoom Out"
+msgstr "Kicsinyítés"
+
+#: bookworm/gui/book_viewer/render_view.py:172
+msgid "Actual Size"
+msgstr "Tényleges méret"
+
+#: bookworm/gui/book_viewer/render_view.py:176
+msgid "Copy"
+msgstr "Másolás"
+
+#: bookworm/gui/book_viewer/render_view.py:179
+msgid "Close"
+msgstr "Bezárás"
+
+#: bookworm/gui/book_viewer/render_view.py:184 bookworm/ocr/ocr_dialogs.py:294
+#: bookworm/structured_text/structural_elements.py:72
+#: bookworm/structured_text/structured_html_parser.py:397
+#: bookworm/structured_text/structured_html_parser.py:424
+msgid "Image"
+msgstr "Kép"
+
+#. Translators: title of a save file dialog for an embedded book image
+#: bookworm/gui/book_viewer/render_view.py:331
+#: bookworm/gui/book_viewer/render_view.py:357
+msgid "Save Image"
+msgstr "Kép mentése"
+
+#: bookworm/gui/book_viewer/render_view.py:334
+msgid "PNG Image"
+msgstr "PNG-kép"
+
+#: bookworm/gui/book_viewer/render_view.py:335
+msgid "JPEG Image"
+msgstr "JPEG-kép"
+
+#: bookworm/gui/book_viewer/render_view.py:356
+msgid "Could not save this image."
+msgstr "Nem sikerült menteni a képet."
+
+#: bookworm/gui/book_viewer/render_view.py:362
+msgid "Image saved"
+msgstr "A kép mentése sikerült"
+
+#. Translators: content of a message confirming overwrite of an image file
+#: bookworm/gui/book_viewer/render_view.py:384
+#, python-brace-format
+msgid "A file named \"{filename}\" already exists. Do you want to replace it?"
+msgstr "Már létezik „{filename}” nevű fájl. Szeretné felülírni?"
+
+#. Translators: title of a message confirming overwrite of an image file
+#: bookworm/gui/book_viewer/render_view.py:389
+msgid "Confirm Save As"
+msgstr "Mentés másként – megerősítés"
+
+#: bookworm/gui/book_viewer/render_view.py:417
+msgid "Could not copy this image."
+msgstr "Nem sikerült másolni a képet."
+
+#: bookworm/gui/book_viewer/render_view.py:418
+msgid "Copy Image"
+msgstr "Kép másolása"
+
+#: bookworm/gui/book_viewer/render_view.py:423
+msgid "Image copied to clipboard"
+msgstr "A kép a vágólapra került"
+
+#. Translators: content of a message in a progress dialog
+#: bookworm/http_tools/http_resource.py:44 bookworm/platforms/win32/updater.py:216
+#, python-brace-format
+msgid "Downloaded {downloaded} MB of {total} MB"
+msgstr "Letöltve: {downloaded} MB / {total} MB"
+
+#. Translators: the label of a page in the settings dialog
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/__init__.py:79 bookworm/ocr/__init__.py:98
+#: bookworm/ocr/__init__.py:101
+msgid "OCR"
+msgstr "OCR"
+
+#. Translators: the label of a group of controls in the reading page
+#: bookworm/ocr/ocr_dialogs.py:64 bookworm/ocr/ocr_menu.py:209
+msgid "OCR Options"
+msgstr "OCR-beállítások"
+
+#. Translators: the title of a group of radio buttons in the OCR page
+#. in the application settings.
+#: bookworm/ocr/ocr_dialogs.py:71
+msgid "Default OCR Engine"
+msgstr "Alapértelmezett OCR-motor"
+
+#. Translators: the label of a group of controls in the OCR page
+#. of the settings related to Tesseract OCR engine
+#: bookworm/ocr/ocr_dialogs.py:78
+#: bookworm/ocr_engines/tesseract_ocr_engine/__init__.py:25
+#: bookworm/ocr_engines/tesseract_ocr_engine/alt_tess.py:29
+msgid "Tesseract OCR Engine"
+msgstr "Tesseract OCR-motor"
+
+#: bookworm/ocr/ocr_dialogs.py:83
+msgid "Download Tesseract OCR Engine"
+msgstr "Tesseract OCR-motor letöltése"
+
+#: bookworm/ocr/ocr_dialogs.py:85
+msgid "Get a free, high-quality OCR engine that supports over 100 languages."
+msgstr "Ingyenes, kiváló minőségű OCR-motor, amely több mint 100 nyelvet támogat."
+
+#. Translators: label of a button
+#: bookworm/ocr/ocr_dialogs.py:94
+msgid "Manage Tesseract OCR Languages"
+msgstr "Tesseract OCR nyelveinek kezelése"
+
+#. Translators: description of a button
+#: bookworm/ocr/ocr_dialogs.py:96
+msgid "Add support for new languages, and /or remove installed languages."
+msgstr "Új nyelvek telepítése, illetve a már telepített nyelvek eltávolítása."
+
+#. Translators: label of a button
+#: bookworm/ocr/ocr_dialogs.py:102
+msgid "Update Tesseract OCr Engine"
+msgstr "Tesseract OCR-motor frissítése"
+
+#. Translators: description of a button
+#: bookworm/ocr/ocr_dialogs.py:104
+msgid "Check for and install updates for Tesseract OCR Engine"
+msgstr "A Tesseract OCR-motor frissítéseinek keresése és telepítése"
+
+#. Translators: the label of a group of controls in the OCR page
+#. of the settings related to Baidu OCR engine
+#: bookworm/ocr/ocr_dialogs.py:110
+msgid "Baidu OCR Engine"
+msgstr "Baidu OCR-motor"
+
+#. Translators: the label of an edit field
+#: bookworm/ocr/ocr_dialogs.py:112
+msgid "API Key:"
+msgstr "API-kulcs:"
+
+#. Translators: the label of an edit field
+#: bookworm/ocr/ocr_dialogs.py:115
+msgid "Secret Key:"
+msgstr "Titkos kulcs:"
+
+#. Translators: the label of a group of controls in the OCR page
+#. of the settings related to Vivo OCR engine
+#: bookworm/ocr/ocr_dialogs.py:121
+msgid "Vivo OCR Engine (requires nvdacn.com account)"
+msgstr "Vivo OCR-motor (nvdacn.com-fiók szükséges)"
+
+#. Translators: the label of an edit field for username
+#: bookworm/ocr/ocr_dialogs.py:123
+msgid "Username:"
+msgstr "Felhasználónév:"
+
+#. Translators: the label of an edit field for password
+#: bookworm/ocr/ocr_dialogs.py:126
+msgid "Password:"
+msgstr "Jelszó:"
+
+#. Translators: the label of a group of controls in the reading page
+#. of the settings related to image enhancement
+#: bookworm/ocr/ocr_dialogs.py:132
+msgid "Image processing"
+msgstr "Képfeldolgozás"
+
+#. Translators: the label of a checkbox
+#: bookworm/ocr/ocr_dialogs.py:138
+msgid "Enable default image enhancement filters"
+msgstr "Alapértelmezett képjavító szűrők engedélyezése"
+
+#. Translators: title of a progress dialog
+#: bookworm/ocr/ocr_dialogs.py:162
+msgid "Downloading Tesseract OCR Engine"
+msgstr "Tesseract OCR-motor letöltése"
+
+#. Translators: title of a dialog to manage Tesseract OCR engine languages
+#: bookworm/ocr/ocr_dialogs.py:175
+msgid "Manage Tesseract OCR Engine Languages"
+msgstr "A Tesseract OCR-motor nyelveinek kezelése"
+
+#. Translators: content of a message box
+#: bookworm/ocr/ocr_dialogs.py:187
+msgid ""
+"Bookworm will now restart to complete the installation of the Tesseract OCR "
+"Engine."
+msgstr "A Bookworm most újraindul a Tesseract OCR-motor telepítésének befejezéséhez."
+
+#. Translators: content of a message box
+#: bookworm/ocr/ocr_dialogs.py:207
+msgid ""
+"A new version of Tesseract OCr engine is available for download.\n"
+"It is strongly recommended to update to the latest version for the best "
+"accuracy and performance.\n"
+"Would you like to update to the new version?"
+msgstr ""
+"A Tesseract OCR-motor új verziója érhető el.\n"
+"A lehető legjobb felismerési pontosság és teljesítmény érdekében javasoljuk "
+"a legújabb verzió használatát.\n"
+"Szeretne frissíteni az új verzióra?"
+
+#. Translators: title of a message box
+#: bookworm/ocr/ocr_dialogs.py:210
+msgid "Update Tesseract OCr Engine?"
+msgstr "Frissíti a Tesseract OCR-motort?"
+
+#. Translators: message of a dialog
+#: bookworm/ocr/ocr_dialogs.py:219
+msgid "Removing old Tesseract version. Please wait..."
+msgstr "A Tesseract korábbi verziójának eltávolítása. Kérjük, várjon..."
+
+#. Translators: content of a message box
+#: bookworm/ocr/ocr_dialogs.py:225
+msgid "Your version of Tesseract OCR engine is up to date."
+msgstr "A Tesseract OCR-motor naprakész."
+
+#. Translators: content of a message box
+#: bookworm/ocr/ocr_dialogs.py:236
+msgid "Failed to check for updates for Tesseract OCr engine."
+msgstr "Nem sikerült frissítéseket keresni a Tesseract OCR-motorhoz."
+
+#. Translators: title of a group of controls
+#: bookworm/ocr/ocr_dialogs.py:273
+msgid "Recognition Language"
+msgstr "Felismerési nyelv"
+
+#. Translators: the label of a combobox
+#: bookworm/ocr/ocr_dialogs.py:275
+msgid "Primary recognition Language"
+msgstr "Elsődleges felismerési nyelv"
+
+#: bookworm/ocr/ocr_dialogs.py:282
+msgid "Add a secondary recognition language"
+msgstr "Másodlagos felismerési nyelv hozzáadása"
+
+#: bookworm/ocr/ocr_dialogs.py:286
+msgid "Secondary recognition Language"
+msgstr "Másodlagos felismerési nyelv"
+
+#: bookworm/ocr/ocr_dialogs.py:295
+msgid "Supplied Image resolution::"
+msgstr "Bemeneti kép felbontása:"
+
+#: bookworm/ocr/ocr_dialogs.py:299
+msgid "Enable image enhancements"
+msgstr "Képjavítás engedélyezése"
+
+#. Translators: Title for a group of engine-specific OCR options
+#: bookworm/ocr/ocr_dialogs.py:304
+msgid "Engine Specific Options"
+msgstr "Az OCR-motor saját beállításai"
+
+#: bookworm/ocr/ocr_dialogs.py:322
+msgid "Available image pre-processing filters:"
+msgstr "Elérhető kép-előfeldolgozó szűrők:"
+
+#. Translators: the label of a checkbox
+#: bookworm/ocr/ocr_dialogs.py:337
+msgid "&Save these options until I close the current book"
+msgstr "A beállítások &megőrzése az aktuális könyv bezárásáig"
+
+#: bookworm/ocr/ocr_dialogs.py:432
+msgid "Increase image resolution"
+msgstr "Képfelbontás növelése"
+
+#: bookworm/ocr/ocr_dialogs.py:433
+msgid "Binarization"
+msgstr "Binarizálás"
+
+#: bookworm/ocr/ocr_dialogs.py:436
+msgid "Split two-in-one scans to individual pages"
+msgstr "Két oldalt egy képen tartalmazó beolvasások szétválasztása"
+
+#: bookworm/ocr/ocr_dialogs.py:439
+msgid "Combine images"
+msgstr "Képek egyesítése"
+
+#: bookworm/ocr/ocr_dialogs.py:440
+msgid "Blurring"
+msgstr "Elmosás"
+
+#: bookworm/ocr/ocr_dialogs.py:441
+msgid "Deskewing"
+msgstr "Ferdeségkorrekció"
+
+#: bookworm/ocr/ocr_dialogs.py:442
+msgid "Erosion"
+msgstr "Erózió"
+
+#: bookworm/ocr/ocr_dialogs.py:443
+msgid "Dilation"
+msgstr "Dilatáció"
+
+#: bookworm/ocr/ocr_dialogs.py:444
+msgid "Sharpen image"
+msgstr "Kép élesítése"
+
+#: bookworm/ocr/ocr_dialogs.py:445
+msgid "Invert colors"
+msgstr "Színek invertálása"
+
+#: bookworm/ocr/ocr_dialogs.py:448
+msgid "Debug"
+msgstr "Hibakeresés"
+
+#: bookworm/ocr/ocr_dialogs.py:467
+msgid "Installed Languages"
+msgstr "Telepített nyelvek"
+
+#: bookworm/ocr/ocr_dialogs.py:471
+msgid "Downloadable Languages"
+msgstr "Letölthető nyelvek"
+
+#. Translators: label of a list control containing bookmarks
+#: bookworm/ocr/ocr_dialogs.py:502
+msgid "Tesseract Languages"
+msgstr "Tesseract OCR nyelvei"
+
+#: bookworm/ocr/ocr_dialogs.py:515
+msgid "Download &Best Model"
+msgstr "&Legjobb modell letöltése"
+
+#: bookworm/ocr/ocr_dialogs.py:519
+msgid "Download &Fast Model"
+msgstr "&Gyors modell letöltése"
+
+#. Translators: the title of a column in the Tesseract language list
+#: bookworm/ocr/ocr_dialogs.py:561
+msgid "Installed"
+msgstr "Telepítve"
+
+#: bookworm/ocr/ocr_dialogs.py:564
+msgid "Yes"
+msgstr "Igen"
+
+#: bookworm/ocr/ocr_dialogs.py:564
+msgid "No"
+msgstr "Nem"
+
+#. Translators: content of a messagebox
+#: bookworm/ocr/ocr_dialogs.py:595
+msgid ""
+"A version of the selected language model already exists.\n"
+"Are you sure you want to replace it?"
+msgstr ""
+"A kiválasztott nyelvhez már van telepített nyelvi modell.\n"
+"Biztosan lecseréli?"
+
+#. Translators: title of a progress dialog
+#: bookworm/ocr/ocr_dialogs.py:612
+msgid "Downloading Language"
+msgstr "Nyelvi modell letöltése"
+
+#. Translators: content of a messagebox
+#: bookworm/ocr/ocr_dialogs.py:637
+#, python-brace-format
+msgid ""
+"Are you sure you want to remove language:\n"
+"{lang}?"
+msgstr ""
+"Biztosan eltávolítja a következő nyelvet?\n"
+"{lang}"
+
+#. Translators: title of a messagebox
+#: bookworm/ocr/ocr_dialogs.py:662
+msgid "Language Added"
+msgstr "Nyelv hozzáadva"
+
+#. Translators: content of a message box
+#: bookworm/ocr/ocr_dialogs.py:664
+msgid "The Language Model was downloaded successfully."
+msgstr "A nyelvi modell sikeresen letöltődött."
+
+#. Translators: title of a message box
+#. Translators: title of a messagebox
+#: bookworm/ocr/ocr_dialogs.py:672 bookworm/platforms/win32/pandoc_download.py:54
+#: bookworm/platforms/win32/tesseract_download.py:85
+#: bookworm/webservices/wikiworm.py:148
+msgid "Connection Error"
+msgstr "Kapcsolódási hiba"
+
+#. Translators: content of a message box
+#: bookworm/ocr/ocr_dialogs.py:675
+msgid ""
+"Failed to download language data.\n"
+"Please check your internet connection."
+msgstr ""
+"Nem sikerült letölteni a nyelvi adatokat.\n"
+"Ellenőrizze az internetkapcsolatot."
+
+#. Translators: content of a messagebox
+#: bookworm/ocr/ocr_dialogs.py:685
+msgid ""
+"Failed to install language data.\n"
+"Please try again later."
+msgstr ""
+"Nem sikerült telepíteni a nyelvi adatokat.\n"
+"Próbálja meg később újra."
+
+#: bookworm/ocr/ocr_menu.py:88
+#, python-brace-format
+msgid "Recognition Result: {image_name}"
+msgstr "Felismerés eredménye: {image_name}"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:124
+msgid "&Scan Current Page...\tF4"
+msgstr "Aktuális oldal &felismerése...\tF4"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:126
+msgid "Run OCR on the current page"
+msgstr "OCR futtatása az aktuális oldalon"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:131
+msgid "&Automatic OCR\tCtrl-F4"
+msgstr "&Automatikus OCR\tCtrl-F4"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:133
+msgid "Auto run  OCR when turning pages."
+msgstr "OCR automatikus futtatása lapozáskor."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:139
+msgid "&Change OCR Options..."
+msgstr "OCR-beállítások &módosítása..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:141
+msgid "Change OCR options"
+msgstr "OCR-beállítások módosítása"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:146
+msgid "Scan To &Text File..."
+msgstr "Felismerés &szövegfájlba..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:148
+msgid "Scan pages and save the text to a .txt file."
+msgstr "Oldalak felismerése és a szöveg mentése .txt-fájlba."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:153
+msgid "Image To Text..."
+msgstr "Kép szöveggé alakítása..."
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/ocr/ocr_menu.py:155
+msgid "Run OCR on an image."
+msgstr "OCR futtatása képen."
+
+#. Translators: the label of the OCR menu in the application menubar
+#. Event handlers
+#. Translators: content of a message
+#: bookworm/ocr/ocr_menu.py:200
+msgid ""
+"No language for OCR is present.\n"
+"Please checkout Bookworm user manual to learn how to add new languages."
+msgstr ""
+"Nincs telepítve OCR-hez használható nyelv.\n"
+"Új nyelvek hozzáadásáról a Bookworm felhasználói kézikönyvében olvashat."
+
+#. Translators: title for a message
+#: bookworm/ocr/ocr_menu.py:203
+msgid "No Languages for OCR"
+msgstr "Nincs OCR-hez használható nyelv"
+
+#: bookworm/ocr/ocr_menu.py:222
+msgid "Canceled"
+msgstr "Megszakítva"
+
+#: bookworm/ocr/ocr_menu.py:268
+msgid "Running OCR, please wait..."
+msgstr "OCR folyamatban. Kérjük, várjon..."
+
+#: bookworm/ocr/ocr_menu.py:283
+msgid "Automatic OCR failed."
+msgstr "Az automatikus OCR nem sikerült."
+
+#: bookworm/ocr/ocr_menu.py:353
+msgid "Automatic OCR setup canceled."
+msgstr "Az automatikus OCR beállítása megszakadt."
+
+#: bookworm/ocr/ocr_menu.py:358
+msgid "Automatic OCR is enabled"
+msgstr "Az automatikus OCR engedélyezve"
+
+#: bookworm/ocr/ocr_menu.py:365
+msgid "Automatic OCR is disabled"
+msgstr "Az automatikus OCR letiltva"
+
+#. Translators: the title of a save file dialog asking the user for a filename
+#. to export notes to
+#: bookworm/ocr/ocr_menu.py:381
+msgid "Save as"
+msgstr "Mentés másként"
+
+#. Translators: the title of a progress dialog
+#: bookworm/ocr/ocr_menu.py:398
+msgid "Scanning Pages"
+msgstr "Oldalak felismerése"
+
+#. Translators: the message of a progress dialog
+#: bookworm/ocr/ocr_menu.py:400
+msgid "Preparing book"
+msgstr "Könyv előkészítése"
+
+#: bookworm/ocr/ocr_menu.py:426
+#, python-brace-format
+msgid ""
+"Successfully processed {total} pages.\n"
+"Extracted text was written to: {file}"
+msgstr ""
+"Sikeresen feldolgozott oldalak száma: {total}.\n"
+"A felismert szöveg mentési helye: {file}"
+
+#: bookworm/ocr/ocr_menu.py:428
+msgid "OCR Completed"
+msgstr "Az OCR befejeződött"
+
+#: bookworm/ocr/ocr_menu.py:447
+msgid "Portable Network Graphics"
+msgstr "PNG-képek"
+
+#: bookworm/ocr/ocr_menu.py:448
+msgid "JPEG images"
+msgstr "JPEG-képek"
+
+#: bookworm/ocr/ocr_menu.py:449
+msgid "Bitmap images"
+msgstr "BMP-képek"
+
+#: bookworm/ocr/ocr_menu.py:450
+msgid "Tiff graphics"
+msgstr "TIFF-képek"
+
+#: bookworm/ocr/ocr_menu.py:456
+msgid "All supported image formats"
+msgstr "Minden támogatott képformátum"
+
+#. Translators: the title of a file dialog to browse to an image
+#: bookworm/ocr/ocr_menu.py:460
+msgid "Choose image file"
+msgstr "Képfájl kiválasztása"
+
+#. Translators: content of a message box
+#: bookworm/ocr/ocr_menu.py:476
+#, python-brace-format
+msgid ""
+"Could not load image from\n"
+"{filename}.\n"
+"Please make sure the file exists and the data contained in is not corrupted."
+msgstr ""
+"Nem sikerült betölteni a képet a következő fájlból:\n"
+"{filename}.\n"
+"Győződjön meg arról, hogy a fájl létezik, és a benne lévő adatok nem "
+"sérültek."
+
+#. Translators: title of a message box
+#: bookworm/ocr/ocr_menu.py:480
+msgid "Could not load image file"
+msgstr "A képfájl nem tölthető be"
+
+#: bookworm/ocr/ocr_menu.py:524
+msgid "Authentication Error"
+msgstr "Hitelesítési hiba"
+
+#: bookworm/ocr/ocr_menu.py:536
+msgid "OCR Service Error"
+msgstr "Az OCR-szolgáltatás hibája"
+
+#: bookworm/ocr/ocr_menu.py:544
+msgid "An unexpected error occurred during OCR. Please check the logs for details."
+msgstr ""
+"Váratlan hiba történt az OCR során. További részletek a naplófájlokban "
+"találhatók."
+
+#: bookworm/ocr/ocr_menu.py:553
+msgid "Scan finished."
+msgstr "A felismerés befejeződött."
+
+#: bookworm/ocr/ocr_menu.py:559
+msgid "OCR canceled"
+msgstr "Az OCR megszakítva"
+
+#: bookworm/ocr_engines/baidu_ocr.py:88
+msgid "Auto-detect and correct image direction"
+msgstr "A kép tájolásának automatikus felismerése és javítása"
+
+#: bookworm/ocr_engines/baidu_ocr.py:93
+msgid "Attempt to reconstruct paragraphs"
+msgstr "Kísérlet a bekezdésszerkezet helyreállítására"
+
+#: bookworm/ocr_engines/baidu_ocr.py:98
+msgid "Recognize text with multiple directions"
+msgstr "Több irányban elhelyezkedő szöveg felismerése"
+
+#: bookworm/ocr_engines/baidu_ocr.py:130
+msgid "API Key or Secret Key is not configured."
+msgstr "Az API-kulcs vagy a titkos kulcs nincs beállítva."
+
+#: bookworm/ocr_engines/baidu_ocr.py:147
+msgid "Invalid API Key or Secret Key."
+msgstr "Érvénytelen API-kulcs vagy titkos kulcs."
+
+#: bookworm/ocr_engines/baidu_ocr.py:154
+msgid ""
+"Could not get Baidu access token. Please check your network connection and "
+"ensure your API Key and Secret Key are correct."
+msgstr ""
+"Nem sikerült lekérni a Baidu hozzáférési tokenjét. Ellenőrizze a hálózati "
+"kapcsolatot, valamint az API-kulcs és a titkos kulcs helyességét."
+
+#: bookworm/ocr_engines/baidu_ocr.py:160
+msgid "Received an invalid response from Baidu token endpoint."
+msgstr "A Baidu tokenvégpontjáról érvénytelen válasz érkezett."
+
+#: bookworm/ocr_engines/baidu_ocr.py:264
+msgid "A network error occurred while calling the Baidu OCR API."
+msgstr "Hálózati hiba történt a Baidu OCR API hívásakor."
+
+#: bookworm/ocr_engines/baidu_ocr.py:268 bookworm/ocr_engines/vivo_auth.py:57
+#: bookworm/ocr_engines/vivo_ocr.py:118
+msgid "Unknown API error"
+msgstr "Ismeretlen API-hiba"
+
+#: bookworm/ocr_engines/baidu_ocr.py:270
+msgid "Baidu OCR failed: "
+msgstr "Baidu OCR-hiba: "
+
+#: bookworm/ocr_engines/baidu_ocr.py:284
+msgid "Baidu General OCR (Standard)"
+msgstr "Baidu General OCR (normál)"
+
+#: bookworm/ocr_engines/baidu_ocr.py:311
+msgid "Baidu General OCR (Accurate)"
+msgstr "Baidu General OCR (nagy pontosságú)"
+
+#. Translators: An option in the OCR language list to automatically detect the
+#. language.
+#: bookworm/ocr_engines/baidu_ocr.py:330
+msgid "Auto Detect"
+msgstr "Automatikus nyelvfelismerés"
+
+#: bookworm/ocr_engines/vivo_auth.py:65
+#, python-brace-format
+msgid "NVDACN API Error: {error_message} (Code: {error_code})"
+msgstr "NVDACN API-hiba: {error_message} (kód: {error_code})"
+
+#: bookworm/ocr_engines/vivo_auth.py:75
+msgid "NVDACN API connection failed"
+msgstr "Nem sikerült kapcsolódni az NVDACN API-hoz"
+
+#: bookworm/ocr_engines/vivo_auth.py:77
+msgid "Invalid response from NVDACN API"
+msgstr "Érvénytelen válasz érkezett az NVDACN API-tól"
+
+#: bookworm/ocr_engines/vivo_ocr.py:34
+msgid "Vivo General OCR"
+msgstr "Vivo General OCR"
+
+#: bookworm/ocr_engines/vivo_ocr.py:61
+msgid "Enable Enhanced Recognition (slower, supports rotation)"
+msgstr ""
+"Bővített felismerés engedélyezése (lassabb, támogatja az elforgatott képek "
+"felismerését)"
+
+#: bookworm/ocr_engines/vivo_ocr.py:82
+msgid "nvdacn.com username and password for Vivo OCR are not configured."
+msgstr ""
+"A Vivo OCR használatához szükséges nvdacn.com-fiók felhasználóneve és "
+"jelszava nincs beállítva."
+
+#: bookworm/ocr_engines/vivo_ocr.py:114
+msgid "A network error occurred while calling the Vivo OCR API."
+msgstr "Hálózati hiba történt a Vivo OCR API hívásakor."
+
+#: bookworm/ocr_engines/vivo_ocr.py:122
+msgid "Vivo OCR failed: "
+msgstr "Vivo OCR-hiba: "
+
+#. Translators: the content of a message indicating the availability of an
+#. update
+#: bookworm/platforms/linux/updater.py:15
+#, python-brace-format
+msgid ""
+"A new update for Bookworm is available.\n"
+"\tInstalled Version: {current}\n"
+"\tNew Version: {new}\n"
+"Please check Bookworm's documentation to learn how to update your version of"
+" Bookworm"
+msgstr ""
+"Új Bookworm-frissítés érhető el.\n"
+"\tTelepített verzió: {current}\n"
+"\tÚj verzió: {new}\n"
+"A Bookworm frissítésének módjáról a program dokumentációjában talál "
+"útmutatást."
+
+#. Translators: the title of a message indicating the availability of an update
+#: bookworm/platforms/linux/updater.py:22
+msgid "Update Available"
+msgstr "Frissítés érhető el"
+
+#: bookworm/platforms/win32/docr_engine.py:42
+msgid "Windows 10 OCR"
+msgstr "Windows 10 OCR"
+
+#: bookworm/platforms/win32/pandoc_download.py:39
+#: bookworm/platforms/win32/tesseract_download.py:70
+msgid "Extracting file..."
+msgstr "Fájl kicsomagolása..."
+
+#. Translators: content of a messagebox
+#: bookworm/platforms/win32/pandoc_download.py:47
+msgid "Pandoc downloaded successfully"
+msgstr "A Pandoc sikeresen letöltődött"
+
+#: bookworm/platforms/win32/pandoc_download.py:56
+msgid ""
+"Could not download Pandoc.\n"
+"Please check your internet connection and try again."
+msgstr ""
+"Nem sikerült letölteni a Pandocot.\n"
+"Ellenőrizze az internetkapcsolatot, majd próbálja meg újra."
+
+#: bookworm/platforms/win32/pandoc_download.py:64
+msgid ""
+"Could not add Pandoc.\n"
+"Please try again."
+msgstr ""
+"Nem sikerült telepíteni a Pandocot.\n"
+"Próbálja meg újra."
+
+#. Translators: content of a messagebox
+#: bookworm/platforms/win32/tesseract_download.py:78
+msgid "Tesseract engine downloaded successfully"
+msgstr "A Tesseract OCR-motor sikeresen letöltődött"
+
+#: bookworm/platforms/win32/tesseract_download.py:87
+msgid ""
+"Could not download Tesseract OCR Engine.\n"
+"Please check your internet and try again."
+msgstr ""
+"Nem sikerült letölteni a Tesseract OCR-motort.\n"
+"Ellenőrizze az internetkapcsolatot, majd próbálja meg újra."
+
+#: bookworm/platforms/win32/tesseract_download.py:97
+msgid ""
+"Could not install the Tesseract OCR engine.\n"
+"Please try again."
+msgstr ""
+"Nem sikerült telepíteni a Tesseract OCR-motort.\n"
+"Próbálja meg újra."
+
+#. Translators: the content of a message indicating the availability of an
+#. update
+#: bookworm/platforms/win32/updater.py:79
+#, python-brace-format
+msgid ""
+"A new update for Bookworm has been released.\n"
+"Would you like to download and install it?\n"
+"Installed Version: {current}\n"
+"New Version: {new}\n"
+msgstr ""
+"Új Bookworm-frissítés jelent meg.\n"
+"Szeretné letölteni és telepíteni?\n"
+"Telepített verzió: {current}\n"
+"Új verzió: {new}\n"
+
+#. Translators: the title of a message indicating the availability of an update
+#: bookworm/platforms/win32/updater.py:85
+msgid "Bookworm Update"
+msgstr "Bookworm-frissítés"
+
+#. Translators: the title of a message indicating the progress of downloading
+#. an update
+#: bookworm/platforms/win32/updater.py:95
+msgid "Downloading Update"
+msgstr "Frissítés letöltése"
+
+#. Translators: a message indicating the progress of downloading an update
+#. bundle
+#: bookworm/platforms/win32/updater.py:97
+msgid "Downloading update bundle"
+msgstr "Frissítési csomag letöltése"
+
+#. Translators: the content of a message indicating a failure in downloading an
+#. update
+#: bookworm/platforms/win32/updater.py:118
+msgid ""
+"A network error was occured when trying to download the update.\n"
+"Make sure you are connected to the internet, or try again at a later time."
+msgstr ""
+"Hálózati hiba történt a frissítés letöltése közben.\n"
+"Ellenőrizze az internetkapcsolatot, vagy próbálja meg később újra."
+
+#. Translators: the content of a message indicating a corrupted file
+#: bookworm/platforms/win32/updater.py:138
+msgid ""
+"The update file has been downloaded, but it has been corrupted during "
+"download.\n"
+"Would you like to download the update file again?"
+msgstr ""
+"A frissítési fájl letöltődött, de a letöltés közben megsérült.\n"
+"Szeretné újra letölteni a fájlt?"
+
+#. Translators: the title of a message indicating a corrupted file
+#: bookworm/platforms/win32/updater.py:142
+msgid "Download Error"
+msgstr "Letöltési hiba"
+
+#: bookworm/platforms/win32/updater.py:153
+msgid "Extracting update bundle..."
+msgstr "Frissítési csomag kicsomagolása..."
+
+#: bookworm/platforms/win32/updater.py:159
+msgid ""
+"A problem has occured when installing the update.\n"
+"Please check the logs for more info."
+msgstr ""
+"Hiba történt a frissítés telepítése közben.\n"
+"További részletek a naplófájlokban találhatók."
+
+#: bookworm/platforms/win32/updater.py:161 bookworm/platforms/win32/updater.py:205
+msgid "Error installing update"
+msgstr "Hiba a frissítés telepítésekor"
+
+#. Translators: the content of a message indicating successful download of the
+#. update bundle
+#: bookworm/platforms/win32/updater.py:171
+msgid ""
+"The update has been downloaded successfully, and it is ready to be "
+"installed.\n"
+"The application will be restarted in order to complete the update process.\n"
+"Click the OK button to continue."
+msgstr ""
+"A frissítés sikeresen letöltődött, és készen áll a telepítésre.\n"
+"A frissítés befejezéséhez az alkalmazás újraindul.\n"
+"A folytatáshoz válassza az OK gombot."
+
+#. Translators: the title of a message indicating successful download of the
+#. update bundle
+#: bookworm/platforms/win32/updater.py:176
+msgid "Download Completed"
+msgstr "A letöltés befejeződött"
+
+#: bookworm/platforms/win32/updater.py:202
+msgid ""
+"The update files were prepared, but Bookworm could not start the final "
+"installer step.\n"
+"Please check the logs for more information."
+msgstr ""
+"A frissítési fájlok előkészítése befejeződött, de a Bookworm nem tudta "
+"elindítani a telepítés utolsó lépését.\n"
+"További részletek a naplófájlokban találhatók."
+
+#: bookworm/platforms/win32/speech_engines/onecore.py:116
+msgid "One-core Synthesizer"
+msgstr "OneCore beszédszintetizátor"
+
+#: bookworm/platforms/win32/speech_engines/espeak/__init__.py:74
+msgid "eSpeak NG"
+msgstr "eSpeak NG"
+
+#. Translators: name of the default espeak varient.
+#: bookworm/platforms/win32/speech_engines/espeak/_espeak.py:442
+msgctxt "espeakVarient"
+msgid "none"
+msgstr "nincs"
+
+#: bookworm/platforms/win32/speech_engines/piper/__init__.py:201
+msgid "Piper Neural TTS"
+msgstr "Piper Neural TTS"
+
+#: bookworm/platforms/win32/speech_engines/sapi/_sapi.py:95
+msgid "Microsoft Speech API version 5 (SAPI 5)"
+msgstr "Microsoft Speech API 5 (SAPI 5)"
+
+#: bookworm/speechdriver/__init__.py:16
+msgid "No Speech"
+msgstr "Nincs beszéd"
+
+#: bookworm/structured_text/structural_elements.py:61
+msgid "Heading"
+msgstr "Címsor"
+
+#: bookworm/structured_text/structural_elements.py:62
+msgid "Heading level 1"
+msgstr "1. szintű címsor"
+
+#: bookworm/structured_text/structural_elements.py:63
+msgid "Heading level 2"
+msgstr "2. szintű címsor"
+
+#: bookworm/structured_text/structural_elements.py:64
+msgid "Heading level 3"
+msgstr "3. szintű címsor"
+
+#: bookworm/structured_text/structural_elements.py:65
+msgid "Heading level 4"
+msgstr "4. szintű címsor"
+
+#: bookworm/structured_text/structural_elements.py:66
+msgid "Heading level 5"
+msgstr "5. szintű címsor"
+
+#: bookworm/structured_text/structural_elements.py:67
+msgid "Heading level 6"
+msgstr "6. szintű címsor"
+
+#: bookworm/structured_text/structural_elements.py:68
+msgid "Link"
+msgstr "Hivatkozás"
+
+#: bookworm/structured_text/structural_elements.py:69
+msgid "List"
+msgstr "Lista"
+
+#: bookworm/structured_text/structural_elements.py:70
+msgid "Quote"
+msgstr "Idézet"
+
+#: bookworm/structured_text/structural_elements.py:71
+msgid "Table"
+msgstr "Táblázat"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/__init__.py:174
+msgid "S&peech"
+msgstr "&Beszéd"
+
+#. Translators: the label of a page in the settings dialog
+#: bookworm/text_to_speech/__init__.py:179
+msgid "Reading"
+msgstr "Olvasás"
+
+#. Translators: the label of a page in the settings dialog
+#. Translators: the label of a group of controls in the
+#. speech settings page related to voice selection
+#: bookworm/text_to_speech/__init__.py:181 bookworm/text_to_speech/__init__.py:192
+#: bookworm/text_to_speech/tts_gui.py:180
+msgid "Voice"
+msgstr "Hang"
+
+#: bookworm/text_to_speech/__init__.py:189
+msgid "Back"
+msgstr "Vissza"
+
+#: bookworm/text_to_speech/__init__.py:190
+msgid "Play"
+msgstr "Felolvasás"
+
+#: bookworm/text_to_speech/__init__.py:191
+msgid "Forward"
+msgstr "Előre"
+
+#. Translators: a message that is announced when the speech is resumed
+#: bookworm/text_to_speech/__init__.py:236 bookworm/text_to_speech/__init__.py:244
+#: bookworm/text_to_speech/__init__.py:264 bookworm/text_to_speech/__init__.py:276
+msgid "Resumed"
+msgstr "Folytatva"
+
+#. Translators: a message that is announced when the speech is paused
+#. Translators: a message announced when pending speech is paused or resumed
+#: bookworm/text_to_speech/__init__.py:259 bookworm/text_to_speech/__init__.py:276
+msgid "Paused"
+msgstr "Szüneteltetve"
+
+#. Translators: a message that is announced when the speech is stopped
+#: bookworm/text_to_speech/__init__.py:287
+msgid "Stopped"
+msgstr "Leállítva"
+
+#. Translators: a message to speak at the end of the document
+#: bookworm/text_to_speech/__init__.py:428
+msgid "End of document."
+msgstr "A dokumentum vége."
+
+#: bookworm/text_to_speech/__init__.py:443
+#, python-brace-format
+msgid "End of section: {chapter}."
+msgstr "A fejezet vége: {chapter}."
+
+#. Translators: The title of a warning dialog shown when an engine fails.
+#: bookworm/text_to_speech/__init__.py:598
+msgid "Speech Engine Warning"
+msgstr "A beszédmotor figyelmeztetése"
+
+#. Translators: Explains that Bookworm selected a working fallback engine.
+#: bookworm/text_to_speech/__init__.py:601
+#, python-brace-format
+msgid ""
+"The previously selected speech engine could not be loaded. Bookworm has "
+"automatically switched to '{engine_display_name}'."
+msgstr ""
+"Nem sikerült betölteni a korábban kiválasztott beszédmotort. A Bookworm "
+"automatikusan erre a beszédmotorra váltott: „{engine_display_name}”."
+
+#. Translators: The title of a critical error dialog.
+#: bookworm/text_to_speech/__init__.py:614
+msgid "Critical Speech Error"
+msgstr "Kritikus hiba a beszédmotorban"
+
+#. Translators: Explains that no speech engine could be loaded.
+#: bookworm/text_to_speech/__init__.py:617
+msgid ""
+"No speech engines could be loaded on this system. Text-to-speech "
+"functionality will be disabled."
+msgstr ""
+"Ezen a rendszeren egyetlen beszédmotort sem sikerült betölteni. A "
+"szövegfelolvasás ezért nem használható."
+
+#. Translators: the title of a message telling the user that no TTS voice found
+#: bookworm/text_to_speech/__init__.py:658
+msgid "No TTS Voices"
+msgstr "Nincs elérhető beszédhang"
+
+#. Translators: a message telling the user that no TTS voice found
+#: bookworm/text_to_speech/__init__.py:661
+msgid ""
+"A valid Text-to-speech voice was not found for the current speech engine.\n"
+"Text-to-speech functionality will be disabled."
+msgstr ""
+"Az aktuális beszédmotorhoz nem található használható szövegfelolvasó hang.\n"
+"A szövegfelolvasás ezért nem lesz elérhető."
+
+#. Translators: a message telling the user that the TTS voice has been changed
+#: bookworm/text_to_speech/__init__.py:679
+#, python-brace-format
+msgid ""
+"Bookworm has noticed that the currently configured Text-to-speech voice "
+"speaks a language different from that of this document.\n"
+"Do you want to temporary switch to another voice that speaks a language "
+"similar to the language  of the currently opened document?\n"
+"\n"
+"Voice language: {voice_lang}\n"
+"Document language: {document_lang}"
+msgstr ""
+"A Bookworm észlelte, hogy a jelenleg beállított szövegfelolvasó hang nyelve "
+"eltér a dokumentum nyelvétől.\n"
+"Szeretne ideiglenesen olyan hangra váltani, amelynek nyelve megegyezik vagy "
+"közel áll a megnyitott dokumentum nyelvéhez?\n"
+"\n"
+"Beszédhang nyelve: {voice_lang}\n"
+"Dokumentum nyelve: {document_lang}"
+
+#. Translators: the title of a message telling the user that the TTS voice has
+#. been changed
+#: bookworm/text_to_speech/__init__.py:691
+msgid "Incompatible TTS Voice Detected"
+msgstr "Eltérő nyelvű beszédhang észlelve"
+
+#. Translators: the name of a built-in voice profile
+#: bookworm/text_to_speech/tts_config.py:154
+msgid "Human-like"
+msgstr "Természetes"
+
+#. Translators: the name of a built-in voice profile
+#: bookworm/text_to_speech/tts_config.py:165
+msgid "Deep Reading"
+msgstr "Elmélyült olvasás"
+
+#. Translators: the name of a built-in voice profile
+#: bookworm/text_to_speech/tts_config.py:176
+msgid "Express"
+msgstr "Gyors"
+
+#. Translators: the label of a group of controls in the reading page
+#: bookworm/text_to_speech/tts_gui.py:52
+msgid "Reading Options"
+msgstr "Olvasási beállítások"
+
+#. Translators: the title of a group of radio buttons in the reading page
+#. in the application settings related to how to read.
+#: bookworm/text_to_speech/tts_gui.py:58
+msgid "When Pressing Play:"
+msgstr "A felolvasás indításakor:"
+
+#. Translators: the label of a radio button
+#: bookworm/text_to_speech/tts_gui.py:63
+msgid "Read the entire book"
+msgstr "A teljes könyv felolvasása"
+
+#. Translators: the label of a radio button
+#: bookworm/text_to_speech/tts_gui.py:65
+msgid "Read the current section"
+msgstr "Az aktuális fejezet felolvasása"
+
+#. Translators: the label of a radio button
+#: bookworm/text_to_speech/tts_gui.py:67
+msgid "Read the current page"
+msgstr "Az aktuális oldal felolvasása"
+
+#. Translators: the title of a group of radio buttons in the reading page
+#. in the application settings related to where to start reading from.
+#: bookworm/text_to_speech/tts_gui.py:75
+msgid "Start reading from:"
+msgstr "Felolvasás kezdete:"
+
+#. Translators: the label of a radio button
+#: bookworm/text_to_speech/tts_gui.py:79
+msgid "Cursor position"
+msgstr "Kurzor helye"
+
+#: bookworm/text_to_speech/tts_gui.py:79
+msgid "Beginning of page"
+msgstr "Oldal eleje"
+
+#. Translators: the label of a group of controls in the reading page
+#. related to structural navigation.
+#: bookworm/text_to_speech/tts_gui.py:83
+msgid "Navigation"
+msgstr "Navigáció"
+
+#. Translators: the label of a checkbox
+#: bookworm/text_to_speech/tts_gui.py:88
+msgid "Include images with empty alternative text in image navigation"
+msgstr "Üres alternatív szövegű képek figyelembevétele a képek közötti navigációban"
+
+#. Translators: the label of a group of controls in the reading page
+#. of the settings related to behavior during reading  aloud
+#: bookworm/text_to_speech/tts_gui.py:93
+msgid "During Reading Aloud"
+msgstr "Felolvasás közben"
+
+#: bookworm/text_to_speech/tts_gui.py:98
+msgid "Speak page number"
+msgstr "Oldalszám bemondása"
+
+#. Translators: the label of a checkbox
+#: bookworm/text_to_speech/tts_gui.py:105
+msgid "Announce the end of sections"
+msgstr "Fejezetek végének bemondása"
+
+#. Translators: the label of a checkbox
+#: bookworm/text_to_speech/tts_gui.py:112
+msgid "Ask to switch to a voice that speaks the language of the current book"
+msgstr "A könyv nyelvének megfelelő hangra váltás felajánlása"
+
+#. Translators: the label of a checkbox
+#: bookworm/text_to_speech/tts_gui.py:119
+msgid "Highlight spoken text"
+msgstr "A felolvasott szöveg kiemelése"
+
+#. Translators: the label of a checkbox
+#: bookworm/text_to_speech/tts_gui.py:126
+msgid "Select spoken text"
+msgstr "A felolvasott szöveg kijelölése"
+
+#. Translators: the label of a checkbox
+#: bookworm/text_to_speech/tts_gui.py:133
+msgid "Play a sound when the cursor reaches an image"
+msgstr "Hangjelzés lejátszása, amikor a kurzor képhez ér"
+
+#. Translators: the label of a checkbox
+#: bookworm/text_to_speech/tts_gui.py:140
+msgid "Enable global media keys (Play/Pause, Next, Previous)"
+msgstr ""
+"Rendszerszintű médiabillentyűk engedélyezése (Lejátszás/Szünet, Következő, "
+"Előző)"
+
+#. Translators: A warning message in the settings dialog.
+#: bookworm/text_to_speech/tts_gui.py:149
+msgid ""
+"Note: Media key functionality can be unreliable when multiple media "
+"applications are running simultaneously, regardless of whether global mode "
+"is on or off."
+msgstr ""
+"Megjegyzés: ha egyszerre több médiaalkalmazás fut, a médiabillentyűk a "
+"rendszerszintű kezelés állapotától függetlenül megbízhatatlanul működhetnek."
+
+#. Translators: the label of a combobox containing a list of tts engines
+#: bookworm/text_to_speech/tts_gui.py:183
+msgid "Speech Engine:"
+msgstr "Beszédmotor:"
+
+#. Translators: the label of a button that opens a dialog to change the speech
+#. engine
+#: bookworm/text_to_speech/tts_gui.py:188
+msgid "Change..."
+msgstr "Váltás..."
+
+#. Translators: the label of a combobox containing a list of tts voices
+#: bookworm/text_to_speech/tts_gui.py:191
+msgid "Select Voice:"
+msgstr "Hang kiválasztása:"
+
+#. Translators: the label of the speech rate slider
+#: bookworm/text_to_speech/tts_gui.py:194
+msgid "Speech Rate:"
+msgstr "Beszédsebesség:"
+
+#. Translators: the label of the voice pitch slider
+#: bookworm/text_to_speech/tts_gui.py:200
+msgid "Voice Pitch:"
+msgstr "Hangmagasság:"
+
+#. Translators: the label of the speech volume slider
+#: bookworm/text_to_speech/tts_gui.py:206
+msgid "Speech Volume:"
+msgstr "Hangerő:"
+
+#. Translators: the label of a group of controls in the speech
+#. settings page related to speech pauses
+#: bookworm/text_to_speech/tts_gui.py:213
+msgid "Pauses"
+msgstr "Szünetek"
+
+#. Translators: the label of an edit field
+#: bookworm/text_to_speech/tts_gui.py:216
+msgid "Additional Pause At Sentence End (Ms)"
+msgstr "További szünet a mondat végén (ms)"
+
+#. Translators: the label of an edit field
+#: bookworm/text_to_speech/tts_gui.py:221
+msgid "Additional Pause At Paragraph End (Ms)"
+msgstr "További szünet a bekezdés végén (ms)"
+
+#. Translators: the label of an edit field
+#: bookworm/text_to_speech/tts_gui.py:226
+msgid "End of Page Pause (ms)"
+msgstr "Szünet az oldal végén (ms)"
+
+#. Translators: the label of an edit field
+#: bookworm/text_to_speech/tts_gui.py:235
+msgid "End of Section Pause (ms)"
+msgstr "Szünet a fejezet végén (ms)"
+
+#: bookworm/text_to_speech/tts_gui.py:293
+msgid "Speech Engine"
+msgstr "Beszédmotor"
+
+#. Translators: the title of a dialog to edit a voice profile
+#: bookworm/text_to_speech/tts_gui.py:342
+#, python-brace-format
+msgid "Voice Profile: {profile}"
+msgstr "Hangprofil: {profile}"
+
+#. Translators: the label of a combobox to select a voice profile
+#: bookworm/text_to_speech/tts_gui.py:369
+msgid "Select Voice Profile:"
+msgstr "Hangprofil kiválasztása:"
+
+#. Translators: the label of a button to activate a voice profile
+#: bookworm/text_to_speech/tts_gui.py:375
+msgid "&Activate"
+msgstr "&Aktiválás"
+
+#. Translators: the label of a button to create a new voice profile
+#: bookworm/text_to_speech/tts_gui.py:381
+msgid "&New Profile..."
+msgstr "Új &profil..."
+
+#. Translators: the entry of the active voice profile in the voice profiles
+#. list
+#: bookworm/text_to_speech/tts_gui.py:415
+#, python-brace-format
+msgid "{profile} (active)"
+msgstr "{profile} (aktív)"
+
+#. Translators: the label of an edit field to enter the voice profile name
+#: bookworm/text_to_speech/tts_gui.py:465
+msgid "Profile Name:"
+msgstr "Profil neve:"
+
+#. Translators: the title of a dialog to enter the name of a new voice profile
+#: bookworm/text_to_speech/tts_gui.py:467
+msgid "New Voice Profile"
+msgstr "Új hangprofil"
+
+#. Translators: the content of a message notifying the user
+#. user of the existence of a voice profile with the same name
+#: bookworm/text_to_speech/tts_gui.py:480
+msgid ""
+"A voice profile with the same name already exists. Please select another "
+"name."
+msgstr "Már létezik ilyen nevű hangprofil. Válasszon másik nevet."
+
+#. Translators: the content of a message telling the user that the voice
+#. profile he is removing is the active one
+#: bookworm/text_to_speech/tts_gui.py:506
+#, python-brace-format
+msgid ""
+"Voice profile {profile} is the active profile.\n"
+"Please deactivate it first by clicking 'Deactivate Active Voice Profile` "
+"menu item from the speech menu."
+msgstr ""
+"A „{profile}” hangprofil jelenleg aktív.\n"
+"Először kapcsolja ki a Beszéd menü „Aktív hangprofil kikapcsolása” "
+"parancsával."
+
+#. Translators: the title of a message telling the user that
+#. it is not possible to remove this voice profile
+#: bookworm/text_to_speech/tts_gui.py:512
+msgid "Cannot Remove Profile"
+msgstr "A profil nem távolítható el"
+
+#. Translators: the title of a message to confirm the removal of the voice
+#. profile
+#: bookworm/text_to_speech/tts_gui.py:519
+#, python-brace-format
+msgid ""
+"Are you sure you want to remove voice profile {profile}?\n"
+"This cannot be undone."
+msgstr ""
+"Biztosan eltávolítja a „{profile}” hangprofilt?\n"
+"A művelet nem vonható vissza."
+
+#. Translators: the title of a message to confirm the removal of a voice
+#. profile
+#: bookworm/text_to_speech/tts_gui.py:523
+msgid "Remove Voice Profile?"
+msgstr "Eltávolítja a hangprofilt?"
+
+#. Translators: the label of a combobox
+#: bookworm/text_to_speech/tts_gui.py:546
+msgid "Select Speech Engine:"
+msgstr "Beszédmotor kiválasztása:"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:575
+msgid "&Play\tF5"
+msgstr "&Felolvasás\tF5"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:577
+msgid "Start reading aloud"
+msgstr "Felolvasás indítása"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:582
+msgid "Pa&use/Resume\tF6"
+msgstr "&Szünet/Folytatás\tF6"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:584
+msgid "Pause/Resume reading aloud"
+msgstr "Felolvasás szüneteltetése vagy folytatása"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:589
+msgid "&Stop\tF7"
+msgstr "&Leállítás\tF7"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:591
+msgid "Stop reading aloud"
+msgstr "Felolvasás leállítása"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:596
+msgid "&Rewind\tAlt-LeftArrow"
+msgstr "&Vissza\tAlt-LeftArrow"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:598
+msgid "Skip to previous paragraph"
+msgstr "Ugrás az előző bekezdésre"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:603
+msgid "&Fast Forward\tAlt-RightArrow"
+msgstr "&Előre\tAlt-RightArrow"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:605
+msgid "Skip to next paragraph"
+msgstr "Ugrás a következő bekezdésre"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:610
+msgid "&Voice Profiles\tCtrl-Shift-V"
+msgstr "&Hangprofilok\tCtrl-Shift-V"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:612
+msgid "Manage voice profiles."
+msgstr "Hangprofilok kezelése."
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:617
+msgid "&Deactivate Active Voice Profile"
+msgstr "Aktív hangprofil &kikapcsolása"
+
+#. Translators: the help text of an item in the application menubar
+#: bookworm/text_to_speech/tts_gui.py:619
+msgid "Deactivate the active voice profile."
+msgstr "Az aktív hangprofil kikapcsolása."
+
+#. Translators: the title of the voice profiles dialog
+#: bookworm/text_to_speech/tts_gui.py:672
+msgid "Voice Profiles"
+msgstr "Hangprofilok"
+
+#. Translators: the label of an item in the application menubar
+#: bookworm/webservices/__init__.py:23
+msgid "&Web Services"
+msgstr "&Webszolgáltatások"
+
+#: bookworm/webservices/url_open.py:34
+msgid "&Open URL\tCtrl+U"
+msgstr "&URL megnyitása\tCtrl+U"
+
+#: bookworm/webservices/url_open.py:36
+msgid "&Open URL From Clipboard\tCtrl+Shift+U"
+msgstr "URL megnyitása a &vágólapról\tCtrl+Shift+U"
+
+#. Translators: title of a dialog for entering a URL
+#: bookworm/webservices/url_open.py:49
+msgid "Enter URL"
+msgstr "URL megadása"
+
+#. Translators: label of a textbox in a dialog for entering a URL
+#: bookworm/webservices/url_open.py:51
+msgid "URL"
+msgstr "URL"
+
+#: bookworm/webservices/wikiworm.py:57
+msgid "&Wikipedia quick search"
+msgstr "&Gyorskeresés a Wikipédián"
+
+#: bookworm/webservices/wikiworm.py:58
+msgid "Get a quick definition from Wikipedia"
+msgstr "Gyors meghatározás lekérése a Wikipédiáról"
+
+#: bookworm/webservices/wikiworm.py:79
+msgid "Define using Wikipedia"
+msgstr "Meghatározás keresése a Wikipédián"
+
+#: bookworm/webservices/wikiworm.py:80
+msgid "Define the selected text using Wikipedia"
+msgstr "Meghatározás keresése a kijelölt szöveghez a Wikipédián"
+
+#: bookworm/webservices/wikiworm.py:118
+msgid "Retrieving information, please wait..."
+msgstr "Információk lekérése. Kérjük, várjon..."
+
+#: bookworm/webservices/wikiworm.py:150
+msgid ""
+"Could not connect to Wikipedia at the moment.\\Please make sure that you're "
+"connected to the internet or try again later."
+msgstr ""
+"Jelenleg nem lehet kapcsolódni a Wikipédiához. Ellenőrizze az "
+"internetkapcsolatot, vagy próbálja meg később újra."
+
+#. Translators: title of a message box
+#: bookworm/webservices/wikiworm.py:160
+msgid "Page not found"
+msgstr "Az oldal nem található"
+
+#. Translators: content of a message box
+#: bookworm/webservices/wikiworm.py:162
+msgid "Could not find a Wikipedia page for the given term.."
+msgstr "A megadott kifejezéshez nem található Wikipédia-oldal."
+
+#: bookworm/webservices/wikiworm.py:168
+msgid "Matches"
+msgstr "Találatok"
+
+#: bookworm/webservices/wikiworm.py:169
+msgid "Multiple Matches Found"
+msgstr "Több találat"
+
+#: bookworm/webservices/wikiworm.py:184
+msgid "Failed to get term definition from Wikipedia."
+msgstr "Nem sikerült meghatározást lekérni a Wikipédiáról."
+
+#: bookworm/webservices/wikiworm.py:201
+#, python-brace-format
+msgid "{term} — Wikipedia"
+msgstr "{term} — Wikipédia"
+
+#. Translators: label of a read only edit control showing Wikipedia article
+#. summary
+#: bookworm/webservices/wikiworm.py:207
+msgid "Summary"
+msgstr "Összefoglaló"
+
+#: bookworm/webservices/wikiworm.py:218
+msgid "Open in &Bookworm"
+msgstr "Megnyitás a B&ookwormban"
+
+#: bookworm/webservices/wikiworm.py:219
+msgid "&Open in Browser"
+msgstr "Megnyitás bö&ngészőben"
+
+#. Translators: the title of a dialog to search for a term in Wikipedia
+#: bookworm/webservices/wikiworm.py:251
+msgid "Wikipedia Quick Search"
+msgstr "Gyorskeresés a Wikipédián"
+
+#. Translators: label of an edit control in the search Wikipedia dialog
+#: bookworm/webservices/wikiworm.py:257
+msgid "Enter term"
+msgstr "Keresendő kifejezés"
+
+#. Translators: label of a combobox  that shows a list of languages to search
+#. in Wikipedia
+#: bookworm/webservices/wikiworm.py:263
+msgid "Choose Wikipedia language"
+msgstr "A Wikipédia nyelvének kiválasztása"
+
