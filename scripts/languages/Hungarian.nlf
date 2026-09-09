@@ -1,0 +1,190 @@
+﻿# Header, don't edit
+NLF v6
+# Language ID
+1038
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ASCII code page
+1250
+# RTL - anything else than RTL means LTR
+-
+# Hungarian localization for the Bookworm installer, 2026
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+$(^Name) – Telepítés
+# ^UninstallCaption
+$(^Name) – Eltávolítás
+# ^LicenseSubCaption
+: Licencfeltételek
+# ^ComponentsSubCaption
+: Összetevők kiválasztása
+# ^DirSubCaption
+: Telepítési hely
+# ^InstallingSubCaption
+: Telepítés
+# ^CompletedSubCaption
+: Befejezve
+# ^UnComponentsSubCaption
+: Eltávolítandó összetevők
+# ^UnDirSubCaption
+: Eltávolítási hely
+# ^ConfirmSubCaption
+: Megerősítés
+# ^UninstallingSubCaption
+: Eltávolítás
+# ^UnCompletedSubCaption
+: Befejezve
+# ^BackBtn
+< &Vissza
+# ^NextBtn
+&Tovább >
+# ^AgreeBtn
+&Elfogadom
+# ^AcceptBtn
+&Elfogadom a licencfeltételeket
+# ^DontAcceptBtn
+&Nem fogadom el a licencfeltételeket
+# ^InstallBtn
+&Telepítés
+# ^UninstallBtn
+&Eltávolítás
+# ^CancelBtn
+&Mégse
+# ^CloseBtn
+&Bezárás
+# ^BrowseBtn
+Ta&llózás...
+# ^ShowDetailsBtn
+&Részletek
+# ^ClickNext
+A folytatáshoz válassza a Tovább gombot.
+# ^ClickInstall
+A művelet megkezdéséhez válassza a Telepítés gombot.
+# ^ClickUninstall
+A művelet megkezdéséhez válassza az Eltávolítás gombot.
+# ^Name
+Név
+# ^Completed
+Befejezve
+# ^LicenseText
+A $(^NameDA) telepítése előtt olvassa el a licencfeltételeket. A hivatalos szöveg angol nyelvű. Elfogadásuk esetén válassza az Elfogadom gombot.
+# ^LicenseTextCB
+A $(^NameDA) telepítése előtt olvassa el a licencfeltételeket. A hivatalos szöveg angol nyelvű. Elfogadásuk esetén jelölje be az alábbi jelölőnégyzetet. $_CLICK
+# ^LicenseTextRB
+A $(^NameDA) telepítése előtt olvassa el a licencfeltételeket. A hivatalos szöveg angol nyelvű. Elfogadásuk esetén válassza az első lehetőséget. $_CLICK
+# ^UnLicenseText
+A $(^NameDA) eltávolítása előtt olvassa el a licencfeltételeket. A hivatalos szöveg angol nyelvű. Elfogadásuk esetén válassza az Elfogadom gombot.
+# ^UnLicenseTextCB
+A $(^NameDA) eltávolítása előtt olvassa el a licencfeltételeket. A hivatalos szöveg angol nyelvű. Elfogadásuk esetén jelölje be az alábbi jelölőnégyzetet. $_CLICK
+# ^UnLicenseTextRB
+A $(^NameDA) eltávolítása előtt olvassa el a licencfeltételeket. A hivatalos szöveg angol nyelvű. Elfogadásuk esetén válassza az első lehetőséget. $_CLICK
+# ^Custom
+Egyéni
+# ^ComponentsText
+Jelölje be a telepíteni kívánt összetevőket, a többinél pedig törölje a jelölést. $_CLICK
+# ^ComponentsSubText1
+Válassza ki a telepítés típusát:
+# ^ComponentsSubText2_NoInstTypes
+Válassza ki a telepítendő összetevőket:
+# ^ComponentsSubText2
+Vagy válasszon a telepíthető kiegészítő összetevők közül:
+# ^UnComponentsText
+Jelölje be az eltávolítani kívánt összetevőket, a többinél pedig törölje a jelölést. $_CLICK
+# ^UnComponentsSubText1
+Válassza ki az eltávolítás típusát:
+# ^UnComponentsSubText2_NoInstTypes
+Válassza ki az eltávolítandó összetevőket:
+# ^UnComponentsSubText2
+Vagy válasszon az eltávolítható kiegészítő összetevők közül:
+# ^DirText
+A $(^NameDA) az alábbi mappába kerül. Másik hely megadásához válassza a Tallózás gombot, majd jelölje ki a kívánt mappát. $_CLICK
+# ^DirSubText
+Célmappa
+# ^DirBrowseText
+Válassza ki a $(^NameDA) telepítési mappáját:
+# ^UnDirText
+A $(^NameDA) az alábbi mappából lesz eltávolítva. Másik hely megadásához válassza a Tallózás gombot, majd jelölje ki a kívánt mappát. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Válassza ki a mappát, amelyből a programot el szeretné távolítani:
+# ^SpaceAvailable
+"Szabad terület: "
+# ^SpaceRequired
+"Szükséges terület: "
+# ^UninstallingText
+A $(^NameDA) az alábbi mappából lesz eltávolítva. $_CLICK
+# ^UninstallingSubText
+Eltávolítás helye:
+# ^FileError
+A fájl nem nyitható meg írásra: \r\n\r\n$0\r\n\r\nA telepítés megszakításához válassza a Megszakítás,\r\naz újbóli próbálkozáshoz az Újra,\r\na fájl kihagyásához pedig a Kihagyás gombot.
+# ^FileError_NoIgnore
+A fájl nem nyitható meg írásra: \r\n\r\n$0\r\n\r\nA művelet megismétléséhez válassza az Újra,\r\na telepítés megszakításához pedig a Mégse gombot.
+# ^CantWrite
+"Nem írható: "
+# ^CopyFailed
+A másolás nem sikerült
+# ^CopyTo
+"Másolás ide: "
+# ^Registering
+"Regisztrálás: "
+# ^Unregistering
+"Regisztráció törlése: "
+# ^SymbolNotFound
+"A szimbólum nem található: "
+# ^CouldNotLoad
+"Nem tölthető be: "
+# ^CreateFolder
+"Mappa létrehozása: "
+# ^CreateShortcut
+"Parancsikon létrehozása: "
+# ^CreatedUninstaller
+"Eltávolító létrehozva: "
+# ^Delete
+"Fájl törlése: "
+# ^DeleteOnReboot
+"Törlés újraindításkor: "
+# ^ErrorCreatingShortcut
+"Nem sikerült létrehozni a parancsikont: "
+# ^ErrorCreating
+"Nem sikerült létrehozni: "
+# ^ErrorDecompressing
+Hiba történt az adatok kibontásakor. Lehet, hogy a telepítő sérült.
+# ^ErrorRegistering
+Nem sikerült regisztrálni a DLL-fájlt
+# ^ExecShell
+"Megnyitás: "
+# ^Exec
+"Futtatás: "
+# ^Extract
+"Kibontás: "
+# ^ErrorWriting
+"Kibontási hiba, a fájl nem írható: "
+# ^InvalidOpcode
+A telepítő sérült: érvénytelen utasítás
+# ^NoOLE
+"Nincs OLE-támogatás ehhez: "
+# ^OutputFolder
+"Kimeneti mappa: "
+# ^RemoveFolder
+"Mappa eltávolítása: "
+# ^RenameOnReboot
+"Átnevezés újraindításkor: "
+# ^Rename
+"Átnevezés: "
+# ^Skipped
+"Kihagyva: "
+# ^CopyDetails
+Részletek másolása a vágólapra
+# ^LogInstall
+Telepítési napló készítése
+# ^Byte
+B
+# ^Kilo
+ K
+# ^Mega
+ M
+# ^Giga
+ G
