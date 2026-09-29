@@ -299,7 +299,9 @@ def test_structured_html_parser_keeps_range_stops_before_following_images():
 
 def test_text_position_map_from_texts_preserves_legacy_image_boundaries():
     legacy_text = "before middle after text\n"
-    storage_text = f"before {TEXT_OBJECT_REPLACEMENT_CHAR} middle {TEXT_OBJECT_REPLACEMENT_CHAR} after text\n"
+    storage_text = (
+        f"before {TEXT_OBJECT_REPLACEMENT_CHAR} middle {TEXT_OBJECT_REPLACEMENT_CHAR} after text\n"
+    )
     mapper = TextPositionMap.from_texts(legacy_text, storage_text)
 
     after_text = legacy_text.index("after")
@@ -341,9 +343,7 @@ def test_html_legacy_content_hash_uses_pre_image_navigation_text(tmp_path):
         legacy_text = legacy_parser.get_text()
         assert TEXT_OBJECT_REPLACEMENT_CHAR not in legacy_text
         assert document.get_legacy_content() == legacy_text
-        assert document.get_legacy_content_hash() == document._hash_document_text(
-            legacy_text
-        )
+        assert document.get_legacy_content_hash() == document._hash_document_text(legacy_text)
     finally:
         document.close()
 
@@ -368,9 +368,7 @@ def test_html_legacy_content_hash_stays_pre_image_navigation_after_current_hash(
         legacy_text = document.get_legacy_content()
         current_hash = document.get_content_hash()
 
-        assert document.get_legacy_content_hash() == document._hash_document_text(
-            legacy_text
-        )
+        assert document.get_legacy_content_hash() == document._hash_document_text(legacy_text)
         assert document.get_legacy_content_hash() != current_hash
     finally:
         document.close()
@@ -464,6 +462,59 @@ def test_structured_html_parser_keeps_empty_alt_images_with_caption():
 
     assert [text[start:stop] for start, stop in ranges] == ["[Diagram caption]"]
     assert parser.get_image_info(0).label == "Diagram caption"
+
+
+def test_structured_html_parser_extracts_alt_attribute_in_reader_content():
+    parser = StructuredHtmlParser.from_string(
+        """
+        <html><body>
+            <p>Here is an image: <img src="chart.png" alt="Sales growth chart"> in text.</p>
+        </body></html>
+        """
+    )
+    text = parser.get_text()
+    assert "[Sales growth chart]" in text
+    assert parser.get_image_info(0).label == "Sales growth chart"
+
+
+def test_structured_html_parser_image_without_alt_attribute_uses_default_label():
+    parser = StructuredHtmlParser.from_string(
+        """
+        <html><body>
+            <p>Here is an image: <img src="photo.jpg"> in text.</p>
+        </body></html>
+        """
+    )
+    text = parser.get_text()
+    assert "[Image]" in text
+    assert parser.get_image_info(0).label == "Image"
+
+
+def test_structured_html_parser_extracts_image_alt_attribute_without_src():
+    parser = StructuredHtmlParser.from_string(
+        """
+        <html><body>
+            <p>Description: <img alt="Diagram of solar system"> end.</p>
+        </body></html>
+        """
+    )
+    text = parser.get_text()
+    assert "[Diagram of solar system]" in text
+    assert parser.get_image_info(0).label == "Diagram of solar system"
+
+
+def test_structured_html_parser_extracts_alt_from_xhtml_content():
+    xhtml = """<?xml version="1.0" encoding="utf-8"?>
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    <head><title>XHTML Sample</title></head>
+    <body>
+        <p>Start <img src="img1.png" alt="XHTML Image Description" /> middle <img src="img2.png" /> end</p>
+    </body>
+    </html>"""
+    parser = StructuredHtmlParser.from_string(xhtml)
+    text = parser.get_text()
+    assert "[XHTML Image Description]" in text
+    assert "[Image]" in text
 
 
 def test_structured_html_parser_places_image_ranges_after_rendered_prefixes():
@@ -704,7 +755,7 @@ def test_web_html_document_opens_remote_embedded_image(monkeypatch):
 
     monkeypatch.setattr(html_format, "HttpResource", FakeHttpResource)
     document = make_web_html_document(
-        f'<html><head><title>Web</title></head><body>'
+        f"<html><head><title>Web</title></head><body>"
         f'<img src="{image_url}" alt="Diagram"></body></html>'
     )
 
@@ -835,9 +886,7 @@ def test_html_content_hash_uses_embedded_image_bytes(tmp_path):
     red_image = make_png_bytes(color=(255, 0, 0))
     blue_image = make_png_bytes(color=(0, 0, 255))
     first = make_document(tmp_path / "first", "pic.png", red_image)
-    same_image_different_name = make_document(
-        tmp_path / "same", "renamed.png", red_image
-    )
+    same_image_different_name = make_document(tmp_path / "same", "renamed.png", red_image)
     different_image = make_document(tmp_path / "different", "pic.png", blue_image)
     inline_image_src = "data:image/png;base64," + base64.b64encode(red_image).decode("ascii")
     inline_image = make_document(
@@ -894,9 +943,7 @@ def test_odp_content_hash_uses_package_image_bytes(tmp_path):
             package.writestr("Pictures/pic.png", image_bytes)
         document = OdfPresentation(DocumentUri.from_filename(odp_path))
         document.parser = SimpleNamespace(title="Deck")
-        document.slides = {
-            "Slide": '<p>alpha <img src="Pictures/pic.png" alt="Picture"> omega</p>'
-        }
+        document.slides = {"Slide": '<p>alpha <img src="Pictures/pic.png" alt="Picture"> omega</p>'}
         document.num_slides = 1
         document._is_read = True
         return document
@@ -921,7 +968,7 @@ def test_epub_content_hash_uses_embedded_image_bytes(tmp_path):
     first_dir.mkdir()
     second_dir.mkdir()
     chapter_content = (
-        '<html><body><h1>Intro</h1><p>alpha '
+        "<html><body><h1>Intro</h1><p>alpha "
         '<img src="../images/pic.png" alt="Picture"> omega</p></body></html>'
     )
     first = make_epub_document(
@@ -1036,9 +1083,7 @@ def test_embedded_image_dialog_initial_zoom_fits_large_images():
         viewport_size=(700, 500),
     )
 
-    assert zoom_factor == pytest.approx(
-        (700 - EmbeddedImageDialog.INITIAL_VIEW_PADDING) / 2400
-    )
+    assert zoom_factor == pytest.approx((700 - EmbeddedImageDialog.INITIAL_VIEW_PADDING) / 2400)
 
 
 @pytest.mark.parametrize(
@@ -1202,9 +1247,7 @@ def test_reader_ctrl_enter_uses_table_action_when_embedded_image_fails(reader, v
             SemanticElementType.FIGURE: [(0, 7)],
             SemanticElementType.TABLE: [(0, 7)],
         },
-        image_infos=(
-            ImageElementInfo(TextRange(0, 7), "chart.png", "Chart", "chart.png"),
-        ),
+        image_infos=(ImageElementInfo(TextRange(0, 7), "chart.png", "Chart", "chart.png"),),
         image_error=DocumentIOError("Remote images are not supported"),
         table_markup="<table><tr><td>Chart</td></tr></table>",
     )

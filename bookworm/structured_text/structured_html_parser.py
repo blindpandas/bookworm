@@ -10,6 +10,7 @@ import ftfy
 from inscriptis import Inscriptis
 from inscriptis.css_profiles import STRICT_CSS_PROFILE
 from inscriptis.model.config import ParserConfig
+from lxml import etree as lxml_etree
 from lxml import html as html_parser
 from selectolax.parser import HTMLParser
 
@@ -27,7 +28,7 @@ IMAGE_ANNOTATION = "__bookworm_image__"
 INSCRIPTIS_PARSE_HTML_TREE = Inscriptis._parse_html_tree
 INSCRIPTIS_GET_TEXT = Inscriptis.get_text
 MAX_DECODE_LENGTH = int(5e6)
-RE_STRIP_XML_DECLARATION = re.compile(r"^<\?xml [^>]+?\?>")
+RE_STRIP_XML_DECLARATION = re.compile(r"^<\?xml\s+[^>]+?\?>", re.IGNORECASE)
 TAGS_TO_STRIP = [
     "form",
     "input",
@@ -83,6 +84,7 @@ SEMANTIC_HTML_ELEMENTS = {
 }
 STYLE_HTML_ELEMENTS = {}
 INSCRIPTIS_ANNOTATION_RULES = {t: (k,) for (k, v) in SEMANTIC_HTML_ELEMENTS.items() for t in v}
+INSCRIPTIS_ANNOTATION_RULES["img"] = (IMAGE_ANNOTATION,)
 INSCRIPTIS_ANNOTATION_RULES["img#src"] = (IMAGE_ANNOTATION,)
 INSCRIPTIS_CONFIG = ParserConfig(
     css=STRICT_CSS_PROFILE,
@@ -97,9 +99,7 @@ def should_include_empty_alt_images_in_navigation():
     try:
         from bookworm import config
 
-        return config.conf["reading"].as_bool(
-            "include_empty_alt_images_in_image_navigation"
-        )
+        return config.conf["reading"].as_bool("include_empty_alt_images_in_image_navigation")
     except (AttributeError, KeyError, TypeError, ValueError):
         return True
 
@@ -149,6 +149,13 @@ class StructuredHtmlParser(Inscriptis):
         self._storage_text = ""
         self._text_position_map = TextPositionMap.identity(0)
         kwargs.setdefault("config", INSCRIPTIS_CONFIG)
+        if (
+            args
+            and hasattr(args[0], "tag")
+            and isinstance(args[0].tag, str)
+            and args[0].tag.startswith("{")
+        ):
+            args = (html_parser.fromstring(lxml_etree.tostring(args[0])), *args[1:])
         if include_images and args:
             self._prepare_image_elements(
                 args[0],
@@ -166,8 +173,9 @@ class StructuredHtmlParser(Inscriptis):
         start_index = self._get_canvas_index(canvas)
         super()._parse_html_tree(state, tree)
         end_index = self._get_canvas_index(canvas)
+        tag = tree.tag.split("}")[-1].lower() if isinstance(tree.tag, str) else ""
         if (
-            tree.tag == "a"
+            tag == "a"
             and (href := tree.attrib.get("href", ""))
             and (anot := self._get_current_link_annotation(canvas, start_index, end_index))
         ):
@@ -176,7 +184,7 @@ class StructuredHtmlParser(Inscriptis):
             element_range = (start_index, end_index)
             self.anchors[anch] = element_range
             self.html_id_ranges[anch] = element_range
-        if tree.tag == "table":
+        if tag == "table":
             self._table_elements.append(tree)
             self._resolve_table_image_ranges(
                 tree,
@@ -185,14 +193,11 @@ class StructuredHtmlParser(Inscriptis):
                 start_index,
                 end_index,
             )
-        if (
-            tree.tag == "img"
-            and (src := tree.attrib.get("src", ""))
-            and self._is_navigable_image(
-                tree,
-                include_empty_alt_images=self._include_empty_alt_images,
-            )
+        if tag == "img" and self._is_navigable_image(
+            tree,
+            include_empty_alt_images=self._include_empty_alt_images,
         ):
+            src = tree.attrib.get("src", "")
             label = self._get_image_label(tree)
             placeholder = self._get_image_placeholder(label)
             text_range = self._find_placeholder_range(
@@ -230,9 +235,19 @@ class StructuredHtmlParser(Inscriptis):
         except TypeError:
             return 0
 
+    @staticmethod
+    def _is_image_element(element):
+        return (
+            hasattr(element, "tag")
+            and isinstance(element.tag, str)
+            and element.tag.split("}")[-1].lower() == "img"
+        )
+
     @classmethod
     def _prepare_image_elements(cls, tree, *, include_empty_alt_images=False):
-        for image in tree.iter("img"):
+        for image in tree.iter():
+            if not cls._is_image_element(image):
+                continue
             if not cls._is_navigable_image(
                 image,
                 include_empty_alt_images=include_empty_alt_images,
@@ -244,10 +259,8 @@ class StructuredHtmlParser(Inscriptis):
 
     @classmethod
     def _is_navigable_image(cls, image, *, include_empty_alt_images=False):
-        return (
-            bool(image.attrib.get("src", ""))
-            and not cls._is_hidden_image(image)
-            and (include_empty_alt_images or not cls._is_decorative_image(image))
+        return not cls._is_hidden_image(image) and (
+            include_empty_alt_images or not cls._is_decorative_image(image)
         )
 
     @classmethod
@@ -261,6 +274,7 @@ class StructuredHtmlParser(Inscriptis):
     @classmethod
     def _get_non_alt_image_label(cls, image):
         for raw_label in (
+            image.attrib.get("aria-label", ""),
             image.attrib.get("title", ""),
             cls._get_figure_caption(image),
         ):
@@ -335,8 +349,9 @@ class StructuredHtmlParser(Inscriptis):
     def _get_table_image_infos(self, table):
         table_image_count = sum(
             1
-            for image in table.iter("img")
-            if self._is_navigable_image(
+            for image in table.iter()
+            if self._is_image_element(image)
+            and self._is_navigable_image(
                 image,
                 include_empty_alt_images=self._include_empty_alt_images,
             )
@@ -388,6 +403,7 @@ class StructuredHtmlParser(Inscriptis):
     def _get_image_label(image):
         for raw_label in (
             image.attrib.get("alt", ""),
+            image.attrib.get("aria-label", ""),
             image.attrib.get("title", ""),
             StructuredHtmlParser._get_figure_caption(image),
         ):
@@ -398,10 +414,16 @@ class StructuredHtmlParser(Inscriptis):
 
     @staticmethod
     def _get_figure_caption(image):
-        for figure in image.iterancestors("figure"):
-            caption = " ".join(figure.xpath(".//figcaption//text()")).strip()
-            if caption:
-                return caption
+        for ancestor in image.iterancestors():
+            tag = ancestor.tag.split("}")[-1].lower() if isinstance(ancestor.tag, str) else ""
+            if tag == "figure":
+                caption = " ".join(
+                    ancestor.xpath(".//*[local-name()='figcaption']//text()")
+                ).strip()
+                if not caption:
+                    caption = " ".join(ancestor.xpath(".//figcaption//text()")).strip()
+                if caption:
+                    return caption
         return ""
 
     @staticmethod
@@ -413,6 +435,8 @@ class StructuredHtmlParser(Inscriptis):
 
     @staticmethod
     def _get_suggested_filename(src):
+        if not src:
+            return ""
         if src.lower().startswith("data:image/"):
             media_type = src.split(",", 1)[0].split(";", 1)[0]
             image_type = media_type.split("/", 1)[-1].split("+", 1)[0]
@@ -429,10 +453,9 @@ class StructuredHtmlParser(Inscriptis):
         if not html_content:
             raise ValueError("Invalid html content")
         # strip XML declaration, if necessary
-        if html_content.startswith("<?xml "):
-            html_content = RE_STRIP_XML_DECLARATION.sub("", html_content, count=1)
-        html_content = cls.normalize_html(html_content)
-        return html_content
+        if html_content.lower().startswith("<?xml"):
+            html_content = RE_STRIP_XML_DECLARATION.sub("", html_content, count=1).strip()
+        return cls.normalize_html(html_content)
 
     @classmethod
     def from_string(cls, html_string, *, include_images=True, include_empty_alt_images=None):

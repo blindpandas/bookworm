@@ -318,3 +318,28 @@ def test_epub_cache_failures_fall_back_to_in_memory_parsing(asset, tmp_path, mon
 
     assert replacement_document.get_content() == expected_content
     assert replacement_document.get_legacy_content() == expected_legacy_content
+
+
+def test_epub_document_extracts_image_alt_attributes_in_reader_content(tmp_path):
+    book = epub.EpubBook()
+    book.set_title("Alt Test Book")
+    book.set_language("en")
+    c1 = epub.EpubHtml(title="Chapter 1", file_name="ch1.xhtml", lang="en")
+    c1.content = (
+        "<html><body>"
+        '<p>Before image <img src="pic1.png" alt="Accessible description" /> between <img src="pic2.png" /> after.</p>'
+        "</body></html>"
+    )
+    book.add_item(c1)
+    book.toc = (epub.Link("ch1.xhtml", "Chapter 1", "ch1"),)
+    book.add_item(epub.EpubNcx())
+    book.add_item(epub.EpubNav())
+    book.spine = ["nav", c1]
+    epub_path = tmp_path / "alt_book.epub"
+    epub.write_epub(epub_path, book, {})
+
+    doc = EpubDocument(DocumentUri.from_filename(epub_path))
+    doc.read()
+    content = doc.get_content()
+    assert "[Accessible description]" in content
+    assert "[Image]" in content
