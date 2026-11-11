@@ -6,13 +6,127 @@ import sqlite3
 import time
 from dataclasses import replace
 from pathlib import Path
+from threading import Condition, Thread
 from uuid import uuid4
 
 from .model import Audiobook
 
+_POSITION_SQL = """UPDATE books SET position=?, rate=?, volume=?, completed=?, updated=?, boost=?
+                   WHERE id=?"""
+
+
+class _PositionWriter:
+    """One worker owns its SQLite connection; pending updates coalesce per book.
+
+    The main thread can read the latest submitted values immediately. Flush is
+    a durability barrier for closing, switching books and making backups.
+    A failed write is surfaced once by the GUI timer and always by flush/save.
+    """
+
+    def __init__(self, path):
+        self.path = path
+        self.condition = Condition()
+        self.pending = {}
+        self.latest = {}
+        self.submitted = self.completed = 0
+        self.error = None
+        self.error_reported = False
+        self.stopping = False
+        self.thread = Thread(target=self._run, name="audiobook-position-writer", daemon=True)
+        self.thread.start()
+
+    def submit(self, values):
+        with self.condition:
+            if self.error is not None:
+                self.error_reported = True
+                raise self.error
+            if self.stopping:
+                raise RuntimeError("The audiobook position writer is closed")
+            self.submitted += 1
+            update = self.submitted, values
+            self.pending[values[-1]] = update
+            self.latest[values[-1]] = update
+            self.condition.notify_all()
+
+    def overlay(self, book_id):
+        with self.condition:
+            item = self.latest.get(book_id)
+            if item is None:
+                return None
+            values = item[1]
+            return dict(
+                zip(
+                    ("position", "rate", "volume", "completed", "boost"),
+                    (values[0], values[1], values[2], values[3], values[5]),
+                )
+            )
+
+    def _persist(self, connection, updates):
+        with connection:
+            connection.executemany(_POSITION_SQL, [values for _sequence, values in updates])
+
+    def _run(self):
+        connection = None
+        try:
+            connection = sqlite3.connect(self.path, timeout=10)
+            while True:
+                with self.condition:
+                    self.condition.wait_for(lambda: self.pending or self.stopping)
+                    if self.stopping and not self.pending:
+                        break
+                    updates = list(self.pending.values())
+                    self.pending.clear()
+                self._persist(connection, updates)
+                with self.condition:
+                    for sequence, values in updates:
+                        if self.latest.get(values[-1], (None,))[0] == sequence:
+                            del self.latest[values[-1]]
+                    self.completed = max(self.completed, *(s for s, _values in updates))
+                    self.condition.notify_all()
+        except Exception as exc:
+            with self.condition:
+                self.error = exc
+                self.condition.notify_all()
+        finally:
+            if connection is not None:
+                connection.close()
+
+    def check_error(self):
+        with self.condition:
+            if self.error is not None and not self.error_reported:
+                self.error_reported = True
+                raise self.error
+
+    def flush(self):
+        with self.condition:
+            target = self.submitted
+            self.condition.wait_for(
+                lambda: self.completed >= target or self.error is not None or self.stopping
+            )
+            if self.error is not None:
+                self.error_reported = True
+                raise self.error
+            if self.completed < target:
+                raise RuntimeError("Pending audiobook positions were discarded")
+
+    def close(self, discard=False):
+        with self.condition:
+            if self.stopping:
+                return
+        try:
+            if not discard:
+                self.flush()
+        finally:
+            with self.condition:
+                self.stopping = True
+                if discard:
+                    self.pending.clear()
+                self.condition.notify_all()
+            self.thread.join()
+
 
 class AudioLibrary:
-    def __init__(self, path):
+    def __init__(self, path, *, defer_positions=False):
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(path, timeout=10)
@@ -43,9 +157,26 @@ class AudioLibrary:
             if "boost" not in columns:
                 self.db.execute("ALTER TABLE books ADD COLUMN boost REAL NOT NULL DEFAULT 0")
             self.db.execute("PRAGMA user_version=2")
+        self.position_writer = _PositionWriter(path) if defer_positions else None
+        self.closed = False
 
-    def close(self):
-        self.db.close()
+    def close(self, *, discard_positions=False):
+        if self.closed:
+            return
+        try:
+            if self.position_writer is not None:
+                self.position_writer.close(discard=discard_positions)
+        finally:
+            self.db.close()
+            self.closed = True
+
+    def flush_positions(self):
+        if self.position_writer is not None:
+            self.position_writer.flush()
+
+    def check_position_errors(self):
+        if self.position_writer is not None:
+            self.position_writer.check_error()
 
     def books(self):
         return [
@@ -100,16 +231,20 @@ class AudioLibrary:
                     )
 
     def remove(self, book_id):
+        self.flush_positions()
         with self.db:
             self.db.execute("DELETE FROM books WHERE id=?", (book_id,))
 
     def state(self, book_id):
+        # Capture an outstanding submission before reading: if the worker
+        # commits meanwhile, this snapshot is still at least as new as SQLite.
+        pending = self.position_writer.overlay(book_id) if self.position_writer else None
         row = self.db.execute(
             "SELECT position, rate, volume, completed, boost FROM books WHERE id=?", (book_id,)
         ).fetchone()
         if row is None:
             raise KeyError(book_id)
-        return dict(row)
+        return pending if pending is not None else dict(row)
 
     def save_position(self, book, position, rate, volume, completed=False, boost=0):
         if not math.isfinite(rate) or not 0.5 <= rate <= 2:
@@ -118,20 +253,20 @@ class AudioLibrary:
             raise ValueError("Invalid volume")
         if not math.isfinite(boost) or not 0 <= boost <= 12:
             raise ValueError("Invalid speech boost")
-        with self.db:
-            self.db.execute(
-                """UPDATE books SET position=?, rate=?, volume=?, completed=?, updated=?, boost=?
-                               WHERE id=?""",
-                (
-                    max(0, min(int(position), book.duration_ms)),
-                    rate,
-                    volume,
-                    int(completed),
-                    time.time(),
-                    boost,
-                    book.id,
-                ),
-            )
+        values = (
+            max(0, min(int(position), book.duration_ms)),
+            rate,
+            volume,
+            int(completed),
+            time.time(),
+            boost,
+            book.id,
+        )
+        if self.position_writer is not None:
+            self.position_writer.submit(values)
+        else:
+            with self.db:
+                self.db.execute(_POSITION_SQL, values)
 
     def bookmark(self, book, position, title, note="", bookmark_id=None):
         if not title.strip():
@@ -225,6 +360,7 @@ class AudioLibrary:
         return added
 
     def backup(self, path):
+        self.flush_positions()
         destination = sqlite3.connect(path)
         try:
             self.db.backup(destination)

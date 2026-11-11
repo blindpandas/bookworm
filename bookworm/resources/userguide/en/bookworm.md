@@ -402,6 +402,8 @@ Speech boost adds 0–12 dB for quiet recordings. A look-ahead sample-peak limit
 
 Position is checkpointed during playback and on pause, jumps and close. Reopening defaults to the exact stored position. Optional rewind on reopening can be configured from 0 to 30 seconds; the default is 0. It never affects explicit bookmarks or Go to Time. Reaching the end marks a book finished without automatically restarting it; select a chapter to listen again.
 
+Position writes run in the background so seeking and volume or speed changes do not wait for disk writes. Before switching books, closing the audiobook window or making a library backup, the program finishes pending position writes. A save failure interrupts playback and produces an error message.
+
 Ctrl+B captures the position when invoked, before opening the name/note editor. Notes may span several lines. The bookmark list supports jumping, renaming, note editing and confirmed deletion. Export/import uses JSON with book/timeline identity checks. Repeated import does not duplicate identical entries. Editing a bookmark's label or note does not change its time.
 
 The Playback menu provides a sleep timer in real elapsed minutes, pause at chapter end, timer cancellation, and A–B section repeat. Use 0 minutes to cancel. The repeat end must follow its start. Rate changes do not extend the elapsed-time sleep deadline.

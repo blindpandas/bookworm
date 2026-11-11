@@ -21,6 +21,11 @@ are not migrated or repurposed.
   transactionally. Identical reimports retain the book ID and annotations,
   including after a timestamp-only change. Relocation checks complete file hashes.
   Bookmark JSON validates all entries before writing and deduplicates repeats.
+  The GUI uses one background position writer with its own SQLite connection.
+  Rapid writes coalesce to the latest exact state per book; readers see pending
+  values immediately. Closing/switching books and library backups flush pending
+  writes. Write failures stop playback and are reported once, rather than being
+  treated as saved. A confirmed close without saving can discard failed writes.
 * `player.py` owns state transitions on the GUI thread. Load generations reject
   stale native callbacks. Loading and stalled playback have deadlines. In-file
   seeks reuse the decoder; contiguous embedded chapters do not reopen it. Book
@@ -138,6 +143,17 @@ the widgets and audio engine are real. No physical sound card is used in CI.
    message dispatch uses EventLoopBase.GetActive. The corrected fixture keeps
    EventLoopActivator alive through setup, the test and teardown. All native
    key simulation and response-time assertions remain enabled.
+   The next Windows run passed every x64 test; x86 reached the correct F8 seek
+   position with the same decoder but exceeded the old timing assertion (1.14 s
+   versus 0.75 s). The seek path performed two synchronous position commits on
+   the GUI thread. Position writes now run on a dedicated worker and redundant
+   pre-seek saving is removed. The response assertion retains 0.75 s for native
+   input dispatch plus the actual command handler; it no longer includes later,
+   unrelated paint/timer processing inside Yield. A separate real GUI test
+   blocks disk writing while exercising F8. Six SQLite tests cover slow I/O,
+   coalescing, exact latest/zero persistence, backup, failed close and error
+   notification. No durability pragma is weakened and no Windows test cases
+   are disabled.
 
 Full stop is available as a native button, menu item and F9 shortcut. It closes
 the decoder, resets and saves book position zero, clears completion, cancels

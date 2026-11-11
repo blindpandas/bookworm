@@ -307,7 +307,9 @@ class AudiobookWindow(wx.Frame):
         super().__init__(parent, title=_("Audiobooks — Bookworm"), size=(1000, 800))
         self.on_closed = on_closed
         self.closing = False
-        self.library = AudioLibrary(data_path("audiobooks", "library.sqlite3"))
+        self.library = AudioLibrary(
+            data_path("audiobooks", "library.sqlite3"), defer_positions=True
+        )
         self.player = AudiobookPlayer(
             MpvAudioBackend(wx.CallAfter),
             self.library,
@@ -541,7 +543,13 @@ class AudiobookWindow(wx.Frame):
         try:
             return action()
         except Exception as exc:
-            wx.MessageBox(str(exc), _("Audiobooks"), wx.OK | wx.ICON_ERROR, self)
+            writer = self.library.position_writer
+            if writer is not None and writer.error is exc:
+                self.player._fail(
+                    _("The listening position could not be saved: {reason}").format(reason=exc)
+                )
+            else:
+                wx.MessageBox(str(exc), _("Audiobooks"), wx.OK | wx.ICON_ERROR, self)
             return None
 
     def announce(self, message):
@@ -1220,6 +1228,7 @@ class AudiobookWindow(wx.Frame):
         if self.closing:
             event.Skip()
             return
+        discard_positions = False
         try:
             self.player.close()
         except Exception as exc:
@@ -1236,11 +1245,12 @@ class AudiobookWindow(wx.Frame):
                     event.Veto()
                     return
             self.player.close(save=False)
+            discard_positions = True
         self.closing = True
         self.timer.Stop()
         self.cancel_import.set()
         self.cancel_export.set()
         self.worker.shutdown(wait=False, cancel_futures=True)
-        self.library.close()
+        self.library.close(discard_positions=discard_positions)
         self.on_closed()
         self.Destroy()

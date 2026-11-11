@@ -46,7 +46,7 @@ jobs:
           $PSNativeCommandUseErrorActionPreference = $false
           # Native aborts bypass pytest's report writer. Separate processes
           # retain the other suites' results and expose native stderr in logs.
-          foreach ($suite in 'audiobooks', 'runtime', 'export', 'metadata', 'native_audio', 'gui') {
+          foreach ($suite in 'audiobooks', 'position_writer', 'runtime', 'export', 'metadata', 'native_audio', 'gui') {
             python -u -m pytest --confcutdir=tests/audiobooks "tests/audiobooks/test_$suite.py" -v -s --junitxml="audio-results-$suite.xml" 2>&1 | Tee-Object -FilePath "audio-log-$suite.txt"
             if ($LASTEXITCODE -ne 0) { $failed = $true }
           }

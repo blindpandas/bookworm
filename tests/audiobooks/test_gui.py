@@ -8,6 +8,7 @@ import sys
 import time
 import types
 import wave
+from threading import Event
 
 import pytest
 
@@ -107,7 +108,7 @@ def test_native_controls_and_no_duplicate_volume_speech(window):
     assert "80%" in spoken[0]
 
 
-def test_real_menu_accelerators_respond_without_reloading(window):
+def test_real_menu_accelerators_respond_without_reloading(window, monkeypatch):
     import wx
 
     from bookworm.audiobooks.player import State
@@ -132,13 +133,26 @@ def test_real_menu_accelerators_respond_without_reloading(window):
     pump(app)
     assert frame.player.state is State.PAUSED
     control = frame.player.backend.control
+    # Time the native input dispatch plus the real command handler. Yield also
+    # processes unrelated paint/timer events after the handler has completed;
+    # their duration is not keyboard command latency.
+    completed = []
+    real_skip = frame.skip
+
+    def timed_skip(*args, **kwargs):
+        result = real_skip(*args, **kwargs)
+        completed.append(time.monotonic())
+        return result
+
+    monkeypatch.setattr(frame, "skip", timed_skip)
     started = time.monotonic()
     assert simulator.KeyDown(wx.WXK_F8)
     assert simulator.KeyUp(wx.WXK_F8)
     pump(app)
     assert 10000 <= frame.player.position_ms < 11000
     assert frame.player.backend.control is control
-    assert time.monotonic() - started < 0.75
+    assert len(completed) == 1
+    assert completed[0] - started < 0.75
     stop = wx.FindWindowByName("Stop", frame)
     assert isinstance(stop, wx.Button)
     assert simulator.KeyDown(wx.WXK_F9)
@@ -155,6 +169,81 @@ def test_real_menu_accelerators_respond_without_reloading(window):
     assert frame.player.state is State.PLAYING
     assert frame.player.position_ms < 1000
     assert frame.player.backend.control is not control
+
+
+def test_seek_command_remains_responsive_while_position_disk_write_is_blocked(window, monkeypatch):
+    import wx
+
+    frame, _spoken, app = window
+    frame.player.checkpoint()
+    writer = frame.library.position_writer
+    persist = writer._persist
+    entered, release = Event(), Event()
+
+    def blocked(connection, updates):
+        entered.set()
+        assert release.wait(5), "Test did not release the position writer"
+        persist(connection, updates)
+
+    monkeypatch.setattr(writer, "_persist", blocked)
+    completed = []
+    real_skip = frame.skip
+
+    def timed_skip(*args, **kwargs):
+        result = real_skip(*args, **kwargs)
+        completed.append(time.monotonic())
+        return result
+
+    monkeypatch.setattr(frame, "skip", timed_skip)
+    try:
+        frame.player.seek(1000)
+        assert entered.wait(2)
+        frame.books.SetFocus()
+        pump(app)
+        simulator = wx.UIActionSimulator()
+        started = time.monotonic()
+        assert simulator.KeyDown(wx.WXK_F8)
+        assert simulator.KeyUp(wx.WXK_F8)
+        pump(app)
+        assert len(completed) == 1
+        assert completed[0] - started < 0.75
+        assert frame.player.position_ms == 11000
+        assert not release.is_set()
+    finally:
+        release.set()
+    frame.library.flush_positions()
+    assert frame.library.state(frame.player.book.id)["position"] == 11000
+
+
+def test_position_writer_error_stops_audio_and_has_one_error_dialog(window, monkeypatch):
+    import wx
+
+    from bookworm.audiobooks.player import State
+
+    frame, _spoken, _app = window
+    frame.player.checkpoint()
+    dialogs = []
+
+    def message_box(message, title, style, *_args):
+        dialogs.append((message, title))
+        return wx.YES if style & wx.YES_NO else wx.OK
+
+    monkeypatch.setattr(wx, "MessageBox", message_box)
+
+    def fail(_connection, _updates):
+        raise OSError("disk full")
+
+    monkeypatch.setattr(frame.library.position_writer, "_persist", fail)
+    frame.player.play()
+    frame.player.seek(1234)
+    frame.library.position_writer.thread.join(timeout=2)
+    frame.guarded(lambda: frame.change_volume(0.05))
+    assert frame.player.state is State.ERROR
+    assert frame.player.backend.control is None
+    assert len(dialogs) == 1
+    assert "listening position could not be saved" in dialogs[0][0]
+    frame.on_timer(None)
+    assert len(dialogs) == 1
 
 
 def test_dialogs_construct_and_export_choices_are_native(window):

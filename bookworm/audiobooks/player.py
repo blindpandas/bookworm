@@ -80,6 +80,7 @@ class AudiobookPlayer:
         self.poll()
         try:
             self._save()
+            self.library.flush_positions()
         except Exception as exc:
             self._fail(_("The listening position could not be saved: {reason}").format(reason=exc))
             raise
@@ -93,6 +94,7 @@ class AudiobookPlayer:
                 self.state = State.PAUSED
                 self.desired_play = False
             self._save()
+            self.library.flush_positions()
         self.generation += 1
         self.backend.close()
         self.book = None
@@ -275,7 +277,6 @@ class AudiobookPlayer:
     def seek(self, position_ms):
         play = self.desired_play
         self.poll(advance=False)
-        self._save()
         self._seek(position_ms, play)
         self._save()
 
@@ -339,6 +340,11 @@ class AudiobookPlayer:
             self.loop_start, self.loop_end = start, end
 
     def poll(self, advance=True):
+        try:
+            self.library.check_position_errors()
+        except Exception as exc:
+            self._fail(_("The listening position could not be saved: {reason}").format(reason=exc))
+            return
         if self.book is None:
             return
         if self.state is State.LOADING:
