@@ -47,6 +47,12 @@ def window(tmp_path, monkeypatch):
         monkeypatch.setattr(gui, name, module)
     monkeypatch.setattr(gui, "data_path", paths.data_path)
     app = wx.GetApp() or wx.App(False)
+    # These tests run outside app.MainLoop(). On MSW, app.Yield() dispatches
+    # native input through EventLoopBase.GetActive(); a temporary, unactivated
+    # loop does not dispatch the queued keyboard messages. GTK hid this error.
+    event_loop = wx.GUIEventLoop()
+    loop_activator = wx.EventLoopActivator(event_loop)
+    assert wx.EventLoopBase.GetActive() == event_loop
     frame = gui.AudiobookWindow(None, lambda: None)
     frame.player.backend = MpvAudioBackend(wx.CallAfter, ao="null")
     source = tmp_path / "test.wav"
@@ -71,6 +77,7 @@ def window(tmp_path, monkeypatch):
     yield frame, spoken, app
     frame.Close()
     app.Yield()
+    del loop_activator
 
 
 def pump(app, duration=0.1):
@@ -116,22 +123,38 @@ def test_real_menu_accelerators_respond_without_reloading(window):
     assert frame.IsActive(), "The test window did not receive desktop activation"
     frame.books.SetFocus()
     pump(app)
-    simulator.KeyDown(wx.WXK_F5)
-    simulator.KeyUp(wx.WXK_F5)
+    assert simulator.KeyDown(wx.WXK_F5)
+    assert simulator.KeyUp(wx.WXK_F5)
     pump(app)
     assert frame.player.state is State.PLAYING
-    simulator.KeyDown(wx.WXK_F6)
-    simulator.KeyUp(wx.WXK_F6)
+    assert simulator.KeyDown(wx.WXK_F6)
+    assert simulator.KeyUp(wx.WXK_F6)
     pump(app)
     assert frame.player.state is State.PAUSED
     control = frame.player.backend.control
     started = time.monotonic()
-    simulator.KeyDown(wx.WXK_F8)
-    simulator.KeyUp(wx.WXK_F8)
+    assert simulator.KeyDown(wx.WXK_F8)
+    assert simulator.KeyUp(wx.WXK_F8)
     pump(app)
     assert 10000 <= frame.player.position_ms < 11000
     assert frame.player.backend.control is control
     assert time.monotonic() - started < 0.75
+    stop = wx.FindWindowByName("Stop", frame)
+    assert isinstance(stop, wx.Button)
+    assert simulator.KeyDown(wx.WXK_F9)
+    assert simulator.KeyUp(wx.WXK_F9)
+    pump(app)
+    assert frame.player.state is State.STOPPED
+    assert frame.player.position_ms == 0
+    assert frame.player.backend.control is None
+    assert simulator.KeyDown(wx.WXK_F5)
+    assert simulator.KeyUp(wx.WXK_F5)
+    deadline = time.monotonic() + 2
+    while frame.player.state is not State.PLAYING and time.monotonic() < deadline:
+        pump(app, 0.01)
+    assert frame.player.state is State.PLAYING
+    assert frame.player.position_ms < 1000
+    assert frame.player.backend.control is not control
 
 
 def test_dialogs_construct_and_export_choices_are_native(window):

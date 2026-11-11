@@ -311,6 +311,65 @@ def test_play_pause_and_saved_progress(setup_player, library, book):
     assert not backend.playing
 
 
+def test_full_stop_resets_position_releases_audio_and_restarts_at_zero(setup_player, library, book):
+    player, backend, _, _ = setup_player
+    player.play()
+    backend.value = 1234
+    player.poll()
+    player.set_loop(500, 1500)
+    player.set_sleep(10)
+    previous_loads = len(backend.loads)
+    player.stop()
+    assert player.state is State.STOPPED
+    assert player.position_ms == player.chapter_index == 0
+    assert not backend.playing and not player._ready and not player.desired_play
+    assert player.loop_start is player.loop_end is player.sleep_deadline is None
+    assert library.state(book.id)["position"] == 0
+    player.play()
+    assert len(backend.loads) == previous_loads + 1
+    backend.ready()
+    assert player.state is State.PLAYING and backend.value == 0
+
+
+def test_stop_during_load_rejects_late_ready_and_eof(setup_player):
+    player, backend, _, _ = setup_player
+    player.seek(2500)
+    ready, eof = backend.loads[-1][1:3]
+    player.stop()
+    ready()
+    eof()
+    player.stop()
+    assert player.state is State.STOPPED and player.position_ms == 0
+    assert not backend.playing and not player._ready
+
+
+def test_stop_finished_book_clears_completion(setup_player, library, book):
+    player, backend, _, _ = setup_player
+    player.seek(book.duration_ms)
+    assert player.state is State.FINISHED
+    player.stop()
+    assert not player.completed and not library.state(book.id)["completed"]
+    player.play()
+    backend.ready()
+    assert player.state is State.PLAYING and backend.value == 0
+
+
+def test_stop_releases_engine_even_when_position_cannot_be_saved(
+    setup_player, library, monkeypatch
+):
+    player, backend, _, _ = setup_player
+    player.play()
+
+    def fail(*_args):
+        raise OSError("disk full")
+
+    monkeypatch.setattr(library, "save_position", fail)
+    with pytest.raises(OSError, match="disk full"):
+        player.stop()
+    assert player.state is State.STOPPED and not backend.playing
+    assert not player._ready
+
+
 def test_short_and_long_seek_cross_file_boundaries(setup_player):
     player, backend, _, _ = setup_player
     player.play()

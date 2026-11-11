@@ -370,6 +370,7 @@ A keresőmező a könyvcímekben, valamint a szerzők és felolvasók nevében k
 | --- | --- |
 | F5 | Lejátszás vagy szüneteltetés |
 | F6 | Szüneteltetés |
+| F9 | Teljes leállítás, visszaállítás a könyv elejére |
 | F7 / F8 | Rövid ugrás vissza / előre |
 | Shift+F7 / Shift+F8 | Hosszú ugrás vissza / előre |
 | Ctrl+PageUp / Ctrl+PageDown | Előző / következő fejezet |
@@ -380,6 +381,8 @@ A keresőmező a könyvcímekben, valamint a szerzők és felolvasók nevében k
 | Ctrl+Shift+T | Az aktuális hangfájl címkeszerkesztője |
 | Ctrl+B | Könyvjelző az aktuális időpontnál |
 | Ctrl+Shift+B | Könyvjelzők megnyitása |
+
+A **Leállítás** gomb vagy az **F9** teljesen leállítja a lejátszást, és a könyv elejére állítja a mentett pozíciót. Kikapcsolja az elalvásidőzítőt és az A–B szakaszismétlést is. Az **F5** ezután a könyv elejéről indítja a lejátszást. A szüneteltetés megőrzi az aktuális pozíciót.
 
 A rövid ugrás alapértéke **10 másodperc**, a hosszúé **60 másodperc**. A beállításokban a rövid ugrás 1–60, a hosszú 10–600 másodperc között adható meg; a hosszú ugrásnak nagyobbnak kell lennie a rövidnél. Az ugrás a fájlhatárokon is átlép. A **Ctrl+G** ablakában másodperc, `perc:másodperc` vagy `óra:perc:másodperc` alakban adhatja meg a célidőt. Például a `90`, az `1:30` és a `0:01:30` ugyanazt a pontot jelenti. Legfeljebb három tizedesjegy is megadható, ponttal vagy vesszővel: az `1:30,125` 90 másodperc és 125 ezredmásodperc.
 

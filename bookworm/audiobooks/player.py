@@ -11,6 +11,7 @@ class State(Enum):
     EMPTY = "empty"
     LOADING = "loading"
     PAUSED = "paused"
+    STOPPED = "stopped"
     PLAYING = "playing"
     FINISHED = "finished"
     ERROR = "error"
@@ -225,7 +226,7 @@ class AudiobookPlayer:
         if self.state is State.FINISHED:
             self.notify(_("The audiobook is finished. Select a chapter to listen again."))
             return
-        if self.state is State.ERROR:
+        if self.state in (State.ERROR, State.STOPPED):
             self._seek(self.position_ms, play=True)
             return
         self.desired_play = True
@@ -254,6 +255,22 @@ class AudiobookPlayer:
             self.pause()
         else:
             self.play()
+
+    def stop(self):
+        if self.book is None:
+            return
+        # Invalidate callbacks before closing the decoder. Stop also resets a
+        # finished or still-loading book; stale EOF/load events cannot undo it.
+        self.generation += 1
+        self.desired_play = self._ready = False
+        self.sleep_deadline = self.sleep_boundary = None
+        self.loop_start = self.loop_end = None
+        self.backend.close()
+        self.position_ms = self.chapter_index = 0
+        self.completed = False
+        self.error = ""
+        self.state = State.STOPPED
+        self._save()
 
     def seek(self, position_ms):
         play = self.desired_play

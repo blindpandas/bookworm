@@ -73,7 +73,7 @@ playback or TTS owns them. Starting one pauses/stops the other.
 Printable Ctrl+Alt combinations are avoided because they can consume AltGr
 characters on Windows; see [Microsoft's keyboard guidance](https://devblogs.microsoft.com/oldnewthing/20040329-00/?p=40003).
 
-The Hungarian catalog adds 408 translated strings and reuses 10 existing ones.
+The Hungarian catalog adds 410 translated strings and reuses 11 existing ones.
 The original 797 entries and all pre-existing manual sections are retained.
 The English and Hungarian guides document the same controls, ranges and limits.
 Technical identifiers, user file names and diagnostic output from third-party
@@ -131,6 +131,19 @@ the widgets and audio engine are real. No physical sound card is used in CI.
    key test verifies desktop activation first. DLL discovery is pinned to the
    bundled library even if another mpv-2.dll occurs earlier on PATH. A child
    regression test creates that conflicting library name and checks cleanup.
+   The third Windows run verified both native runtimes: 114 of 115 audiobook
+   tests passed on both x86 and x64, including exports, tags and exact seeks.
+   Only the simulated F5 test failed. The fixture lacked an active event loop:
+   on MSW app.Yield creates a temporary loop without activating it, while native
+   message dispatch uses EventLoopBase.GetActive. The corrected fixture keeps
+   EventLoopActivator alive through setup, the test and teardown. All native
+   key simulation and response-time assertions remain enabled.
+
+Full stop is available as a native button, menu item and F9 shortcut. It closes
+the decoder, resets and saves book position zero, clears completion, cancels
+sleep/A–B state and invalidates late callbacks. F5 subsequently reopens the first
+recording at zero; Pause retains the listening position. Tests cover stopping
+while loading, after completion, and when the position save fails.
 2. Test the packaged installer and portable application on the Windows versions
    the release claims to support, with a normal account and without developer
    tools. Verify the DLL/FFmpeg are present and that opening audio works offline.

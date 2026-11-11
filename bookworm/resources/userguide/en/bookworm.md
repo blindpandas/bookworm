@@ -366,6 +366,7 @@ Search filters the shelf by title and author. Enter, Ctrl+O or Open Selected Boo
 | --- | --- |
 | F5 | Play/pause; open the selected book if necessary |
 | F6 | Pause |
+| F9 | Full stop and return to the beginning of the book |
 | F7 / F8 | Short backward/forward jump |
 | Shift+F7 / Shift+F8 | Long backward/forward jump |
 | Ctrl+PageUp / Ctrl+PageDown | Previous/next chapter |
@@ -380,6 +381,8 @@ Search filters the shelf by title and author. Enter, Ctrl+O or Open Selected Boo
 | Ctrl+Shift+T | Edit that file's tags |
 | Ctrl+B | Add a bookmark at the current position |
 | Ctrl+Shift+B | Browse, edit or delete bookmarks |
+
+The Stop button and F9 close the audio engine and reset the saved position to the beginning of the book. They cancel the sleep timer and A–B repeat. F5 then starts from the beginning; Pause keeps the current position.
 
 Short and long jumps default to 10 and 60 seconds. Settings allow 1–60 and 10–600 seconds respectively; the long jump must exceed the short jump. Jumps cross physical file boundaries. Go to Time accepts seconds, mm:ss or hh:mm:ss; 90, 1:30 and 0:01:30 identify the same point. Up to three decimal places are accepted with a dot or comma: 1:30.125 is 90 seconds and 125 milliseconds.
 

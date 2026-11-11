@@ -6759,3 +6759,11 @@ msgstr ""
 #: bookworm/audiobooks/backend.py
 msgid "The loaded audio engine does not match this Bookworm build. Close and restart Bookworm."
 msgstr "A betöltött hangmotor nem a Bookworm ezen verziójához tartozik. Zárja be, majd indítsa újra a programot."
+
+#: bookworm/audiobooks/gui.py
+msgid "&Stop"
+msgstr "Leállí&tás"
+
+#: bookworm/audiobooks/gui.py
+msgid "Stop\tF9"
+msgstr "Leállítás\tF9"

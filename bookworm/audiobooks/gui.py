@@ -349,6 +349,7 @@ class AudiobookWindow(wx.Frame):
         for label, action in (
             (_("Previous chapter"), lambda: self.player.chapter(-1)),
             (_("&Play / pause"), self.toggle),
+            (_("&Stop"), self.stop),
             (_("Next chapter"), lambda: self.player.chapter(1)),
             (_("Go to selected chapter"), self.go_chapter),
         ):
@@ -468,6 +469,7 @@ class AudiobookWindow(wx.Frame):
                 [
                     (_("Play / pause\tF5"), self.toggle),
                     (_("Pause\tF6"), self.player.pause),
+                    (_("Stop\tF9"), self.stop),
                     (_("Back (short)\tF7"), lambda: self.skip(-1)),
                     (_("Forward (short)\tF8"), lambda: self.skip(1)),
                     (_("Back (long)\tShift+F7"), lambda: self.skip(-1, True)),
@@ -630,6 +632,12 @@ class AudiobookWindow(wx.Frame):
             if self.player.state is State.LOADING
             else (_("Playing") if self.player.desired_play else _("Paused"))
         )
+
+    def stop(self):
+        self.require_book()
+        self.player.stop()
+        self.loop_a = None
+        self.announce(_("Stopped"))
 
     def skip(self, direction, long=False):
         self.require_book()
