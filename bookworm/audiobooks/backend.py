@@ -4,6 +4,7 @@ Native callbacks never touch wx widgets: the GUI supplies wx.CallAfter as dispat
 Each load owns a player instance so late native events cannot target another file.
 """
 
+import locale
 import os
 import sys
 import time
@@ -23,6 +24,11 @@ def audio_filters(rate, boost):
 
 
 def _load_mpv():
+    # libmpv requires this for its entire lifetime, including later seeks and
+    # filter updates. python-mpv applies it on import on Unix, but not Windows;
+    # wx/App locale setup may also have changed it since the previous import.
+    # Do not change LC_CTYPE or the application's translation/date locale.
+    locale.setlocale(locale.LC_NUMERIC, "C")
     if sys.platform == "win32":
         from bookworm import app
 
@@ -45,16 +51,41 @@ def _load_mpv():
     return mpv
 
 
-def probe_mp4_chapters(path):
-    """Read QuickTime chapter tracks not covered by Mutagen's Nero chpl parser."""
-    player = _load_mpv().MPV(
+def create_mpv(player_factory=None, **options):
+    """Create every audio client without mpv's independent Lua UI clients.
+
+    load-scripts=no only disables scripts from the user's config directory.
+    It does not disable built-in scripts. Those are unnecessary in Bookworm
+    and can raise LuaJIT SEH exceptions inside an embedded Windows process.
+    Keep native crash reporting enabled; prevent the unused scripts starting.
+    """
+    factory = player_factory or _load_mpv().MPV
+    defaults = dict(
         config=False,
         load_scripts=False,
+        osc=False,
         ytdl=False,
+        load_stats_overlay=False,
+        load_osd_console=False,
+        load_auto_profiles=False,
+        load_select=False,
         video=False,
+        terminal=False,
+        input_default_bindings=False,
+        input_vo_keyboard=False,
+    )
+    if sys.platform == "win32":
+        # These additional built-ins exist in our pinned Windows runtime.
+        defaults.update(load_positioning=False, load_commands=False, load_context_menu=False)
+    defaults.update(options)
+    return factory(**defaults)
+
+
+def probe_mp4_chapters(path):
+    """Read QuickTime chapter tracks not covered by Mutagen's Nero chpl parser."""
+    player = create_mpv(
         ao="null",
         pause=True,
-        terminal=False,
     )
     try:
         with player.prepare_and_wait_for_event("file-loaded", timeout=10):
@@ -89,17 +120,9 @@ class MpvAudioBackend:
     def load(self, path, on_loaded, on_finished, on_error, *, rate=1.0, volume=1.0, boost=0.0):
         self.close()
         self.rate, self.boost = rate, boost
-        factory = self.factory or _load_mpv().MPV
-        control = factory(
-            config=False,
-            load_scripts=False,
-            ytdl=False,
-            video=False,
-            input_default_bindings=False,
-            input_vo_keyboard=False,
-            osc=False,
+        control = create_mpv(
+            self.factory,
             audio_display="no",
-            terminal=False,
             pause=True,
             idle=True,
             audio_pitch_correction=True,

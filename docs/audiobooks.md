@@ -26,7 +26,10 @@ are not migrated or repurposed.
   seeks reuse the decoder; contiguous embedded chapters do not reopen it. Book
   completion, file EOF, sleep boundaries and repeat boundaries are separate cases.
 * `backend.py` dispatches native callbacks through wx.CallAfter. Configuration,
-  scripts, video, automatic URLs and mpv keyboard bindings are disabled. Seeks
+  user and built-in scripts, video, automatic URLs and mpv keyboard bindings are
+  disabled for playback, chapter probing and export. libmpv requires the C
+  numeric locale for its lifetime; client creation enforces LC_NUMERIC=C without
+  changing text, translation or date locales. Seeks
   pause output until a playback-restart event and a position within 50 ms of the
   requested target have both been observed. Failure stops playback. Millisecond
   storage does not promise sample-accurate decoding for every codec/device.
@@ -93,6 +96,10 @@ tests avoid importing the document/OCR subsystem. Minimal dependencies are
 pytest, numpy, wxPython, mutagen and mpv. Native GUI tests need an interactive
 desktop. Without the opt-in variables, native tests are explicitly skipped.
 Do not count skipped tests as successful engine or screen-reader tests.
+Each suite runs in a separate process with native stderr visible; a native
+crash fails the job while preserving the other suites' reports. A child-process
+test repeatedly creates/closes the engine with fault reporting enabled and,
+on Windows, begins with Hungarian numeric settings.
 
 The implementation session used Linux libmpv 0.40/FFmpeg, Python 3.12 for audio
 tests, and real wxGTK 4.2.3/Python 3.13 controls under Xvfb for GUI tests. Real PCM
@@ -105,8 +112,15 @@ the widgets and audio engine are real. No physical sound card is used in CI.
 
 ## Required before a release
 
-1. Run the Windows x64/x86 workflow and the existing full Bookworm test/build
-   workflow. They were not executed on Windows in the implementation session.
+1. Obtain passing Windows x64/x86 audio and full Bookworm test/build results.
+   The first Windows runs on 2026-11-11 failed: the full suite rejected a missing
+   path-validation exception (290 passed, one failed, 54 skipped), while both
+   native jobs terminated inside the engine. x64 reported a LuaJIT SEH exception
+   and access violation; x86 reported an abort at mpv_create. The follow-up fixes
+   portable path validation, disables every built-in script in the pinned
+   runtime, and enforces its numeric-locale requirement. A Windows rerun must
+   confirm whether these initialization changes resolve both native failures;
+   the original captured output does not establish the x86 abort's cause.
 2. Test the packaged installer and portable application on the Windows versions
    the release claims to support, with a normal account and without developer
    tools. Verify the DLL/FFmpeg are present and that opening audio works offline.

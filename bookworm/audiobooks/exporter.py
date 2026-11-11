@@ -17,7 +17,7 @@ from threading import Event
 
 import mutagen
 
-from .backend import _load_mpv
+from .backend import create_mpv
 from .importer import ImportCancelledError, fingerprint
 
 FORMATS = {
@@ -233,15 +233,8 @@ def _render_pcm(book, path, options, cancel, progress):
         if level in ("error", "fatal") and len(errors) < 20:
             errors.append(message.strip())
 
-    player = _load_mpv().MPV(
-        config=False,
-        load_scripts=False,
-        ytdl=False,
-        video=False,
-        terminal=False,
+    player = create_mpv(
         idle=True,
-        input_default_bindings=False,
-        input_vo_keyboard=False,
         ao="pcm",
         ao_pcm_file=str(path),
         ao_pcm_waveheader=False,

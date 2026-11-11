@@ -123,7 +123,18 @@ def test_book_timeline_boundaries(book):
 
 
 @pytest.mark.parametrize(
-    "path", ["../escape.mp3", "/tmp/escape.mp3", "C:/a.mp3", "C:a.mp3", "..\\a.mp3"]
+    "path",
+    [
+        "../escape.mp3",
+        "/tmp/escape.mp3",
+        "/escape.mp3",
+        "//server/share/a.mp3",
+        "C:/a.mp3",
+        "C:a.mp3",
+        "..\\a.mp3",
+        "\\escape.mp3",
+        "folder/../../a.mp3",
+    ],
 )
 def test_relative_chapter_paths_only(path):
     with pytest.raises(ValueError):

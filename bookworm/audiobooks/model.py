@@ -4,7 +4,7 @@ import re
 from bisect import bisect_right
 from dataclasses import asdict, dataclass
 from functools import cached_property
-from pathlib import Path, PureWindowsPath
+from pathlib import Path, PurePosixPath, PureWindowsPath
 
 
 @dataclass(frozen=True)
@@ -18,7 +18,10 @@ class Chapter:
     mtime_ns: int = 0
 
     def __post_init__(self):
-        path = Path(self.path)
+        # Stored paths always use '/' and must be relative on every platform.
+        # WindowsPath('/name').is_absolute() is False (no drive), even though
+        # joining it replaces the root directory. Parse the portable syntax.
+        path = PurePosixPath(self.path)
         if (
             path.is_absolute()
             or PureWindowsPath(self.path).drive
