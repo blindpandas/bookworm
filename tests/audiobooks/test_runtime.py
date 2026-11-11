@@ -18,9 +18,20 @@ def test_engine_repeated_initialization_with_native_fault_reporting():
     source = r"""
 import faulthandler
 import locale
+import os
+from pathlib import Path
+import shutil
 import sys
+import tempfile
 faulthandler.enable()
 from bookworm.audiobooks.backend import create_mpv
+from bookworm import app
+from bookworm.audiobooks import backend
+shadow = tempfile.TemporaryDirectory()
+if sys.platform == "win32":
+    expected = Path(backend.__file__).resolve().parents[2] / "scripts" / "dlls" / "mpv" / app.arch / "libmpv-2.dll"
+    shutil.copyfile(expected, Path(shadow.name) / "mpv-2.dll")
+    os.environ["PATH"] = shadow.name + os.pathsep + os.environ.get("PATH", "")
 for index in range(12):
     if sys.platform == "win32":
         locale.setlocale(locale.LC_NUMERIC, "Hungarian_Hungary.1250")
@@ -34,6 +45,9 @@ for index in range(12):
     finally:
         player.terminate()
 print("All audio clients closed", flush=True)
+# Windows keeps the imported DLL mapped until exit; the shadow copy must never
+# be loaded, so it can be removed now, not just after the process exits.
+shadow.cleanup()
 """
     result = subprocess.run(
         [sys.executable, "-u", "-c", source],

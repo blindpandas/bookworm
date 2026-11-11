@@ -506,6 +506,7 @@ class AudiobookWindow(wx.Frame):
         ]
         groups.append((_("&Help"), [(_("Audiobook help\tF1"), self.help)]))
         self.shortcut_index = {}
+        accelerators = []
         for label, actions in groups:
             menu = wx.Menu()
             for text, action in actions:
@@ -520,9 +521,11 @@ class AudiobookWindow(wx.Frame):
                             )
                         )
                     self.shortcut_index[combination] = text
+                    accelerators.append((*combination, item.GetId()))
                 self.Bind(wx.EVT_MENU, lambda _event, a=action: self.guarded(a), item)
             bar.Append(menu, label)
         self.SetMenuBar(bar)
+        self.SetAcceleratorTable(wx.AcceleratorTable(accelerators))
 
     def help(self):
         from bookworm import app

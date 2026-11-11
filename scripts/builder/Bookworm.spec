@@ -90,6 +90,11 @@ for audio_binary in ("libmpv-2.dll", "ffmpeg.exe"):
     audio_binaries.append((str(audio_folder / audio_binary), "audio-engine"))
 DATA_FILES.extend((str(path), "audio-engine") for path in audio_folder.glob("*.txt"))
 
+# Also protect direct PyInstaller invocations, not only the invoke build task.
+import runpy
+audio_runtime = runpy.run_path(str(root / "scripts" / "prepare_audio_engine.py"))
+audio_runtime["verify_runtime"](audio_arch)
+
 
 a = Analysis(
     ["Bookworm.py"],

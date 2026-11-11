@@ -6755,3 +6755,7 @@ msgstr ""
 "hátralévő idő: {file_remaining}. Pozíció a könyvben: {position}; teljes "
 "időtartam: {duration}. Hátralévő hallgatási idő {percent}%-os sebességgel: "
 "{remaining}."
+
+#: bookworm/audiobooks/backend.py
+msgid "The loaded audio engine does not match this Bookworm build. Close and restart Bookworm."
+msgstr "A betöltött hangmotor nem a Bookworm ezen verziójához tartozik. Zárja be, majd indítsa újra a programot."

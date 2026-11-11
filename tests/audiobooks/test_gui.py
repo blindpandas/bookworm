@@ -107,6 +107,13 @@ def test_real_menu_accelerators_respond_without_reloading(window):
 
     frame, _spoken, app = window
     simulator = wx.UIActionSimulator()
+    # SendInput on Windows goes to the foreground window. A native click
+    # activates this test window before testing the real accelerator route.
+    point = frame.books.ClientToScreen((10, 10))
+    assert simulator.MouseMove(point.x, point.y)
+    assert simulator.MouseClick()
+    pump(app)
+    assert frame.IsActive(), "The test window did not receive desktop activation"
     frame.books.SetFocus()
     pump(app)
     simulator.KeyDown(wx.WXK_F5)

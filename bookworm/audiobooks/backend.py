@@ -4,11 +4,14 @@ Native callbacks never touch wx widgets: the GUI supplies wx.CallAfter as dispat
 Each load owns a player instance so late native events cannot target another file.
 """
 
+import ctypes.util
 import locale
-import os
 import sys
 import time
 from pathlib import Path
+from threading import RLock
+
+_binding_lock = RLock()
 
 
 def audio_filters(rate, boost):
@@ -40,12 +43,30 @@ def _load_mpv():
             raise RuntimeError(
                 _("The audiobook audio engine is missing. Please use a build that includes it.")
             )
-        old_path = os.environ.get("PATH", "")
-        os.environ["PATH"] = str(folder) + os.pathsep + old_path
-        try:
-            import mpv
-        finally:
-            os.environ["PATH"] = old_path
+        expected = (folder / "libmpv-2.dll").resolve()
+        # python-mpv tries mpv-2.dll before libmpv-2.dll. Prepending PATH alone
+        # can therefore select another installed player's DLL. Pin discovery
+        # to this build without changing the process PATH; forward all other
+        # library requests and restore discovery even if import fails.
+        with _binding_lock:
+            discover = ctypes.util.find_library
+
+            def pinned_library(name):
+                if name in ("mpv-2.dll", "libmpv-2.dll", "mpv-1.dll"):
+                    return str(expected)
+                return discover(name)
+
+            ctypes.util.find_library = pinned_library
+            try:
+                import mpv
+            finally:
+                ctypes.util.find_library = discover
+            if Path(mpv.backend._name).resolve() != expected:
+                raise RuntimeError(
+                    _(
+                        "The loaded audio engine does not match this Bookworm build. Close and restart Bookworm."
+                    )
+                )
     else:
         import mpv
     return mpv

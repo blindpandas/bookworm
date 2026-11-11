@@ -73,7 +73,7 @@ playback or TTS owns them. Starting one pauses/stops the other.
 Printable Ctrl+Alt combinations are avoided because they can consume AltGr
 characters on Windows; see [Microsoft's keyboard guidance](https://devblogs.microsoft.com/oldnewthing/20040329-00/?p=40003).
 
-The Hungarian catalog adds 407 translated strings and reuses 10 existing ones.
+The Hungarian catalog adds 408 translated strings and reuses 10 existing ones.
 The original 797 entries and all pre-existing manual sections are retained.
 The English and Hungarian guides document the same controls, ranges and limits.
 Technical identifiers, user file names and diagnostic output from third-party
@@ -121,6 +121,16 @@ the widgets and audio engine are real. No physical sound card is used in CI.
    runtime, and enforces its numeric-locale requirement. A Windows rerun must
    confirm whether these initialization changes resolve both native failures;
    the original captured output does not establish the x86 abort's cause.
+   The second run passed the full application tests and 114/115 x64 audio/GUI
+   cases. x86 now exposed `OpenSSL internal error: assertion failed: lock != NULL`
+   at mpv_create. The follow-up pins i686 to retained build 20260419/06f4ce7,
+   before global libcurl initialization was merged on May 16, and adds a native
+   build-time decode/R3/limiter smoke test before freezing. This is a targeted
+   dependency replacement, not evidence of a passing Windows rerun yet.
+   The keyboard path now has an explicit wx accelerator table; its simulated
+   key test verifies desktop activation first. DLL discovery is pinned to the
+   bundled library even if another mpv-2.dll occurs earlier on PATH. A child
+   regression test creates that conflicting library name and checks cleanup.
 2. Test the packaged installer and portable application on the Windows versions
    the release claims to support, with a normal account and without developer
    tools. Verify the DLL/FFmpeg are present and that opening audio works offline.
