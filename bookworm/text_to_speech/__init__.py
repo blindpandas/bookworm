@@ -160,6 +160,14 @@ class TextToSpeechService(BookwormService):
                 self.pynput_listener = None
 
     def on_key_press_global(self, key):
+        audio_key = {
+            keyboard.Key.media_play_pause: "play_pause",
+            keyboard.Key.media_next: "next",
+            keyboard.Key.media_previous: "previous",
+        }.get(key)
+        if audio_key:
+            wx.CallAfter(self._route_media_key, audio_key, key)
+            return
         action = self.pynput_key_map.get(key)
         if action:
             # CRITICAL: This method is called from a non-GUI thread created by pynput.
@@ -167,6 +175,15 @@ class TextToSpeechService(BookwormService):
             # are not thread-safe MUST be delegated to the main GUI thread.
             # wx.CallAfter is the standard, safe way to do this.
             wx.CallAfter(action)
+
+    def _route_media_key(self, audio_key, original_key):
+        handler = getattr(wx.GetApp(), "service_handler", None)
+        audio = handler.get_service("audiobooks") if handler else None
+        if audio is not None and audio.handle_media_key(audio_key):
+            return
+        action = self.pynput_key_map.get(original_key)
+        if action:
+            action()
 
     def process_menubar(self, menubar):
         self.menu = SpeechMenu(self)
@@ -220,6 +237,10 @@ class TextToSpeechService(BookwormService):
         self.utterance_queue.appendleft(utterance)
 
     def play_or_resume(self):
+        handler = getattr(wx.GetApp(), "service_handler", None)
+        audio = handler.get_service("audiobooks") if handler else None
+        if audio is not None:
+            audio.pause_for_tts()
         if not self.is_engine_ready:
             self.initialize_engine()
         if not self.is_engine_ready:

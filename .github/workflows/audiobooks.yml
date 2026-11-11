@@ -1,0 +1,61 @@
+name: Audiobook audio and native controls
+
+on:
+  pull_request:
+  push:
+    branches: [develop, feature/audiobook-library, 'audiobooks-*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audio:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture: [x64, x86]
+    env:
+      BOOKWORM_TEST_AUDIO: '1'
+      BOOKWORM_TEST_GUI: '1'
+      PYTHONIOENCODING: utf-8
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+          architecture: ${{ matrix.architecture }}
+      - name: Install isolated audio test dependencies
+        shell: pwsh
+        run: |
+          python -m pip install pytest==8.4.2 numpy==1.26.4 wxPython==4.2.1 mutagen==1.48.1 mpv==1.0.8
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Prepare and verify the Windows audio engines
+        shell: pwsh
+        run: |
+          python scripts/prepare_audio_engine.py --arch ${{ matrix.architecture }}
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          (Join-Path $PWD 'scripts/dlls/mpv/${{ matrix.architecture }}') | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Exercise actual decoders, export, tags and native controls
+        shell: pwsh
+        run: |
+          $failed = $false
+          $PSNativeCommandUseErrorActionPreference = $false
+          # Native aborts bypass pytest's report writer. Separate processes
+          # retain the other suites' results and expose native stderr in logs.
+          foreach ($suite in 'audiobooks', 'position_writer', 'runtime', 'export', 'metadata', 'native_audio', 'gui') {
+            python -u -m pytest --confcutdir=tests/audiobooks "tests/audiobooks/test_$suite.py" -v -s --junitxml="audio-results-$suite.xml" 2>&1 | Tee-Object -FilePath "audio-log-$suite.txt"
+            if ($LASTEXITCODE -ne 0) { $failed = $true }
+          }
+          if ($failed) { exit 1 }
+      - name: Retain results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: audiobook-tests-${{ matrix.architecture }}
+          path: |
+            audio-results-*.xml
+            audio-log-*.txt

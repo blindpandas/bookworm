@@ -4556,3 +4556,2214 @@ msgstr "Keresendő kifejezés"
 msgid "Choose Wikipedia language"
 msgstr "A Wikipédia nyelvének kiválasztása"
 
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:159
+msgid "&Add field or value…"
+msgstr "Mező vagy érték &hozzáadása…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/service.py:29
+msgid "&Audiobooks…\tCtrl+F11"
+msgstr "&Hangoskönyvek…\tCtrl+F11"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:498
+msgid "&Bookmarks"
+msgstr "Könyv&jelzők"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:135
+msgid "&Delete"
+msgstr "&Törlés"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:134
+msgid "&Edit note"
+msgstr "Megjegyzés &szerkesztése"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:158
+msgid "&Edit value…"
+msgstr "Érték &szerkesztése…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:133
+msgid "&Go to"
+msgstr "&Ugrás"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:452
+msgid "&Library"
+msgstr "&Könyvespolc"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:337
+msgid "&Open selected book"
+msgstr "A kijelölt könyv &megnyitása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:351
+msgid "&Play / pause"
+msgstr "Lejátszás vagy szü&neteltetés"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:467
+msgid "&Playback"
+msgstr "&Lejátszás"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:160
+msgid "&Remove field or value"
+msgstr "Mező vagy érték &eltávolítása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:251
+msgid "A binary tag value must not exceed 32 MiB."
+msgstr "Egy bináris címkeérték mérete legfeljebb 32 MiB lehet."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/storage.py:138
+msgid "A bookmark needs a name."
+msgstr "Adjon nevet a könyvjelzőnek."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1114
+msgid ""
+"A file operation is already in progress. Wait for it to finish or cancel it."
+msgstr ""
+"Már folyamatban van egy fájlművelet. Várja meg a befejezését, vagy szakítsa "
+"meg."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:50
+msgid ""
+"Access to this audio file was denied. Check its permissions or whether "
+"another program has locked it: {file}"
+msgstr ""
+"A hangfájlhoz való hozzáférés megtagadva. Ellenőrizze a jogosultságokat, "
+"illetve azt, hogy nem zárolta-e a fájlt egy másik program: {file}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:338
+msgid "Add &file…"
+msgstr "&Fájl hozzáadása…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:908
+msgid "Add an audiobook file"
+msgstr "Hangoskönyvfájl hozzáadása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:455
+msgid "Add audio file…"
+msgstr "Hangfájl hozzáadása…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:456
+msgid "Add book folder…"
+msgstr "Hangoskönyvmappa hozzáadása…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:500
+msgid "Add bookmark…\tCtrl+B"
+msgstr "Könyvjelző hozzáadása…\tCtrl+B"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:339
+msgid "Add f&older…"
+msgstr "M&appa hozzáadása…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:301
+#: bookworm/audiobooks/metadata_gui.py:317
+#: bookworm/audiobooks/metadata_gui.py:324
+msgid "Add tag field"
+msgstr "Címkemező hozzáadása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:353
+msgid "Add tag value"
+msgstr "Címkeérték hozzáadása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:89
+msgid "Adjustments"
+msgstr "Módosítások"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:67
+msgid "Album artist (TPE2)"
+msgstr "Albumelőadó (TPE2)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:59
+msgid "Album or book title"
+msgstr "Az album vagy a könyv címe"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:65
+msgid "Album or book title (TALB)"
+msgstr "Az album vagy a könyv címe (TALB)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:315
+msgid "All fields of this ID3 frame are already shown."
+msgstr "Az ID3-keret összes mezője már látható."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:259
+msgid "An MP4 cover must be a JPEG or PNG image."
+msgstr "Az MP4-borítóképnek JPEG- vagy PNG-formátumúnak kell lennie."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:154
+msgid "An unchanged copy must keep the original file extension."
+msgstr ""
+"A változatlan másolatnak meg kell őriznie az eredeti fájlkiterjesztést."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:405
+msgid "Apply speech boost"
+msgstr "Kiegészítő erősítés alkalmazása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:376
+msgid "Apply speed"
+msgstr "Sebesség alkalmazása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:255
+msgid "Apply the current playback speed and speech boost"
+msgstr "A jelenlegi lejátszási sebesség és kiegészítő erősítés alkalmazása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:393
+msgid "Apply volume"
+msgstr "Hangerő alkalmazása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:58
+msgid "Artist or narrator"
+msgstr "Előadó vagy felolvasó"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:66
+msgid "Artist or narrator (TPE1)"
+msgstr "Előadó vagy felolvasó (TPE1)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:72
+msgid "Attached picture (APIC)"
+msgstr "Beágyazott kép (APIC)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:550
+msgid ""
+"Audio data changed during tag editing. The original file has been kept."
+msgstr ""
+"A címkék szerkesztése közben megváltoztak a hangadatok. Az eredeti fájl "
+"változatlan maradt."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:288 bookworm/audiobooks/exporter.py:271
+msgid "Audio encoding failed: {reason}"
+msgstr "A hang kódolása sikertelen: {reason}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:284
+msgid "Audio export stopped responding."
+msgstr "A hang exportálása elakadt."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:61
+#: bookworm/audiobooks/metadata_gui.py:49
+#: bookworm/audiobooks/metadata_gui.py:59 bookworm/audiobooks/gui.py:863
+msgid "Audio file information"
+msgstr "A hangfájl adatai"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:487
+msgid "Audio file information…\tCtrl+Shift+I"
+msgstr "A hangfájl adatai…\tCtrl+Shift+I"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:909
+msgid "Audio files"
+msgstr "Hangfájlok"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:240 bookworm/audiobooks/metadata.py:382
+msgid "Audio format"
+msgstr "Hangformátum"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:329
+msgid "Audio loading timed out. Check the recording and the audio device."
+msgstr ""
+"A hang betöltése túllépte az időkorlátot. Ellenőrizze a felvételt és a "
+"hangeszközt."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:553
+msgid "Audio playback error"
+msgstr "Hiba a hanglejátszásban"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:307
+msgid "Audio processing failed: {reason}"
+msgstr "A hang feldolgozása sikertelen: {reason}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:147
+#: bookworm/audiobooks/metadata_gui.py:202
+#: bookworm/audiobooks/metadata_gui.py:145
+msgid "Audio tag fields"
+msgstr "A hangfájl címkemezői"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:951
+msgid "Audiobook added."
+msgstr "A hangoskönyv hozzáadva."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:106
+msgid "Audiobook bookmark"
+msgstr "A hangoskönyv könyvjelzője"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:122
+msgid "Audiobook bookmarks"
+msgstr "A hangoskönyv könyvjelzői"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:507
+msgid "Audiobook help\tF1"
+msgstr "A hangoskönyv-kezelő súgója\tF1"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:202
+msgid "Audiobook settings"
+msgstr "Hangoskönyv-beállítások"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:462
+msgid "Audiobook settings…"
+msgstr "Hangoskönyv-beállítások…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:330
+msgid "Audiobook shelf"
+msgstr "A hangoskönyvek könyvespolca"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/service.py:41 bookworm/audiobooks/gui.py:90
+#: bookworm/audiobooks/gui.py:224 bookworm/audiobooks/gui.py:996
+#: bookworm/audiobooks/gui.py:190 bookworm/audiobooks/gui.py:539
+#: bookworm/audiobooks/gui.py:955 bookworm/audiobooks/gui.py:984
+#: bookworm/audiobooks/gui.py:1203
+msgid "Audiobooks"
+msgstr "Hangoskönyvek"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:307
+msgid "Audiobooks — Bookworm"
+msgstr "Hangoskönyvek – Bookworm"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:50
+msgid "Author or narrator"
+msgstr "Szerző vagy felolvasó"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:361
+msgid "Back (long)"
+msgstr "Hosszú ugrás vissza"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:473
+msgid "Back (long)\tShift+F7"
+msgstr "Hosszú ugrás vissza\tShift+F7"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:359
+msgid "Back (short)"
+msgstr "Rövid ugrás vissza"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:471
+msgid "Back (short)\tF7"
+msgstr "Rövid ugrás vissza\tF7"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1098
+msgid "Back up audiobook library"
+msgstr "A hangoskönyvtár biztonsági mentése"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:459
+msgid "Back up audiobook library…"
+msgstr "A hangoskönyvtár biztonsági mentése…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:357 bookworm/audiobooks/metadata.py:37
+msgid "Binary data"
+msgstr "Bináris adatok"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:399
+msgid "Binary tag data"
+msgstr "Bináris címkeadatok"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:249
+msgid "Bitrate (kbit/s)"
+msgstr "Bitráta (kbit/s)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:387
+msgid "Bitrate reported by the audio format (bit/s; approximate for VBR)"
+msgstr ""
+"A hangformátum által jelzett bitráta (bit/s; változó bitráta esetén közelítő"
+" érték)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:83
+msgid "Bits per byte deviation"
+msgstr "A bájteltérés tárolására használt bitek száma"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:120
+msgid "Bits per index point"
+msgstr "Az indexpontonkénti bitek száma"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:392
+msgid "Bits per sample"
+msgstr "Mintánkénti bitszám"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:84
+msgid "Bits per time deviation"
+msgstr "Az időeltérés tárolására használt bitek száma"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:807
+msgid "Book duration"
+msgstr "A könyv teljes időtartama"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:810
+msgid "Book listening time remaining at the current speed"
+msgstr "A könyvből hátralévő hallgatási idő a jelenlegi sebességgel"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:806
+msgid "Book position"
+msgstr "Pozíció a könyvben"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:808
+msgid "Book time remaining"
+msgstr "A könyvből hátralévő idő"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:49 bookworm/audiobooks/gui.py:787
+msgid "Book title"
+msgstr "A könyv címe"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1054
+msgid "Bookmark added."
+msgstr "A könyvjelző hozzáadva."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:111
+msgid "Bookmark name"
+msgstr "A könyvjelző neve"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:129
+msgid "Bookmarks"
+msgstr "Könyvjelzők"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:501
+msgid "Browse bookmarks…\tCtrl+Shift+B"
+msgstr "Könyvjelzők böngészése…\tCtrl+Shift+B"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:81
+msgid "Byte count"
+msgstr "Bájtok száma"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:104
+msgid "Byte offset"
+msgstr "Bájtpozíció"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:417
+msgid "Cancel file operation"
+msgstr "Fájlművelet megszakítása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:413
+msgid "Cancel import"
+msgstr "Importálás megszakítása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:494
+msgid "Cancel repeat"
+msgstr "Ismétlés kikapcsolása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:491
+msgid "Cancel sleep timer"
+msgstr "Elalvásidőzítő kikapcsolása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:211
+msgid "Cannot import {file}: {reason}"
+msgstr "A fájl nem importálható: {file}. Hiba: {reason}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:165
+msgid "Cannot play this recording: {reason}"
+msgstr "A felvétel nem játszható le: {reason}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:85
+msgid "Channel code"
+msgstr "Csatornakód"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:253 bookworm/audiobooks/metadata.py:385
+msgid "Channels"
+msgstr "Csatornák"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:802
+msgid "Chapter"
+msgstr "Fejezet"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:75
+msgid "Chapter (CHAP)"
+msgstr "Fejezet (CHAP)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:804
+msgid "Chapter duration"
+msgstr "A fejezet teljes időtartama"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:44
+msgid "Chapter identifier"
+msgstr "Fejezetazonosító"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:803
+msgid "Chapter position"
+msgstr "Pozíció a fejezetben"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:805
+msgid "Chapter time remaining"
+msgstr "A fejezetből hátralévő idő"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:344 bookworm/audiobooks/gui.py:343
+msgid "Chapters"
+msgstr "Fejezetek"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:52 bookworm/audiobooks/gui.py:51
+msgid "Chapters in listening order"
+msgstr "Fejezetek a lejátszás sorrendjében"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:507
+msgid "Checking the original audio data"
+msgstr "Az eredeti hangadatok ellenőrzése"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:50
+msgid "Child chapter identifiers"
+msgstr "Az alárendelt fejezetek azonosítói"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:129
+msgid ""
+"Choose a different destination. Original recordings cannot be overwritten."
+msgstr ""
+"Válasszon másik célhelyet. Az eredeti hangfelvételek nem írhatók felül."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1108
+msgid "Choose a different file for the backup."
+msgstr "Válasszon másik fájlt a biztonsági mentéshez."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1134
+msgid "Choose the parent folder for the copy"
+msgstr "Válassza ki a másolatot tartalmazó új mappa helyét"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:463
+msgid "Close\tAlt+F4"
+msgstr "Bezárás\tAlt+F4"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:55
+msgid "Colour depth (bits)"
+msgstr "Színmélység (bit)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:73
+msgid "Comment (COMM)"
+msgstr "Megjegyzés (COMM)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:113
+msgid "Contact address"
+msgstr "Kapcsolattartási cím"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:52
+msgid "Contributors"
+msgstr "Közreműködők"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:175
+msgid "Copying original recordings"
+msgstr "Az eredeti hangfelvételek másolása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:140 bookworm/audiobooks/metadata.py:413
+msgid "Cover art"
+msgstr "Borítókép"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:102
+msgid "Data size"
+msgstr "Adatméret"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:189
+msgid "Delete this bookmark and its note?"
+msgstr "Törli ezt a könyvjelzőt és a hozzá tartozó megjegyzést?"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:744 bookworm/audiobooks/gui.py:733
+#: bookworm/audiobooks/gui.py:742
+msgid "Detailed listening times"
+msgstr "Részletes időadatok"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:486
+msgid "Detailed listening times…\tCtrl+F12"
+msgstr "Részletes időadatok…\tCtrl+F12"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:70
+msgid "Disc number (TPOS)"
+msgstr "Lemezsorszám (TPOS)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:518
+msgid "Duplicate audiobook keyboard shortcut: {shortcut}"
+msgstr "Ütköző billentyűparancs a hangoskönyv-kezelőben: {shortcut}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:383
+msgid "Duration reported by the audio format (seconds)"
+msgstr "A hangformátum által jelzett időtartam (másodperc)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:179
+msgid "Edit ID3&v1…"
+msgstr "ID3&v1-címke szerkesztése…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:132
+#: bookworm/audiobooks/metadata_gui.py:382 bookworm/audiobooks/gui.py:879
+msgid "Edit audio tags"
+msgstr "Hangfájlcímkék szerkesztése"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:488
+msgid "Edit audio tags…\tCtrl+Shift+T"
+msgstr "Hangfájlcímkék szerkesztése…\tCtrl+Shift+T"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:262
+#: bookworm/audiobooks/metadata_gui.py:272
+msgid "Edit tag value"
+msgstr "Címkeérték szerkesztése"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:41
+msgid "Email address"
+msgstr "E-mail-cím"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:49
+msgid "Embedded ID3 fields"
+msgstr "Beágyazott ID3-mezők"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:363
+msgid "Encoding audio and saving chapters"
+msgstr "A hang kódolása és a fejezetadatok mentése"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:280
+msgid "Encoding audiobook"
+msgstr "A hangoskönyv kódolása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:48
+msgid "End byte offset"
+msgstr "Záró bájtpozíció"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:46
+msgid "End time (milliseconds)"
+msgstr "Befejezési idő (ezredmásodperc)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:329
+msgid "Enter a new, non-empty tag field name."
+msgstr "Adjon meg új, nem üres címkemezőnevet."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:161
+msgid "Export &binary value…"
+msgstr "Bináris érték e&xportálása…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:235 bookworm/audiobooks/gui.py:1158
+#: bookworm/audiobooks/gui.py:300
+msgid "Export audiobook"
+msgstr "Hangoskönyv exportálása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1066
+msgid "Export audiobook bookmarks"
+msgstr "A hangoskönyv könyvjelzőinek exportálása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:461
+msgid "Export audiobook…"
+msgstr "Hangoskönyv exportálása…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:397
+msgid "Export binary tag value"
+msgstr "Bináris címkeérték exportálása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:502
+msgid "Export bookmarks…"
+msgstr "Könyvjelzők exportálása…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:261
+msgid "Export information"
+msgstr "Exportálási tudnivalók"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:244
+msgid "FLAC (lossless, 16-bit)"
+msgstr "FLAC (veszteségmentes, 16 bites)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:479
+msgid "Faster\tAlt+Up"
+msgstr "Gyorsítás\tAlt+Up"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:94
+msgid "Feedback: left to left"
+msgstr "Visszacsatolás: balról balra"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:95
+msgid "Feedback: left to right"
+msgstr "Visszacsatolás: balról jobbra"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:97
+msgid "Feedback: right to left"
+msgstr "Visszacsatolás: jobbról balra"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:96
+msgid "Feedback: right to right"
+msgstr "Visszacsatolás: jobbról jobbra"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:788 bookworm/audiobooks/metadata.py:380
+msgid "File"
+msgstr "Fájl"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:796
+msgid "File duration"
+msgstr "A fájl teljes időtartama"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:799
+msgid "File listening time remaining at the current speed"
+msgstr "A fájlból hátralévő hallgatási idő a jelenlegi sebességgel"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:101
+msgid "File name"
+msgstr "Fájlnév"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:790
+msgid "File number"
+msgstr "A fájl sorszáma"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1200 bookworm/audiobooks/gui.py:982
+msgid "File operation cancelled. No completed file was replaced."
+msgstr ""
+"A fájlművelet megszakítva. Egyetlen korábbi kész fájl sem íródott felül."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:415
+msgid "File operation progress"
+msgstr "A fájlművelet állapota"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:795
+msgid "File position"
+msgstr "Pozíció a fájlban"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:381
+msgid "File size (bytes)"
+msgstr "Fájlméret (bájt)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:797
+msgid "File time remaining"
+msgstr "A fájlból hátralévő idő"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:565
+msgid "Finished"
+msgstr "Befejezve"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:51
+msgid "Flags"
+msgstr "Jelzőbitek"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:78
+msgid "Format code"
+msgstr "Formátumkód"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:362
+msgid "Forward (long)"
+msgstr "Hosszú ugrás előre"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:474
+msgid "Forward (long)\tShift+F8"
+msgstr "Hosszú ugrás előre\tShift+F8"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:360
+msgid "Forward (short)"
+msgstr "Rövid ugrás előre"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:472
+msgid "Forward (short)\tF8"
+msgstr "Rövid ugrás előre\tF8"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:80
+msgid "Frame count"
+msgstr "Keretek száma"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:107
+msgid "Frame identifier"
+msgstr "Keretazonosító"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:86
+msgid "Gain (dB)"
+msgstr "Erősítés (dB)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:71
+msgid "Genre (TCON)"
+msgstr "Műfaj (TCON)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:63
+msgid "Genre code"
+msgstr "Műfajkód"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:353
+msgid "Go to selected chapter"
+msgstr "Ugrás a kijelölt fejezetre"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:649
+msgid "Go to time"
+msgstr "Ugrás időpontra"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:477
+msgid "Go to time…\tCtrl+G"
+msgstr "Ugrás időpontra…\tCtrl+G"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:115
+msgid "Group identifier"
+msgstr "Csoportazonosító"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:54
+msgid "Height (pixels)"
+msgstr "Magasság (képpont)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:301
+msgid "ID3 field type"
+msgstr "ID3-mezőtípus"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:81
+#: bookworm/audiobooks/metadata_gui.py:77
+msgid "ID3v1 character encoding"
+msgstr "Az ID3v1-címke karakterkódolása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:292
+msgid ""
+"ID3v1 field {field} exceeds its {limit}-byte limit. No text has been "
+"truncated."
+msgstr ""
+"Az ID3v1-címke {field} mezőjének megengedett mérete {limit} bájt. A megadott"
+" szöveg ennél hosszabb. A program nem csonkította meg a szöveget."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:74
+#: bookworm/audiobooks/metadata_gui.py:106
+#: bookworm/audiobooks/metadata_gui.py:417
+#: bookworm/audiobooks/metadata_gui.py:123
+msgid "ID3v1 fields"
+msgstr "Az ID3v1-címke mezői"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:402
+msgid ""
+"ID3v1 text below is decoded as ISO-8859-1; use the editor to select "
+"Windows-1250 for Hungarian legacy tags."
+msgstr ""
+"Az alábbi ID3v1-szöveg ISO-8859-1 kódolással jelenik meg. Régi magyar "
+"címkékhez a szerkesztőben a Windows-1250 kódolás is kiválasztható."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:281
+msgid "ID3v1 text cannot contain a null character."
+msgstr "Az ID3v1-címke szövege nem tartalmazhat nullkaraktert."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:270
+msgid "ID3v1 track and genre numbers must be between 0 and 255."
+msgstr ""
+"Az ID3v1-címkében a sorszámnak és a műfajkódnak 0 és 255 közé kell esnie."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:399
+msgid "ID3v1: absent"
+msgstr "ID3v1: nincs"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:399
+msgid "ID3v1: present"
+msgstr "ID3v1: van"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:396
+msgid "ID3v2"
+msgstr "ID3v2"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:341
+msgid "ID3v2 fields"
+msgstr "Az ID3v2-címke mezői"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:172
+#: bookworm/audiobooks/metadata_gui.py:170
+msgid "ID3v2 save version"
+msgstr "Az ID3v2-címke mentési verziója"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:394
+msgid "ID3v2 version"
+msgstr "Az ID3v2-címke verziója"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:80
+msgid "ISO-8859-1 (legacy standard)"
+msgstr "ISO-8859-1 (hagyományos kódolás)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1083
+msgid "Import audiobook bookmarks"
+msgstr "A hangoskönyv könyvjelzőinek importálása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:243
+msgid "Import binary tag value"
+msgstr "Bináris címkeérték importálása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:503
+msgid "Import bookmarks…"
+msgstr "Könyvjelzők importálása…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:953
+msgid "Import cancelled."
+msgstr "Az importálás megszakítva."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1092
+msgid "Imported bookmarks: {count}"
+msgstr "Importált könyvjelzők: {count}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:934
+msgid "Importing {current} of {total}: {file}"
+msgstr "Importálás: {current}/{total}. fájl: {file}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:119
+msgid "Index point count"
+msgstr "Indexpontok száma"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:121
+msgid "Index points"
+msgstr "Indexpontok"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:117
+msgid "Index start"
+msgstr "Az index kezdete"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:56
+msgid "Indexed colours"
+msgstr "Indexelt színek száma"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:118
+msgid "Indexed data length"
+msgstr "Az indexelt adatok hossza"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:103
+msgid "Information code"
+msgstr "Információs kód"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:356
+msgid "Integer"
+msgstr "Egész szám"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:105
+msgid "Invalid audio duration: {file}"
+msgstr "A hangfájl időtartama érvénytelen: {file}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:53
+msgid "Invalid audio export settings."
+msgstr "Érvénytelen hangexportálási beállítások."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/storage.py:201 bookworm/audiobooks/storage.py:212
+msgid "Invalid bookmark file."
+msgstr "Érvénytelen könyvjelzőfájl."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:429
+msgid "Invalid tag value"
+msgstr "Érvénytelen címkeérték"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:35
+msgid "Language code"
+msgstr "Nyelvkód"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:90
+msgid "Left channel"
+msgstr "Bal csatorna"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:92
+msgid "Left-channel reflections"
+msgstr "A bal csatorna visszaverődései"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:483
+msgid "Less speech boost\tAlt+Home"
+msgstr "Kiegészítő erősítés csökkentése\tAlt+Home"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:409
+msgid "Listening information"
+msgstr "Lejátszási információk"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:485
+msgid "Listening information\tCtrl+I"
+msgstr "Lejátszási információk\tCtrl+I"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:626
+msgid "Loading audio"
+msgstr "A hang betöltése folyamatban"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:114
+msgid "Logo data"
+msgstr "Logóadatok"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:208
+msgid "Long jump (seconds)"
+msgstr "Hosszú ugrás (másodperc)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:74
+msgid "Lyrics or transcript (USLT)"
+msgstr "Dalszöveg vagy átirat (USLT)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:243
+msgid "M4B (AAC audiobook)"
+msgstr "M4B (AAC hangoskönyv)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:38
+msgid "MIME type"
+msgstr "MIME-típus"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:242
+msgid "MP3"
+msgstr "MP3"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:59
+msgid "MP3 at 22050 Hz supports a maximum bitrate of 160 kbit/s."
+msgstr "22050 Hz-es MP3-fájlnál a bitráta legfeljebb 160 kbit/s lehet."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:88
+msgid "Method code"
+msgstr "Eljáráskód"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:82
+msgid "Milliseconds"
+msgstr "Ezredmásodperc"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1023
+msgid "Minutes"
+msgstr "Perc"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/model.py:102
+msgid "Minutes and seconds after a colon must be below 60."
+msgstr ""
+"A kettőspont után álló perc- és másodpercértéknek 60-nál kisebbnek kell "
+"lennie."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:253
+msgid "Mono"
+msgstr "Monó"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:484
+msgid "More speech boost\tAlt+End"
+msgstr "Kiegészítő erősítés növelése\tAlt+End"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:55
+msgid "Move &down"
+msgstr "Mozgatás &lefelé"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:55
+msgid "Move &up"
+msgstr "Mozgatás &felfelé"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1140
+msgid "New folder name"
+msgstr "Az új mappa neve"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:352
+msgid "Next chapter"
+msgstr "Következő fejezet"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:476
+msgid "Next chapter\tCtrl+PageDown"
+msgstr "Következő fejezet\tCtrl+PageDown"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:200
+msgid "No supported audio files were found."
+msgstr "Nem található támogatott hangfájl."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:480
+msgid "Normal speed\tCtrl+0"
+msgstr "Normál sebesség\tCtrl+0"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:396
+msgid "Not present in this file"
+msgstr "A fájl nem tartalmazza"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:112
+msgid "Note"
+msgstr "Megjegyzés"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:584
+msgid "Open an audiobook first."
+msgstr "Először nyisson meg egy hangoskönyvet."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:454
+msgid "Open selected book\tCtrl+O"
+msgstr "A kijelölt könyv megnyitása\tCtrl+O"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:317
+msgid "Optional field"
+msgstr "Nem kötelező mező"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1127
+msgid "Original audio format"
+msgstr "Eredeti hangformátum"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:40
+msgid "Owner"
+msgstr "Tulajdonos"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:358
+msgid "Pair of numbers"
+msgstr "Számpár"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:359
+msgid "Pair of text values"
+msgstr "Szövegpár"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:470
+msgid "Pause\tF6"
+msgstr "Szüneteltetés\tF6"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:87
+msgid "Peak level"
+msgstr "Csúcsszint"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:469
+msgid "Play / pause\tF5"
+msgstr "Lejátszás vagy szüneteltetés\tF5"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:43
+msgid "Play count"
+msgstr "Lejátszások száma"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:247
+msgid "Playback could not be paused."
+msgstr "Nem sikerült szüneteltetni a lejátszást."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:238
+msgid "Playback could not be started."
+msgstr "Nem sikerült elindítani a lejátszást."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:55 bookworm/audiobooks/player.py:277
+msgid "Playback speed must be between 50% and 200%."
+msgstr "A lejátszási sebesség 50 és 200% között állítható."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:664
+msgid "Playback speed: {percent}%"
+msgstr "Lejátszási sebesség: {percent}%"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:362
+msgid "Playback stopped advancing. Check the audio device and try again."
+msgstr ""
+"A lejátszás nem halad előre. Ellenőrizze a hangeszközt, majd próbálja újra."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1031
+msgid "Playback will pause at the end of this chapter."
+msgstr "A lejátszás az aktuális fejezet végén megáll."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:628
+msgid "Playing"
+msgstr "Lejátszás"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:90
+msgid "Please enter a book title."
+msgstr "Kérjük, adja meg a könyv címét."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:290
+#: bookworm/audiobooks/metadata_gui.py:288
+msgid "Please enter a finite number."
+msgstr "Véges számot adjon meg."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1146
+msgid "Please enter a valid folder name."
+msgstr "Érvényes mappanevet adjon meg."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:283
+msgid "Please enter an integer."
+msgstr "Egész számot adjon meg."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:896
+msgid "Position {position} of {duration}; speed {percent}%"
+msgstr ""
+"Pozíció: {position}; teljes időtartam: {duration}; sebesség: {percent}%"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:98
+msgid "Premix: left to right"
+msgstr "Előkeverés: balról jobbra"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:99
+msgid "Premix: right to left"
+msgstr "Előkeverés: jobbról balra"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1171
+msgid "Preparing file operation"
+msgstr "A fájlművelet előkészítése"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:106
+msgid "Preview length"
+msgstr "Az előnézet hossza"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:105
+msgid "Preview start"
+msgstr "Az előnézet kezdete"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:350
+msgid "Previous chapter"
+msgstr "Előző fejezet"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:475
+msgid "Previous chapter\tCtrl+PageUp"
+msgstr "Előző fejezet\tCtrl+PageUp"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:109
+msgid "Price"
+msgstr "Ár"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:42
+msgid "Rating"
+msgstr "Értékelés"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:68
+msgid "Recording date (TDRC)"
+msgstr "Felvételi dátum (TDRC)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:103
+msgid ""
+"Reload the original ID3v1 bytes using this character encoding? Unsaved edits"
+" in this window will be replaced."
+msgstr ""
+"Újra beolvassa az eredeti ID3v1-adatokat ezzel a karakterkódolással? Az "
+"ablakban végzett, még nem mentett módosítások elvesznek."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:457
+msgid "Relocate selected book…"
+msgstr "A kijelölt könyv új helyének megadása…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:818
+msgid ""
+"Remaining listening time excludes pauses and section repeats. Disable "
+"automatic updates to read a fixed snapshot."
+msgstr ""
+"A hátralévő hallgatási idő nem tartalmazza a szüneteket és a "
+"szakaszismétléseket. Változatlan pillanatkép olvasásához kapcsolja ki az "
+"automatikus frissítést."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:180
+msgid "Remove ID3v1"
+msgstr "ID3v1-címke eltávolítása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:416
+msgid "Remove ID3v1 when saving? ID3v2 will be kept."
+msgstr "Mentéskor eltávolítja az ID3v1-címkét? Az ID3v2-címke megmarad."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:458
+msgid "Remove selected book…"
+msgstr "A kijelölt könyv eltávolítása…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:381
+msgid "Remove the selected tag field or value?"
+msgstr "Eltávolítja a kijelölt címkemezőt vagy értéket?"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:992
+msgid ""
+"Remove this audiobook, its saved position and bookmarks from the shelf? The "
+"audio files will be kept."
+msgstr ""
+"Eltávolítja a hangoskönyvet, a mentett hallgatási pozícióját és a "
+"könyvjelzőit a polcról? A hangfájlok megmaradnak."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1037
+msgid "Repeat start set."
+msgstr "Az ismétlés kezdőpontja beállítva."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:406
+msgid "Reset speech boost"
+msgstr "Kiegészítő erősítés alaphelyzetbe állítása"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:42
+msgid "Review audiobook"
+msgstr "A hangoskönyv ellenőrzése"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:209
+msgid "Rewind when reopening (seconds)"
+msgstr "Visszatekerés újranyitáskor (másodperc)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:91
+msgid "Right channel"
+msgstr "Jobb csatorna"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:93
+msgid "Right-channel reflections"
+msgstr "A jobb csatorna visszaverődései"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:251 bookworm/audiobooks/metadata.py:384
+msgid "Sample rate (Hz)"
+msgstr "Mintavételi frekvencia (Hz)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:63
+#: bookworm/audiobooks/metadata_gui.py:162
+msgid "Save as &text…"
+msgstr "Mentés szöveg&fájlba…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:32
+msgid "Save file information as text"
+msgstr "A fájladatok mentése szövegfájlba"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1125
+msgid "Save original recording as"
+msgstr "Az eredeti hangfelvétel mentése másként"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1140
+msgid "Save original recordings"
+msgstr "Az eredeti hangfelvételek mentése"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:460
+msgid "Save original recordings as…"
+msgstr "Az eredeti hangfelvételek mentése másként…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1198
+msgid "Saved and verified: {path}"
+msgstr "Mentve és ellenőrizve: {path}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:188
+msgid ""
+"Saving creates a verified backup and checks that the encoded audio is "
+"unchanged. Unknown ID3 frames are preserved. Cancel discards edits."
+msgstr ""
+"Mentéskor ellenőrzött biztonsági másolat készül, és a program ellenőrzi, "
+"hogy a kódolt hangadatok változatlanok maradtak-e. Az ismeretlen ID3-keretek"
+" megmaradnak. A Mégse gomb elveti a módosításokat."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:329
+msgid "Search audiobooks"
+msgstr "Hangoskönyvek keresése"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1045
+msgid "Section repeat enabled."
+msgstr "A szakaszismétlés bekapcsolva."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:394
+msgid "Select a binary tag value first."
+msgstr "Először jelöljön ki egy bináris címkeértéket."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:367
+msgid "Select a field group or a list before adding a value."
+msgstr "Érték hozzáadása előtt jelöljön ki egy mezőcsoportot vagy listát."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:962
+msgid "Select the book's new folder"
+msgstr "Válassza ki a könyv új mappáját"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:916
+msgid "Select the folder containing one audiobook"
+msgstr "Válassza ki az egy hangoskönyvhöz tartozó fájlokat tartalmazó mappát"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:153
+#: bookworm/audiobooks/metadata_gui.py:151
+msgid "Selected tag value"
+msgstr "A kijelölt címke értéke"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:111
+msgid "Seller"
+msgstr "Eladó"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:493
+msgid "Set repeat end (B)"
+msgstr "Ismétlés végpontjának beállítása (B)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:492
+msgid "Set repeat start (A)"
+msgstr "Ismétlés kezdőpontjának beállítása (A)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1043
+msgid "Set the repeat start first."
+msgstr "Először állítsa be az ismétlés kezdőpontját."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:207
+msgid "Short jump (seconds)"
+msgstr "Rövid ugrás (másodperc)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:116
+msgid "Signature data"
+msgstr "Aláírásadatok"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:490
+msgid "Sleep at end of chapter"
+msgstr "Szüneteltetés a fejezet végén"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1023
+msgid "Sleep timer"
+msgstr "Elalvásidőzítő"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:312
+msgid "Sleep timer finished. Playback paused."
+msgstr "Az elalvásidőzítő lejárt. A lejátszás szünetel."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:489
+msgid "Sleep timer…"
+msgstr "Elalvásidőzítő…"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:478
+msgid "Slower\tAlt+Down"
+msgstr "Lassítás\tAlt+Down"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:403 bookworm/audiobooks/gui.py:402
+#: bookworm/audiobooks/gui.py:815 bookworm/audiobooks/gui.py:397
+msgid "Speech boost (dB)"
+msgstr "Kiegészítő erősítés (dB)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:295 bookworm/audiobooks/player.py:184
+msgid "Speech boost could not be enabled safely."
+msgstr "Nem sikerült biztonságosan bekapcsolni a kiegészítő erősítést."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:57 bookworm/audiobooks/player.py:293
+msgid "Speech boost must be between 0 and 12 dB."
+msgstr "A kiegészítő erősítés 0 és 12 dB között állítható."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:681
+msgid "Speech boost: {boost} dB"
+msgstr "Kiegészítő erősítés: {boost} dB"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:374 bookworm/audiobooks/gui.py:373
+#: bookworm/audiobooks/gui.py:813 bookworm/audiobooks/gui.py:372
+msgid "Speed (%)"
+msgstr "Sebesség (%)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:47
+msgid "Start byte offset"
+msgstr "Kezdő bájtpozíció"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:45
+msgid "Start time (milliseconds)"
+msgstr "Kezdési idő (ezredmásodperc)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:253
+msgid "Stereo"
+msgstr "Sztereó"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:76
+msgid "Table of contents (CTOC)"
+msgstr "Tartalomjegyzék (CTOC)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:244
+msgid "Tag data and pictures"
+msgstr "Címkeadatok és képek"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:877
+msgid "Tag editing cancelled. The original file has been kept."
+msgstr "A címkeszerkesztés megszakítva. Az eredeti fájl változatlan maradt."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:324
+msgid "Tag field name"
+msgstr "Címkemező neve"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:343
+msgid "Tag fields"
+msgstr "Címkemezők"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:874
+msgid "Tags saved and audio verified. Backup: {path}"
+msgstr "A címkék mentve, a hangadatok ellenőrizve. Biztonsági másolat: {path}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:32
+msgid "Text encoding"
+msgstr "Szövegkódolás"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:34
+msgid "Text files"
+msgstr "Szövegfájlok"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:655
+msgid "That time is beyond the end of this book."
+msgstr "A megadott időpont a könyv vége után van."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:486
+msgid "The ID3 version cannot be changed while unknown frames are present."
+msgstr ""
+"Az ID3-verzió nem módosítható, amíg a címke ismeretlen kereteket tartalmaz."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:87
+msgid ""
+"The audio export engine is missing. Please reinstall a complete Bookworm "
+"build."
+msgstr ""
+"Hiányzik a hangexportáló összetevő. Telepítse újra a Bookworm teljes "
+"változatát."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/backend.py:130
+msgid ""
+"The audio file could not be opened. Check whether it still exists and can be"
+" read."
+msgstr ""
+"A hangfájl nem nyitható meg. Ellenőrizze, hogy továbbra is létezik-e, és "
+"olvasható-e."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/backend.py:138
+msgid "The audio file format could not be recognized."
+msgstr "A hangfájl formátuma nem ismerhető fel."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:40
+msgid "The audio file has no readable content: {file}"
+msgstr "A hangfájl nem tartalmaz olvasható adatot: {file}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:34
+msgid "The audio file is empty (0 bytes): {file}"
+msgstr "A hangfájl üres, mérete 0 bájt: {file}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:44
+msgid ""
+"The audio file was not found. It may have been moved or deleted: {file}"
+msgstr ""
+"A hangfájl nem található. Lehet, hogy áthelyezték vagy törölték: {file}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:163
+msgid "The audio folder could not be read completely: {folder}"
+msgstr ""
+"A hangfájlokat tartalmazó mappát nem sikerült teljes egészében beolvasni: "
+"{folder}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/backend.py:133
+msgid ""
+"The audio output device could not be opened. Check the selected Windows "
+"playback device."
+msgstr ""
+"A hangkimeneti eszköz nem nyitható meg. Ellenőrizze a Windowsban "
+"kiválasztott lejátszóeszközt."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:287 bookworm/audiobooks/player.py:182
+msgid "The audio volume could not be set."
+msgstr "Nem sikerült beállítani a hangerőt."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/backend.py:35
+msgid ""
+"The audiobook audio engine is missing. Please use a build that includes it."
+msgstr ""
+"Hiányzik a hangoskönyvek lejátszásához szükséges hangmotor. Kérjük, "
+"használjon olyan programváltozatot, amely tartalmazza azt."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:980
+msgid "The audiobook folder has been updated."
+msgstr "A hangoskönyv mappája frissítve."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:226
+msgid "The audiobook is finished. Select a chapter to listen again."
+msgstr ""
+"A hangoskönyv véget ért. Az ismételt meghallgatáshoz válasszon egy "
+"fejezetet."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/storage.py:198
+msgid "The bookmark file does not belong to this audiobook."
+msgstr "A könyvjelzőfájl nem ehhez a hangoskönyvhöz tartozik."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1090
+msgid "The bookmark file is too large."
+msgstr "A könyvjelzőfájl túl nagy."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:132
+msgid "The destination already exists. Choose another name."
+msgstr "A célhely már létezik. Válasszon másik nevet."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:140
+msgid "The destination changed during export. Choose another name."
+msgstr "A célhely az exportálás közben megváltozott. Válasszon másik nevet."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:134
+msgid "The destination folder does not exist."
+msgstr "A célmappa nem létezik."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:320
+msgid "The end of the repeated section must follow its start."
+msgstr "Az ismételt szakasz végpontjának a kezdőpont után kell lennie."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:438
+msgid "The exported audio does not match the requested bitrate."
+msgstr "Az exportált hang bitrátája nem felel meg a kért értéknek."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:435
+msgid "The exported audio does not match the requested duration or format."
+msgstr ""
+"Az exportált hang időtartama vagy formátuma nem felel meg a kért "
+"beállításoknak."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:476
+msgid ""
+"The file changed after its tags were opened. Open the tag editor again."
+msgstr ""
+"A fájl a címkék megnyitása óta megváltozott. Nyissa meg újra a "
+"címkeszerkesztőt."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:554
+msgid "The file changed during tag editing. No changes have been applied."
+msgstr ""
+"A fájl a címkeszerkesztés közben megváltozott. A módosítások nem léptek "
+"életbe."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/backend.py:137
+msgid "The file does not contain a playable audio track."
+msgstr "A fájl nem tartalmaz lejátszható hangsávot."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:351
+msgid "The file extension must match the selected audio format."
+msgstr ""
+"A fájlkiterjesztésnek meg kell egyeznie a kiválasztott hangformátummal."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1217
+msgid ""
+"The latest listening position could not be saved. Close anyway?\n"
+"{reason}"
+msgstr ""
+"A legutóbbi hallgatási pozíciót nem sikerült menteni. Ennek ellenére bezárja az ablakot?\n"
+"{reason}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1220
+msgid "The listening position could not be saved"
+msgstr "Nem sikerült menteni a hallgatási pozíciót"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:83 bookworm/audiobooks/player.py:378
+msgid "The listening position could not be saved: {reason}"
+msgstr "Nem sikerült menteni a hallgatási pozíciót: {reason}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:223 bookworm/audiobooks/gui.py:1015
+msgid "The long jump must be longer than the short jump."
+msgstr "A hosszú ugrásnak hosszabbnak kell lennie a rövid ugrásnál."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/backend.py:141
+msgid "The recording could not be decoded or the audio device is unavailable."
+msgstr "A felvétel nem dekódolható, vagy a hangeszköz nem érhető el."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:111 bookworm/audiobooks/player.py:154
+msgid "The recording has changed. Import it as a new book."
+msgstr "A felvétel megváltozott. Importálja új könyvként."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/backend.py:136
+msgid "The recording uses an unsupported audio codec or feature."
+msgstr "A felvétel nem támogatott hangkódolást vagy funkciót használ."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:127 bookworm/audiobooks/player.py:191
+msgid "The requested listening position could not be reached."
+msgstr "Nem sikerült a kért hallgatási pozícióra ugrani."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/backend.py:205
+msgid ""
+"The requested listening position could not be verified. Playback has been "
+"stopped."
+msgstr ""
+"A kért hallgatási pozíciót nem sikerült ellenőrizni. A lejátszás leállt."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:505 bookworm/audiobooks/exporter.py:184
+msgid "The saved copy failed verification."
+msgstr "A mentett másolat ellenőrzése sikertelen."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:538
+msgid ""
+"The saved tags did not match the requested values. The original file has "
+"been kept."
+msgstr ""
+"A mentett címkék nem egyeznek meg a megadott értékekkel. Az eredeti fájl "
+"változatlan maradt."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:559
+msgid "The tag backup failed verification. The original file has been kept."
+msgstr ""
+"A címkeszerkesztés előtti biztonsági másolat ellenőrzése sikertelen. Az "
+"eredeti fájl változatlan maradt."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:262
+msgid ""
+"The whole book is saved as one new file. Original recordings are kept. "
+"Playback volume is not applied. MP3 and M4B retain chapter titles; WAV and "
+"FLAC do not. Increasing bitrate or sample rate cannot restore lost quality."
+msgstr ""
+"A teljes könyv egy új fájlba kerül. Az eredeti felvételek megmaradnak. A "
+"lejátszási hangerő nem kerül bele az exportált hangba. Az MP3 és az M4B "
+"megőrzi a fejezetcímeket; a WAV és a FLAC nem. A bitráta vagy a mintavételi "
+"frekvencia növelése nem állítja helyre az elveszett hangminőséget."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:157 bookworm/audiobooks/exporter.py:354
+msgid "There is not enough free space at the destination."
+msgstr "Nincs elegendő szabad hely a célmeghajtón."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:479
+msgid "There is not enough free space for a verified tag backup."
+msgstr ""
+"Nincs elegendő szabad hely a címkék módosítása előtti ellenőrzött biztonsági"
+" másolathoz."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:377
+msgid "This ID3 field is required. Edit its value or remove the whole frame."
+msgstr ""
+"Ez kötelező ID3-mező. Módosítsa az értékét, vagy távolítsa el a teljes "
+"keretet."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:494
+msgid ""
+"This ID3 version change would alter or remove fields. Keep the original "
+"version or edit those fields explicitly."
+msgstr ""
+"Az ID3-verzió módosítása egyes mezők megváltozásával vagy eltávolításával "
+"járna. Tartsa meg az eredeti verziót, vagy módosítsa kifejezetten az "
+"érintett mezőket."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:36
+msgid "This audio file format is not supported: {file}"
+msgstr "Ez a hangfájlformátum nem támogatott: {file}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:330
+msgid "This file does not contain a supported audio stream."
+msgstr "A fájl nem tartalmaz támogatott hangfolyamot."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:250
+msgid "This is not the original recording: {file}"
+msgstr "Ez nem az eredeti felvétel: {file}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:32
+msgid "This path is not an audio file: {file}"
+msgstr "A megadott elérési út nem hangfájlra mutat: {file}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:188
+msgid ""
+"This recording does not support the selected speed. Normal speed is used."
+msgstr ""
+"Ez a felvétel nem támogatja a kiválasztott sebességet. A lejátszás normál "
+"sebességgel folytatódik."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/player.py:279
+msgid "This recording or audio backend does not support that speed."
+msgstr "Ez a felvétel vagy hangmotor nem támogatja a kiválasztott sebességet."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:286
+msgid ""
+"This text cannot be represented in the selected ID3v1 encoding. Use ID3v2 "
+"for full Unicode support."
+msgstr ""
+"Ez a szöveg nem tárolható a kiválasztott ID3v1-karakterkódolással. A teljes "
+"Unicode-támogatáshoz használjon ID3v2-címkét."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:646
+msgid ""
+"Time from the beginning of the book (hh:mm:ss, mm:ss or seconds; decimals "
+"are allowed)"
+msgstr ""
+"Időpont a könyv elejétől számítva (óra:perc:másodperc, perc:másodperc vagy "
+"másodperc; tizedesjegyek is megadhatók)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:79
+msgid "Timed events"
+msgstr "Időzített események"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:817
+msgid "Times"
+msgstr "Időadatok"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:64
+msgid "Title (TIT2)"
+msgstr "Cím (TIT2)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:194
+msgid "Too many audio files in this folder."
+msgstr "Túl sok hangfájl található ebben a mappában."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:62
+msgid "Track number"
+msgstr "Sorszám"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:69
+msgid "Track number (TRCK)"
+msgstr "Sorszám (TRCK)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:183
+msgid ""
+"Two ID3 frames have the same identifier. Change an identifying field or "
+"remove one frame."
+msgstr ""
+"Két ID3-keret azonosítója megegyezik. Módosítsa az azonosításra szolgáló "
+"mezőt, vagy távolítsa el az egyik keretet."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:191
+msgid "Two tag fields have the same name."
+msgstr "Két címkemező neve megegyezik."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:39
+msgid "Type code"
+msgstr "Típuskód"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:416
+msgid "Unknown ID3 frame {index}: {size} bytes, SHA-256 {digest}"
+msgstr ""
+"Ismeretlen ID3-keret, sorszám: {index}; méret: {size} bájt; SHA-256: "
+"{digest}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:546
+msgid ""
+"Unknown tag data could not be preserved. The original file has been kept."
+msgstr ""
+"Az ismeretlen címkeadatokat nem sikerült megőrizni. Az eredeti fájl "
+"változatlan maradt."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/importer.py:102
+msgid "Unrecognized audio file: {file}"
+msgstr "Nem felismerhető hangfájl: {file}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:746
+msgid "Update times automatically"
+msgstr "Az időadatok automatikus frissítése"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1023
+msgid "Use 0 to cancel the timer."
+msgstr "Az időzítő kikapcsolásához adjon meg 0 értéket."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/model.py:97
+msgid ""
+"Use seconds, mm:ss or hh:mm:ss, optionally with up to three decimal places."
+msgstr ""
+"Másodpercet, perc:másodperc vagy óra:perc:másodperc alakú időpontot adjon "
+"meg, legfeljebb három tizedesjeggyel."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:405
+msgid "Use the .bin extension for binary tag data."
+msgstr "Bináris címkeadatokhoz a .bin kiterjesztést használja."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1074
+msgid "Use the .json extension for audiobook bookmarks."
+msgstr "A hangoskönyv könyvjelzőihez a .json kiterjesztést használja."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:41
+msgid "Use the .txt extension for the information report."
+msgstr "A fájladatok mentéséhez a .txt kiterjesztést használja."
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:77
+msgid "User-defined text (TXXX)"
+msgstr "Egyéni szöveg (TXXX)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:112
+msgid "Valid until"
+msgstr "Érvényesség vége"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:100
+msgid "Value"
+msgstr "Érték"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:352
+msgid "Value type"
+msgstr "Értéktípus"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/exporter.py:408
+msgid "Verifying the complete audio file"
+msgstr "A teljes hangfájl ellenőrzése"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:388 bookworm/audiobooks/gui.py:386
+#: bookworm/audiobooks/gui.py:814 bookworm/audiobooks/gui.py:378
+msgid "Volume (%)"
+msgstr "Hangerő (%)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:481
+msgid "Volume down\tAlt+PageDown"
+msgstr "Hangerő csökkentése\tAlt+PageDown"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:482
+msgid "Volume up\tAlt+PageUp"
+msgstr "Hangerő növelése\tAlt+PageUp"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:699
+msgid "Volume: {percent}%"
+msgstr "Hangerő: {percent}%"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:245
+msgid "WAV (uncompressed, 16-bit)"
+msgstr "WAV (tömörítetlen, 16 bites)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:36
+msgid "Web address"
+msgstr "Webcím"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:53
+msgid "Width (pixels)"
+msgstr "Szélesség (képpont)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata_gui.py:80
+msgid "Windows-1250 (Hungarian legacy tags)"
+msgstr "Windows-1250 (régi magyar címkékhez)"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:60
+msgid "Year"
+msgstr "Év"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:791
+msgid "{current} of {total}"
+msgstr "{current} / {total}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/metadata.py:428
+msgid "{field}: {size} bytes, SHA-256 {digest}"
+msgstr "{field}: {size} bájt; SHA-256: {digest}"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:1189
+msgid "{stage}: {percent}%"
+msgstr "{stage}: {percent}%"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:603
+msgid "{title} — Audiobooks — Bookworm"
+msgstr "{title} – Hangoskönyvek – Bookworm"
+
+#. Audiobook interface; Hungarian editorial review.
+#: bookworm/audiobooks/gui.py:710
+msgid ""
+"{title}. Chapter {chapter} of {count}: {name}. File position {file_position}"
+" of {file_duration}; remaining {file_remaining}. Book position {position} of"
+" {duration}. Remaining listening time at {percent}%: {remaining}."
+msgstr ""
+"{title}. Aktuális fejezet: {chapter}. – {name}. A fejezetek száma: {count}. "
+"Pozíció a fájlban: {file_position}; teljes időtartam: {file_duration}; "
+"hátralévő idő: {file_remaining}. Pozíció a könyvben: {position}; teljes "
+"időtartam: {duration}. Hátralévő hallgatási idő {percent}%-os sebességgel: "
+"{remaining}."
+
+#: bookworm/audiobooks/backend.py
+msgid "The loaded audio engine does not match this Bookworm build. Close and restart Bookworm."
+msgstr "A betöltött hangmotor nem a Bookworm ezen verziójához tartozik. Zárja be, majd indítsa újra a programot."
+
+#: bookworm/audiobooks/gui.py
+msgid "&Stop"
+msgstr "Leállí&tás"
+
+#: bookworm/audiobooks/gui.py
+msgid "Stop\tF9"
+msgstr "Leállítás\tF9"
