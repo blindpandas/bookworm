@@ -747,6 +747,10 @@ def freeze(c):
     from bookworm import app
 
     print("Freezing the application...")
+    from scripts.prepare_audio_engine import prepare
+
+    prepare(app.arch)
+    prepare(app.arch, export_engine=True)
     with c.cd(str(PROJECT_ROOT / "scripts" / "builder")):
         if app.get_version_info()["pre_type"] is None:
             print(

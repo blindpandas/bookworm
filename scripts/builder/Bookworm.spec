@@ -53,6 +53,13 @@ HIDDEN_SUBMODULES = [
     "winrt",
 ]
 HIDDEN_IMPORTS = [
+    "mpv",
+    "mutagen.mp3",
+    "mutagen.mp4",
+    "mutagen.wave",
+    "mutagen.flac",
+    "mutagen.oggvorbis",
+    "mutagen.oggopus",
     "alembic",
     "numpy",
     "cv2",
@@ -72,11 +79,22 @@ for package_with_submodules in HIDDEN_SUBMODULES:
 
 block_cipher = None
 
+# Fail the build instead of shipping controls backed by missing native engines.
+import struct
+audio_arch = "x64" if struct.calcsize("P") == 8 else "x86"
+audio_folder = root / "scripts" / "dlls" / "mpv" / audio_arch
+audio_binaries = []
+for audio_binary in ("libmpv-2.dll", "ffmpeg.exe"):
+    if not (audio_folder / audio_binary).is_file():
+        raise RuntimeError("Run scripts/prepare_audio_engine.py for the build architecture first")
+    audio_binaries.append((str(audio_folder / audio_binary), "audio-engine"))
+DATA_FILES.extend((str(path), "audio-engine") for path in audio_folder.glob("*.txt"))
+
 
 a = Analysis(
     ["Bookworm.py"],
     pathex=[""],
-    binaries=[],
+    binaries=audio_binaries,
     datas=DATA_FILES,
     hiddenimports=HIDDEN_IMPORTS,
     hookspath=[],

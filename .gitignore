@@ -126,3 +126,4 @@ scripts/release-info.json
 
 # OS generated files
 Thumbs.db
+scripts/dlls/mpv/

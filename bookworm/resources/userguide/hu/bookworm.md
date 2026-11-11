@@ -346,6 +346,106 @@ A fájltársítás-kezelő a következő lehetőségeket kínálja:
 * **Minden támogatott fájltípus társításának megszüntetése:** eltávolítja a korábban regisztrált fájltársításokat.
 * **Külön gomb minden támogatott fájltípushoz:** az adott gomb kiválasztásával csak a hozzá tartozó fájltípust társíthatja a Bookwormhoz.
 
+<a id="audiobooks"></a>
+
+## Hangoskönyvek
+
+A hangoskönyv-kezelő a Bookworm főablakának **Fájl → Hangoskönyvek** menüpontjából, illetve a **Ctrl+F11** billentyűparanccsal nyitható meg. Saját ablakban működik; az alábbi billentyűparancsok erre az ablakra vonatkoznak. A **Tab** és a **Shift+Tab** billentyűvel járhatja be a vezérlőket, az **Alt** billentyűvel nyithatja meg a menüsort. Az **F1** megnyitja a súgót. Az **Alt+F4** bezárja a hangoskönyvablakot, és menti a hallgatási pozíciót.
+
+### Könyv hozzáadása és megnyitása
+
+Egyetlen hangfájlt vagy egy teljes könyv mappáját adhatja hozzá. A támogatott fájltípusok: **MP3, M4B, M4A, WAV, FLAC, Ogg Vorbis és Opus**. A fájlválasztó ezekre a kiterjesztésekre szűr. Mappa hozzáadásakor a program az almappákat is átnézi; a dokumentumokat, képeket és más fájlokat nem veszi fel. A mappán kívülre mutató hivatkozásokon keresztül nem gyűjt hangfájlokat.
+
+A gyors előellenőrzés kiszűri a hiányzó, üres és nem olvasható fájlokat. Ezt a hangadatok teljes, háttérben végzett ellenőrzése követi. A teljes vizsgálat ideje a könyv hosszától és a gép sebességétől függ; közben a felület használható, a művelet pedig megszakítható. Sérült felvétel esetén nem kerül csendben hiányos könyv a könyvespolcra: a program megnevezi az érintett fájlt, és hibaüzenetet ad. Az **OK** gombbal visszatérhet az előző ablakhoz.
+
+A könyvespolcra vétel előtt ellenőrizheti és módosíthatja a könyv címét, a szerző vagy felolvasó nevét és a fejezetek sorrendjét. A fájlnevek számait a program természetes sorrendben értelmezi: a 2. rész megelőzi a 10. részt. Ha minden fájlban egyértelmű, nem ismétlődő lemez- és sorszámadat található, az adatok szerinti sorrendet használja. A **Mozgatás felfelé** és **Mozgatás lefelé** gombbal a sorrend kézzel is módosítható.
+
+Az MP3 beágyazott ID3-fejezetei, valamint az M4B és M4A támogatott fejezetadatai megjelennek a fejezetlistában. A legelső fejezetjelölés előtti bevezetőt a program nem hagyja ki. Ez a rész helyi hangfájlokat kezel; nem DAISY-csomagok, védett hangoskönyvek, hálózati közvetítések vagy tömörített archívumok lejátszója.
+
+A keresőmező a könyvcímekben, valamint a szerzők és felolvasók nevében keres. A kijelölt könyvet az **Enter**, a **Ctrl+O** vagy a megnyitás gomb tölti be. A betöltés után az **F5** indítja a lejátszást. Ugyanez a billentyű szüneteltet, illetve folytat. A könyvespolcról való eltávolítás a felvételeket nem törli, de az adott könyv mentett pozícióját és könyvjelzőit eltávolítja; előtte megerősítést kér.
+
+### Navigáció és pontos időpontok
+
+| Billentyűparancs | Művelet |
+| --- | --- |
+| F5 | Lejátszás vagy szüneteltetés |
+| F6 | Szüneteltetés |
+| F7 / F8 | Rövid ugrás vissza / előre |
+| Shift+F7 / Shift+F8 | Hosszú ugrás vissza / előre |
+| Ctrl+PageUp / Ctrl+PageDown | Előző / következő fejezet |
+| Ctrl+G | Ugrás a könyv elejétől számított időpontra |
+| Ctrl+I | Az aktuális hallgatási adatok bemondása |
+| Ctrl+F12 | Részletes, élő időadatok megnyitása |
+| Ctrl+Shift+I | Az aktuális hangfájl adatlapja |
+| Ctrl+Shift+T | Az aktuális hangfájl címkeszerkesztője |
+| Ctrl+B | Könyvjelző az aktuális időpontnál |
+| Ctrl+Shift+B | Könyvjelzők megnyitása |
+
+A rövid ugrás alapértéke **10 másodperc**, a hosszúé **60 másodperc**. A beállításokban a rövid ugrás 1–60, a hosszú 10–600 másodperc között adható meg; a hosszú ugrásnak nagyobbnak kell lennie a rövidnél. Az ugrás a fájlhatárokon is átlép. A **Ctrl+G** ablakában másodperc, `perc:másodperc` vagy `óra:perc:másodperc` alakban adhatja meg a célidőt. Például a `90`, az `1:30` és a `0:01:30` ugyanazt a pontot jelenti. Legfeljebb három tizedesjegy is megadható, ponttal vagy vesszővel: az `1:30,125` 90 másodperc és 125 ezredmásodperc.
+
+A könyvjelzők és a mentett hallgatási pozíciók ezredmásodperces értékként tárolódnak. A lejátszó pontos keresést kér a hangmotortól, és az ugrás után ellenőrzi a visszajelzett pozíciót. Ha azt nem tudja legfeljebb 50 ezredmásodperces eltéréssel igazolni, a hibát jelzi, és nem folytatja észrevétlenül más helyen a lejátszást. Ez ellenőrzési tűrés, nem minden hangformátumra és hangeszközre vonatkozó, mintapontossági ígéret.
+
+A fájlon belüli ugrás a már megnyitott lejátszóban történik. A tekerés nem jár automatikus időbemondással. Az időadatokat a **Ctrl+I** kéri le: bemondja az aktuális fejezetet, a fájlon és a könyvön belüli pozíciót, a teljes és hátralévő időt, valamint a beállított sebességgel számított hátralévő hallgatási időt.
+
+A **Ctrl+F12** részletes ablaka másodpercenként frissül, és az időértékeket ezredmásodpercekkel is megjeleníti. A frissítéshez nem kapcsolódik külön programbemondás. **Az időadatok automatikus frissítése** jelölőnégyzet kikapcsolásával rögzítheti a pillanatképet, hogy soronként elolvashassa vagy kimásolhassa. A hátralévő hallgatási idő nem számol a későbbi szünetekkel vagy a szakaszismétléssel. A fájlformátum által közölt időtartam és a tényleges dekódolás pontossága korlátozhatja az adatok pontosságát; a több tizedesjegy önmagában nem jelent nagyobb mérési pontosságot.
+
+### Sebesség, hangerő és kiegészítő erősítés
+
+| Billentyűparancs | Művelet |
+| --- | --- |
+| Alt+Le / Alt+Fel | Lassítás / gyorsítás 5 százalékponttal |
+| Ctrl+0 | Normál, 100%-os sebesség |
+| Alt+PageDown / Alt+PageUp | Hangerő csökkentése / növelése 5 százalékponttal |
+| Alt+Home / Alt+End | Kiegészítő erősítés csökkentése / növelése 1 dB-lel |
+
+A sebesség **50–200%** között állítható. A hangmagasság megtartásáról a Rubber Band R3 eljárása gondoskodik. A mezőbe közvetlenül beírt értéket a **Sebesség alkalmazása** gombbal érvényesítheti. A billentyűparancs azonnal alkalmazza a változtatást. Az eredmény minősége a felvételtől és a választott sebességtől is függ; minden felvétel minden sebességén teljesen észrevehetetlen feldolgozás nem garantálható.
+
+A hangerő **0–100%** között állítható, natív Windows-csúszkával. A csúszka módosítása közvetlenül érvényesül. A program nem mondja be külön a fókuszban lévő hangerő-, sebesség- vagy erősítésvezérlő értékét: azt a képernyőolvasó olvassa fel. Ha az értéket más vezérlőn állva billentyűparanccsal változtatja meg, egy programjelzés tájékoztat az új értékről.
+
+Halk felvételekhez **0–12 dB kiegészítő erősítés** adható. Csúcsszintkorlátozó védi a digitális kimenetet a túlvezérléstől; a beállított határ −1 dBFS. Ez nem tanúsított valódi csúcsszintmérés, és nem javítja ki a már eleve torz, zajos vagy rosszul rögzített hangot. Erős korlátozásnál változhat a beszéd dinamikája. A hangerő, a sebesség és a kiegészítő erősítés könyvenként megmarad.
+
+### Folytatás, könyvjelzők, elalvásidőzítő és ismétlés
+
+A program lejátszás közben rendszeresen, továbbá szüneteltetéskor, ugráskor és bezáráskor menti a pozíciót. Újranyitáskor alapértelmezés szerint ugyanonnan folytathatja. A beállításokban külön kérhető **0–30 másodperc visszatekerés újranyitáskor**; ennek alapértéke 0. Ez a beállítás a könyvjelzőkre és a kézzel megadott célidőre nem vonatkozik. A könyv végére érve nem indul el magától újra; ismételt hallgatáshoz válasszon fejezetet.
+
+A **Ctrl+B** a billentyű lenyomásakor érvényes pozíciót rögzíti. A könyvjelzőnek nevet és többsoros megjegyzést adhat. A **Ctrl+Shift+B** listájában odaugorhat a kijelölt könyvjelzőhöz, szerkesztheti annak nevét és megjegyzését, vagy megerősítés után törölheti. A könyvjelzők JSON-fájlba exportálhatók és visszaolvashatók. A program ellenőrzi, hogy az adatok a megfelelő könyvhöz és fejezetszerkezethez tartoznak-e; az ismételt importálás nem sokszorozza meg az azonos könyvjelzőket.
+
+A lejátszási menüben beállíthat elalvásidőzítőt, vagy kérheti a megállást az aktuális fejezet végén. A perces időzítő ténylegesen eltelt időt mér, ezért a sebesség módosítása nem változtatja meg a lejáratát. A 0 perces érték, illetve az időzítő megszakítása kikapcsolja azt. Szakaszismétléshez előbb a kezdőpontot, majd egy későbbi befejezési pontot kell kijelölni. Az ismétlés külön menüponttal kapcsolható ki.
+
+A támogatott multimédiás billentyűk a Bookworm globális multimédiabillentyű-beállítását követik. A lejátszás/szünet gomb az éppen használt hangoskönyv-lejátszót vagy szövegfelolvasót vezérli; hangoskönyvnél az előző/következő gomb rövid ugrást végez. Hangoskönyv indításakor a szövegfelolvasás leáll; szövegfelolvasás indításakor a hangoskönyv szünetel.
+
+### Áthelyezett fájlok és biztonsági másolat
+
+Ha a könyv mappája más helyre került, a könyvespolc menüjében adja meg az új mappát. Az ellenőrzés a fájlok teljes tartalmának SHA-256 lenyomatát is összehasonlítja, így pusztán az azonos fájlnév és méret nem elegendő. Sikeres újracsatoláskor megmaradnak a pozíciók és a könyvjelzők. A művelet háttérben fut és megszakítható.
+
+A könyvtár biztonsági mentése a hangoskönyv-kezelő adatbázisát, a könyvek hivatkozásait, a pozíciókat és a könyvjelzőket menti. **A hangfájlokat nem másolja bele.** Visszaállításhoz előbb zárja be a Bookwormot, őrizze meg a jelenlegi `audiobooks/library.sqlite3` fájlt, majd annak helyére tegye a biztonsági másolatot. Az adatfájl a Bookworm felhasználói adatmappájában található. A hangfelvételekről külön készítsen másolatot.
+
+### Mentés másként és exportálás
+
+**Az eredeti hangfelvételek mentése másként** parancs változatlan hangfájlokat másol. Egyetlen fizikai fájlnál új fájlnevet kér, több fájlnál új mappát hoz létre, és megőrzi az almappák szerkezetét. A másolat tartalmát ellenőrzi. A kiterjesztés átírásával nem lehet másik formátumot létrehozni. A források nem írhatók felül.
+
+A **Hangoskönyv exportálása** a teljes könyvet a beállított sorrendben egy új fájlba kódolja. Kimenete MP3, M4B/AAC, 16 bites FLAC vagy 16 bites WAV lehet. Beállítható a monó vagy sztereó kimenet, továbbá a 22050, 44100 vagy 48000 Hz-es mintavételi frekvencia. MP3-nál és AAC-nél a bitráta is megadható. A 22050 Hz-es MP3 bitrátája legfeljebb 160 kbit/s; az AAC bitrátája célérték, amelytől a tényleges átlag eltérhet. A WAV és a FLAC esetében nincs veszteséges kódolási bitráta.
+
+Alapértelmezés szerint az export nem alkalmazza a hallgatáshoz beállított sebességet és erősítést. Ezek külön jelölőnégyzettel érvényesíthetők. A lejátszási hangerő nem kerül az exportált hangba. Az MP3 és az M4B megtartja a fejezetcímeket és a módosított sebességhez igazított fejezetidőket. A WAV és a FLAC exportja nem tartalmaz beágyazott fejezeteket.
+
+Az exportálás köztes hangadatokat használ, ezért a végleges fájl méreténél lényegesen több ideiglenes lemezterületre is szükség lehet. A program indulás előtt ellenőrzi a szabad helyet, és a művelet után eltávolítja a saját ideiglenes fájljait. A végleges fájlt csak a kódolás és a teljes visszaellenőrzés sikeres befejezése után teszi a megadott helyre. Megszakításkor a korábbi célfájl megmarad. A nagyobb bitráta, mintavételi frekvencia vagy a monó hang sztereóvá alakítása nem állítja helyre az elveszett részleteket.
+
+### Fájladatok és címkék
+
+A **Ctrl+Shift+I** az aktuális fizikai hangfájl adatlapját nyitja meg. Az adatok soronként olvashatók, kimásolhatók és UTF-8 szövegfájlba menthetők. Az adatlap megkülönbözteti a fájlméretet, az időtartamot, a mintavételi frekvenciát, a csatornaszámot és a formátum által jelzett bitrátát. Változó bitrátájú fájloknál az átlagos bitráta közelítő adat lehet.
+
+A puszta megtekintés nem módosítja a fájlt. Az ID3v1 és az ID3v2 jelenlétét külön ellenőrzi: ha nincs v2-címke, nem jelenít meg hozzá kitalált mezőket vagy verzióadatot. A bináris értékeknél a méret és a SHA-256 lenyomat olvasható; magát a bináris tartalmat a szerkesztőből külön lehet exportálni.
+
+A **Ctrl+Shift+T** a címkeszerkesztőt nyitja meg, és szünetelteti a hangoskönyvet. A natív fanézetben a nyílbillentyűkkel járhatja be a mezőket és a többértékű listákat. Az **Enter** egy csoportot kibont, illetve egy egyszerű értéket szerkesztésre megnyit. A szöveg, a számok, a nyelvkódok, a leírások, a hivatkozások, a többsoros megjegyzések, a beágyazott fejezetkeretek és a támogatott bináris adatok külön kezelhetők. Mező vagy listaérték hozzáadható, módosítható és törölhető. Egyes ritka mezők szabványos műszaki azonosítóval szerepelnek; ezek jelentését csak a megfelelő formátumszabvány ismeretében módosítsa.
+
+Az MP3 ID3v1-címkéje külön ablakban szerkeszthető. A hagyományos ISO-8859-1 mellett választható a régi magyar állományoknál előforduló Windows-1250. Az utóbbi értelmezését nem minden más lejátszó támogatja. A v1 rövid mezőit a program nem csonkítja meg, és a nem ábrázolható ékezeteket sem helyettesíti csendben: mentés előtt hibát jelez. Teljes Unicode-szöveghez ID3v2 használható. A v2.3/v2.4 váltást visszautasítja, ha az adatvesztéssel vagy ismeretlen mezők elvesztésével járna.
+
+Mentéskor külön, ellenőrzött `.bookworm-tags-….bak` biztonsági másolat készül. A szerkesztett változatban a program visszaolvassa a címkéket, és összehasonlítja az eredeti és a módosított fájl kódolt hangadatait. A címkeszerkesztés nem kódolja újra a hangot. Az ismeretlen ID3-kereteket megőrzi; nem próbálja találgatással átírni a jelentésüket. Csak sikeres ellenőrzés után cseréli le az eredeti fájlt. A könyvespolc hivatkozásai frissülnek, a könyvjelzők és a mentett pozíciók megmaradnak. A könyvespolcra vételkor meghatározott sorrend és fejezetbeosztás ettől nem rendeződik át automatikusan. A mentés után a könyvet újra meg kell nyitni.
+
+### Ha nem indul vagy megszakad a lejátszás
+
+A hiányzó hangmotor, a nem hozzáférhető hangeszköz, a dekódolási hiba, a sikertelen pozícióellenőrzés és az elakadt lejátszás nem marad jelzés nélkül. A program megállítja az érintett lejátszást, és képernyőolvasóval elérhető, **OK** gombbal bezárható hibaablakot ad. A technikai részletek egy része a hangmotor eredeti nyelvén szerepelhet. Ha a fájl időközben megváltozott, ellenőrizze a felvételt, majd vegye fel újra a könyvespolcra. Ha csak az elérési út változott, használja a mappa újracsatolását.
+
 ## A Bookworm frissítése
 
 A Bookworm alapértelmezés szerint minden indításkor ellenőrzi, hogy elérhető-e újabb változat. Így az új kiadásokról a lehető leghamarabb értesülhet. Az automatikus ellenőrzést a program beállításaiban kikapcsolhatja. A **Súgó** menü **Frissítések keresése** parancsával kézzel is ellenőrizheti a frissítéseket.

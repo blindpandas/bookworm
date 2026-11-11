@@ -344,6 +344,97 @@ Once you launch the file associations manager, you will have the following optio
 * Dissociate all supported file types: This removes previously registered file associations.
 * Individual buttons for each supported file type: Clicking any button will associate its respective file type with Bookworm.
 
+<a id="audiobooks"></a>
+
+## Audiobooks
+
+Open **File → Audiobooks**, or press **Ctrl+F11** in Bookworm's main window. The audiobook shelf and player have their own window. Tab and Shift+Tab move between native controls; Alt opens the menu bar. F1 opens this help section. Alt+F4 closes the player and saves its position. The shortcuts below apply to the audiobook window, not to the document reader or modal editing dialogs.
+
+### Adding and organising books
+
+Add one audio file or a folder containing one book, including its disc subfolders. Supported formats are MP3, M4B, M4A, WAV, FLAC, Ogg Vorbis and Opus. The file picker filters these extensions; folder import ignores documents, images and other files. Paths escaping the selected folder through links are not imported.
+
+Fast checks reject missing, empty and unreadable files. Import also performs a complete decode in the background before offering the book for addition. Full verification takes time proportional to the recording and machine performance; it can be cancelled without blocking player controls. A failed file aborts the import rather than silently omitting part of a book. Errors are shown in a native, accessible dialog with an OK button.
+
+Review the title, author/narrator and chapter order before accepting. File names use natural numeric order (2 before 10). Complete, unique disc/track metadata takes precedence. Move Up and Move Down change the proposed listening order. MP3 ID3 chapters and supported Nero/QuickTime M4B/M4A chapter data are imported, including any introduction before the first chapter marker. This feature handles local audio files, not DAISY packages, DRM-protected books, network streams, archives or playlists.
+
+Search filters the shelf by title and author. Enter, Ctrl+O or Open Selected Book loads the selected book in a paused state. F5 starts playback. Removing a book from the shelf removes its stored position and bookmarks after confirmation; it never deletes the audio recordings.
+
+### Playback and navigation shortcuts
+
+| Shortcut | Action |
+| --- | --- |
+| F5 | Play/pause; open the selected book if necessary |
+| F6 | Pause |
+| F7 / F8 | Short backward/forward jump |
+| Shift+F7 / Shift+F8 | Long backward/forward jump |
+| Ctrl+PageUp / Ctrl+PageDown | Previous/next chapter |
+| Ctrl+G | Go to a time measured from the beginning of the book |
+| Alt+Down / Alt+Up | Decrease/increase speed by 5 percentage points |
+| Ctrl+0 | Reset speed to 100% |
+| Alt+PageDown / Alt+PageUp | Decrease/increase volume by 5 percentage points |
+| Alt+Home / Alt+End | Decrease/increase speech boost by 1 dB |
+| Ctrl+I | Announce listening information on demand |
+| Ctrl+F12 | Show detailed, live listening times |
+| Ctrl+Shift+I | Inspect the current physical audio file |
+| Ctrl+Shift+T | Edit that file's tags |
+| Ctrl+B | Add a bookmark at the current position |
+| Ctrl+Shift+B | Browse, edit or delete bookmarks |
+
+Short and long jumps default to 10 and 60 seconds. Settings allow 1–60 and 10–600 seconds respectively; the long jump must exceed the short jump. Jumps cross physical file boundaries. Go to Time accepts seconds, mm:ss or hh:mm:ss; 90, 1:30 and 0:01:30 identify the same point. Up to three decimal places are accepted with a dot or comma: 1:30.125 is 90 seconds and 125 milliseconds.
+
+Positions are stored as integer milliseconds. The player requests an exact native seek and checks the reported position before resuming. A seek that cannot be verified within 50 ms produces an error instead of silently continuing at a different point. This is an acceptance tolerance, not a universal sample-accuracy guarantee for every format and output device. Within an open physical file, jumping reuses the decoder. Contiguous embedded chapters also avoid decoder reloads.
+
+Seeking does not trigger automatic position speech. Ctrl+I reports the current chapter, file position/duration/remaining time, book position/duration and remaining listening time at the current rate. The detailed window updates every second without an extra program announcement. It shows milliseconds and preserves text selection during updates. Uncheck Update Times Automatically to read or copy a fixed snapshot. Calculated listening time excludes future pauses and section repeats. Codec duration estimates and playback timestamps limit accuracy; additional displayed digits do not establish measurement accuracy.
+
+### Speed, volume and speech boost
+
+Playback speed ranges from 50 to 200%, using Rubber Band R3 pitch-preserving stretching. A typed spin-control value takes effect when Apply Speed is activated; shortcuts apply immediately. Processing quality depends on the source and rate. No algorithm can promise imperceptible artefacts on all recordings at every rate.
+
+The native volume slider ranges from 0 to 100% and applies changes directly. Focused native slider/spin values are left to the screen reader: the program does not repeat them. A shortcut used away from the corresponding control sends one value announcement through Bookworm's existing speech route.
+
+Speech boost adds 0–12 dB for quiet recordings. A look-ahead sample-peak limiter targets −1 dBFS after stretching/boosting. This is not certified true-peak loudness processing and cannot repair pre-existing clipping or noise. Strong limiting may change speech dynamics. Volume, rate and boost are remembered separately for each book.
+
+### Resume, annotations, sleep and repeat
+
+Position is checkpointed during playback and on pause, jumps and close. Reopening defaults to the exact stored position. Optional rewind on reopening can be configured from 0 to 30 seconds; the default is 0. It never affects explicit bookmarks or Go to Time. Reaching the end marks a book finished without automatically restarting it; select a chapter to listen again.
+
+Ctrl+B captures the position when invoked, before opening the name/note editor. Notes may span several lines. The bookmark list supports jumping, renaming, note editing and confirmed deletion. Export/import uses JSON with book/timeline identity checks. Repeated import does not duplicate identical entries. Editing a bookmark's label or note does not change its time.
+
+The Playback menu provides a sleep timer in real elapsed minutes, pause at chapter end, timer cancellation, and A–B section repeat. Use 0 minutes to cancel. The repeat end must follow its start. Rate changes do not extend the elapsed-time sleep deadline.
+
+Multimedia keys follow Bookworm's existing global-media-key preference. Play/pause goes to the active audiobook or text-to-speech session; previous/next make short jumps for audiobooks. Starting an audiobook stops document speech; starting document speech pauses the audiobook and returns multimedia-key ownership to speech.
+
+### Relocation and backups
+
+Relocate Selected Book reconnects a moved folder. Full-file SHA-256 identity is checked, not merely names or sizes. Successful relocation preserves positions and bookmarks. The work is cancellable and performed off the GUI thread.
+
+Library Backup copies the SQLite shelf database, including references, positions and bookmarks. It does **not** include recordings. To restore it, close Bookworm, keep a copy of the current `audiobooks/library.sqlite3` in Bookworm's user-data folder, then replace it with the backup. Back up audio files separately.
+
+### Saving copies and exporting audio
+
+Save Original Recordings As makes verified, byte-identical copies. A one-file book is saved as a file; a multi-file book goes into a new folder preserving relative subfolders. The original extension must be retained. Original recordings cannot be overwritten.
+
+Export Audiobook encodes the entire book, in listening order, into one MP3, M4B/AAC, 16-bit FLAC or 16-bit WAV file. Select mono/stereo and 22050, 44100 or 48000 Hz. MP3/AAC expose bitrate settings; MP3 at 22050 Hz is limited to 160 kbit/s. AAC bitrate is a target, so its actual average can differ. WAV/FLAC do not use a lossy-encoding bitrate control.
+
+Export defaults to original speed and no added boost. A checkbox applies the current speed/boost settings. Playback volume is never baked in. MP3 and M4B retain chapter titles with rate-adjusted times; WAV/FLAC exports do not embed chapters. Increasing bitrate, sample rate or channel count cannot recover lost source detail.
+
+A floating-point PCM intermediate avoids lossy intermediate encoding and may require much more temporary space than the final file. Free space is checked before starting. The operation removes its own temporary files when done or cancelled. Only after encoding, metadata writing and complete decode verification succeeds is the requested destination replaced. Cancellation leaves an existing destination intact.
+
+### File information and tag editing
+
+Ctrl+Shift+I opens a read-only, line-readable report with path, size, format, reported duration, sample rate, channels, bitrate and available tags. It can be copied or saved as UTF-8 text. VBR bitrate may be approximate. Inspection never modifies the source and never fabricates ID3v2 fields/version data when no v2 tag exists. Binary fields show size and SHA-256; their contents can be exported separately from the editor.
+
+Ctrl+Shift+T pauses playback and opens a native tree of tag fields. Arrow keys navigate groups; Enter expands a group or edits a scalar. Text, numbers, language codes, descriptions, URLs, multiline comments, multi-value lists, nested ID3 chapter frames and supported binary values can be edited separately. Add/remove operations are explicit. Less common fields retain their standard technical identifiers and should only be changed with an understanding of that format. Unknown ID3 frames are retained, not guessed or rewritten.
+
+MP3 ID3v1 has a separate editor. Choose ISO-8859-1 or Windows-1250 for Hungarian legacy files; other players may interpret Windows-1250 differently. Oversized or unrepresentable v1 text is rejected rather than silently truncated or substituted. ID3v2 supports full Unicode. Changing between v2.3/v2.4 is rejected if fields would be lost/changed or unknown frames cannot be preserved.
+
+Saving creates a verified `.bookworm-tags-….bak` copy, rereads edited tags, and compares the encoded audio payload before and after editing. Audio is not re-encoded. Only a successful result replaces the source; shelf file references are refreshed while positions and bookmarks remain. Previously imported chapter order/layout is not automatically rebuilt from edited tags. Reopen the book after saving.
+
+### Troubleshooting
+
+Missing engines, unavailable audio output, decoding failures, failed seek verification and stalled playback generate accessible OK dialogs instead of remaining in a misleading playing state. Native engine details may be in their original language. If a source changed, inspect it and relocate or reimport it; if only its location changed, use relocation. When the latest position cannot be saved, closing offers an explicit choice to stay open or exit without that last update.
+
 ## Updating Bookworm
 
 By default, Bookworm checks for new versions upon startup. This ensures that you get new versions of Bookworm as early as possible. You can disable this default behavior from the application preferences. You can also check for updates manually by clicking the "Check for updates" menu item found under the "Help" menu.
